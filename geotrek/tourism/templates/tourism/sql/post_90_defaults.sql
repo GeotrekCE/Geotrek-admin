@@ -29,7 +29,6 @@ ALTER TABLE tourism_informationdesk ALTER COLUMN accessibility SET DEFAULT '';
 -- geom
 -- eid
 ALTER TABLE tourism_informationdesk ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
-ALTER TABLE tourism_informationdesk ALTER COLUMN provider SET DEFAULT '';
 ALTER TABLE tourism_informationdesk ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE tourism_informationdesk ALTER COLUMN date_update SET DEFAULT now();
 
@@ -83,7 +82,6 @@ ALTER TABLE tourism_touristiccontent ALTER COLUMN published SET DEFAULT FALSE;
 -- structure
 ALTER TABLE tourism_touristiccontent ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE tourism_touristiccontent ALTER COLUMN date_update SET DEFAULT now();
-ALTER TABLE tourism_touristiccontent ALTER COLUMN provider SET DEFAULT '';
 -- deleted
 
 
@@ -134,7 +132,6 @@ ALTER TABLE tourism_touristiccontent ALTER COLUMN date_update SET DEFAULT now();
 -- deleted
 -- preparation_duration
 -- intervention_duration
-ALTER TABLE tourism_touristicevent ALTER COLUMN provider SET DEFAULT '';
 --price
 
 

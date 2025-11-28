@@ -1,11 +1,12 @@
 from django.utils.translation import gettext_lazy as _
-from django_filters import ChoiceFilter
+from django_filters import ModelMultipleChoiceFilter
 
 from geotrek.altimetry.filters import (
     AltimetryAllGeometriesFilterSet,
     AltimetryPointFilterSet,
 )
 from geotrek.authent.filters import StructureRelatedFilterSet
+from geotrek.common.models import Provider
 from geotrek.core.filters import TopologyFilter, ValidTopologyFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
 
@@ -18,11 +19,9 @@ class TrekFilterSet(
     ZoningFilterSet,
     StructureRelatedFilterSet,
 ):
-    provider = ChoiceFilter(
-        field_name="provider",
-        empty_label=_("Provider"),
+    provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
-        choices=lambda: Trek.objects.provider_choices(),
+        queryset=Provider.objects.filter(trek__isnull=False).distinct(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -57,11 +56,9 @@ class POIFilterSet(
     StructureRelatedFilterSet,
 ):
     trek = POITrekFilter(label=_("Trek"), required=False)
-    provider = ChoiceFilter(
-        field_name="provider",
-        empty_label=_("Provider"),
+    provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
-        choices=lambda: POI.objects.provider_choices(),
+        queryset=Provider.objects.filter(poi__isnull=False).distinct(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -81,11 +78,9 @@ class ServiceFilterSet(
     ZoningFilterSet,
     StructureRelatedFilterSet,
 ):
-    provider = ChoiceFilter(
-        field_name="provider",
-        empty_label=_("Provider"),
+    provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
-        choices=lambda: Service.objects.provider_choices(),
+        queryset=Provider.objects.filter(service__isnull=False).distinct(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

@@ -3,7 +3,6 @@ from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import (
     CharFilter,
-    ChoiceFilter,
     ModelMultipleChoiceFilter,
     MultipleChoiceFilter,
 )
@@ -12,7 +11,7 @@ from mapentity.filters import MapEntityFilterSet, PolygonFilter
 from geotrek.altimetry.filters import AltimetryPointFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.authent.models import Structure
-from geotrek.common.models import Organism
+from geotrek.common.models import Organism, Provider
 from geotrek.core.filters import TopologyFilterTrail, ValidTopologyFilterSet
 from geotrek.core.models import Topology
 from geotrek.maintenance.models import Intervention
@@ -47,11 +46,9 @@ class SignageFilterSet(
         choices=lambda: Intervention.objects.year_choices(),
     )
     trail = TopologyFilterTrail(label=_("Trail"), required=False)
-    provider = ChoiceFilter(
-        field_name="provider",
-        empty_label=_("Provider"),
+    provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
-        choices=lambda: Signage.objects.provider_choices(),
+        queryset=Provider.objects.filter(signage__isnull=False).distinct(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

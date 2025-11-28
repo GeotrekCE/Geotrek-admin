@@ -48,7 +48,7 @@ def load_sql_files(app, stage):
     cursor = connection.cursor()
     for sql_file in sql_files:
         try:
-            logger.info("Loading initial SQL data from '%s'", sql_file)
+            logger.debug("Loading initial SQL data from '%s'", sql_file)
             template = get_template(sql_file)
             context_settings = settings.__dict__["_wrapped"].__dict__
             # fix languages in sql TEMPLATES
@@ -109,7 +109,7 @@ def move_models_to_schemas(app):
     for schema_name in table_schemas.keys():
         sql = f"CREATE SCHEMA IF NOT EXISTS {model_schema};"
         cursor.execute(sql)
-        logger.info("Created schema %s", model_schema)
+        logger.debug("Created schema %s", model_schema)
 
     for schema_name, tables in table_schemas.items():
         for table_name in tables:

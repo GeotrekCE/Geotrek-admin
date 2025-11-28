@@ -1,0 +1,494 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2013-2025, Makina Corpus Territoires / Parc national des
+# Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
+# This file is distributed under the same license as the Geotrek-admin
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Geotrek-admin\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-10 08:21+0000\n"
+"PO-Revision-Date: 2025-10-22 09:01+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/"
+"geotrek-admin/others/fr/>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.13.3\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../others/authors.rst:3
+msgid "Authors"
+msgstr ""
+
+#: ../../others/authors.rst:6
+msgid "Makina Corpus"
+msgstr ""
+
+#: ../../others/authors.rst:8
+msgid "Gilles Bassière"
+msgstr ""
+
+#: ../../others/authors.rst:9
+msgid "Sylvain Beorchia"
+msgstr ""
+
+#: ../../others/authors.rst:10
+msgid "Mathieu Leplatre"
+msgstr ""
+
+#: ../../others/authors.rst:11
+msgid "Anaïs Peyrucq"
+msgstr ""
+
+#: ../../others/authors.rst:12
+msgid "Satya Azemar"
+msgstr ""
+
+#: ../../others/authors.rst:13
+msgid "Simon Thépot"
+msgstr ""
+
+#: ../../others/authors.rst:14
+msgid "Chloé Morisset"
+msgstr ""
+
+#: ../../others/authors.rst:15
+msgid "Frédéric Bonifas"
+msgstr ""
+
+#: ../../others/authors.rst:16
+msgid "Benjamin Marguin"
+msgstr ""
+
+#: ../../others/authors.rst:17
+msgid "Eric Brehault"
+msgstr ""
+
+#: ../../others/authors.rst:18
+msgid "Célian Garcia"
+msgstr ""
+
+#: ../../others/authors.rst:19
+msgid "Gaël Utard"
+msgstr ""
+
+#: ../../others/authors.rst:20
+msgid "Jean-Etienne Castagnede"
+msgstr ""
+
+#: ../../others/authors.rst:21
+msgid "Timothée de Montety"
+msgstr ""
+
+#: ../../others/authors.rst:22
+msgid "Bastien Potiron"
+msgstr ""
+
+#: ../../others/authors.rst:23
+msgid "Emmanuelle Helly"
+msgstr ""
+
+#: ../../others/authors.rst:24
+msgid "Célia Prat"
+msgstr ""
+
+#: ../../others/authors.rst:25
+msgid "Paul Florence"
+msgstr ""
+
+#: ../../others/authors.rst:26
+msgid "Marine Faucher"
+msgstr ""
+
+#: ../../others/authors.rst:27
+msgid "Marc-Antoine Dupré"
+msgstr ""
+
+#: ../../others/authors.rst:28
+msgid "Hugo Hasson"
+msgstr ""
+
+#: ../../others/authors.rst:29
+msgid "Joaquim Nallar"
+msgstr ""
+
+#: ../../others/authors.rst:30
+msgid "Justine Fricou"
+msgstr ""
+
+#: ../../others/authors.rst:31
+msgid "Romain Dessort"
+msgstr ""
+
+#: ../../others/authors.rst:32
+msgid "Romain Boissière"
+msgstr ""
+
+#: ../../others/authors.rst:33
+msgid "Nell Party"
+msgstr ""
+
+#: ../../others/authors.rst:39
+msgid "Parc national des Ecrins"
+msgstr ""
+
+#: ../../others/authors.rst:41
+msgid "Camille Monchicourt"
+msgstr ""
+
+#: ../../others/authors.rst:42
+msgid "Théo Lechémia"
+msgstr ""
+
+#: ../../others/authors.rst:43
+msgid "Élie Bouttier"
+msgstr ""
+
+#: ../../others/authors.rst:44
+msgid "Raphael Doisy"
+msgstr ""
+
+#: ../../others/authors.rst:47
+msgid "Others"
+msgstr ""
+
+#: ../../others/authors.rst:49
+msgid "Michaël Viadere (OpenIG)"
+msgstr ""
+
+#: ../../others/authors.rst:50
+msgid "Guillaume Boitel"
+msgstr ""
+
+#: ../../others/authors.rst:51
+msgid "Jean Lenormand"
+msgstr ""
+
+#: ../../others/authors.rst:52
+msgid "Claude Paroz"
+msgstr ""
+
+#: ../../others/authors.rst:53
+msgid "Amandine Sahl (Parc National des Cévennes)"
+msgstr ""
+
+#: ../../others/authors.rst:54
+msgid "Frédéric Cloitre (LPO AuRA)"
+msgstr ""
+
+#: ../../others/authors.rst:55
+msgid "Idrissa Djepa Creutz (OepnIG / Parc National des Cévennes)"
+msgstr ""
+
+#: ../../others/authors.rst:56
+msgid "Yannick Le Duc"
+msgstr ""
+
+#: ../../others/authors.rst:57
+msgid "Guillaume Boitel (Parc National de Port Cros)"
+msgstr ""
+
+#: ../../others/authors.rst:58
+msgid "Pierre Loicq (Parc National de la Vanoise)"
+msgstr ""
+
+#: ../../others/authors.rst:59
+msgid "Nathanaël (@roipoussiere)"
+msgstr ""
+
+#: ../../others/authors.rst:62
+msgid "Credits"
+msgstr ""
+
+#: ../../others/authors.rst:64
+msgid "*Information desk* by Alex Berkowitz from The Noun Project"
+msgstr ""
+
+#: ../../others/authors.rst:65
+msgid "*Calendar* by Laurent Patain from The Noun Project"
+msgstr ""
+
+#: ../../others/authors.rst:66
+msgid "*Restaurant* designed by Roberto Pinto from the Noun Project"
+msgstr ""
+
+#: ../../others/authors.rst:67
+msgid "*Kayak* designed by johanna from the Noun Project"
+msgstr ""
+
+#: ../../others/authors.rst:68
+msgid "*Luggage* designed by Luis Prado from the Noun Project"
+msgstr ""
+
+#: ../../others/authors.rst:69
+msgid "*Location* designed by Jacob Lowe from the Noun Project"
+msgstr ""
+
+#: ../../others/authors.rst:70
+msgid "*Food* designed by Rémy Médard from the Noun Project"
+msgstr ""
+
+#: ../../others/authors.rst:71
+msgid "*Climbing* designed by Eric Milet from the Noun Project"
+msgstr ""
+
+#: ../../others/authors.rst:72
+msgid "*Box Office* designed by Alessio Damiano from the Noun Project"
+msgstr ""
+
+#: ../../others/authors.rst:73
+msgid "*Steep Descent* designed by Sergey Patutin from the Noun Project"
+msgstr ""
+
+#: ../../others/authors.rst:74
+msgid "*Landscape* by Adrien Coquet from the Noun Project"
+msgstr ""
+
+#: ../../others/authors.rst:75
+msgid "*Ski course* by Sahua D from the Noun Project"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:5
+msgid "Troubleshooting"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:7
+msgid "Keywords"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:9
+msgid "``screamshotter``, ``log``"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:11
+msgid ""
+"Geotrek-admin logs are stored in ``/opt/geotrek-"
+"admin/var/log/geotrek.log`` file."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:13
+msgid ""
+"But if Geotrek-admin does not start, take a look at systemd logs for each"
+" of the 3 Geotrek-admin services (user web interface, API and "
+"asynchronous tasks):"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:22
+msgid ""
+"The output is paginated. With -e option you are at the end of the logs "
+"but you can go up an down with arrows. Type Q to quit. If you want to "
+"copy the log to a file, run:"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:31
+msgid "Frequently encountered problems"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:34
+msgid ""
+"Error 500 with ``django.db.utils.IntegrityError … NOT NULL for column "
+"\"language\"``"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:36
+msgid ""
+"``django.db.utils.IntegrityError: ERREUR:  une valeur NULL viole la "
+"contrainte NOT NULL de la colonne « language »``"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:38
+msgid ""
+"This means specific migrations for translated fields have not been "
+"executed on database during update. You have to run them manually, "
+"classical migrations included:"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:50
+msgid "Error 500 with document generation or map capture"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:52
+msgid ""
+"Les captures de carte (utiles entre autre à la génération des documents "
+"et aux PDF) utilise un logiciel nommé screamshotter. Ce logiciel, pilote "
+"un navigateur web (chromium, via puppeteer) qui va appeler la page web de"
+" geotrek-admin de l'objet dont il doit réaliser une capture de carte."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:55
+msgid "ex: ``https://mon-geotrek-admin.fr/trek/1/``"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:57
+msgid "Il est donc nécessaire que cette URL lui soit accessible."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:59
+msgid "Paquet Debian :"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:60
+msgid ""
+"l'URL utilisée depuis le navigateur (``https://mon-geotrek-"
+"admin.fr/trek/1/``) doit être accessible depuis l'hôte de l'application "
+"Geotrek-admin."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:62
+msgid "Image docker :"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:63
+msgid ""
+"l'URL utilisée depuis le navigateur (``https://mon-geotrek-"
+"admin.fr/trek/1/``) doit être accessible depuis le container de "
+"l'application screamshotter (et convertit)."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:65
+msgid "Warning"
+msgstr "Attention"
+
+#: ../../others/troubleshooting.rst:66
+msgid ""
+"Faites attention aux pare-feux, proxy et domaines privés. L'hôte (ou le "
+"container docker) doit pouvoir correctement résoudre l'adresse IP du "
+"domaine utilisé."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:68
+msgid ""
+"Sur certaines infrastructures, en particulier en entreprise ou derrière "
+"certains proxy, il se peut que la configuration de base empêche le bon "
+"fonctionnement."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:70
+msgid "**Exemple :**"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:72
+msgid ""
+"l'IP derriere le domaine demo-admin.geotrek.fr depuis mon poste de "
+"travail est 88.77.66.55, il s'affiche bien, mais depuis le serveur c'est "
+"172.16.0.10, les captures de carte ne fonctionnent pas. Il faut jouer "
+"avec la configuration de la machine, les serveurs DNS, les paramètres "
+"network/alias ou extra_hosts du docker-compose.yml afin de le rendre "
+"accessible."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:73
+msgid ""
+"le Proxy qui gère les certificats SSL ne transmet pas les bons en-têtes à"
+" geotrek-admin. De ce fait, geotrek-admin pense tourner en http et génère"
+" des url en http:// à screamshotter (ex: prend une capture de ``http"
+"://mon-geotrek-admin.fr/trek/1/`` au lieu de ``https://mon-geotrek-"
+"admin.fr/trek/1/``). Il faut penser à bien transmettre l'en-tête ``X"
+"-Forwarded-Proto https``."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:76
+msgid "Comment débloquer le bon fonctionnement ?"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:78
+msgid ""
+"Tout d'abord, vérifiez que vous utilisez bien les dernières versions des "
+"outils screamshotter et convertit."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:87
+msgid "Pour docker"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:94
+msgid "puis relancer toute l'application (down / up)"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:97
+msgid ""
+"Vérifiez que l'URL de votre geotrek-admin est accessible depuis le "
+"serveur ou le container."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:104
+msgid "Depuis docker :"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:112
+msgid "La réponse devrait ressembler à une page HTML de connexion."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:114
+msgid "Si ce n'est pas le cas, vérifiez l'IP du domaine"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:121
+msgid ""
+"La réponse doit être une IP publique, idéalement la même que depuis votre"
+" poste de travail."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:123
+msgid ""
+"Testez la capture de carte depuis geotrek-admin, sur une carte, le bouton"
+" avec un appareil photo."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:125
+msgid "Si ça ne fonctionne pas, vérifiez le message d'erreur :"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:127
+msgid ""
+"Request on http://screamshotter:8000/?url=http%3A//mon-geotrek-"
+"admin.fr/trek/1/xxxx failed (status=500)"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:129
+msgid ""
+"On peut voir que l'URL est **http** et non **https**, c'est un problème d"
+"'en-tête non transmis. Il faut régler ça au niveau du proxy."
+msgstr ""
+
+#: ../../others/troubleshooting.rst:133
+msgid "Signature check for Debian packages"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:135
+msgid ""
+"When you try to upgrade your Geotrek-admin, you can have problems with "
+"signature check:"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:143
+msgid "You have to update the signature key to get the last update:"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:151
+msgid "Show main packages versions"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:153
+msgid ""
+"To debug or to report a bug, you can check or provide in issue the main "
+"versions of Geotrek-admin and its dependencies:"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:160
+msgid "From docker:"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:167
+msgid "Some examples:"
+msgstr ""
+
+#: ../../others/troubleshooting.rst:175
+msgid "Check command help for more options:"
+msgstr ""

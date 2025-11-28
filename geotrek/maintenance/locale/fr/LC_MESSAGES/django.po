@@ -8,29 +8,30 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2025-02-13 10:14+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"PO-Revision-Date: 2025-10-10 18:37+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/maintenance/fr/>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1)\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.13.3\n"
 
 msgid "Maintenance"
 msgstr "Maintenance"
 
 msgid "length 3d"
-msgstr "Longueur 3D"
+msgstr "longueur 3d"
 
 msgid "ascent"
-msgstr "Dénivelé positif"
+msgstr "dénivelé positif"
 
 msgid "descent"
-msgstr "Dénivelé négatif"
+msgstr "dénivelé négatif"
 
 msgid "slope"
-msgstr "Pente"
+msgstr "pente"
 
 msgid "min"
 msgstr "min"
@@ -63,7 +64,7 @@ msgid "Trail"
 msgstr "Sentier"
 
 msgid "Report"
-msgstr "Rapport"
+msgstr "Signalement"
 
 msgid "Outdoor Course"
 msgstr "Parcours Outdoor"
@@ -96,10 +97,10 @@ msgid "Restricted area"
 msgstr "Zone réglementaire"
 
 msgid "City"
-msgstr "Ville"
+msgstr "Commune"
 
 msgid "District"
-msgstr "District"
+msgstr "Secteur"
 
 msgid "Year of activity"
 msgstr "Année d'activité"
@@ -220,10 +221,10 @@ msgid "Display order"
 msgstr "Ordre d'affichage"
 
 msgid "Intervention's status"
-msgstr "Statut"
+msgstr "Statut d'intervention"
 
 msgid "Intervention's statuses"
-msgstr "Statuts"
+msgstr "Statuts d'intervention"
 
 msgid "Intervention's type"
 msgstr "Type d'intervention"
@@ -303,9 +304,6 @@ msgstr "Période"
 msgid "Interventions total cost"
 msgstr "Coût total des interventions"
 
-msgid "Add a new project"
-msgstr "Ajouter un chantier"
-
 msgid "Project type"
 msgstr "Type de chantier"
 
@@ -352,13 +350,13 @@ msgid "Dimensions"
 msgstr "Dimensions"
 
 msgid "H:"
-msgstr "h:"
+msgstr "h :"
 
 msgid "L:"
-msgstr "L:"
+msgstr "L :"
 
 msgid "W:"
-msgstr "l:"
+msgstr "l :"
 
 msgid "Add"
 msgstr "Ajouter"

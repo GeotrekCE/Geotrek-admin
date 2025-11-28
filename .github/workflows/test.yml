@@ -4,6 +4,7 @@
 name: Test CI
 
 on:
+  workflow_dispatch:
   pull_request:
     paths-ignore:
       - 'docs/**'
@@ -63,7 +64,7 @@ jobs:
 
     services:
       postgres:
-        image: pgrouting/pgrouting:12-3.0-3.0.0
+        image: pgrouting/pgrouting:14-3.5-3.7
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -79,8 +80,8 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: astral-sh/setup-uv@v6
+    - uses: actions/checkout@v6
+    - uses: astral-sh/setup-uv@v7
       with:
         version: "latest"
 
@@ -154,7 +155,7 @@ jobs:
         ./venv/bin/coverage xml -o coverage.xml
 
     - name: Save coverage
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v5
       with:
         name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
         path: coverage.xml
@@ -173,8 +174,8 @@ jobs:
       OS: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v6
         with:
             name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
             path: .
@@ -190,7 +191,7 @@ jobs:
     name: Build docker image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         id: buildx
@@ -231,7 +232,7 @@ jobs:
           DISTRO: ubuntu:${{ matrix.os }}
 
       steps:
-          - uses: actions/checkout@v4
+          - uses: actions/checkout@v6
           - name: Prepare versioning
             run: |
                 grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu'$CODE'~dev'$GITHUB_RUN_ID'/' debian/changelog
@@ -243,7 +244,7 @@ jobs:
               cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
 
           - name: Archive package artifact
-            uses: actions/upload-artifact@v4
+            uses: actions/upload-artifact@v5
             with:
               name: ${{ matrix.os }}
               path: |
@@ -256,7 +257,7 @@ jobs:
 
     services:
       postgres:
-        image: pgrouting/pgrouting:12-3.0-3.0.0
+        image: pgrouting/pgrouting:14-3.5-3.7
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -270,10 +271,10 @@ jobs:
           - postgres:/var/lib/postgresql/data
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Download image
-        uses: ishworkh/container-image-artifact-download@v2.0.0
+        uses: ishworkh/container-image-artifact-download@v2.1.0
         with:
           image: "geotrek:latest"
 
@@ -319,7 +320,7 @@ jobs:
           docker compose run --rm web sh -c 'command -v raster2pgsql >/dev/null 2>&1 || { echo >&2 "raster2pgsql command not found."; exit 1; }'
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-docker
           path: |
@@ -344,7 +345,7 @@ jobs:
 
     services:
       postgres:
-        image: pgrouting/pgrouting:12-3.0-3.0.0
+        image: pgrouting/pgrouting:14-3.5-3.7
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -356,8 +357,8 @@ jobs:
           --health-cmd pg_isready
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v6
         with:
           name: ${{ matrix.os }}
 
@@ -410,7 +411,7 @@ jobs:
       - name: Show logs
         run: cat /opt/geotrek-admin/var/log/geotrek.log
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: cypress-${{ matrix.code }}
           path: |
@@ -423,28 +424,28 @@ jobs:
     needs: [ test, e2e_docker_image, build_deb, e2e_deb ]
     if: ${{ github.event_name != 'pull_request' }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Download 20.04 debian artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
           name: focal
 
       - name: Download 22.04 debian artifact
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: jammy
 
       - name: Download 24.04 debian artifact
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v6
         with:
           name: noble
 
       - name: Download docker image
-        uses: ishworkh/container-image-artifact-download@v2.0.0
+        uses: ishworkh/container-image-artifact-download@v2.1.0
         with:
           image: 'geotrek:latest'
 
@@ -519,13 +520,15 @@ jobs:
           args: '*.deb'
 
       - name: Prepare install-docker.zip
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         run: |
           cd docker/install
           mkdir -p geotrek/var
           cp * ./geotrek 2>/dev/null || :
-          zip -r ../install-docker.zip geotrek/
+          zip -r ../../install-docker.zip geotrek/
 
       - name: Attach zip archive as release binary
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         uses: skx/github-action-publish-binaries@master
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

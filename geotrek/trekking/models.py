@@ -14,6 +14,7 @@ from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.template.defaultfilters import slugify
 from django.urls import reverse
+from django.utils.functional import cached_property
 from django.utils.translation import get_language, gettext
 from django.utils.translation import gettext_lazy as _
 from mapentity.helpers import clone_attachment
@@ -22,6 +23,7 @@ from mapentity.serializers import plain_text
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
     BasePublishableMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     OptionalPictogramMixin,
     PictogramMixin,
@@ -164,7 +166,12 @@ def log_cascade_deletion_from_rating_scale(sender, instance, using, **kwargs):
 
 
 class Trek(
-    Topology, StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin
+    Topology,
+    StructureRelated,
+    PicturesMixin,
+    PublishableMixin,
+    GeotrekMapEntityMixin,
+    ExternalSourceMixin,
 ):
     topo_object = models.OneToOneField(
         Topology, parent_link=True, on_delete=models.CASCADE
@@ -383,12 +390,6 @@ class Trek(
     labels = models.ManyToManyField(
         "common.Label", related_name="treks", verbose_name=_("Labels"), blank=True
     )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
-    )
     eid2 = models.CharField(
         verbose_name=_("Second external id"), max_length=1024, blank=True, null=True
     )
@@ -495,10 +496,10 @@ class Trek(
     def web_links_display(self):
         return ", ".join([str(n) for n in self.web_links.all()])
 
-    @property
-    def city_departure(self):
+    @cached_property
+    def departure_city(self):
         cities = self.published_cities
-        return str(cities[0]) if len(cities) > 0 else ""
+        return cities[0] if cities else ""
 
     def kml(self):
         """Exports trek into KML format, add geometry as linestring and POI
@@ -568,10 +569,6 @@ class Trek(
     @classmethod
     def tourism_treks(cls, tourism_object, queryset=None):
         return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_object)
-
-    @classmethod
-    def get_create_label(cls):
-        return _("Add a new trek")
 
     @property
     def parents(self):
@@ -912,7 +909,12 @@ class WebLinkCategory(TimeStampedModelMixin, PictogramMixin):
 
 
 class POI(
-    StructureRelated, PicturesMixin, PublishableMixin, GeotrekMapEntityMixin, Topology
+    StructureRelated,
+    PicturesMixin,
+    PublishableMixin,
+    GeotrekMapEntityMixin,
+    Topology,
+    ExternalSourceMixin,
 ):
     topo_object = models.OneToOneField(
         Topology, parent_link=True, on_delete=models.CASCADE
@@ -922,12 +924,6 @@ class POI(
     )
     type = models.ForeignKey(
         "POIType", related_name="pois", verbose_name=_("Type"), on_delete=models.PROTECT
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
     )
     view_points = GenericRelation("common.HDViewPoint", related_query_name="poi")
 
@@ -1099,7 +1095,7 @@ class ServiceType(TimeStampedModelMixin, PictogramMixin, BasePublishableMixin):
         return self.name
 
 
-class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
+class Service(StructureRelated, GeotrekMapEntityMixin, ExternalSourceMixin, Topology):
     topo_object = models.OneToOneField(
         Topology, parent_link=True, on_delete=models.CASCADE
     )
@@ -1108,12 +1104,6 @@ class Service(StructureRelated, GeotrekMapEntityMixin, Topology):
         related_name="services",
         verbose_name=_("Type"),
         on_delete=models.PROTECT,
-    )
-    eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, null=True
-    )
-    provider = models.CharField(
-        verbose_name=_("Provider"), db_index=True, max_length=1024, blank=True
     )
 
     objects = ServiceManager()

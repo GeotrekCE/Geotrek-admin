@@ -32,7 +32,7 @@ class CommandUpdatePostMigrationTests(TestCase):
         self.assertEqual(portal.description_fr, "")
         call_command("update_post_migration_languages")
         changed_portal = TargetPortal.objects.get(name="Test")
-        self.assertEqual(changed_portal.title_fr, "Geotrek Rando")
+        self.assertEqual(changed_portal.title_fr, "Geotrek-rando")
         self.assertEqual(
             changed_portal.description_fr,
             "Geotrek est une web app permettant de préparer à "

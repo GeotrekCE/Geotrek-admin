@@ -55,9 +55,20 @@ class TouristicContentViewsTests(CommonTest):
             "geom": '{"type": "Point", "coordinates":[0, 0]}',
         }
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.category)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/touristiccontent/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
     def test_intersection_zoning(self):
         self.modelfactory.create()
-        CityFactory.create(
+        city1 = CityFactory.create(
             name="Are",
             code="09000",
             geom=MultiPolygon(
@@ -67,7 +78,7 @@ class TouristicContentViewsTests(CommonTest):
                 )
             ),
         )
-        CityFactory.create(
+        city2 = CityFactory.create(
             name="Nor",
             code="09001",
             geom=MultiPolygon(
@@ -77,11 +88,11 @@ class TouristicContentViewsTests(CommonTest):
                 )
             ),
         )
-        params = "?city=09000"
+        params = f"?city={city1.pk}"
         response = self.client.get(self.model.get_datatablelist_url() + params)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["recordsFiltered"], 1)
-        params = "?city=09001"
+        params = f"?city={city2.pk}"
         response = self.client.get(self.model.get_datatablelist_url() + params)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(len(response.json()["data"]), 0)
@@ -148,6 +159,17 @@ class TouristicEventViewsTests(CommonTest):
             "begin_date": "2002-02-20",
             "end_date": "2002-02-20",
         }
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.type)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/touristicevent/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
 
     @patch("mapentity.helpers.requests")
     def test_document_export_with_attachment(self, mock_requests):

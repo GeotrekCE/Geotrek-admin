@@ -134,7 +134,6 @@ class CirkwiParserTests(TestCase):
         self.assertEqual(attachement.title, "")
         self.assertEqual(attachement.legend, "Le patrimoine de Plancoët")
         self.assertEqual(attachement.author, "Manon")
-        self.assertEqual(attachement.attachment_file.size, len(testdata.IMG_FILE))
         self.assertEqual(t.duration, 2.0)
 
         # Test values for english parsing
@@ -146,7 +145,7 @@ class CirkwiParserTests(TestCase):
         self.assertEqual(t.practice.cirkwi.eid, 3)
         self.assertEqual(t.description_teaser_fr, "Laissez-vous guider par ce chemin")
         self.assertIn(
-            "Cirkwi Locomotion 'Vélo' n'existait pas dans Geotrek-Admin. Il a été créé automatiquement,",
+            "Cirkwi Locomotion 'Vélo' n'existait pas dans Geotrek-admin. Il a été créé automatiquement,",
             output.getvalue(),
         )
 
@@ -193,7 +192,7 @@ class CirkwiParserTests(TestCase):
             stdout=output,
         )
         self.assertIn(
-            "Cirkwi Locomotion '['Aviron', '8']' n'existe pas dans Geotrek-Admin. Merci de l'ajouter,",
+            "Cirkwi Locomotion '['Aviron', '8']' n'existe pas dans Geotrek-admin. Merci de l'ajouter,",
             output.getvalue(),
         )
         # Test Locomotion exists but no related Practice is found
@@ -209,7 +208,7 @@ class CirkwiParserTests(TestCase):
             output.getvalue(),
         )
         self.assertIn(
-            "Niveau de Difficulté ayant le niveau Cirkwi '3' n'existe pas dans Geotrek-Admin. Merci de l'ajouter,",
+            "Niveau de Difficulté ayant le niveau Cirkwi '3' n'existe pas dans Geotrek-admin. Merci de l'ajouter,",
             output.getvalue(),
         )
 

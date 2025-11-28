@@ -28,7 +28,7 @@ class PathRouter:
                         'id'
                     )
                 """
-        cursor.execute(query, [settings.PATH_SNAPPING_DISTANCE])
+        cursor.execute(query, [settings.PGROUTING_TOLERANCE])
         return ("OK",) == cursor.fetchone()
 
     def get_route(self, steps):
@@ -45,7 +45,8 @@ class PathRouter:
         line_strings, serialized_topology = self.compute_all_steps_routes()
         if line_strings == []:
             return None
-
+        if not all(ls.geom_type == "LineString" for ls in line_strings):
+            return None
         multi_line_string = GeometryCollection(line_strings, srid=settings.SRID)
         multi_line_string.transform(settings.API_SRID)
         geojson = json.loads(multi_line_string.geojson)
@@ -179,8 +180,8 @@ class PathRouter:
                         edge_id AS id,
                         source_id AS source,
                         target_id AS target,
-                        ST_Length(edge_geom) AS cost,
-                        ST_Length(edge_geom) AS reverse_cost,
+                        ST_LengthSpheroid(ST_TRANSFORM(edge_geom, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]') AS cost,
+                        ST_LengthSpheroid(ST_TRANSFORM(edge_geom, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]') AS reverse_cost,
                         ST_X(source_geom) AS x1,
                         ST_Y(source_geom) AS y1,
                         ST_X(target_geom) AS x2,

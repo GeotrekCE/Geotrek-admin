@@ -3,20 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-16 18:12+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"PO-Revision-Date: 2025-10-22 09:00+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/tourism/it/>\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.13.3\n"
 
 msgid "Tourism"
 msgstr "Turismo"
@@ -48,9 +48,7 @@ msgstr "gg/mm/aaaa"
 msgid "HH:MM"
 msgstr "HH:MM"
 
-msgid ""
-"Please add a participant category in admin interface in order to complete "
-"the number of participants."
+msgid "Please add a participant category in admin interface in order to complete the number of participants."
 msgstr ""
 
 msgid "Start time is unset"
@@ -76,9 +74,6 @@ msgstr ""
 
 msgid "Labels accessibility"
 msgstr ""
-
-msgid "External id"
-msgstr "External id"
 
 msgid "Title"
 msgstr "Titolo"
@@ -378,19 +373,28 @@ msgstr "Pubblicato eventi turistici"
 
 #, python-brace-format
 msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr ""
-"Il tipo 1 '{subval}' non esiste per la categoria '{cat}'. Si prega di "
-"aggiungerlo"
+msgstr "Il tipo 1 '{subval}' non esiste per la categoria '{cat}'. Si prega di aggiungerlo"
 
 #, python-brace-format
 msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
+msgstr "Il tipo 2 '{subval}' non esiste per la categoria '{cat}'. Si prega di aggiungerlo"
+
+#, python-format
+msgid "Cannot link information desk to trek: could not find trek with UUID %(uuid)s"
 msgstr ""
-"Il tipo 2 '{subval}' non esiste per la categoria '{cat}'. Si prega di "
-"aggiungerlo"
+
+#, python-format
+msgid "%(housenumber)s %(street)s"
+msgstr ""
+
+#, python-format
+msgid "%(postcode)s, %(city)s"
+msgstr ""
 
 #, python-format
 msgid ""
-"Cannot link information desk to trek: could not find trek with UUID %(uuid)s"
+"%(street)s\n"
+"%(city)s"
 msgstr ""
 
 msgid "Add a new touristic content"
@@ -425,6 +429,9 @@ msgstr "si, no"
 
 msgid "None"
 msgstr "Nessuna"
+
+msgid "External id"
+msgstr "External id"
 
 msgid "Thumbnail"
 msgstr "Thumbnail"

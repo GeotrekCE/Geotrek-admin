@@ -7,15 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-15 17:51+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2025-10-23 16:15+0000\n"
+"PO-Revision-Date: 2025-10-22 09:01+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/outdoor/fr/>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.13.3\n"
 
 msgid "Color"
 msgstr "Couleur"
@@ -51,15 +52,11 @@ msgid "Hidden ordered children"
 msgstr "Enfants ordonnés cachés"
 
 msgid "Cannot add children because this course is itself a child."
-msgstr ""
-"Impossible d'ajouter des enfants car ce parcours est lui-même un enfant."
+msgstr "Impossible d'ajouter des enfants car ce parcours est lui-même un enfant."
 
-#, fuzzy, python-format
-#| msgid "Cannot use parent course {child.name} as a child course."
+#, python-format
 msgid "Cannot use parent course %(name)s as a child course."
-msgstr ""
-"Impossible d'utiliser le parcours parent {child.name} comme itinéraire "
-"enfant."
+msgstr "Impossible d'utiliser le parcours parent %(name)s comme itinéraire enfant."
 
 msgid "Name"
 msgstr "Nom"
@@ -203,7 +200,7 @@ msgid "Source"
 msgstr "Source"
 
 msgid "Excluded POIs"
-msgstr ""
+msgstr "POIs exclus"
 
 msgid "Web links"
 msgstr "Liens web"
@@ -217,9 +214,6 @@ msgstr "Accessibilité"
 msgid "Type"
 msgstr "Type"
 
-msgid "External id"
-msgstr "ID externe"
-
 msgid "Managers"
 msgstr "Gestionnaires"
 
@@ -228,9 +222,6 @@ msgstr "Site outdoor"
 
 msgid "Outdoor sites"
 msgstr "Sites outdoor"
-
-msgid "Add a new outdoor site"
-msgstr "Ajouter un nouveau site outdoor"
 
 msgid "Sites"
 msgstr "Sites"
@@ -278,7 +269,7 @@ msgid "Height"
 msgstr "Hauteur"
 
 msgid "Points of reference"
-msgstr ""
+msgstr "Points de référence"
 
 msgid "Outdoor course"
 msgstr "Parcours outdoor"
@@ -286,17 +277,14 @@ msgstr "Parcours outdoor"
 msgid "Outdoor courses"
 msgstr "Parcours outdoor"
 
-msgid "Add a new outdoor course"
-msgstr "Ajouter un nouveau parcours outdoor"
-
 msgid "Courses"
 msgstr "Parcours"
 
 msgid "Public print"
-msgstr ""
+msgstr "Impression grand-public"
 
 msgid "Print"
-msgstr ""
+msgstr "Impression"
 
 msgid "Public print booklet"
 msgstr "Impression livret grand public"
@@ -319,6 +307,9 @@ msgstr "Enfant de :"
 msgid "Parent of:"
 msgstr "Parent de :"
 
+msgid "External id"
+msgstr "ID externe"
+
 msgid "No result"
 msgstr "Pas de résultat"
 
@@ -338,10 +329,16 @@ msgid "All useful information"
 msgstr "Toutes les infos pratiques"
 
 msgid "On your path..."
-msgstr ""
+msgstr "Sur votre route..."
 
 msgid "Attribution"
-msgstr "Crédit photo"
+msgstr "Crédit"
+
+msgid "Add a new outdoor site"
+msgstr "Ajouter un nouveau site outdoor"
+
+msgid "Add a new outdoor course"
+msgstr "Ajouter un nouveau parcours outdoor"
 
 msgid "Add a course"
 msgstr "Ajouter un parcours outdoor"
@@ -353,14 +350,8 @@ msgid "Add a brother site"
 msgstr "Ajouter un site frère"
 
 #, python-format
-msgid ""
-"You can't delete <strong>%(object)s</strong> because it has child outdoor "
-"sites associated with it. Modify or delete these child outdoor sites before "
-"proceeding."
-msgstr ""
-"Vous ne pouvez pas supprimer <strong>%(object)s</strong> car des sites "
-"'outdoor' lui sont associés. Pour pouvoir supprimer un site parent, il faut "
-"au préalable supprimer ses sites 'outdoor' associés."
+msgid "You can't delete <strong>%(object)s</strong> because it has child outdoor sites associated with it. Modify or delete these child outdoor sites before proceeding."
+msgstr "Vous ne pouvez pas supprimer <strong>%(object)s</strong> car des sites 'outdoor' lui sont associés. Pour pouvoir supprimer un site parent, il faut au préalable supprimer ses sites 'outdoor' associés."
 
 msgid "Child outdoor sites linked to this site"
 msgstr "Sites outdoor enfants de ce site"
@@ -391,4 +382,4 @@ msgid "Advices"
 msgstr "Recommandations"
 
 msgid "Invalid geometry value."
-msgstr "Valeur de géométrie invalide"
+msgstr "Valeur de géométrie invalide."

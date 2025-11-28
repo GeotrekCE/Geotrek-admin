@@ -2,20 +2,235 @@
 CHANGELOG
 =========
 
-2.115.1+dev    (XXXX-XX-XX)
+2.121.1+dev     (XXXX-XX-XX)
+----------------------------
+
+
+2.121.1         (2025-11-17)
+----------------------------
+
+**Bug fixes**
+
+* Draft path can be add by user without permission to add regular path
+* Fix the email sending and status change processes in the Suricate workflow.
+
+
+2.121.0         (2025-11-14)
+----------------------------
+
+**Performances**
+
+* Topology length 2d is now computed at database level.
+* Last modified header and content cache is now enabled on zoning internal API.
+
+**Documentation**
+
+- Reorganize the "Import data" chapter
+
+**Improvements**
+
+* Add configurable popups on map overlay (refs #4626).
+
+
+2.120.2         (2025-10-28)
+----------------------------
+
+**Bug fixes**
+
+* Fix trek's ``ambiance`` translated fields not being emptied by ApidaeTrekParser when the source data does not contain corresponding translations
+
+
+2.120.1         (2025-10-22)
 ----------------------------
 
 **Improvements**
 
+* Length are now computed with Earth spheroïd. We can now support using SRID 3857 (Pseudo mercator) to cover - almost - all Earth surface.
+
+**Documentation**
+
+* Refactor sphinx dependencies management
+
+
+2.120.0         (2025-10-22)
+----------------------------
+
+**Breaking changes**
+
+* Due to upgrade to Django 5.2 LTS, minimal PostgreSQL version is now 14.
+* Please Check your version and upgrade your database if needed before upgrading to this version.
+  * https://geotrek.readthedocs.io/en/latest/others/troubleshooting.html#show-main-packages-versions
+  * https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.rst
+
+**Warnings**
+
+* Geotrek-admin does not support anymore Ubuntu 18.04 since version 2.114.0 (march 2025).
+* Ubuntu 20.04, packaged by default with PostgreSQL 12, is still supported but not recommended since version 2.114.0 (march 2025).
+* It is recommended to upgrade your OS to Ubuntu 22.04 or 24.04, and PostgreSQL to version 14 minimum. Or to externalize your database on another server with the desired PostgreSQL version.
+* Due to the regeneration of pgRouting's network topology, the database migration to this version might take several minutes.
+
+**Improvements**
+
+* Add new parameter: ``PGROUTING_TOLERANCE``, which corresponds to pgrouting's tolerance for disconnected edges in the graph
+* Add a ``--flush`` option to the ``generate_pgr_network_topology`` command to reset the graph before regenerating it
+* Add a ``--append`` option to the ``loaddem`` command to allow adding DEM data to an existing DEM.
+* Allow manager to self assign a report (refs #4627)
+* Allow report reassignment (refs #4624)
+* Related report status now auto-updates to “Planned” when intervention status is set to “To be verified”, “Requested”, or “Planned” (refs #4633)
+
+**Bug fixes**
+
+* Prevent routing from returning MultiLineStrings
+
+**Maintenance**
+
+* Upgrade to Django 5.2 LTS
+
+**Developers**
+
+* For developers, you need to upgrade your database. ``make flush`` can help you to drop your docker database volume, and recreate a fresh install of geotrek-admin.
+  * By using this command, you will lose local data.
+
+
+2.119.0         (2025-10-06)
+----------------------------
+
+**Breaking changes**
+
+- Docker user : `GUNICORN_WORKERS` environment variable is now deprecated. Use `GUNICORN_CMD_ARGS` instead. (ex: `GUNICORN_CMD_ARGS=--workers=4` instead of `GUNICORN_WORKERS=4`)
+
+**Bug fixes**
+
+- Fix gunicorn configuration in Dockerfile
+- Fix Makefile's build_doc cache
+
+**Improvements**
+
+- Add cities and coordinates in the report CSV export (refs #4631)
+
+
+2.118.2         (2025-09-23)
+----------------------------
+
+**Bug fixes**
+
+- Fix translations in Add buttons on lists. (refs #4963)
+
+**Improvements**
+
+- Improve title in navbar (refs #4965)
+
+
+2.118.1         (2025-09-18)
+----------------------------
+
+**Bug fixes**
+
+- Fix parser crash when a row fails with any error
+- Fix map loading if instance has restricted areas
+
+**Maintenance**
+
+- Update ``ApidaeTrekParser`` to handle deprecated trek duration fields in Apidae API responses (refs #4621)
+
+
+2.118.0         (2025-09-09)
+----------------------------
+
+**Improvements**
+
+- Responsive design through mapentity. Navbar header, side bar, buttons in list views, detail views, user menu.
+
+**Bug fixes**
+
+- Update nginx configuration with Access-Control-Allow-Origin for static folder (refs #4859)
+
+**New features**
+
+- Maintenance mode is now available in the admin interface, allowing to set the application in maintenance mode.
+- Locate control on each map (via mapentity 8.14.0 update)
+
+**Documentation**
+
+- Update make serve_docs command in makefile (refs #4847)
+- Add main section blocks in landing page (refs #4883)
+
+**Maintenance**
+
+- Bump to django-mapentity 8.14.2
+
+
+2.117.0         (2025-07-28)
+----------------------------
+
+**Breaking changes**
+
+- The ``mobile`` API now references the city's internal ID instead of its code, since codes are not used in all countries.
+
+**Improvements**
+
+- Change provider Charfield to a foreign key
+- The ``mobile`` API now references the city's internal ID instead of its code
+
+**Documentation**
+
+- Update hidden form fields list and postgres version recommandations (refs #4846)
+
+
+2.116.1         (2025-07-15)
+----------------------------
+
+**Improvements**
+
+- In the ``mobile`` API, a trek's touristic contents are now ordered by category
+
+**Bug fixes**
+
+- Fix parser crash after exception during attachment download (refs #4807)
+
+**Documentation**
+
+- Update README.rst
+
+
+2.116.0         (2025-07-03)
+----------------------------
+
+**Breaking changes**
+
+- API v2 city now references the city's internal ID instead of its code, since codes are not used in all countries.
+- Due to changes in the public API, we recommend clearing caches after updating.
+
+**Improvements**
+
+- move primary key of City model on a new column ID.
+- add city_code and city_codes fields in API v2 responses.
 - Add default license for attachments parsers
 - Add attachments for OpenStreetMapParser
 - Add OpenStreetMap parser for Restricted Area
+- Add Apidae parser for Services
+- Add OpenStreetMap parser for infrastructures
+- Add OpenStreetMap parser for touristic contents
+- Add OpenStreetMap parser for Outdoor Sites
+- All parsers for point topology objects now generate the topology
+- Add OpenStreetMap parser for Cities
+- Add Apidae parser for Infrastructure
+
+**Bug fixes**
+
+- Fix delete=True in GeotrekParser when filtering by bbox or portal
 
 **Documentation**
 
 - Fix docker command for fixtures, add map settings and columns list details (#4740)
+- Add new authors and improve copyright details
 
-2.115.1    (2025-05-21)
+**Minor fixes**
+
+- Fix mobile api settings name for touristic content categories
+
+
+2.115.1         (2025-05-21)
 ----------------------------
 
 **Improvements**
@@ -43,7 +258,7 @@ CHANGELOG
 - Fix signage fixture typo
 
 
-2.115.0    (2025-04-29)
+2.115.0         (2025-04-29)
 ----------------------------
 
 **Warnings**
@@ -72,7 +287,7 @@ CHANGELOG
 - Update documentation with missing parameters from base.py (#4676)
 
 
-2.114.0     (2025-03-13)
+2.114.0         (2025-03-13)
 ----------------------------
 
 **Breaking changes**

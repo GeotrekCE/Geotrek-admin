@@ -7,17 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-28 18:47+0200\n"
-"PO-Revision-Date: 2020-09-23 07:10+0000\n"
+"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
-"admin/common/fr/>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/common/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 5.13.3\n"
 
 msgid "content type"
 msgstr "type d'objet"
@@ -35,10 +34,10 @@ msgid "Common"
 msgstr "Commun"
 
 msgid "min"
-msgstr ""
+msgstr "min"
 
 msgid "max"
-msgstr ""
+msgstr "max"
 
 msgid "This field is required to publish object."
 msgstr "Ce champs est obligatoire pour publier l'objet."
@@ -48,17 +47,11 @@ msgstr "Ce champs est obligatoire pour réviser l'objet."
 
 #, python-format
 msgid "Fields are missing to publish or review object: %(fields)s"
-msgstr ""
-"Ces champs doivent être renseignés pour publier ou réviser l'objet : "
-"%(fields)s"
+msgstr "Ces champs doivent être renseignés pour publier ou réviser l'objet : %(fields)s"
 
 #, python-brace-format
-msgid ""
-"Please select a choice related to all structures (without brackets) or "
-"related to the structure {struc} (in brackets)"
-msgstr ""
-"Veuillez sélectionner un choix lié à toutes les structures (sans "
-"parenthèses) ou lié à la structure {struc} (entre parenthèses)"
+msgid "Please select a choice related to all structures (without brackets) or related to the structure {struc} (in brackets)"
+msgstr "Veuillez sélectionner un choix lié à toutes les structures (sans parenthèses) ou lié à la structure {struc} (entre parenthèses)"
 
 msgid "Data to import from network"
 msgstr "Données à importer depuis le réseau"
@@ -102,22 +95,17 @@ msgstr "L'image sélectionnée n'est pas assez haute"
 msgid "Save changes"
 msgstr "Sauvegarder"
 
-msgid "Geotrek Rando"
-msgstr "Geotrek Rando"
+msgid "Geotrek-rando"
+msgstr "Geotrek-rando"
 
 msgid "Geotrek is a web app allowing you to prepare your next trekking trip !"
-msgstr ""
-"Geotrek est une web app permettant de préparer à l'avance ses randonnées !"
+msgstr "Geotrek est une web app permettant de préparer à l'avance ses randonnées !"
 
 msgid "Is in the midst of the park"
 msgstr "En coeur de parc"
 
-msgid ""
-"The national park is an unrestricted natural area but subjected to "
-"regulations which must be known by all visitors."
-msgstr ""
-"Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une "
-"réglementation qu’il est utile de connaître pour préparer son séjour"
+msgid "The national park is an unrestricted natural area but subjected to regulations which must be known by all visitors."
+msgstr "Le Parc national est un territoire naturel, ouvert à tous, mais soumis à une réglementation qu’il est utile de connaître pour préparer son séjour."
 
 msgid "Merge"
 msgstr "Fusionner"
@@ -164,6 +152,12 @@ msgstr "{obj} a besoin d'une review"
 
 msgid "Pictogram"
 msgstr "Pictogramme"
+
+msgid "Provider"
+msgstr "Fournisseur"
+
+msgid "External id"
+msgstr "ID externe"
 
 msgid "Attachment license"
 msgstr "Licence pièce-jointes"
@@ -249,38 +243,14 @@ msgstr "Utilisé pour la synchro"
 msgid "Title Rando"
 msgstr "Titre Rando"
 
-msgid "Title on Geotrek Rando"
-msgstr "Titre sur Geotrek Rando"
+msgid "Title on Geotrek-rando"
+msgstr "Titre sur Geotrek-rando"
 
 msgid "Description"
 msgstr "Description"
 
-msgid "Description on Geotrek Rando"
-msgstr "Description sur Geotrek Rando"
-
-msgid "Facebook ID"
-msgstr "ID Facebook"
-
-msgid "Facebook ID for Geotrek Rando"
-msgstr "Id facebook pour Geotrek Rando"
-
-msgid "Facebook image url"
-msgstr "URL de l'image Facebook"
-
-msgid "Url of the facebook image"
-msgstr "Url de l'image facebook"
-
-msgid "Facebook image width"
-msgstr "Largeur de l'image Facebook"
-
-msgid "Facebook image's width"
-msgstr "Largeur de l'image facebook"
-
-msgid "Facebook image height"
-msgstr "Hauteur de l'image Facebook"
-
-msgid "Facebook image's height"
-msgstr "Hauteur de l'image facebook"
+msgid "Description on Geotrek-rando"
+msgstr "Description sur Geotrek-rando"
 
 msgid "Target portal"
 msgstr "Portail cible"
@@ -295,7 +265,7 @@ msgid "Reservation systems"
 msgstr "Systèmes de réservation"
 
 msgid "Advice"
-msgstr "Recommandations"
+msgstr "Recommandation"
 
 msgid "Filter"
 msgstr "Filtre"
@@ -304,7 +274,7 @@ msgid "Show this label as a filter in public portal"
 msgstr "Voir cette étiquette en tant que filtre sur le portail public"
 
 msgid "Label"
-msgstr "Étiquette"
+msgstr "Libellé"
 
 msgid "Labels"
 msgstr "Étiquettes"
@@ -316,7 +286,7 @@ msgid "Within a practice. Alphabetical order if blank"
 msgstr "Au sein d'une pratique. Ordre alphabétique si vide"
 
 msgid "Alphabetical order if blank"
-msgstr "Au sein d'une pratique. Ordre alphabétique si vide"
+msgstr "Ordre alphabétique si vide"
 
 msgid "Color"
 msgstr "Couleur"
@@ -354,6 +324,18 @@ msgstr "Moyen d'accès"
 msgid "Access means"
 msgstr "Moyens d'accès"
 
+msgid "Link template"
+msgstr "Modèle du lien"
+
+msgid "HTML template for external source links"
+msgstr "Modèle HTML pour les liens sources externes"
+
+msgid "Providers"
+msgstr "Fournisseurs"
+
+msgid "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer."
+msgstr "Le paramètre PARSER_NUMBER_OF_TRIES doit être un entier strictement positif."
+
 #, python-format
 msgid "Line %(line)s"
 msgstr "Ligne %(line)s"
@@ -383,19 +365,12 @@ msgid "Missing id field '{eid_src}'"
 msgstr "L'identifiant '{eid_src}' est manquant"
 
 #, python-brace-format
-msgid ""
-"Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier"
-msgstr ""
-"Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il n'y a pas d'objet "
-"avec cet identifiant"
+msgid "Bad value '{eid_val}' for field '{eid_src}'. No object with this identifier"
+msgstr "Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il n'y a pas d'objet avec cet identifiant"
 
 #, python-brace-format
-msgid ""
-"Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this "
-"identifier"
-msgstr ""
-"Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il y plusieurs objets "
-"avec cet identifiant"
+msgid "Bad value '{eid_val}' for field '{eid_src}'. Multiple objects with this identifier"
+msgstr "Mauvaise valeur '{eid_val}' pour le champ '{eid_src}'. Il y plusieurs objets avec cet identifiant"
 
 #, python-brace-format
 msgid "Bad ownership '{structure}' for object '{eid_val}'."
@@ -403,25 +378,19 @@ msgstr "Mauvaise appartenance de '{structure}' sur l'objet '{eid_val}'."
 
 #, python-brace-format
 msgid "Bad value '{val}' for field {src}. Should contain {values}"
-msgstr ""
-"Mauvaise valeur '{val}' pour le champ '{src}'. Elle doit contenir {values}"
+msgstr "Mauvaise valeur '{val}' pour le champ '{src}'. Elle doit contenir {values}"
 
 #, python-brace-format
 msgid "Bad value '{val}' for field {src}. Should be in {values}"
-msgstr ""
-"Mauvaise valeur '{val}' pour le champ '{src}'. Elle devrait être comprise "
-"parmi {values}"
+msgstr "Mauvaise valeur '{val}' pour le champ '{src}'. Elle devrait être comprise parmi {values}"
 
 #, python-brace-format
-msgid ""
-"{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
-msgstr ""
-"{model} '{val}' n'existait pas dans Geotrek-Admin. Il a été créé "
-"automatiquement"
+msgid "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
+msgstr "{model} '{val}' n'existait pas dans Geotrek-admin. Il a été créé automatiquement"
 
 #, python-brace-format
-msgid "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
-msgstr "{model} '{val}' n'existe pas dans Geotrek-Admin. Merci de l'ajouter"
+msgid "{model} '{val}' does not exists in Geotrek-admin. Please add it"
+msgstr "{model} '{val}' n'existe pas dans Geotrek-admin. Merci de l'ajouter"
 
 msgid "Filename or url is required"
 msgstr "Un nom de fichier ou une url est requis"
@@ -429,6 +398,18 @@ msgstr "Un nom de fichier ou une url est requis"
 #, python-brace-format
 msgid "File does not exists at: {filename}"
 msgstr "Le fichier à l'emplacement {filename} n'existe pas"
+
+#, python-format
+msgid "%(error_name)s: %(error_msg)s"
+msgstr "%(error_name)s : %(error_msg)s"
+
+#, python-format
+msgid "Failed to fetch %(url)s. %(error)s"
+msgstr "Echec lors de la récupération de %(url)s. %(error)s"
+
+#, python-format
+msgid "Failed to fetch %(url)s after %(try_get)s attempt(s)."
+msgstr "La tentative de récupération de %(url)s a échoué après %(try_get)s essai(s)."
 
 #, python-brace-format
 msgid "Failed to download {url}. HTTP status code {status_code}"
@@ -438,81 +419,63 @@ msgid "Attachments"
 msgstr "Pièce-jointes"
 
 #, python-brace-format
-msgid "FileType '{name}' does not exists in Geotrek-Admin. Please add it"
-msgstr ""
-"Le type de fichier '{name}' n'existe pas dans Geotrek-Admin. Merci de "
-"l'ajouter"
+msgid "FileType '{name}' does not exists in Geotrek-admin. Please add it"
+msgstr "Le type de fichier '{name}' n'existe pas dans Geotrek-admin. Merci de l'ajouter"
+
+#, python-format
+msgid "Failed to load attachment: %(e)s"
+msgstr "Echec lors de la récupération du fichier : %(e)s"
+
+#, python-format
+msgid "%(class)s #%(pk)s - %(url)s: downloaded file is too large"
+msgstr "%(class)s #%(pk)s - %(url)s: le fichier téléchargé est trop large"
+
+#, python-format, python-brace-format
+msgid "%(class)s #%(pk)s - {url}: downloaded file is not wide enough"
+msgstr "%(class)s #%(pk)s - {url} : le fichier téléchargé n'est pas assez large"
+
+#, python-format
+msgid "%(class)s #%(pk)s - %(url)s : downloaded file is not tall enough"
+msgstr "%(class)s #%(pk)s - %(url)s : le fichier téléchargé n'est pas assez haut"
+
+#, python-format
+msgid "Invalid attachment file %(url)s for %(class)s #%(pk)s: File type '%(ext)s' is not allowed."
+msgstr "Fichier joint invalide %(url)s pour %(class)s #%(pk)s : L'extension '%(ext)s' n'est pas autorisée."
+
+#, python-format
+msgid "Invalid attachment file %(url)s for %(class)s #%(pk)s: File mime type '%(mimetype)s' is not allowed for %(ext)s."
+msgstr "Fichier joint invalide %(url)s pour %(class)s #%(pk)s : Le type mime du fichier '%(mimetype)s' n'est pas autorisé pour l'extension %(ext)s."
+
+#, python-format
+msgid "File does not exists at: %(filename)s"
+msgstr "Le fichier à l'emplacement %(filename)s n'existe pas"
+
+#, python-format
+msgid "Model %(model)s"
+msgstr "Modèle %(model)s"
+
+msgid "Geotrek-admin"
+msgstr "Geotrek-admin"
+
+#, python-format
+msgid "Source '%(name)s' did not exist in Geotrek-admin and was automatically created"
+msgstr "La source '%(name)s' n'existait pas dans Geotrek-admin. Elle a été créée automatiquement"
 
 #, python-brace-format
 msgid "Failed to download '{url}'"
 msgstr "Impossible de télécharger '{url}'"
 
-#, python-format
-msgid "%(class)s #%(pk)s - %(url)s: downloaded file is too large"
-msgstr ""
-
-#, fuzzy, python-format, python-brace-format
-#| msgid "The uploaded file is not wide enough"
-msgid "%(class)s #%(pk)s - {url}: downloaded file is not wide enough"
-msgstr "L'image sélectionnée n'est pas assez large"
-
-#, fuzzy, python-format
-#| msgid "The uploaded file is not tall enough"
-msgid "%(class)s #%(pk)s - %(url)s : downloaded file is not tall enough"
-msgstr "L'image sélectionnée n'est pas assez haute"
-
-#, python-format
-msgid ""
-"Invalid attachment file %(url)s for %(class)s #%(pk)s: File type '%(ext)s' "
-"is not allowed."
-msgstr ""
-
-#, python-format
-msgid ""
-"Invalid attachment file %(url)s for %(class)s #%(pk)s: File mime type "
-"'%(mimetype)s' is not allowed for %(ext)s."
-msgstr ""
-
-#, fuzzy, python-format
-#| msgid "File does not exists at: {filename}"
-msgid "File does not exists at: %(filename)s"
-msgstr "Le fichier à l'emplacement {filename} n'existe pas"
-
-#, python-format
-msgid "Model %(model)s"
-msgstr ""
-
-msgid "Geotrek-admin"
-msgstr ""
-
-#, fuzzy, python-format
-#| msgid ""
-#| "Source '{name}' did not exist in Geotrek-Admin and was automatically "
-#| "created"
-msgid ""
-"Source '%(name)s' did not exist in Geotrek-Admin and was automatically "
-"created"
-msgstr ""
-"Source '{name}' n'existait pas dans Geotrek-Admin. Elle a été créée "
-"automatiquement"
-
 msgid "Import from web."
 msgstr "Importer du web."
 
 msgid "Photos to illustrate information related to the accessibility of treks."
-msgstr ""
-"Photos pour illustrer les informations liées à l'accessibilité des "
-"randonnées."
+msgstr "Photos pour illustrer les informations liées à l'accessibilité des randonnées."
 
 msgid "Photos accessibility"
 msgstr "Photos accessibilité"
 
-msgid ""
-"You are not allowed to modify attachments on this object, this object is not "
-"from the same structure."
-msgstr ""
-"Vous n'êtes pas autorisé à voir les fichiers attachés de cet objet, cet "
-"objet n'est pas de la même structure"
+msgid "You are not allowed to modify attachments on this object, this object is not from the same structure."
+msgstr "Vous n'êtes pas autorisé à voir les fichiers attachés de cet objet, cet objet n'est pas de la même structure."
 
 msgid "Accessibility type"
 msgstr "Type d'accessibilité"
@@ -599,13 +562,8 @@ msgstr "Utilisateur"
 msgid "Full history"
 msgstr "Historique complet"
 
-msgid ""
-"Add very high resolution images that will be automatically tiled and add "
-"annotations on it (points, lines, polygons and text)"
-msgstr ""
-"Ajouter des images de très haute résolution qui seront tuilées "
-"automatiquement et ajouter des annotations sur celles-ci (points, lignes, "
-"polygones et texte)"
+msgid "Add very high resolution images that will be automatically tiled and add annotations on it (points, lines, polygons and text)"
+msgstr "Ajouter des images de très haute résolution qui seront tuilées automatiquement et ajouter des annotations sur celles-ci (points, lignes, polygones et texte)"
 
 msgid "Add a new HD view"
 msgstr "Ajouter une nouvelle vue HD"
@@ -617,9 +575,7 @@ msgid "You are not allowed to see HD views."
 msgstr "Vous n'êtes pas autorisé à voir les vues HD."
 
 msgid "Decoding error. Please check encoding and use only ASCII in file names."
-msgstr ""
-"Erreur de décodage. Merci de vérifier l'encodage et d'utiliser l'ASCII (sans "
-"accents) pour les noms de fichier."
+msgstr "Erreur de décodage. Merci de vérifier l'encodage et d'utiliser l'ASCII (sans accents) pour les noms de fichier."
 
 msgid "No parser available."
 msgstr "Aucun parser disponible."
@@ -696,21 +652,21 @@ msgstr "%s jours"
 
 #, python-format
 msgid "%(hour)s h %(min)s"
-msgstr ""
+msgstr "%(hour)s h %(min)s"
 
 #, python-format
 msgid "%(hour)s h"
-msgstr ""
+msgstr "%(hour)s h"
 
 #, python-format
 msgid "%s min"
-msgstr ""
+msgstr "%s min"
 
 msgid "Topology is not valid."
 msgstr "La topologie n'est pas valide."
 
 msgid "Invalid geometry value."
-msgstr "Pointeur de géométrie invalide."
+msgstr "Valeur de géométrie invalide."
 
 msgctxt "North"
 msgid "N"
@@ -728,19 +684,15 @@ msgctxt "West"
 msgid "W"
 msgstr "O"
 
-msgid ""
-"Feature geometry cannot be converted to a single continuous LineString "
-"feature"
-msgstr ""
-"La géométrie de l'objet ne peut être convertie en une unique LineString "
-"continue"
+msgid "Feature geometry cannot be converted to a single continuous LineString feature"
+msgstr "La géométrie de l'objet ne peut être convertie en une unique LineString continue"
 
-msgid ""
-"Geometries from various features cannot be converted to a single continuous "
-"LineString feature"
-msgstr ""
-"Les géométries de plusieurs objets ne peuvent être converties en une unique "
-"LineString continue"
+msgid "Geometries from various features cannot be converted to a single continuous LineString feature"
+msgstr "Les géométries de plusieurs objets ne peuvent être converties en une unique LineString continue"
+
+#, python-format
+msgid "Incorrect syntax: %(error)s"
+msgstr "Syntax incorrecte : %(error)s"
 
 msgid "Reports"
 msgstr "Signalements"

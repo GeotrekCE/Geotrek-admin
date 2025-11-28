@@ -8,7 +8,7 @@ from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.core.cache import caches
 from django.core.files.storage import default_storage
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from mapentity.tests.factories import UserFactory
@@ -57,7 +57,8 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
         POIFactory.create(paths=[(path_1, 0, 0)])
         response = self.client.get(reverse("core:path_list"))
         self.assertContains(
-            response, '<a href="#delete" id="btn-delete" role="button">'
+            response,
+            '<a class="dropdown-item text-danger" href="#delete" id="btn-delete" role="button">',
         )
 
     def test_delete_view_multiple_path(self):
@@ -127,7 +128,7 @@ class PathViewsTest(CommonTest):
         "type": "LineString",
         "coordinates": [[3.0, 46.5], [3.001304, 46.5009004]],
     }
-    length = 141.4
+    length = 141.6
     extra_column_list = ["length_2d", "eid"]
     expected_column_list_extra = [
         "id",
@@ -149,8 +150,8 @@ class PathViewsTest(CommonTest):
         return {
             "checkbox": self.obj.checkbox_display,
             "id": self.obj.pk,
-            "length": 141.4,
-            "length_2d": 141.4,
+            "length": 141.6,
+            "length_2d": 141.6,
             "name": self.obj.name_display,
         }
 
@@ -172,6 +173,14 @@ class PathViewsTest(CommonTest):
             "valid": "on",
             "geom": '{"geom": "LINESTRING (99.0 89.0, 100.0 88.0)", "snap": [null, null]}',
         }
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/path/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
 
     def _post_add_form(self):
         # Avoid overlap, delete all !
@@ -363,12 +372,12 @@ class PathViewsTest(CommonTest):
         )
         self.assertEqual(len(p1.cities), 1)
         response = self.client.get(
-            f"/api/path/drf/paths/filter_infos.json?city={city.code}"
+            f"/api/path/drf/paths/filter_infos.json?city={city.pk}"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["count"], "0 (0 km)")
         response = self.client.get(
-            f"/api/path/drf/paths/filter_infos.json?city={city2.code}"
+            f"/api/path/drf/paths/filter_infos.json?city={city2.pk}"
         )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["count"], "1 (1.0 km)")
@@ -1314,6 +1323,108 @@ class PathRouteViewTestCase(TestCase):
         }
         self.check_route_geometry_response(response.data, expected_data)
 
+    def test_route_geometry_fail_default_pgrouting_tolerance(self):
+        """
+        There are two paths that are 1 meter from each other. Default value of
+        PGROUTING_TOLERANCE is 0.001 meter, so a route cannot go through those two paths.
+
+          ─ : path
+          > : path direction
+          X : route step
+
+                       X end
+                       │
+                       │
+                       │
+                       ^ path2
+                       │
+                       │
+        start
+          X─────>──────
+              path1
+
+        """
+        pathGeom1 = LineString(
+            [
+                [569842, 6271111],
+                [574262, 6271111],
+            ],
+            srid=settings.SRID,
+        )
+        path1 = PathFactory(geom=pathGeom1)
+
+        pathGeom2 = LineString(
+            [
+                [574263, 6271111],
+                [574263, 6276940],
+            ],
+            srid=settings.SRID,
+        )
+        path2 = PathFactory(geom=pathGeom2)
+
+        response = self.get_route_geometry(
+            {
+                "steps": [
+                    {"path_id": path1.pk, "positionOnPath": 0},
+                    {"path_id": path2.pk, "positionOnPath": 1},
+                ]
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get("error"), "No path between the given points")
+
+    @override_settings(PGROUTING_TOLERANCE=1)
+    def test_route_geometry_fail_high_pgrouting_tolerance(self):
+        """
+        There are two paths that are 1 meter from each other. PGROUTING_TOLERANCE
+        is set to 1 meter, so a route is found but an error is raised since it's
+        a MultiLineString.
+
+          ─ : path
+          > : path direction
+          X : route step
+
+                       X end
+                       │
+                       │
+                       │
+                       ^ path2
+                       │
+                       │
+        start
+          X─────>──────
+              path1
+
+        """
+        pathGeom1 = LineString(
+            [
+                [569842, 6271111],
+                [574262, 6271111],
+            ],
+            srid=settings.SRID,
+        )
+        path1 = PathFactory(geom=pathGeom1)
+
+        pathGeom2 = LineString(
+            [
+                [574263, 6271111],
+                [574263, 6276940],
+            ],
+            srid=settings.SRID,
+        )
+        path2 = PathFactory(geom=pathGeom2)
+
+        response = self.get_route_geometry(
+            {
+                "steps": [
+                    {"path_id": path1.pk, "positionOnPath": 0},
+                    {"path_id": path2.pk, "positionOnPath": 1},
+                ]
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response.data.get("error"), "No path between the given points")
+
     def test_route_geometry_not_fail_with_via_point_one_path(self):
         """
         3 markers on one path
@@ -2183,6 +2294,14 @@ class TrailViewsTest(CommonTest):
             "certifications-INITIAL_FORMS": "1",
             "certifications-MAX_NUM_FORMS": "0",
         }, _("This field is required.")
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/trail/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
 
     def test_detail_page(self):
         trail = TrailFactory()

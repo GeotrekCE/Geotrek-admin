@@ -1,13 +1,15 @@
-ARG DISTRO=ubuntu:focal
+ARG DISTRO=ubuntu:noble
 
 FROM ${DISTRO} AS base
 
 
 RUN apt-get update -qq -o Acquire::Languages=none && \
-    env DEBIAN_FRONTEND=noninteractive apt-get install -yqq lsb-release && \
+    env DEBIAN_FRONTEND=noninteractive apt-get install -yqq curl lsb-release && \
     if test "$(lsb_release -cs)" = 'focal' ; then \
        env DEBIAN_FRONTEND=noninteractive apt-get install -yqq software-properties-common; \
-       add-apt-repository ppa:deadsnakes/ppa; \
+       install -d /usr/share/geotrek; \
+       curl -o /usr/share/geotrek/apt.geotrek.org.key --fail https://packages.geotrek.fr/geotrek.gpg.key; \
+       echo "deb [signed-by=/usr/share/geotrek/apt.geotrek.org.key] https://packages.geotrek.fr/ubuntu $(lsb_release -cs) main" | tee /etc/apt/sources.list.d/geotrek.list; \
        add-apt-repository ppa:jyrki-pulliainen/dh-virtualenv; fi &&\
     env DEBIAN_FRONTEND=noninteractive apt-get install -yqq \
     nano \

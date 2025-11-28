@@ -23,13 +23,19 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.gdal import CoordTransform, DataSource, GDALException
-from django.contrib.gis.geos import GEOSGeometry, LineString, Point, Polygon, WKBWriter
+from django.contrib.gis.geos import (
+    GEOSGeometry,
+    LineString,
+    Point,
+    Polygon,
+    fromstr,
+)
 from django.contrib.gis.geos.collections import MultiPolygon
 from django.core.exceptions import FieldError, ImproperlyConfigured
 from django.core.files.base import ContentFile
 from django.db import connection, models
 from django.db.models.fields import NOT_PROVIDED
-from django.db.utils import DatabaseError, InternalError
+from django.db.utils import InternalError
 from django.template.loader import render_to_string
 from django.utils import translation
 from django.utils.encoding import force_str
@@ -38,10 +44,11 @@ from modeltranslation.utils import build_localized_fieldname
 from paperclip.models import attachment_upload, random_suffix_regexp
 from PIL import Image, UnidentifiedImageError
 from requests.auth import HTTPBasicAuth
+from requests.exceptions import ChunkedEncodingError
 
 from geotrek.authent.models import default_structure
-from geotrek.common.models import Attachment, FileType, License, RecordSource
-from geotrek.common.utils.parsers import add_http_prefix
+from geotrek.common.models import Attachment, FileType, License, Provider, RecordSource
+from geotrek.common.utils.parsers import add_http_prefix, force_geom_to_2d
 from geotrek.common.utils.translation import get_translated_fields
 from geotrek.settings.base import api_bbox
 
@@ -113,7 +120,7 @@ class Parser:
     field_options = {}
     default_fields_values = {}
     default_language = None
-    headers = {"User-Agent": "Geotrek-Admin"}
+    headers = {"User-Agent": "Geotrek-admin"}
     intersection_geom = None
     _ref_geom = None
 
@@ -129,6 +136,15 @@ class Parser:
         self.structure = (user and user.profile.structure) or default_structure()
         self.encoding = encoding
         self.translated_fields = get_translated_fields(self.model)
+
+        if not (
+            isinstance(settings.PARSER_NUMBER_OF_TRIES, int)
+            and settings.PARSER_NUMBER_OF_TRIES > 0
+        ):
+            msg = _(
+                "Setting PARSER_NUMBER_OF_TRIES must be a strictly positive integer."
+            )
+            raise ImproperlyConfigured(msg)
 
         if self.fields is None:
             self.fields = {
@@ -376,14 +392,20 @@ class Parser:
                 update_fields.remove("id")  # Can't update primary key
         except RowImportError as warnings:
             self.add_warning(str(warnings))
-            return
+            return False
         if operation == "created":
             if (
                 hasattr(self.model, "provider")
-                and self.provider is not None
+                and self.provider  # do not allow "" provider, because not provider should be attached in this case
                 and not self.obj.provider
             ):
-                self.obj.provider = self.provider
+                self.obj.provider, created = Provider.objects.get_or_create(
+                    name=self.provider
+                )
+                if created:
+                    self.add_warning(
+                        f"Provider '{self.provider}' did not exist in Geotrek-admin and was automatically created"
+                    )
             self.obj.save()
         else:
             self.obj.save(update_fields=update_fields)
@@ -396,6 +418,7 @@ class Parser:
             self.nb_updated += 1
         else:
             self.nb_unmodified += 1
+        return True
 
     def get_eid_kwargs(self, row):
         try:
@@ -433,7 +456,7 @@ class Parser:
                 return
             objects = self.model.objects.filter(**eid_kwargs)
             if hasattr(self.model, "provider") and self.provider is not None:
-                objects = objects.filter(provider__exact=self.provider)
+                objects = objects.filter(provider__name__exact=self.provider)
         if len(objects) == 0 and self.update_only:
             if self.warn_on_missing_objects:
                 self.add_warning(
@@ -561,7 +584,7 @@ class Parser:
             if created:
                 self.add_warning(
                     _(
-                        "{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
+                        "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
                     ).format(model=model._meta.verbose_name.title(), val=val)
                 )
             return val
@@ -570,7 +593,7 @@ class Parser:
         except model.DoesNotExist:
             self.add_warning(
                 _(
-                    "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+                    "{model} '{val}' does not exists in Geotrek-admin. Please add it"
                 ).format(model=model._meta.verbose_name.title(), val=val)
             )
             return None
@@ -606,7 +629,7 @@ class Parser:
                 if created:
                     self.add_warning(
                         _(
-                            "{model} '{val}' did not exist in Geotrek-Admin and was automatically created"
+                            "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
                         ).format(model=model._meta.verbose_name.title(), val=subval)
                     )
                 dst.append(subval)
@@ -616,7 +639,7 @@ class Parser:
             except model.DoesNotExist:
                 self.add_warning(
                     _(
-                        "{model} '{val}' does not exists in Geotrek-Admin. Please add it"
+                        "{model} '{val}' does not exists in Geotrek-admin. Please add it"
                     ).format(model=model._meta.verbose_name.title(), val=subval)
                 )
                 continue
@@ -649,7 +672,7 @@ class Parser:
             except field.remote_field.model.DoesNotExist:
                 return None
         if hasattr(self.model, "provider") and self.provider is not None:
-            kwargs["provider__exact"] = self.provider
+            kwargs["provider__name__exact"] = self.provider
         return kwargs
 
     def start(self):
@@ -691,37 +714,52 @@ class Parser:
                     break
                 try:
                     self.parse_row(row)
-                except (DatabaseError, RowImportError, ValueImportError) as e:
-                    self.add_warning(str(e))
                 except Exception as e:
-                    raise e
+                    self.add_warning(str(e))
             self.end()
 
     def request_or_retry(self, url, verb="get", **kwargs):
-        try_get = settings.PARSER_NUMBER_OF_TRIES
-        assert try_get > 0
-        while try_get:
-            action = getattr(requests, verb)
-            response = action(url, headers=self.headers, allow_redirects=True, **kwargs)
-            if response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
-                logger.info("Failed to fetch url %s. Retrying ...", url)
-                sleep(settings.PARSER_RETRY_SLEEP_TIME)
-                try_get -= 1
-            elif response.status_code == 200:
-                return response
-            else:
-                break
-        logger.warning(
-            "Failed to fetch %s after %s times. Status code : %s.",
-            url,
-            settings.PARSER_NUMBER_OF_TRIES,
-            response.status_code,
-        )
-        raise DownloadImportError(
-            _("Failed to download {url}. HTTP status code {status_code}").format(
-                url=response.url, status_code=response.status_code
-            )
-        )
+        def prepare_retry(error_msg):
+            logger.info("Failed to fetch %s. %s. Retrying...", url, error_msg)
+            sleep(settings.PARSER_RETRY_SLEEP_TIME)
+
+        def format_exception(e):
+            return _("%(error_name)s: %(error_msg)s") % {
+                "error_name": e.__class__.__name__,
+                "error_msg": e,
+            }
+
+        action = getattr(requests, verb)
+        response = None
+        try_get = 0
+        while try_get < settings.PARSER_NUMBER_OF_TRIES:
+            try_get += 1
+            try:
+                response = action(
+                    url, headers=self.headers, allow_redirects=True, **kwargs
+                )
+                if response.status_code == 200:
+                    return response
+                elif response.status_code in settings.PARSER_RETRY_HTTP_STATUS:
+                    prepare_retry(f"Status code: {response.status_code}")
+                else:
+                    break
+            except (ChunkedEncodingError, requests.exceptions.ConnectionError) as e:
+                prepare_retry(format_exception(e))
+            except Exception as e:
+                raise DownloadImportError(
+                    _("Failed to fetch %(url)s. %(error)s")
+                    % {
+                        "url": url,
+                        "error": format_exception(e),
+                    }
+                )
+        logger.warning("Failed to fetch %s after %s attempt(s).", url, try_get)
+        msg = _("Failed to fetch %(url)s after %(try_get)s attempt(s).") % {
+            "url": url,
+            "try_get": try_get,
+        }
+        raise DownloadImportError(msg)
 
     def start_intersect_geom(self):
         if self.intersection_geom:
@@ -935,7 +973,7 @@ class AttachmentParserMixin:
                 raise GlobalImportError(
                     _(
                         "FileType '{name}' does not exists in "
-                        "Geotrek-Admin. Please add it"
+                        "Geotrek-admin. Please add it"
                     ).format(name=self.filetype_name)
                 )
         self.creator, created = get_user_model().objects.get_or_create(
@@ -978,25 +1016,14 @@ class AttachmentParserMixin:
 
     def download_attachment(self, url):
         parsed_url = urlparse(url)
-        if parsed_url.scheme == "ftp":
+        is_ftp = parsed_url.scheme == "ftp"
+        if is_ftp or self.download_attachments:
             try:
                 response = self.request_or_retry(url)
-            except (DownloadImportError, requests.exceptions.ConnectionError) as e:
-                msg = f"Failed to load attachment: {e}"
-                raise ValueImportError(msg)
-            return response.read()
-        else:
-            if self.download_attachments:
-                try:
-                    response = self.request_or_retry(url)
-                except (DownloadImportError, requests.exceptions.ConnectionError) as e:
-                    msg = f"Failed to load attachment: {e}"
-                    raise ValueImportError(msg)
-                if response.status_code != requests.codes.ok:
-                    self.add_warning(_("Failed to download '{url}'").format(url=url))
-                    return None
-                return response.content
-            return None
+            except Exception as e:
+                self.add_warning(_("Failed to load attachment: %(e)s") % {"e": e})
+                return None
+            return response.read() if is_ftp else response.content
 
     def check_attachment_updated(self, attachments_to_delete, updated, **kwargs):
         found = False
@@ -1820,7 +1847,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         super().start()
         kwargs = self.get_to_delete_kwargs()
         json_id_key = self.replace_fields.get("eid", "id")
-        params = {"fields": json_id_key, "page_size": 10000}
+        params = {"fields": json_id_key, "page_size": 10000, **self.get_url_params()}
         response = self.request_or_retry(self.next_url, params=params)
         ids = [
             f"{element[json_id_key]}" for element in response.json().get("results", [])
@@ -1880,36 +1907,35 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     def filter_geom(self, src, val):
         geom = GEOSGeometry(json.dumps(val))
         geom.transform(settings.SRID)
-        geom = WKBWriter().write(geom)
-        geom = GEOSGeometry(geom)
+        geom = force_geom_to_2d(geom)
         return geom
+
+    def get_url_params(self):
+        return {
+            "in_bbox": ",".join([str(coord) for coord in self.bbox.extent]),
+            "portals": ",".join(self.portals_filter) if self.portals_filter else "",
+        }
 
     def next_row(self):
         """Returns next row.
         Geotrek API is paginated, run until "next" is empty
         :returns row
         """
-        portals = self.portals_filter
         updated_after = None
 
         available_fields = [field.name for field in self.model._meta.get_fields()]
         if (
             not self.all_datas
-            and self.model.objects.filter(provider__exact=self.provider).exists()
+            and self.model.objects.filter(provider__name__exact=self.provider).exists()
             and "date_update" in available_fields
         ):
             updated_after = (
-                self.model.objects.filter(provider__exact=self.provider)
+                self.model.objects.filter(provider__name__exact=self.provider)
                 .latest("date_update")
                 .date_update.strftime("%Y-%m-%d")
             )
-        params = {
-            "in_bbox": ",".join([str(coord) for coord in self.bbox.extent]),
-            "portals": ",".join(portals) if portals else "",
-            "updated_after": updated_after,
-        }
-        self.params_used = params
-        response = self.request_or_retry(self.next_url, params=params)
+        self.params_used = {"updated_after": updated_after, **self.get_url_params()}
+        response = self.request_or_retry(self.next_url, params=self.params_used)
         self.root = response.json()
         self.nb = int(self.root["count"])
 
@@ -1941,7 +1967,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
                 if created:
                     self.add_warning(
                         _(
-                            "Source '%(name)s' did not exist in Geotrek-Admin and was automatically created"
+                            "Source '%(name)s' did not exist in Geotrek-admin and was automatically created"
                         )
                         % {"name": name}
                     )
@@ -2040,7 +2066,7 @@ class OpenStreetMapAttachmentsParserMixin(AttachmentParserMixin):
             url = f"{self.base_url_wikimedia}{filename}"
 
             # API request
-            response = requests.get(url, headers={"User-Agent": "Geotrek-Admin"})
+            response = requests.get(url, headers={"User-Agent": "Geotrek-admin"})
             if response.status_code == requests.codes.ok:
                 data = response.json()
                 file = data["original"]["url"]
@@ -2170,6 +2196,20 @@ class OpenStreetMapParser(Parser):
         centroid = polygon.centroid
         centroid.srid = self.osm_srid
         return centroid
+
+    def get_polygon_from_API(self, id):
+        params = {
+            "id": id,
+            "params": 0,
+        }
+        response = self.request_or_retry(self.url_polygons, params=params)
+        wkt = response.content.decode("utf-8")
+        geom = fromstr(wkt, srid=self.osm_srid)
+
+        if not geom.valid:
+            geom = geom.buffer(0)
+
+        return geom
 
     def next_row(self):
         params = {"data": self.build_query()}

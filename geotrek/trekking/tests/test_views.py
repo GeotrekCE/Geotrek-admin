@@ -98,6 +98,14 @@ class POIViewsTest(CommonTest):
             good_data["geom"] = "POINT(5.1 6.6)"
         return good_data
 
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/poi/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
+
     def test_status_only_review(self):
         element_not_published = self.modelfactory.create(published=False, review=True)
         element_not_published.save()
@@ -313,6 +321,17 @@ class TrekViewsTest(CommonTest):
                 geom="SRID=2154;POINT (700000 6600000)"
             ).pk
         return good_data
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'        <p class="m-0 p-1">\n'
+            f"            {str(self.obj.practice)}<br>\n"
+            f"        </p>\n    \n"
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/trek/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
 
     def test_status(self):
         TrekFactory.create(duration=float("nan"))
@@ -801,9 +820,7 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         cls.content2 = TrekFactory.create(structure=structure)
 
     def setUp(self):
-        profile = UserProfileFactory.create(
-            user__username="homer", user__password="dooh"
-        )
+        profile = UserProfileFactory()
         self.user = profile.user
         self.user.groups.add(Group.objects.get(name="Référents communication"))
         self.client.force_login(user=self.user)
@@ -815,24 +832,13 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
     def test_edit_button_same_structure(self):
         url = f"/trek/{self.content1.pk}/"
         response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<a class="btn btn-primary ml-auto" '
-            f'href="/trek/edit/{self.content1.pk}/">'
-            '<i class="bi bi-pencil-square"></i> '
-            "Update</a>",
-            html=True,
-        )
+
+        self.assertContains(response, f'href="/trek/edit/{self.content1.pk}/"')
 
     def test_edit_button_other_structure(self):
         url = f"/trek/{self.content2.pk}/"
         response = self.client.get(url)
-        self.assertContains(
-            response,
-            '<span class="btn ml-auto disabled" href="#">'
-            '<i class="bi bi-pencil-square"></i> Update</span>',
-            html=True,
-        )
+        self.assertNotContains(response, f'href="/trek/edit/{self.content2.pk}/"')
 
     def test_edit_button_bypass_structure(self):
         self.add_bypass_perm()
@@ -840,11 +846,7 @@ class TrekViewsSameStructureTests(AuthentFixturesTest):
         response = self.client.get(url)
         self.assertContains(
             response,
-            '<a class="btn btn-primary ml-auto" '
-            f'href="/trek/edit/{self.content2.pk}/">'
-            '<i class="bi bi-pencil-square"></i> '
-            "Update</a>",
-            html=True,
+            f'href="/trek/edit/{self.content2.pk}/"',
         )
 
     def test_can_edit_same_structure(self):
@@ -985,6 +987,14 @@ class ServiceViewsTest(CommonTest):
                 "type": ServiceTypeFactory.create().pk,
                 "geom": "POINT(5.1 6.6)",
             }
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/service/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f"</div>"
+        )
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"

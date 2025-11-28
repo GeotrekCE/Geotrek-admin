@@ -47,7 +47,7 @@ USE_SSL = False
 
 CACHE_ROOT = os.path.join(VAR_DIR, "cache")
 
-TITLE = "Geotrek-Admin"
+TITLE = "Geotrek-admin"
 
 DEBUG = False
 TEST = "test" in sys.argv
@@ -259,7 +259,12 @@ MIDDLEWARE = (
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
     "geotrek.authent.middleware.CorsMiddleware",
     "mapentity.middleware.AutoLoginMiddleware",
+    "maintenance_mode.middleware.MaintenanceModeMiddleware",
 )
+
+MAINTENANCE_MODE_IGNORE_URLS = (r"/api",)  # IGNORE /api/v2 from maintenance
+MAINTENANCE_MODE_STATE_BACKEND = "maintenance_mode.backends.StaticStorageBackend"
+
 FORCE_SCRIPT_NAME = ROOT_URL if ROOT_URL != "" else None
 ADMIN_MEDIA_PREFIX = f"{ROOT_URL}/static/admin/"
 
@@ -308,6 +313,7 @@ PROJECT_APPS += (
     "colorfield",
     "mptt",
     "treebeard",
+    "maintenance_mode",
 )
 
 INSTALLED_APPS = (
@@ -475,6 +481,11 @@ PATHS_LINE_MARKER = "dotL"
 PATH_SNAPPING_DISTANCE = 1  # Distance of path snapping in meters
 SNAP_DISTANCE = 30  # Distance of snapping in pixels
 PATH_MERGE_SNAPPING_DISTANCE = 2  # minimum distance to merge paths
+
+# pgRouting's snapping tolerance of disconnected edges/coincident points (in projection unit).
+# Consult the Geotrek-admin's documentation section that refers to this setting before modifying
+# it, as regenerating pgRouting's network topology is required for the change to take effect.
+PGROUTING_TOLERANCE = 0.001
 
 ALTIMETRIC_PROFILE_PRECISION = 25  # Sampling precision in meters
 ALTIMETRIC_PROFILE_AVERAGE = 2  # nb of points for altimetry moving average
@@ -781,6 +792,9 @@ MOBILE_DURATION_INTERVALS = [
 
 TINYMCE_DEFAULT_CONFIG = {
     "convert_urls": False,
+    "plugins": "advlist,autolink,lists,link,image,charmap,preview,anchor,"
+    "searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,"
+    "code,help,wordcount",
     "toolbar": "bold italic forecolor | bullist numlist link image media | "
     "undo redo | "
     "removeformat | code | wordcount | help",
@@ -792,7 +806,7 @@ SYNC_MOBILE_OPTIONS = {"skip_tiles": False}
 
 """
 If true; displays the attached pois pictures in the Trek's geojson pictures property.
-In Geotrek Rando it enables correlated pictures to be displayed in the slideshow.
+In Geotrek-rando it enables correlated pictures to be displayed in the slideshow.
 """
 TREK_WITH_POIS_PICTURES = False
 
@@ -813,15 +827,14 @@ SENSITIVITY_OPENAIR_SPORT_PRACTICES = [
 
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.PBKDF2PasswordHasher",
-    "django.contrib.auth.hashers.UnsaltedMD5PasswordHasher",  # Used for extern authent
+    "django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher",
+    "django.contrib.auth.hashers.Argon2PasswordHasher",
+    "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
+    "django.contrib.auth.hashers.ScryptPasswordHasher",
+    "geotrek.authent.hashers.UnsaltedMD5PasswordHasher",  # Used for extern authent
 ]
 
 EMAIL_SUBJECT_PREFIX = f"[{TITLE}] "
-
-FACEBOOK_APP_ID = ""
-FACEBOOK_IMAGE = "/images/logo-geotrek.png"
-FACEBOOK_IMAGE_WIDTH = 200
-FACEBOOK_IMAGE_HEIGHT = 200
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
@@ -999,6 +1012,27 @@ REST_FRAMEWORK_EXTENSIONS = {
 
 SESSION_ENGINE = "django.contrib.sessions.backends.file"
 SESSION_FILE_PATH = os.path.join(CACHE_ROOT, "sessions")
+
+# Popup configuration
+POPUP_CONTENT = {
+    "trail": [],
+    "path": [],
+    "dive": ["practice"],
+    "report": ["category"],
+    "infrastructure": ["type"],
+    "intervention": ["type"],
+    "project": ["type"],
+    "site": ["type"],
+    "course": ["type"],
+    "sensitivearea": ["category"],
+    "signage": ["type"],
+    "blade": ["type"],
+    "touristiccontent": ["category"],
+    "touristicevent": ["type"],
+    "trek": ["practice"],
+    "poi": [],
+    "service": [],
+}
 
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv("ENV", "prod")

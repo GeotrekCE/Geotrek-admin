@@ -1,5 +1,5 @@
-from geotrek.common.mixins.managers import NoDeleteManager, ProviderChoicesMixin
+from geotrek.common.mixins.managers import NoDeleteManager
 
 
-class SensitiveAreaManager(NoDeleteManager, ProviderChoicesMixin):
+class SensitiveAreaManager(NoDeleteManager):
     pass

@@ -14,7 +14,6 @@ from geotrek.common.models import (
     AccessibilityAttachment,
     Attachment,
     Label,
-    TargetPortal,
 )
 from geotrek.common.tests.factories import FileTypeFactory
 from geotrek.common.utils.postgresql import load_sql_files
@@ -68,20 +67,6 @@ class SQLDefaultValuesTest(TestCase):
                                    '')""")
         attachment = Attachment.objects.first()
         self.assertEqual(attachment.author, "")
-
-    def test_target_portal(self):
-        with connection.cursor() as cur:
-            cur.execute("""INSERT INTO common_targetportal
-                                   (
-                                   name,
-                                   website
-                                   ) VALUES
-                                   (
-                                   'name_target',
-                                   'http://foo.com'
-                                   )""")
-        target_portal = TargetPortal.objects.first()
-        self.assertEqual(target_portal.facebook_image_url, "/images/logo-geotrek.png")
 
     def test_label(self):
         with connection.cursor() as cur:

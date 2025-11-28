@@ -13,7 +13,7 @@ from django.core.files.base import ContentFile
 from django.utils.timezone import make_aware
 from paperclip.models import attachment_upload
 
-from geotrek.common.models import Attachment, FileType
+from geotrek.common.models import Attachment, FileType, Provider
 from geotrek.feedback.models import (
     AttachedMessage,
     Report,
@@ -133,6 +133,11 @@ class SuricateParser(SuricateGestionRequestManager):
             # Parse activity
             rep_activity = ReportActivity.objects.get(identifier=report["idactivite"])
 
+            # Parse provider
+            rep_provider, created = Provider.objects.get_or_create(name="Suricate")
+            if created:
+                logger.info("Created new provider - name: Suricate")
+
             # Create report object
             fields = {
                 "locked": bool(report["locked"]),
@@ -146,7 +151,7 @@ class SuricateParser(SuricateGestionRequestManager):
                 "created_in_suricate": rep_creation,
                 "last_updated_in_suricate": rep_updated,
                 "eid": str(report["shortkeylink"]),
-                "provider": "Suricate",
+                "provider": rep_provider,
             }
 
             if should_update_status:

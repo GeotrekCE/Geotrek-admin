@@ -78,7 +78,7 @@ Then create the application administrator account and connect to the web interfa
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
           docker compose run --rm web ./manage.py createsuperuser
 
 
@@ -213,8 +213,10 @@ In documentation, replace ``sudo geotrek …`` commands by :
 
 Replace ``sudo dpkg-reconfigure geotrek-admin`` by :
 
-1. ``cd <install directory>`` 
+1. ``cd <install directory>``
 2. ``docker compose run --rm web update.sh``
+
+.. _loading-fixtures:
 
 Load fixtures
 --------------
@@ -231,9 +233,15 @@ To load minimal fixtures, run this command **only once during setup**:
 
   - The ``load_data.sh`` script is intended only for first-time installation. Never re-run this script after the initial installation, especially in a production environment. It will overwrite manually entered or modified data (e.g., paths, infrastructure, zoning, practices, etc.).
 
+  - You only need to run this command if you are opting for a Docker installation. When using the Debian package, the script will run automatically.
+
   - Do not run this command if your Geotrek instance does not use **dynamic segmentation**, as it will try to create segmentation-dependent data that may not be relevant or usable
-  
+
   - Once your Geotrek instance is installed, you should import your own :ref:`initial data <minimal-initial-data>` to begin working with the application.
+
+.. seealso::
+
+	Refer to :ref:`this section <fixture-import>` to learn more about every fixtures command included in the ``load_data.sh`` script.
 
 Create a superuser
 ------------------

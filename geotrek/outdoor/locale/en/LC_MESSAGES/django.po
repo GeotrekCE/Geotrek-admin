@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-15 17:51+0200\n"
+"POT-Creation-Date: 2025-10-23 11:11+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -214,9 +214,6 @@ msgstr ""
 msgid "Type"
 msgstr ""
 
-msgid "External id"
-msgstr ""
-
 msgid "Managers"
 msgstr ""
 
@@ -224,9 +221,6 @@ msgid "Outdoor site"
 msgstr ""
 
 msgid "Outdoor sites"
-msgstr ""
-
-msgid "Add a new outdoor site"
 msgstr ""
 
 msgid "Sites"
@@ -283,9 +277,6 @@ msgstr ""
 msgid "Outdoor courses"
 msgstr ""
 
-msgid "Add a new outdoor course"
-msgstr ""
-
 msgid "Courses"
 msgstr ""
 
@@ -316,6 +307,9 @@ msgstr ""
 msgid "Parent of:"
 msgstr ""
 
+msgid "External id"
+msgstr ""
+
 msgid "No result"
 msgstr ""
 
@@ -340,6 +334,12 @@ msgstr ""
 msgid "Attribution"
 msgstr ""
 
+msgid "Add a new outdoor site"
+msgstr ""
+
+msgid "Add a new outdoor course"
+msgstr ""
+
 msgid "Add a course"
 msgstr ""
 
@@ -350,10 +350,7 @@ msgid "Add a brother site"
 msgstr ""
 
 #, python-format
-msgid ""
-"You can't delete <strong>%(object)s</strong> because it has child outdoor "
-"sites associated with it. Modify or delete these child outdoor sites before "
-"proceeding."
+msgid "You can't delete <strong>%(object)s</strong> because it has child outdoor sites associated with it. Modify or delete these child outdoor sites before proceeding."
 msgstr ""
 
 msgid "Child outdoor sites linked to this site"

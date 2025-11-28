@@ -113,6 +113,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "attachments_accessibility",
         "children",
         "cities",
+        "city_codes",
         "create_datetime",
         "departure",
         "departure_geom",
@@ -121,6 +122,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "description_teaser",
         "difficulty",
         "departure_city",
+        "departure_city_code",
         "disabled_infrastructure",
         "districts",
         "duration",
@@ -223,11 +225,13 @@ TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted(
         "attachments",
         "category",
         "cities",
+        "city_codes",
         "contact",
         "create_datetime",
         "description",
         "description_teaser",
         "departure_city",
+        "departure_city_code",
         "districts",
         "email",
         "external_id",
@@ -253,7 +257,7 @@ TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted(
     ]
 )
 
-CITY_PROPERTIES_JSON_STRUCTURE = sorted(["id", "geometry", "name", "published"])
+CITY_PROPERTIES_JSON_STRUCTURE = sorted(["id", "code", "geometry", "name", "published"])
 
 DISTRICT_PROPERTIES_JSON_STRUCTURE = sorted(["id", "geometry", "name", "published"])
 
@@ -272,10 +276,6 @@ TARGET_PORTAL_PROPERTIES_JSON_STRUCTURE = sorted(
         "website",
         "title",
         "description",
-        "facebook_id",
-        "facebook_image_url",
-        "facebook_image_height",
-        "facebook_image_width",
     ]
 )
 
@@ -324,6 +324,7 @@ SITE_PROPERTIES_JSON_STRUCTURE = sorted(
         "children",
         "children_uuids",
         "cities",
+        "city_codes",
         "courses",
         "courses_uuids",
         "description",
@@ -419,6 +420,7 @@ COURSE_PROPERTIES_JSON_STRUCTURE = sorted(
         "accessibility",
         "advice",
         "cities",
+        "city_codes",
         "description",
         "districts",
         "eid",
@@ -506,6 +508,7 @@ TOURISTIC_EVENT_DETAIL_JSON_STRUCTURE = sorted(
         "bookable",
         "booking",
         "cities",
+        "city_codes",
         "contact",
         "create_datetime",
         "description",
@@ -6737,7 +6740,7 @@ class SensitivityAPIv2Test(TrekkingManagerTest):
                     "url": "http://url.com",
                 },
             ],
-            "provider": "",
+            "provider": None,
             "structure": self.structure.pk,
             "published": True,
         }

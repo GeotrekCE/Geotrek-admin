@@ -3,20 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-30 13:53+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2025-10-23 11:11+0200\n"
+"PO-Revision-Date: 2025-10-22 09:00+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/core/de/>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.13.3\n"
 
 msgid "Geotrek configuration"
 msgstr ""
@@ -85,6 +85,24 @@ msgstr ""
 msgid "Certifications"
 msgstr ""
 
+#, python-format
+msgid "You need to add a network of paths before importing '%(model)s' objects"
+msgstr ""
+
+#, python-format
+msgid "Invalid geometry type: should be 'Point', not '%(geom_type)s'"
+msgstr ""
+
+msgid "Cannot import object: geometry is None"
+msgstr ""
+
+#, python-format
+msgid "Could not parse geometry from value '%(value)s'"
+msgstr ""
+
+msgid "Length 2D"
+msgstr ""
+
 msgid "Validity"
 msgstr ""
 
@@ -124,9 +142,6 @@ msgstr ""
 msgid "Networks"
 msgstr ""
 
-msgid "External id"
-msgstr ""
-
 msgid "Draft"
 msgstr ""
 
@@ -154,9 +169,6 @@ msgid "Trails"
 msgstr ""
 
 msgid "None"
-msgstr ""
-
-msgid "Add a new path"
 msgstr ""
 
 msgid "Treks"
@@ -255,6 +267,21 @@ msgstr ""
 msgid "Add a new trail"
 msgstr ""
 
+msgid "Actions"
+msgstr ""
+
+msgid "Merge"
+msgstr ""
+
+msgid "Delete"
+msgstr ""
+
+msgid "Merge paths"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
 #, python-format
 msgid "%(obj)s has changed state to draft. "
 msgstr ""
@@ -273,9 +300,7 @@ msgid "Different topologies are linked with this path"
 msgstr ""
 
 #, python-format
-msgid ""
-"You can't delete <strong>%(object)s</strong>, some topologies are linked "
-"with this path. Modify these topologies before deleting this path."
+msgid "You can't delete <strong>%(object)s</strong>, some topologies are linked with this path. Modify these topologies before deleting this path."
 msgstr ""
 
 msgid "No, back to edit view"
@@ -290,6 +315,9 @@ msgstr ""
 msgid "Not validated"
 msgstr ""
 
+msgid "External id"
+msgstr ""
+
 msgid "Draft mode"
 msgstr ""
 
@@ -297,18 +325,6 @@ msgid "Select two paths to merge them"
 msgstr ""
 
 msgid "Are you sure you want to merge these paths ?"
-msgstr ""
-
-msgid "Merge"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
-msgid "Merge paths"
-msgstr ""
-
-msgid "Cancel"
 msgstr ""
 
 msgid "Warning"
@@ -332,13 +348,10 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
-msgid ""
-"Access to the requested resource is restricted. You have been redirected."
+msgid "Access to the requested resource is restricted. You have been redirected."
 msgstr ""
 
-msgid ""
-"Access to the requested resource is restricted by structure. You have been "
-"redirected."
+msgid "Access to the requested resource is restricted by structure. You have been redirected."
 msgstr ""
 
 msgid "path"

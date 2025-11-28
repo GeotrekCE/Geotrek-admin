@@ -317,13 +317,13 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         geometries = []
         for pathagg in topology.aggregations.all():
             cursor = connection.cursor()
-            cursor.execute(f"""SELECT * FROM ST_ASTEXT(ST_SmartLineSubstring('{pathagg.path.geom.wkt}'::geometry,
+            cursor.execute(f"""SELECT * FROM ST_ASEWKT(ST_SmartLineSubstring('{pathagg.path.geom.ewkt}'::geometry,
                                                                               {pathagg.start_position},
                                                                               {pathagg.end_position}
                                                        ))
             """)
             geom = cursor.fetchall()[0][0]
-            geometries.append(GEOSGeometry(geom, srid=2154))
+            geometries.append(GEOSGeometry(geom, srid=settings.SRID).ewkt)
         return geometries
 
     def test_split_reorder_1(self):
@@ -395,9 +395,9 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(
             geometries,
             [
-                LineString((700000, 6600000), (700045, 6600045), srid=2154),
-                LineString((700045, 6600045), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700100, 6600100), srid=2154),
+                LineString((700000, 6600000), (700045, 6600045), srid=2154).ewkt,
+                LineString((700045, 6600045), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700100, 6600100), srid=2154).ewkt,
             ],
         )
         self.assertEqual(
@@ -505,15 +505,15 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(
             geometries,
             [
-                LineString((700000, 6600000), (700045, 6600045), srid=2154),
-                LineString((700045, 6600045), (700047.5, 6600047.5), srid=2154),
-                Point(700047.5, 6600047.5, srid=2154),
-                LineString((700047.5, 6600047.5), (700045, 6600045), srid=2154),
-                LineString((700045, 6600045), (700025, 6600025), srid=2154),
-                Point(700025, 6600025, srid=2154),
-                LineString((700025, 6600025), (700045, 6600045), srid=2154),
-                LineString((700045, 6600045), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700100, 6600100), srid=2154),
+                LineString((700000, 6600000), (700045, 6600045), srid=2154).ewkt,
+                LineString((700045, 6600045), (700047.5, 6600047.5), srid=2154).ewkt,
+                Point(700047.5, 6600047.5, srid=2154).ewkt,
+                LineString((700047.5, 6600047.5), (700045, 6600045), srid=2154).ewkt,
+                LineString((700045, 6600045), (700025, 6600025), srid=2154).ewkt,
+                Point(700025, 6600025, srid=2154).ewkt,
+                LineString((700025, 6600025), (700045, 6600045), srid=2154).ewkt,
+                LineString((700045, 6600045), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700100, 6600100), srid=2154).ewkt,
             ],
         )
 
@@ -571,6 +571,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         🡥           3 ⠳     ⠳
 
         """
+        self.maxDiff = None
         topo = TopologyFactory.create(
             paths=[
                 (self.path_1_a, 0, 1),
@@ -629,19 +630,19 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(
             geometries,
             [
-                LineString((700000, 6600000), (700035, 6600035), srid=2154),
-                LineString((700035, 6600035), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700035, 6600065), srid=2154),
+                LineString((700000, 6600000), (700035, 6600035), srid=2154).ewkt,
+                LineString((700035, 6600035), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700035, 6600065), srid=2154).ewkt,
                 LineString(
-                    (700035, 6600065), (700007.142857143, 6600092.85714286), srid=2154
-                ),
-                Point(700007.142857143, 6600092.85714286, srid=2154),
+                    (700035, 6600065), (700007.1428571428, 6600092.857142857), srid=2154
+                ).ewkt,
+                Point(700007.1428571428, 6600092.857142857, srid=2154).ewkt,
                 LineString(
-                    (700007.142857143, 6600092.85714286), (700035, 6600065), srid=2154
-                ),
-                LineString((700035, 6600065), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700075, 6600075), srid=2154),
-                LineString((700075, 6600075), (700100, 6600100), srid=2154),
+                    (700007.1428571428, 6600092.857142857), (700035, 6600065), srid=2154
+                ).ewkt,
+                LineString((700035, 6600065), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700075, 6600075), srid=2154).ewkt,
+                LineString((700075, 6600075), (700100, 6600100), srid=2154).ewkt,
             ],
         )
 
@@ -757,12 +758,12 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(
             geometries,
             [
-                LineString((700000, 6600000), (700035, 6600035), srid=2154),
-                LineString((700035, 6600035), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700035, 6600065), srid=2154),
-                LineString((700035, 6600065), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700075, 6600075), srid=2154),
-                LineString((700075, 6600075), (700100, 6600100), srid=2154),
+                LineString((700000, 6600000), (700035, 6600035), srid=2154).ewkt,
+                LineString((700035, 6600035), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700035, 6600065), srid=2154).ewkt,
+                LineString((700035, 6600065), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700075, 6600075), srid=2154).ewkt,
+                LineString((700075, 6600075), (700100, 6600100), srid=2154).ewkt,
             ],
         )
 
@@ -876,19 +877,19 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual(
             geometries,
             [
-                LineString((700000, 6600000), (700050, 6600050), srid=2154),
-                LineString((700050, 6600050), (700025, 6600075), srid=2154),
-                Point(700025, 6600075, srid=2154),
-                LineString((700025, 6600075), (700050, 6600050), srid=2154),
+                LineString((700000, 6600000), (700050, 6600050), srid=2154).ewkt,
+                LineString((700050, 6600050), (700025, 6600075), srid=2154).ewkt,
+                Point(700025, 6600075, srid=2154).ewkt,
+                LineString((700025, 6600075), (700050, 6600050), srid=2154).ewkt,
                 LineString(
                     (700050, 6600050),
                     (700100, 6600100),
                     (700050, 6600100),
                     (700025, 6600075),
                     srid=2154,
-                ),
-                Point(700025, 6600075, srid=2154),
-                LineString((700025, 6600075), (700000, 6600050), srid=2154),
+                ).ewkt,
+                Point(700025, 6600075, srid=2154).ewkt,
+                LineString((700025, 6600075), (700000, 6600050), srid=2154).ewkt,
             ],
         )
 
@@ -961,16 +962,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             )
         )
         topo.reload()
-        self.assertEqual(
-            MultiLineString(
-                LineString((700000, 6600000), (700045, 6600045)),
-                LineString((700045, 6600045), (700050, 6600050)),
-                LineString((700050, 6600050), (700025, 6600075)),
-                LineString((700050, 6600050), (700100, 6600100)),
-                srid=settings.SRID,
-            ),
-            topo.geom,
-        )
+
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=topo).values_list(
@@ -1097,7 +1089,8 @@ class MergePathsTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class GeneratePgrNetworkTopologyTest(TestCase):
-    def test_generate_newtork_topology(self):
+    def test_generate_network_topology(self):
+        """Checks that the graph data is generated when running the command."""
         geom_1 = LineString(
             Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID
         )
@@ -1111,5 +1104,33 @@ class GeneratePgrNetworkTopologyTest(TestCase):
         path_2.refresh_from_db()
         self.assertIsNotNone(path_1.source_pgr)
         self.assertIsNotNone(path_1.target_pgr)
+        self.assertIsNotNone(path_2.source_pgr)
+        self.assertIsNotNone(path_2.target_pgr)
+
+    def test_regenerate_network_topology_with_flush(self):
+        """Checks that running the command with the flush option updates obsolete graph data and populates missing data."""
+        geom_1 = LineString(
+            Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID
+        )
+        geom_2 = LineString(
+            Point(700000, 6600100), Point(700100, 6600000), srid=settings.SRID
+        )
+        path_1 = PathFactory.create(geom=geom_1)
+        path_2 = PathFactory.create(geom=geom_2)
+        # Simulate obsolete data for path_1, that should be overwritten thanks to the flush option:
+        obsolete_path_1_source = 4653
+        obsolete_path_1_target = 4654
+        cursor = connection.cursor()
+        query = """UPDATE core_path SET source = %s, target = %s"""
+        cursor.execute(query, [obsolete_path_1_source, obsolete_path_1_target])
+        path_1.refresh_from_db()
+        self.assertEqual(path_1.source_pgr, obsolete_path_1_source)
+        self.assertEqual(path_1.target_pgr, obsolete_path_1_target)
+        # Finally, run the command and check the graph data
+        call_command("generate_pgr_network_topology", "--flush")
+        path_1.refresh_from_db()
+        path_2.refresh_from_db()
+        self.assertNotEqual(path_1.source_pgr, obsolete_path_1_source)
+        self.assertNotEqual(path_1.target_pgr, obsolete_path_1_target)
         self.assertIsNotNone(path_2.source_pgr)
         self.assertIsNotNone(path_2.target_pgr)

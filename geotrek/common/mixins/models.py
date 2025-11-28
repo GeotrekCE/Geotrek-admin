@@ -9,6 +9,7 @@ from django.core.files.storage import default_storage
 from django.core.mail import mail_managers
 from django.db import models
 from django.db.models import Count, Max
+from django.template import Context, Template
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
 from django.utils.formats import date_format
@@ -70,6 +71,13 @@ class TimeStampedModelMixin(models.Model):
         return self._meta.model.objects.aggregate(
             last_update=Max("date_update"), count=Count("pk")
         )
+
+    @classmethod
+    def latest_updated(cls):
+        try:
+            return cls.objects.only("date_update").latest("date_update").date_update
+        except cls.DoesNotExist:
+            return None
 
 
 class NoDeleteMixin(models.Model):
@@ -473,3 +481,34 @@ class GeotrekMapEntityMixin(MapEntityMixin):
         if hasattr(clone, "mutate"):
             clone.mutate(self)
         return clone
+
+
+class ExternalSourceMixin(models.Model):
+    provider = models.ForeignKey(
+        "common.Provider",
+        verbose_name=_("Provider"),
+        blank=True,
+        null=True,
+        on_delete=models.PROTECT,
+    )
+    eid = models.CharField(
+        verbose_name=_("External id"), max_length=1024, blank=True, default=""
+    )
+
+    class Meta:
+        abstract = True
+
+    @property
+    def get_eid(self):
+        if self.eid:
+            if self.provider and self.provider.link_template:
+                tmpl = Template(self.provider.link_template)
+                context = Context({"object": self})
+                return mark_safe(tmpl.render(context))
+            else:
+                return self.eid
+        else:
+            tmpl = Template(
+                "{% load i18n  %} <span class='none'>{% trans 'None' %}</span>"
+            )
+            return mark_safe(tmpl.render(Context({})))

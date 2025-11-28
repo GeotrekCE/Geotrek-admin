@@ -22,6 +22,7 @@ from paperclip.validators import FileMimetypeValidator
 from PIL import Image
 
 from geotrek.authent.models import StructureOrNoneRelated
+from geotrek.common.validators import validate_html_template
 
 from .managers import AccessibilityAttachmentManager
 from .mixins.models import OptionalPictogramMixin, PictogramMixin, TimeStampedModelMixin
@@ -47,7 +48,7 @@ class License(StructureOrNoneRelated, BaseLicense):
 
 
 class AccessibilityAttachment(TimeStampedModelMixin):
-    # Do not forget to change default value in sql (geotrek/common/sql/post_30_attachments.sql)
+    # Remember to change default value in sql (geotrek/common/sql/post_30_attachments.sql)
     class InfoAccessibilityChoices(models.TextChoices):
         SLOPE = "slope", _("Slope")
         WIDTH = "width", _("Width")
@@ -283,36 +284,13 @@ class TargetPortal(TimeStampedModelMixin, models.Model):
     title = models.CharField(
         verbose_name=_("Title Rando"),
         max_length=50,
-        help_text=_("Title on Geotrek Rando"),
+        help_text=_("Title on Geotrek-rando"),
         default="",
     )
     description = models.TextField(
         verbose_name=_("Description"),
-        help_text=_("Description on Geotrek Rando"),
+        help_text=_("Description on Geotrek-rando"),
         default="",
-    )
-    facebook_id = models.CharField(
-        verbose_name=_("Facebook ID"),
-        max_length=20,
-        help_text=_("Facebook ID for Geotrek Rando"),
-        blank=True,
-        default=settings.FACEBOOK_APP_ID,
-    )
-    facebook_image_url = models.CharField(
-        verbose_name=_("Facebook image url"),
-        max_length=256,
-        help_text=_("Url of the facebook image"),
-        default=settings.FACEBOOK_IMAGE,
-    )
-    facebook_image_width = models.IntegerField(
-        verbose_name=_("Facebook image width"),
-        help_text=_("Facebook image's width"),
-        default=settings.FACEBOOK_IMAGE_WIDTH,
-    )
-    facebook_image_height = models.IntegerField(
-        verbose_name=_("Facebook image height"),
-        help_text=_("Facebook image's height"),
-        default=settings.FACEBOOK_IMAGE_HEIGHT,
     )
 
     class Meta:
@@ -499,3 +477,25 @@ class AccessMean(TimeStampedModelMixin):
 
     def __str__(self):
         return self.label
+
+
+class Provider(TimeStampedModelMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=1024, unique=True)
+    link_template = models.TextField(
+        verbose_name=_("Link template"),
+        blank=True,
+        default="",
+        help_text=_("HTML template for external source links"),
+        validators=[validate_html_template],
+    )
+    copyright = models.CharField(
+        max_length=1024, blank=True, default="", verbose_name="Copyright"
+    )
+
+    class Meta:
+        verbose_name = _("Provider")
+        verbose_name_plural = _("Providers")
+        ordering = ("name",)
+
+    def __str__(self):
+        return self.name

@@ -1,4 +1,5 @@
 sphinx_immaterial
-sphinx>=4.0.0
+sphinx
 sphinx-autobuild
 sphinx-intl
+sphinx-design

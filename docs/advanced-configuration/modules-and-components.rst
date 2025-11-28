@@ -5,9 +5,9 @@ Modules and components
 =======================
 
 .. info::
-  
+
   For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
-  
+
 Enable Apps
 ------------
 
@@ -19,7 +19,7 @@ To disable specific modules, modify the custom settings file by adding the follo
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
               # Disable infrastructure and maintenance modules
               _INSTALLED_APPS = list(INSTALLED_APPS)
               _INSTALLED_APPS.remove('geotrek.infrastructure')
@@ -29,7 +29,7 @@ To disable specific modules, modify the custom settings file by adding the follo
     .. md-tab-item:: Default Enabled Modules
 
          .. code-block:: python
-    
+
               INSTALLED_APPS = (
                 'geotrek.cirkwi',
                 'geotrek.authent',
@@ -58,13 +58,13 @@ This parameter allows enabling or disabling the Path module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 PATH_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 PATH_MODEL_ENABLED = False
 
 Trail model enabled
@@ -77,13 +77,13 @@ This parameter allows enabling or disabling the Trail module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 TRAIL_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 TRAIL_MODEL_ENABLED = False
 
 Landedge model enabled
@@ -95,15 +95,15 @@ This parameter allows enabling or disabling the Landedge module:
     :name: landedge-model-enabled-tabs
 
     .. md-tab-item:: Default configuration
-    
+
          .. code-block:: python
-    
+
                 LANDEDGE_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 LANDEDGE_MODEL_ENABLED = False
 
 Signage model enabled
@@ -116,13 +116,13 @@ This parameter allows enabling or disabling the Signage module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 SIGNAGE_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 SIGNAGE_MODEL_ENABLED = False
 
 Infrastructure model enabled
@@ -135,13 +135,13 @@ This parameter allows enabling or disabling the Infrastructure module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 INFRASTRUCTURE_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 INFRASTRUCTURE_MODEL_ENABLED = False
 
 Project model enabled
@@ -154,13 +154,13 @@ This parameter allows enabling or disabling the Project module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 PROJECT_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 PROJECT_MODEL_ENABLED = False
 
 Intervention model enabled
@@ -173,13 +173,13 @@ This parameter allows enabling or disabling the Intervention module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 INTERVENTION_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 INTERVENTION_MODEL_ENABLED = False
 
 Report model enabled
@@ -192,13 +192,13 @@ This parameter allows enabling or disabling the Report module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 REPORT_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 REPORT_MODEL_ENABLED = False
 
 Trekking model enabled
@@ -211,13 +211,13 @@ This parameter allows enabling or disabling the Trekking module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 TREKKING_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 TREKKING_MODEL_ENABLED = False
 
 Poi model enabled
@@ -230,13 +230,13 @@ This parameter allows enabling or disabling the Poi module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 POI_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 POI_MODEL_ENABLED = False
 
 Service model enabled
@@ -249,13 +249,13 @@ This parameter allows enabling or disabling the Service module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 SERVICE_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 SERVICE_MODEL_ENABLED = False
 
 Tourism enabled
@@ -269,13 +269,13 @@ This setting enables or disables tourism-related menus, such as touristic conten
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 TOURISM_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 TOURISM_ENABLED = False
 
 Touristic content model enabled
@@ -288,13 +288,13 @@ This parameter allows enabling or disabling the Touristic content module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 TOURISTICCONTENT_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 TOURISTICCONTENT_MODEL_ENABLED = False
 
 Touristic event model enabled
@@ -307,13 +307,13 @@ This parameter allows enabling or disabling the Touristic event module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 TOURISTICEVENT_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 TOURISTICEVENT_MODEL_ENABLED = False
 
 Site model enabled
@@ -326,13 +326,13 @@ This parameter allows enabling or disabling the Site module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 SITE_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 SITE_MODEL_ENABLED = False
 
 Course model enabled
@@ -345,15 +345,15 @@ This parameter allows enabling or disabling the Course module:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 COURSE_MODEL_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 COURSE_MODEL_ENABLED = False
-              
+
 Flatpages enabled
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -365,13 +365,13 @@ Flatpages are used in Geotrek-rando and Geotrek-mobile. This setting allows enab
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 FLATPAGES_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 FLATPAGES_ENABLED = False
 
 Accessibility attachments enabled
@@ -385,13 +385,13 @@ This setting enables or disables the accessibility menu for attachments:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 ACCESSIBILITY_ATTACHMENTS_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 ACCESSIBILITY_ATTACHMENTS_ENABLED = False
 
 .. note::
@@ -401,7 +401,7 @@ This setting enables or disables the accessibility menu for attachments:
 Paths
 ------
 
-Allow path deletion 
+Allow path deletion
 ~~~~~~~~~~~~~~~~~~~~~~
 
 If set to ``False``, paths that are linked to at least one topology cannot be deleted:
@@ -412,13 +412,13 @@ If set to ``False``, paths that are linked to at least one topology cannot be de
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 ALLOW_PATH_DELETION_TOPOLOGY = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 ALLOW_PATH_DELETION_TOPOLOGY = False
 
 Show extremities
@@ -432,13 +432,13 @@ If set to ``True``, shows a bullet at path extremities :
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 SHOW_EXTREMITIES = False
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 SHOW_EXTREMITIES = True
 
 Alert draft
@@ -452,13 +452,13 @@ If set to ``True``, managers will receive an email notification whenever a path 
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 ALERT_DRAFT = False
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 ALERT_DRAFT = True
 
 Alert review
@@ -472,13 +472,13 @@ If set to ``True``, managers will receive an email notification whenever an obje
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 ALERT_REVIEW = False
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 ALERT_REVIEW = True
 
 Treks
@@ -487,7 +487,7 @@ Treks
 Trek signage intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which signage is considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
+This setting defines the maximum distance (in meters) within which signage is considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``).
 
 .. md-tab-set::
     :name: trek-signage-intersection-margin-tabs
@@ -495,19 +495,19 @@ This setting defines the maximum distance (in meters) within which signage is co
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 TREK_SIGNAGE_INTERSECTION_MARGIN = 500 # meters
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 TREK_SIGNAGE_INTERSECTION_MARGIN = 800 # meters
 
 Trek infrastructure intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which infrastructure is considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
+This setting defines the maximum distance (in meters) within which infrastructure is considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``).
 
 .. md-tab-set::
     :name: trek-infrastructure-intersection-margin-tabs
@@ -515,13 +515,13 @@ This setting defines the maximum distance (in meters) within which infrastructur
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 TREK_INFRASTRUCTURE_INTERSECTION_MARGIN = 500 # meters
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 TREK_INFRASTRUCTURE_INTERSECTION_MARGIN = 800 # meters
 
 
@@ -531,7 +531,7 @@ Interventions
 Intervention intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, tourism content, etc. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``). 
+This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, tourism content, etc. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``).
 
 .. md-tab-set::
     :name: intervention-intersection-margin-tabs
@@ -539,13 +539,13 @@ This setting defines the maximum distance (in meters) within which interventions
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 INTERVENTION_INTERSECTION_MARGIN = 500 # meters
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 INTERVENTION_INTERSECTION_MARGIN = 800 # meters
 
 Maintenance intersection margin
@@ -553,9 +553,9 @@ Maintenance intersection margin
 
 .. ns-detail::
 
-    .. 
+    ..
 
-This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, tourism content, etc. 
+This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, tourism content, etc.
 
 .. md-tab-set::
     :name: maintenance-intersection-margin-tabs
@@ -563,13 +563,13 @@ This setting defines the maximum distance (in meters) within which interventions
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 MAINTENANCE_INTERSECTION_MARGIN = 500 # meters
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 MAINTENANCE_INTERSECTION_MARGIN = 800 # meters
 
 Report
@@ -580,9 +580,9 @@ Report intersection margin
 
 .. ns-detail::
 
-    .. 
+    ..
 
-This setting defines the maximum distance (in meters) within which reports are considered related to other objects such as treks, POIs, services, tourism content, etc. 
+This setting defines the maximum distance (in meters) within which reports are considered related to other objects such as treks, POIs, services, tourism content, etc.
 
 .. md-tab-set::
     :name: report-intersection-margin-tabs
@@ -590,13 +590,13 @@ This setting defines the maximum distance (in meters) within which reports are c
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 REPORT_INTERSECTION_MARGIN = 500 # meters
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 REPORT_INTERSECTION_MARGIN = 800 # meters
 
 Signage, blades and lines
@@ -613,14 +613,14 @@ These parameters enable or disable submodules for signage blades and lines:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 BLADE_ENABLED = True
                 LINE_ENABLED = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 BLADE_ENABLED = False
                 LINE_ENABLED = True
 
@@ -676,13 +676,13 @@ You can change the type of the blade code field (string or integer):
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 BLADE_CODE_TYPE = INT
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 BLADE_CODE_TYPE = STR
 
 
@@ -706,9 +706,9 @@ You can modify the format of blade codes:
             Example display: ``CD99.XIDNZEIU.01 (first blade of XIDNZEIU)``
 
           .. code-block:: python
-      
+
                 BLADE_CODE_FORMAT = "CD99.{signagecode}.{bladenumber}"
-        
+
 Line code format
 ~~~~~~~~~~~~~~~~~
 
@@ -720,7 +720,7 @@ You can modify the format of line codes. This setting is used in CSV exports for
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
               LINE_CODE_FORMAT = "{signagecode}-{bladenumber}-{linenumber}"
 
     .. md-tab-item:: Example
@@ -729,7 +729,7 @@ You can modify the format of line codes. This setting is used in CSV exports for
             Example display: ``CD99.XIDNZEIU-01.02``
 
           .. code-block:: python
-      
+
                 LINE_CODE_FORMAT = "CD99.{signagecode}-{bladenumber}.{linenumber}"
 
 Line distance format
@@ -746,7 +746,7 @@ You can modify the format of line distance. This setting is used in CSV exports 
             Example display: ``8.5 km``
 
          .. code-block:: python
-    
+
               LINE_DISTANCE_FORMAT = "{:0.1f} km"
 
     .. md-tab-item:: Example
@@ -755,7 +755,7 @@ You can modify the format of line distance. This setting is used in CSV exports 
             Example display: ``8.5 mi``
 
           .. code-block:: python
-      
+
               LINE_DISTANCE_FORMAT = "{:0.1f} mi" # miles
 
 Line time format
@@ -772,7 +772,7 @@ You can modify the format of line time. This setting is used in CSV exports for 
             Example display: ``3h05``
 
          .. code-block:: python
-    
+
               LINE_TIME_FORMAT = "{hours}h{minutes:02d}"
 
     .. md-tab-item:: Example
@@ -781,9 +781,9 @@ You can modify the format of line time. This setting is used in CSV exports for 
             Example display: ``3:05``
 
           .. code-block:: python
-      
+
               LINE_TIME_FORMAT = "{hours}:{minutes:02d}"
-         
+
 .. _trek-poi-intersection:
 
 POI
@@ -800,13 +800,13 @@ You can define a buffer around treks to intersect POIs (works only without dynam
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 TREK_POI_INTERSECTION_MARGIN = 500  # meters
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 TREK_POI_INTERSECTION_MARGIN = 800  # meters
 
 Tourism
@@ -871,22 +871,10 @@ Like the tourism intersection margin, it can help limit the number of associated
 Land
 -----
 
-You can insert circulation and authorization types using this command:
+.. seealso::
 
-.. md-tab-set::
-    :name: loaddata-circulation-tabs
+	To insert Land minimal data refer to :ref:`this section <fixture-land>`.
 
-    .. md-tab-item:: With Debian
-
-         .. code-block:: bash
-    
-                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/land/fixtures/circulations.json
-
-    .. md-tab-item:: With Docker
-
-         .. code-block:: python
-    
-                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/land/fixtures/circulations.json
 
 Show labels
 ~~~~~~~~~~~~~~~~
@@ -899,13 +887,13 @@ Display labels on status elements on the map view:
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
                 SHOW_LABELS = True
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 SHOW_LABELS = False
 
 .. _outdoor:
@@ -930,31 +918,18 @@ Then run:
     .. md-tab-item:: With Debian
 
          .. code-block:: bash
-    
+
                 sudo dpkg-reconfigure -pcritical geotrek-admin
 
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
                 docker compose run --rm web update.sh
 
-To insert Outdoor minimal data:
+.. seealso::
 
-.. md-tab-set::
-    :name: loaddata-outdoor-minimal-data-tabs
-
-    .. md-tab-item:: With Debian
-
-         .. code-block:: bash
-    
-                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/outdoor/fixtures/basic.json
-
-    .. md-tab-item:: With Docker
-
-         .. code-block:: python
-    
-                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/outdoor/fixtures/basic.json
+	To insert Outdoor minimal data refer to :ref:`this section <fixture-outdoor>`.
 
 After installing the Outdoor module, you need to add permissions to user groups for outdoor sites and courses.
 
@@ -982,24 +957,9 @@ To enable the Sensitivity module, add the following code to the custom settings 
 
     INSTALLED_APPS += ('geotrek.sensitivity', )
 
-To insert sensitivity area rules:
+.. seealso::
 
-.. md-tab-set::
-    :name: loaddata-sensitivity-tabs
-
-    .. md-tab-item:: With Debian
-
-         .. code-block:: bash
-    
-                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/rules.json
-                cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/sensitivity/fixtures/upload/rules/ /opt/geotrek-admin/var/media/upload/
-
-    .. md-tab-item:: With Docker
-
-         .. code-block:: python
-    
-                docker compose run --rm web ./manage.py loaddata rules
-                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/sensitivity/fixtures/basic.json
+	To insert Sensitivity minimal data refer to :ref:`this section <fixture-sensitivity>`.
 
 Sensitivity default radius
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -1024,7 +984,7 @@ Defines the radius of sensitivity areas when not specified for species:
 Sensitive area intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which sensitive areas are considered related to other objects such as treks, POIs, services, tourism content, etc. 
+This setting defines the maximum distance (in meters) within which sensitive areas are considered related to other objects such as treks, POIs, services, tourism content, etc.
 
 .. md-tab-set::
     :name: sensitive-areas-intersection-margin-tabs
@@ -1046,7 +1006,7 @@ This setting defines the maximum distance (in meters) within which sensitive are
   ``UPDATE sensitivity_sensitivearea SET geom_buffered = ST_BUFFER(geom, <your new value>);``
 
 .. seealso::
-  See :ref:`Sensitive area import section <sensitive-areas-import>` for data import instructions.
+  See the :ref:`Sensitive area import section <import-sensitive-areas>` for data import instructions.
 
 Zoning
 --------
@@ -1059,7 +1019,7 @@ These 3 parameters (`LAND_BBOX_CITIES_ENABLED`, `LAND_BBOX_DISTRICTS_ENABLED` an
     .. md-tab-item:: Default configuration
 
          .. code-block:: python
-    
+
               LAND_BBOX_CITIES_ENABLED = True
               LAND_BBOX_DISTRICTS_ENABLED = True
               LAND_BBOX_AREAS_ENABLED = False
@@ -1067,7 +1027,7 @@ These 3 parameters (`LAND_BBOX_CITIES_ENABLED`, `LAND_BBOX_DISTRICTS_ENABLED` an
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
               LAND_BBOX_CITIES_ENABLED = False
               LAND_BBOX_DISTRICTS_ENABLED = False
               LAND_BBOX_AREAS_ENABLED = True

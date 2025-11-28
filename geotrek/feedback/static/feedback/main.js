@@ -6,11 +6,11 @@ $(window).on('entity:map', function (e, data) {
     var modelname = 'report';
     var layername = `${modelname}_layer`;
     var url = window.SETTINGS.urls[layername];
-    var loaded_infrastructure = false;
+    var loaded_report = false;
     var map = data.map;
 
     // Show report layer in application maps
-    var style = L.Util.extend({ clickable: false },
+    var style = L.Util.extend({ clickable: true },
         window.SETTINGS.map.styles[modelname] || {});
     var layer = new L.ObjectsLayer(null, {
         modelname: modelname,
@@ -23,10 +23,10 @@ $(window).on('entity:map', function (e, data) {
 
     map.on('layeradd', function (e) {
         var options = e.layer.options || { 'modelname': 'None' };
-        if (!loaded_infrastructure) {
+        if (!loaded_report) {
             if (options.modelname == modelname && options.modelname != data.modelname) {
                 e.layer.load(url);
-                loaded_infrastructure = true;
+                loaded_report = true;
             }
         }
     });

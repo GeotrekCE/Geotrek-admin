@@ -34,6 +34,21 @@ Cypress.Commands.add('mockTiles', (username, password) => {
     cy.intercept("https://*.tile.opentopomap.org/*/*/*.png", {fixture: "images/tile.png"}).as("tiles");
 });
 
+
+Cypress.Commands.add('setTinyMceContent', (tinyMceId, content) => {
+  cy.window().then((win) => {
+    const editor = win.tinymce.get(tinyMceId);
+    editor.setContent(content);
+  });
+});
+
+Cypress.Commands.add('getTinyMceContent', (tinyMceId, content) => {
+  cy.window().then((win) => {
+    const editor = win.tinymce.get(tinyMceId);
+    return editor.getContent();
+  });
+});
+
 Cypress.Commands.add('getCoordsOnMap', (pathPk, percentage) => {
   cy.getPath(pathPk).then(path => {
     let domPath = path.get(0);
@@ -42,7 +57,7 @@ Cypress.Commands.add('getCoordsOnMap', (pathPk, percentage) => {
     let pathLength = domPath.getTotalLength();
     let lengthAtPercentage = percentage * pathLength / 100;
     return domPath.getPointAtLength(lengthAtPercentage);
-  })
+  });
 });
 
 Cypress.Commands.add('getCoordsOnPath', (pathPk, percentage) => {
@@ -65,10 +80,9 @@ Cypress.Commands.add('getCoordsOnPath', (pathPk, percentage) => {
           y: coordsOnMap.y - verticalDelta,
         }
       });
-    })
-
-  })
-})
+    });
+  });
+});
 
 Cypress.Commands.add('getMap', () => cy.get('[id="id_topology-map"]'));
 Cypress.Commands.add('getPath', pathPk => cy.get(`[data-test=pathLayer-${pathPk}]`));
