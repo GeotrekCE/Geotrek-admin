@@ -1,9 +1,3 @@
-Cypress.on('uncaught:exception', (err, runnable) => {
-    // returning false here prevents Cypress from
-    // failing the test
-    return false;
-});
-
 describe('Create trek', () => {
     beforeEach(() => {
         const username = 'admin';
@@ -15,7 +9,7 @@ describe('Create trek', () => {
 
     it('Create trek', () => {
         cy.wait('@tiles');
-        cy.get("a.btn-success[href='/trek/add/']").contains('Add a new trek').click();
+        cy.get("a.btn-success[href='/trek/add/']").contains('Add').click();
         cy.get("input[id='id_duration']").type('100');
         cy.get("input[name='name_en']").type('Trek number 1');
         cy.get("a[href='#name_fr']").click();

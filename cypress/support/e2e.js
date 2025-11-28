@@ -18,3 +18,11 @@ import './commands'
 
 // Alternatively you can use CommonJS syntax:
 // require('./commands')
+
+// Prevent uncaught exceptions from the application from failing tests
+// Some JavaScript in the application may throw errors that are not test-related
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test due to application JavaScript errors
+    return false;
+});

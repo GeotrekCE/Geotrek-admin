@@ -304,7 +304,6 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
-        continue-on-error: true
         with:
             working-directory: cypress
         env:
@@ -321,11 +320,12 @@ jobs:
 
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v5
+        if: always()
         with:
           name: cypress-docker
           path: |
-            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
-            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
+            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/
+            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/
 
   e2e_deb:
     name: Tests E2E debian package
@@ -399,7 +399,6 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
-        continue-on-error: true
         with:
             working-directory: cypress
             record: true
@@ -412,11 +411,12 @@ jobs:
         run: cat /opt/geotrek-admin/var/log/geotrek.log
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v5
+        if: always()
         with:
           name: cypress-${{ matrix.code }}
           path: |
-            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
-            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
+            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/
+            /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/
 
   deploy:
     name: Publish (on release only)
