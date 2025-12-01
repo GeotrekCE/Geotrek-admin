@@ -15,7 +15,6 @@ describe('Create trek', () => {
 
     it('Create trek', () => {
         cy.wait('@tiles');
-        cy.server();
         cy.get("a.btn-success[href='/trek/add/']").contains('Add').click();
         cy.get("input[id='id_duration']").type('100');
         cy.get("input[name='name_en']").type('Trek number 1');
