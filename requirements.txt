@@ -4,7 +4,7 @@ amqp==5.3.1
     # via kombu
 appy==1.0.20
     # via django-appypod
-argdispatch==1.4.1
+argdispatch==1.4.2
     # via pdfimpose
 asgiref==3.11.0
     # via django
