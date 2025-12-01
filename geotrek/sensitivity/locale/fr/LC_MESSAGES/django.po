@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-09-04 11:40+0200\n"
+"POT-Creation-Date: 2025-11-17 09:32+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/sensitivity/fr/>\n"
@@ -24,6 +24,9 @@ msgstr "Sensibilité"
 msgctxt "Singular"
 msgid "Species"
 msgstr "Espèce"
+
+msgid "Category"
+msgstr "Catégorie"
 
 msgid "Provider"
 msgstr "Fournisseur"
@@ -94,17 +97,14 @@ msgstr "Règles"
 msgid "Sport practice"
 msgstr "Pratique sportive"
 
+msgid "Regulatory"
+msgstr "Réglementaire"
+
 msgid "Bubble radius"
 msgstr "Rayon de la bulle"
 
 msgid "meters"
 msgstr "mètres"
-
-msgid "Category"
-msgstr "Catégorie"
-
-msgid "Regulatory"
-msgstr "Réglementaire"
 
 msgid "External id"
 msgstr "ID externe"

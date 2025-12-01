@@ -531,12 +531,6 @@ msgstr "Ajouter relation"
 msgid "Remove"
 msgstr "Supprimer"
 
-msgid "No result"
-msgstr "Pas de résultat"
-
-msgid "Choose value(s)"
-msgstr "Choisir valeur(s)"
-
 msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"
 

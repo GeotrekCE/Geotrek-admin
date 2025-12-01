@@ -2,12 +2,11 @@ import json
 
 from django import template
 from django.conf import settings
-from django.contrib.gis.db.models import Extent
-from django.contrib.gis.db.models.functions import Envelope, Transform
 from django.db.models.functions import Coalesce
 from django.db.models.query import Prefetch
 from django.urls import reverse
 
+from geotrek.zoning.forms import MapFilterForm
 from geotrek.zoning.models import City, District, RestrictedArea, RestrictedAreaType
 
 register = template.Library()
@@ -17,31 +16,18 @@ def get_bbox_cities():
     return (
         City.objects.annotate(
             label=Coalesce("name", "code"),
-            extent=Extent(Transform(Envelope("geom"), settings.API_SRID)),
         )
-        .values_list("label", "extent")
+        .values_list("label", "envelope")
         .order_by("label")
     )
 
 
 def get_bbox_districts():
-    return (
-        District.objects.annotate(
-            extent=Extent(Transform(Envelope("geom"), settings.API_SRID))
-        )
-        .values_list("name", "extent")
-        .order_by("name")
-    )
+    return District.objects.all().values_list("name", "envelope")
 
 
 def get_bbox_areas():
-    return (
-        RestrictedArea.objects.annotate(
-            extent=Extent(Transform(Envelope("geom"), settings.API_SRID))
-        )
-        .values_list("name", "extent")
-        .order_by("name")
-    )
+    return RestrictedArea.objects.all().values_list("name", "envelope").order_by("name")
 
 
 @register.inclusion_tag("zoning/_bbox_fragment.html")
@@ -49,7 +35,12 @@ def combobox_bbox_land():
     cities = get_bbox_cities() if settings.LAND_BBOX_CITIES_ENABLED else []
     districts = get_bbox_districts() if settings.LAND_BBOX_DISTRICTS_ENABLED else []
     areas = get_bbox_areas() if settings.LAND_BBOX_AREAS_ENABLED else []
-    return {"bbox_cities": cities, "bbox_districts": districts, "bbox_areas": areas}
+    return {
+        "bbox_cities": cities,
+        "bbox_districts": districts,
+        "bbox_areas": areas,
+        "form": MapFilterForm(),
+    }
 
 
 @register.simple_tag

@@ -69,7 +69,7 @@ class SensitiveAreaDetail(MapEntityDetail):
 class SensitiveAreaRadiiMixin:
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        species = Species.objects.filter(category=Species.SPECIES)
+        species = Species.objects.filter(category=Species.CategoryChoices.SPECIES)
         context["radii"] = json.dumps(
             {
                 str(s.id): settings.SENSITIVITY_DEFAULT_RADIUS
@@ -85,7 +85,7 @@ class SensitiveAreaCreate(SensitiveAreaRadiiMixin, MapEntityCreate):
     model = SensitiveArea
 
     def get_form_class(self):
-        if self.request.GET.get("category") == str(Species.REGULATORY):
+        if self.request.GET.get("category") == str(Species.CategoryChoices.REGULATORY):
             return RegulatorySensitiveAreaForm
         return SensitiveAreaForm
 
@@ -94,7 +94,7 @@ class SensitiveAreaUpdate(SensitiveAreaRadiiMixin, MapEntityUpdate):
     queryset = SensitiveArea.objects.existing()
 
     def get_form_class(self):
-        if self.object.species.category == Species.REGULATORY:
+        if self.object.species.category == Species.CategoryChoices.REGULATORY:
             return RegulatorySensitiveAreaForm
         return SensitiveAreaForm
 
