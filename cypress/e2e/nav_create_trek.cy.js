@@ -32,7 +32,6 @@ describe('Create trek', () => {
         cy.get("select[id='id_difficulty']").select("Very hard");
         cy.get("select[id='id_route']").select("Loop");
         cy.setTinyMceContent('id_access_en', 'Access number 1');
-        ;
         cy.setTinyMceContent('id_description_teaser_en', 'Description teaser number 1');
         cy.setTinyMceContent('id_ambiance_en', 'Ambiance number 1');
         cy.setTinyMceContent('id_description_en', 'Description number 1');
