@@ -8,10 +8,10 @@ describe('Change language', () => {
     it('Can change language', () => {
         cy.visit('/path/list');
         cy.get("a.dropdown-toggle").contains('admin').click();
-        cy.get("button.dropdown-item[value='fr']").click();
-        cy.get("a.btn-success[href='/path/add/']").contains('Ajouter');
+        cy.get("button.language-menu-item[value='fr']").click();
+        cy.get("a.btn-success[href='/path/add/']").contains('Ajouter un tronçon');
         cy.url().should('include', '/path/list/');
         cy.get("a.dropdown-toggle").contains('admin').click();
-        cy.get("button.dropdown-item[value='en']").click();
+        cy.get("button.language-menu-item[value='en']").click();
     });
 });

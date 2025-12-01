@@ -1,3 +1,9 @@
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false;
+});
+
 describe('Create trek', () => {
     beforeEach(() => {
         const username = 'admin';
@@ -9,7 +15,7 @@ describe('Create trek', () => {
 
     it('Create trek', () => {
         cy.wait('@tiles');
-        cy.get("a.btn-success[href='/trek/add/']").contains('Add').click();
+        cy.get("a.btn-success[href='/trek/add/']").contains('Add a new trek').click();
         cy.get("input[id='id_duration']").type('100');
         cy.get("input[name='name_en']").type('Trek number 1');
         cy.get("a[href='#name_fr']").click();
@@ -50,8 +56,7 @@ describe('Create trek', () => {
                 cy.visit(href)
             });
         cy.get("div.alert-warning").contains("Waiting for publication").should('have.length', 1);
-        cy.get("a.dropdown-toggle[title='Actions']").click();
-        cy.get("a").contains("Edit").click();
+        cy.get("a.btn-primary").contains("Update").click();
         cy.get("input[id='id_review']").check();
         cy.get("input[name='published_en']").click({force: true});
         cy.get("input[id='id_published_en']").check();

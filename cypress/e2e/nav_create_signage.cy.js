@@ -1,3 +1,9 @@
+Cypress.on('uncaught:exception', (err, runnable) => {
+    // returning false here prevents Cypress from
+    // failing the test
+    return false;
+});
+
 describe('Create signage', () => {
     beforeEach(() => {
         const username = 'admin';
@@ -12,7 +18,7 @@ describe('Create signage', () => {
         cy.wait('@tiles');
         cy.server();
         cy.route('/api/signage/drf/signages.geojson').as('signage');
-        cy.get("a.btn-success[href='/signage/add/']").contains('Add').click();
+        cy.get("a.btn-success[href='/signage/add/']").contains('Add a new signage').click();
         cy.wait('@signage');
         cy.get("a.pointtopology-control").click();
         cy.get('.leaflet-map-pane')

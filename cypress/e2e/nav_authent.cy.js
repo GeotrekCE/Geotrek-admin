@@ -57,7 +57,7 @@ describe('Logout', () => {
         cy.visit('/path/list/');
         cy.url().should('include', '/path/list/');
         cy.get("a.dropdown-toggle").contains('admin').click();
-        cy.get("#btn-logout").click();
+        cy.get("a[href='/logout/']").click();
         cy.url().should('include', '/login/');
     });
 });
