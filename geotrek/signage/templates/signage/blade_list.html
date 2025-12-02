@@ -3,4 +3,30 @@
 
 {% block list_title %}{% endblock %}
 
-{% block mainactions %}{% endblock mainactions %}
+{% block mainactions %}
+    <div class="btn-group" role="group">
+        <button id="btn-batch-editing"
+                class="btn btn-sm btn-primary dropdown-toggle"
+                type="button"
+                data-toggle="dropdown"
+                aria-expanded="false"
+                {% if not can_edit and not can_delete %}
+                    title="{% trans "Access to the requested resource is restricted" %}"
+                    disabled
+                {% endif %}>
+            <i class="bi bi-gear-fill"></i> <span class="d-none d-sm-inline">{% trans "Actions" %}</span>
+        </button>
+        <div class="dropdown-menu">
+            {% if can_edit %}
+                <a class="dropdown-item" href="{{ model.get_multi_update_url }}" id="btn-edit" role="button">
+                    <i class="bi bi-pencil-square"></i> {% trans "Edit" %}
+                </a>
+            {%  endif %}
+            {% if can_delete %}
+                <a class="dropdown-item text-danger" href="{{ model.get_multi_delete_url }}" id="btn-delete" role="button">
+                        <i class="bi bi-trash"></i> {% trans "Delete" %}
+                </a>
+            {% endif %}
+        </div>
+    </div>
+{% endblock mainactions %}
