@@ -3,6 +3,6 @@
   "version": "1.0.0",
   "dependencies": {
     "@foreachbe/cypress-tinymce": "^1.0.0",
-    "cypress": "^13.16.0"
+    "cypress": "^15.7.0"
   }
 }

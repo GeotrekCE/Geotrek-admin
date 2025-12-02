@@ -399,7 +399,6 @@ jobs:
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
-        continue-on-error: true
         with:
             working-directory: cypress
             record: true
