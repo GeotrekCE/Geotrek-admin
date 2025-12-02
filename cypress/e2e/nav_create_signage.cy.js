@@ -16,7 +16,7 @@ describe('Create signage', () => {
 
     it('Create signage', () => {
         cy.wait('@tiles');
-        cy.intercept('/api/signage/drf/signages.geojson').as('signage')
+        cy.intercept('GET', '/api/signage/drf/signages.geojson').as('signage')
         cy.get("a.btn-success[href='/signage/add/']").contains('Add').click()
         cy.wait('@signage')
         cy.get("a.pointtopology-control").click()
