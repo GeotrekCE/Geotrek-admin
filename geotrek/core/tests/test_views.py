@@ -51,6 +51,7 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
     def logout(self):
         self.client.logout()
 
+
 def get_route_exception_mock(arg1, arg2):
     msg = "This is an error message"
     raise Exception(msg)

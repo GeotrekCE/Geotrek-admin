@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import LineString
 from django.test import TestCase
-from django.urls import reverse
 from mapentity.tests.factories import UserFactory
 
 from geotrek.core.models import Path
