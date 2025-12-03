@@ -6,13 +6,10 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Prefetch, Sum
-from django.http import HttpResponseRedirect
 from django.http.response import HttpResponse
 from django.shortcuts import redirect
-from django.urls import reverse
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
-from django.views.generic import TemplateView
 from django.views.generic.detail import BaseDetailView
 from mapentity.helpers import user_has_perm
 from mapentity.serializers import GPXSerializer
@@ -74,9 +71,8 @@ class CreateFromTopologyMixin:
 
 class PathList(CustomColumnsMixin, MapEntityList):
     queryset = Path.objects.all()
-    mandatory_columns = ["id", "checkbox", "name", "length"]
+    mandatory_columns = ["id", "name", "length"]
     default_extra_columns = ["length_2d"]
-    unorderable_columns = ["checkbox"]
     searchable_columns = ["id", "name"]
 
     def get_context_data(self, **kwargs):
@@ -210,62 +206,6 @@ class PathUpdate(MapEntityUpdate):
         if path.draft and self.request.user.has_perm("core.delete_draft_path"):
             kwargs["can_delete"] = True
         return kwargs
-
-
-class MultiplePathDelete(TemplateView):
-    template_name = "core/multiplepath_confirm_delete.html"
-    model = Path
-    success_url = "core:path_list"
-
-    def dispatch(self, *args, **kwargs):
-        self.paths_pk = self.kwargs["pk"].split(",")
-        self.paths = []
-        for pk in self.paths_pk:
-            path = Path.objects.get(pk=pk)
-            self.paths.append(path)
-            if path.draft and not self.request.user.has_perm("core.delete_draft_path"):
-                messages.warning(
-                    self.request,
-                    _(
-                        "Access to the requested resource is restricted. You have been redirected."
-                    ),
-                )
-                return redirect("core:path_list")
-            if not path.draft and not self.request.user.has_perm("core.delete_path"):
-                messages.warning(
-                    self.request,
-                    _(
-                        "Access to the requested resource is restricted. You have been redirected."
-                    ),
-                )
-                return redirect("core:path_list")
-            if not path.same_structure(self.request.user):
-                messages.warning(
-                    self.request,
-                    _(
-                        "Access to the requested resource is restricted by structure. "
-                        "You have been redirected."
-                    ),
-                )
-                return redirect("core:path_list")
-        return super().dispatch(*args, **kwargs)
-
-    # Add support for browsers which only accept GET and POST for now.
-    def post(self, request, *args, **kwargs):
-        return self.delete(request, *args, **kwargs)
-
-    def delete(self, request, *args, **kwargs):
-        for path in self.paths:
-            path.delete()
-        return HttpResponseRedirect(reverse(self.success_url))
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        topologies_by_model = defaultdict(list)
-        for path in self.paths:
-            path.topologies_by_path(topologies_by_model)
-        context["topologies_by_model"] = dict(topologies_by_model)
-        return context
 
 
 class PathDelete(MapEntityDelete):

@@ -26,7 +26,6 @@ from geotrek.authent.models import StructureOrNoneRelated, StructureRelated
 from geotrek.common.functions import IsSimple, LengthSpheroid
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
-    CheckBoxActionMixin,
     ExternalSourceMixin,
     GeotrekMapEntityMixin,
     NoDeleteMixin,
@@ -47,7 +46,6 @@ logger = logging.getLogger(__name__)
 
 
 class Path(
-    CheckBoxActionMixin,
     ZoningPropertiesMixin,
     AddPropertyMixin,
     GeotrekMapEntityMixin,

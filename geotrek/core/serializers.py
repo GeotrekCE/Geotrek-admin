@@ -6,7 +6,6 @@ from geotrek.core.models import Path, Trail
 
 
 class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    checkbox = serializers.CharField(source="checkbox_display")
     length_2d = serializers.FloatField(source="length_2d_display")
     length = serializers.FloatField(source="length_display")
     name = serializers.CharField(source="name_display")
