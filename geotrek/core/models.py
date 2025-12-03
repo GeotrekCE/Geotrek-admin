@@ -489,7 +489,7 @@ class Topology(
     )
     offset = models.FloatField(default=0.0, verbose_name=_("Offset"))  # in SRID units
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
-    geom_need_update = models.BooleanField(default=False)
+    geom_need_update = models.BooleanField(default=False, editable=False)
     geom = models.GeometryField(
         editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
         srid=settings.SRID,
