@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.urls import path, re_path, register_converter
+from django.urls import path, register_converter
 from mapentity.registry import registry
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
