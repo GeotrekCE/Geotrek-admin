@@ -22,7 +22,8 @@
 
         $(function () {
             $('#btn-merge').click(function () {
-                if ($('input[type="checkbox"][name="path\\[\\]"]:checked').length != 2) {
+                const table = $('#objects-list').DataTable();
+                if (table.rows( { selected: true } )[0].length != 2) {
                     $('#btn-confirm').hide();
                     $('#confirm-merge .modal-body h4').html("{% trans 'Select two paths to merge them' %}");
                 } else {
@@ -35,9 +36,14 @@
                 $('#confirm-merge .modal-body h4').html($('#wait_lightbox').html());
                 $('#btn-confirm').hide();
 
-                $.post("{% url 'core:path-drf-merge-path' %}",
-                    $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
+                const table = $('#objects-list').DataTable();
+                const params = {
+                    path: table.rows( { selected: true } ).data().pluck('id').toArray(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                }
 
+                $.post("{% url 'core:path-drf-merge-path' %}",
+                    params,
                     function (response) {
                         $('#btn-confirm').show();
 
