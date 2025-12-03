@@ -51,69 +51,6 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
     def logout(self):
         self.client.logout()
 
-    def test_show_delete_multiple_path_in_list(self):
-        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
-        PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
-        POIFactory.create(paths=[(path_1, 0, 0)])
-        response = self.client.get(reverse("core:path_list"))
-        self.assertContains(
-            response,
-            '<a class="dropdown-item text-danger" href="#delete" id="btn-delete" role="button">',
-        )
-
-    def test_delete_view_multiple_path(self):
-        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
-        path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
-        response = self.client.get(
-            reverse("core:multiple_path_delete", args=[f"{path_1.pk},{path_2.pk}"])
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Do you really wish to delete")
-
-    def test_delete_view_multiple_path_one_wrong_structure(self):
-        other_structure = StructureFactory(name="Other")
-        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
-        path_2 = PathFactory.create(
-            name="path_2", geom=LineString((2, 2), (2, -2)), structure=other_structure
-        )
-        POIFactory.create(paths=[(path_1, 0, 0)])
-        response = self.client.get(
-            reverse("core:multiple_path_delete", args=[f"{path_1.pk},{path_2.pk}"])
-        )
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse("core:path_list"))
-        self.assertIn(
-            response.content,
-            b"Access to the requested resource is restricted by structure.",
-        )
-        self.assertEqual(Path.objects.count(), 4)
-
-    def test_delete_multiple_path(self):
-        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
-        path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
-        POIFactory.create(paths=[(path_1, 0, 0)], name="POI_1")
-        InfrastructureFactory.create(paths=[(path_1, 0, 1)], name="INFRA_1")
-        signage = SignageFactory.create(paths=[(path_1, 0, 1)], name="SIGNA_1")
-        TrailFactory.create(paths=[(path_2, 0, 1)], name="TRAIL_1")
-        ServiceFactory.create(paths=[(path_2, 0, 1)])
-        InterventionFactory.create(target=signage, name="INTER_1")
-        response = self.client.get(
-            reverse("core:multiple_path_delete", args=[f"{path_1.pk},{path_2.pk}"])
-        )
-        self.assertContains(response, "POI_1")
-        self.assertContains(response, "INFRA_1")
-        self.assertContains(response, "SIGNA_1")
-        self.assertContains(response, "TRAIL_1")
-        self.assertContains(response, "Service type")
-        self.assertContains(response, "INTER_1")
-        response = self.client.post(
-            reverse("core:multiple_path_delete", args=[f"{path_1.pk},{path_2.pk}"])
-        )
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(Path.objects.count(), 2)
-        self.assertEqual(Path.objects.filter(pk__in=[path_1.pk, path_2.pk]).count(), 0)
-
-
 def get_route_exception_mock(arg1, arg2):
     msg = "This is an error message"
     raise Exception(msg)
@@ -132,7 +69,6 @@ class PathViewsTest(CommonTest):
     extra_column_list = ["length_2d", "eid"]
     expected_column_list_extra = [
         "id",
-        "checkbox",
         "name",
         "length",
         "length_2d",
@@ -148,7 +84,6 @@ class PathViewsTest(CommonTest):
 
     def get_expected_datatables_attrs(self):
         return {
-            "checkbox": self.obj.checkbox_display,
             "id": self.obj.pk,
             "length": 141.6,
             "length_2d": 141.6,
