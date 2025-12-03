@@ -91,7 +91,7 @@ datetime==6.0
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==5.2.8
+django==5.2.9
     # via
     #   geotrek (setup.py)
     #   crispy-bootstrap4
