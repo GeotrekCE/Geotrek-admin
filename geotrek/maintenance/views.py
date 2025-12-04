@@ -13,13 +13,15 @@ from mapentity.views import (
     MapEntityFilter,
     MapEntityFormat,
     MapEntityList,
+    MapEntityMultiDelete,
+    MapEntityMultiUpdate,
     MapEntityUpdate,
 )
 
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import BelongStructureMixin, CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.feedback.models import Report
 
@@ -237,6 +239,14 @@ class InterventionViewSet(GeotrekMapentityViewSet):
         return qs
 
 
+class InterventionMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = Intervention
+
+
+class InterventionMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+    model = Intervention
+
+
 class ProjectList(CustomColumnsMixin, MapEntityList):
     queryset = Project.objects.existing()
     mandatory_columns = ["id", "name"]
@@ -338,3 +348,11 @@ class ProjectViewSet(GeotrekMapentityViewSet):
             qs = qs.filter(pk__in=non_empty_qs)
             qs = qs.only("id", "name")
         return qs
+
+
+class ProjectMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = Project
+
+
+class ProjectMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+    model = Project

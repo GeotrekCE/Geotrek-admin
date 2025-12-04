@@ -12,12 +12,14 @@ from mapentity.views import (
     MapEntityFilter,
     MapEntityFormat,
     MapEntityList,
+    MapEntityMultiDelete,
+    MapEntityMultiUpdate,
     MapEntityUpdate,
 )
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import BelongStructureMixin, CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 
@@ -133,6 +135,14 @@ class SignageViewSet(GeotrekMapentityViewSet):
                 "structure", "manager", "sealing", "access", "type"
             ).prefetch_related("conditions")
         return qs
+
+
+class SignageMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = Signage
+
+
+class SignageMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+    model = Signage
 
 
 class BladeDetail(MapEntityDetail):

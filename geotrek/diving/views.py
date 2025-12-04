@@ -9,11 +9,17 @@ from mapentity.views import (
     MapEntityFormat,
     MapEntityList,
     MapEntityMapImage,
+    MapEntityMultiDelete,
+    MapEntityMultiUpdate,
     MapEntityUpdate,
 )
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
+from geotrek.common.mixins.views import (
+    BelongStructureMixin,
+    CompletenessMixin,
+    CustomColumnsMixin,
+)
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.trekking.views import FlattenPicturesMixin
@@ -140,3 +146,11 @@ class DiveViewSet(GeotrekMapentityViewSet):
             qs = qs.only("id", "name", "published")
 
         return qs
+
+
+class DiveMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = Dive
+
+
+class DiveMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+    model = Dive
