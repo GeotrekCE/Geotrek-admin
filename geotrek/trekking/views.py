@@ -33,6 +33,7 @@ from geotrek.common.mixins.views import (
     BelongStructureMixin,
     CompletenessMixin,
     CustomColumnsMixin,
+    PublishedFieldMixin,
 )
 from geotrek.common.models import (
     Attachment,
@@ -330,7 +331,7 @@ class TrekMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
     model = Trek
 
 
-class TrekMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+class TrekMultiUpdate(PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate):
     model = Trek
 
 
@@ -487,7 +488,7 @@ class POIMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
     model = POI
 
 
-class POIMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+class POIMultiUpdate(PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate):
     model = POI
 
 

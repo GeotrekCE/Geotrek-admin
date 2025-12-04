@@ -20,6 +20,7 @@ from geotrek.common.mixins.views import (
     BelongStructureMixin,
     CompletenessMixin,
     CustomColumnsMixin,
+    PublishedFieldMixin,
 )
 from geotrek.common.models import HDViewPoint
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
@@ -176,7 +177,7 @@ class SiteMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
     model = Site
 
 
-class SiteMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+class SiteMultiUpdate(PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate):
     model = Site
 
 
@@ -306,5 +307,7 @@ class CourseMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
     model = Course
 
 
-class CourseMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+class CourseMultiUpdate(
+    PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
+):
     model = Course

@@ -19,6 +19,7 @@ from geotrek.common.mixins.views import (
     BelongStructureMixin,
     CompletenessMixin,
     CustomColumnsMixin,
+    PublishedFieldMixin,
 )
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -152,5 +153,5 @@ class DiveMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
     model = Dive
 
 
-class DiveMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+class DiveMultiUpdate(PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate):
     model = Dive

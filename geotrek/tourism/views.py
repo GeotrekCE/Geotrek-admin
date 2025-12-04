@@ -30,6 +30,7 @@ from geotrek.common.mixins.views import (
     BelongStructureMixin,
     CompletenessMixin,
     CustomColumnsMixin,
+    PublishedFieldMixin,
 )
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
@@ -222,7 +223,9 @@ class TouristicContentMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
     model = TouristicContent
 
 
-class TouristicContentMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+class TouristicContentMultiUpdate(
+    PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
+):
     model = TouristicContent
 
 
@@ -420,7 +423,9 @@ class TouristicEventMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
     model = TouristicEvent
 
 
-class TouristicEventMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+class TouristicEventMultiUpdate(
+    PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
+):
     model = TouristicEvent
 
 

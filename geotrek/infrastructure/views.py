@@ -15,7 +15,11 @@ from mapentity.views import (
 )
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins.views import BelongStructureMixin, CustomColumnsMixin
+from geotrek.common.mixins.views import (
+    BelongStructureMixin,
+    CustomColumnsMixin,
+    PublishedFieldMixin,
+)
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -131,5 +135,7 @@ class InfrastructureMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
     model = Infrastructure
 
 
-class InfrastructureMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+class InfrastructureMultiUpdate(
+    PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
+):
     model = Infrastructure

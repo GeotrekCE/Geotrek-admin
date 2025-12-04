@@ -9,7 +9,7 @@ from django.utils.functional import classproperty
 from django.utils.translation import gettext_lazy as _
 from django.views import static
 from mapentity import views as mapentity_views
-from mapentity.helpers import suffix_for
+from mapentity.helpers import suffix_for, user_has_perm
 from pdfimpose.schema.saddle import impose
 from pymupdf import Document
 
@@ -257,3 +257,25 @@ class BelongStructureMixin:
             return HttpResponseRedirect(self.get_success_url())
 
         return super().get(request, *args, **kwargs)
+
+
+class PublishedFieldMixin:
+    """
+    Check if the user can modify "published" field and remove it from the multi update form
+    This mixin is for MultiUpdate views with a "published" field
+    """
+
+    def get_editable_fields(self):
+        publish_permission = (
+            f"{self.model._meta.app_label}.publish_{self.model._meta.model_name}"
+        )
+        editable_fields = super().get_editable_fields()
+
+        if not user_has_perm(self.request.user, publish_permission):
+            editable_fields = [
+                field
+                for field in list(editable_fields)
+                if not field.startswith("published")
+            ]
+
+        return editable_fields
