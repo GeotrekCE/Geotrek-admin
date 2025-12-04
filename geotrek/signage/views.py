@@ -305,3 +305,12 @@ class BladeViewSet(GeotrekMapentityViewSet):
                 "signage", "direction", "type", "color"
             ).prefetch_related("conditions")
         return qs
+
+
+class BladeMultiUpdate(MapEntityMultiUpdate):
+    model = Blade
+
+    def get_editable_fields(self):
+        editable_fields = super().get_editable_fields()
+        editable_fields.remove("topology")
+        return editable_fields
