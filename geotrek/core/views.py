@@ -22,6 +22,8 @@ from mapentity.views import (
     MapEntityFilter,
     MapEntityFormat,
     MapEntityList,
+    MapEntityMultiDelete,
+    MapEntityMultiUpdate,
     MapEntityUpdate,
 )
 from rest_framework import permissions
@@ -32,7 +34,7 @@ from rest_framework.response import Response
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import Length
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import BelongStructureMixin, CustomColumnsMixin
 from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 
@@ -398,6 +400,14 @@ class PathViewSet(GeotrekMapentityViewSet):
         return Response(response, status)
 
 
+class PathMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = Path
+
+
+class PathMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+    model = Path
+
+
 class CertificationTrailMixin(FormsetMixin):
     context_name = "certificationtrail_formset"
     formset_class = CertificationTrailFormSet
@@ -528,3 +538,11 @@ class TrailViewSet(GeotrekMapentityViewSet):
         else:
             qs = qs.defer("geom", "geom_3d")
         return qs
+
+
+class TrailMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = Trail
+
+
+class TrailMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+    model = Trail

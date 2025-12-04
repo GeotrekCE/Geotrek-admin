@@ -2,9 +2,11 @@ import os
 from io import BytesIO
 
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseNotFound
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.functional import classproperty
+from django.utils.translation import gettext_lazy as _
 from django.views import static
 from mapentity import views as mapentity_views
 from mapentity.helpers import suffix_for
@@ -232,3 +234,26 @@ class CompletenessMixin:
                 obj._meta.get_field(field).verbose_name for field in completeness_fields
             ]
         return context
+
+
+class BelongStructureMixin:
+    """
+    Check if the selected items are in the same structure than the user, except for super-user
+    This mixin is for views that handle action on multiple items (ex: MultiDelete, MultiUpdate)
+    """
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        user_structure = self.request.user.profile.structure
+        superuser = self.request.user.is_superuser
+
+        filtered_queryset = queryset.filter(structure__exact=user_structure)
+
+        if not superuser and filtered_queryset.count() != queryset.count():
+            messages.error(
+                self.request,
+                _("Access to the requested resource is restricted by structure"),
+            )
+            return HttpResponseRedirect(self.get_success_url())
+
+        return super().get(request, *args, **kwargs)
