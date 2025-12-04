@@ -19,7 +19,11 @@ from mapentity.views import (
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import BelongStructureMixin, CustomColumnsMixin
+from geotrek.common.mixins.views import (
+    BelongStructureMixin,
+    CustomColumnsMixin,
+    PublishedFieldMixin,
+)
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 
@@ -141,7 +145,9 @@ class SignageMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
     model = Signage
 
 
-class SignageMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+class SignageMultiUpdate(
+    PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
+):
     model = Signage
 
 
