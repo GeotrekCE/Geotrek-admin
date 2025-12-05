@@ -141,7 +141,7 @@ class SpeciesSensitiveAreaShapeParser(ShapeParser):
     model = SensitiveArea
     label = "Shapefile zone sensible espèce"
     label_fr = "Shapefile zone sensible espèce"
-    label_en = "Shapefile species sensitive area"
+    label_en = "Species sensitive area shapefile"
     separator = ","
     delete = False
     fields = {
@@ -169,7 +169,7 @@ class RegulatorySensitiveAreaShapeParser(ShapeParser):
     model = SensitiveArea
     label = "Shapefile zone sensible réglementaire"
     label_fr = "Shapefile zone sensible réglementaire"
-    label_en = "Shapefile species sensitive area"
+    label_en = "Regulatory sensitive area shapefile"
     separator = ","
     delete = False
     fields = {
