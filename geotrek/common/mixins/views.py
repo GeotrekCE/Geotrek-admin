@@ -257,7 +257,7 @@ class BelongStructureMixin:
         filtered_queryset = queryset.filter(structure__exact=user_structure)
 
         if not superuser and filtered_queryset.count() != queryset.count():
-            messages.error(
+            messages.warning(
                 self.request,
                 _("Access to the requested resource is restricted by structure"),
             )

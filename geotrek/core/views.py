@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Prefetch, Sum
-from django.http.response import HttpResponse
+from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.utils.decorators import method_decorator
 from django.utils.translation import gettext as _
@@ -82,6 +82,12 @@ class PathList(CustomColumnsMixin, MapEntityList):
         context["can_add"] = user_has_perm(
             self.request.user, "core.add_path"
         ) or user_has_perm(self.request.user, "core.add_draft_path")
+        context["can_edit"] = user_has_perm(
+            self.request.user, "core.change_path"
+        ) or user_has_perm(self.request.user, "core.change_draft_path")
+        context["can_delete"] = user_has_perm(
+            self.request.user, "core.delete_path"
+        ) or user_has_perm(self.request.user, "core.delete_draft_path")
         return context
 
 
@@ -403,9 +409,61 @@ class PathViewSet(GeotrekMapentityViewSet):
 class PathMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
     model = Path
 
+    def get(self, request, *args, **kwargs):
+        # check pks definition first to avoid get_queryset error
+        response = super().get(request, *args, **kwargs)
+
+        if isinstance(response, HttpResponseRedirect):
+            return response
+
+        # check permissions
+        qs = self.get_queryset()
+
+        has_drafts = qs.filter(draft=True).exists()
+        has_non_drafts = qs.filter(draft=False).exists()
+
+        if (has_drafts and not request.user.has_perm("core.delete_draft_path")) or (
+            has_non_drafts and not request.user.has_perm("core.delete_path")
+        ):
+            messages.warning(
+                self.request,
+                _(
+                    "Access to the requested resource is restricted. You have been redirected."
+                ),
+            )
+            return redirect("core:path_list")
+
+        return response
+
 
 class PathMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
     model = Path
+
+    def get(self, request, *args, **kwargs):
+        # check pks definition first to avoid get_queryset error
+        response = super().get(request, *args, **kwargs)
+
+        if isinstance(response, HttpResponseRedirect):
+            return response
+
+        # check permissions
+        qs = self.get_queryset()
+
+        has_drafts = qs.filter(draft=True).exists()
+        has_non_drafts = qs.filter(draft=False).exists()
+
+        if (has_drafts and not request.user.has_perm("core.change_draft_path")) or (
+            has_non_drafts and not request.user.has_perm("core.change_path")
+        ):
+            messages.warning(
+                self.request,
+                _(
+                    "Access to the requested resource is restricted. You have been redirected."
+                ),
+            )
+            return redirect("core:path_list")
+
+        return response
 
 
 class CertificationTrailMixin(FormsetMixin):
