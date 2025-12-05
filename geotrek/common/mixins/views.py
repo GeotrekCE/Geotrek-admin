@@ -243,6 +243,13 @@ class BelongStructureMixin:
     """
 
     def get(self, request, *args, **kwargs):
+        # check pks definition first to avoid get_queryset error
+        response = super().get(request, *args, **kwargs)
+
+        if isinstance(response, HttpResponseRedirect):
+            return response
+
+        # check permissions
         queryset = self.get_queryset()
         user_structure = self.request.user.profile.structure
         superuser = self.request.user.is_superuser
@@ -256,7 +263,7 @@ class BelongStructureMixin:
             )
             return HttpResponseRedirect(self.get_success_url())
 
-        return super().get(request, *args, **kwargs)
+        return response
 
 
 class PublishedFieldMixin:
