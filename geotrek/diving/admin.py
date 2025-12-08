@@ -6,37 +6,38 @@ from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.mixins.actions import MergeActionMixin
-from .models import (
-    Practice, Difficulty, Level, Dive
-)
 
-if 'modeltranslation' in settings.INSTALLED_APPS:
+from .models import Difficulty, Dive, Level, Practice
+
+if "modeltranslation" in settings.INSTALLED_APPS:
     from modeltranslation.admin import TabbedTranslationAdmin
 else:
     from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
 
 
 class PracticeAdmin(MergeActionMixin, TabbedTranslationAdmin):
-    list_display = ('name', 'order', 'pictogram_img')
-    search_fields = ('name', )
+    list_display = ("name", "order", "pictogram_img")
+    search_fields = ("name",)
 
 
 class DifficultyForm(forms.ModelForm):
     def clean_id(self):
         self.oldid = self.instance.pk if self.instance else None
-        self.newid = self.cleaned_data.get('id')
+        self.newid = self.cleaned_data.get("id")
 
         exists = len(Difficulty.objects.filter(pk=self.newid)) > 0
         if self.oldid != self.newid and exists:
-            raise ValidationError(_("Difficulty with id '%s' already exists") % self.newid)
+            raise ValidationError(
+                _("Difficulty with id '%s' already exists") % self.newid
+            )
         return self.newid
 
 
 class DifficultyAdmin(MergeActionMixin, TabbedTranslationAdmin):
     form = DifficultyForm
-    list_display = ('name', 'id', 'pictogram_img')
-    search_fields = ('name',)
-    fields = ('id', 'name', 'pictogram')
+    list_display = ("name", "id", "pictogram_img")
+    search_fields = ("name",)
+    fields = ("id", "name", "pictogram")
     merge_field = "name"
 
     def save_model(self, request, obj, form, change):
@@ -74,8 +75,9 @@ class DifficultyAdmin(MergeActionMixin, TabbedTranslationAdmin):
         Otherwise, behave as usual.
         """
         if self.oldid is not None:
-            msg = _('Difficulty id {old} was changed to {new} successfully.').format(
-                old=self.oldid, new=obj.pk)
+            msg = _("Difficulty id {old} was changed to {new} successfully.").format(
+                old=self.oldid, new=obj.pk
+            )
             self.message_user(request, msg)
             return self.response_post_save_change(request, obj)
         return super().response_change(request, obj)
@@ -84,7 +86,7 @@ class DifficultyAdmin(MergeActionMixin, TabbedTranslationAdmin):
 class LevelForm(forms.ModelForm):
     def clean_id(self):
         self.oldid = self.instance.pk if self.instance else None
-        self.newid = self.cleaned_data.get('id')
+        self.newid = self.cleaned_data.get("id")
 
         exists = len(Level.objects.filter(pk=self.newid)) > 0
         if self.oldid != self.newid and exists:
@@ -94,9 +96,9 @@ class LevelForm(forms.ModelForm):
 
 class LevelAdmin(MergeActionMixin, TabbedTranslationAdmin):
     form = LevelForm
-    list_display = ('name', 'id', 'pictogram_img')
-    search_fields = ('name',)
-    fields = ('id', 'name', 'description', 'pictogram')
+    list_display = ("name", "id", "pictogram_img")
+    search_fields = ("name",)
+    fields = ("id", "name", "description", "pictogram")
     merge_field = "name"
 
     def save_model(self, request, obj, form, change):
@@ -134,8 +136,9 @@ class LevelAdmin(MergeActionMixin, TabbedTranslationAdmin):
         Otherwise, behave as usual.
         """
         if self.oldid is not None:
-            msg = _('Level id {old} was changed to {new} successfully.').format(
-                old=self.oldid, new=obj.pk)
+            msg = _("Level id {old} was changed to {new} successfully.").format(
+                old=self.oldid, new=obj.pk
+            )
             self.message_user(request, msg)
             return self.response_post_save_change(request, obj)
         return super().response_change(request, obj)

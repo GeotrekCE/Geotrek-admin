@@ -4,25 +4,31 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0030_auto_20220928_1433'),
+        ("tourism", "0030_auto_20220928_1433"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='touristicevent',
-            old_name='meeting_time',
-            new_name='start_time',
+            model_name="touristicevent",
+            old_name="meeting_time",
+            new_name="start_time",
         ),
         migrations.AlterField(
-            model_name='touristicevent',
-            name='start_time',
-            field=models.TimeField(blank=True, help_text='11:00, 23:30', null=True, verbose_name='Start time'),
+            model_name="touristicevent",
+            name="start_time",
+            field=models.TimeField(
+                blank=True,
+                help_text="11:00, 23:30",
+                null=True,
+                verbose_name="Start time",
+            ),
         ),
         migrations.AddField(
-            model_name='touristicevent',
-            name='end_time',
-            field=models.TimeField(blank=True, help_text='11:00, 23:30', null=True, verbose_name='End time'),
+            model_name="touristicevent",
+            name="end_time",
+            field=models.TimeField(
+                blank=True, help_text="11:00, 23:30", null=True, verbose_name="End time"
+            ),
         ),
     ]

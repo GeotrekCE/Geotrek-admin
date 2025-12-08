@@ -4,17 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0036_accessmean'),
-        ('flatpages', '0012_change_flatpage_schema'),
+        ("common", "0036_accessmean"),
+        ("flatpages", "0012_change_flatpage_schema"),
     ]
 
     operations = [
         # Pluralize the verbose name
         migrations.AlterField(
-            model_name='flatpage',
-            name='portals',
-            field=models.ManyToManyField(blank=True, related_name='flatpages', to='common.TargetPortal', verbose_name='Portals'),
+            model_name="flatpage",
+            name="portals",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="flatpages",
+                to="common.TargetPortal",
+                verbose_name="Portals",
+            ),
         ),
     ]

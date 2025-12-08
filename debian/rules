@@ -1,22 +1,23 @@
 #!/usr/bin/make -f
 
 export DH_VIRTUALENV_INSTALL_ROOT=/opt
+export DH_UPGRADE_WHEEL
+export DH_UPGRADE_SETUPTOOLS
 
 %:
 	dh $@ --with python-virtualenv
 
 override_dh_virtualenv:
 	dh_virtualenv \
-	--python /usr/bin/python3.8 \
+	--python /usr/bin/python3.10 \
 	--upgrade-pip \
 	--preinstall wheel \
-	--preinstall setuptools==69.2.0 \
+	--preinstall django \
+	--preinstall setuptools \
 	--builtin-venv \
 	--extra-pip-arg --no-cache-dir \
-	--extra-pip-arg --quiet
-
-override_dh_strip:
-	dh_strip --no-automatic-dbgsym
+	--extra-pip-arg --quiet \
+	--extra-pip-arg --upgrade
 
 override_dh_installinit:
 	dh_installinit --name=geotrek debian/geotrek.service

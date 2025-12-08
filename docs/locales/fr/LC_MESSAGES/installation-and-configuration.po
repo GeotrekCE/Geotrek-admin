@@ -1,0 +1,1562 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2013-2025, Makina Corpus Territoires / Parc national des
+# Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime
+# This file is distributed under the same license as the Geotrek-admin
+# package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2025.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Geotrek-admin\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2025-10-10 08:21+0000\n"
+"PO-Revision-Date: 2025-10-22 09:01+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/"
+"geotrek-admin/installation-and-configuration/fr/>\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.13.3\n"
+"Generated-By: Babel 2.17.0\n"
+
+#: ../../installation-and-configuration/configuration.rst:3
+#: ../../installation-and-configuration/maintenance.rst:47
+msgid "Configuration"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:8
+msgid "Basic configuration update"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:10
+msgid ""
+"To update basic configuration (server name, database connection, "
+"languages, or set workers number or timeout), run:"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst
+#: ../../installation-and-configuration/exploitation-commands.rst
+#: ../../installation-and-configuration/installation.rst
+#: ../../installation-and-configuration/maintenance.rst
+#: ../../installation-and-configuration/synchronization.rst
+msgid "With Debian"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst
+#: ../../installation-and-configuration/exploitation-commands.rst
+#: ../../installation-and-configuration/installation.rst
+#: ../../installation-and-configuration/maintenance.rst
+#: ../../installation-and-configuration/synchronization.rst
+msgid "With Docker"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:27
+msgid ""
+"The basic configuration is stored in ``/opt/geotrek-admin/var/conf/env`` "
+"file, not to be changed manually. This file also contains the PostgreSQL "
+"authentification details, if you need to access your Geotrek-admin "
+"database."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:33
+msgid "Custom setting file"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:35
+msgid ""
+"Geotrek-admin advanced configuration is done in ``/opt/geotrek-"
+"admin/var/conf/custom.py`` file."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:37
+msgid ""
+"The list of all overridable setting and default values can be found at : "
+"`geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-"
+"admin/blob/master/geotrek/settings/base.py>`_."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:40
+msgid "After any change in ``custom.py``, run:"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:58
+msgid "Sometimes you also have to run:"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:75
+#: ../../installation-and-configuration/configuration.rst:201
+#: ../../installation-and-configuration/configuration.rst:207
+#: ../../installation-and-configuration/exploitation-commands.rst:165
+#: ../../installation-and-configuration/exploitation-commands.rst:204
+#: ../../installation-and-configuration/installation.rst:109
+#: ../../installation-and-configuration/installation.rst:181
+#: ../../installation-and-configuration/maintenance.rst:67
+#: ../../installation-and-configuration/upgrade.rst:33
+#: ../../installation-and-configuration/upgrade.rst:116
+#: ../../installation-and-configuration/upgrade.rst:138
+#: ../../installation-and-configuration/upgrade.rst:210
+#: ../../installation-and-configuration/upgrade.rst:250
+#: ../../installation-and-configuration/upgrade.rst:276
+#: ../../installation-and-configuration/upgrade.rst:358
+#: ../../installation-and-configuration/upgrade.rst:399
+#: ../../installation-and-configuration/upgrade.rst:425
+msgid "Note"
+msgstr "Note"
+
+#: ../../installation-and-configuration/configuration.rst:77
+msgid ""
+"Don't override the ``os.getenv()`` settings as they are managed with "
+"Basic configuration."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:82
+msgid "NGINX configuration"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:84
+msgid ""
+"NGINX configuration is controlled by Geotrek-admin and will be erased at "
+"each upgrade. Do not modify ``/etc/nginx/sites-available/geotrek.conf`` "
+"or ``/etc/nginx/sites-enable/geotrek.conf``. Modify ``/opt/geotrek-"
+"admin/var/conf/nginx.conf.in`` instead. To update ``nginx.conf``, then "
+"run:"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:106
+msgid "Activate SSL / HTTPS"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:108
+msgid "To activate https, you need firstly to change ``custom.py`` and add:"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:115
+msgid "After this, edit ``nginx.conf.in`` to add your certificate."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:117
+msgid ""
+"If you generate it with letsencrypt : You can use certbot to add the "
+"certificate in your configuration. But you will have to move the "
+"configuration automatically added into ``nginx.conf``, to the file "
+"``nginx.conf.in`` in ``/opt/geotrek-admin/var/conf/`` directory."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:121
+msgid ""
+"You have to move the configuration to the file ``nginx.conf.in`` because "
+"``nginx.conf`` is automatically changed during command ``dpkg-reconfigure"
+" geotrek-admin``."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:123
+#: ../../installation-and-configuration/configuration.rst:246
+#: ../../installation-and-configuration/upgrade.rst:16
+#: ../../installation-and-configuration/upgrade.rst:48
+#: ../../installation-and-configuration/upgrade.rst:177
+#: ../../installation-and-configuration/upgrade.rst:233
+#: ../../installation-and-configuration/upgrade.rst:256
+#: ../../installation-and-configuration/upgrade.rst:323
+#: ../../installation-and-configuration/upgrade.rst:382
+#: ../../installation-and-configuration/upgrade.rst:405
+msgid "Warning"
+msgstr "Attention"
+
+#: ../../installation-and-configuration/configuration.rst:125
+#, python-brace-format
+msgid ""
+"You need to replace the ``$`` from Certbot with ``${DOLLAR}`` everywhere "
+"in the ``nginx.conf.in`` file, then run the command ``sudo dpkg-"
+"reconfigure geotrek-admin`` to regenerate the file."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:130
+msgid "Mandatory settings"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:133
+msgid "Spatial reference identifier"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:139
+msgid ""
+"Spatial reference identifier of your database. Default 2154 is RGF93 / "
+"Lambert-93 - France"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:141
+msgid "*It should not be change after any creation of geometries.*"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:143
+msgid "*Choose wisely with epsg.io for example*"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:148
+msgid "Default Structure"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:154
+msgid "Name for your default structure."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:156
+msgid "*This one can be changed, except it's tricky.*"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:158
+msgid "*First change the name in the admin (authent/structure),*"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:159
+msgid "*Stop your instance admin.*"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:160
+msgid "*Change in the settings*"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:161
+msgid "*Re-run the server.*"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:166
+msgid "Dynamic segmentation"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:172
+msgid "Use dynamic segmentation or not."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:174
+msgid ""
+":ref:`Dynamic segmentation <segmentation-dynamique>` is used by default "
+"when installing Geotrek-admin."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:176
+msgid "With this mode, linear objects are built and stored related to paths."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:178
+msgid ""
+"Without this mode, linear geometry of objects is built and stored as an "
+"independent geographic object without relation to paths."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:180
+msgid ""
+"So if you want to use Geotrek-admin without dynamic segmentation, set "
+"TREKKING_TOPOLOGY_ENABLED to false after installation."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:182
+msgid "Do not change it again to true after setting it to false."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:185
+msgid "Translations"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:191
+msgid "Language of your interface."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:197
+msgid ""
+"Languages of your project. It will be used to generate fields for "
+"translations. (ex: description_fr, description_en)"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:199
+msgid ""
+"*You won't be able to change it easily, avoid to add any languages and do"
+" not remove any.*"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:202
+msgid ""
+"It is preferable, when in doubt, to include all necessary languages "
+"during the initial installation, even if some remain unused afterward, "
+"rather than missing some and facing complications to add them later."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:205
+msgid "Adding a new language"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:209
+msgid ""
+"When adding a new language to Geotrek, you must define default values for"
+" translated fields that are not ``NULLABLE``. The "
+"``MODELTRANSLATION_LANGUAGES`` command used to generate translated fields"
+" does not automatically assign these values."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:211
+msgid ""
+"For example, if you add the German language (``de``) and need to add the "
+"``published_de`` field (indicating whether content is published in "
+"German), you must set a default value."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:213
+msgid ""
+"To ensure the database functions correctly after adding a new language, "
+"execute the following SQL queries for each affected model:"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:225
+#: ../../installation-and-configuration/installation.rst:232
+msgid "Info"
+msgstr "Info"
+
+#: ../../installation-and-configuration/configuration.rst:227
+msgid ""
+"Ensure that all tables containing translated fields include this column "
+"before running the ``MODELTRANSLATION_LANGUAGES`` command._"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:230
+msgid "Spatial extents"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:232
+msgid "Bounding box of your project : x minimum , y minimum , x max, y max::"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:242
+msgid "Default values::"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:247
+msgid ""
+"If you extend spatial extent, don't forget to load a new DEM that covers "
+"all the zone."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:248
+msgid ""
+"If you shrink spatial extent, be sure there is no element in the removed "
+"zone or you will no more be able to see and edit it."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:250
+msgid ""
+"In order to check your configuration of spatial extents, a small tool is "
+"available at ``https://<server_url>/tools/extents/``. Administrator "
+"privileges are required."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:253
+msgid "Interface de Tool extents"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:260
+msgid "Users management"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:262
+msgid "See :ref:`User management section in usage <user-management-section>`."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:267
+msgid "Database users"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:269
+msgid ""
+"It is not safe to use the ``geotrek`` user in QGIS, or to give its "
+"password to many collaborators."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:272
+msgid ""
+"A wise approach, is to create a *read-only* user, or with specific "
+"permissions."
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:274
+msgid "With *pgAdmin*, you can create database users like this:"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:282
+msgid "And give them permissions by schema :"
+msgstr ""
+
+#: ../../installation-and-configuration/configuration.rst:291
+msgid ""
+"You can also create groups, etc. See `PostgreSQL documentation "
+"<https://www.postgresql.org/docs/>`_."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:3
+msgid "Exploitation commands"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:8
+msgid "Delete attachment from disk"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:10
+msgid ""
+"When an attachment (eg. pictures) is removed, its file is not "
+"automatically removed from disk."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:33
+msgid "Remove duplicate paths"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:35
+msgid ""
+"Duplicate paths can appear while adding paths with commands or directly "
+"in the application. Duplicate paths can cause some problems of routing "
+"for topologies, it can generate corrupted topologies (that become "
+"MultiLineStrings instead of LineStrings)."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:54
+msgid ""
+"During the process of the command, every topology on a duplicate path "
+"will be set on the original path, and the duplicate path will be deleted."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:59
+msgid "Merge segmented paths"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:61
+msgid ""
+"A path network is most optimized when there is only one path between "
+"intersections. If the path database includes many fragmented paths, they "
+"could be merged to improve performances."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:80
+msgid "Important"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:81
+msgid ""
+"This command can take several hours to run. During the process, every "
+"topology on a path will be set on the path it is merged with, but it "
+"would still be more efficient (and safer) to run it before creating "
+"topologies."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:83
+msgid "Before : ::"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:100
+msgid "After : ::"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:120
+msgid "Unset structure on categories"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:122
+msgid ""
+"Use this command if you wish to undo linking categories to structures for"
+" some models :"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:166
+msgid ""
+"You can't chose for each choice which set of category you want to unset "
+"structures, it will happen for all categories."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:168
+msgid ""
+"Firstly, if a categroy is linked to a structure, it creates the same "
+"category but with no structure associated. Secondly, every element with "
+"this old category gets assigned to this new category. Finally all old "
+"categories are removed."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:175
+msgid "Reorder topologies"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:177
+msgid ""
+"All topologies have information about which path they go through on and "
+"in which order. Actually, when a path is split in 2 by another path, a "
+"new path is added to the database. We need to add information for all "
+"topologies that need to go through this new path. This is badly managed "
+"at the moment, especially for the order of passage of the paths."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:198
+msgid ""
+"It removes a lot of useless information which can accelerate the process "
+"of editing topologies afterward."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:200
+msgid ""
+"During the process of this command, it tries to find a good order of "
+"passage on the paths which creates only one Linestring from start to end."
+" It stays as close as possible to the corrupted order. This command uses "
+"the same algorithm to generate one Linestring when the order is not well "
+"managed during topologies' display."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:205
+msgid ""
+"It can happen that this algorithm can't find any solution and will "
+"genereate a MultiLineString. This will be displayed at the end of the "
+"reorder."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:211
+msgid "Automatic commands"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:213
+msgid ""
+"You can set up automatic commands by creating a `cron` file under "
+"``/etc/cron.d/geotrek_command`` that contains:"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst
+msgid "Default configuration with Debian"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst
+msgid "Default configuration with Docker"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst
+msgid "Example with Debian"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:235
+#: ../../installation-and-configuration/exploitation-commands.rst:243
+msgid "This example will automatically reorder topologies at 4 am every day."
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst
+msgid "Example with Docker"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:249
+msgid "Hint"
+msgstr ""
+
+#: ../../installation-and-configuration/exploitation-commands.rst:251
+msgid ""
+"To help you find cron schedule expression you can use  `crontab guru "
+"<https://crontab.guru/>`_."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:5
+msgid "Installation"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:8
+msgid "Ubuntu package"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:10
+msgid ""
+"Use these instructions to install Geotrek-admin in an easy way on a "
+"dedicated Ubuntu Noble 24.04 or Jammy 22.04 LTS server for production. "
+"For another distributions, please use :ref:`the Docker installation "
+"method <docker-section>`. It requires more technical skills. Lastly, for "
+"a developer instance, please follow :ref:`the dedicated procedure "
+"<development-section>`."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:15
+msgid "Requirements"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:17
+msgid ""
+"Geotrek is mostly a CPU-bound application due to the complex queries "
+"including geometric operations (such as intersection) which are executed "
+"on the database. This is especially true in the setup with a Geotrek "
+"Rando v3 portal requesting dynamic geometric data through the Geotrek "
+"API."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:21
+msgid "In such a configuration the required system resources should be:"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:23
+msgid "4 cores"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:24
+msgid "8 Go RAM or more"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:25
+msgid ""
+"50 Go disk space or more (20 Go + estimated size of attached files like "
+"photos, including elements imported from SIT)"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:27
+msgid ""
+"If spreading the components on multiple hosts keep in mind the bottleneck"
+" will most likely be the CPU and RAM at the database server level."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:30
+msgid "Software requirements are :"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:32
+msgid ""
+"Ubuntu Noble 24.04 LTS. Server flavor is recommended but any other "
+"flavors work too (desktop…)"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:34
+msgid ""
+"An Internet connection with open HTTP and HTTPS destination ports is "
+"required."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:37
+msgid "Information to prepare before installation"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:39
+msgid ""
+"These information will be asked during the installation process and are "
+"the basic configuration of Geotrek-admin:"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:41
+msgid ""
+"The **domain name** or **IP** to use to access to **Geotrek-admin** web "
+"application."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:42
+msgid ""
+"Rando server name: the **domain name** to use to access to **Geotrek-"
+"rando** website (optional, if appropriate)."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:43
+msgid ""
+"PostgreSQL **host, port, user, password and DB name** if you use an "
+"external DB server."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:44
+msgid ""
+"The **SRID** of the projection to use to store geometries. The projection"
+" must match your geographic area and coordinates must be in meters."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:45
+msgid "The list of **languages** into which translation of contents will be made"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:46
+msgid "The name or acronym of your **organization**"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:51
+msgid "Fresh installation"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:53
+msgid "Run the following command in a shell prompt on your server:"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:59
+msgid ""
+"If you don't want to use a local database, you can run the following "
+"command instead. This will prevent the script to install PostgreSQL "
+"server locally. Don't forget to enable PostGIS extension in your remote "
+"database before installation."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:67
+msgid ""
+"Then create the application administrator account and connect to the web "
+"interface."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:85
+msgid ""
+"If you are not confident with the ``install.sh`` script, or if you are "
+"having troubles, you can do the same operations by hand:"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:95
+msgid ""
+"If you want to use a local database, install the pgRouting package by "
+"running:"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:101
+msgid ""
+"You must create a user and its database, and enable `postgis`, "
+"`postgis_raster`, `pgrouting` and `pgcrypto` extensions before."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:103
+msgid "Install the Geotrek-admin package"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:111
+msgid ""
+"Geotrek-admin is automatically installed in ``/opt/geotrek-admin/`` "
+"directory."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:113
+msgid ""
+"The installation automatically creates an internal ``geotrek`` linux "
+"user, owner of this directory"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:115
+msgid ""
+"The Geotrek-admin Python application is located in ``/opt/geotrek-"
+"admin/lib/python3.*/site-packages/geotrek`` directory"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:117
+msgid ""
+"PostGIS package, in combination with `--no-install-recommends`, include "
+"only scripts that are useful with `loaddem` command, not PostgreSQL "
+"server dependencies."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:120
+msgid "Extra steps"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:122
+msgid ""
+"We highly recommend installing an antivirus software to regularly scan "
+"uploaded files located under ``/opt/geotrek-admin/var/media/``."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:124
+msgid "Here is the installation process for `ClamAV <https://www.clamav.net/>`_ :"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:130
+msgid "Prepare quarantine folder for suspicious files :"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:137
+msgid ""
+"Configure ClamAV via cron, to scan the folder once a day, put suspicious "
+"files in quarantine, and raise email alerts, by creating file "
+"``/etc/cron.daily/clamscan`` with the following content :"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:152
+msgid ""
+"Make sure to change alert recepient (``admin@example.com`` above) and "
+"make this cron file executable :"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:158
+msgid ""
+"If a suspicious file is put in quarantine, you will need to manually "
+"delete the corresponding attachment from Geotrek-Admin (since the file "
+"for this attachment has moved to the quarantine folder, it will no longer"
+" be found)."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:161
+msgid "Uninstallation"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:163
+msgid "Run:"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:169
+msgid ""
+"Media files will be left in ``/opt/geotrek-admin/var`` directory. To "
+"remove them, run:"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:175
+msgid "To remove dependencies (convertit, screamshooter…), run:"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:183
+msgid ""
+"PostgreSQL and its database will not be removed by these commands. If "
+"need be, remove them manually."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:188
+msgid "Docker"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:190
+msgid ""
+"Docker installation allows to install several instances of Geotrek-admin "
+"on the same serveur, and to install it on other distributions than "
+"Ubuntu."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:194
+msgid ""
+"Install Docker and Docker Compose, `from upstream packages "
+"<https://docs.docker.com/install/>`_"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:195
+msgid ""
+"Download `zip package <https://github.com/GeotrekCE/Geotrek-"
+"admin/releases/latest/download/install-docker.zip>`_"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:196
+msgid "Unzip the archive"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:197
+msgid ""
+"Copy geotrek folder where you want (to keep compatibility with all "
+"examples in this documentation you can use `/opt/geotrek-admin` folder)"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:198
+msgid "Copy ``.env.dist`` to ``.env`` and edit to feed your needs if necessary."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:199
+msgid ""
+"We recommend to use a specific user to run geotrek. So created it "
+"(useradd -m geotrek) and change ownership of the folder to this user. You"
+" should get UID and GID from this user and set them in .env file. With "
+"command ``id geotrek`` you should get uid and gid values."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:201
+msgid ""
+"If you use an external database, you should adapt your docker-compose to "
+"exclude postgres container and volume. Then, you should create user and "
+"database, enable PostGIS, Postgis_raster and pgcrypto extensions, then "
+"set dedicated environment variables in .env file (`POSTGRES_HOST` - empty"
+" if database installed on host, `POSTGRES_USER`, `POSTGRES_DATABASE` and "
+"`POSTGRES_PASSWORD`)"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:202
+msgid "Run ``docker compose run --rm web update.sh``"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:203
+msgid "Run ``docker compose up``"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:204
+msgid ""
+"Install NGINX (or equivalent) and add a configuration file (taking "
+"inspiration from `nginx.conf.in`)"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:207
+msgid "Management commands"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:209
+msgid "In documentation, replace ``sudo geotrek …`` commands by :"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:211
+#: ../../installation-and-configuration/installation.rst:216
+msgid "``cd <install directory>``"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:212
+msgid "``docker compose run --rm web ./manage.py …``"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:214
+msgid "Replace ``sudo dpkg-reconfigure geotrek-admin`` by :"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:217
+msgid "``docker compose run --rm web update.sh``"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:222
+msgid "Load fixtures"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:224
+msgid ""
+"During the initial setup of Geotrek-admin, you may need to run certain "
+"commands to generate and load initial data (fixtures)."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:226
+msgid "To load minimal fixtures, run this command **only once during setup**:"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:234
+msgid ""
+"The ``load_data.sh`` script is intended only for first-time installation."
+" Never re-run this script after the initial installation, especially in a"
+" production environment. It will overwrite manually entered or modified "
+"data (e.g., paths, infrastructure, zoning, practices, etc.)."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:236
+msgid ""
+"Do not run this command if your Geotrek instance does not use **dynamic "
+"segmentation**, as it will try to create segmentation-dependent data that"
+" may not be relevant or usable"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:238
+msgid ""
+"Once your Geotrek instance is installed, you should import your own "
+":ref:`initial data <minimal-initial-data>` to begin working with the "
+"application."
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:241
+msgid "Create a superuser"
+msgstr ""
+
+#: ../../installation-and-configuration/installation.rst:243
+msgid "To create an application superuser, run this command :"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:3
+msgid "Maintenance"
+msgstr "Maintenance"
+
+#: ../../installation-and-configuration/maintenance.rst:8
+msgid "Maintenance mode"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:10
+msgid ""
+"If you want to block access to your application while you are performing "
+"maintenance tasks, you can activate the maintenance mode. This will "
+"display a message to users indicating that the application is temporarily"
+" unavailable."
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:33
+msgid "Application backup"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:35
+msgid "Database"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:41
+msgid "Media files"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:56
+msgid "Application restore"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:58
+msgid ""
+"If you restore Geotrek-admin on a new server, you will have to install "
+"PostgreSQL and PostGIS and create a database user first. Otherwise go "
+"directly to the database creation step."
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:68
+msgid ""
+"The installation command will never be the same depending on the servers "
+"hosting the database (Ubuntu 22, 24 / official repository / PostgreSQL "
+"repository / RedHat, etc.)."
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:70
+msgid ""
+"Here is an example with the command to run to install PostgreSQL on "
+"Ubuntu 24.0 (Noble) :"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:77
+msgid "Create an empty database (``geotrekdb`` in this example):"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:87
+msgid "Restore backup:"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:93
+msgid ""
+"If errors persist, rename your database and recreate a fresh one, then "
+"restore."
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:95
+msgid "Extract media and configuration files:"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:102
+msgid "Follow *Fresh installation* method. Choose to manage database by yourself."
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:107
+msgid "PostgreSQL optimization"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:109
+msgid "Increase ``shared_buffers`` and ``work_mem`` according to your RAM"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:111
+msgid ""
+"`Log long queries "
+"<http://wiki.postgresql.org/wiki/Logging_Difficult_Queries>`_"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:113
+msgid ""
+"Use `pg activity <https://github.com/julmon/pg_activity#readme>`_ for "
+"monitoring"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:118
+msgid "Access your database securely on your local machine (QGIS)"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:120
+msgid ""
+"Instead of opening your database to the world (by opening the 5432 port "
+"for example), you can use `SSH tunnels "
+"<https://www.postgresql.org/docs/current/ssh-tunnels.html>`_. Follow "
+"`this tutorial <https://makina-corpus.com/devops/acceder-base-donnees-"
+"postgresql-depuis-qgis-pgadmin-securisee>`_ for more information (in "
+"french)."
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:126
+msgid "Manage Cache"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:128
+msgid "You can purge application cache :"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:130
+msgid "with command line :"
+msgstr ""
+
+#: ../../installation-and-configuration/maintenance.rst:147
+msgid "in Geotrek-admin interface : ``https://<server_url>/admin/clearcache/``"
+msgstr ""
+
+#: ../../installation-and-configuration/synchronization.rst:3
+msgid "Synchronization"
+msgstr ""
+
+#: ../../installation-and-configuration/synchronization.rst:8
+msgid "Geotrek-mobile app v3"
+msgstr ""
+
+#: ../../installation-and-configuration/synchronization.rst:10
+msgid ""
+"The Geotrek-mobile app v3 has its own API and synchronization command "
+"called ``sync_mobile``."
+msgstr ""
+
+#: ../../installation-and-configuration/synchronization.rst:24
+msgid "Automatic synchronization"
+msgstr ""
+
+#: ../../installation-and-configuration/synchronization.rst:26
+msgid ""
+"You can set up automatic synchronization by creating a file "
+"``/etc/cron.d/geotrek_sync`` that contains:"
+msgstr ""
+
+#: ../../installation-and-configuration/synchronization.rst:43
+msgid "This example will automatically synchronize data a 3 am every day."
+msgstr ""
+
+#: ../../installation-and-configuration/synchronization.rst:45
+msgid ""
+"Note: it is required to give the full path to the geotrek command since "
+"cron sets the PATH only to `bin:/usr/sbin` with Debian and `bin:/usr/bin`"
+" with Docker."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:3
+msgid "Upgrade"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:8
+msgid "Upgrade Geotrek-Admin"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:10
+msgid "Beforehand you should update your system's catalog:"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:17
+msgid ""
+"If your current version is <= 2.40.1 you should run instead : ``sudo apt "
+"update --allow-releaseinfo-change``"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:21
+msgid "To display the installed version and the latest upgradeable version, run:"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:27
+msgid "To upgrade only geotrek-admin and its dependencies, run:"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:35
+msgid ""
+"It is only possible to install the latest version of geotrek-admin via "
+"this command line"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:36
+msgid ""
+"All package versions remain available as `release assets "
+"<https://github.com/GeotrekCE/Geotrek-admin/releases/>`_. Download the "
+".deb for your architecture and do ``sudo apt install <the .deb "
+"package>``."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:37
+msgid "Example : ``sudo apt install geotrek-admin_2.106.0.ubuntu20.04_amd64.deb``"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:39
+msgid ""
+"Once geotrek-admin has been upgraded you may want to prevent unwanted "
+"upgrade with the whole distribution, you can run:"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:46
+msgid "From Geotrek-admin < 2.113.0"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:50
+msgid ""
+"Starting from version 2.113.0, Geotrek now requires pgRouting. Please "
+"follow these steps before updating."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:52
+msgid ""
+"If you use Ubuntu Bionic 18.04 on your database host (on same or external"
+" Geotrek-admin host), you can follow the instructions :ref:`Install "
+"PgRouting on Ubuntu Bionic section <install-pgrouting-bionic>`."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst
+msgid "On Debian packaging >= Ubuntu Focal 20.04"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:59
+msgid "**Installation with database on same host:**"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:61
+msgid "Backup your database : see :ref:`Maintenance <application-backup>`."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:63
+msgid ""
+"Install the pgRouting package from your distribution's package manager "
+"(if you installed Geotrek using the :ref:`install script <fresh-"
+"installation>` : ``sudo apt install postgresql-pgrouting``)."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:65
+msgid ""
+"Activate the extension in your database : ``su postgres -c \"psql -q -d "
+"$POSTGRES_DB -c 'CREATE EXTENSION pgrouting;'\"``"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:67
+#: ../../installation-and-configuration/upgrade.rst:88
+msgid "Update Geotrek as usual"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst
+msgid "On an external database host"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:71
+msgid "**Ubuntu >= 20.04 or docker with external database:**"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:73
+msgid ""
+"These instructions could be the same as previous if you use a debian like"
+" distribution on your database host."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:75
+msgid "Backup your database."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:76
+msgid ""
+"Install pgrouting version corresponding to your PostgreSQL version on "
+"your database server. (see `pgRouting documentation "
+"<https://docs.pgrouting.org/latest/en/index.html>`_)."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:77
+msgid ""
+"Activate pgrouting extension in your Geotrek-admin database with your "
+"database superuser."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst
+msgid "On a Docker installation"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:82
+msgid "**Import your database is a docker container:**"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:84
+#, python-format
+msgid ""
+"Backup your database : ``docker compose run --rm web bash -c 'pg_dump "
+"--no-acl --no-owner -Fc -h postgres $POSTGRES_DB > `date "
+"+%Y%m%d%H%M`-database.backup'``"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:86
+msgid ""
+"Replace the docker image in ``docker-compose.yml`` for service "
+"``postgres`` with an image that includes PostgreSQL, PostGIS and "
+"pgRouting version >=3.0.0 (`example with PostgreSQL 12, PostGIS 3.0 and "
+"pgRouting 3.0.0 "
+"<https://hubgw.docker.com/layers/pgrouting/pgrouting/12-3.0-3.0.0/images/sha256-382a2862cac07b0d3e57be9ddac587ad7a0d890ae2adc9fbae96a320a50194fb>`_)."
+" We highly recommend picking an image including the **same versions of "
+"PostgreSQL and PostGIS that you already use**. If you choose to pick "
+"later versions instead, you will need to delete your database, recreate "
+"it, and use ``pg_restore`` to restore the backup from step 1 (see "
+":ref:`recreate user and database <recreate-user-database>` below)."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:93
+msgid "Server migration"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:96
+msgid "New server"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:98
+msgid ""
+"It is a new installation with an additional backup/restore and a file "
+"transfert in between. The commands below are examples to adapt to your "
+"actual configuration (server names, database configuration). These "
+"commands apply to versions >= 2.33. If your version is below 2.33, please"
+" check the doc of your version."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:100
+#: ../../installation-and-configuration/upgrade.rst:113
+msgid ""
+":ref:`Backup <application-backup>` your data (database and `/opt/geotrek-"
+"admin/var` folders)"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:102
+msgid "Restore files on the new server:"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:104
+msgid "/opt/geotrek-admin/var/conf"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:105
+msgid "/opt/geotrek-admin/var/media"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:106
+msgid "database.backup"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:109
+msgid "Same server"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:111
+msgid "Take care to update your server to a supported version."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:114
+msgid ""
+"Remove and purge your postgresql server version (take care about your "
+"configuration in your `postgresql.conf` and `pg_hba.conf`)"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:118
+msgid ""
+"You can check postgresql versions installed with ``pg_lsclusters`` "
+"command."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:124
+msgid "Upgrade your distribution"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:125
+msgid ""
+"Run again the install script referring to the :ref:`fresh-installation` "
+"section"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:126
+msgid ""
+"Restore your database and media files and your custom `postgresql.conf` "
+"and `pg_hba.conf` files."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:129
+msgid "With PostgreSQL on same server:"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:131
+msgid "Check if your upgrade have installed new postgresql version or not."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:136
+msgid "PostgreSQL"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:140
+msgid ""
+"Geotrek-admin support **PostgreSQL >= 14**, **PostGIS >= 3.1** and "
+"**PgRouting >=3.0** for now."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:142
+msgid ""
+"We recommend upgrading to **PostgreSQL 17**, **PostGIS 3.5.0** and "
+"**PgRouting 3.7.0**."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:144
+msgid "You can check your versions with the following command:"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:150
+msgid ""
+"If your PostgreSQL version is below 14, you should upgrade your "
+"PostgreSQL server. If you can not upgrade for the moment, check release "
+"notes before each Geotrek-admin upgrade to ensure compatibility. You will"
+" be able to mark hold your Geotrek-admin Ubuntu package to prevent "
+"unwanted upgrade."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:158
+msgid ""
+"In case of unwanted upgrade, you will be able to revert your Geotrek-"
+"admin version to last supporting PostgreSQL 10 with, for example:"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:164
+msgid "for Ubuntu >= 20.04, or"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:170
+msgid "for Ubuntu bionic"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:175
+msgid "Update PostgreSQL / PostGIS / PgRouting on Ubuntu Bionic"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:179
+msgid ""
+"Ubuntu Bionic is already deprecated. We recommend you to install "
+"PostgreSQL on a dedicated server, with a most recent version of Ubuntu."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:181
+#: ../../installation-and-configuration/upgrade.rst:329
+msgid ""
+"If possible, install PostgreSQL on the same host or datacenter than your "
+"Geotrek-admin instance."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:183
+msgid ""
+"If you can't, you can follow these instructions to upgrade PostgreSQL, "
+"PostGIS and PgRouting on Ubuntu Bionic with official PostgreSQL APT "
+"archive repository."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:185
+msgid ""
+"The ultimate version published for Bionic is PostgreSQL 14, supported "
+"until November 12, 2026."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:187
+#: ../../installation-and-configuration/upgrade.rst:334
+msgid "If you have Postgresql < 14:"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:198
+#: ../../installation-and-configuration/upgrade.rst:345
+msgid ""
+"Then, make a database dump. You can see user / database / password in "
+"/opt/geotrek-admin/conf/env file."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:204
+#: ../../installation-and-configuration/upgrade.rst:351
+msgid "Now, install newest version of PostgreSQL and PostGIS:"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:212
+#: ../../installation-and-configuration/upgrade.rst:360
+msgid ""
+"Installing many PostgreSQL versions on the same system will use another "
+"port than default 5432. You can check the newest port with "
+"``pg_lsclusters`` command. For next lines, we consider new port is 5433."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:217
+#: ../../installation-and-configuration/upgrade.rst:365
+msgid "Recreate user and database:"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:235
+msgid ""
+"You should report configuration from "
+"``/etc/postgresql/10/main/pg_hba.conf`` to "
+"``/etc/postgresql/14/main/pg_hba.conf``. Then restart your PostgreSQL"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:244
+#: ../../installation-and-configuration/upgrade.rst:393
+msgid "You can now restore your database dump."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:252
+#: ../../installation-and-configuration/upgrade.rst:401
+msgid ""
+"You have to use ``-h 127.0.0.1`` to connect with the ``geotrek`` user "
+"(this user cannot connect with the default unix socket). Connecting with "
+"``geotrek`` is important for restored entities to have the right owner. "
+"Some errors can occurs, around extensions creation or ``spatial_ref_sys``"
+" table content. This is normal. We already create these extensions on "
+"previous steps."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:258
+msgid ""
+"Any special configuration or tune setting in your ``postgresql.conf`` "
+"will not be reported, you should report configuration yourself in "
+"``/etc/postgresql/14/main/postgresql.conf``. Then restart your PostgreSQL"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:266
+#: ../../installation-and-configuration/upgrade.rst:415
+msgid ""
+"Now, you can update your Geotrek-admin configuration to use the new "
+"PostgreSQL server, by changing its default port to the new one."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:272
+#: ../../installation-and-configuration/upgrade.rst:421
+msgid "And change ``POSTGRES_PORT`` to 5433"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:274
+#: ../../installation-and-configuration/upgrade.rst:423
+msgid ""
+"You can now upgrade your Geotrek-admin, and check that the right database"
+" is used."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:278
+msgid ""
+"If you want to use default 5432 port, you should change it in "
+"``/etc/postgresql/14/main/postgresql.conf``, restart PostgreSQL service, "
+"and change it by reconfiguring Geotrek-admin."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:285
+msgid "If it shows PostgreSQL 14, you can remove the old PostgreSQL version."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:295
+msgid "Install PgRouting on Ubuntu Bionic"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:297
+msgid ""
+"If you have your database host on Ubuntu Bionic 18.04, you should install"
+" a PgRouting version compatible with your PostgreSQL 14 version. "
+"PostgreSQL does not provide PgRouting package in its repository, so you "
+"should install it manually."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:321
+msgid "Update PostgreSQL / PostGIS / PgRouting on Ubuntu Focal 20.04"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:325
+msgid ""
+"Ubuntu Focal will be deprecated on May 2026. We recommend you to install "
+"PostgreSQL on a dedicated server, with a most recent version of Ubuntu."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:327
+msgid "Prefer upgrade your server to Ubuntu Noble 24.04 from now."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:331
+msgid ""
+"If you can't, you can follow these instructions to upgrade PostgreSQL, "
+"PostGIS and PgRouting on Ubuntu Bionic with official PostgreSQL APT "
+"repository."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:384
+msgid ""
+"You should report configuration from "
+"``/etc/postgresql/12/main/pg_hba.conf`` to "
+"``/etc/postgresql/15/main/pg_hba.conf``. Then restart your PostgreSQL"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:407
+msgid ""
+"Any special configuration or tune setting in your ``postgresql.conf`` "
+"will not be reported, you should report configuration yourself in "
+"``/etc/postgresql/15/main/postgresql.conf``. Then restart your PostgreSQL"
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:427
+msgid ""
+"If you want to use default 5432 port, you should change it in "
+"``/etc/postgresql/15/main/postgresql.conf``, restart PostgreSQL service, "
+"and change it by reconfiguring Geotrek-admin."
+msgstr ""
+
+#: ../../installation-and-configuration/upgrade.rst:434
+msgid "If it shows PostgreSQL 15, you can remove the old PostgreSQL version."
+msgstr ""

@@ -1,15 +1,15 @@
 from django.conf import settings
 from django.urls import path, register_converter
-
 from mapentity.registry import registry
 
-from . import models
-from geotrek.trekking.views import TrekSignageViewSet
 from geotrek.common.urls import LangConverter
+from geotrek.trekking.views import TrekSignageViewSet
 
-register_converter(LangConverter, 'lang')
+from . import models
 
-app_name = 'signage'
+register_converter(LangConverter, "lang")
+
+app_name = "signage"
 urlpatterns = registry.register(models.Signage, menu=settings.SIGNAGE_MODEL_ENABLED)
 
 
@@ -18,6 +18,9 @@ if settings.BLADE_ENABLED:
 
 
 urlpatterns += [
-    path('api/<lang:lang>/treks/<int:pk>/signages.geojson',
-         TrekSignageViewSet.as_view({'get': 'list'}), name="trek_signage_geojson"),
+    path(
+        "api/<lang:lang>/treks/<int:pk>/signages.geojson",
+        TrekSignageViewSet.as_view({"get": "list"}),
+        name="trek_signage_geojson",
+    ),
 ]

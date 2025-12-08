@@ -4,35 +4,64 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('land', '0002_auto_20180608_1236'),
+        ("land", "0002_auto_20180608_1236"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='competenceedge',
-            name='eid',
-            field=models.CharField(blank=True, db_column='id_externe', max_length=128, null=True, verbose_name='External id'),
+            model_name="competenceedge",
+            name="eid",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe",
+                max_length=128,
+                null=True,
+                verbose_name="External id",
+            ),
         ),
         migrations.AddField(
-            model_name='landedge',
-            name='eid',
-            field=models.CharField(blank=True, db_column='id_externe', max_length=128, null=True, verbose_name='External id'),
+            model_name="landedge",
+            name="eid",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe",
+                max_length=128,
+                null=True,
+                verbose_name="External id",
+            ),
         ),
         migrations.AddField(
-            model_name='physicaledge',
-            name='eid',
-            field=models.CharField(blank=True, db_column='id_externe', max_length=128, null=True, verbose_name='External id'),
+            model_name="physicaledge",
+            name="eid",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe",
+                max_length=128,
+                null=True,
+                verbose_name="External id",
+            ),
         ),
         migrations.AddField(
-            model_name='signagemanagementedge',
-            name='eid',
-            field=models.CharField(blank=True, db_column='id_externe', max_length=128, null=True, verbose_name='External id'),
+            model_name="signagemanagementedge",
+            name="eid",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe",
+                max_length=128,
+                null=True,
+                verbose_name="External id",
+            ),
         ),
         migrations.AddField(
-            model_name='workmanagementedge',
-            name='eid',
-            field=models.CharField(blank=True, db_column='id_externe', max_length=128, null=True, verbose_name='External id'),
+            model_name="workmanagementedge",
+            name="eid",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe",
+                max_length=128,
+                null=True,
+                verbose_name="External id",
+            ),
         ),
     ]

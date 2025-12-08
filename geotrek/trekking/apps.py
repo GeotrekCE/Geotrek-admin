@@ -1,14 +1,14 @@
 from django.apps import AppConfig
-from django.core.checks import register, Tags
+from django.core.checks import Tags, register
 from django.utils.translation import gettext_lazy as _
 
 
 class TrekkingConfig(AppConfig):
-    name = 'geotrek.trekking'
+    name = "geotrek.trekking"
     verbose_name = _("Trekking")
 
     def ready(self):
-        from .forms import TrekForm, POIForm, ServiceForm
+        from .forms import POIForm, ServiceForm, TrekForm
 
         def check_hidden_fields_settings(app_configs, **kwargs):
             # Check all Forms hidden fields settings

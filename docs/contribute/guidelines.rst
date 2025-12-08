@@ -92,13 +92,15 @@ Release
 
 On master branch:
 
-* Update files *VERSION* and *docs/changelog.rst* to remove ``+dev`` suffix and increment version (please use semver rules)
-* Run ``dch -r -D RELEASED``, update version in the same way and save
+* Choose a version number for the release (X.Y.Z). Increment Y if new feature is present, only Z for bugfixes or minor improvements (please use semver rules).
+* ``make release version=<version>``
+* Check files *VERSION* and *docs/changelog.rst* and *debian/changelog*
 * Commit with message 'Release X.Y.Z' and push to ``master``
 * Create new release with name 'Geotrek-admin X.Y.Z' on Github, with tag X.Y.Z, click on "Generate release notes"
 * Wait for release to be published through CI
-* Update files *VERSION* and *docs/changelog.rst* to add ``+dev`` suffix
-* Run ``dch -v <version>+dev --no-force-save-on-release`` and save
+* Prepare repository for next developements
+* ``make back_to_dev version=<version>``
+* Check files *VERSION* and *docs/changelog.rst* and *debian/changelog*
 * Commit with message 'Back to development' and push to ```master``
 
 * When creating a new release 'X.Y.Z' on github, Github actions will generate the .deb package file, and publish it on https://packages.geotrek.fr (see ``.github/workflows/test.yml`` file for details)

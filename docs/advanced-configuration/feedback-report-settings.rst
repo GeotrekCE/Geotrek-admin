@@ -5,7 +5,7 @@ Feedback reports settings
 ==========================
 
 .. info::
-  
+
   For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
 Send acknowledge email
@@ -22,12 +22,12 @@ If ``False``, no email will be sent to the sender of any feedback on Geotrek-ran
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 SEND_REPORT_ACK = True
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 SEND_REPORT_ACK = False
 
 .. _suricate-support:
@@ -52,13 +52,13 @@ To initialize Report forms (Geotrek-admin, Geotrek-rando-V2, Geotrek-rando-V3) l
     .. md-tab-item:: With Debian
 
          .. code-block:: bash
-    
+
                 geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
 
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/basic.json
 
 2 - Suricate Standard
@@ -150,7 +150,7 @@ Furthermore, it is now possible to display the report layer on other Geotrek mod
 
 **6** - Reports visibility
 
-When a supervisor logs in to Geotrek, they can only see reports that are currently assigned to them. Both the manager and administrators can see all existing reports.
+When a supervisor logs in to Geotrek, they can only see reports that were assigned to them, whether they are currently being processed or have been solved. Both the manager and administrators can see all existing reports.
 
 **7** - Predefined messages
 
@@ -210,13 +210,13 @@ You can use the following command to test your connection settings:
     .. md-tab-item:: With Debian
 
          .. code-block:: bash
-    
+
                 geotrek sync_suricate -v 2 --connection-test
 
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
                 docker compose run --rm web ./manage.py sync_suricate -v 2 --connection-test
 
 Load lists for activities and/or report statuses from Suricate:
@@ -227,13 +227,13 @@ Load lists for activities and/or report statuses from Suricate:
     .. md-tab-item:: With Debian
 
          .. code-block:: bash
-    
+
                 geotrek sync_suricate --activities --statuses -v 2
 
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
                 docker compose run --rm web ./manage.py sync_suricate --activities --statuses -v 2
 
 Load alerts from Suricate (located in your bounding box) :
@@ -244,13 +244,13 @@ Load alerts from Suricate (located in your bounding box) :
     .. md-tab-item:: With Debian
 
          .. code-block:: bash
-    
+
                 geotrek sync_suricate -v 2 --no-notification
 
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
                 docker compose run --rm web ./manage.py sync_suricate -v 2 --no-notification
 
 Then load extra required statuses for Reports and Interventions:
@@ -261,14 +261,14 @@ Then load extra required statuses for Reports and Interventions:
     .. md-tab-item:: With Debian
 
          .. code-block:: bash
-    
+
                 geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/management_workflow.json
                 geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/basic.json
 
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/feedback/fixtures/management_workflow.json
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/maintenance/fixtures/basic.json
 
@@ -279,9 +279,9 @@ Then load extra required statuses for Reports and Interventions:
   - create predefined emails (`/admin/feedback/predefinedemail/`) to notify Suricate Sentinels and Administrators. You can use ``intervention_end_date`` and ``supervisor`` in the messages' body to automatically replace with the report's linked Intervention date and author. The Extended Username field will be dsiplayed (see User Profile under `/admin/auth/user/`).
   - Make sure Users involved in the workflow have proper permissions to create and update Reports and Interventions (`/admin/auth/user/`)
 
-.. note:: 
+.. note::
   - Be aware that, when enabling Suricate Management mode, Suricate becomes the master database for reports. This means **reports created in Geotrek-admin will not be saved to the database, they will only be sent to Suricate**.
-  - Reports are only saved when synchronized back from Suricate, when the synchronization command is run. 
+  - Reports are only saved when synchronized back from Suricate, when the synchronization command is run.
 
 Make sure to run these three commands daily to maintain synchronization and update reports (thanks to `cron` for instance) :
 
@@ -291,7 +291,7 @@ Make sure to run these three commands daily to maintain synchronization and upda
     .. md-tab-item:: With Debian
 
          .. code-block:: bash
-    
+
                 geotrek retry_failed_requests_and_mails
                 geotrek check_timers
                 geotrek sync_suricate
@@ -299,7 +299,7 @@ Make sure to run these three commands daily to maintain synchronization and upda
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
                 docker compose run --rm web ./manage.py retry_failed_requests_and_mails
                 docker compose run --rm web ./manage.py check_timers
                 docker compose run --rm web ./manage.py sync_suricate
@@ -307,7 +307,7 @@ Make sure to run these three commands daily to maintain synchronization and upda
 Display reports with status defined colors
 --------------------------------------------
 
-Enable report colors per status 
+Enable report colors per status
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 Go to the Configuration site and select colors to display for each status (`/admin/feedback/reportstatus/`).
@@ -318,12 +318,12 @@ Go to the Configuration site and select colors to display for each status (`/adm
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 ENABLE_REPORT_COLORS_PER_STATUS = True
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 ENABLE_REPORT_COLORS_PER_STATUS = False
 
 Use timers to receive alerts for your reports
@@ -350,13 +350,13 @@ Use timers to receive alerts for your reports
     .. md-tab-item:: With Debian
 
          .. code-block:: bash
-    
+
                 geotrek check_timers
 
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
                 docker compose run --rm web ./manage.py check_timers
 
 Anonymize feedback reports
@@ -374,13 +374,13 @@ than 365 days:
     .. md-tab-item:: With Debian
 
          .. code-block:: bash
-    
+
                 geotrek erase_emails
 
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
                 docker compose run --rm web ./manage.py erase_emails
 
 Or if you want to erase emails for reports older than 90 days:
@@ -391,12 +391,12 @@ Or if you want to erase emails for reports older than 90 days:
     .. md-tab-item:: With Debian
 
          .. code-block:: bash
-    
+
                 geotrek erase_emails --days 90
 
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
                 docker compose run --rm web ./manage.py erase_emails --days 90
 

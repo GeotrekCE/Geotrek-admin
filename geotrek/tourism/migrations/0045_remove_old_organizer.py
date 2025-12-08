@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0044_deplace_organizer_to_model'),
+        ("tourism", "0044_deplace_organizer_to_model"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='touristicevent',
-            name='organizer',
+            model_name="touristicevent",
+            name="organizer",
         ),
     ]

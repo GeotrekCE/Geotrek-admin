@@ -5,15 +5,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0009_auto_20190809_1146'),
+        ("trekking", "0009_auto_20190809_1146"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='trek',
-            name='duration',
-            field=models.FloatField(blank=True, db_column='duree', help_text='In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)', null=True, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Duration'),
+            model_name="trek",
+            name="duration",
+            field=models.FloatField(
+                blank=True,
+                db_column="duree",
+                help_text="In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)",
+                null=True,
+                validators=[django.core.validators.MinValueValidator(0)],
+                verbose_name="Duration",
+            ),
         ),
     ]

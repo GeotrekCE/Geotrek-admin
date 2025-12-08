@@ -4,16 +4,27 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0008_auto_20200228_1830'),
+        ("common", "0008_auto_20200228_1830"),
     ]
 
     operations = [
-        migrations.RunSQL('ALTER SEQUENCE m_b_organisme_id_seq RENAME TO common_organism_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE fl_b_fichier_id_seq RENAME TO common_filetype_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE fl_t_fichier_id_seq RENAME TO common_attachment_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_b_theme_id_seq RENAME TO common_theme_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_b_source_fiche_id_seq RENAME TO common_recordsource_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_b_target_portal_id_seq RENAME TO common_targetportal_id_seq;'),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_b_organisme_id_seq RENAME TO common_organism_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE fl_b_fichier_id_seq RENAME TO common_filetype_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE fl_t_fichier_id_seq RENAME TO common_attachment_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_theme_id_seq RENAME TO common_theme_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_source_fiche_id_seq RENAME TO common_recordsource_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_target_portal_id_seq RENAME TO common_targetportal_id_seq;"
+        ),
     ]

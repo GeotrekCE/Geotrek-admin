@@ -1,14 +1,14 @@
 from django.apps import AppConfig
-from django.core.checks import register, Tags
+from django.core.checks import Tags, register
 from django.utils.translation import gettext_lazy as _
 
 
 class SensitivityConfig(AppConfig):
-    name = 'geotrek.sensitivity'
+    name = "geotrek.sensitivity"
     verbose_name = _("Sensitivity")
 
     def ready(self):
-        from .forms import SensitiveAreaForm, RegulatorySensitiveAreaForm
+        from .forms import RegulatorySensitiveAreaForm, SensitiveAreaForm
 
         def check_hidden_fields_settings(app_configs, **kwargs):
             # Check all Forms hidden fields settings

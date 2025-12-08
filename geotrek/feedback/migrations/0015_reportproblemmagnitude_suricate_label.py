@@ -4,15 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('feedback', '0014_auto_20210825_1130'),
+        ("feedback", "0014_auto_20210825_1130"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='reportproblemmagnitude',
-            name='suricate_label',
-            field=models.CharField(blank=True, max_length=128, null=True, unique=True, verbose_name='Suricate label'),
+            model_name="reportproblemmagnitude",
+            name="suricate_label",
+            field=models.CharField(
+                blank=True,
+                max_length=128,
+                null=True,
+                unique=True,
+                verbose_name="Suricate label",
+            ),
         ),
     ]

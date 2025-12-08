@@ -1,7 +1,7 @@
 import factory
 
-from geotrek.core.tests.factories import TopologyFactory
 from geotrek.common.tests.factories import OrganismFactory
+from geotrek.core.tests.factories import TopologyFactory
 
 from .. import models
 
@@ -10,7 +10,7 @@ class PhysicalTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.PhysicalType
 
-    name = factory.Sequence(lambda n: "PhysicalType %s" % n)
+    name = factory.Sequence(lambda n: f"PhysicalType {n}")
 
 
 class PhysicalEdgeFactory(TopologyFactory):
@@ -24,7 +24,7 @@ class LandTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.LandType
 
-    name = factory.Sequence(lambda n: "LandType %s" % n)
+    name = factory.Sequence(lambda n: f"LandType {n}")
     right_of_way = True
 
 
@@ -39,14 +39,14 @@ class CirculationTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.CirculationType
 
-    name = factory.Sequence(lambda n: "CirculationType %s" % n)
+    name = factory.Sequence(lambda n: f"CirculationType {n}")
 
 
 class AuthorizationTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.AuthorizationType
 
-    name = factory.Sequence(lambda n: "AuthorizationType %s" % n)
+    name = factory.Sequence(lambda n: f"AuthorizationType {n}")
 
 
 class CirculationEdgeFactory(TopologyFactory):

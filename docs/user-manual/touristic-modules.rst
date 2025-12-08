@@ -11,7 +11,7 @@ Itinéraires
 
     .. 
 
-Les itinéraires sont des randonnées présentés au grand public : l’itinéraire est défini selon la géométrie des tronçons empruntés.
+Les itinéraires sont des randonnées présentées au grand public : l’itinéraire est défini selon la géométrie des tronçons empruntés.
 L’ajout ou la modification sont fréquents.
 
 Fiche détaillée
@@ -364,7 +364,7 @@ Fiche détaillée
 	- Visibilité : publique
 	- Exemple : La montée du Saut du Laire, particulièrement les 150 derniers mètres, sont déconseillés aux joëlettes, notamment dans la perspective du retour en descente sur pavé pouvant être glissant.
 
-	**Signalétique accessiiblité [fr]**
+	**Signalétique accessibilité [fr]**
 
 	- Description : description de taille, forme et couleurs des signalétiques d'accessibilité
 	- Type : liste déroulante
@@ -430,6 +430,25 @@ Services
 Contenus touristiques
 =====================
 
+Les contenus touristiques sont des lieux accessibles sans date préétablie, par exemple un hôtel,
+une auberge, un producteur artisanal, etc. Ils sont filtrables directement depuis la liste des
+éléments géographiques et sont identifiés dans Geotrek-Rando comme des « services ».
+
+Les contenus touristiques contiennent de multiples champs, mais il existe trois champs
+permettant de filtrer sur le contenu :
+
+- **Categorie**
+- **Type 1** (sous-type 1)
+- **Type 2** (sous-type 2)
+
+Le Type 1 et le Type 2 sont dépendants de la catégorie.  
+Par exemple, pour une catégorie « Hébergement », on peut avoir :
+
+- une sous-catégorie *Type 1* : « Type d’hébergement »  
+  (contenant des valeurs comme *Camping*, *Hébergement collectif*, *Hôtel*, *Gîte*, etc.)
+- une sous-catégorie *Type 2* : « Label »  
+  (indiquant par exemple des appartenances à des réseaux, ou des niveaux comme des étoiles)
+
 Zone tampon pour contenus à proximité
 ----------------------------------------
 
@@ -443,6 +462,8 @@ La taille de la zone tampon est fixée à 500m autour de l'itinéraire pour remo
 
 Évènements touristiques
 =======================
+
+Les événements touristiques sont des lieux ou des événements accessibles avec date préétablie, par exemple, une randonnée accompagnée. 
 
 .. _signalements:
 

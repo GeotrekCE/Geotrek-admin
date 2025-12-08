@@ -2,12 +2,13 @@ import factory
 from django.conf import settings
 from django.contrib.gis.geos import Point
 
-from .. import models
-from geotrek.core.tests.factories import TopologyFactory, PointTopologyFactory
 from geotrek.common.tests.factories import ReservationSystemFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.core.tests.factories import PointTopologyFactory, TopologyFactory
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.signage.tests.factories import SignageFactory
+
+from .. import models
 
 
 class TrekNetworkFactory(factory.django.DjangoModelFactory):
@@ -15,7 +16,7 @@ class TrekNetworkFactory(factory.django.DjangoModelFactory):
         model = models.TrekNetwork
 
     network = "Network"
-    pictogram = get_dummy_uploaded_image('network.png')
+    pictogram = get_dummy_uploaded_image("network.png")
 
 
 class PracticeFactory(factory.django.DjangoModelFactory):
@@ -23,7 +24,7 @@ class PracticeFactory(factory.django.DjangoModelFactory):
         model = models.Practice
 
     name = "Usage"
-    pictogram = get_dummy_uploaded_image('practice.png')
+    pictogram = get_dummy_uploaded_image("practice.png")
 
 
 class RatingScaleFactory(factory.django.DjangoModelFactory):
@@ -46,7 +47,7 @@ class AccessibilityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Accessibility
 
-    name = factory.Faker('word')
+    name = factory.Faker("word")
     pictogram = factory.django.ImageField()
 
 
@@ -62,7 +63,7 @@ class RouteFactory(factory.django.DjangoModelFactory):
         model = models.Route
 
     route = "Route"
-    pictogram = get_dummy_uploaded_image('routes.png')
+    pictogram = get_dummy_uploaded_image("routes.png")
 
 
 class DifficultyLevelFactory(factory.django.DjangoModelFactory):
@@ -70,7 +71,7 @@ class DifficultyLevelFactory(factory.django.DjangoModelFactory):
         model = models.DifficultyLevel
 
     difficulty = "Difficulty"
-    pictogram = get_dummy_uploaded_image('difficulty.png')
+    pictogram = get_dummy_uploaded_image("difficulty.png")
 
 
 class WebLinkCategoryFactory(factory.django.DjangoModelFactory):
@@ -78,7 +79,7 @@ class WebLinkCategoryFactory(factory.django.DjangoModelFactory):
         model = models.WebLinkCategory
 
     label = "Category"
-    pictogram = get_dummy_uploaded_image('weblink-category.png')
+    pictogram = get_dummy_uploaded_image("weblink-category.png")
 
 
 class WebLinkFactory(factory.django.DjangoModelFactory):
@@ -131,7 +132,7 @@ class TrekFactory(TopologyFactory):
     practice = factory.SubFactory(PracticeFactory)
 
     reservation_system = factory.SubFactory(ReservationSystemFactory)
-    reservation_id = 'XXXXXXXXX'
+    reservation_id = "XXXXXXXXX"
 
     @factory.post_generation
     def web_links(obj, create, extracted=None, **kwargs):
@@ -159,8 +160,8 @@ class TrekWithPOIsFactory(TrekFactory):
             if create:
                 obj.save()
         else:
-            POIFactory.create(geom='SRID=2154;POINT (700040 6600040)')
-            POIFactory.create(geom='SRID=2154;POINT (700050 6600050)')
+            POIFactory.create(geom="SRID=2154;POINT (700040 6600040)")
+            POIFactory.create(geom="SRID=2154;POINT (700050 6600050)")
 
 
 class TrekWithPublishedPOIsFactory(TrekFactory):
@@ -168,15 +169,33 @@ class TrekWithPublishedPOIsFactory(TrekFactory):
     def create_trek_with_poi(obj, create, extracted, **kwargs):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = obj.paths.all()[0]
-            POIFactory.create(paths=[(path, 0.5, 0.5)], published=True, published_en=True, published_fr=True)
-            POIFactory.create(paths=[(path, 0.4, 0.4)], published=True, published_en=True, published_fr=True)
+            POIFactory.create(
+                paths=[(path, 0.5, 0.5)],
+                published=True,
+                published_en=True,
+                published_fr=True,
+            )
+            POIFactory.create(
+                paths=[(path, 0.4, 0.4)],
+                published=True,
+                published_en=True,
+                published_fr=True,
+            )
             if create:
                 obj.save()
         else:
-            POIFactory.create(geom='SRID=2154;POINT (700040 6600040)',
-                              published=True, published_en=True, published_fr=True)
-            POIFactory.create(geom='SRID=2154;POINT (700050 6600050)',
-                              published=True, published_en=True, published_fr=True)
+            POIFactory.create(
+                geom="SRID=2154;POINT (700040 6600040)",
+                published=True,
+                published_en=True,
+                published_fr=True,
+            )
+            POIFactory.create(
+                geom="SRID=2154;POINT (700050 6600050)",
+                published=True,
+                published_en=True,
+                published_fr=True,
+            )
 
 
 class TrekWithInfrastructuresFactory(TrekFactory):
@@ -189,8 +208,8 @@ class TrekWithInfrastructuresFactory(TrekFactory):
             if create:
                 obj.save()
         else:
-            InfrastructureFactory.create(geom='SRID=2154;POINT (700040 6600040)')
-            InfrastructureFactory.create(geom='SRID=2154;POINT (700050 6600050)')
+            InfrastructureFactory.create(geom="SRID=2154;POINT (700040 6600040)")
+            InfrastructureFactory.create(geom="SRID=2154;POINT (700050 6600050)")
 
 
 class TrekWithSignagesFactory(TrekFactory):
@@ -203,8 +222,8 @@ class TrekWithSignagesFactory(TrekFactory):
             if create:
                 obj.save()
         else:
-            SignageFactory.create(geom='SRID=2154;POINT (700040 6600040)')
-            SignageFactory.create(geom='SRID=2154;POINT (700050 6600050)')
+            SignageFactory.create(geom="SRID=2154;POINT (700040 6600040)")
+            SignageFactory.create(geom="SRID=2154;POINT (700050 6600050)")
 
 
 class TrekWithServicesFactory(TrekFactory):
@@ -219,9 +238,9 @@ class TrekWithServicesFactory(TrekFactory):
             if create:
                 obj.save()
         else:
-            service1 = ServiceFactory.create(geom='SRID=2154;POINT (700040 6600040)')
+            service1 = ServiceFactory.create(geom="SRID=2154;POINT (700040 6600040)")
             service1.type.practices.add(obj.practice)
-            service2 = ServiceFactory.create(geom='SRID=2154;POINT (700050 6600050)')
+            service2 = ServiceFactory.create(geom="SRID=2154;POINT (700050 6600050)")
             service2.type.practices.add(obj.practice)
 
 
@@ -230,7 +249,7 @@ class POITypeFactory(factory.django.DjangoModelFactory):
         model = models.POIType
 
     label = "POI type"
-    pictogram = get_dummy_uploaded_image('poi-type.png')
+    pictogram = get_dummy_uploaded_image("poi-type.png")
 
 
 class POIFactory(PointTopologyFactory):
@@ -248,7 +267,7 @@ class ServiceTypeFactory(factory.django.DjangoModelFactory):
         model = models.ServiceType
 
     name = "Service type"
-    pictogram = get_dummy_uploaded_image('service-type.png')
+    pictogram = get_dummy_uploaded_image("service-type.png")
     published = True
 
 

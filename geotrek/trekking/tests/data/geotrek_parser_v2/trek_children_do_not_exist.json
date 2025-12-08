@@ -37,16 +37,25 @@
       "steps": []
     },
     {
-      "uuid": "b2aea892-5e6e-4daa-a750-7d2ee52d3fe1",
-      "steps": []
-    },
-    {
       "uuid": "b2aea666-5e6e-4daa-a750-7d2ee52d3fe1",
       "steps": [
         {
           "id": 457,
           "published": {
             "fr": false,
+            "en": false,
+            "it": false
+          }
+        }
+      ]
+    },
+    {
+      "uuid": "b2aea892-5e6e-4daa-a750-7d2ee52d3fe1",
+      "steps": [
+        {
+          "id": 10440,
+          "published": {
+            "fr": true,
             "en": false,
             "it": false
           }

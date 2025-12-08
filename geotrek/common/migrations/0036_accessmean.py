@@ -4,32 +4,56 @@ from django.db import migrations, models
 
 
 def copy_infrastructure_accessmean(apps, schema_editor):
-    Common_AccessMean = apps.get_model('common', 'AccessMean')
-    Infrastructure_AccessMean = apps.get_model('infrastructure', 'InfrastructureAccessMean')
+    Common_AccessMean = apps.get_model("common", "AccessMean")
+    Infrastructure_AccessMean = apps.get_model(
+        "infrastructure", "InfrastructureAccessMean"
+    )
     for accessmean in Infrastructure_AccessMean.objects.all():
-        Common_AccessMean.objects.get_or_create(pk=accessmean.pk, label=accessmean.label)
+        Common_AccessMean.objects.get_or_create(
+            pk=accessmean.pk, label=accessmean.label
+        )
 
 
 class Migration(migrations.Migration):
     dependencies = [
-        ('common', '0035_label_published'),
-        ('infrastructure', '0035_auto_20230613_0917'),
+        ("common", "0035_label_published"),
+        ("infrastructure", "0035_auto_20230613_0917"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='AccessMean',
+            name="AccessMean",
             fields=[
-                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date')),
-                ('date_update', models.DateTimeField(auto_now=True, db_index=True, verbose_name='Update date')),
-                ('label', models.CharField(max_length=128)),
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "date_insert",
+                    models.DateTimeField(
+                        auto_now_add=True, verbose_name="Insertion date"
+                    ),
+                ),
+                (
+                    "date_update",
+                    models.DateTimeField(
+                        auto_now=True, db_index=True, verbose_name="Update date"
+                    ),
+                ),
+                ("label", models.CharField(max_length=128)),
             ],
             options={
-                'verbose_name': 'Access mean',
-                'verbose_name_plural': 'Access means',
-                'ordering': ('label',),
+                "verbose_name": "Access mean",
+                "verbose_name_plural": "Access means",
+                "ordering": ("label",),
             },
         ),
-        migrations.RunPython(copy_infrastructure_accessmean, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(
+            copy_infrastructure_accessmean, reverse_code=migrations.RunPython.noop
+        ),
     ]

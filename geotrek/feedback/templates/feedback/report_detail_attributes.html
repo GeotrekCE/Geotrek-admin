@@ -63,14 +63,14 @@
             </td>
         </tr>
         <tr>
-            <th>{{ report|verbose:"assigned_user" }}</th>
-            <td>{% if report.assigned_user %}{{ report.assigned_user|safe }}
+            <th>{{ report|verbose:"current_user" }}</th>
+            <td>{% if report.current_user %}{{ report.current_user|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
             <th>{% trans "Provider" %}</th>
-            <td>{% if report.provider %}{{ report.provider|safe }}
+            <td>{% if report.provider %}{{ report.provider.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
@@ -115,7 +115,7 @@
         </tr>
             <tr>
                 <th>{{ report|verbose:"eid" }}</th>
-                <td>{{ report.eid }}</td>
+                <td>{{ report.get_eid }}</td>
             </tr>
         <tr>
             <th>{{ report|verbose:"locked" }}</th>

@@ -2,6 +2,31 @@
 Maintenance
 ===========
 
+.. _maintenance:
+
+Maintenance mode
+================
+
+If you want to block access to your application while you are performing maintenance tasks, you can activate the maintenance mode.
+This will display a message to users indicating that the application is temporarily unavailable.
+
+.. md-tab-set::
+    :name: maintenance-mode
+
+    .. md-tab-item:: With Debian
+
+            .. code-block:: bash
+
+                sudo geotrek maintenance_mode on # activate maintenance mode
+                sudo geotrek maintenance_mode off # deactivate maintenance mode
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: bash
+
+                docker compose run --rm web ./manage.py maintenance_mode on # activate maintenance mode
+                docker compose run --rm web ./manage.py maintenance_mode off # deactivate maintenance mode
+
 .. _application-backup:
 
 Application backup
@@ -35,9 +60,19 @@ Otherwise go directly to the database creation step.
 
 .. code-block:: bash
 
-    sudo apt install postgresql-14 postgresql-14-postgis-3
+    sudo apt install postgresql-14-pgrouting
     sudo -u postgres psql -c "CREATE USER geotrek PASSWORD 'geotrek';"
 
+
+.. note::
+  The installation command will never be the same depending on the servers hosting the database (Ubuntu 22, 24 / official repository / PostgreSQL repository / RedHat, etc.). 
+  
+  Here is an example with the command to run to install PostgreSQL on Ubuntu 24.0 (Noble) :
+
+  .. code-block:: bash
+
+      sudo apt install postgresql-17-pgrouting
+      sudo -u postgres psql -c "CREATE USER geotrek PASSWORD 'geotrek';"
 
 Create an empty database (``geotrekdb`` in this example):
 
@@ -47,6 +82,7 @@ Create an empty database (``geotrekdb`` in this example):
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis;"
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis_raster;"
     sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION pgcrypto;"
+    sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION pgrouting;"
 
 Restore backup:
 

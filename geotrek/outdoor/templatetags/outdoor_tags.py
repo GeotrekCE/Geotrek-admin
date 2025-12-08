@@ -1,31 +1,30 @@
+import json
+
 from django import template
 from django.conf import settings
-import json
-from geotrek.outdoor.models import Practice, RatingScale, Site
 
+from geotrek.outdoor.models import Practice, RatingScale, Site
 
 register = template.Library()
 
 
 @register.simple_tag
 def is_outdoor_enabled():
-    return 'geotrek.outdoor' in settings.INSTALLED_APPS
+    return "geotrek.outdoor" in settings.INSTALLED_APPS
 
 
 @register.simple_tag
 def site_practices():
     practices = {
         str(practice.pk): {
-            'types': {
-                str(type.pk): type.name
-                for type in practice.site_types.all()
-            },
-            'scales': {
-                str(scale.pk): scale.name
-                for scale in practice.rating_scales.all()
+            "types": {str(type.pk): type.name for type in practice.site_types.all()},
+            "scales": {
+                str(scale.pk): scale.name for scale in practice.rating_scales.all()
             },
         }
-        for practice in Practice.objects.prefetch_related('site_types', 'rating_scales').all()
+        for practice in Practice.objects.prefetch_related(
+            "site_types", "rating_scales"
+        ).all()
     }
     return json.dumps(practices)
 
@@ -34,27 +33,26 @@ def site_practices():
 def course_sites():
     sites = {
         str(site.pk): {
-            'practice': site.practice.pk,
-            'types': {
-                str(type.pk): type.name
-                for type in site.practice.course_types.all()
+            "practice": site.practice.pk,
+            "types": {
+                str(type.pk): type.name for type in site.practice.course_types.all()
             },
-            'scales': {
-                str(scale.pk): scale.name
-                for scale in site.practice.rating_scales.all()
+            "scales": {
+                str(scale.pk): scale.name for scale in site.practice.rating_scales.all()
             },
-        } if not (site.practice is None) else {'practice': None, 'types': {}, 'scales': {}}
-        for site in Site.objects.select_related('practice').prefetch_related('practice__course_types', 'practice__rating_scales').all()
+        }
+        if site.practice is not None
+        else {"practice": None, "types": {}, "scales": {}}
+        for site in Site.objects.select_related("practice")
+        .prefetch_related("practice__course_types", "practice__rating_scales")
+        .all()
     }
     return json.dumps(sites)
 
 
 @register.simple_tag
 def all_ratings_scales():
-    scales = {
-        str(scale.pk): scale.name
-        for scale in RatingScale.objects.all()
-    }
+    scales = {str(scale.pk): scale.name for scale in RatingScale.objects.all()}
     return json.dumps(scales)
 
 

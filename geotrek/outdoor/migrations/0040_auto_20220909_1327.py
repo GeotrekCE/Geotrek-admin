@@ -4,20 +4,23 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('outdoor', '0039_auto_20220304_1442'),
+        ("outdoor", "0039_auto_20220304_1442"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='course',
-            name='provider',
-            field=models.CharField(blank=True, db_index=True, max_length=1024, verbose_name='Provider'),
+            model_name="course",
+            name="provider",
+            field=models.CharField(
+                blank=True, db_index=True, max_length=1024, verbose_name="Provider"
+            ),
         ),
         migrations.AddField(
-            model_name='site',
-            name='provider',
-            field=models.CharField(blank=True, db_index=True, max_length=1024, verbose_name='Provider'),
+            model_name="site",
+            name="provider",
+            field=models.CharField(
+                blank=True, db_index=True, max_length=1024, verbose_name="Provider"
+            ),
         ),
     ]

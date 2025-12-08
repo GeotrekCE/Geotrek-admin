@@ -9,27 +9,29 @@ Map settings
 ===============
 
 .. info::
-  
+
   For a complete list of available parameters, refer to the default values in `geotrek/settings/base.py <https://github.com/GeotrekCE/Geotrek-admin/blob/master/geotrek/settings/base.py>`_.
 
 Leaflet configuration
 ----------------------
 
-Change or add WMTS tiles layers (IGN, OSM, Mapbox…)
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Change or add tiled basemaps (IGN, OSM, Mapbox…)
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-By default, you have two basemaps layers in your Geotrek-admin (OSM and OpenTopoMap)
+By default, a Geotrek-admin installation includes two basemap layers: OpenStreetMap and OpenTopoMap.
 
-You can change or add more basemaps layers like this:
-
-Specify the tiles URLs this way in your custom Django setting file:
+You can customize or add more tiled basemap layers by specifying the tile URLs in your custom Django settings file:
 
 .. code-block:: python
 
     LEAFLET_CONFIG['TILES'] = [('NAME_OF_TILE', 'URL', 'COPYRIGHT'), ...]
 
-.. note:: 
-  To use some IGN Geoportail WMTS tiles (Scan25, Scan100, etc.), you may need an API key. You can find more information about this on https://geoservices.ign.fr/services-geoplateforme-diffusion.
+.. note::
+  - Geotrek-admin (via Leaflet) **only supports basemaps served as tiles in the {z}/{x}/{y} format**. This means that **standard WMS services are not supported**.
+
+  - Only **WMTS services or other XYZ tile providers** (like OpenStreetMap, OpenTopoMap, Mapbox, etc.) can be used. WMTS is a standard protocol that can provide such tiles, but not all XYZ tile providers follow WMTS – for example, OpenStreetMap does not.
+
+  - If you plan to use IGN Geoportail WMTS layers (such as Plan IGN, Scan25, Orthophotos…), an API key might be required. For more details, see https://geoservices.ign.fr/services-geoplateforme-diffusion.
 
 .. md-tab-set::
     :name: leaflet-config-tile-tabs
@@ -38,7 +40,7 @@ Specify the tiles URLs this way in your custom Django setting file:
 
         .. code-block:: python
 
-    
+
                 LEAFLET_CONFIG['TILES'] = [
                     (
                         'OpenTopoMap',
@@ -63,7 +65,7 @@ Specify the tiles URLs this way in your custom Django setting file:
 
          .. code-block:: python
 
-    
+
                 LEAFLET_CONFIG['TILES'] = [
                 (
                     'IGN Plan V2',
@@ -130,7 +132,7 @@ Map overlays
 
         .. code-block:: python
 
-    
+
                 LEAFLET_CONFIG['OVERLAYS'] = [
                 (
                     'IGN Cadastre',
@@ -146,7 +148,7 @@ Map overlays
 
          .. code-block:: python
 
-    
+
                 LEAFLET_CONFIG['OVERLAYS'] = [
                 ('Coeur de parc', 'http://serveur/coeur-parc/{z}/{x}/{y}.png', '&copy; PNF'),
                 ]
@@ -173,13 +175,13 @@ You can define the max_zoom the user can zoom for all tiles.
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 LEAFLET_CONFIG['MAX_ZOOM'] = 19
-                
+
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 LEAFLET_CONFIG['MAX_ZOOM'] = 20
 
 .. note::
@@ -202,31 +204,62 @@ All layers colors can be customized from the settings. See `Leaflet reference <h
 
         .. code-block:: python
 
-    
                 MAPENTITY_CONFIG['MAP_STYLES'] = {
+                    # Path
                     'path': {'weight': 2, 'color': '#FF4800', 'opacity': 1.0},
+
+                    # Draft path
                     'draftpath': {'weight': 5, 'opacity': 1, 'color': 'yellow', 'dashArray': '8, 8'},
+
+                    # City
                     'city': {'weight': 4, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0},
+
+                    # District
                     'district': {'weight': 6, 'color': '#FF9700', 'opacity': 0.3, 'fillOpacity': 0.0, 'dashArray': '12, 12'},
+
+                    # Restricted area
                     'restrictedarea': {'weight': 2, 'color': 'red', 'opacity': 0.5, 'fillOpacity': 0.5},
+
+                    # Land edge
                     'land': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+
+                    # Physical edge
                     'physical': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+
+                    # Circulation edge
                     'circulation': {'weight': 6, 'color': 'red', 'opacity': 1.0},
+
+                    # Competence edge
                     'competence': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+
+                    # Work management edge
                     'workmanagement': {'weight': 4, 'color': 'red', 'opacity': 1.0},
+
+                    # Signage management edge
                     'signagemanagement': {'weight': 5, 'color': 'red', 'opacity': 1.0},
-    
+
+                    # File imported via FileLayer (e.g., GPX, KML, GeoJSON)
                     'filelayer': {'color': 'blue', 'opacity': 1.0, 'fillOpacity': 0.9, 'weight': 3, 'radius': 5},
-                    
+
+                    # Object detail (used to focus on a specific feature)
                     'detail': {'color': '#ffff00'},
+
+                    # Other objects
                     'others': {'color': '#ffff00'},
-    
+
+                    # Styles used for PDF printing
                     'print': {
+                        # Path
                         'path': {'weight': 1},
-                        'trek': {'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
-                                'arrowColor': 'black', 'arrowSize': 10},
+
+                        # Trek
+                        'trek': {
+                            'color': '#FF3300', 'weight': 7, 'opacity': 0.5,
+                            'arrowColor': 'black', 'arrowSize': 10
+                        },
                     }
                 }
+
     .. md-tab-item:: Examples
 
             Example to override configuration for displaying ``Path`` objects::
@@ -251,7 +284,7 @@ Regarding colors that depend from database content, such as land layers (physica
 
         .. code-block:: python
 
-    
+
                 COLORS_POOL = {
                                'land': ['#f37e79', '#7998f3', '#bbf379', '#f379df', '#f3bf79', '#9c79f3', '#7af379'],
                                'physical': ['#f3799d', '#79c1f3', '#e4f379', '#de79f3', '#79f3ba', '#f39779', '#797ff3'],
@@ -267,9 +300,9 @@ Regarding colors that depend from database content, such as land layers (physica
 
          .. code-block:: python
 
-    
+
                 COLORS_POOL['restrictedarea'] = ['#ff00ff', 'red', '#ddddd'...]
-.. note:: 
+.. note::
   - Each of the object types for Status module (``land``, ``physical``, ``competence``, ``signagemanagement``, ``workmanagement``...) should have values defined.
   - For ``restrictedarea``: add as many color there are restricted area types
 
@@ -293,6 +326,26 @@ Since IGN map backgrounds are very dense and colourful, a dark opacity is applie
 
           MAPENTITY_CONFIG['MAP_BACKGROUND_FOGGED'] = False
 
+Popup configuration
+-------------------
+
+Geotrek displays a popup when clicking on an object on the map.
+By default, this popup shows the object's name, its type, and a button linking to its detail page.
+
+You can customize the fields displayed in the popup for each model by defining the ``POPUP_CONTENT`` setting in ``/var/conf/custom.py``:
+
+.. code-block:: python
+
+    POPUP_CONTENT = {
+        "signage": ["code", "type", "conditions"],
+    }
+
+Each key corresponds to a model name written in lowercase (for example, ``"signage"``),
+and each value is a list of field names to display in the popup.
+
+The available fields are the same as those that can be configured for column display and exports.
+For more information, see :ref:`Custom columns available <custom-columns-available>`.
+
 Map screenshots
 ----------------
 
@@ -312,6 +365,8 @@ When you generate a PDF in Geotrek-admin, a screenshot of the map with the objec
 Display related objects
 ~~~~~~~~~~~~~~~~~~~~~~~
 
+Include objects in map screenshots:
+
 .. md-tab-set::
     :name: show-on-map-screenshot-tabs
 
@@ -326,7 +381,7 @@ Display related objects
           SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT = True
 
     .. md-tab-item:: Example
-      
+
         .. code-block:: python
 
           SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT = True
@@ -351,7 +406,7 @@ Path snapping distance
 
 .. ns-detail::
 
-    .. 
+    ..
 
 Minimum distance to merge two paths in unit of SRID.
 
@@ -361,13 +416,13 @@ Minimum distance to merge two paths in unit of SRID.
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 PATH_SNAPPING_DISTANCE = 1 # Distance of path snapping in meters
 
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 PATH_SNAPPING_DISTANCE = 2
 
 .. note::
@@ -384,13 +439,13 @@ Distance of snapping for the cursor in pixels on Leaflet map.
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 SNAP_DISTANCE = 30 # Distance of snapping in pixels
-                
+
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 SNAP_DISTANCE = 15
 
 Path merge snapping distance
@@ -404,23 +459,23 @@ Minimum distance to merge two paths.
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 PATH_MERGE_SNAPPING_DISTANCE = 2 # minimum distance to merge paths
-                
+
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 PATH_MERGE_SNAPPING_DISTANCE = 3
 
 .. note::
-  - Should be higher or the same as ``PATH_SNAPPING_DISTANCE``. 
+  - Should be higher or the same as ``PATH_SNAPPING_DISTANCE``.
   - Used only when ``TREKKING_TOPOLOGY_ENABLED = True``.
 
 Enable treks points of reference
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Points of reference are enabled on form of treks.
+Points of reference can be enabled in the forms for treks.
 
 .. md-tab-set::
     :name: trek-points-of-reference-enabled-tabs
@@ -428,20 +483,20 @@ Points of reference are enabled on form of treks.
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 TREK_POINTS_OF_REFERENCE_ENABLED = True
-                
+
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 TREK_POINTS_OF_REFERENCE_ENABLED = False
 
 
 Enable outdoor course points of reference
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Points of reference are enabled on form of otudoor courses.
+Points of reference can be enabled in the forms for outdoor courses.
 
 .. md-tab-set::
     :name: outdoor-course-of-reference-enabled-tabs
@@ -449,14 +504,36 @@ Points of reference are enabled on form of otudoor courses.
     .. md-tab-item:: Default configuration
 
             .. code-block:: python
-    
+
                 OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
-                
+
     .. md-tab-item:: Example
 
          .. code-block:: python
-    
+
                 OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = False
+
+.. _hd-views:
+
+Enable HD views
+~~~~~~~~~~~~~~~~~
+
+Enable or disable high-definition views in the interface:
+
+.. md-tab-set::
+    :name: enable-hd-views-tabs
+
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+
+                ENABLE_HD_VIEWS = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+
+                ENABLE_HD_VIEWS = False
 
 Topology static offset
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -475,7 +552,7 @@ Land objects are added on other objects (path for example) with offset, avoiding
 
         .. code-block:: python
 
-    
+
                 TOPOLOGY_STATIC_OFFSETS = {'land': -5,
                                         'physical': 0,
                                         'circulation': 15,
@@ -486,11 +563,11 @@ Land objects are added on other objects (path for example) with offset, avoiding
 
          .. code-block:: python
 
-    
-                TOPOLOGY_STATIC_OFFSETS = {'land': -5, 
-                                        'physical': 0, 
-                                        'competence': 5, 
-                                        'signagemanagement': -10, 
+
+                TOPOLOGY_STATIC_OFFSETS = {'land': -5,
+                                        'physical': 0,
+                                        'competence': 5,
+                                        'signagemanagement': -10,
                                         'workmanagement': 10}
 
 Altimetric profile
@@ -520,7 +597,7 @@ Altimetric profile
 
          .. code-block:: python
 
-          ALTIMETRIC_PROFILE_PRECISION = 30  
+          ALTIMETRIC_PROFILE_PRECISION = 30
           ALTIMETRIC_PROFILE_AVERAGE = 4  # nb of points for altimetry moving average
           ALTIMETRIC_PROFILE_STEP = 1  # Step min precision for positive / negative altimetry gain
           ALTIMETRIC_PROFILE_BACKGROUND = 'white'
@@ -543,3 +620,34 @@ Altimetric profile
     cd /opt/geotrek-admin/var/media/profiles
     rm *
 
+Routing
+-------
+
+.. _pgrouting-tolerance:
+
+pgRouting's tolerance
+~~~~~~~~~~~~~~~~~~~~~
+
+Snapping tolerance of disconnected edges/coincident points (in projection unit).
+
+.. md-tab-set::
+    :name: pgrouting-tolerance-tabs
+
+    .. md-tab-item:: Default configuration
+
+            .. code-block:: python
+
+                PGROUTING_TOLERANCE = 0.001
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+
+                PGROUTING_TOLERANCE = 0.01
+
+.. warning::
+    After modifying this parameter, you must regenerate pgRouting's network topology for the change to take effect.
+    Use the ``generate_pgr_network_topology`` command with the ``--flush`` option. Refer to :ref:`this section <generate-pgrouting-network-topology>` to learn about this command.
+
+.. note::
+  For more information, consult pgRouting's documentation: https://docs.pgrouting.org/latest/en/index.html

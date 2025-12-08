@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('flatpages', '0013_fix_page_portals_verbose'),
+        ("flatpages", "0013_fix_page_portals_verbose"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='menuitem',
-            name='title',
-            field=models.CharField(max_length=200, verbose_name='Title'),
+            model_name="menuitem",
+            name="title",
+            field=models.CharField(max_length=200, verbose_name="Title"),
         ),
     ]

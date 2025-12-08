@@ -4,7 +4,8 @@ else
   docker_compose=docker-compose
 endif
 
--include Makefile.perso.mk
+-include $(wildcard Makefile.perso.mk)
+-include $(wildcard .env)
 
 ###########################
 #          colors         #
@@ -15,9 +16,34 @@ COLOR_DEBUG = \033[36m
 COLOR_RESET = \033[0m
 
 build:
-	docker build -t geotrek -f docker/Dockerfile . --build-arg BASE_IMAGE_TAG=$(BASE_IMAGE_TAG)
+	$(docker_compose) build
 
 build_no_cache:
+	$(docker_compose) build --no-cache
+
+serve:
+	$(docker_compose) up --remove-orphans
+
+purge_docs:
+	rm -rf docs/_build
+
+serve_docs: purge_docs
+	$(docker_compose) run --rm -w /opt/geotrek-admin/docs -p ${SPHINX_PORT}:8800 -v ./var/cache:/.cache web bash \
+    -c "sphinx-autobuild -b html --host 0.0.0.0 --port 8800 ./ ./_build/html"
+
+build_docs: purge_docs
+	$(docker_compose) run --rm -w /opt/geotrek-admin/docs -v ./var/cache:/.cache web bash -c "make html SPHINXOPTS=\"-W\""
+
+build_doc_translations:
+	$(docker_compose) run -w /opt/geotrek-admin/docs -v ./var/cache:/.cache --rm web bash -c "make gettext && sphinx-intl update -p _build/locale -l fr --no-obsolete"
+
+bash:
+	$(docker_compose) run --rm web bash
+
+build_prod:
+	docker build -t geotrek -f docker/Dockerfile .
+
+build_prod_no_cache:
 	docker build -t geotrek -f docker/Dockerfile --no-cache .
 
 build_deb:
@@ -30,22 +56,38 @@ build_deb:
 
 release:
 	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
-	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -it geotrek_release  bash -c "dch -r -D RELEASED"
+	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -t geotrek_release  bash -c "dch -M -v $(version) -D RELEASED --force-distribution -m \"New package release\""
+	echo "$(version)" > geotrek/VERSION
+	sed -i "s/.*+dev/$(version)+dev/g" docs/changelog.rst
+	sed -i 's/+dev/    /g' docs/changelog.rst
+	sed -i "s/XXXX-XX-XX/$(shell date +%Y-%m-%d)/g" docs/changelog.rst
 	docker stop geotrek_release
 	docker rm geotrek_release
 
-
-serve:
-	$(docker_compose) up
+back_to_dev:
+	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
+	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -t geotrek_release  bash -c "dch -M -v $(version)+dev --no-force-save-on-release -m \"Merging improvements\""
+	echo "$(version)+dev" > geotrek/VERSION
+	sed -i '4a $(version)+dev     (XXXX-XX-XX)\n----------------------------\n\n' docs/changelog.rst
+	docker stop geotrek_release
+	docker rm geotrek_release
 
 deps:
-	$(docker_compose) run --rm web bash -c "pip-compile -q --strip-extras && pip-compile -q --strip-extras dev-requirements.in && pip-compile -q --strip-extras docs/requirements.in"
+	$(docker_compose) run --remove-orphans --no-deps --rm web bash -c "uv pip compile setup.py -o requirements.txt && uv pip compile requirements-dev.in -o requirements-dev.txt && cd docs/ && uv pip compile -c ../requirements.txt -c ../requirements-dev.txt requirements.in -o requirements.txt"
 
-flake8:
-	$(docker_compose) run --rm web flake8 geotrek
+format:
+	$(docker_compose) run --remove-orphans --no-deps --rm web ruff format geotrek
+
+lint:
+	$(docker_compose) run --remove-orphans --no-deps --rm web ruff check --fix geotrek
+
+force_lint:
+	$(docker_compose) run --remove-orphans --no-deps --rm web ruff check --fix --unsafe-fixes geotrek
+
+quality: lint format
 
 messages:
-	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete
+	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete --no-wrap --ignore var/cache
 
 compilemessages:
 	$(docker_compose) run --rm web ./manage.py compilemessages
@@ -94,24 +136,27 @@ clean_data:
 	rm -rf var/log/*
 	rm -rf var/mobile/*
 
-
 flush: clean_data update load_data
 
 %.pdf:
-	mkdir -p docs/data-model
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "$*_.*" --password=geotrek -s "public"
-	dot geotrekdb.dot -T pdf -o docs/data-model/$@
-	rm geotrekdb.dot
+	$(docker_compose) up postgres -d
+	docker run --user=${UID}:${GID} -v ${PWD}:/app juank/autodoc postgresql_autodoc -h 172.17.0.1 -p ${POSTGRES_LOCAL_PORT} -u ${POSTGRES_USER} -d ${POSTGRES_DB} --password=${POSTGRES_PASSWORD} -t dot -m "$*_.*" -s "public"
+	$(docker_compose) run --rm web dot ./${POSTGRES_DB}.dot -T pdf -o /opt/geotrek-admin/docs/data-model/$@
+	rm ./${POSTGRES_DB}.dot
 
 authent.pdf:
-	mkdir -p docs/data-model
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot -m "auth(ent)?_.*" --password=geotrek -s "public"
-	dot geotrekdb.dot -T pdf -o docs/data-model/authent.pdf
-	rm geotrekdb.dot
+	$(docker_compose) up postgres -d
+	docker run --user=${UID}:${GID} -v ${PWD}:/app juank/autodoc postgresql_autodoc -h 172.17.0.1 -p ${POSTGRES_LOCAL_PORT} -u ${POSTGRES_USER} -d ${POSTGRES_DB} --password=${POSTGRES_PASSWORD} -t dot -m "auth(ent)?_.*" -s "public"
+	$(docker_compose) run --rm web dot ./${POSTGRES_DB}.dot -T pdf -o /opt/geotrek-admin/docs/data-model/$@
+	rm ./${POSTGRES_DB}.dot
 
 global.pdf:
-	postgresql_autodoc -h localhost -u geotrek -d geotrekdb -t dot --password=geotrek -s "public"
-	dot geotrekdb.dot -T pdf -o docs/data-model/global.pdf
-	rm geotrekdb.dot
+	$(docker_compose) up postgres -d
+	docker run --user=${UID}:${GID} -v ${PWD}:/app juank/autodoc postgresql_autodoc  -h 172.17.0.1 -p ${POSTGRES_LOCAL_PORT} -u ${POSTGRES_USER} -d ${POSTGRES_DB} --password=${POSTGRES_PASSWORD} -t dot -s "public"
+	$(docker_compose) run --rm web dot ./${POSTGRES_DB}.dot -T pdf -o /opt/geotrek-admin/docs/data-model/global.pdf
+	rm ./${POSTGRES_DB}.dot
 
 uml: authent.pdf cirkwi.pdf core.pdf diving.pdf feedback.pdf flatpages.pdf infrastructure.pdf land.pdf maintenance.pdf outdoor.pdf sensitivity.pdf signage.pdf tourism.pdf trekking.pdf zoning.pdf global.pdf
+
+m_%:
+	$(docker_compose) run --rm web ./manage.py $@

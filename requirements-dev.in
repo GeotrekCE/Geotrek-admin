@@ -1,0 +1,10 @@
+-c requirements.txt
+
+lxml
+tblib
+ruff
+freezegun
+coverage
+factory_boy
+django-extensions
+django-debug-toolbar

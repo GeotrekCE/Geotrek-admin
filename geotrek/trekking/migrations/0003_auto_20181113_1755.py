@@ -4,15 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0002_trek_pois_excluded'),
+        ("trekking", "0002_trek_pois_excluded"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='trek',
-            name='pois_excluded',
-            field=models.ManyToManyField(db_table='l_r_troncon_poi_exclus', related_name='excluded_treks', to='trekking.POI', verbose_name='Excluded POIs'),
+            model_name="trek",
+            name="pois_excluded",
+            field=models.ManyToManyField(
+                db_table="l_r_troncon_poi_exclus",
+                related_name="excluded_treks",
+                to="trekking.POI",
+                verbose_name="Excluded POIs",
+            ),
         ),
     ]

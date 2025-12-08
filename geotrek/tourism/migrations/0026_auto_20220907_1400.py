@@ -4,25 +4,30 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0025_auto_20220726_0903'),
+        ("tourism", "0025_auto_20220726_0903"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='informationdesk',
-            name='provider',
-            field=models.CharField(blank=True, db_index=True, max_length=1024, verbose_name='Provider'),
+            model_name="informationdesk",
+            name="provider",
+            field=models.CharField(
+                blank=True, db_index=True, max_length=1024, verbose_name="Provider"
+            ),
         ),
         migrations.AddField(
-            model_name='touristiccontent',
-            name='provider',
-            field=models.CharField(blank=True, db_index=True, max_length=1024, verbose_name='Provider'),
+            model_name="touristiccontent",
+            name="provider",
+            field=models.CharField(
+                blank=True, db_index=True, max_length=1024, verbose_name="Provider"
+            ),
         ),
         migrations.AddField(
-            model_name='touristicevent',
-            name='provider',
-            field=models.CharField(blank=True, db_index=True, max_length=1024, verbose_name='Provider'),
+            model_name="touristicevent",
+            name="provider",
+            field=models.CharField(
+                blank=True, db_index=True, max_length=1024, verbose_name="Provider"
+            ),
         ),
     ]

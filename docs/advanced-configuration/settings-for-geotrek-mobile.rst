@@ -83,7 +83,7 @@ Defines the tile URLs used for the mobile application.
     
                 MOBILE_TILES_URL = ['https://data.geopf.fr/wmts?SERVICE=WMTS&REQUEST=GetTile&VERSION=1.0.0&LAYER=GEOGRAPHICALGRIDSYSTEMS.PLANIGNV2&STYLE=normal&FORMAT=image/png&TILEMATRIXSET=PM&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}']
 
-Mpbile length intervals 
+Mobile length intervals 
 -------------------------
 
 Defines length intervals for filtering in the mobile app.

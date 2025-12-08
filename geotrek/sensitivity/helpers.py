@@ -1,5 +1,5 @@
-from datetime import date
 from calendar import monthrange
+from datetime import date
 
 
 def openair_atimes(month: int) -> str:
@@ -13,7 +13,9 @@ def openair_atimes(month: int) -> str:
     year = date.today().year
     str_lmonth = str(monthrange(year, month)[1]).zfill(2)
     str_month = str(month).zfill(2)
-    tpl = '"{m}": ["UTC(01/{str_month}->{str_lmonth}/{str_month})", "ANY(00:00->23:59)"]'
+    tpl = (
+        '"{m}": ["UTC(01/{str_month}->{str_lmonth}/{str_month})", "ANY(00:00->23:59)"]'
+    )
     return tpl.format(m=str(month), str_month=str_month, str_lmonth=str_lmonth)
 
 
@@ -36,4 +38,4 @@ def openair_atimes_concat(row) -> str:
     for i in range(12):
         if months_fields[i]:
             aatimes_list.append(openair_atimes(i + 1))
-    return '{{{{{}}}}}'.format(','.join(aatimes_list))
+    return "{{{{{}}}}}".format(",".join(aatimes_list))

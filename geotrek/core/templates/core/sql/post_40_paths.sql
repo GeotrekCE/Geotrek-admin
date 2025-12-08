@@ -74,22 +74,6 @@ CREATE TRIGGER core_path_90_topologies_geom_u_tgr
 AFTER UPDATE OF geom ON core_path
 FOR EACH ROW EXECUTE PROCEDURE update_topology_geom_when_path_changes();
 
-
--------------------------------------------------------------------------------
--- Ensure paths have valid geometries
--------------------------------------------------------------------------------
-
-ALTER TABLE core_path DROP CONSTRAINT IF EXISTS l_t_troncon_geom_isvalid;
-ALTER TABLE core_path DROP CONSTRAINT IF EXISTS core_path_geom_isvalid;
-
-ALTER TABLE core_path DROP CONSTRAINT IF EXISTS troncons_geom_issimple;
-ALTER TABLE core_path DROP CONSTRAINT IF EXISTS l_t_troncon_geom_issimple;
-ALTER TABLE core_path DROP CONSTRAINT IF EXISTS core_path_geom_issimple;
-
-ALTER TABLE core_path ADD CONSTRAINT core_path_geom_isvalid CHECK (ST_IsValid(geom));
-ALTER TABLE core_path ADD CONSTRAINT core_path_geom_issimple CHECK (ST_IsSimple(geom));
-
-
 -------------------------------------------------------------------------------
 -- Compute elevation and elevation-based indicators
 -------------------------------------------------------------------------------
@@ -101,7 +85,7 @@ BEGIN
     SELECT * FROM ft_elevation_infos(NEW.geom, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
     -- Update path geometry
     NEW.geom_3d := elevation.draped;
-    NEW.length := ST_3DLength(elevation.draped);
+    NEW.length := ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]');
     NEW.slope := elevation.slope;
     NEW.min_elevation := elevation.min_elevation;
     NEW.max_elevation := elevation.max_elevation;

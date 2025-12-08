@@ -25,9 +25,8 @@ def backward(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('infrastructure', '0027_infrastructure_accessibility'),
+        ("infrastructure", "0027_infrastructure_accessibility"),
     ]
 
     operations = [

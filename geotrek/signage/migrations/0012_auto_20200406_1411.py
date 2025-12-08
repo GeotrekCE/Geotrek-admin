@@ -4,17 +4,30 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('signage', '0011_auto_20200228_1755'),
+        ("signage", "0011_auto_20200228_1755"),
     ]
 
     operations = [
-        migrations.RunSQL('ALTER SEQUENCE s_b_scellement_id_seq RENAME TO signage_sealing_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE s_b_signaletique_id_seq RENAME TO signage_signagetype_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE s_b_direction_id_seq RENAME TO signage_direction_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE s_b_color_id_seq RENAME TO signage_color_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE s_b_lame_id_seq RENAME TO signage_bladetype_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE s_t_lame_id_seq RENAME TO signage_blade_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE s_t_ligne_id_seq RENAME TO signage_line_id_seq;'),
+        migrations.RunSQL(
+            "ALTER SEQUENCE s_b_scellement_id_seq RENAME TO signage_sealing_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE s_b_signaletique_id_seq RENAME TO signage_signagetype_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE s_b_direction_id_seq RENAME TO signage_direction_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE s_b_color_id_seq RENAME TO signage_color_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE s_b_lame_id_seq RENAME TO signage_bladetype_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE s_t_lame_id_seq RENAME TO signage_blade_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE s_t_ligne_id_seq RENAME TO signage_line_id_seq;"
+        ),
     ]

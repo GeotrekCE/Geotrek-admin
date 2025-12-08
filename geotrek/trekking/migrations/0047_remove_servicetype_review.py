@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0046_alter_weblink_category'),
+        ("trekking", "0046_alter_weblink_category"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='servicetype',
-            name='review',
+            model_name="servicetype",
+            name="review",
         ),
     ]

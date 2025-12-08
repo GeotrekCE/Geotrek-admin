@@ -51,7 +51,7 @@ Un itinéraire repose sur un ou plusieurs tronçons, et certains POIs leur sont 
 Segmentation dynamique
 -----------------------
 
-Certains objets sont saisis et stockés relativement aux tronçons, en utilisant `la segmentation dynamique <https://makina-corpus.com/sig-webmapping/la-segmentation-dynamique>`_. Il s'agit des objets suivants : sentiers, statuts, aménagements, interventions, itinéraires et POI. Tous les autres objets sont indépendants et ont leur propre géométrie.
+Certains objets sont saisis et stockés relativement aux tronçons, en utilisant `la segmentation dynamique <https://makina-corpus.com/logiciel-libre/installer-geotrek-avec-ou-sans-segmentation-dynamique>`_. Il s'agit des objets suivants : sentiers, statuts, aménagements, interventions, itinéraires et POI. Tous les autres objets sont indépendants et ont leur propre géométrie.
 
 La **segmentation dynamique** permet de saisir et stocker des informations relatives aux tronçons. Elle s'accompagne d'un ensemble de déclencheurs calculant automatiquement les géométries résultantes à la création et lors de modifications sur le réseau de tronçons. 
 
@@ -76,7 +76,7 @@ Snapping - Aimantage - Accrochage
 
 Quand vous créez un objet, il est possible de le snapper (aimanter) aux objets existants. C'est notamment utile pour bien raccorder les tronçons entre eux. Quand vous raccrochez un tronçon à un tronçon existant, ce dernier est coupé automatiquement à la nouvelle intersection.
 
-Les fonctions d'aimantage ne sont pas disponibles lors de la création d'un nouvel objet (linéraire ou ponctuel). Il faut commencer par le créer puis le modifier pour disposer des fonctionnalités d'aimantage, activées automatiquement lorsque l'on se rapproche d'un objet existant. Par défaut la distance d'imantage est de 30 pixels mais elle est modifiable en configuration avancée.
+Les fonctions d'aimantage ne sont pas disponibles lors de la création d'un nouvel objet (linéraire ou ponctuel). Il faut commencer par le créer puis le modifier pour disposer des fonctionnalités d'aimantage, activées automatiquement lorsque l'on se rapproche d'un objet existant. Par défaut la distance d'aimantage est de 30 pixels mais elle est modifiable en configuration avancée.
 
 Informations altimétriques
 ---------------------------
@@ -140,6 +140,11 @@ La vue HD est également associée à une localisation correspondant à l'emplac
 .. note::
 
 	Les vues HD ne sont disponibles que pour les modules Itinéraires, POIs et Outdoor.
+
+.. seealso::
+
+	Se référer à :ref:`cette section <hd-views>` pour savoir comment activer les vues HD dans l'interface
+
 
 Photos accessibilité
 ---------------------

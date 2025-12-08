@@ -4,19 +4,27 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('outdoor', '0012_auto_20210122_1029'),
+        ("outdoor", "0012_auto_20210122_1029"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='ratingscale',
-            options={'ordering': ('practice', 'order', 'name'), 'verbose_name': 'Rating scale', 'verbose_name_plural': 'Rating scales'},
+            name="ratingscale",
+            options={
+                "ordering": ("practice", "order", "name"),
+                "verbose_name": "Rating scale",
+                "verbose_name_plural": "Rating scales",
+            },
         ),
         migrations.AddField(
-            model_name='ratingscale',
-            name='order',
-            field=models.IntegerField(blank=True, help_text='Within a practice. Alphabetical order if blank', null=True, verbose_name='Order'),
+            model_name="ratingscale",
+            name="order",
+            field=models.IntegerField(
+                blank=True,
+                help_text="Within a practice. Alphabetical order if blank",
+                null=True,
+                verbose_name="Order",
+            ),
         ),
     ]

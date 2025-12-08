@@ -4,8 +4,8 @@ from django.db import migrations
 
 
 def create_organizer_fk(apps, schema_editor):
-    TouristicEventModel = apps.get_model('tourism', 'TouristicEvent')
-    OrganizerModel = apps.get_model('tourism', 'TouristicEventOrganizer')
+    TouristicEventModel = apps.get_model("tourism", "TouristicEvent")
+    OrganizerModel = apps.get_model("tourism", "TouristicEventOrganizer")
     for event in TouristicEventModel.objects.all():
         if event.organizer:
             organizer, _ = OrganizerModel.objects.get_or_create(label=event.organizer)
@@ -14,7 +14,7 @@ def create_organizer_fk(apps, schema_editor):
 
 
 def reverse_create_organizer_fk(apps, schema_editor):
-    TouristicEventModel = apps.get_model('tourism', 'TouristicEvent')
+    TouristicEventModel = apps.get_model("tourism", "TouristicEvent")
     for event in TouristicEventModel.objects.all():
         if event.organizer_temp:
             event.organizer = event.organizer_temp.label
@@ -22,9 +22,8 @@ def reverse_create_organizer_fk(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0043_auto_20230804_1317'),
+        ("tourism", "0043_auto_20230804_1317"),
     ]
 
     operations = [

@@ -41,7 +41,7 @@ MapEntity.GeometryField.GeometryFieldPathMixin = {
      */
     buildPathsLayer: function (objectsLayer) {
         var url_path = window.SETTINGS.urls.path_layer
-        var pathsLayer = MapEntity.pathsLayer({style: {clickable: true}, no_draft: objectsLayer.modelname != 'path'});
+        var pathsLayer = MapEntity.pathsLayer({style: {clickable: true}, no_draft: objectsLayer.modelname != 'path', displayPopup: false});
         if (objectsLayer.modelname != 'path')
             url_path += '?_no_draft=true';
         pathsLayer.load(url_path, true);

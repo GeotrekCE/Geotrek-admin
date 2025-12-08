@@ -4,31 +4,30 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0008_aggregation_infrastructure'),
-        ('maintenance', '0003_auto_20181203_1101'),
-        ('infrastructure', '0008_create_infrastructure_by_type'),
+        ("core", "0008_aggregation_infrastructure"),
+        ("maintenance", "0003_auto_20181203_1101"),
+        ("infrastructure", "0008_create_infrastructure_by_type"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='baseinfrastructure',
-            name='condition',
+            model_name="baseinfrastructure",
+            name="condition",
         ),
         migrations.RemoveField(
-            model_name='baseinfrastructure',
-            name='structure',
+            model_name="baseinfrastructure",
+            name="structure",
         ),
         migrations.RemoveField(
-            model_name='baseinfrastructure',
-            name='topo_object',
+            model_name="baseinfrastructure",
+            name="topo_object",
         ),
         migrations.RemoveField(
-            model_name='baseinfrastructure',
-            name='type',
+            model_name="baseinfrastructure",
+            name="type",
         ),
         migrations.DeleteModel(
-            name='BaseInfrastructure',
+            name="BaseInfrastructure",
         ),
     ]

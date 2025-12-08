@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('signage', '0005_logentry_signage'),
+        ("signage", "0005_logentry_signage"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='blade',
-            name='number',
-            field=models.CharField(db_column='numero', max_length=250, verbose_name='Blade Number'),
+            model_name="blade",
+            name="number",
+            field=models.CharField(
+                db_column="numero", max_length=250, verbose_name="Blade Number"
+            ),
         ),
     ]

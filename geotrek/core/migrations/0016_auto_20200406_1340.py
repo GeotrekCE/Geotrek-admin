@@ -4,20 +4,39 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0015_topology_geom_need_update'),
+        ("core", "0015_topology_geom_need_update"),
     ]
 
     operations = [
-        migrations.RunSQL('ALTER SEQUENCE e_r_evenement_troncon_id_seq RENAME TO core_pathaggregation_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE e_t_evenement_id_seq RENAME TO core_topology_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE l_t_troncon_id_seq RENAME TO core_path_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE l_b_confort_id_seq RENAME TO core_comfort_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE l_b_enjeu_id_seq RENAME TO core_stake_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE l_b_reseau_id_seq RENAME TO core_network_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE l_b_source_troncon_id_seq RENAME TO core__id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE l_b_usage_id_seq RENAME TO core_usage_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE l_r_troncon_reseau_id_seq RENAME TO core_path_networks_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE l_r_troncon_usage_id_seq RENAME TO core_path_usages_id_seq;'),
+        migrations.RunSQL(
+            "ALTER SEQUENCE e_r_evenement_troncon_id_seq RENAME TO core_pathaggregation_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE e_t_evenement_id_seq RENAME TO core_topology_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE l_t_troncon_id_seq RENAME TO core_path_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE l_b_confort_id_seq RENAME TO core_comfort_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE l_b_enjeu_id_seq RENAME TO core_stake_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE l_b_reseau_id_seq RENAME TO core_network_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE l_b_source_troncon_id_seq RENAME TO core__id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE l_b_usage_id_seq RENAME TO core_usage_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE l_r_troncon_reseau_id_seq RENAME TO core_path_networks_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE l_r_troncon_usage_id_seq RENAME TO core_path_usages_id_seq;"
+        ),
     ]

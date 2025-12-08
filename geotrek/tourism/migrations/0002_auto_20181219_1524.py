@@ -4,25 +4,41 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0001_initial'),
+        ("tourism", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='touristiccontent',
-            name='eid',
-            field=models.CharField(blank=True, db_column='id_externe', max_length=1024, null=True, verbose_name='External id'),
+            model_name="touristiccontent",
+            name="eid",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe",
+                max_length=1024,
+                null=True,
+                verbose_name="External id",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristiccontent',
-            name='reservation_id',
-            field=models.CharField(blank=True, db_column='id_reservation', max_length=1024, verbose_name='Reservation ID'),
+            model_name="touristiccontent",
+            name="reservation_id",
+            field=models.CharField(
+                blank=True,
+                db_column="id_reservation",
+                max_length=1024,
+                verbose_name="Reservation ID",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristicevent',
-            name='eid',
-            field=models.CharField(blank=True, db_column='id_externe', max_length=1024, null=True, verbose_name='External id'),
+            model_name="touristicevent",
+            name="eid",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe",
+                max_length=1024,
+                null=True,
+                verbose_name="External id",
+            ),
         ),
     ]

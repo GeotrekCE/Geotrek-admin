@@ -2,12 +2,12 @@ from tempfile import TemporaryDirectory
 
 from django.test import TestCase
 from django.urls import reverse
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from mapentity.tests import SuperUserFactory
+
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 
 class TinyMCEUploadViewTestCase(TestCase):
-
     def test_tinymce_upload(self):
         user = SuperUserFactory()
         self.client.force_login(user)
@@ -22,5 +22,7 @@ class TinyMCEUploadViewTestCase(TestCase):
         data = response.json()
         self.assertIn("location", data)
         location = data["location"]
-        self.assertTrue(location.startswith("http://") or location.startswith("https://"))
+        self.assertTrue(
+            location.startswith("http://") or location.startswith("https://")
+        )
         self.assertIn("tinymce_uploaded_image", location)

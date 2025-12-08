@@ -4,25 +4,38 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0016_auto_20201217_0940'),
+        ("common", "0016_auto_20201217_0940"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='label',
-            name='pictogram',
-            field=models.FileField(blank=True, max_length=512, null=True, upload_to='upload', verbose_name='Pictogram'),
+            model_name="label",
+            name="pictogram",
+            field=models.FileField(
+                blank=True,
+                max_length=512,
+                null=True,
+                upload_to="upload",
+                verbose_name="Pictogram",
+            ),
         ),
         migrations.AlterField(
-            model_name='recordsource',
-            name='pictogram',
-            field=models.FileField(blank=True, max_length=512, null=True, upload_to='upload', verbose_name='Pictogram'),
+            model_name="recordsource",
+            name="pictogram",
+            field=models.FileField(
+                blank=True,
+                max_length=512,
+                null=True,
+                upload_to="upload",
+                verbose_name="Pictogram",
+            ),
         ),
         migrations.AlterField(
-            model_name='theme',
-            name='pictogram',
-            field=models.FileField(max_length=512, null=True, upload_to='upload', verbose_name='Pictogram'),
+            model_name="theme",
+            name="pictogram",
+            field=models.FileField(
+                max_length=512, null=True, upload_to="upload", verbose_name="Pictogram"
+            ),
         ),
     ]

@@ -1,15 +1,15 @@
 from django.conf import settings
-from django.urls import path, converters, register_converter, re_path
+from django.urls import converters, path, re_path, register_converter
 from mapentity.registry import MapEntityOptions, registry
 from mapentity.urls import _MEDIA_URL
 from rest_framework.routers import DefaultRouter
 
-from .models import HDViewPoint
 from . import views
+from .models import HDViewPoint
 
 
 class LangConverter(converters.StringConverter):
-    regex = "[a-z]{2}(-[a-z]{2,4})?"   # noqa
+    regex = "[a-z]{2}(-[a-z]{2,4})?"
 
 
 register_converter(LangConverter, "lang")
@@ -51,7 +51,7 @@ urlpatterns = [
 if settings.DEBUG or settings.MAPENTITY_CONFIG["SENDFILE_HTTP_HEADER"]:
     urlpatterns += [
         re_path(
-            r"^%s/(?P<path>attachments_accessibility/.*)$" % _MEDIA_URL,
+            rf"^{_MEDIA_URL}/(?P<path>attachments_accessibility/.*)$",
             views.ServeAttachmentAccessibility.as_view(),
         ),
     ]
@@ -72,25 +72,19 @@ class PublishableEntityOptions(MapEntityOptions):
         mapentity_views = super().scan_views()
         publishable_views = [
             path(
-                "api/<lang:lang>/{name}s/<int:pk>/<slug:slug>_booklet.pdf".format(
-                    name=self.modelname
-                ),
+                f"api/<lang:lang>/{self.modelname}s/<int:pk>/<slug:slug>_booklet.pdf",
                 self.document_public_booklet_view.as_view(model=self.model),
-                name="%s_booklet_printable" % self.modelname,
+                name=f"{self.modelname}_booklet_printable",
             ),
             path(
-                "api/<lang:lang>/{name}s/<int:pk>/<slug:slug>.pdf".format(
-                    name=self.modelname
-                ),
+                f"api/<lang:lang>/{self.modelname}s/<int:pk>/<slug:slug>.pdf",
                 self.document_public_view.as_view(model=self.model),
-                name="%s_printable" % self.modelname,
+                name=f"{self.modelname}_printable",
             ),
             path(
-                "api/<lang:lang>/{name}s/<int:pk>/<slug:slug>.html".format(
-                    name=self.modelname
-                ),
+                f"api/<lang:lang>/{self.modelname}s/<int:pk>/<slug:slug>.html",
                 self.markup_public_view.as_view(model=self.model),
-                name="%s_markup_html" % self.modelname,
+                name=f"{self.modelname}_markup_html",
             ),
         ]
         return publishable_views + mapentity_views

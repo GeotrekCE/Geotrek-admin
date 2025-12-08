@@ -4,40 +4,51 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maintenance', '0015_auto_20201117_1302'),
+        ("maintenance", "0015_auto_20201117_1302"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='intervention',
-            name='date_insert',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Insertion date'),
+            model_name="intervention",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name="Insertion date"
+            ),
         ),
         migrations.AlterField(
-            model_name='intervention',
-            name='date_update',
-            field=models.DateTimeField(auto_now=True, db_index=True, verbose_name='Update date'),
+            model_name="intervention",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True, db_index=True, verbose_name="Update date"
+            ),
         ),
         migrations.AlterField(
-            model_name='intervention',
-            name='deleted',
-            field=models.BooleanField(default=False, editable=False, verbose_name='Deleted'),
+            model_name="intervention",
+            name="deleted",
+            field=models.BooleanField(
+                default=False, editable=False, verbose_name="Deleted"
+            ),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='date_insert',
-            field=models.DateTimeField(auto_now_add=True, verbose_name='Insertion date'),
+            model_name="project",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name="Insertion date"
+            ),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='date_update',
-            field=models.DateTimeField(auto_now=True, db_index=True, verbose_name='Update date'),
+            model_name="project",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True, db_index=True, verbose_name="Update date"
+            ),
         ),
         migrations.AlterField(
-            model_name='project',
-            name='deleted',
-            field=models.BooleanField(default=False, editable=False, verbose_name='Deleted'),
+            model_name="project",
+            name="deleted",
+            field=models.BooleanField(
+                default=False, editable=False, verbose_name="Deleted"
+            ),
         ),
     ]

@@ -4,7 +4,7 @@ from django.db import migrations, models
 
 
 def copy_condition_to_conditions(apps, schema_editor):
-    Infrastructure = apps.get_model('infrastructure', 'Infrastructure')
+    Infrastructure = apps.get_model("infrastructure", "Infrastructure")
 
     # Copy InfrastructureCondition ForeignKey to ManyToMany field
     for infrastructure in Infrastructure.objects.all():
@@ -13,16 +13,22 @@ def copy_condition_to_conditions(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('infrastructure', '0038_rename_access_tmp_infrastructure_access'),
+        ("infrastructure", "0038_rename_access_tmp_infrastructure_access"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='infrastructure',
-            name='conditions',
-            field=models.ManyToManyField(blank=True, related_name='infrastructures', to='infrastructure.InfrastructureCondition', verbose_name='Conditions'),
+            model_name="infrastructure",
+            name="conditions",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="infrastructures",
+                to="infrastructure.InfrastructureCondition",
+                verbose_name="Conditions",
+            ),
         ),
-        migrations.RunPython(copy_condition_to_conditions, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(
+            copy_condition_to_conditions, reverse_code=migrations.RunPython.noop
+        ),
     ]

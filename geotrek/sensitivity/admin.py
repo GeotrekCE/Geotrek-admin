@@ -1,14 +1,20 @@
 from django.contrib import admin
 
 from geotrek.common.mixins.actions import MergeActionMixin
-from geotrek.sensitivity.models import Rule, SportPractice, Species
+from geotrek.sensitivity.models import Rule, Species, SportPractice
 
 
 @admin.register(Rule)
 class RuleAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = "name"
-    list_display = ('name', 'code', )
-    search_fields = ('name', 'code', )
+    list_display = (
+        "name",
+        "code",
+    )
+    search_fields = (
+        "name",
+        "code",
+    )
 
 
 @admin.register(SportPractice)

@@ -6,16 +6,17 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('sensitivity', '0025_auto_20221117_1734'),
+        ("sensitivity", "0025_auto_20221117_1734"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='sensitivearea',
-            name='geom_buffered',
-            field=django.contrib.gis.db.models.fields.GeometryField(default=None, editable=False, srid=settings.SRID),
+            model_name="sensitivearea",
+            name="geom_buffered",
+            field=django.contrib.gis.db.models.fields.GeometryField(
+                default=None, editable=False, srid=settings.SRID
+            ),
             preserve_default=False,
         ),
     ]

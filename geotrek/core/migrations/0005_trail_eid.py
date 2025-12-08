@@ -4,15 +4,20 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0004_auto_20181116_1821'),
+        ("core", "0004_auto_20181116_1821"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='trail',
-            name='eid',
-            field=models.CharField(blank=True, db_column='id_externe', max_length=128, null=True, verbose_name='External id'),
+            model_name="trail",
+            name="eid",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe",
+                max_length=128,
+                null=True,
+                verbose_name="External id",
+            ),
         ),
     ]

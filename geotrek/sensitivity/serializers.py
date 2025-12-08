@@ -21,4 +21,4 @@ class SensitiveAreaGeojsonSerializer(MapentityGeojsonModelSerializer):
 
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = sensitivity_models.SensitiveArea
-        fields = ['id', 'species', 'radius', 'published']
+        fields = ["id", "species", "radius", "published"]

@@ -3,7 +3,7 @@ from rest_framework import permissions
 
 
 class GeotrekMapentityViewSet(MapEntityViewSet):
-    """ Custom MapentityViewSet for geotrek. """
+    """Custom MapentityViewSet for geotrek."""
 
     permission_classes = [permissions.DjangoModelPermissionsOrAnonReadOnly]
     mapentity_list_class = []
@@ -16,8 +16,8 @@ class GeotrekMapentityViewSet(MapEntityViewSet):
         columns = self.get_columns()
 
         if columns:
-            context['request'].query_params._mutable = True
+            context["request"].query_params._mutable = True
             # in combination with DynamicFieldsMixin on serializer
             # this permit to optimize data serialization with only required columns
-            context['request'].query_params['fields'] = ','.join(columns)
+            context["request"].query_params["fields"] = ",".join(columns)
         return context

@@ -97,7 +97,7 @@ class RegulatorySensitiveAreaFormTest(TestCase):
         self.assertEqual(area.species.url, form_data["url"])
         self.assertEqual(area.species.practices.count(), len(form_data["practices"]))
         for p in range(1, 13):
-            fieldname = "period{:02}".format(p)
+            fieldname = f"period{p:02}"
             self.assertEqual(getattr(area.species, fieldname), form_data[fieldname])
 
     def test_form_save_existing_instance(self):
@@ -132,5 +132,5 @@ class RegulatorySensitiveAreaFormTest(TestCase):
         self.assertEqual(area.species.url, form_data["url"])
         self.assertEqual(area.species.practices.count(), len(form_data["practices"]))
         for p in range(1, 13):
-            fieldname = "period{:02}".format(p)
+            fieldname = f"period{p:02}"
             self.assertEqual(getattr(area.species, fieldname), form_data[fieldname])

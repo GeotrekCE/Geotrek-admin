@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maintenance', '0017_auto_20210211_0825'),
+        ("maintenance", "0017_auto_20210211_0825"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='interventionjob',
-            name='active',
-            field=models.BooleanField(default=True, verbose_name='Active'),
+            model_name="interventionjob",
+            name="active",
+            field=models.BooleanField(default=True, verbose_name="Active"),
         ),
     ]

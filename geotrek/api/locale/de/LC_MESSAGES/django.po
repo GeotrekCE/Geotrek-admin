@@ -3,20 +3,20 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-07-12 12:45+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2025-06-26 13:34+0000\n"
+"PO-Revision-Date: 2025-10-22 09:01+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/api/de/>\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.13.3\n"
 
 msgid "Medias syncing ..."
 msgstr ""
@@ -138,6 +138,12 @@ msgstr ""
 msgid "Touristic event types"
 msgstr ""
 
+msgid "Touristic content categories"
+msgstr ""
+
+msgid "Sensitive area practices"
+msgstr ""
+
 msgid "Sync verifications"
 msgstr ""
 
@@ -162,15 +168,13 @@ msgstr ""
 msgid "Sync"
 msgstr ""
 
-msgid ""
-"Set language for translation. Can be all or a two-letters language code."
+msgid "Set language for translation. Can be all or a two-letters language code."
 msgstr ""
 
 msgid "Fields"
 msgstr ""
 
-msgid ""
-"Limit required fields to increase performances. Example: id,url,geometry."
+msgid "Limit required fields to increase performances. Example: id,url,geometry."
 msgstr ""
 
 msgid "Omit"
@@ -194,9 +198,7 @@ msgstr ""
 msgid "In bbox"
 msgstr ""
 
-msgid ""
-"Filter by a bounding box formatted like W-lng,S-lat,E-lng,N-lat (WGS84)."
-"Example: 1.15,46.1,1.56,47.6."
+msgid "Filter by a bounding box formatted like W-lng,S-lat,E-lng,N-lat (WGS84).Example: 1.15,46.1,1.56,47.6."
 msgstr ""
 
 msgid "Distance"
@@ -214,10 +216,7 @@ msgstr ""
 msgid "Period"
 msgstr ""
 
-msgid ""
-"Filter by period of occupancy. Month numbers (1-12), comma-separated. any = "
-"occupied at any time in the year. ignore = occupied or not. Example: 7,8 for "
-"july and august."
+msgid "Filter by period of occupancy. Month numbers (1-12), comma-separated. any = occupied at any time in the year. ignore = occupied or not. Example: 7,8 for july and august."
 msgstr ""
 
 msgid "Practices"
@@ -248,56 +247,43 @@ msgstr ""
 msgid "Sites"
 msgstr ""
 
-msgid ""
-"Filter by one or multiple site id. It will show only the POIs related to "
-"this outdoor site. If multiple sites, they should be separated by commas."
+msgid "Filter by one or multiple site id. It will show only the POIs related to this outdoor site. If multiple sites, they should be separated by commas."
 msgstr ""
 
 msgid "Courses"
 msgstr ""
 
-msgid ""
-"Filter by one or multiple Course id. It will show only the POIs related to "
-"this outdoor Course. If multiple courses, they should be separated by commas."
+msgid "Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas."
 msgstr ""
 
 msgid "Near trek"
 msgstr ""
 
-msgid ""
-"Filter by a trek id. It will only show the contents related to this trek."
+msgid "Filter by a trek id. It will only show the contents related to this trek."
 msgstr ""
 
 msgid "Near touristic content"
 msgstr ""
 
-msgid ""
-"Filter by a touristic content id. It will only show the contents related to "
-"this touristic content."
+msgid "Filter by a touristic content id. It will only show the contents related to this touristic content."
 msgstr ""
 
 msgid "Near touristic event"
 msgstr ""
 
-msgid ""
-"Filter by a touristic event id. It will only show the contents related to "
-"this touristic event."
+msgid "Filter by a touristic event id. It will only show the contents related to this touristic event."
 msgstr ""
 
 msgid "Near outdoor site"
 msgstr ""
 
-msgid ""
-"Filter by an outdoor site id. It will only show the contents related to this "
-"outdoor site."
+msgid "Filter by an outdoor site id. It will only show the contents related to this outdoor site."
 msgstr ""
 
 msgid "Near outdoor course"
 msgstr ""
 
-msgid ""
-"Filter by an outdoor course id. It will only show the contents related to "
-"this outdoor course."
+msgid "Filter by an outdoor course id. It will only show the contents related to this outdoor course."
 msgstr ""
 
 msgid "Filter by one or more city id, comma-separated."
@@ -318,14 +304,10 @@ msgstr ""
 msgid "Query string"
 msgstr ""
 
-msgid ""
-"Filter by some case-insensitive text contained in name, description teaser "
-"or description."
+msgid "Filter by some case-insensitive text contained in name, description teaser or description."
 msgstr ""
 
-msgid ""
-"Filter by one or more types id, comma-separated. Logical OR for types in the "
-"same list, AND for types in different lists."
+msgid "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
 msgstr ""
 
 msgid "Labels accessibility"
@@ -472,9 +454,7 @@ msgstr ""
 msgid "Exclude one or more label id, comma-separated."
 msgstr ""
 
-msgid ""
-"Filter by some case-insensitive text contained in name, description, "
-"description teaser or ambiance."
+msgid "Filter by some case-insensitive text contained in name, description, description teaser or ambiance."
 msgstr ""
 
 msgid "Ratings"
@@ -489,17 +469,13 @@ msgstr ""
 msgid "Root sites only"
 msgstr ""
 
-msgid ""
-"Only return sites that are at the top of the hierarchy and have no parent. "
-"Use any string to activate."
+msgid "Only return sites that are at the top of the hierarchy and have no parent. Use any string to activate."
 msgstr ""
 
 msgid "Practices in hierarchy"
 msgstr ""
 
-msgid ""
-"Filter by one or more practices id, comma-separated. Return sites that have "
-"theses practices OR have at least one child site that does."
+msgid "Filter by one or more practices id, comma-separated. Return sites that have theses practices OR have at least one child site that does."
 msgstr ""
 
 msgid "Filter by one or more site type id, comma-separated."
@@ -508,9 +484,7 @@ msgstr ""
 msgid "Ratings in hierarchy"
 msgstr ""
 
-msgid ""
-"Filter by one or more ratings id, comma-separated. Return sites that have "
-"theses ratings OR have at least one child site that does."
+msgid "Filter by one or more ratings id, comma-separated. Return sites that have theses ratings OR have at least one child site that does."
 msgstr ""
 
 msgid "Filter by one or more course type id, comma-separated."
@@ -522,9 +496,7 @@ msgstr ""
 msgid "Filter"
 msgstr ""
 
-msgid ""
-"Filter by the fact that this label can be used as filter. 'y', 'yes', 't', "
-"'true', 'on', '1' are possible values"
+msgid "Filter by the fact that this label can be used as filter. 'y', 'yes', 't', 'true', 'on', '1' are possible values"
 msgstr ""
 
 msgid "Rating scale"
@@ -533,9 +505,7 @@ msgstr ""
 msgid "Filter by a rating scale id."
 msgstr ""
 
-msgid ""
-"Filter by some case-insensitive text contained in name, scale name or "
-"description."
+msgid "Filter by some case-insensitive text contained in name, scale name or description."
 msgstr ""
 
 msgid "Parent"
@@ -563,9 +533,7 @@ msgid "Altimetry data not available"
 msgstr ""
 
 #, python-format
-msgid ""
-"This field is deprecated and will be removed in next releases. Please start "
-"using '%(field)s'"
+msgid "This field is deprecated and will be removed in next releases. Please start using '%(field)s'"
 msgstr ""
 
 msgid "Geotrek : Signal a mistake"
@@ -574,8 +542,7 @@ msgstr ""
 msgid ""
 "Hello,\n"
 "\n"
-"We acknowledge receipt of your feedback, thank you for your interest in "
-"Geotrek.\n"
+"We acknowledge receipt of your feedback, thank you for your interest in Geotrek.\n"
 "\n"
 "Best regards,\n"
 "\n"

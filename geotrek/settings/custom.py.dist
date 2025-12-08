@@ -16,7 +16,7 @@
 
 # MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'it', 'es')
 # Change with your own wanted translations
-# ex: MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'de', 'ne')
+# ex: MODELTRANSLATION_LANGUAGES = ('en', 'fr', 'de', 'nl')
 
 # ADMINS = (
 #     ('admin1', 'admin1@geotrek.fr'), # change with tuple ('your name', 'your@address.mail')

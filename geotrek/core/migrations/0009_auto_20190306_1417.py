@@ -4,20 +4,29 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0008_aggregation_infrastructure'),
+        ("core", "0008_aggregation_infrastructure"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='path',
-            name='date_update',
-            field=models.DateTimeField(auto_now=True, db_column='date_update', db_index=True, verbose_name='Update date'),
+            model_name="path",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True,
+                db_column="date_update",
+                db_index=True,
+                verbose_name="Update date",
+            ),
         ),
         migrations.AlterField(
-            model_name='topology',
-            name='date_update',
-            field=models.DateTimeField(auto_now=True, db_column='date_update', db_index=True, verbose_name='Update date'),
+            model_name="topology",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True,
+                db_column="date_update",
+                db_index=True,
+                verbose_name="Update date",
+            ),
         ),
     ]

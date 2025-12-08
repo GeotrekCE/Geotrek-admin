@@ -4,23 +4,48 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('maintenance', '0012_auto_20200311_1608'),
+        ("maintenance", "0012_auto_20200311_1608"),
     ]
 
     operations = [
-        migrations.RunSQL('ALTER SEQUENCE m_b_chantier_id_seq RENAME TO maintenance_projecttype_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE m_b_desordre_id_seq RENAME TO maintenance_interventiondisorder_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE m_b_domaine_id_seq RENAME TO maintenance_projectdomain_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE m_b_fonction_id_seq RENAME TO maintenance_interventionjob_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE m_b_intervention_id_seq RENAME TO maintenance_interventiontype_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE m_b_prestataire_id_seq RENAME TO maintenance_contractor_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE m_b_suivi_id_seq RENAME TO maintenance_interventionstatus_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE m_r_chantier_financement_id_seq RENAME TO maintenance_funding_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE m_r_chantier_prestataire_id_seq RENAME TO maintenance_project_contractors_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE m_r_intervention_desordre_id_seq RENAME TO maintenance_intervention_disorders_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE m_r_intervention_fonction_id_seq RENAME TO maintenance_maintenance_manday_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE m_t_chantier_id_seq RENAME TO maintenance_project_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE m_t_intervention_id_seq RENAME TO maintenance_intervention_id_seq;'),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_b_chantier_id_seq RENAME TO maintenance_projecttype_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_b_desordre_id_seq RENAME TO maintenance_interventiondisorder_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_b_domaine_id_seq RENAME TO maintenance_projectdomain_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_b_fonction_id_seq RENAME TO maintenance_interventionjob_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_b_intervention_id_seq RENAME TO maintenance_interventiontype_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_b_prestataire_id_seq RENAME TO maintenance_contractor_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_b_suivi_id_seq RENAME TO maintenance_interventionstatus_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_r_chantier_financement_id_seq RENAME TO maintenance_funding_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_r_chantier_prestataire_id_seq RENAME TO maintenance_project_contractors_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_r_intervention_desordre_id_seq RENAME TO maintenance_intervention_disorders_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_r_intervention_fonction_id_seq RENAME TO maintenance_maintenance_manday_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_t_chantier_id_seq RENAME TO maintenance_project_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE m_t_intervention_id_seq RENAME TO maintenance_intervention_id_seq;"
+        ),
     ]

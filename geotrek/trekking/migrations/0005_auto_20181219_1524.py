@@ -4,38 +4,59 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0004_auto_20181127_1551'),
+        ("trekking", "0004_auto_20181127_1551"),
     ]
 
     operations = [
         migrations.RunSQL(
-            "DROP VIEW IF EXISTS o_v_poi, o_v_itineraire;",
-            migrations.RunSQL.noop
+            "DROP VIEW IF EXISTS o_v_poi, o_v_itineraire;", migrations.RunSQL.noop
         ),
         migrations.AlterField(
-            model_name='poi',
-            name='eid',
-            field=models.CharField(blank=True, db_column='id_externe', max_length=1024, null=True, verbose_name='External id'),
+            model_name="poi",
+            name="eid",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe",
+                max_length=1024,
+                null=True,
+                verbose_name="External id",
+            ),
         ),
         migrations.AlterField(
-            model_name='service',
-            name='eid',
-            field=models.CharField(blank=True, db_column='id_externe', max_length=1024, null=True, verbose_name='External id'),
+            model_name="service",
+            name="eid",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe",
+                max_length=1024,
+                null=True,
+                verbose_name="External id",
+            ),
         ),
         migrations.AlterField(
-            model_name='trek',
-            name='eid',
-            field=models.CharField(blank=True, db_column='id_externe', max_length=1024, null=True, verbose_name='External id'),
+            model_name="trek",
+            name="eid",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe",
+                max_length=1024,
+                null=True,
+                verbose_name="External id",
+            ),
         ),
         migrations.AlterField(
-            model_name='trek',
-            name='eid2',
-            field=models.CharField(blank=True, db_column='id_externe2', max_length=1024, null=True, verbose_name='Second external id'),
+            model_name="trek",
+            name="eid2",
+            field=models.CharField(
+                blank=True,
+                db_column="id_externe2",
+                max_length=1024,
+                null=True,
+                verbose_name="Second external id",
+            ),
         ),
         migrations.RunSQL(
-            migrations.RunSQL.noop,
-            "DROP VIEW IF EXISTS o_v_poi, o_v_itineraire;"
+            migrations.RunSQL.noop, "DROP VIEW IF EXISTS o_v_poi, o_v_itineraire;"
         ),
     ]

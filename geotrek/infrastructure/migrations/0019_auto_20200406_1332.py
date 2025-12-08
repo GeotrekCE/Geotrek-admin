@@ -4,12 +4,15 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('infrastructure', '0018_auto_20200228_1755'),
+        ("infrastructure", "0018_auto_20200228_1755"),
     ]
 
     operations = [
-        migrations.RunSQL('ALTER SEQUENCE a_b_amenagement_id_seq RENAME TO infrastructure_infrastructure_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE a_b_etat_id_seq RENAME TO infrastructure_infrastructurecondition_id_seq;'),
+        migrations.RunSQL(
+            "ALTER SEQUENCE a_b_amenagement_id_seq RENAME TO infrastructure_infrastructure_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE a_b_etat_id_seq RENAME TO infrastructure_infrastructurecondition_id_seq;"
+        ),
     ]

@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('signage', '0040_signage_access_tmp'),
+        ("signage", "0040_signage_access_tmp"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='signage',
-            name='access',
+            model_name="signage",
+            name="access",
         ),
     ]

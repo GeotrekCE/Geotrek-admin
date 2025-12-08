@@ -4,13 +4,18 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('feedback', '0005_remove_report_name'),
+        ("feedback", "0005_remove_report_name"),
     ]
 
     operations = [
-        migrations.RunSQL('ALTER SEQUENCE f_t_signalement_id_seq RENAME TO feedback_report_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE f_b_categorie_id_seq RENAME TO feedback_reportcategory_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE f_b_status_id_seq RENAME TO feedback_reportstatus_id_seq;'),
+        migrations.RunSQL(
+            "ALTER SEQUENCE f_t_signalement_id_seq RENAME TO feedback_report_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE f_b_categorie_id_seq RENAME TO feedback_reportcategory_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE f_b_status_id_seq RENAME TO feedback_reportstatus_id_seq;"
+        ),
     ]

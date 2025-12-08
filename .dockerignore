@@ -6,3 +6,8 @@ node_modules
 .github
 .githooks
 dpkg
+__pycache__
+*.pyc
+*.pyo
+*.orig
+tests

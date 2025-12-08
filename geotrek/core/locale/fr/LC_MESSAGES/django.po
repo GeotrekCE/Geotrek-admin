@@ -7,17 +7,16 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-30 13:53+0000\n"
-"PO-Revision-Date: 2020-09-23 07:10+0000\n"
-"Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
-"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-"
-"admin/core/fr/>\n"
+"POT-Creation-Date: 2025-09-23 12:05+0200\n"
+"PO-Revision-Date: 2025-10-10 18:37+0000\n"
+"Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 5.13.3\n"
 
 msgid "Geotrek configuration"
 msgstr "Configuration de Geotrek"
@@ -36,7 +35,7 @@ msgid "Topology %s does not exist."
 msgstr "La topologie %s n'existe pas."
 
 msgid "Linestring invalid snapping."
-msgstr "La ligne a un snapping invalide"
+msgstr "La ligne a un snapping invalide."
 
 msgid "Valid topology"
 msgstr "Topologie valide"
@@ -69,22 +68,40 @@ msgid "Reverse path"
 msgstr "Inverser le tronçon"
 
 msgid "The path will be reversed once saved"
-msgstr "Le tronçon sera inversé une fois sauvegardé."
+msgstr "Le tronçon sera inversé une fois sauvegardé"
 
 msgid "Invalid snapped geometry."
-msgstr "La géométrie snappée est invalide"
+msgstr "La géométrie snappée est invalide."
 
 msgid "Geometry is not simple."
-msgstr "La géométrie est non simple"
+msgstr "La géométrie est non simple."
 
 msgid "Geometry overlaps another."
-msgstr "La géométrie en superpose une autre"
+msgstr "La géométrie en superpose une autre."
 
 msgid "Geometry is not valid."
-msgstr "La géométrie n'est pas valide"
+msgstr "La géométrie n'est pas valide."
 
 msgid "Certifications"
 msgstr "Labellisations"
+
+#, python-format
+msgid "You need to add a network of paths before importing '%(model)s' objects"
+msgstr "Vous devez ajouter un réseau de tronçons avant d'importer des objets de type '%(model)s'"
+
+#, python-format
+msgid "Invalid geometry type: should be 'Point', not '%(geom_type)s'"
+msgstr "Type de géométrie invalide : le type doit être 'Point', pas '%(geom_type)s'"
+
+msgid "Cannot import object: geometry is None"
+msgstr "Impossible d'importer l'objet : la géométrie est None"
+
+#, python-format
+msgid "Could not parse geometry from value '%(value)s'"
+msgstr "Impossible de parser la géométrie à partir de la valeur '%(value)s'"
+
+msgid "Length 2D"
+msgstr "Longueur 2D"
 
 msgid "Validity"
 msgstr "Validité"
@@ -125,9 +142,6 @@ msgstr "Usages"
 msgid "Networks"
 msgstr "Réseaux"
 
-msgid "External id"
-msgstr "ID externe"
-
 msgid "Draft"
 msgstr "Brouillon"
 
@@ -149,18 +163,13 @@ msgid "{obj} has been set to draft"
 msgstr "{obj} a été mis en brouillon"
 
 msgid "You can't delete this path, some topologies are linked with this path"
-msgstr ""
-"Vous ne pouvez pas supprimer ce tronçon, des topologies sont liées à ce "
-"tronçon"
+msgstr "Vous ne pouvez pas supprimer ce tronçon, des topologies sont liées à ce tronçon"
 
 msgid "Trails"
 msgstr "Sentiers"
 
 msgid "None"
 msgstr "Aucun(e)"
-
-msgid "Add a new path"
-msgstr "Ajouter un tronçon"
 
 msgid "Treks"
 msgstr "Itinéraires"
@@ -229,7 +238,7 @@ msgid "Network"
 msgstr "Réseau"
 
 msgid "Category"
-msgstr "Categorie"
+msgstr "Catégorie"
 
 msgid "Trail category"
 msgstr "Categorie de sentier"
@@ -258,9 +267,24 @@ msgstr "Pas d'information"
 msgid "Add a new trail"
 msgstr "Ajouter un sentier"
 
+msgid "Actions"
+msgstr "Actions"
+
+msgid "Merge"
+msgstr "Fusionner"
+
+msgid "Delete"
+msgstr "Supprimer"
+
+msgid "Merge paths"
+msgstr "Fusionner les tronçons"
+
+msgid "Cancel"
+msgstr "Annuler"
+
 #, python-format
 msgid "%(obj)s has changed state to draft. "
-msgstr "%(obj)s a été mis en brouillon."
+msgstr "%(obj)s a été mis en brouillon. "
 
 #, python-format
 msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
@@ -276,15 +300,11 @@ msgid "Different topologies are linked with this path"
 msgstr "Différentes Topologies sont liées à ce tronçon"
 
 #, python-format
-msgid ""
-"You can't delete <strong>%(object)s</strong>, some topologies are linked "
-"with this path. Modify these topologies before deleting this path."
-msgstr ""
-"Vous ne pouvez pas supprimer <strong>%(object)s</strong>, des topologies "
-"sont lié à ce tronçon. Modifiez ces topologies avant de supprimer ce tronçon"
+msgid "You can't delete <strong>%(object)s</strong>, some topologies are linked with this path. Modify these topologies before deleting this path."
+msgstr "Vous ne pouvez pas supprimer <strong>%(object)s</strong>, des topologies sont liées à ce tronçon. Modifiez ces topologies avant de supprimer ce tronçon."
 
 msgid "No, back to edit view"
-msgstr "Non, retour à la l'édition"
+msgstr "Non, retour à l'édition"
 
 msgid "GPX"
 msgstr "GPX"
@@ -295,6 +315,9 @@ msgstr "KML"
 msgid "Not validated"
 msgstr "Non validé"
 
+msgid "External id"
+msgstr "ID externe"
+
 msgid "Draft mode"
 msgstr "Mode brouillon"
 
@@ -303,18 +326,6 @@ msgstr "Sélectionner deux tronçons pour les fusionner"
 
 msgid "Are you sure you want to merge these paths ?"
 msgstr "Etes-vous certain de vouloir fusionner ces tronçons ?"
-
-msgid "Merge"
-msgstr "Fusionner"
-
-msgid "Delete"
-msgstr "Supprimer"
-
-msgid "Merge paths"
-msgstr "Fusionner les tronçons"
-
-msgid "Cancel"
-msgstr "Annuler"
 
 msgid "Warning"
 msgstr "Attention"
@@ -329,24 +340,19 @@ msgid "No certification"
 msgstr "Aucune labellisation"
 
 msgid "Add"
-msgstr ""
+msgstr "Ajouter"
 
 msgid "Remove"
-msgstr ""
+msgstr "Supprimer"
 
 msgid "This field is required."
-msgstr ""
+msgstr "Ce champ est requis."
 
-msgid ""
-"Access to the requested resource is restricted. You have been redirected."
+msgid "Access to the requested resource is restricted. You have been redirected."
 msgstr "L'accès à cette ressource est restreint. Vous avez été redirigé."
 
-msgid ""
-"Access to the requested resource is restricted by structure. You have been "
-"redirected."
-msgstr ""
-"L'accès à cette ressource est restreint selon la structure. Vous avez été "
-"redirigé."
+msgid "Access to the requested resource is restricted by structure. You have been redirected."
+msgstr "L'accès à cette ressource est restreint par structure. Vous avez été redirigé."
 
 msgid "path"
 msgstr "tronçon"
@@ -358,16 +364,13 @@ msgid "You don't have the right to change these paths"
 msgstr "Vous n'avez pas le droit de modifier ces tronçons"
 
 msgid "You can't merge 1 draft path with 1 normal path"
-msgstr ""
-"Vous ne pouvez pas fusionner un tronçon en brouillon avec un tronçon normal"
+msgstr "Vous ne pouvez pas fusionner un tronçon en brouillon avec un tronçon normal"
 
 msgid "You can't merge 2 paths with a 3rd path in the intersection"
-msgstr ""
-"Vous ne pouvez pas fusionner deux tronçons qui intersectent un troisième "
-"tronçon"
+msgstr "Vous ne pouvez pas fusionner deux tronçons qui intersectent un troisième tronçon"
 
 msgid "No matching points to merge paths found"
 msgstr "Aucun point de correspondance trouvé pour fusionner les tronçons"
 
 msgid "Paths merged successfully"
-msgstr "Les tronçons ont été fusionnés."
+msgstr "Les tronçons ont été fusionnés"

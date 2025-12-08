@@ -3,8 +3,8 @@ from django.db import migrations
 
 
 def move_is_park_centered(apps, schema_editor):
-    Trek = apps.get_model('trekking', 'Trek')
-    LabelTrek = apps.get_model('trekking', 'LabelTrek')
+    Trek = apps.get_model("trekking", "Trek")
+    LabelTrek = apps.get_model("trekking", "LabelTrek")
     is_park_centered = LabelTrek.objects.create()
 
     for trek in Trek.objects.filter(is_park_centered=True):
@@ -12,11 +12,8 @@ def move_is_park_centered(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0018_auto_20201012_1411'),
+        ("trekking", "0018_auto_20201012_1411"),
     ]
 
-    operations = [
-        migrations.RunPython(move_is_park_centered)
-    ]
+    operations = [migrations.RunPython(move_is_park_centered)]

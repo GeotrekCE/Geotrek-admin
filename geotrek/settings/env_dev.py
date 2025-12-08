@@ -37,5 +37,6 @@ MIDDLEWARE += (
 )
 
 LOGGING['loggers']['']['level'] = 'DEBUG'
+LOGGING['handlers']['console']['level'] = 'INFO'
 
 CACHES['default']['BACKEND'] = 'django.core.cache.backends.locmem.LocMemCache'

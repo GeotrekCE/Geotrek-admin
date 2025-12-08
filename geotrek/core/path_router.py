@@ -1,10 +1,14 @@
 import json
 
-from django.db import connection
 from django.conf import settings
-from django.contrib.gis.geos import GEOSGeometry, Point, LineString, MultiLineString, GeometryCollection
+from django.contrib.gis.geos import (
+    GeometryCollection,
+    GEOSGeometry,
+    LineString,
+    MultiLineString,
+)
+from django.db import connection
 
-from geotrek.common.utils import sqlfunction
 from .models import Path
 
 
@@ -13,7 +17,7 @@ class PathRouter:
         self.set_path_network_topology()
 
     def set_path_network_topology(self):
-        """ Builds or updates the paths graph (pgRouting network topology) """
+        """Builds or updates the paths graph (pgRouting network topology)"""
         cursor = connection.cursor()
         query = """
                 SELECT
@@ -24,8 +28,8 @@ class PathRouter:
                         'id'
                     )
                 """
-        cursor.execute(query, [settings.PATH_SNAPPING_DISTANCE])
-        return ('OK',) == cursor.fetchone()
+        cursor.execute(query, [settings.PGROUTING_TOLERANCE])
+        return ("OK",) == cursor.fetchone()
 
     def get_route(self, steps):
         """
@@ -35,37 +39,19 @@ class PathRouter:
         """
         self.steps = steps
         self.steps_topo = [
-            {
-                'edge_id': step.get('path_id'),
-                'fraction': self.get_step_fraction(step)
-            }
+            {"edge_id": step.get("path_id"), "fraction": step.get("positionOnPath")}
             for step in steps
         ]
         line_strings, serialized_topology = self.compute_all_steps_routes()
         if line_strings == []:
             return None
-
+        if not all(ls.geom_type == "LineString" for ls in line_strings):
+            return None
         multi_line_string = GeometryCollection(line_strings, srid=settings.SRID)
         multi_line_string.transform(settings.API_SRID)
         geojson = json.loads(multi_line_string.geojson)
 
-        return {'geojson': geojson, 'serialized': serialized_topology}
-
-    def get_step_fraction(self, step):
-        """
-        For one step on a path, returns its position on the path.
-        """
-        # Transform the point to the right SRID
-        point = Point(step.get('lng'), step.get('lat'), srid=settings.API_SRID)
-        point.transform(settings.SRID)
-        # Get the closest path
-        closest_path = Path.objects.get(pk=step.get('path_id'))
-        # Get which fraction of the Path this point is on
-        closest_path_geom = f"'{closest_path.geom}'"
-        point_geom = f"'{point.ewkt}'"
-        fraction_of_distance = sqlfunction('SELECT ST_LineLocatePoint',
-                                           closest_path_geom, point_geom)[0]
-        return fraction_of_distance
+        return {"geojson": geojson, "serialized": serialized_topology}
 
     def compute_all_steps_routes(self):
         """
@@ -94,22 +80,20 @@ class PathRouter:
             from_step: {edge_id: int, fraction: float}
             to_step: {edge_id: int, fraction: float}
         """
-        from_edge_id = from_step.get('edge_id')
-        to_edge_id = to_step.get('edge_id')
+        from_edge_id = from_step.get("edge_id")
+        to_edge_id = to_step.get("edge_id")
 
         if from_edge_id == to_edge_id:
-            from_fraction = from_step.get('fraction')
-            to_fraction = to_step.get('fraction')
+            from_fraction = from_step.get("fraction")
+            to_fraction = to_step.get("fraction")
             # If both points are on same edge, split it from the 1st to the 2nd
             path_substring = self.create_path_substring(
-                from_edge_id,
-                from_fraction,
-                to_fraction
+                from_edge_id, from_fraction, to_fraction
             )
             line_strings = [path_substring]
             topology = {
-                'positions': {'0': [from_fraction, to_fraction]},
-                'paths': [from_edge_id],
+                "positions": {"0": [from_fraction, to_fraction]},
+                "paths": [from_edge_id],
             }
         else:
             # Compute the shortest path between the two points
@@ -128,12 +112,12 @@ class PathRouter:
             from_step: {edge_id: int, fraction: float}
             to_step: {edge_id: int, fraction: float}
         """
-        start_edge = from_step.get('edge_id')
-        end_edge = to_step.get('edge_id')
-        fraction_start = self._fix_fraction(from_step.get('fraction'))
-        fraction_end = self._fix_fraction(to_step.get('fraction'))
+        start_edge = from_step.get("edge_id")
+        end_edge = to_step.get("edge_id")
+        fraction_start = self._fix_fraction(from_step.get("fraction"))
+        fraction_end = self._fix_fraction(to_step.get("fraction"))
 
-        query = """
+        query = f"""
             DO $$
             DECLARE
                 max_edge_id integer;
@@ -184,10 +168,10 @@ class PathRouter:
                                 END AS target_geom
                         FROM (
                             VALUES
-                                (1, '{}'::int, 0, '{}'::float),
-                                (2, '{}'::int, '{}'::float, 1),
-                                (3, '{}'::int, 0, '{}'::float),
-                                (4, '{}'::int, '{}'::float, 1)
+                                (1, '{start_edge}'::int, 0, '{fraction_start}'::float),
+                                (2, '{start_edge}'::int, '{fraction_start}'::float, 1),
+                                (3, '{end_edge}'::int, 0, '{fraction_end}'::float),
+                                (4, '{end_edge}'::int, '{fraction_end}'::float, 1)
                         ) AS tmp_edges_info (index, path_id, fraction_start, fraction_end)
                         JOIN core_path ON core_path.id = tmp_edges_info.path_id
                     )
@@ -196,8 +180,8 @@ class PathRouter:
                         edge_id AS id,
                         source_id AS source,
                         target_id AS target,
-                        ST_Length(edge_geom) AS cost,
-                        ST_Length(edge_geom) AS reverse_cost,
+                        ST_LengthSpheroid(ST_TRANSFORM(edge_geom, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]') AS cost,
+                        ST_LengthSpheroid(ST_TRANSFORM(edge_geom, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]') AS reverse_cost,
                         ST_X(source_geom) AS x1,
                         ST_Y(source_geom) AS y1,
                         ST_X(target_geom) AS x2,
@@ -251,12 +235,12 @@ class PathRouter:
                         END AS edge_geom,
                     edge,
                     CASE
-                        WHEN node = max_vertex_id + 1 THEN '{}'::float
+                        WHEN node = max_vertex_id + 1 THEN '{fraction_start}'::float
                         WHEN node = source THEN 0
                         ELSE 1  -- node = target
                         END AS fraction_start,
                     CASE
-                        WHEN next_node IS NULL THEN '{}'::float
+                        WHEN next_node IS NULL THEN '{fraction_end}'::float
                         WHEN next_node = source THEN 0
                         ELSE 1  -- next_node = target
                         END AS fraction_end
@@ -270,13 +254,7 @@ class PathRouter:
                 fraction_start,
                 fraction_end
             FROM route
-        """.format(
-            start_edge, fraction_start,
-            start_edge, fraction_start,
-            end_edge, fraction_end,
-            end_edge, fraction_end,
-            fraction_start, fraction_end
-        )
+        """
 
         with connection.cursor() as cursor:
             cursor.execute(query)
@@ -285,7 +263,9 @@ class PathRouter:
             if query_result == []:
                 return [], None
 
-            geometries, edge_ids, fraction_starts, fraction_ends = list(zip(*query_result))
+            geometries, edge_ids, fraction_starts, fraction_ends = list(
+                zip(*query_result)
+            )
             return (
                 [
                     # Convert each geometry to a LineString
@@ -293,16 +273,18 @@ class PathRouter:
                     for geometry in geometries
                 ],
                 {
-                    'positions': dict([
-                        (str(i), [fraction_starts[i], fraction_ends[i]])
-                        for i in range(len(fraction_starts))
-                    ]),
-                    'paths': list(edge_ids),
-                }
+                    "positions": dict(
+                        [
+                            (str(i), [fraction_starts[i], fraction_ends[i]])
+                            for i in range(len(fraction_starts))
+                        ]
+                    ),
+                    "paths": list(edge_ids),
+                },
             )
 
     def _fix_fraction(self, fraction):
-        """ This function is used to fix an issue with pgRouting where a point's
+        """This function is used to fix an issue with pgRouting where a point's
         position on an edge being 0.0 or 1.0 create a routing topology problem.
         See https://github.com/pgRouting/pgrouting/issues/760
         So we create a fake fraction near the vertices of the edge.
@@ -319,17 +301,17 @@ class PathRouter:
         end_fraction.
         """
         path = Path.objects.get(pk=path_id)
-        sql = """
-        SELECT ST_AsText(ST_SmartLineSubstring('{}'::geometry, {}, {}))
-        """.format(path.geom, start_fraction, end_fraction)
+        sql = f"""
+        SELECT ST_AsText(ST_SmartLineSubstring('{path.geom}'::geometry, {start_fraction}, {end_fraction}))
+        """
 
         cursor = connection.cursor()
         cursor.execute(sql)
         result = cursor.fetchone()[0]
 
         # Convert the string into an array of arrays of floats
-        coords_str = result.split('(')[1].split(')')[0]
-        str_points_array = [elem.split(' ') for elem in coords_str.split(',')]
+        coords_str = result.split("(")[1].split(")")[0]
+        str_points_array = [elem.split(" ") for elem in coords_str.split(",")]
         arr = [[float(nb) for nb in sub_array] for sub_array in str_points_array]
 
         line_substring = LineString(arr, srid=settings.SRID)

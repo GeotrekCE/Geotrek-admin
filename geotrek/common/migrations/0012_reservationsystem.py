@@ -4,24 +4,36 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0011_attachment_add_is_image'),
+        ("common", "0011_attachment_add_is_image"),
     ]
 
     operations = [
         migrations.SeparateDatabaseAndState(
             state_operations=[
                 migrations.CreateModel(
-                    name='ReservationSystem',
+                    name="ReservationSystem",
                     fields=[
-                        ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                        ('name', models.CharField(max_length=256, unique=True, verbose_name='Name')),
+                        (
+                            "id",
+                            models.AutoField(
+                                auto_created=True,
+                                primary_key=True,
+                                serialize=False,
+                                verbose_name="ID",
+                            ),
+                        ),
+                        (
+                            "name",
+                            models.CharField(
+                                max_length=256, unique=True, verbose_name="Name"
+                            ),
+                        ),
                     ],
                     options={
-                        'verbose_name': 'Reservation system',
-                        'verbose_name_plural': 'Reservation systems',
-                        'ordering': ('name',),
+                        "verbose_name": "Reservation system",
+                        "verbose_name_plural": "Reservation systems",
+                        "ordering": ("name",),
                     },
                 ),
             ],

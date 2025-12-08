@@ -4,11 +4,12 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('feedback', '0043_report_provider'),
+        ("feedback", "0043_report_provider"),
     ]
 
     operations = [
-        migrations.RunSQL('ALTER TABLE feedback_report ALTER COLUMN external_uuid DROP DEFAULT;')
+        migrations.RunSQL(
+            "ALTER TABLE feedback_report ALTER COLUMN external_uuid DROP DEFAULT;"
+        )
     ]

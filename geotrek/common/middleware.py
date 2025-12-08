@@ -3,7 +3,7 @@ import re
 from django.utils import translation
 from django.utils.translation.trans_real import get_supported_language_variant
 
-language_code_prefix_re = re.compile(r'^/api/([\w-]+)(/|$)')
+language_code_prefix_re = re.compile(r"^/api/([\w-]+)(/|$)")
 
 
 def get_language_from_path(path):
@@ -14,11 +14,13 @@ def get_language_from_path(path):
 
 
 def get_language_from_request(request):
-    return request.GET.get('lang')
+    return request.GET.get("lang")
 
 
 def get_language_from_url(request):
-    lang = get_language_from_path(request.path_info) or get_language_from_request(request)
+    lang = get_language_from_path(request.path_info) or get_language_from_request(
+        request
+    )
     try:
         return get_supported_language_variant(lang)
     except LookupError:

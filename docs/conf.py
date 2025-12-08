@@ -5,7 +5,8 @@ root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 extensions = [
     'sphinx.ext.todo',
-    "sphinx_immaterial"
+    "sphinx_immaterial",
+    "sphinx_design",
 ]
 
 html_theme = 'sphinx_immaterial'
@@ -20,7 +21,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = 'Geotrek-admin'
-copyright = f'2013-{datetime.date.today().year}, Makina Corpus'
+copyright = f'2013-{datetime.date.today().year}, Makina Corpus Territoires / Parc national des Ecrins - Parc National du Mercantour - Parco delle Alpi Marittime'
 
 
 exclude_patterns = ['_build']

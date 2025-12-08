@@ -4,13 +4,18 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('flatpages', '0005_auto_20200228_2150'),
+        ("flatpages", "0005_auto_20200228_2150"),
     ]
 
     operations = [
-        migrations.RunSQL('ALTER SEQUENCE p_t_page_id_seq RENAME TO flatpages_flatpage_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE t_r_page_portal_id_seq RENAME TO flatpages_flatpage_portal_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE t_r_page_source_id_seq RENAME TO flatpages_flatpage_source_id_seq;'),
+        migrations.RunSQL(
+            "ALTER SEQUENCE p_t_page_id_seq RENAME TO flatpages_flatpage_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE t_r_page_portal_id_seq RENAME TO flatpages_flatpage_portal_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE t_r_page_source_id_seq RENAME TO flatpages_flatpage_source_id_seq;"
+        ),
     ]

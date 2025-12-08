@@ -1,18 +1,23 @@
-from django.test import TestCase
-from django.conf import settings
-
 from unittest import skipIf
 
-from geotrek.infrastructure.tests.factories import InfrastructureFactory
-from geotrek.signage.tests.factories import SignageFactory
-from geotrek.maintenance.tests.factories import InterventionFactory, ProjectFactory
+from django.conf import settings
+from django.test import TestCase
+
 from geotrek.core.tests.factories import TopologyFactory
-from geotrek.land.tests.factories import (SignageManagementEdgeFactory, WorkManagementEdgeFactory,
-                                          CompetenceEdgeFactory)
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.land.tests.factories import (
+    CompetenceEdgeFactory,
+    SignageManagementEdgeFactory,
+    WorkManagementEdgeFactory,
+)
+from geotrek.maintenance.tests.factories import InterventionFactory, ProjectFactory
+from geotrek.signage.tests.factories import SignageFactory
 
 
 class ProjectTest(TestCase):
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     def test_helpers(self):
         i1 = InterventionFactory.create(target=None)
         i2 = InterventionFactory.create(target=None)
@@ -57,7 +62,9 @@ class ProjectTest(TestCase):
         self.assertEqual(proj.signages, [sign])
         self.assertEqual(proj.infrastructures, [infra])
 
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, 'Test without dynamic segmentation only')
+    @skipIf(
+        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
+    )
     def test_helpers_nds(self):
         i1 = InterventionFactory.create(target=None)
         i2 = InterventionFactory.create(target=None)
@@ -120,7 +127,7 @@ class ProjectTest(TestCase):
         self.assertEqual(proj.infrastructures, [])
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class ProjectLandTest(TestCase):
     @classmethod
     def setUpTestData(cls):

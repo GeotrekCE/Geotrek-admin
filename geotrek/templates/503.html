@@ -1,0 +1,33 @@
+{% extends "mapentity/base_site.html" %}
+
+{% load i18n %}
+{% load static %}
+
+{% block navbar %}
+{% endblock %}
+
+{% block container %}
+    <div id="container" class="container">
+        <div class="card text-center bg-warning">
+            <div class="card-img-bottom">
+                <img src="{% static 'images/logo-header.png' %}" class="img-fluid" alt="Maintenance Image" />
+            </div>
+            <div class="card-body bg-white">
+                <h4 class="card-title">
+                    {% trans "Geotrek-admin is under maintenance..." %}
+                </h4>
+            <p class="card-text">
+            {% trans "Please come back later." %}
+            </p>
+                <i class="bi bi-cone-striped text-warning" style="font-size: 5em"></i>
+                <i class="bi bi-cone-striped text-danger" style="font-size: 5em"></i>
+                <i class="bi bi-cone-striped text-warning" style="font-size: 5em"></i>
+                <i class="bi bi-cone-striped text-danger" style="font-size: 5em"></i>
+                <i class="bi bi-cone-striped text-warning" style="font-size: 5em"></i>
+            </div>
+        </div>
+    </div>
+{% endblock container %}
+
+{% block extrabody %}
+{% endblock %}
