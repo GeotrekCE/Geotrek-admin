@@ -147,7 +147,7 @@ django-js-asset==3.1.2
     # via django-mptt
 django-large-image==0.10.2
     # via geotrek (setup.py)
-django-leaflet==0.33.0
+django-leaflet==0.19.post11
     # via mapentity
 django-maintenance-mode==0.22.0
     # via geotrek (setup.py)
