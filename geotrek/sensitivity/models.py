@@ -114,9 +114,15 @@ class Species(TimeStampedModelMixin, OptionalPictogramMixin):
         return ", ".join([str(practice) for practice in self.practices.all()])
 
 
-class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMixin, NoDeleteMixin,
-                    AddPropertyMixin, ExternalSourceMixin,):
-    name = models.CharField(max_length=250, verbose_name=_("Name"), default='undefined')
+class SensitiveArea(
+    GeotrekMapEntityMixin,
+    StructureRelated,
+    TimeStampedModelMixin,
+    NoDeleteMixin,
+    AddPropertyMixin,
+    ExternalSourceMixin,
+):
+    name = models.CharField(max_length=250, verbose_name=_("Name"), default="undefined")
     geom = models.GeometryField(srid=settings.SRID)
     geom_buffered = models.GeometryField(srid=settings.SRID, editable=False)
     species = models.ForeignKey(
@@ -213,18 +219,20 @@ class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMix
     @property
     def area_name(self):
         if self.species.category == 1:
-            return self.species.name if (self.name == "" or not self.name) else self.name
+            return (
+                self.species.name if (self.name == "" or not self.name) else self.name
+            )
         return self.name
-        
+
     @classproperty
     def area_name_verbose_name(cls):
         return _("Published name")
-        
+
     @property
     def name_display(self):
         s = f'<a data-pk="{self.pk}" href="{self.get_detail_url()}" title="{self.area_name}">{self.area_name}</a>'
         if self.published:
-            s = f"""<span class="badge badge-success" title="{_('Published')}">&#x2606;</span> {s}"""
+            s = f"""<span class="badge badge-success" title="{_("Published")}">&#x2606;</span> {s}"""
         return s
 
     @property
@@ -254,10 +262,12 @@ class SensitiveArea(GeotrekMapEntityMixin, StructureRelated, TimeStampedModelMix
                 geometry += (coords,)
             geom = GEOSGeometry(Polygon(geometry), srid=settings.SRID)
         geom = geom.transform(4326, clone=True)  # KML uses WGS84
-        line = kml.newpolygon(name=self.name,
-                              description=plain_text(self.description),
-                              altitudemode=simplekml.AltitudeMode.relativetoground,
-                              outerboundaryis=simplify_coords(geom.coords[0]))
+        line = kml.newpolygon(
+            name=self.name,
+            description=plain_text(self.description),
+            altitudemode=simplekml.AltitudeMode.relativetoground,
+            outerboundaryis=simplify_coords(geom.coords[0]),
+        )
         line.style.linestyle.color = simplekml.Color.red  # Red
         line.style.linestyle.width = 4  # pixels
         return kml.kml()

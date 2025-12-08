@@ -23,7 +23,10 @@ class SpeciesTO(TranslationOptions):
 
 
 class SensitiveAreaTO(TranslationOptions):
-    fields = ('name', 'description', )
+    fields = (
+        "name",
+        "description",
+    )
 
 
 translator.register(Rule, RuleTO)

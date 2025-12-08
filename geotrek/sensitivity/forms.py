@@ -22,13 +22,23 @@ class PolygonMapWidget(MapWidget):
 
 
 class SensitiveAreaForm(CommonForm):
-    geomfields = ['geom']
+    geomfields = ["geom"]
     name = forms.CharField(max_length=250, label=_("Name"), required=False)
-    species = forms.ModelChoiceField(queryset=Species.objects.filter(category=Species.SPECIES),
-                                     label=pgettext("Singular", "Species"))
+    species = forms.ModelChoiceField(
+        queryset=Species.objects.filter(category=Species.SPECIES),
+        label=pgettext("Singular", "Species"),
+    )
 
     class Meta:
-        fields = ['structure', 'species', 'name', 'published', 'description', 'contact', 'geom']
+        fields = [
+            "structure",
+            "species",
+            "name",
+            "published",
+            "description",
+            "contact",
+            "geom",
+        ]
         model = SensitiveArea
         widgets = {"geom": BubbleMapWidget()}
 
@@ -80,11 +90,11 @@ class RegulatorySensitiveAreaForm(CommonForm):
         instance = kwargs.get("instance")
         if instance:
             species = instance.species
-            kwargs['initial'] = {
-                'elevation': species.radius,
-                'pictogram': species.pictogram,
-                'practices': species.practices.all(),
-                'url': species.url,
+            kwargs["initial"] = {
+                "elevation": species.radius,
+                "pictogram": species.pictogram,
+                "practices": species.practices.all(),
+                "url": species.url,
             }
             for p in range(1, 13):
                 name = f"period{p:02}"
@@ -99,9 +109,9 @@ class RegulatorySensitiveAreaForm(CommonForm):
         else:
             species = self.instance.species
         species.category = Species.REGULATORY
-        species.radius = self.cleaned_data['elevation']
-        species.pictogram = self.cleaned_data['pictogram']
-        species.url = self.cleaned_data['url']
+        species.radius = self.cleaned_data["elevation"]
+        species.pictogram = self.cleaned_data["pictogram"]
+        species.url = self.cleaned_data["url"]
         for p in range(1, 13):
             fieldname = f"period{p:02}"
             setattr(species, fieldname, self.cleaned_data[fieldname])
