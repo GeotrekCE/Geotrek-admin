@@ -261,7 +261,7 @@ class BelongStructureMixin:
                 self.request,
                 _("Access to the requested resource is restricted by structure"),
             )
-            return HttpResponseRedirect(self.get_success_url())
+            return HttpResponseRedirect(self.get_redirect_url())
 
         return response
 
