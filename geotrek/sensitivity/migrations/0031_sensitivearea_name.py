@@ -1,15 +1,14 @@
 import logging
-from typing import Any, cast
+from typing import cast
 
 from django.conf import settings
 from django.core.management.color import no_style
 from django.db import connection, migrations, models, utils
-from django.db.models import Model, Field
+from django.db.models import Field, Model
 from modeltranslation.translator import TranslationOptions, translator
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.sensitivity.models import SensitiveArea
-
 
 logger = logging.getLogger(__name__)
 
@@ -62,7 +61,6 @@ def generate_name(apps, schema_editor):
 
     sensitive_area = SensitiveArea
     languages = settings.MODELTRANSLATION_LANGUAGES
-    print(f"migration MODELTRANSLATION_LANGUAGES {languages}")
     update_fields = [
         "name",
     ]
@@ -73,7 +71,7 @@ def generate_name(apps, schema_editor):
                 setattr(row, field, getattr(row.species, field))
                 row.save(update_fields=update_fields)
             except utils.ProgrammingError as e:
-                logger.warning(f'An error occured during migration {e}')
+                logger.warning('[Update sensitive areas] An error occured during migration : %s', e)
         for field in update_fields:
             # print(f"species.manager {row.species._meta.managers}")
             # print(f"row {row.species} | field {field}")
@@ -81,7 +79,7 @@ def generate_name(apps, schema_editor):
                 setattr(row.species, field, "")
                 row.species.save(update_fields=update_fields)
             except utils.ProgrammingError as e:
-                logger.warning(f'An error occured during migration {e}')
+                logger.warning('[Update sensitive species] An error occured during migration : %s', e)
 
 class Migration(migrations.Migration):
     dependencies = [
