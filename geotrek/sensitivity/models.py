@@ -122,7 +122,7 @@ class SensitiveArea(
     AddPropertyMixin,
     ExternalSourceMixin,
 ):
-    name = models.CharField(max_length=250, verbose_name=_("Name"), default="undefined")
+    name = models.CharField(max_length=250, verbose_name=_("Name"), default="")
     geom = models.GeometryField(srid=settings.SRID)
     geom_buffered = models.GeometryField(srid=settings.SRID, editable=False)
     species = models.ForeignKey(
