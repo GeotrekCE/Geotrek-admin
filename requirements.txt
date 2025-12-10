@@ -293,7 +293,7 @@ psycopg2==2.9.11
     # via geotrek (setup.py)
 pycparser==2.23
     # via cffi
-pydyf==0.11.0
+pydyf==0.12.1
     # via weasyprint
 pygal==3.0.5
     # via geotrek (setup.py)
