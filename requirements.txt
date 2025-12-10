@@ -351,7 +351,7 @@ ruamel-yaml==0.18.16
     # via drf-yasg
 ruamel-yaml-clib==0.2.15
     # via ruamel-yaml
-sentry-sdk==2.46.0
+sentry-sdk==2.47.0
     # via geotrek (setup.py)
 setuptools==80.9.0
     # via
