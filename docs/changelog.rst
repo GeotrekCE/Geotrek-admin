@@ -5,6 +5,9 @@ CHANGELOG
 2.121.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Fix ``label_en`` content on sensitivity module parser
 
 2.121.1         (2025-11-17)
 ----------------------------
