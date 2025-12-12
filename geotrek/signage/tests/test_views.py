@@ -10,7 +10,12 @@ from django.test.utils import override_settings
 from django.utils.translation import gettext
 
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import (
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonTest,
+)
 from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.models import Blade, Signage
 from geotrek.signage.tests.factories import (
@@ -435,3 +440,53 @@ class SignageViewsTest(CommonTest):
         form = response.context["form"]
         type = form.fields["type"]
         self.assertTrue((signagetype.pk, str(signagetype)) in type.choices)
+
+
+class SignageMultiActionsViewTest(
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Signage
+    modelFactory = SignageFactory
+    expected_fields = [
+        "Published [fr]",
+        "Published [en]",
+        "Provider",
+        "Related structure",
+        "Access mean",
+        "Manager",
+        "Sealing",
+        "Type",
+    ]
+
+
+class BladeMultiActionsViewTest(
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Blade
+    modelFactory = BladeFactory
+    expected_fields = [
+        "Signage",
+        "Direction",
+        "Type",
+        "Color",
+    ]
+
+    def create_items(self, struct):
+        signage1 = SignageFactory.create(structure=struct)
+        signage2 = SignageFactory.create(structure=StructureFactory.create())
+        self.item1 = self.modelFactory.create(signage=signage1)
+        self.item2 = self.modelFactory.create(signage=signage2)
+
+    def test_editable_fields_no_blades(self):
+        def test_editable_fields_with_not_superuser(self):
+            self.login(self.user)
+            response = self.client.get(
+                self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
+            )
+
+            self.assertNotContains(response, "Blades")

@@ -17,7 +17,11 @@ from mapentity.serializers.shapefile import ZipShapeSerializer
 from mapentity.tests.factories import SuperUserFactory
 
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import (
+    CommonMultiActionViewsMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonTest,
+)
 from geotrek.common.tests.factories import AccessMeanFactory, OrganismFactory
 from geotrek.core.models import PathAggregation
 from geotrek.core.tests.factories import PathFactory, StakeFactory, TopologyFactory
@@ -970,3 +974,37 @@ class TestInterventionTargetExports(TestCase):
         )
         for row in reader:
             self.assertEqual(row["On"], f"Path: {self.path.name} ({self.path.pk})")
+
+
+class InterventionMultiActionsViewTest(
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Intervention
+    modelFactory = InterventionFactory
+    expected_fields = [
+        "Related structure",
+        "Subcontracting",
+        "Stake",
+        "Status",
+        "Type",
+        "Project",
+        "Access mean",
+    ]
+
+
+class ProjectMultiActionsViewTest(
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Project
+    modelFactory = ProjectFactory
+    expected_fields = [
+        "Related structure",
+        "Type",
+        "Domain",
+        "Project owner",
+        "Project manager",
+    ]

@@ -1,5 +1,6 @@
 import os
 from unittest import mock
+from unittest.mock import MagicMock
 
 from django.conf import settings
 from django.contrib import messages
@@ -507,3 +508,113 @@ class CommonLiveTest(MapEntityLiveTest):
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(default_storage.exists(image_path))
+
+
+class CommonMultiActionViewsMixin:
+    model = None
+    modelFactory = None
+    expected_fields = []
+
+    def setUp(self):
+        self.superuser = User.objects.create_superuser(
+            "admin", "email@corp.com", "test"
+        )
+        self.user = User.objects.create_user("toto", "email@corp.com", "test")
+
+        structure = self.user.profile.structure
+        self.create_items(structure)
+
+    def create_items(self, struct):
+        if hasattr(self.model, "structure"):
+            self.item1 = self.modelFactory.create(structure=struct)
+            self.item2 = self.modelFactory.create(structure=StructureFactory.create())
+        else:
+            self.item1 = self.modelFactory.create()
+            self.item2 = self.modelFactory.create()
+
+    def login(self, user):
+        self.client.logout()
+        self.client.login(username=user.username, password="test")
+        return user
+
+    @mock.patch.object(User, "has_perm", return_value=True)
+    def test_delete_view(self, mock):
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url() + f"?pks={self.item1.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    @mock.patch.object(User, "has_perm", return_value=True)
+    def test_update_view(self, mock):
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    @mock.patch.object(User, "has_perm", return_value=True)
+    def test_editable_fields(self, mock):
+        self.login(self.superuser)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
+        )
+
+        for field in self.expected_fields:
+            self.assertContains(response, field)
+
+
+class CommonMultiActionViewsStructureMixin:
+    @mock.patch.object(User, "has_perm", return_value=True)
+    def test_delete_selected_items_with_different_structure_than_user(self, mock):
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.item2.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, self.model.get_list_url())
+
+    @mock.patch.object(User, "has_perm", return_value=True)
+    def test_update_selected_items_with_different_structure_than_user(self, mock):
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_update_url()
+            + f"?pks={self.item1.pk}%2C{self.item2.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, self.model.get_list_url())
+
+    @mock.patch.object(User, "has_perm", return_value=True)
+    def test_editable_fields_with_not_superuser(self, mock):
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
+        )
+
+        self.assertNotContains(response, "Related structure")
+
+
+class CommonMultiActionsViewsPublishedMixin:
+    def setUp(self):
+        super().setUp()
+        self.user_no_publish_perm = User.objects.create_user(
+            "titi", "email@corp.com", "test"
+        )
+        self.user_no_publish_perm.has_perm = MagicMock(return_value=self.user_perm)
+
+    def user_perm(self, perm):
+        if perm == f"{self.model._meta.app_label}.publish_{self.model._meta.model_name}":
+            return False
+        return True
+
+    @mock.patch.object(User, "has_perm")
+    def test_editable_fields_without_publish_perms(self, mock):
+        mock.side_effect = self.user_perm
+
+        self.login(self.user_no_publish_perm)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
+        )
+
+        self.assertNotContains(response, "Published")

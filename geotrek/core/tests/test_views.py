@@ -4,7 +4,7 @@ from unittest import mock, skipIf
 
 from bs4 import BeautifulSoup
 from django.conf import settings
-from django.contrib.auth.models import Permission
+from django.contrib.auth.models import Permission, User
 from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.core.cache import caches
 from django.core.files.storage import default_storage
@@ -15,7 +15,11 @@ from mapentity.tests.factories import UserFactory
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import (
+    CommonMultiActionViewsMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonTest,
+)
 from geotrek.core.models import Path, PathSource, Trail
 from geotrek.core.tests.factories import (
     ComfortFactory,
@@ -2362,3 +2366,126 @@ class RemovePathKeepTopology(TestCase):
         self.assertEqual(poi.deleted, False)
 
         self.assertAlmostEqual(1.5, poi.offset)
+
+from mapentity.helpers import user_has_perm
+class PathMultiActionsViewTest(
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Path
+    modelFactory = PathFactory
+    expected_fields = [
+        "Provider",
+        "Related structure",
+        "Validity",
+        "Visible",
+        "Comfort",
+        "Source",
+        "Maintenance stake",
+        "Draft",
+    ]
+
+    def create_items(self, struct):
+        self.item1 = self.modelFactory.create(structure=struct, draft=False)
+        self.item2 = self.modelFactory.create(
+            structure=StructureFactory.create(), draft=False
+        )
+        self.draft = self.modelFactory.create(structure=struct, draft=True)
+
+    def user_perm_path(self, perm):
+        if perm in [
+            "core.delete_path",
+            "core.delete_draft_path",
+            "core.change_path",
+            "core.delete_draft_path",
+        ]:
+            return False
+        return True
+
+    @mock.patch.object(User, "has_perm")
+    def test_delete_draft_path_without_permission(self, mock):
+        mock.side_effect = self.user_perm_path
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url() + f"?pks={self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+
+    @mock.patch.object(User, "has_perm", return_value=True)
+    def test_delete_draft_path_with_permission(self, mock):
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    @mock.patch.object(User, "has_perm")
+    def test_delete_path_without_permission(self, mock):
+        mock.side_effect = self.user_perm_path
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+
+    @mock.patch.object(User, "has_perm", return_value=True)
+    def test_delete_path_with_permission(self, mock):
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    @mock.patch.object(User, "has_perm")
+    def test_change_draft_path_without_permission(self, mock):
+        mock.side_effect = self.user_perm_path
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url() + f"?pks={self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+
+    @mock.patch.object(User, "has_perm", return_value=True)
+    def test_change_draft_path_with_permission(self, mock):
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url() + f"?pks={self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    @mock.patch.object(User, "has_perm")
+    def test_change_path_without_permission(self, mock):
+        mock.side_effect = self.user_perm_path
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+
+    @mock.patch.object(User, "has_perm", return_value=True)
+    def test_change_path_with_permission(self, mock):
+        self.login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+
+class TrailMultiActionsViewTest(
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Trail
+    modelFactory = TrailFactory
+    expected_fields = [
+        "Provider",
+        "Related structure",
+        "Category",
+    ]

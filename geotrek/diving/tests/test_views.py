@@ -1,8 +1,15 @@
+from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
 from mapentity.tests.factories import SuperUserFactory
 
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.common.tests import CommonLiveTest, CommonTest
+from geotrek.common.tests import (
+    CommonLiveTest,
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonTest,
+)
 
 from ..models import Dive
 from .factories import (
@@ -70,3 +77,21 @@ class DiveViewsLiveTests(CommonLiveTest):
     model = Dive
     modelfactory = DiveFactory
     userfactory = SuperUserFactory
+
+
+class DiveMultiActionsViewTest(
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Dive
+    modelFactory = DiveFactory
+    expected_fields = [
+        "Published [fr]",
+        "Published [en]",
+        "Waiting for publication",
+        "Related structure",
+        "Practice",
+        "Difficulty level",
+    ]
