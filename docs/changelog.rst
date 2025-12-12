@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-* Fix ``label_en`` content on sensitivity module parserdiffenrecied
+* Fix ``label_en`` content on sensitivity module parser
 * Fix restricted area geojson that are not different by type in cache (#5136)
 
 2.121.1         (2025-11-17)
