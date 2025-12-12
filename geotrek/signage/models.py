@@ -378,7 +378,7 @@ class Blade(
 
     @property
     def signage_display(self):
-        return f'<img src="{settings.STATIC_URL}images/signage-16.png" title="Signage">'
+        return f'<img src="{settings.STATIC_URL}images/signage-16.png" title="{_("Signage")}" />'
 
     @property
     def order_lines(self):
