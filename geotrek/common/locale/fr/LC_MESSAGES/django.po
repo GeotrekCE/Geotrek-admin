@@ -157,7 +157,7 @@ msgid "External id"
 msgstr "ID externe"
 
 msgid "Access to the requested resource is restricted by structure"
-msgstr ""
+msgstr "L'accès à la ressource demandée est limité par la structure."
 
 msgid "Attachment license"
 msgstr "Licence pièce-jointes"
