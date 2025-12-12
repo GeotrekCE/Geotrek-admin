@@ -265,6 +265,15 @@ class BelongStructureMixin:
 
         return response
 
+    def get_editable_fields(self):
+        superuser = self.request.user.is_superuser
+        editable_fields = super().get_editable_fields()
+
+        if not superuser:
+            editable_fields.remove("structure")
+
+        return editable_fields
+
 
 class PublishedFieldMixin:
     """
