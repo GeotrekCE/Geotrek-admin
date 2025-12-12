@@ -2367,7 +2367,7 @@ class RemovePathKeepTopology(TestCase):
 
         self.assertAlmostEqual(1.5, poi.offset)
 
-from mapentity.helpers import user_has_perm
+
 class PathMultiActionsViewTest(
     CommonMultiActionViewsStructureMixin,
     CommonMultiActionViewsMixin,
@@ -2416,8 +2416,7 @@ class PathMultiActionsViewTest(
     def test_delete_draft_path_with_permission(self, mock):
         self.login(self.user)
         response = self.client.get(
-            self.model.get_multi_delete_url()
-            + f"?pks={self.draft.pk}"
+            self.model.get_multi_delete_url() + f"?pks={self.draft.pk}"
         )
         self.assertEqual(response.status_code, 200)
 

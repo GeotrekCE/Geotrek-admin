@@ -604,7 +604,10 @@ class CommonMultiActionsViewsPublishedMixin:
         self.user_no_publish_perm.has_perm = MagicMock(return_value=self.user_perm)
 
     def user_perm(self, perm):
-        if perm == f"{self.model._meta.app_label}.publish_{self.model._meta.model_name}":
+        if (
+            perm
+            == f"{self.model._meta.app_label}.publish_{self.model._meta.model_name}"
+        ):
             return False
         return True
 

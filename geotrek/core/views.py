@@ -422,8 +422,11 @@ class PathMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
         has_drafts = qs.filter(draft=True).exists()
         has_non_drafts = qs.filter(draft=False).exists()
 
-        if (has_drafts and not request.user.has_perm("core.delete_draft_path")) or (
-            has_non_drafts and not request.user.has_perm("core.delete_path")
+        if (
+            has_drafts
+            and not user_has_perm(self.request.user, "core.delete_draft_path")
+        ) or (
+            has_non_drafts and not user_has_perm(self.request.user, "core.delete_path")
         ):
             messages.warning(
                 self.request,
@@ -449,11 +452,14 @@ class PathMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
         # check permissions
         qs = self.get_queryset()
 
-        has_drafts = qs.filter(draft=True).exists()
-        has_non_drafts = qs.filter(draft=False).exists()
+        has_drafts = qs.filter(draft__exact=True).exists()
+        has_non_drafts = qs.filter(draft__exact=False).exists()
 
-        if (has_drafts and not request.user.has_perm("core.change_draft_path")) or (
-            has_non_drafts and not request.user.has_perm("core.change_path")
+        if (
+            has_drafts
+            and not user_has_perm(self.request.user, "core.change_draft_path")
+        ) or (
+            has_non_drafts and not user_has_perm(self.request.user, "core.change_path")
         ):
             messages.warning(
                 self.request,
