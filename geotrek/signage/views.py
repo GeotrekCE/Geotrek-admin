@@ -1,9 +1,11 @@
 import logging
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.gis.db.models.functions import Transform
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.functional import classproperty
+from django.utils.translation import gettext_lazy as _
 from mapentity.views import (
     MapEntityCreate,
     MapEntityDelete,
@@ -313,6 +315,33 @@ class BladeViewSet(GeotrekMapentityViewSet):
         return qs
 
 
+class BladeMultiDelete(MapEntityMultiDelete):
+    model = Blade
+
+    def get(self, request, *args, **kwargs):
+        # check pks definition first to avoid get_queryset error
+        response = super().get(request, *args, **kwargs)
+
+        if isinstance(response, HttpResponseRedirect):
+            return response
+
+        # check permissions
+        queryset = self.get_queryset()
+        user_structure = self.request.user.profile.structure
+        superuser = self.request.user.is_superuser
+
+        filtered_queryset = queryset.filter(signage__structure__exact=user_structure)
+
+        if not superuser and filtered_queryset.count() != queryset.count():
+            messages.warning(
+                self.request,
+                _("Access to the requested resource is restricted by structure"),
+            )
+            return HttpResponseRedirect(self.get_redirect_url())
+
+        return response
+
+
 class BladeMultiUpdate(MapEntityMultiUpdate):
     model = Blade
 
@@ -320,3 +349,26 @@ class BladeMultiUpdate(MapEntityMultiUpdate):
         editable_fields = super().get_editable_fields()
         editable_fields.remove("topology")
         return editable_fields
+
+    def get(self, request, *args, **kwargs):
+        # check pks definition first to avoid get_queryset error
+        response = super().get(request, *args, **kwargs)
+
+        if isinstance(response, HttpResponseRedirect):
+            return response
+
+        # check permissions
+        queryset = self.get_queryset()
+        user_structure = self.request.user.profile.structure
+        superuser = self.request.user.is_superuser
+
+        filtered_queryset = queryset.filter(signage__structure__exact=user_structure)
+
+        if not superuser and filtered_queryset.count() != queryset.count():
+            messages.warning(
+                self.request,
+                _("Access to the requested resource is restricted by structure"),
+            )
+            return HttpResponseRedirect(self.get_redirect_url())
+
+        return response
