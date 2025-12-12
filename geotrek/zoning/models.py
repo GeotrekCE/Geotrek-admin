@@ -35,6 +35,16 @@ class RestrictedArea(TimeStampedModelMixin, models.Model):
         help_text=_("Visible on Geotrek-rando"),
     )
 
+    @classmethod
+    def latest_updated(cls, type_id=None):
+        try:
+            qs = cls.objects.all()
+            if type_id:
+                qs = cls.objects.filter(area_type_id=type_id)
+            return qs.only("date_update").latest("date_update").date_update
+        except cls.DoesNotExist:
+            return None
+
     class Meta:
         ordering = ["area_type", "name"]
         verbose_name = _("Restricted area")
