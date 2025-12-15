@@ -401,7 +401,7 @@ uritemplate==4.2.0
     #   coreapi
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.6.0
+urllib3==2.6.2
     # via
     #   requests
     #   sentry-sdk
