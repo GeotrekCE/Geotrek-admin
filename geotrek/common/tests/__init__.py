@@ -554,6 +554,18 @@ class CommonMultiActionViewsMixin:
         self.assertEqual(response.status_code, 200)
 
     @mock.patch.object(User, "has_perm", return_value=True)
+    def test_delete_view_without_selected_items(self, mock):
+        self.login(self.user)
+        response = self.client.get(self.model.get_multi_delete_url() + "?pks=")
+        self.assertEqual(response.status_code, 302)
+
+    @mock.patch.object(User, "has_perm", return_value=True)
+    def test_update_view_without_selected_items(self, mock):
+        self.login(self.user)
+        response = self.client.get(self.model.get_multi_update_url() + "?pks=")
+        self.assertEqual(response.status_code, 302)
+
+    @mock.patch.object(User, "has_perm", return_value=True)
     def test_editable_fields(self, mock):
         self.login(self.superuser)
         response = self.client.get(

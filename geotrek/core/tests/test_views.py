@@ -2398,7 +2398,7 @@ class PathMultiActionsViewTest(
             "core.delete_path",
             "core.delete_draft_path",
             "core.change_path",
-            "core.delete_draft_path",
+            "core.change_draft_path",
         ]:
             return False
         return True
@@ -2444,7 +2444,7 @@ class PathMultiActionsViewTest(
         mock.side_effect = self.user_perm_path
         self.login(self.user)
         response = self.client.get(
-            self.model.get_multi_delete_url() + f"?pks={self.draft.pk}"
+            self.model.get_multi_update_url() + f"?pks={self.draft.pk}"
         )
         self.assertEqual(response.status_code, 302)
 
@@ -2452,7 +2452,7 @@ class PathMultiActionsViewTest(
     def test_change_draft_path_with_permission(self, mock):
         self.login(self.user)
         response = self.client.get(
-            self.model.get_multi_delete_url() + f"?pks={self.draft.pk}"
+            self.model.get_multi_update_url() + f"?pks={self.draft.pk}"
         )
         self.assertEqual(response.status_code, 200)
 
@@ -2461,7 +2461,7 @@ class PathMultiActionsViewTest(
         mock.side_effect = self.user_perm_path
         self.login(self.user)
         response = self.client.get(
-            self.model.get_multi_delete_url()
+            self.model.get_multi_update_url()
             + f"?pks={self.item1.pk}%2C{self.draft.pk}"
         )
         self.assertEqual(response.status_code, 302)
@@ -2470,7 +2470,7 @@ class PathMultiActionsViewTest(
     def test_change_path_with_permission(self, mock):
         self.login(self.user)
         response = self.client.get(
-            self.model.get_multi_delete_url()
+            self.model.get_multi_update_url()
             + f"?pks={self.item1.pk}%2C{self.draft.pk}"
         )
         self.assertEqual(response.status_code, 200)
