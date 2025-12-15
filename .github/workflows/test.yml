@@ -155,7 +155,7 @@ jobs:
         ./venv/bin/coverage xml -o coverage.xml
 
     - name: Save coverage
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
         path: coverage.xml
@@ -244,7 +244,7 @@ jobs:
               cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
 
           - name: Archive package artifact
-            uses: actions/upload-artifact@v5
+            uses: actions/upload-artifact@v6
             with:
               name: ${{ matrix.os }}
               path: |
@@ -325,7 +325,7 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: cypress-docker
           path: |
@@ -414,7 +414,7 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: cypress-${{ matrix.code }}
           path: |
