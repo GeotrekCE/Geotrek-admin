@@ -9,6 +9,9 @@ CHANGELOG
 
 * Fix ``label_en`` content on sensitivity module parser
 
+**New features**
+* Add bulk deletion/edition on list views (refs #5107).
+
 2.121.1         (2025-11-17)
 ----------------------------
 
