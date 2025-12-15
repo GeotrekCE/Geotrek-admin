@@ -38,13 +38,12 @@ class RestrictedAreaViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewS
         language = get_language()
         geojson_lookup = None
         latest_saved = self.model.latest_updated(type_id=self.kwargs.get("type_pk"))
-        if latest_saved:
-            geojson_lookup = "{}_restricted_area_{}_{}_{}_geojson_layer".format(
-                language,
-                self.kwargs.get("type_pk", "all"),
-                latest_saved.isoformat(),
-                self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else "",
-            )
+        geojson_lookup = "{}_restricted_area_{}_{}_{}_geojson_layer".format(
+            language,
+            self.kwargs.get("type_pk", "all"),
+            latest_saved.isoformat() if latest_saved else "no_data",
+            self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else "",
+        )
         return geojson_lookup
 
     def get_queryset(self):
