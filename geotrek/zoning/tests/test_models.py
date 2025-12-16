@@ -11,6 +11,7 @@ from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
     RestrictedAreaFactory,
+    RestrictedAreaTypeFactory,
 )
 
 
@@ -347,3 +348,27 @@ class RestrictedAreaTestCase(TestCase):
         restricted_area = RestrictedAreaFactory()
         self.assertIsNotNone(RestrictedArea.latest_updated())
         self.assertEqual(RestrictedArea.latest_updated(), restricted_area.date_update)
+
+    def test_latest_updated_when_no_data_at_all(self):
+        self.assertIsNone(RestrictedArea.latest_updated())
+
+    def test_latest_updated_is_different_by_type(self):
+        type_without_data = RestrictedAreaTypeFactory()
+        type_with_data = RestrictedAreaTypeFactory()
+        type_with_data_2 = RestrictedAreaTypeFactory()
+        RestrictedAreaFactory.create_batch(5, area_type=type_with_data)
+        RestrictedAreaFactory.create_batch(5, area_type=type_with_data_2)
+
+        self.assertIsNone(RestrictedArea.latest_updated(type_without_data.pk))
+        self.assertEqual(
+            RestrictedArea.latest_updated(type_with_data.pk),
+            type_with_data.restrictedarea_set.only("date_update")
+            .latest("date_update")
+            .date_update,
+        )
+        self.assertEqual(
+            RestrictedArea.latest_updated(type_with_data_2.pk),
+            type_with_data_2.restrictedarea_set.only("date_update")
+            .latest("date_update")
+            .date_update,
+        )
