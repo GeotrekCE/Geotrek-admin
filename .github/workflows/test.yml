@@ -80,7 +80,7 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v5
+    - uses: actions/checkout@v6
     - uses: astral-sh/setup-uv@v7
       with:
         version: "latest"
@@ -149,7 +149,7 @@ jobs:
         ./venv/bin/coverage xml -o coverage.xml
 
     - name: Save coverage
-      uses: actions/upload-artifact@v5
+      uses: actions/upload-artifact@v6
       with:
         name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
         path: coverage.xml
@@ -168,8 +168,8 @@ jobs:
       OS: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v6
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v7
         with:
             name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
             path: .
@@ -185,7 +185,7 @@ jobs:
     name: Build docker image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         id: buildx
@@ -224,7 +224,7 @@ jobs:
           DISTRO: ubuntu:${{ matrix.os }}
 
       steps:
-          - uses: actions/checkout@v5
+          - uses: actions/checkout@v6
           - name: Prepare versioning
             run: |
                 grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu'$CODE'~dev'$GITHUB_RUN_ID'/' debian/changelog
@@ -236,7 +236,7 @@ jobs:
               cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
 
           - name: Archive package artifact
-            uses: actions/upload-artifact@v5
+            uses: actions/upload-artifact@v6
             with:
               name: ${{ matrix.os }}
               path: |
@@ -266,7 +266,7 @@ jobs:
           - postgres:/var/lib/postgresql/data
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Download image
         uses: ishworkh/container-image-artifact-download@v2.1.0
@@ -317,7 +317,7 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: cypress-docker
           path: |
@@ -355,8 +355,8 @@ jobs:
           --health-cmd pg_isready
 
     steps:
-      - uses: actions/checkout@v5
-      - uses: actions/download-artifact@v6
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v7
         with:
           name: ${{ matrix.os }}
 
@@ -407,7 +407,7 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: cypress-${{ matrix.code }}
           path: |
@@ -420,17 +420,17 @@ jobs:
     needs: [ test, e2e_docker_image, build_deb, e2e_deb ]
     if: ${{ github.event_name != 'pull_request' }}
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v6
 
       - name: Download 24.04 debian artifact
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: noble
 
       - name: Download 26.04 debian artifact
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: resolute
 

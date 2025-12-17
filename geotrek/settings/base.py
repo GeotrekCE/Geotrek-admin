@@ -792,6 +792,9 @@ MOBILE_DURATION_INTERVALS = [
 
 TINYMCE_DEFAULT_CONFIG = {
     "convert_urls": False,
+    "plugins": "advlist,autolink,lists,link,image,charmap,preview,anchor,"
+    "searchreplace,visualblocks,code,fullscreen,insertdatetime,media,table,"
+    "code,help,wordcount",
     "toolbar": "bold italic forecolor | bullist numlist link image media | "
     "undo redo | "
     "removeformat | code | wordcount | help",

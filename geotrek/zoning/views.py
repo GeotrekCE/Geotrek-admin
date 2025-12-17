@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.shortcuts import get_object_or_404
+from django.utils.translation import get_language
 from mapentity.decorators import view_cache_latest, view_cache_response_content
 from mapentity.renderers import GeoJSONRenderer
 from rest_framework import permissions, viewsets
@@ -31,6 +32,19 @@ class LandGeoJSONAPIViewMixin:
 class RestrictedAreaViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet):
     model = RestrictedArea
     serializer_class = RestrictedAreaSerializer
+
+    def view_cache_key(self):
+        """Used by the ``view_cache_response_content`` decorator."""
+        language = get_language()
+        geojson_lookup = None
+        latest_saved = self.model.latest_updated(type_id=self.kwargs.get("type_pk"))
+        geojson_lookup = "{}_restricted_area_{}_{}_{}_geojson_layer".format(
+            language,
+            self.kwargs.get("type_pk", "all"),
+            latest_saved.isoformat() if latest_saved else "no_data",
+            self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else "",
+        )
+        return geojson_lookup
 
     def get_queryset(self):
         type_pk = self.kwargs.get("type_pk")
