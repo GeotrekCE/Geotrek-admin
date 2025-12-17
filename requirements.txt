@@ -4,7 +4,7 @@ amqp==5.3.1
     # via kombu
 appy==1.0.20
     # via django-appypod
-argdispatch==1.4.1
+argdispatch==1.4.2
     # via pdfimpose
 asgiref==3.11.0
     # via django
@@ -15,15 +15,15 @@ attrs==25.4.0
     #   fiona
     #   jsonschema
     #   referencing
-beautifulsoup4==4.14.2
+beautifulsoup4==4.14.3
     # via mapentity
-billiard==4.2.3
+billiard==4.2.4
     # via celery
 brotli==1.2.0
     # via fonttools
 btrees==6.3
     # via zodb
-cachetools==6.2.2
+cachetools==6.2.3
     # via large-image
 cairocffi==1.7.1
     # via
@@ -32,7 +32,7 @@ cairocffi==1.7.1
     #   mapentity
 cairosvg==2.8.2
     # via geotrek (setup.py)
-celery==5.5.3
+celery==5.6.0
     # via
     #   geotrek (setup.py)
     #   django-celery-results
@@ -87,11 +87,11 @@ cssselect2==0.8.0
     #   cairosvg
     #   svglib
     #   weasyprint
-datetime==5.5
+datetime==6.0
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==5.2.8
+django==5.2.9
     # via
     #   geotrek (setup.py)
     #   crispy-bootstrap4
@@ -145,21 +145,21 @@ django-filter==25.2
     #   mapentity
 django-js-asset==3.1.2
     # via django-mptt
-django-large-image==0.10.1
+django-large-image==0.10.2
     # via geotrek (setup.py)
 django-leaflet==0.19.post11
     # via mapentity
 django-maintenance-mode==0.22.0
     # via geotrek (setup.py)
-django-modelcluster==6.4
+django-modelcluster==6.4.1
     # via geotrek (setup.py)
 django-modeltranslation==0.19.17
     # via mapentity
 django-mptt==0.18.0
     # via geotrek (setup.py)
-django-tinymce==4.1.0
+django-tinymce==5.0.0
     # via mapentity
-django-treebeard==4.7.1
+django-treebeard==4.8.0
     # via geotrek (setup.py)
 django-weasyprint==2.4.0
     # via
@@ -191,13 +191,15 @@ easy-thumbnails==2.10.1
     #   geotrek (setup.py)
     #   mapentity
     #   paperclip
+exceptiongroup==1.3.1
+    # via celery
 filelock==3.20.0
     # via django-large-image
 fiona==1.10.1
     # via
     #   geotrek (setup.py)
     #   mapentity
-fonttools==4.60.1
+fonttools==4.61.1
     # via weasyprint
 geojson==3.2.0
     # via
@@ -207,7 +209,7 @@ gevent==25.9.1
     # via gunicorn
 gpxpy==1.6.2
     # via mapentity
-greenlet==3.2.4
+greenlet==3.3.0
     # via gevent
 gunicorn==23.0.0
     # via geotrek (setup.py)
@@ -227,15 +229,15 @@ jsonschema==4.25.1
     # via drf-spectacular
 jsonschema-specifications==2025.9.1
     # via jsonschema
-kombu==5.5.4
+kombu==5.6.1
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
-large-image==1.33.3
+large-image==1.33.5
     # via
     #   django-large-image
     #   large-image-source-vips
-large-image-source-vips==1.33.3
+large-image-source-vips==1.33.5
     # via geotrek (setup.py)
 lxml==4.9.3
     # via
@@ -271,7 +273,7 @@ papersize==1.6.1
     # via pdfimpose
 pdfimpose==2.8.0
     # via geotrek (setup.py)
-persistent==6.3
+persistent==6.5
     # via
     #   btrees
     #   zodb
@@ -291,13 +293,13 @@ psycopg2==2.9.11
     # via geotrek (setup.py)
 pycparser==2.23
     # via cffi
-pydyf==0.11.0
+pydyf==0.12.1
     # via weasyprint
-pygal==3.0.5
+pygal==3.1.0
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
-pymupdf==1.26.6
+pymupdf==1.26.7
     # via pdfimpose
 pyopenair==1.2.1
     # via geotrek (setup.py)
@@ -315,7 +317,7 @@ pytz==2025.2
     # via
     #   datetime
     #   drf-yasg
-pyvips==3.0.0
+pyvips==3.1.1
     # via large-image-source-vips
 pyxdg==0.28
     # via pdfimpose
@@ -329,7 +331,7 @@ referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
-reportlab==4.4.5
+reportlab==4.4.6
     # via
     #   easy-thumbnails
     #   svglib
@@ -341,7 +343,7 @@ requests==2.32.5
     #   mapentity
 rjsmin==1.2.5
     # via django-compressor
-rpds-py==0.29.0
+rpds-py==0.30.0
     # via
     #   jsonschema
     #   referencing
@@ -349,7 +351,7 @@ ruamel-yaml==0.18.16
     # via drf-yasg
 ruamel-yaml-clib==0.2.15
     # via ruamel-yaml
-sentry-sdk==2.45.0
+sentry-sdk==2.47.0
     # via geotrek (setup.py)
 setuptools==80.9.0
     # via
@@ -364,7 +366,7 @@ six==1.17.0
     # via python-dateutil
 soupsieve==2.8
     # via beautifulsoup4
-sqlparse==0.5.3
+sqlparse==0.5.4
     # via django
 svglib==1.5.1
     # via easy-thumbnails
@@ -385,18 +387,21 @@ typing-extensions==4.15.0
     #   asgiref
     #   beautifulsoup4
     #   django-modeltranslation
+    #   exceptiongroup
     #   large-image
     #   referencing
-tzdata==2025.2
+tzdata==2025.3
     # via
     #   kombu
     #   mapentity
+tzlocal==5.3.1
+    # via celery
 uritemplate==4.2.0
     # via
     #   coreapi
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.5.0
+urllib3==2.6.2
     # via
     #   requests
     #   sentry-sdk
@@ -407,7 +412,7 @@ vine==5.1.0
     #   kombu
 wcwidth==0.2.14
     # via prompt-toolkit
-weasyprint==66.0
+weasyprint==67.0
     # via
     #   geotrek (setup.py)
     #   django-weasyprint

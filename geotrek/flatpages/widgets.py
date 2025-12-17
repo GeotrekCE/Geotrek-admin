@@ -11,8 +11,6 @@ FLATPAGE_TINYMCE_CONFIG = {
         "media",
         "button-link",
         "table",
-        "paste",
-        "imagetools",
         "wordcount",
         "visualblocks",
         "code",
