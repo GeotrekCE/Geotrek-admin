@@ -383,6 +383,7 @@ transaction==5.0
 typing-extensions==4.15.0
     # via
     #   beautifulsoup4
+    #   exceptiongroup
     #   large-image
     #   referencing
 tzdata==2025.3
