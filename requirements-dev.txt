@@ -36,7 +36,7 @@ six==1.17.0
     # via
     #   -c requirements.txt
     #   python-dateutil
-sqlparse==0.5.4
+sqlparse==0.5.5
     # via
     #   -c requirements.txt
     #   django
