@@ -476,17 +476,17 @@ class BladeMultiActionsViewTest(
         "Color",
     ]
 
-    def create_items(self, struct):
+    @classmethod
+    def create_items(cls, struct=None):
         signage1 = SignageFactory.create(structure=struct)
         signage2 = SignageFactory.create(structure=StructureFactory.create())
-        self.item1 = self.modelFactory.create(signage=signage1)
-        self.item2 = self.modelFactory.create(signage=signage2)
+        cls.item1 = cls.modelFactory.create(signage=signage1)
+        cls.item2 = cls.modelFactory.create(signage=signage2)
 
     def test_editable_fields_no_blades(self):
-        def test_editable_fields_with_not_superuser(self):
-            self.login(self.user)
-            response = self.client.get(
-                self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
-            )
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
+        )
 
-            self.assertNotContains(response, "Blades")
+        self.assertNotContains(response, "Blades\n")

@@ -274,6 +274,7 @@ class OpenStreetMapInfrastructureParserTests(TestCase):
         call_command(
             "import",
             "geotrek.infrastructure.tests.test_parsers.TestInfrastructureOpenStreetMapParser",
+            verbosity=0,
         )
 
     @classmethod

@@ -140,6 +140,7 @@ class OpenStreetMapSignageParserTests(TestCase):
         call_command(
             "import",
             "geotrek.signage.tests.test_parsers.TestSignageOpenStreetMapParser",
+            verbosity=0,
         )
 
     @classmethod
