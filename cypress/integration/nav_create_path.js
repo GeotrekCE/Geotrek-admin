@@ -53,15 +53,12 @@ describe('Create path', () => {
     it('Path action delete multiple without path', () => {
         cy.visit('/path/list');
         cy.get("button.btn-primary[data-toggle='dropdown']").click();
-        cy.get("#btn-delete").click();
-        cy.url().should('include', '/path/list/');
-        cy.get("a[title='Path number 1']").should('have.length', 2);
-        cy.get("a[title='Path number 2']").should('have.length', 2);
+        cy.get("#btn-delete").should('have.attr', 'disabled');
     })
     it('Path action delete multiple path', () => {
         cy.visit('/path/list');
-        cy.get('a[data-pk="1"]').closest('tr').find('input.dt-select-checkbox').check();
-        cy.get('a[data-pk="2"]').closest('tr').find('input.dt-select-checkbox').check();
+        cy.get('a[data-pk="5"]').closest('tr').find('input.dt-select-checkbox').check();
+        cy.get('a[data-pk="6"]').closest('tr').find('input.dt-select-checkbox').check();
         cy.get("button.btn-primary[data-toggle='dropdown']").click();
         cy.get("#btn-delete").click();
         cy.get("input[type='submit']").click();
