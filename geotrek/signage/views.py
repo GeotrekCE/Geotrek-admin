@@ -335,7 +335,7 @@ class BladeMultiDelete(MapEntityMultiDelete):
         if not superuser and filtered_queryset.count() != queryset.count():
             messages.warning(
                 self.request,
-                _("Access to the requested resource is restricted by structure"),
+                _("Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."),
             )
             return HttpResponseRedirect(self.get_redirect_url())
 
@@ -367,7 +367,7 @@ class BladeMultiUpdate(MapEntityMultiUpdate):
         if not superuser and filtered_queryset.count() != queryset.count():
             messages.warning(
                 self.request,
-                _("Access to the requested resource is restricted by structure"),
+                _("Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."),
             )
             return HttpResponseRedirect(self.get_redirect_url())
 

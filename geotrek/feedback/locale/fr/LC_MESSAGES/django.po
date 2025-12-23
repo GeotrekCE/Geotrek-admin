@@ -339,7 +339,7 @@ msgid "Map"
 msgstr "Carte"
 
 msgid "Add"
-msgstr ""
+msgstr "Ajouter"
 
 msgid "Data to import from Suricate"
 msgstr "Données à importer de Suricate"
