@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-23 09:05+0000\n"
+"POT-Creation-Date: 2025-12-23 17:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -186,18 +186,6 @@ msgstr ""
 msgid "Choose value(s)"
 msgstr ""
 
-msgid "Access to the requested resource is restricted"
-msgstr ""
-
-msgid "Actions"
-msgstr ""
-
-msgid "Edit"
-msgstr ""
-
-msgid "Delete"
-msgstr ""
-
 msgid "External id"
 msgstr ""
 
@@ -208,6 +196,9 @@ msgid "Add a new blade"
 msgstr ""
 
 msgid "Add a new signage"
+msgstr ""
+
+msgid "Edit"
 msgstr ""
 
 msgid "Add"
