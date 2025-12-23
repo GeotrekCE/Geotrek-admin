@@ -57,8 +57,8 @@ describe('Create path', () => {
     })
     it('Path action delete multiple path', () => {
         cy.visit('/path/list');
-        cy.get('a[data-pk="5"]').closest('tr').find('input.dt-select-checkbox').check();
-        cy.get('a[data-pk="6"]').closest('tr').find('input.dt-select-checkbox').check();
+        cy.get('a[data-pk="1"]').closest('tr').find('input.dt-select-checkbox').check();
+        cy.get('a[data-pk="2"]').closest('tr').find('input.dt-select-checkbox').check();
         cy.get("button.btn-primary[data-toggle='dropdown']").click();
         cy.get("#btn-delete").click();
         cy.get("input[type='submit']").click();
