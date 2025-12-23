@@ -234,6 +234,12 @@ class BladeList(CustomColumnsMixin, MapEntityList):
             )
         return columns
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["can_add"] = False # delete Add button on blade view
+
+        return context
+
 
 class BladeFilter(MapEntityFilter):
     model = Blade
