@@ -524,7 +524,7 @@ class CommonMultiActionViewsMixin(AuthentFixturesMixin):
             codename=f"delete_{cls.model._meta.model_name}"
         )
         cls.perm_update = Permission.objects.get(
-            codename=f"update_{cls.model._meta.model_name}"
+            codename=f"change_{cls.model._meta.model_name}"
         )
         cls.user.user_pemissions.add(cls.perm_delete)
         cls.user.user_pemissions.add(cls.perm_update)
