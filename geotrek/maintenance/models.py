@@ -1,5 +1,4 @@
 import os
-import uuid
 from datetime import datetime
 
 from django.conf import settings
