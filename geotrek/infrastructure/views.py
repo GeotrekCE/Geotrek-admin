@@ -9,11 +9,17 @@ from mapentity.views import (
     MapEntityFilter,
     MapEntityFormat,
     MapEntityList,
+    MapEntityMultiDelete,
+    MapEntityMultiUpdate,
     MapEntityUpdate,
 )
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import (
+    BelongStructureMixin,
+    CustomColumnsMixin,
+    PublishedFieldMixin,
+)
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
@@ -123,3 +129,13 @@ class InfrastructureViewSet(GeotrekMapentityViewSet):
                 ),
             )
         return qs
+
+
+class InfrastructureMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = Infrastructure
+
+
+class InfrastructureMultiUpdate(
+    PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
+):
+    model = Infrastructure

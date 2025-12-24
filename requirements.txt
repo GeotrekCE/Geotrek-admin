@@ -243,7 +243,7 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.15.1
+mapentity==8.16.0
     # via geotrek (setup.py)
 markdown==3.10
     # via geotrek (setup.py)

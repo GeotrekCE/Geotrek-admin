@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"POT-Creation-Date: 2025-12-15 08:21+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Spanish <https://weblate.makina-corpus.net/projects/geotrek-admin/common/es/>\n"
@@ -111,9 +111,6 @@ msgstr ""
 msgid "Merge"
 msgstr ""
 
-msgid "Action"
-msgstr ""
-
 msgid "Insertion date"
 msgstr "Fecha de inserción"
 
@@ -158,6 +155,9 @@ msgid "Provider"
 msgstr ""
 
 msgid "External id"
+msgstr ""
+
+msgid "Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."
 msgstr ""
 
 msgid "Attachment license"
@@ -558,6 +558,9 @@ msgid "Date"
 msgstr ""
 
 msgid "User"
+msgstr ""
+
+msgid "Action"
 msgstr ""
 
 msgid "Full history"

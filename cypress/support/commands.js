@@ -4,7 +4,7 @@ Cypress.Commands.add('loginByCSRF', (username, password) => {
       .then((body) => {
         // we can use Cypress.$ to parse the string body
         // thus enabling us to query into it easily
-        const $html = Cypress.$(body)
+        const $html = Cypress.$(body);
         cy.request({
           method: 'POST',
           url: '/login/?next=/',

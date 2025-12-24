@@ -15,7 +15,7 @@ from mapentity.registry import app_settings
 from mapentity.tests import MapEntityLiveTest, MapEntityTest
 from mapentity.tests.factories import SuperUserFactory, UserFactory
 
-from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.base import AuthentFixturesMixin, AuthentFixturesTest
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common.models import AccessibilityAttachment, Attachment, FileType  # NOQA
 
@@ -507,3 +507,107 @@ class CommonLiveTest(MapEntityLiveTest):
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
         self.assertTrue(default_storage.exists(image_path))
+
+
+class CommonMultiActionViewsMixin(AuthentFixturesMixin):
+    model = None
+    modelFactory = None
+    expected_fields = []
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.superuser = SuperUserFactory.create()
+        cls.user = UserFactory.create()
+
+        cls.perm_delete = Permission.objects.get(
+            codename=f"delete_{cls.model._meta.model_name}"
+        )
+        cls.perm_update = Permission.objects.get(
+            codename=f"change_{cls.model._meta.model_name}"
+        )
+        cls.user.user_permissions.add(cls.perm_delete)
+        cls.user.user_permissions.add(cls.perm_update)
+
+        structure = cls.user.profile.structure
+        cls.create_items(structure)
+
+    @classmethod
+    def create_items(cls, struct=None):
+        if hasattr(cls.model, "structure"):
+            cls.item1 = cls.modelFactory.create(structure=struct)
+            cls.item2 = cls.modelFactory.create(structure=StructureFactory.create())
+        else:
+            cls.item1 = cls.modelFactory.create()
+            cls.item2 = cls.modelFactory.create()
+
+    def test_editable_fields(self):
+        self.client.force_login(self.superuser)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
+        )
+
+        for field in self.expected_fields:
+            self.assertContains(response, field)
+
+
+class CommonMultiActionViewsStructureMixin:
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.user_bypass_structure = UserFactory.create()
+        cls.user_bypass_structure.user_permissions.add(
+            Permission.objects.get(codename="can_bypass_structure")
+        )
+        cls.user_bypass_structure.user_permissions.add(cls.perm_delete)
+        cls.user_bypass_structure.user_permissions.add(cls.perm_update)
+
+    def test_delete_selected_items_with_different_structure_than_user(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.item2.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, self.model.get_list_url())
+
+    def test_delete_selected_items_with_bypass_structure(self):
+        self.client.force_login(self.user_bypass_structure)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.item2.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_selected_items_with_different_structure_than_user(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_update_url()
+            + f"?pks={self.item1.pk}%2C{self.item2.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, self.model.get_list_url())
+
+    def test_update_selected_items_with_bypass_structure(self):
+        self.client.force_login(self.user_bypass_structure)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.item2.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_editable_fields_with_not_superuser(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
+        )
+        self.assertNotContains(response, "Related structure")
+
+
+class CommonMultiActionsViewsPublishedMixin:
+    def test_editable_fields_without_publish_perms(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
+        )
+        self.assertNotContains(response, "Published")

@@ -15,14 +15,15 @@
 {% endblock change_style %}
 
 {% block extrahead %}
-
+    {{ block.super }}
     {% csrf_token %}
 
     <script type="text/javascript">
 
         $(function () {
             $('#btn-merge').click(function () {
-                if ($('input[type="checkbox"][name="path\\[\\]"]:checked').length != 2) {
+                const table = $('#objects-list').DataTable();
+                if (table.rows( { selected: true } )[0].length != 2) {
                     $('#btn-confirm').hide();
                     $('#confirm-merge .modal-body h4').html("{% trans 'Select two paths to merge them' %}");
                 } else {
@@ -31,25 +32,18 @@
                 }
             });
 
-            var pathDelete = "{% url 'core:multiple_path_delete' "0,0" %}";
-            var pathsToDelete = [];
-            $('#btn-delete').click(function () {
-                for (const value of Object.values($('#objects-list input:checkbox:checked'))) {
-                    pathsToDelete.push(value.value);
-                }
-                ;
-                if (pathsToDelete.filter(Boolean).length != 0) {
-                    window.location = pathDelete.replace('0,0', pathsToDelete.filter(Boolean).join(','));
-                }
-            });
-
             $('#btn-confirm').click(function () {
                 $('#confirm-merge .modal-body h4').html($('#wait_lightbox').html());
                 $('#btn-confirm').hide();
 
-                $.post("{% url 'core:path-drf-merge-path' %}",
-                    $('input:checkbox:checked').serialize() + '&' + $('input[name=csrfmiddlewaretoken]').serialize(),
+                const table = $('#objects-list').DataTable();
+                const params = {
+                    path: table.rows( { selected: true } ).data().pluck('id').toArray(),
+                    csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),
+                }
 
+                $.post("{% url 'core:path-drf-merge-path' %}",
+                    params,
                     function (response) {
                         $('#btn-confirm').show();
 
@@ -68,3 +62,42 @@
     </script>
 
 {% endblock %}
+
+{% block actions %}
+    {% if perms.core.change_path %}
+        <a class="dropdown-item" href="#confirm-merge" id="btn-merge" role="button" data-toggle="modal">
+            <i class="bi bi-bezier"></i> {% trans "Merge" %}
+        </a>
+    {% endif %}
+{% endblock %}
+
+{% block container %}
+    {{ block.super }}
+    <div id="wait_lightbox" style="display: none;">
+        <div class="progress progress-striped active">
+            <div class="bar" style="width: 100%;"></div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="confirm-merge" tabindex="-1" role="dialog" aria-labelledby="confirm-mergeLabel"
+         aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4>{% trans "Merge paths" %}</h4>
+                </div>
+                <div class="modal-body">
+                    <h4></h4>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">
+                        {% trans "Cancel" %}
+                    </button>
+                    <button type="button" id="btn-confirm" class="btn btn-success success">
+                        {% trans "Merge" %}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+{%  endblock %}

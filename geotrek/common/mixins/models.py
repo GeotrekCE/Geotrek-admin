@@ -24,20 +24,6 @@ from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.common.utils import classproperty, logger
 
 
-class CheckBoxActionMixin:
-    @property
-    def checkbox(self):
-        return f'<input type="checkbox" name="{self._meta.model_name}[]" value="{self.pk}" />'
-
-    @classproperty
-    def checkbox_verbose_name(cls):
-        return _("Action")
-
-    @property
-    def checkbox_display(self):
-        return self.checkbox
-
-
 class TimeStampedModelMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
     date_insert = models.DateTimeField(
