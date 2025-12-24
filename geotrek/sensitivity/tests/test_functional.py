@@ -103,7 +103,7 @@ class SensitiveAreaViewsTests(CommonTest):
     def test_regulatory_form_creation(self):
         """Test if RegulatorySensitiveAreaForm is used with ?category query parameter"""
         response = self.client.get(
-            self._get_add_url(), {"category": Species.REGULATORY}
+            self._get_add_url(), {"category": Species.CategoryChoices.REGULATORY}
         )
         self.assertTrue(
             isinstance(response.context["form"], RegulatorySensitiveAreaForm)

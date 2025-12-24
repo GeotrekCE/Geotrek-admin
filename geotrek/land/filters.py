@@ -1,3 +1,4 @@
+from dal import autocomplete
 from django.utils.translation import gettext_lazy as _
 from mapentity.filters import MapEntityFilterSet
 
@@ -12,7 +13,6 @@ from geotrek.infrastructure.filters import InfrastructureFilterSet
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.signage.filters import SignageFilterSet
 from geotrek.trekking.filters import POIFilterSet, TrekFilterSet
-from geotrek.zoning.filters import *  # NOQA
 
 from .models import (
     AuthorizationType,
@@ -137,24 +137,40 @@ class TopologyFilterWorkManagementEdge(TopologyFilter):
 def add_edge_filters(filter_set):
     filter_set.add_filters(
         {
-            "land_type": TopologyFilterLandType(label=_("Land edge"), required=False),
+            "land_type": TopologyFilterLandType(
+                label=_("Land edge"),
+                required=False,
+                widget=autocomplete.Select2Multiple(),
+            ),
             "physical_type": TopologyFilterPhysicalType(
-                label=_("Physical edge"), required=False
+                label=_("Physical edge"),
+                required=False,
+                widget=autocomplete.Select2Multiple(),
             ),
             "circulation_type": TopologyFilterCirculationType(
-                label=_("Circulation edge"), required=False
+                label=_("Circulation type"),
+                required=False,
+                widget=autocomplete.Select2Multiple(),
             ),
             "authorization_type": TopologyFilterAuthorizationType(
-                label=_("Circulation edge"), required=False
+                label=_("Circulation edge"),
+                required=False,
+                widget=autocomplete.Select2Multiple(),
             ),
             "competence": TopologyFilterCompetenceEdge(
-                label=_("Competence edge"), required=False
+                label=_("Competence edge"),
+                required=False,
+                widget=autocomplete.Select2Multiple(),
             ),
             "signage": TopologyFilterSignageManagementEdge(
-                label=_("Signage management edge"), required=False
+                label=_("Signage management edge"),
+                required=False,
+                widget=autocomplete.Select2Multiple(),
             ),
             "work": TopologyFilterWorkManagementEdge(
-                label=_("Work management edge"), required=False
+                label=_("Work management edge"),
+                required=False,
+                widget=autocomplete.Select2Multiple(),
             ),
         }
     )

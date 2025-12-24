@@ -24,7 +24,7 @@ class PolygonMapWidget(MapWidget):
 class SensitiveAreaForm(CommonForm):
     geomfields = ["geom"]
     species = forms.ModelChoiceField(
-        queryset=Species.objects.filter(category=Species.SPECIES),
+        queryset=Species.objects.filter(category=Species.CategoryChoices.SPECIES),
         label=pgettext("Singular", "Species"),
     )
 
@@ -93,14 +93,14 @@ class RegulatorySensitiveAreaForm(CommonForm):
                 kwargs["initial"][name] = getattr(species, name)
 
         super().__init__(*args, **kwargs)
-        self.helper.form_action += f"?category={Species.REGULATORY}"
+        self.helper.form_action += f"?category={Species.CategoryChoices.REGULATORY}"
 
     def save(self, **kwargs):
         if not self.instance.pk:
             species = Species()
         else:
             species = self.instance.species
-        species.category = Species.REGULATORY
+        species.category = Species.CategoryChoices.REGULATORY
         species.name = self.cleaned_data["name"]
         species.radius = self.cleaned_data["elevation"]
         species.pictogram = self.cleaned_data["pictogram"]

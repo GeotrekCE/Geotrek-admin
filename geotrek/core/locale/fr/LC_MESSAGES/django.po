@@ -43,20 +43,8 @@ msgstr "Topologie valide"
 msgid "Valid geometry"
 msgstr "Géometrie valide"
 
-msgid "Name"
-msgstr "Nom"
-
-msgid "Comments"
-msgstr "Commentaires"
-
 msgid "Provider"
 msgstr "Fournisseur"
-
-msgid "Departure"
-msgstr "Départ"
-
-msgid "Arrival"
-msgstr "Arrivée"
 
 msgid "Certification labels"
 msgstr "Labellisations"
@@ -115,14 +103,26 @@ msgstr "Visible"
 msgid "Shown in lists and maps"
 msgstr "Affiché dans les listes et sur les cartes"
 
+msgid "Name"
+msgstr "Nom"
+
 msgid "Official name"
 msgstr "Nom officiel"
+
+msgid "Comments"
+msgstr "Commentaires"
 
 msgid "Remarks"
 msgstr "Remarques"
 
+msgid "Departure"
+msgstr "Départ"
+
 msgid "Departure place"
 msgstr "Lieu de départ"
+
+msgid "Arrival"
+msgstr "Arrivée"
 
 msgid "Arrival place"
 msgstr "Lieu d'arrivée"

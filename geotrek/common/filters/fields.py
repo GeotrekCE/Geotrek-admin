@@ -19,4 +19,6 @@ class ComaSeparatedMultipleModelChoiceField(ModelChoiceField):
 
 
 class OneLineRangeField(RangeField):
-    widget = OneLineRangeWidget(attrs={"class": "minmax-field"})
+    widget = OneLineRangeWidget(
+        attrs={"class": "minmax-field form-control form-control-sm"}
+    )
