@@ -25,12 +25,6 @@ class NoDeleteManager(DefaultManager):
     def existing(self):
         return self.get_queryset().filter(deleted=False)
 
-    def delete(self, force=False):
-        if not force:
-            return self.get_queryset().update(deleted=True)
-        else:
-            return super().delete()
-
 
 class TimestampedChoicesMixin:
     def extract_year_choices(self, fieldname):
