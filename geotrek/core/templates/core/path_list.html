@@ -15,7 +15,7 @@
 {% endblock change_style %}
 
 {% block extrahead %}
-
+    {{ block.super }}
     {% csrf_token %}
 
     <script type="text/javascript">
