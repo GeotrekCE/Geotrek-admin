@@ -526,8 +526,8 @@ class CommonMultiActionViewsMixin(AuthentFixturesMixin):
         cls.perm_update = Permission.objects.get(
             codename=f"change_{cls.model._meta.model_name}"
         )
-        cls.user.user_pemissions.add(cls.perm_delete)
-        cls.user.user_pemissions.add(cls.perm_update)
+        cls.user.user_permissions.add(cls.perm_delete)
+        cls.user.user_permissions.add(cls.perm_update)
 
         structure = cls.user.profile.structure
         cls.create_items(structure)
@@ -559,8 +559,8 @@ class CommonMultiActionViewsStructureMixin:
         cls.user_bypass_structure.user_permissions.add(
             Permission.objects.get(codename="can_bypass_structure")
         )
-        cls.user_bypass_structure.user_pemissions.add(cls.perm_delete)
-        cls.user_bypass_structure.user_pemissions.add(cls.perm_update)
+        cls.user_bypass_structure.user_permissions.add(cls.perm_delete)
+        cls.user_bypass_structure.user_permissions.add(cls.perm_update)
 
     def test_delete_selected_items_with_different_structure_than_user(self):
         self.client.force_login(self.user)
