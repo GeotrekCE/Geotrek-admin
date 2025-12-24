@@ -7,6 +7,12 @@ class NoDeleteQuerySet(models.QuerySet):
     def existing(self):
         return self.filter(deleted=False)
 
+    def delete(self, force=False):
+        if not force:
+            return self.update(deleted=True)
+        else:
+            return super().delete()
+
 
 class NoDeleteManager(DefaultManager):
     # Use this manager when walking through FK/M2M relationships
@@ -18,6 +24,12 @@ class NoDeleteManager(DefaultManager):
     # Filter out deleted objects
     def existing(self):
         return self.get_queryset().filter(deleted=False)
+
+    def delete(self, force=False):
+        if not force:
+            return self.get_queryset().update(deleted=True)
+        else:
+            return super().delete()
 
 
 class TimestampedChoicesMixin:
