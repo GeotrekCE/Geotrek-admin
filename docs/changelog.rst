@@ -12,6 +12,7 @@ CHANGELOG
 **New features**
 * Add bulk deletion/edition on list views (refs #5107).
 
+
 2.121.1         (2025-11-17)
 ----------------------------
 
