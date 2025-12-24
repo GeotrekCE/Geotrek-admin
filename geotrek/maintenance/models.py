@@ -1,4 +1,5 @@
 import os
+import uuid
 from datetime import datetime
 
 from django.conf import settings
@@ -419,6 +420,18 @@ class Intervention(
     @property
     def jobs_display(self):
         return ", ".join([str(job) for job in self.jobs.all()])
+
+    def duplicate(self, **kwargs):
+        clone = super().duplicate(**kwargs)
+        if clone.target_type == ContentType.objects.get_for_model(Topology):
+            # if the target is a topology create a new one with the same information
+            topology = self.target
+            new_topology = Topology.objects.create(kind="INTERVENTION")
+            new_topology.mutate(topology)
+
+            clone.target = new_topology
+            clone.save(update_fields=["target_id"])
+        return clone
 
 
 Path.add_property(

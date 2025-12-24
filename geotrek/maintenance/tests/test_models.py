@@ -6,6 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 
+from geotrek.core.models import Topology
 from geotrek.core.tests.factories import (
     PathFactory,
     StakeFactory,
@@ -349,6 +350,21 @@ class InterventionTest(TestCase):
         interv = InterventionFactory.create(target=None)
         self.assertIn("-", interv.target_csv_display)
 
+    def test_duplication_with_topology_target(self):
+        topology = TopologyFactory.create()
+        intervention = InterventionFactory.create(
+            target=topology, target_id=topology.pk, target_type=ContentType.objects.get_for_model(Topology), name="intervention test"
+        )
+        self.assertEqual(Intervention.objects.count(), 1)
+        Intervention.duplicate(intervention)
+        self.assertEqual(Intervention.objects.count(), 2)
+        intervention_copy = Intervention.objects.get(name="intervention test (copy)")
+        self.assertEqual(intervention_copy.target_type, intervention.target_type)
+        self.assertNotEqual(intervention_copy.target_id, intervention.target_id)
+        topology_copy = intervention_copy.target
+        self.assertEqual(topology_copy.geom, topology.geom)
+        self.assertEqual(topology_copy.offset, topology.offset)
+        self.assertEqual(topology_copy.kind, 'INTERVENTION')
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class ProjectModelTest(TestCase):

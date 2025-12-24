@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix ``label_en`` content on sensitivity module parser
+* Fix geometry of duplicated intervention
 
 2.121.1         (2025-11-17)
 ----------------------------
