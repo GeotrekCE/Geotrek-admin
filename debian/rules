@@ -9,7 +9,7 @@ export DH_UPGRADE_SETUPTOOLS
 
 override_dh_virtualenv:
 	dh_virtualenv \
-	--python /usr/bin/python3.10 \
+	--python /usr/bin/python3.12 \
 	--upgrade-pip \
 	--preinstall wheel \
 	--preinstall django \
