@@ -2404,7 +2404,9 @@ class SchemaRandonneeParserTests(TestCase):
     def test_parse_from_url(self, mocked_request_or_retry):
         mocked_request_or_retry.return_value = self.mocked_url()
         call_command(
-            "import", "geotrek.trekking.tests.test_parsers.SchemaRandonneeParserWithURL"
+            "import",
+            "geotrek.trekking.tests.test_parsers.SchemaRandonneeParserWithURL",
+            verbosity=0,
         )
         self.assertEqual(Trek.objects.count(), 1)
 
@@ -2698,6 +2700,7 @@ class OpenStreetMapPOIParserTest(TestCase):
         call_command(
             "import",
             "geotrek.trekking.tests.test_parsers.TestPOIOpenStreetMapParser",
+            verbosity=0,
         )
 
     @classmethod

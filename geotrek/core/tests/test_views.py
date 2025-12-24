@@ -4,7 +4,7 @@ from unittest import mock, skipIf
 
 from bs4 import BeautifulSoup
 from django.conf import settings
-from django.contrib.auth.models import Permission, User
+from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.core.cache import caches
 from django.core.files.storage import default_storage
@@ -2386,89 +2386,89 @@ class PathMultiActionsViewTest(
         "Draft",
     ]
 
-    def create_items(self, struct):
-        self.item1 = self.modelFactory.create(structure=struct, draft=False)
-        self.item2 = self.modelFactory.create(
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="delete_draft_path")
+        )
+        cls.user.user_permissions.add(Permission.objects.get(codename="delete_path"))
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="change_draft_path")
+        )
+        cls.user.user_permissions.add(Permission.objects.get(codename="change_path"))
+
+        cls.user_bypass_structure.user_permissions.add(
+            Permission.objects.get(codename="delete_path")
+        )
+        cls.user_bypass_structure.user_permissions.add(
+            Permission.objects.get(codename="change_path")
+        )
+
+        cls.user_without_perm = UserFactory.create()
+
+    @classmethod
+    def create_items(cls, struct):
+        cls.item1 = cls.modelFactory.create(structure=struct, draft=False)
+        cls.item2 = cls.modelFactory.create(
             structure=StructureFactory.create(), draft=False
         )
-        self.draft = self.modelFactory.create(structure=struct, draft=True)
+        cls.draft = cls.modelFactory.create(structure=struct, draft=True)
 
-    def user_perm_path(self, perm):
-        if perm in [
-            "core.delete_path",
-            "core.delete_draft_path",
-            "core.change_path",
-            "core.change_draft_path",
-        ]:
-            return False
-        return True
-
-    @mock.patch.object(User, "has_perm")
-    def test_delete_draft_path_without_permission(self, mock):
-        mock.side_effect = self.user_perm_path
-        self.login(self.user)
+    def test_delete_draft_path_without_permission(self):
+        self.client.force_login(self.user_without_perm)
         response = self.client.get(
             self.model.get_multi_delete_url() + f"?pks={self.draft.pk}"
         )
         self.assertEqual(response.status_code, 302)
 
-    @mock.patch.object(User, "has_perm", return_value=True)
-    def test_delete_draft_path_with_permission(self, mock):
-        self.login(self.user)
+    def test_delete_draft_path_with_permission(self):
+        self.client.force_login(self.user)
         response = self.client.get(
             self.model.get_multi_delete_url() + f"?pks={self.draft.pk}"
         )
         self.assertEqual(response.status_code, 200)
 
-    @mock.patch.object(User, "has_perm")
-    def test_delete_path_without_permission(self, mock):
-        mock.side_effect = self.user_perm_path
-        self.login(self.user)
+    def test_delete_path_without_permission(self):
+        self.client.force_login(self.user_without_perm)
         response = self.client.get(
             self.model.get_multi_delete_url()
             + f"?pks={self.item1.pk}%2C{self.draft.pk}"
         )
         self.assertEqual(response.status_code, 302)
 
-    @mock.patch.object(User, "has_perm", return_value=True)
-    def test_delete_path_with_permission(self, mock):
-        self.login(self.user)
+    def test_delete_path_with_permission(self):
+        self.client.force_login(self.user)
         response = self.client.get(
             self.model.get_multi_delete_url()
             + f"?pks={self.item1.pk}%2C{self.draft.pk}"
         )
         self.assertEqual(response.status_code, 200)
 
-    @mock.patch.object(User, "has_perm")
-    def test_change_draft_path_without_permission(self, mock):
-        mock.side_effect = self.user_perm_path
-        self.login(self.user)
+    def test_change_draft_path_without_permission(self):
+        self.client.force_login(self.user_without_perm)
         response = self.client.get(
             self.model.get_multi_update_url() + f"?pks={self.draft.pk}"
         )
         self.assertEqual(response.status_code, 302)
 
-    @mock.patch.object(User, "has_perm", return_value=True)
-    def test_change_draft_path_with_permission(self, mock):
-        self.login(self.user)
+    def test_change_draft_path_with_permission(self):
+        self.client.force_login(self.user)
         response = self.client.get(
             self.model.get_multi_update_url() + f"?pks={self.draft.pk}"
         )
         self.assertEqual(response.status_code, 200)
 
-    @mock.patch.object(User, "has_perm")
-    def test_change_path_without_permission(self, mock):
-        mock.side_effect = self.user_perm_path
-        self.login(self.user)
+    def test_change_path_without_permission(self):
+        self.client.force_login(self.user_without_perm)
         response = self.client.get(
             self.model.get_multi_update_url()
             + f"?pks={self.item1.pk}%2C{self.draft.pk}"
         )
         self.assertEqual(response.status_code, 302)
 
-    @mock.patch.object(User, "has_perm", return_value=True)
-    def test_change_path_with_permission(self, mock):
-        self.login(self.user)
+    def test_change_path_with_permission(self):
+        self.client.force_login(self.user)
         response = self.client.get(
             self.model.get_multi_update_url()
             + f"?pks={self.item1.pk}%2C{self.draft.pk}"

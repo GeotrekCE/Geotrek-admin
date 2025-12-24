@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-12 08:55+0000\n"
+"POT-Creation-Date: 2025-12-23 17:20+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/feedback/fr/>\n"
@@ -337,9 +337,6 @@ msgstr "Non"
 
 msgid "Map"
 msgstr "Carte"
-
-msgid "Add"
-msgstr "Ajouter"
 
 msgid "Data to import from Suricate"
 msgstr "Données à importer de Suricate"

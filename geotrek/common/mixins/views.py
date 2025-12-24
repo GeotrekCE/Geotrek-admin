@@ -252,11 +252,16 @@ class BelongStructureMixin:
         # check permissions
         queryset = self.get_queryset()
         user_structure = self.request.user.profile.structure
-        superuser = self.request.user.is_superuser
+        has_bypass_structure_perm = self.request.user.has_perm(
+            "authent.can_bypass_structure"
+        )
 
         filtered_queryset = queryset.filter(structure__exact=user_structure)
 
-        if not superuser and filtered_queryset.count() != queryset.count():
+        if (
+            not has_bypass_structure_perm
+            and filtered_queryset.count() != queryset.count()
+        ):
             messages.warning(
                 self.request,
                 _(
@@ -268,10 +273,12 @@ class BelongStructureMixin:
         return response
 
     def get_editable_fields(self):
-        superuser = self.request.user.is_superuser
+        has_bypass_structure_perm = self.request.user.has_perm(
+            "authent.can_bypass_structure"
+        )
         editable_fields = super().get_editable_fields()
 
-        if not superuser:
+        if not has_bypass_structure_perm:
             editable_fields.remove("structure")
 
         return editable_fields

@@ -234,6 +234,12 @@ class BladeList(CustomColumnsMixin, MapEntityList):
             )
         return columns
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["can_add"] = False  # delete Add button on blade view
+
+        return context
+
 
 class BladeFilter(MapEntityFilter):
     model = Blade
@@ -328,11 +334,16 @@ class BladeMultiDelete(MapEntityMultiDelete):
         # check permissions
         queryset = self.get_queryset()
         user_structure = self.request.user.profile.structure
-        superuser = self.request.user.is_superuser
+        has_bypass_structure_perm = self.request.user.has_perm(
+            "authent.can_bypass_structure"
+        )
 
         filtered_queryset = queryset.filter(signage__structure__exact=user_structure)
 
-        if not superuser and filtered_queryset.count() != queryset.count():
+        if (
+            not has_bypass_structure_perm
+            and filtered_queryset.count() != queryset.count()
+        ):
             messages.warning(
                 self.request,
                 _(
@@ -362,11 +373,16 @@ class BladeMultiUpdate(MapEntityMultiUpdate):
         # check permissions
         queryset = self.get_queryset()
         user_structure = self.request.user.profile.structure
-        superuser = self.request.user.is_superuser
+        has_bypass_structure_perm = self.request.user.has_perm(
+            "authent.can_bypass_structure"
+        )
 
         filtered_queryset = queryset.filter(signage__structure__exact=user_structure)
 
-        if not superuser and filtered_queryset.count() != queryset.count():
+        if (
+            not has_bypass_structure_perm
+            and filtered_queryset.count() != queryset.count()
+        ):
             messages.warning(
                 self.request,
                 _(
