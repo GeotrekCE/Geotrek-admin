@@ -353,7 +353,10 @@ class InterventionTest(TestCase):
     def test_duplication_with_topology_target(self):
         topology = TopologyFactory.create()
         intervention = InterventionFactory.create(
-            target=topology, target_id=topology.pk, target_type=ContentType.objects.get_for_model(Topology), name="intervention test"
+            target=topology,
+            target_id=topology.pk,
+            target_type=ContentType.objects.get_for_model(Topology),
+            name="intervention test",
         )
         self.assertEqual(Intervention.objects.count(), 1)
         Intervention.duplicate(intervention)
@@ -364,7 +367,8 @@ class InterventionTest(TestCase):
         topology_copy = intervention_copy.target
         self.assertEqual(topology_copy.geom, topology.geom)
         self.assertEqual(topology_copy.offset, topology.offset)
-        self.assertEqual(topology_copy.kind, 'INTERVENTION')
+        self.assertEqual(topology_copy.kind, "INTERVENTION")
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class ProjectModelTest(TestCase):
