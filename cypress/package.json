@@ -1,5 +1,8 @@
 {
+  "name": "geotrek-admin-e2e",
+  "version": "1.0.0",
   "dependencies": {
-    "cypress": "^9.5.1"
+    "@foreachbe/cypress-tinymce": "^1.0.0",
+    "cypress": "^13.16.0"
   }
 }
