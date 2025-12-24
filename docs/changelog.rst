@@ -5,6 +5,10 @@ CHANGELOG
 2.126.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Fix geometry of duplicated intervention
+
 
 2.126.1         (2026-08-14)
 ----------------------------
