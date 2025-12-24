@@ -2418,6 +2418,7 @@ class PathMultiActionsViewTest(
             self.model.get_multi_delete_url() + f"?pks={self.draft.pk}"
         )
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, Path.get_list_url())
 
     def test_delete_draft_path_with_permission(self):
         self.client.force_login(self.user)
@@ -2433,6 +2434,7 @@ class PathMultiActionsViewTest(
             + f"?pks={self.item1.pk}%2C{self.draft.pk}"
         )
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, Path.get_list_url())
 
     def test_delete_path_with_permission(self):
         self.client.force_login(self.user)
@@ -2448,6 +2450,7 @@ class PathMultiActionsViewTest(
             self.model.get_multi_update_url() + f"?pks={self.draft.pk}"
         )
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, Path.get_list_url())
 
     def test_change_draft_path_with_permission(self):
         self.client.force_login(self.user)
@@ -2463,6 +2466,7 @@ class PathMultiActionsViewTest(
             + f"?pks={self.item1.pk}%2C{self.draft.pk}"
         )
         self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, Path.get_list_url())
 
     def test_change_path_with_permission(self):
         self.client.force_login(self.user)

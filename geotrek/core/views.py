@@ -452,8 +452,8 @@ class PathMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
         # check permissions
         qs = self.get_queryset()
 
-        has_drafts = qs.filter(draft__exact=True).exists()
-        has_non_drafts = qs.filter(draft__exact=False).exists()
+        has_drafts = qs.filter(draft=True).exists()
+        has_non_drafts = qs.filter(draft=False).exists()
 
         if (
             has_drafts

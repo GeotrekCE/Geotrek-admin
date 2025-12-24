@@ -256,7 +256,7 @@ class BelongStructureMixin:
             "authent.can_bypass_structure"
         )
 
-        filtered_queryset = queryset.filter(structure__exact=user_structure)
+        filtered_queryset = queryset.filter(structure=user_structure)
 
         if (
             not has_bypass_structure_perm
