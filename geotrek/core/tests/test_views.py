@@ -2392,20 +2392,17 @@ class PathMultiActionsViewTest(
         cls.user.user_permissions.add(
             Permission.objects.get(codename="delete_draft_path")
         )
-        cls.user.user_permissions.add(Permission.objects.get(codename="delete_path"))
         cls.user.user_permissions.add(
             Permission.objects.get(codename="change_draft_path")
         )
-        cls.user.user_permissions.add(Permission.objects.get(codename="change_path"))
-
-        cls.user_bypass_structure.user_permissions.add(
-            Permission.objects.get(codename="delete_path")
-        )
-        cls.user_bypass_structure.user_permissions.add(
-            Permission.objects.get(codename="change_path")
-        )
 
         cls.user_without_perm = UserFactory.create()
+        cls.user_without_perm.user_permissions.add(
+            Permission.objects.get(codename="delete_path")
+        )
+        cls.user_without_perm.user_permissions.add(
+            Permission.objects.get(codename="change_path")
+        )
 
     @classmethod
     def create_items(cls, struct):
