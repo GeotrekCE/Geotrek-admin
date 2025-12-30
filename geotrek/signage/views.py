@@ -363,6 +363,24 @@ class BladeMultiUpdate(MapEntityMultiUpdate):
         editable_fields.remove("topology")
         return editable_fields
 
+    def form_valid(self, form):
+        signage = form.cleaned_data.get("signage", None)
+        user = self.request.user
+        user_structure = user.profile.structure
+
+        if (
+            not user.has_perm("authent.can_bypass_structure")
+            and signage
+            and signage != "unknown"
+            and signage.structure != user_structure
+        ):
+            messages.warning(
+                self.request,
+                _("Selected signage is not in your structure"),
+            )
+            return self.form_invalid(form)
+        return super().form_valid(form)
+
     def get(self, request, *args, **kwargs):
         # check pks definition first to avoid get_queryset error
         response = super().get(request, *args, **kwargs)

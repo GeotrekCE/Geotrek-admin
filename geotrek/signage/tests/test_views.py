@@ -478,10 +478,10 @@ class BladeMultiActionsViewTest(
 
     @classmethod
     def create_items(cls, struct=None):
-        signage1 = SignageFactory.create(structure=struct)
-        signage2 = SignageFactory.create(structure=StructureFactory.create())
-        cls.item1 = cls.modelFactory.create(signage=signage1)
-        cls.item2 = cls.modelFactory.create(signage=signage2)
+        cls.signage1 = SignageFactory.create(structure=struct)
+        cls.signage2 = SignageFactory.create(structure=StructureFactory.create())
+        cls.item1 = cls.modelFactory.create(signage=cls.signage1)
+        cls.item2 = cls.modelFactory.create(signage=cls.signage2)
 
     def test_editable_fields_no_blades(self):
         self.client.force_login(self.user)
@@ -490,3 +490,31 @@ class BladeMultiActionsViewTest(
         )
 
         self.assertNotContains(response, "Blades\n")
+
+    def test_structure_security_on_signage_selection_without_bypass_perm(self):
+        self.client.force_login(self.user)
+        data = {
+            "signage": self.signage2.pk,
+            "direction": "unknown",
+            "type": "unknown",
+            "color": "unknown",
+        }
+        response = self.client.post(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}", data=data
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Selected signage is not in your structure")
+
+    def test_structure_security_on_signage_selection_with_bypass_perm(self):
+        self.client.force_login(self.user_bypass_structure)
+        data = {
+            "signage": self.signage2.pk,
+            "direction": "unknown",
+            "type": "unknown",
+            "color": "unknown",
+        }
+        response = self.client.post(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}", data=data
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, self.model.get_list_url())
