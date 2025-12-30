@@ -243,7 +243,7 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.16.0
+mapentity @ git+https://github.com/makinacorpus/django-mapentity@1d611740bf4d497097577cdf931c389bb91979be#egg=mapentity
     # via geotrek (setup.py)
 markdown==3.10
     # via geotrek (setup.py)

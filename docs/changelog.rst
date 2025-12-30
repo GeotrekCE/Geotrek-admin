@@ -5,6 +5,10 @@ CHANGELOG
 2.122.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Do not allowed a user to select a signage that is not in it's structure in multi-update form
+
 
 2.122.0         (2025-12-24)
 ----------------------------
