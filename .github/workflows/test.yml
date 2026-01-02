@@ -53,7 +53,7 @@ jobs:
 
     strategy:
       matrix:
-        os: ['focal-3.10', 'jammy-3.10', 'noble-3.12']
+        os: ['jammy-3.10', 'noble-3.12']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -112,13 +112,7 @@ jobs:
            libvips
         apt-get install -y --no-install-recommends postgis
 
-    - name: Install python venv for focal
-      if: ${{ matrix.os == 'focal-3.10'}}
-      run: |
-          uv venv -p python3.10 venv
-
     - name: Install python venv
-      if: ${{ matrix.os != 'focal-3.10'}}
       run: |
           uv venv venv
 
@@ -166,7 +160,7 @@ jobs:
     needs: [ test ]
     strategy:
       matrix:
-        os: ['focal-3.10', 'jammy-3.10', 'noble-3.12']
+        os: ['jammy-3.10', 'noble-3.12']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -217,10 +211,8 @@ jobs:
       runs-on: ubuntu-latest
       strategy:
           matrix:
-              os: ['focal', 'jammy', 'noble']
+              os: ['jammy', 'noble']
               include:
-                  - os: 'focal'
-                    code: '20.04'
                   - os: 'jammy'
                     code: '22.04'
                   - os: 'noble'
@@ -429,12 +421,6 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Download 20.04 debian artifact
-        uses: actions/download-artifact@v7
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        with:
-          name: focal
-
       - name: Download 22.04 debian artifact
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         uses: actions/download-artifact@v7
@@ -505,11 +491,9 @@ jobs:
           echo "${{ github.ref }} : Publishing as $DEB_COMPONENT package"
           scp -P ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no /home/runner/work/Geotrek-admin/Geotrek-admin/geotrek-admin_*_amd64.deb ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/srv/packages/incoming/$DEB_COMPONENT/
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_dev -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_dev -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make noble_dev -C /srv/packages
           else
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_main -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_main -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make noble_main -C /srv/packages
           fi

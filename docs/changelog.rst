@@ -9,6 +9,10 @@ CHANGELOG
 2.122.0         (2025-12-24)
 ----------------------------
 
+**Breaking changes**
+
+* Ubuntu focal 20.04 debian package is not supported anymore. Please update or migrate your server to Ubuntu 24.04.
+
 
 2.121.2         (2025-12-16)
 ----------------------------
