@@ -5,6 +5,10 @@ CHANGELOG
 2.122.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Map screenshot contains wrong layers by default
+
 
 2.122.0         (2025-12-24)
 ----------------------------
