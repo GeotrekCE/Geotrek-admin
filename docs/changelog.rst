@@ -9,6 +9,9 @@ CHANGELOG
 2.122.0         (2025-12-24)
 ----------------------------
 
+**New features**
+* Add bulk deletion/edition on list views (refs #5107).
+
 
 2.121.2         (2025-12-16)
 ----------------------------
@@ -17,9 +20,6 @@ CHANGELOG
 
 * Fix ``label_en`` content on sensitivity module parser
 * Fix restricted area geojson that are not different by type in cache (#5136)
-
-**New features**
-* Add bulk deletion/edition on list views (refs #5107).
 
 
 2.121.1         (2025-11-17)
