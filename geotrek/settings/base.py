@@ -799,7 +799,7 @@ TINYMCE_DEFAULT_CONFIG = {
     "undo redo | "
     "removeformat | code | wordcount | help",
     "paste_as_text": True,
-    "license_key": "gpl"
+    "license_key": "gpl",
 }
 
 SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, "mobile")
