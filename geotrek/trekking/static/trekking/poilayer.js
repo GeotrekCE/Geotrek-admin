@@ -26,14 +26,14 @@ var POILayer = L.GeoJSON.extend({
             marker = L.marker(latlng, {icon: poicon});
         marker.properties = featureData.properties;
 
-        /* If POI has a thumbnail, show popup on click */
-        if (marker.properties.thumbnail) {
-            marker.bindPopup(
-                L.Util.template('<img src="{SRC}" width="110" height="110">', {
-                    SRC: marker.properties.thumbnail
-                }),
-                {autoPan: false});
-        }
+        marker.on('click', function() {
+            $.get(`/api/poi/drf/pois/${featureData.id}/popup-content`, function(data) {
+                marker.bindPopup(
+                    data,
+                    {autoPan: false});
+                marker.openPopup();
+            });
+        });
         return marker;
     }
 });

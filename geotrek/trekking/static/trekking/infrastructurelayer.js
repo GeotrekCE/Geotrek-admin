@@ -25,6 +25,13 @@ var InfrastructuresLayer = L.GeoJSON.extend({
                                     html: img}),
 		marker = L.marker(latlng, {icon: infrastructureicon});
         marker.properties = featureData.properties;
+        marker.on('click', function() {
+            $.get(`/api/infrastructure/drf/infrastructures/${featureData.id}/popup-content`, function(data) {
+                marker.bindPopup(
+                    data,
+                    {autoPan: false});
+            });
+        });
 
         return marker;
     }

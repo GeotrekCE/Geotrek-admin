@@ -21,6 +21,15 @@ var ServiceLayer = L.GeoJSON.extend({
             marker = L.marker(latlng, {icon: serviceicon});
         marker.properties = featureData.properties;
 
+        marker.on('click', function() {
+            $.get(`/api/service/drf/services/${featureData.id}/popup-content`, function(data) {
+                marker.bindPopup(
+                    data,
+                    {autoPan: false});
+                marker.openPopup();
+            });
+        });
+
         return marker;
     }
 });

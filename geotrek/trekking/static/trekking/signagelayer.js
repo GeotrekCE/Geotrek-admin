@@ -24,6 +24,16 @@ var SignagesLayer = L.GeoJSON.extend({
                                     iconSize: [this.options.iconSize, this.options.iconSize],
                                     html: img});
 
-        return L.marker(latlng, {icon: serviceicon}).bindLabel(featureData.properties.name, {noHide: true});
+        marker = L.marker(latlng, {icon: serviceicon}).bindLabel(featureData.properties.name, {noHide: true});
+        marker.on('click', function() {
+            $.get(`/api/signage/drf/signages/${featureData.id}/popup-content`, function(data) {
+                marker.bindPopup(
+                    data,
+                    {autoPan: false});
+                marker.openPopup();
+            });
+        });
+
+        return marker;
     }
 });
