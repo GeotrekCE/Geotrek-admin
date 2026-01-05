@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-23 11:11+0200\n"
+"POT-Creation-Date: 2026-01-05 14:01+0100\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/trekking/de/>\n"
@@ -496,6 +496,24 @@ msgstr "GPX"
 
 msgid "KML"
 msgstr "KML"
+
+#, fuzzy
+#| msgid "Treks"
+msgid "Trek's POIs"
+msgstr "Route"
+
+#, fuzzy
+#| msgid "Trek ascent"
+msgid "Trek's services"
+msgstr "Positiver Aufstieg"
+
+#, fuzzy
+#| msgid "Trekking"
+msgid "Trek's signages"
+msgstr "Route"
+
+msgid "Trek's infrastructures"
+msgstr ""
 
 msgid "Itinerancy"
 msgstr "Roaming"
