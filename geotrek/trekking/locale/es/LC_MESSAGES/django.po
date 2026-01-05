@@ -498,10 +498,8 @@ msgstr ""
 msgid "Trek's POIs"
 msgstr ""
 
-#, fuzzy
-#| msgid "Trek ascent"
 msgid "Trek's services"
-msgstr "Desnivel positivo"
+msgstr ""
 
 msgid "Trek's signages"
 msgstr ""

@@ -68,10 +68,9 @@ msgstr ""
 msgid "Cannot add children because this trek is itself a child."
 msgstr "Es ist nicht möglich, Kinder hinzuzufügen, da diese Route selbst ein Kind ist."
 
-#, fuzzy, python-format
-#| msgid "Cannot use parent trek {child.name} as a child trek."
+#, python-format
 msgid "Cannot use parent trek %(name)s as a child trek."
-msgstr "Die übergeordnete Route {child.name} kann nicht als Unterroute verwendet werden."
+msgstr ""
 
 msgid "Cancel"
 msgstr "Stornieren"
@@ -409,10 +408,9 @@ msgstr "Publiziert"
 msgid "Published Services"
 msgstr "Dienstleistungen Publiziert"
 
-#, fuzzy, python-format
-#| msgid "Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
+#, python-format
 msgid "Bad value '%(val)s' for field %(src)s. Should be like '2h30', '2,5' or '2.5'"
-msgstr "Falscher Wert'{val}' für das Feld {src}. Sollte ähnlich sein wie'2h30', '2,5' oder '2.5'"
+msgstr ""
 
 #, python-brace-format
 msgid "Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
@@ -497,20 +495,14 @@ msgstr "GPX"
 msgid "KML"
 msgstr "KML"
 
-#, fuzzy
-#| msgid "Treks"
 msgid "Trek's POIs"
-msgstr "Route"
+msgstr ""
 
-#, fuzzy
-#| msgid "Trek ascent"
 msgid "Trek's services"
-msgstr "Positiver Aufstieg"
+msgstr ""
 
-#, fuzzy
-#| msgid "Trekking"
 msgid "Trek's signages"
-msgstr "Route"
+msgstr ""
 
 msgid "Trek's infrastructures"
 msgstr ""
