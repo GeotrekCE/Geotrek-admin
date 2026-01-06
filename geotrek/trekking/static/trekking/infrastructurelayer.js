@@ -25,6 +25,22 @@ var InfrastructuresLayer = L.GeoJSON.extend({
                                     html: img}),
 		marker = L.marker(latlng, {icon: infrastructureicon});
         marker.properties = featureData.properties;
+        marker.on('click', function() {
+            $.get(`/api/infrastructure/drf/infrastructures/${featureData.id}/popup-content`, function(data) {
+                marker.bindPopup(
+                    data,
+                    {autoPan: false});
+                marker.openPopup();
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.error('Failed to load infrastructure popup content:', {
+                    id: featureData.id,
+                    status: jqXHR.status,
+                    statusText: jqXHR.statusText,
+                    textStatus: textStatus,
+                    error: errorThrown
+                });
+            });
+        });
 
         return marker;
     }

@@ -91,7 +91,7 @@
                 var poiUrl = "{% url 'trekking:poi_detail' 0 %}";
                 pois.eachLayer(function (layer) {
                     layer.on('dblclick', function (e) {
-                        window.location = poiUrl.replace('0', layer.properties.pk);
+                        window.location = poiUrl.replace('0', layer.feature.id);
                     });
                 });
                 map.layerscontrol.addOverlay(pois, "{{ poi_layer_label }}", tr('Objects'));
@@ -112,7 +112,7 @@
                 var serviceUrl = "{% url 'trekking:service_detail' 0 %}";
                 services.eachLayer(function (layer) {
                     layer.on('dblclick', function (e) {
-                        window.location = serviceUrl.replace('0', layer.properties.pk);
+                        window.location = serviceUrl.replace('0', layer.feature.id);
                     });
                 });
                 map.layerscontrol.addOverlay(services, "{{ service_layer_label }}", tr('Objects'));
@@ -131,7 +131,7 @@
                 var signageUrl = "{% url 'signage:signage_detail' 0 %}";
                 signages.eachLayer(function (layer) {
                     layer.on('dblclick', function (e) {
-                        window.location = signageUrl.replace('0', layer.properties.pk);
+                        window.location = signageUrl.replace('0', layer.feature.id);
                     });
                 });
                 map.layerscontrol.addOverlay(signages, "{{ signage_layer_label }}", tr('Objects'));
@@ -150,7 +150,7 @@
                 var infrastructureUrl = "{% url 'infrastructure:infrastructure_detail' 0 %}";
                 infrastructures.eachLayer(function (layer) {
                     layer.on('dblclick', function (e) {
-                        window.location = infrastructureUrl.replace('0', layer.properties.pk);
+                        window.location = infrastructureUrl.replace('0', layer.feature.id);
                     });
                 });
                 map.layerscontrol.addOverlay(infrastructures, "{{ infrastructure_layer_label }}", tr('Objects'));
