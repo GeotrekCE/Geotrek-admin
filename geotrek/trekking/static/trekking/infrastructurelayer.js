@@ -30,6 +30,7 @@ var InfrastructuresLayer = L.GeoJSON.extend({
                 marker.bindPopup(
                     data,
                     {autoPan: false});
+                marker.openPopup();
             });
         });
 
