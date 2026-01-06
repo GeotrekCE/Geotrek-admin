@@ -30,6 +30,7 @@ var InfrastructuresLayer = L.GeoJSON.extend({
                 marker.bindPopup(
                     data,
                     {autoPan: false});
+                marker.openPopup();
             }).fail(function(jqXHR, textStatus, errorThrown) {
                 console.error('Failed to load infrastructure popup content:', {
                     id: featureData.id,
@@ -38,7 +39,6 @@ var InfrastructuresLayer = L.GeoJSON.extend({
                     textStatus: textStatus,
                     error: errorThrown
                 });
-                marker.openPopup();
             });
         });
 

@@ -35,7 +35,7 @@ var POILayer = L.GeoJSON.extend({
                     {autoPan: false});
                 marker.openPopup();
             }).fail(function (jqXHR, textStatus, errorThrown) {
-                console.error('Failed to load signage popup content for ID ' + featureData.id + ':', textStatus, errorThrown);
+                console.error('Failed to load POI popup content for ID ' + featureData.id + ':', textStatus, errorThrown);
             });
         });
         return marker;
