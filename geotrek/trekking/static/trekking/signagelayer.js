@@ -26,12 +26,16 @@ var SignagesLayer = L.GeoJSON.extend({
 
         marker = L.marker(latlng, {icon: serviceicon}).bindLabel(featureData.properties.name, {noHide: true});
         marker.on('click', function() {
-            $.get(`/api/signage/drf/signages/${featureData.id}/popup-content`, function(data) {
-                marker.bindPopup(
-                    data,
-                    {autoPan: false});
-                marker.openPopup();
-            });
+            $.get(`/api/signage/drf/signages/${featureData.id}/popup-content`)
+                .done(function(data) {
+                    marker.bindPopup(
+                        data,
+                        {autoPan: false});
+                    marker.openPopup();
+                })
+                .fail(function(jqXHR, textStatus, errorThrown) {
+                    console.error('Failed to load signage popup content for ID ' + featureData.id + ':', textStatus, errorThrown);
+                });
         });
 
         return marker;
