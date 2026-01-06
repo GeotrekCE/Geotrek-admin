@@ -36,8 +36,11 @@ var POILayer = L.GeoJSON.extend({
                 marker.openPopup();
             }).fail(function (jqXHR, textStatus, errorThrown) {
                 console.error('Failed to load POI popup content for ID ' + featureData.id + ':', textStatus, errorThrown);
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.error('Failed to load POI popup content for ID ' + featureData.id + ':', textStatus, errorThrown);
             });
         });
         return marker;
     }
-});
+ });
+ 
