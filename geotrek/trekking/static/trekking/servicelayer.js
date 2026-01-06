@@ -27,6 +27,12 @@ var ServiceLayer = L.GeoJSON.extend({
                     data,
                     {autoPan: false});
                 marker.openPopup();
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.error(
+                    'Failed to load service popup content for service ID ' + featureData.id +
+                    ': ' + textStatus,
+                    errorThrown
+                );
             });
         });
 
