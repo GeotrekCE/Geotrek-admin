@@ -18,13 +18,20 @@ from mapentity.views import (
     MapEntityFilter,
     MapEntityFormat,
     MapEntityList,
+    MapEntityMultiDelete,
+    MapEntityMultiUpdate,
     MapEntityUpdate,
 )
 from rest_framework import permissions as rest_permissions
 from rest_framework import viewsets
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
+from geotrek.common.mixins.views import (
+    BelongStructureMixin,
+    CompletenessMixin,
+    CustomColumnsMixin,
+    PublishedFieldMixin,
+)
 from geotrek.common.models import RecordSource, TargetPortal
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -210,6 +217,16 @@ class TouristicContentViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
             qs = qs.only("id", "name")
         return qs
+
+
+class TouristicContentMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = TouristicContent
+
+
+class TouristicContentMultiUpdate(
+    PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
+):
+    model = TouristicContent
 
 
 class TouristicEventList(CustomColumnsMixin, MapEntityList):
@@ -400,6 +417,16 @@ class TouristicEventViewSet(GeotrekMapentityViewSet):
                 "participants"
             )
         return qs
+
+
+class TouristicEventMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = TouristicEvent
+
+
+class TouristicEventMultiUpdate(
+    PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
+):
+    model = TouristicEvent
 
 
 class TrekInformationDeskViewSet(viewsets.ModelViewSet):

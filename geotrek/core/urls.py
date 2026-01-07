@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.urls import path, re_path, register_converter
+from django.urls import path, register_converter
 from mapentity.registry import registry
 
 from geotrek.altimetry.urls import AltimetryEntityOptions
@@ -7,7 +7,6 @@ from geotrek.common.urls import LangConverter
 
 from .models import Path, Trail
 from .views import (
-    MultiplePathDelete,
     PathGPXDetail,
     PathKMLDetail,
     TrailGPXDetail,
@@ -19,11 +18,6 @@ register_converter(LangConverter, "lang")
 app_name = "core"
 
 urlpatterns = [
-    re_path(
-        r"^path/delete/(?P<pk>\d+(,\d+)+)/",
-        MultiplePathDelete.as_view(),
-        name="multiple_path_delete",
-    ),
     path(
         "api/<lang:lang>/paths/<int:pk>/path_<slug:slug>.gpx",
         PathGPXDetail.as_view(),

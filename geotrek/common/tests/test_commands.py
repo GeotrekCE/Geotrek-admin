@@ -30,7 +30,7 @@ class CommandUpdatePostMigrationTests(TestCase):
         portal = TargetPortalFactory.create(name="Test", title=None)
         self.assertEqual(portal.title_fr, "")
         self.assertEqual(portal.description_fr, "")
-        call_command("update_post_migration_languages")
+        call_command("update_post_migration_languages", verbosity=0)
         changed_portal = TargetPortal.objects.get(name="Test")
         self.assertEqual(changed_portal.title_fr, "Geotrek-rando")
         self.assertEqual(

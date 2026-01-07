@@ -4,7 +4,7 @@
 
 {% if appname == "signage" and is_blades_enabled %}
 <div class="btn-group" role="group">
-    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuModelButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuModelButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
         <strong>
             {% if modelname == 'signage' %}{% trans "Signages" %}{% endif %}
             {% if modelname == 'blade' %}{% trans "Blades" %}{% endif %}

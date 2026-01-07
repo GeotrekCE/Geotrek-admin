@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-23 11:59+0000\n"
+"POT-Creation-Date: 2026-01-05 14:01+0100\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/trekking/it/>\n"
@@ -68,10 +68,9 @@ msgstr ""
 msgid "Cannot add children because this trek is itself a child."
 msgstr "Non si possono aggiungere i bambini perché questo itinerario è esso stesso un bambino"
 
-#, fuzzy, python-format
-#| msgid "Cannot use parent trek {child.name} as a child trek."
+#, python-format
 msgid "Cannot use parent trek %(name)s as a child trek."
-msgstr "Non può usare il itinerario dei genitori {child.name} come un trek per bambini."
+msgstr ""
 
 msgid "Cancel"
 msgstr "Annulla"
@@ -409,10 +408,9 @@ msgstr ""
 msgid "Published Services"
 msgstr "Pubblicato"
 
-#, fuzzy, python-format
-#| msgid "Bad value '{val}' for field {src}. Should be like '2h30', '2,5' or '2.5'"
+#, python-format
 msgid "Bad value '%(val)s' for field %(src)s. Should be like '2h30', '2,5' or '2.5'"
-msgstr "Valore errato '{val}' per il campo {src}. Dovrebbe essere come '2h30', '2,5' o '2.5'"
+msgstr ""
 
 #, python-brace-format
 msgid "Not contiguous segment {i} ({distance} m) for geometry for field '{src}'"
@@ -496,6 +494,18 @@ msgstr "GPX"
 
 msgid "KML"
 msgstr "KML"
+
+msgid "Trek's POIs"
+msgstr ""
+
+msgid "Trek's services"
+msgstr ""
+
+msgid "Trek's signages"
+msgstr ""
+
+msgid "Trek's infrastructures"
+msgstr ""
 
 msgid "Itinerancy"
 msgstr "itinerari a tappe"

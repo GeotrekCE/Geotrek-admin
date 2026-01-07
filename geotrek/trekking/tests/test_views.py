@@ -26,7 +26,13 @@ from geotrek.authent.tests.factories import (
     TrekkingManagerFactory,
     UserProfileFactory,
 )
-from geotrek.common.tests import CommonLiveTest, CommonTest
+from geotrek.common.tests import (
+    CommonLiveTest,
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonTest,
+)
 from geotrek.common.tests.factories import AttachmentFactory, ThemeFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
@@ -1209,3 +1215,57 @@ class TrekPDFChangeAlongLinkedInfrastructures(TestCase):
                 self.trek.get_map_image_path("fr"), self.trek.get_date_update()
             )
         )
+
+
+class POIMultiActionsViewTest(
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = POI
+    modelFactory = POIFactory
+    expected_fields = [
+        "Waiting for publication",
+        "Provider",
+        "Related structure",
+        "POI type",
+        "Published [en]",
+        "Published [fr]",
+    ]
+
+
+class TrekMultiActionsViewTest(
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Trek
+    modelFactory = TrekFactory
+    expected_fields = [
+        "Published [fr]",
+        "Published [en]",
+        "Waiting for publication",
+        "Provider",
+        "Related structure",
+        "Practice",
+        "Level accessibility",
+        "Route",
+        "Difficulty",
+        "Reservation system",
+    ]
+
+
+class ServiceMultiActionsViewTest(
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Service
+    modelFactory = ServiceFactory
+    expected_fields = [
+        "Provider",
+        "Related structure",
+        "Type",
+    ]

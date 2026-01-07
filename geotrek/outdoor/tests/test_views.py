@@ -5,8 +5,13 @@ from django.test.utils import override_settings
 from django.urls import reverse
 from mapentity.tests.factories import SuperUserFactory
 
+from geotrek.common.tests import (
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsMixin,
+    CommonMultiActionViewsStructureMixin,
+)
 from geotrek.outdoor import views as course_views
-from geotrek.outdoor.models import Site
+from geotrek.outdoor.models import Course, Site
 from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
 from geotrek.tourism.tests.test_views import PNG_BLACK_PIXEL
 from geotrek.trekking.tests.factories import POIFactory
@@ -119,3 +124,41 @@ class SiteDeleteTest(TestCase):
         self.assertEqual(response.status_code, 302)
         self.assertEqual(Site.objects.count(), 1)
         self.assertEqual(Site.objects.filter(pk=site_1.pk).exists(), True)
+
+
+class SiteMultiActionsViewTest(
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Site
+    modelFactory = SiteFactory
+    expected_fields = [
+        "Published [fr]",
+        "Published [en]",
+        "Waiting for publication",
+        "Provider",
+        "Related structure",
+        "Parent",
+        "Practice",
+        "Type",
+    ]
+
+
+class CourseMultiActionsViewTest(
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Course
+    modelFactory = CourseFactory
+    expected_fields = [
+        "Published [fr]",
+        "Published [en]",
+        "Waiting for publication",
+        "Provider",
+        "Related structure",
+        "Type",
+    ]

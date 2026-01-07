@@ -15,7 +15,11 @@ from mapentity.tests.factories import UserFactory
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import (
+    CommonMultiActionViewsMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonTest,
+)
 from geotrek.core.models import Path, PathSource, Trail
 from geotrek.core.tests.factories import (
     ComfortFactory,
@@ -51,68 +55,6 @@ class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
     def logout(self):
         self.client.logout()
 
-    def test_show_delete_multiple_path_in_list(self):
-        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
-        PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
-        POIFactory.create(paths=[(path_1, 0, 0)])
-        response = self.client.get(reverse("core:path_list"))
-        self.assertContains(
-            response,
-            '<a class="dropdown-item text-danger" href="#delete" id="btn-delete" role="button">',
-        )
-
-    def test_delete_view_multiple_path(self):
-        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
-        path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
-        response = self.client.get(
-            reverse("core:multiple_path_delete", args=[f"{path_1.pk},{path_2.pk}"])
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertContains(response, "Do you really wish to delete")
-
-    def test_delete_view_multiple_path_one_wrong_structure(self):
-        other_structure = StructureFactory(name="Other")
-        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
-        path_2 = PathFactory.create(
-            name="path_2", geom=LineString((2, 2), (2, -2)), structure=other_structure
-        )
-        POIFactory.create(paths=[(path_1, 0, 0)])
-        response = self.client.get(
-            reverse("core:multiple_path_delete", args=[f"{path_1.pk},{path_2.pk}"])
-        )
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(response.url, reverse("core:path_list"))
-        self.assertIn(
-            response.content,
-            b"Access to the requested resource is restricted by structure.",
-        )
-        self.assertEqual(Path.objects.count(), 4)
-
-    def test_delete_multiple_path(self):
-        path_1 = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
-        path_2 = PathFactory.create(name="path_2", geom=LineString((2, 2), (2, -2)))
-        POIFactory.create(paths=[(path_1, 0, 0)], name="POI_1")
-        InfrastructureFactory.create(paths=[(path_1, 0, 1)], name="INFRA_1")
-        signage = SignageFactory.create(paths=[(path_1, 0, 1)], name="SIGNA_1")
-        TrailFactory.create(paths=[(path_2, 0, 1)], name="TRAIL_1")
-        ServiceFactory.create(paths=[(path_2, 0, 1)])
-        InterventionFactory.create(target=signage, name="INTER_1")
-        response = self.client.get(
-            reverse("core:multiple_path_delete", args=[f"{path_1.pk},{path_2.pk}"])
-        )
-        self.assertContains(response, "POI_1")
-        self.assertContains(response, "INFRA_1")
-        self.assertContains(response, "SIGNA_1")
-        self.assertContains(response, "TRAIL_1")
-        self.assertContains(response, "Service type")
-        self.assertContains(response, "INTER_1")
-        response = self.client.post(
-            reverse("core:multiple_path_delete", args=[f"{path_1.pk},{path_2.pk}"])
-        )
-        self.assertEqual(response.status_code, 302)
-        self.assertEqual(Path.objects.count(), 2)
-        self.assertEqual(Path.objects.filter(pk__in=[path_1.pk, path_2.pk]).count(), 0)
-
 
 def get_route_exception_mock(arg1, arg2):
     msg = "This is an error message"
@@ -132,7 +74,6 @@ class PathViewsTest(CommonTest):
     extra_column_list = ["length_2d", "eid"]
     expected_column_list_extra = [
         "id",
-        "checkbox",
         "name",
         "length",
         "length_2d",
@@ -148,7 +89,6 @@ class PathViewsTest(CommonTest):
 
     def get_expected_datatables_attrs(self):
         return {
-            "checkbox": self.obj.checkbox_display,
             "id": self.obj.pk,
             "length": 141.6,
             "length_2d": 141.6,
@@ -2426,3 +2366,126 @@ class RemovePathKeepTopology(TestCase):
         self.assertEqual(poi.deleted, False)
 
         self.assertAlmostEqual(1.5, poi.offset)
+
+
+class PathMultiActionsViewTest(
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Path
+    modelFactory = PathFactory
+    expected_fields = [
+        "Provider",
+        "Related structure",
+        "Validity",
+        "Visible",
+        "Comfort",
+        "Source",
+        "Maintenance stake",
+        "Draft",
+    ]
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="delete_draft_path")
+        )
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="change_draft_path")
+        )
+
+        cls.user_without_perm = UserFactory.create()
+        cls.user_without_perm.user_permissions.add(
+            Permission.objects.get(codename="delete_path")
+        )
+        cls.user_without_perm.user_permissions.add(
+            Permission.objects.get(codename="change_path")
+        )
+
+    @classmethod
+    def create_items(cls, struct):
+        cls.item1 = cls.modelFactory.create(structure=struct, draft=False)
+        cls.item2 = cls.modelFactory.create(
+            structure=StructureFactory.create(), draft=False
+        )
+        cls.draft = cls.modelFactory.create(structure=struct, draft=True)
+
+    def test_delete_draft_path_without_permission(self):
+        self.client.force_login(self.user_without_perm)
+        response = self.client.get(
+            self.model.get_multi_delete_url() + f"?pks={self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, Path.get_list_url())
+
+    def test_delete_draft_path_with_permission(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url() + f"?pks={self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_delete_path_without_permission(self):
+        self.client.force_login(self.user_without_perm)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, Path.get_list_url())
+
+    def test_delete_path_with_permission(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_change_draft_path_without_permission(self):
+        self.client.force_login(self.user_without_perm)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, Path.get_list_url())
+
+    def test_change_draft_path_with_permission(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_change_path_without_permission(self):
+        self.client.force_login(self.user_without_perm)
+        response = self.client.get(
+            self.model.get_multi_update_url()
+            + f"?pks={self.item1.pk}%2C{self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, Path.get_list_url())
+
+    def test_change_path_with_permission(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_update_url()
+            + f"?pks={self.item1.pk}%2C{self.draft.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+
+class TrailMultiActionsViewTest(
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Trail
+    modelFactory = TrailFactory
+    expected_fields = [
+        "Provider",
+        "Related structure",
+        "Category",
+    ]

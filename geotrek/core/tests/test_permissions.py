@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import LineString
 from django.test import TestCase
-from django.urls import reverse
 from mapentity.tests.factories import UserFactory
 
 from geotrek.core.models import Path
@@ -258,40 +257,6 @@ class PermissionDraftPath(TestCase):
         self.assertEqual(Path.objects.count(), 1)
 
         response = self.client.post(f"/path/delete/{draft_path.pk}/")
-        self.assertEqual(response.status_code, 302)
-
-        self.assertEqual(Path.objects.count(), 0)
-
-    def test_delete_multiple_path_draft_withtout_perm(self):
-        user = UserFactory.create()
-        self.client.force_login(user=user)
-        path = PathFactory.create(name="path_1", geom=LineString((0, 0), (4, 0)))
-        draft_path = PathFactory.create(
-            name="path_2", geom=LineString((2, 2), (2, -2)), draft=True
-        )
-
-        response = self.client.post(
-            reverse("core:multiple_path_delete", args=[f"{path.pk},{draft_path.pk}"])
-        )
-        self.assertEqual(response.status_code, 302)
-
-        self.assertEqual(Path.objects.count(), 2)
-
-        user.user_permissions.add(Permission.objects.get(codename="delete_path"))
-
-        response = self.client.post(
-            reverse("core:multiple_path_delete", args=[f"{path.pk},{draft_path.pk}"])
-        )
-        self.assertEqual(response.status_code, 302)
-
-        self.assertEqual(Path.objects.count(), 2)
-
-        user.user_permissions.add(Permission.objects.get(codename="delete_draft_path"))
-        self.client.force_login(user=user)
-
-        response = self.client.post(
-            reverse("core:multiple_path_delete", args=[f"{path.pk},{draft_path.pk}"])
-        )
         self.assertEqual(response.status_code, 302)
 
         self.assertEqual(Path.objects.count(), 0)

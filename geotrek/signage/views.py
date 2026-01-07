@@ -1,9 +1,11 @@
 import logging
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.gis.db.models.functions import Transform
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.functional import classproperty
+from django.utils.translation import gettext_lazy as _
 from mapentity.views import (
     MapEntityCreate,
     MapEntityDelete,
@@ -12,12 +14,18 @@ from mapentity.views import (
     MapEntityFilter,
     MapEntityFormat,
     MapEntityList,
+    MapEntityMultiDelete,
+    MapEntityMultiUpdate,
     MapEntityUpdate,
 )
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import (
+    BelongStructureMixin,
+    CustomColumnsMixin,
+    PublishedFieldMixin,
+)
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 
@@ -135,6 +143,16 @@ class SignageViewSet(GeotrekMapentityViewSet):
         return qs
 
 
+class SignageMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = Signage
+
+
+class SignageMultiUpdate(
+    PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
+):
+    model = Signage
+
+
 class BladeDetail(MapEntityDetail):
     queryset = Blade.objects.existing()
 
@@ -216,6 +234,12 @@ class BladeList(CustomColumnsMixin, MapEntityList):
             )
         return columns
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["can_add"] = False  # delete Add button on blade view
+
+        return context
+
 
 class BladeFilter(MapEntityFilter):
     model = Blade
@@ -295,3 +319,76 @@ class BladeViewSet(GeotrekMapentityViewSet):
                 "signage", "direction", "type", "color"
             ).prefetch_related("conditions")
         return qs
+
+
+class BladeMultiDelete(MapEntityMultiDelete):
+    model = Blade
+
+    def get(self, request, *args, **kwargs):
+        # check pks definition first to avoid get_queryset error
+        response = super().get(request, *args, **kwargs)
+
+        if isinstance(response, HttpResponseRedirect):
+            return response
+
+        # check permissions
+        queryset = self.get_queryset()
+        user_structure = self.request.user.profile.structure
+        has_bypass_structure_perm = self.request.user.has_perm(
+            "authent.can_bypass_structure"
+        )
+
+        filtered_queryset = queryset.filter(signage__structure__exact=user_structure)
+
+        if (
+            not has_bypass_structure_perm
+            and filtered_queryset.count() != queryset.count()
+        ):
+            messages.warning(
+                self.request,
+                _(
+                    "Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."
+                ),
+            )
+            return HttpResponseRedirect(self.get_redirect_url())
+
+        return response
+
+
+class BladeMultiUpdate(MapEntityMultiUpdate):
+    model = Blade
+
+    def get_editable_fields(self):
+        editable_fields = super().get_editable_fields()
+        editable_fields.remove("topology")
+        return editable_fields
+
+    def get(self, request, *args, **kwargs):
+        # check pks definition first to avoid get_queryset error
+        response = super().get(request, *args, **kwargs)
+
+        if isinstance(response, HttpResponseRedirect):
+            return response
+
+        # check permissions
+        queryset = self.get_queryset()
+        user_structure = self.request.user.profile.structure
+        has_bypass_structure_perm = self.request.user.has_perm(
+            "authent.can_bypass_structure"
+        )
+
+        filtered_queryset = queryset.filter(signage__structure__exact=user_structure)
+
+        if (
+            not has_bypass_structure_perm
+            and filtered_queryset.count() != queryset.count()
+        ):
+            messages.warning(
+                self.request,
+                _(
+                    "Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."
+                ),
+            )
+            return HttpResponseRedirect(self.get_redirect_url())
+
+        return response

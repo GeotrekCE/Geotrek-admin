@@ -47,6 +47,7 @@ from requests.auth import HTTPBasicAuth
 from requests.exceptions import ChunkedEncodingError
 
 from geotrek.authent.models import default_structure
+from geotrek.common.mixins.models import NoDeleteMixin
 from geotrek.common.models import Attachment, FileType, License, Provider, RecordSource
 from geotrek.common.utils.parsers import add_http_prefix, force_geom_to_2d
 from geotrek.common.utils.translation import get_translated_fields
@@ -688,7 +689,11 @@ class Parser:
 
     def end(self):
         if self.delete:
-            self.model.objects.filter(pk__in=self.to_delete).delete()
+            params = {}
+            if issubclass(self.model, NoDeleteMixin):
+                params = {"force": True}
+
+            self.model.objects.filter(pk__in=self.to_delete).delete(**params)
 
     def parse(self, filename=None, limit=None):
         if filename:
