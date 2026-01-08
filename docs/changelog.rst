@@ -7,6 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
+* Do not allowed a user to select a signage that is not in it's structure in multi-update form
 * Map screenshot contains wrong layers by default
 
 
