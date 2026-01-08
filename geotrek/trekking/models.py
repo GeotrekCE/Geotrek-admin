@@ -481,10 +481,6 @@ class Trek(
         return ", ".join([str(d) for d in self.districts])
 
     @property
-    def themes_display(self):
-        return ", ".join([str(n) for n in self.themes.all()])
-
-    @property
     def information_desks_display(self):
         return ", ".join([str(n) for n in self.information_desks.all()])
 
