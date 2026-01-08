@@ -2,7 +2,11 @@
 CHANGELOG
 =========
 
-2.122.0+dev     (XXXX-XX-XX)
+2.122.1+dev     (XXXX-XX-XX)
+----------------------------
+
+
+2.122.1         (2026-01-08)
 ----------------------------
 
 **Breaking changes**
@@ -11,6 +15,7 @@ CHANGELOG
 
 **Bug fixes**
 
+* Do not allowed a user to select a signage that is not in it's structure in multi-update form
 * Map screenshot contains wrong layers by default
 
 

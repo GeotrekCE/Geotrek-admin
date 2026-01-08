@@ -350,7 +350,7 @@ class BladeMultiDelete(MapEntityMultiDelete):
                     "Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."
                 ),
             )
-            return HttpResponseRedirect(self.get_redirect_url())
+            return HttpResponseRedirect(self.get_success_url())
 
         return response
 
@@ -361,6 +361,7 @@ class BladeMultiUpdate(MapEntityMultiUpdate):
     def get_editable_fields(self):
         editable_fields = super().get_editable_fields()
         editable_fields.remove("topology")
+        editable_fields.remove("signage")
         return editable_fields
 
     def get(self, request, *args, **kwargs):
@@ -371,24 +372,22 @@ class BladeMultiUpdate(MapEntityMultiUpdate):
             return response
 
         # check permissions
-        queryset = self.get_queryset()
         user_structure = self.request.user.profile.structure
         has_bypass_structure_perm = self.request.user.has_perm(
             "authent.can_bypass_structure"
         )
 
-        filtered_queryset = queryset.filter(signage__structure__exact=user_structure)
+        has_wrong_structure_objects = (
+            self.get_queryset().exclude(signage__structure=user_structure).exists()
+        )
 
-        if (
-            not has_bypass_structure_perm
-            and filtered_queryset.count() != queryset.count()
-        ):
+        if not has_bypass_structure_perm and has_wrong_structure_objects:
             messages.warning(
                 self.request,
                 _(
                     "Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."
                 ),
             )
-            return HttpResponseRedirect(self.get_redirect_url())
+            return HttpResponseRedirect(self.get_success_url())
 
         return response

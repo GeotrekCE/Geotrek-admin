@@ -243,7 +243,7 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.16.0
+mapentity==8.16.1
     # via geotrek (setup.py)
 markdown==3.10
     # via geotrek (setup.py)
@@ -399,7 +399,7 @@ uritemplate==4.2.0
     #   coreapi
     #   drf-spectacular
     #   drf-yasg
-urllib3==2.6.2
+urllib3==2.6.3
     # via
     #   requests
     #   sentry-sdk
