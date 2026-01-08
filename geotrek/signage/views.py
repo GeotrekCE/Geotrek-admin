@@ -372,18 +372,16 @@ class BladeMultiUpdate(MapEntityMultiUpdate):
             return response
 
         # check permissions
-        queryset = self.get_queryset()
         user_structure = self.request.user.profile.structure
         has_bypass_structure_perm = self.request.user.has_perm(
             "authent.can_bypass_structure"
         )
 
-        filtered_queryset = queryset.filter(signage__structure__exact=user_structure)
+        has_wrong_structure_objects = (
+            self.get_queryset().exclude(signage__structure=user_structure).exists()
+        )
 
-        if (
-            not has_bypass_structure_perm
-            and filtered_queryset.count() != queryset.count()
-        ):
+        if not has_bypass_structure_perm and has_wrong_structure_objects:
             messages.warning(
                 self.request,
                 _(
