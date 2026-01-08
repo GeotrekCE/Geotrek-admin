@@ -364,7 +364,8 @@ class BladeMultiUpdate(MapEntityMultiUpdate):
         return editable_fields
 
     def form_valid(self, form):
-        signage = form.cleaned_data.get("signage", None)
+        signage_id = form.cleaned_data.get("signage", None)
+        signage = Signage.objects.get(pk=signage_id)
         user = self.request.user
         user_structure = user.profile.structure
 

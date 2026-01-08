@@ -495,9 +495,9 @@ class BladeMultiActionsViewTest(
         self.client.force_login(self.user)
         data = {
             "signage": self.signage2.pk,
-            "direction": "unknown",
-            "type": "unknown",
-            "color": "unknown",
+            "direction": "nothing",
+            "type": "nothing",
+            "color": "nothing",
         }
         response = self.client.post(
             self.model.get_multi_update_url() + f"?pks={self.item1.pk}", data=data
@@ -509,9 +509,9 @@ class BladeMultiActionsViewTest(
         self.client.force_login(self.user_bypass_structure)
         data = {
             "signage": self.signage2.pk,
-            "direction": "unknown",
-            "type": "unknown",
-            "color": "unknown",
+            "direction": "nothing",
+            "type": "nothing",
+            "color": "nothing",
         }
         response = self.client.post(
             self.model.get_multi_update_url() + f"?pks={self.item1.pk}", data=data
