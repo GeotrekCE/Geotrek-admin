@@ -350,7 +350,7 @@ class BladeMultiDelete(MapEntityMultiDelete):
                     "Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."
                 ),
             )
-            return HttpResponseRedirect(self.get_redirect_url())
+            return HttpResponseRedirect(self.get_success_url())
 
         return response
 
@@ -389,6 +389,6 @@ class BladeMultiUpdate(MapEntityMultiUpdate):
                     "Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."
                 ),
             )
-            return HttpResponseRedirect(self.get_redirect_url())
+            return HttpResponseRedirect(self.get_success_url())
 
         return response
