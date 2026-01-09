@@ -1,3 +1,4 @@
+from dal import autocomplete
 from django.utils.translation import gettext_lazy as _
 from django_filters import ModelMultipleChoiceFilter
 
@@ -22,6 +23,7 @@ class TrekFilterSet(
     provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(trek__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -55,10 +57,13 @@ class POIFilterSet(
     ZoningFilterSet,
     StructureRelatedFilterSet,
 ):
-    trek = POITrekFilter(label=_("Trek"), required=False)
+    trek = POITrekFilter(
+        label=_("Trek"), required=False, widget=autocomplete.Select2Multiple()
+    )
     provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(poi__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -81,6 +86,7 @@ class ServiceFilterSet(
     provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(service__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

@@ -10,7 +10,7 @@ from django.contrib.gis.db import models
 from django.contrib.postgres.indexes import GistIndex
 from django.utils.translation import gettext_lazy as _
 
-from geotrek.common.mixins.models import TimeStampedModelMixin
+from geotrek.common.mixins.models import BBoxMixin, TimeStampedModelMixin
 
 
 class RestrictedAreaType(models.Model):
@@ -23,7 +23,7 @@ class RestrictedAreaType(models.Model):
         return self.name
 
 
-class RestrictedArea(TimeStampedModelMixin, models.Model):
+class RestrictedArea(TimeStampedModelMixin, BBoxMixin, models.Model):
     name = models.CharField(max_length=250, verbose_name=_("Name"))
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     area_type = models.ForeignKey(
@@ -63,11 +63,16 @@ class RestrictedArea(TimeStampedModelMixin, models.Model):
         return f"{self.area_type.name} - {self.name}"
 
 
-class City(TimeStampedModelMixin, models.Model):
+class City(TimeStampedModelMixin, BBoxMixin, models.Model):
     code = models.CharField(
-        max_length=256, unique=True, blank=True, null=True, verbose_name=_("Code")
+        max_length=256,
+        unique=True,
+        blank=True,
+        null=True,
+        verbose_name=_("Code"),
+        db_index=True,
     )
-    name = models.CharField(max_length=128, verbose_name=_("Name"))
+    name = models.CharField(max_length=128, verbose_name=_("Name"), db_index=True)
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     published = models.BooleanField(
         verbose_name=_("Published"),
@@ -93,8 +98,8 @@ class City(TimeStampedModelMixin, models.Model):
         return self.name
 
 
-class District(TimeStampedModelMixin, models.Model):
-    name = models.CharField(max_length=128, verbose_name=_("Name"))
+class District(TimeStampedModelMixin, BBoxMixin, models.Model):
+    name = models.CharField(max_length=128, verbose_name=_("Name"), db_index=True)
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     published = models.BooleanField(
         verbose_name=_("Published"),
