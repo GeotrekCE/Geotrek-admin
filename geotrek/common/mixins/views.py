@@ -2,12 +2,14 @@ import os
 from io import BytesIO
 
 from django.conf import settings
-from django.http import HttpResponse, HttpResponseNotFound
+from django.contrib import messages
+from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.functional import classproperty
+from django.utils.translation import gettext_lazy as _
 from django.views import static
 from mapentity import views as mapentity_views
-from mapentity.helpers import suffix_for
+from mapentity.helpers import suffix_for, user_has_perm
 from pdfimpose.schema.saddle import impose
 from pymupdf import Document
 
@@ -232,3 +234,71 @@ class CompletenessMixin:
                 obj._meta.get_field(field).verbose_name for field in completeness_fields
             ]
         return context
+
+
+class BelongStructureMixin:
+    """
+    Check if the selected items are in the same structure than the user, except for super-user
+    This mixin is for views that handle action on multiple items (ex: MultiDelete, MultiUpdate)
+    """
+
+    def get(self, request, *args, **kwargs):
+        # check pks definition first to avoid get_queryset error
+        response = super().get(request, *args, **kwargs)
+
+        if isinstance(response, HttpResponseRedirect):
+            return response
+
+        # check permissions
+        user_structure = self.request.user.profile.structure
+        has_bypass_structure_perm = self.request.user.has_perm(
+            "authent.can_bypass_structure"
+        )
+
+        has_wrong_structure_object = (
+            self.get_queryset().exclude(structure=user_structure).exists()
+        )
+
+        if not has_bypass_structure_perm and has_wrong_structure_object:
+            messages.warning(
+                self.request,
+                _(
+                    "Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."
+                ),
+            )
+            return HttpResponseRedirect(self.get_success_url())
+
+        return response
+
+    def get_editable_fields(self):
+        has_bypass_structure_perm = self.request.user.has_perm(
+            "authent.can_bypass_structure"
+        )
+        editable_fields = super().get_editable_fields()
+
+        if not has_bypass_structure_perm:
+            editable_fields.remove("structure")
+
+        return editable_fields
+
+
+class PublishedFieldMixin:
+    """
+    Check if the user can modify "published" field and remove it from the multi update form
+    This mixin is for MultiUpdate views with a "published" field
+    """
+
+    def get_editable_fields(self):
+        publish_permission = (
+            f"{self.model._meta.app_label}.publish_{self.model._meta.model_name}"
+        )
+        editable_fields = super().get_editable_fields()
+
+        if not user_has_perm(self.request.user, publish_permission):
+            editable_fields = [
+                field
+                for field in list(editable_fields)
+                if not field.startswith("published")
+            ]
+
+        return editable_fields

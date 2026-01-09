@@ -10,11 +10,18 @@ from mapentity.views import (
     MapEntityFilter,
     MapEntityFormat,
     MapEntityList,
+    MapEntityMultiDelete,
+    MapEntityMultiUpdate,
     MapEntityUpdate,
 )
 
 from geotrek.authent.decorators import same_structure_required
-from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
+from geotrek.common.mixins.views import (
+    BelongStructureMixin,
+    CompletenessMixin,
+    CustomColumnsMixin,
+    PublishedFieldMixin,
+)
 from geotrek.common.models import HDViewPoint
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
@@ -166,6 +173,14 @@ class SiteViewSet(GeotrekMapentityViewSet):
         return qs
 
 
+class SiteMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = Site
+
+
+class SiteMultiUpdate(PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate):
+    model = Site
+
+
 class CourseList(CustomColumnsMixin, MapEntityList):
     queryset = (
         Course.objects.select_related("type").prefetch_related("parent_sites").all()
@@ -286,3 +301,13 @@ class CourseViewSet(GeotrekMapentityViewSet):
         else:
             qs = qs.prefetch_related("parent_sites")
         return qs
+
+
+class CourseMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = Course
+
+
+class CourseMultiUpdate(
+    PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
+):
+    model = Course

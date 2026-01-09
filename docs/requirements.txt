@@ -14,7 +14,7 @@ babel==2.17.0
     # via
     #   sphinx
     #   sphinx-intl
-certifi==2025.11.12
+certifi==2026.1.4
     # via
     #   -c ../requirements.txt
     #   requests
@@ -113,7 +113,7 @@ typing-extensions==4.15.0
     #   typing-inspection
 typing-inspection==0.4.2
     # via pydantic
-urllib3==2.6.2
+urllib3==2.6.3
     # via
     #   -c ../requirements.txt
     #   requests

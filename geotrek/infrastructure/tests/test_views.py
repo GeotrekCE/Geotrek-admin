@@ -1,7 +1,13 @@
 from django.conf import settings
+from django.test import TestCase
 
 from geotrek.authent.tests.factories import PathManagerFactory
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import (
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonTest,
+)
 from geotrek.core.tests.factories import PathFactory
 from geotrek.infrastructure.models import Infrastructure, InfrastructureTypeChoices
 from geotrek.infrastructure.tests.factories import (
@@ -124,3 +130,23 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
             f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/infrastructure/{self.obj.pk}/\'">Detail sheet</button>\n'
             f"</div>"
         )
+
+
+class InfrastructureMultiActionsViewTest(
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = Infrastructure
+    modelFactory = InfrastructureFactory
+    expected_fields = [
+        "Published [fr]",
+        "Published [en]",
+        "Provider",
+        "Related structure",
+        "Access mean",
+        "Type",
+        "Maintenance difficulty",
+        "Usage difficulty",
+    ]

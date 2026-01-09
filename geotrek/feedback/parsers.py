@@ -191,7 +191,7 @@ class SuricateParser(SuricateGestionRequestManager):
             logger.info("Starting reports parsing from Suricate\n")
 
     def after_get_alerts(self, reports_created, should_notify):
-        Report.objects.filter(pk__in=self.to_delete).delete()
+        Report.objects.filter(pk__in=self.to_delete).delete(force=True)
         if reports_created and should_notify:
             self.send_workflow_manager_new_reports_email(reports_created)
 

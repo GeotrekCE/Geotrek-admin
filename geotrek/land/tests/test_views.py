@@ -4,7 +4,7 @@ from django.conf import settings
 from django.test import TestCase
 
 from geotrek.authent.tests.factories import PathManagerFactory
-from geotrek.common.tests import CommonTest
+from geotrek.common.tests import CommonMultiActionViewsMixin, CommonTest
 from geotrek.common.tests.factories import OrganismFactory
 from geotrek.core.tests.factories import PathFactory
 from geotrek.land.models import (
@@ -361,3 +361,71 @@ class SignageManagementEdgeViewsTest(CommonTest):
             f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/signagemanagementedge/{self.obj.pk}/\'">Detail sheet</button>\n'
             f"</div>"
         )
+
+
+class LandEdgeMultiActionsViewTest(
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = LandEdge
+    modelFactory = LandEdgeFactory
+    expected_fields = [
+        "Land type",
+        "Agreement",
+    ]
+
+
+class PhysicalEdgeMultiActionsViewTest(
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = PhysicalEdge
+    modelFactory = PhysicalEdgeFactory
+    expected_fields = [
+        "Physical type",
+    ]
+
+
+class CirculationEdgeMultiActionsViewTest(
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = CirculationEdge
+    modelFactory = CirculationEdgeFactory
+    expected_fields = [
+        "Circulation type",
+        "Authorization type",
+    ]
+
+
+class CompetenceEdgeMultiActionsViewTest(
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = CompetenceEdge
+    modelFactory = CompetenceEdgeFactory
+    expected_fields = [
+        "Organism",
+    ]
+
+
+class WorkManagementEdgeMultiActionsViewTest(
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = WorkManagementEdge
+    modelFactory = WorkManagementEdgeFactory
+    expected_fields = [
+        "Organism",
+    ]
+
+
+class SignageManagementEdgeMultiActionsViewTest(
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = SignageManagementEdge
+    modelFactory = SignageManagementEdgeFactory
+    expected_fields = [
+        "Organism",
+    ]

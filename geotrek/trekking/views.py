@@ -20,6 +20,8 @@ from mapentity.views import (
     MapEntityFormat,
     MapEntityList,
     MapEntityMapImage,
+    MapEntityMultiDelete,
+    MapEntityMultiUpdate,
     MapEntityUpdate,
 )
 from rest_framework import permissions as rest_permissions
@@ -27,7 +29,12 @@ from rest_framework import viewsets
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.forms import AttachmentAccessibilityForm
-from geotrek.common.mixins.views import CompletenessMixin, CustomColumnsMixin
+from geotrek.common.mixins.views import (
+    BelongStructureMixin,
+    CompletenessMixin,
+    CustomColumnsMixin,
+    PublishedFieldMixin,
+)
 from geotrek.common.models import (
     Attachment,
     HDViewPoint,
@@ -320,6 +327,14 @@ class TrekViewSet(GeotrekMapentityViewSet):
         return qs
 
 
+class TrekMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = Trek
+
+
+class TrekMultiUpdate(PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate):
+    model = Trek
+
+
 class POIList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = POI.objects.existing()
     mandatory_columns = ["id", "name"]
@@ -469,6 +484,14 @@ class POIViewSet(GeotrekMapentityViewSet):
         return qs
 
 
+class POIMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = POI
+
+
+class POIMultiUpdate(PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate):
+    model = POI
+
+
 class TrekPOIViewSet(viewsets.ModelViewSet):
     model = POI
     serializer_class = TrekPOIAPIGeojsonSerializer
@@ -586,6 +609,14 @@ class ServiceViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
             qs = qs.only("id", "type")
         return qs
+
+
+class ServiceMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = Service
+
+
+class ServiceMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
+    model = Service
 
 
 class TrekServiceViewSet(viewsets.ModelViewSet):

@@ -13,6 +13,12 @@ from geotrek.authent.tests.factories import (
     UserProfileFactory,
 )
 from geotrek.common.models import Attachment, FileType
+from geotrek.common.tests import (
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsMixin,
+    CommonMultiActionViewsStructureMixin,
+)
+from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.tourism.tests.factories import (
     InformationDeskFactory,
     TouristicContentCategoryFactory,
@@ -277,3 +283,47 @@ class TrekInformationDeskAPITest(TestCase):
         self.assertEqual(result["features"][0]["type"], "Feature")
         self.assertEqual(result["features"][0]["geometry"]["type"], "Point")
         self.assertEqual(result["features"][0]["properties"]["name"], desk.name)
+
+
+class TouristicContentMultiActionsViewTest(
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = TouristicContent
+    modelFactory = TouristicContentFactory
+    expected_fields = [
+        "Published [fr]",
+        "Published [en]",
+        "Waiting for publication",
+        "Provider",
+        "Related structure",
+        "Category",
+        "Label accessibility",
+        "Reservation system",
+        "Approved",
+    ]
+
+
+class TouristicEventMultiActionsViewTest(
+    CommonMultiActionsViewsPublishedMixin,
+    CommonMultiActionViewsStructureMixin,
+    CommonMultiActionViewsMixin,
+    TestCase,
+):
+    model = TouristicEvent
+    modelFactory = TouristicEventFactory
+    expected_fields = [
+        "Published [fr]",
+        "Published [en]",
+        "Waiting for publication",
+        "Provider",
+        "Related structure",
+        "Type",
+        "Approved",
+        "Bookable",
+        "Cancelled",
+        "Cancellation reason",
+        "Event place",
+    ]

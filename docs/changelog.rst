@@ -2,8 +2,28 @@
 CHANGELOG
 =========
 
-2.121.2+dev     (XXXX-XX-XX)
+2.122.1+dev     (XXXX-XX-XX)
 ----------------------------
+
+**Breaking changes**
+
+* Ubuntu focal 20.04 debian package is not supported anymore. Please update or migrate your server to Ubuntu 24.04.
+
+
+2.122.1         (2026-01-08)
+----------------------------
+
+**Bug fixes**
+
+* Do not allowed a user to select a signage that is not in it's structure in multi-update form
+* Map screenshot contains wrong layers by default
+
+
+2.122.0         (2025-12-24)
+----------------------------
+
+**New features**
+* Add bulk deletion/edition on list views (refs #5107).
 
 
 2.121.2         (2025-12-16)
@@ -13,6 +33,7 @@ CHANGELOG
 
 * Fix ``label_en`` content on sensitivity module parser
 * Fix restricted area geojson that are not different by type in cache (#5136)
+
 
 2.121.1         (2025-11-17)
 ----------------------------
