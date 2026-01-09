@@ -823,7 +823,7 @@ class Parser:
         * object_filter: {"field_name": "object_name"} with field_name, the name of the field in the model that define the name of the object
         """
         if self._ref_geom and not self._ref_geom.intersects(geom):
-            if self.delete:
+            if self.delete and self.obj.pk:
                 self.to_delete.add(self.obj.pk)
             msg = (
                 f"Object geometry does not intersect with reference geometry "
