@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-08 14:54+0000\n"
+"POT-Creation-Date: 2026-01-09 11:30+0100\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/signage/it/>\n"
@@ -19,15 +19,6 @@ msgstr ""
 "X-Generator: Weblate 5.13.3\n"
 
 msgid "Signage"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-msgid "Code"
-msgstr ""
-
-msgid "Description"
 msgstr ""
 
 msgid "Intervention year"
@@ -53,7 +44,10 @@ msgid "Number already exists, numbers already used: %(number)s"
 msgstr ""
 
 #, python-format
-msgid "On %s"
+msgid "On: %(target)s"
+msgstr ""
+
+msgid "Name"
 msgstr ""
 
 msgid "Sealing"
@@ -69,6 +63,12 @@ msgid "Signage Types"
 msgstr ""
 
 msgid "Label"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "Description"
 msgstr ""
 
 msgid "Complete description"
@@ -178,12 +178,6 @@ msgid "Add a line"
 msgstr ""
 
 msgid "Remove"
-msgstr ""
-
-msgid "No result"
-msgstr ""
-
-msgid "Choose value(s)"
 msgstr ""
 
 msgid "External id"

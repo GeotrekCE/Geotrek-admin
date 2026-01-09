@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-08 14:54+0000\n"
+"POT-Creation-Date: 2026-01-09 11:30+0100\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/signage/fr/>\n"
@@ -20,15 +20,6 @@ msgstr ""
 
 msgid "Signage"
 msgstr "Signalétique"
-
-msgid "Name"
-msgstr "Nom"
-
-msgid "Code"
-msgstr "Code"
-
-msgid "Description"
-msgstr "Description"
 
 msgid "Intervention year"
 msgstr "Année d'intervention"
@@ -53,8 +44,11 @@ msgid "Number already exists, numbers already used: %(number)s"
 msgstr "Le numéro existe déjà, numéro(s) déjà utilisé(s) : %(number)s"
 
 #, python-format
-msgid "On %s"
-msgstr "Sur %s"
+msgid "On: %(target)s"
+msgstr ""
+
+msgid "Name"
+msgstr "Nom"
 
 msgid "Sealing"
 msgstr "Scellement"
@@ -70,6 +64,12 @@ msgstr "Types de signalétique"
 
 msgid "Label"
 msgstr "Libellé"
+
+msgid "Code"
+msgstr "Code"
+
+msgid "Description"
+msgstr "Description"
 
 msgid "Complete description"
 msgstr "Description complète"
@@ -179,12 +179,6 @@ msgstr "Ajouter une ligne"
 
 msgid "Remove"
 msgstr "Supprimer"
-
-msgid "No result"
-msgstr "Pas de résultat"
-
-msgid "Choose value(s)"
-msgstr "Choisir une ou des valeur(s)"
 
 msgid "External id"
 msgstr "ID externe"
