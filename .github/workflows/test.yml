@@ -53,7 +53,7 @@ jobs:
 
     strategy:
       matrix:
-        os: ['jammy-3.10', 'noble-3.12']
+        os: ['noble-3.12', 'resolute-3.13']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -107,7 +107,7 @@ jobs:
            libxml2-dev \
            libxslt-dev \
            libpangocairo-1.0-0 \
-           libgdk-pixbuf2.0-dev \
+           libgdk-pixbuf*2.0-dev \
            libffi-dev \
            libvips
         apt-get install -y --no-install-recommends postgis
@@ -160,7 +160,7 @@ jobs:
     needs: [ test ]
     strategy:
       matrix:
-        os: ['jammy-3.10', 'noble-3.12']
+        os: ['noble-3.12', 'resolute-3.13']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -211,12 +211,12 @@ jobs:
       runs-on: ubuntu-latest
       strategy:
           matrix:
-              os: ['jammy', 'noble']
+              os: ['noble', 'resolute']
               include:
-                  - os: 'jammy'
-                    code: '22.04'
                   - os: 'noble'
                     code: '24.04'
+                  - os: 'resolute'
+                    code: '26.04'
 
       env:
           OS: ${{ matrix.os }}
@@ -330,12 +330,13 @@ jobs:
     needs: [ build_deb ]
     strategy:
       matrix:
-          os: ['jammy', 'noble']
+          os: ['noble', 'resolute']
           include:
-              - os: 'jammy'
-                code: '22.04'
+
               - os: 'noble'
                 code: '24.04'
+              - os: 'resolute'
+                code: '26.04'
     env:
       CYPRESS_BASE_URL: http://geotrek.local
       CYPRESS_CACHE_FOLDER: ~/cypress/cache
@@ -421,17 +422,17 @@ jobs:
     steps:
       - uses: actions/checkout@v6
 
-      - name: Download 22.04 debian artifact
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        uses: actions/download-artifact@v7
-        with:
-          name: jammy
-
       - name: Download 24.04 debian artifact
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         uses: actions/download-artifact@v7
         with:
           name: noble
+
+      - name: Download 26.04 debian artifact
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: actions/download-artifact@v7
+        with:
+          name: resolute
 
       - name: Download docker image
         uses: ishworkh/container-image-artifact-download@v2.1.0
@@ -491,11 +492,11 @@ jobs:
           echo "${{ github.ref }} : Publishing as $DEB_COMPONENT package"
           scp -P ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no /home/runner/work/Geotrek-admin/Geotrek-admin/geotrek-admin_*_amd64.deb ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/srv/packages/incoming/$DEB_COMPONENT/
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_dev -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make noble_dev -C /srv/packages
+            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make resolute_dev -C /srv/packages
           else
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_main -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make noble_main -C /srv/packages
+            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make resolute_main -C /srv/packages
           fi
 
       - name: Attach debian packages as release binaries
