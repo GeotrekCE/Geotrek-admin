@@ -54,9 +54,7 @@ class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source="name_display")
-    type = serializers.CharField(source="type_display")
     thumbnail = serializers.CharField(source="thumbnail_display")
-    structure = serializers.SlugRelatedField("name", read_only=True)
 
     class Meta:
         model = trekking_models.POI
