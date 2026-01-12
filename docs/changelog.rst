@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix fetching published steps of parent treks with aggregator parser
+* Allows to add/edit trek despite missing service type pictogram
 
 
 2.123.0         (2026-01-15)
