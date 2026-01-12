@@ -5,9 +5,10 @@ import shutil
 import uuid
 
 from django.conf import settings
+from django.contrib.gis.db import models
+from django.contrib.gis.db.models.functions import Envelope, Transform
 from django.core.files.storage import default_storage
 from django.core.mail import mail_managers
-from django.db import models
 from django.db.models import Count, Max
 from django.template import Context, Template
 from django.template.defaultfilters import slugify
@@ -498,3 +499,18 @@ class ExternalSourceMixin(models.Model):
                 "{% load i18n  %} <span class='none'>{% trans 'None' %}</span>"
             )
             return mark_safe(tmpl.render(Context({})))
+
+
+class BBoxMixin(models.Model):
+    envelope = models.GeneratedField(
+        expression=Envelope(Transform("geom", settings.API_SRID)),
+        db_persist=True,
+        output_field=models.GeometryField(),
+    )
+
+    @property
+    def bbox(self):
+        return self.envelope.extent
+
+    class Meta:
+        abstract = True
