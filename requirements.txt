@@ -349,7 +349,7 @@ rpds-py==0.30.0
     #   referencing
 ruamel-yaml==0.19.1
     # via drf-yasg
-sentry-sdk==2.48.0
+sentry-sdk==2.49.0
     # via geotrek (setup.py)
 setuptools==80.9.0
     # via
