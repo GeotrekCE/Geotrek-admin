@@ -59,7 +59,6 @@ class TrekInformationDeskGeojsonSerializer(
 class TouristicContentSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
     name = rest_serializers.CharField(source="name_display")
     structure = rest_serializers.SlugRelatedField("name", read_only=True)
-    themes = rest_serializers.CharField(source="themes_display")
     category = rest_serializers.SlugRelatedField("label", read_only=True)
     label_accessibility = rest_serializers.SlugRelatedField("label", read_only=True)
     reservation_system = rest_serializers.SlugRelatedField("name", read_only=True)
