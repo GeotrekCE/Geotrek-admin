@@ -4,10 +4,10 @@ Basés sur BaseGeometryWidget, complètement séparés de MapWidget.
 """
 
 import json
+
+from django.contrib.gis.forms.widgets import BaseGeometryWidget
 from django.core import validators
 from django.template.defaultfilters import slugify
-from django.contrib.gis.forms.widgets import BaseGeometryWidget
-from mapentity.widgets import MapWidget
 
 from .models import Topology
 
@@ -17,6 +17,7 @@ class BaseTopologyWidget(BaseGeometryWidget):
     Widget de base pour les topologies, complètement indépendant de MapWidget.
     Utilise uniquement le template topology_widget_fragment.html.
     """
+
     template_name = "core/topology_widget_fragment.html"
     display_raw = False
     modifiable = True
@@ -44,18 +45,22 @@ class BaseTopologyWidget(BaseGeometryWidget):
         attrs = attrs or {}
 
         # Génération des IDs pour les éléments HTML et JavaScript
-        map_id_css = slugify(attrs.get('id', name))
-        map_id = map_id_css.replace('-', '_')
+        map_id_css = slugify(attrs.get("id", name))
+        map_id = map_id_css.replace("-", "_")
 
-        attrs.update({
-            'id': map_id,
-            'id_css': map_id_css,
-            'id_map': map_id_css + '_map',
-            'modifiable': self.modifiable,
-            'is_line_topology': self.is_line_topology,
-            'is_point_topology': self.is_point_topology,
-            'target_map': attrs.get('target_map', getattr(self, 'target_map', None)),
-        })
+        attrs.update(
+            {
+                "id": map_id,
+                "id_css": map_id_css,
+                "id_map": map_id_css + "_map",
+                "modifiable": self.modifiable,
+                "is_line_topology": self.is_line_topology,
+                "is_point_topology": self.is_point_topology,
+                "target_map": attrs.get(
+                    "target_map", getattr(self, "target_map", None)
+                ),
+            }
+        )
         return attrs
 
     def get_context(self, name, value, attrs):
@@ -73,7 +78,7 @@ class BaseTopologyWidget(BaseGeometryWidget):
         context.update(topology_attrs)
 
         # Ajout de la valeur sérialisée pour le template
-        context['serialized'] = self.serialize(value)
+        context["serialized"] = self.serialize(value)
 
         return context
 
@@ -90,26 +95,25 @@ class BaseTopologyWidget(BaseGeometryWidget):
 
         # Mise à jour des attributs avec les flags de topologie
         attrs = attrs or {}
-        attrs.update({
-            'is_line_topology': self.is_line_topology,
-            'is_point_topology': self.is_point_topology,
-        })
+        attrs.update(
+            {
+                "is_line_topology": self.is_line_topology,
+                "is_point_topology": self.is_point_topology,
+            }
+        )
 
         return super().render(name, value, attrs, renderer)
 
 
 class LineTopologyWidget(BaseTopologyWidget):
-
     is_line_topology = True
 
 
 class PointTopologyWidget(BaseTopologyWidget):
-
     is_point_topology = True
 
 
 class PointLineTopologyWidget(BaseTopologyWidget):
-
     is_line_topology = True
     is_point_topology = True
 
