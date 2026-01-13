@@ -2,6 +2,14 @@
 Upgrade
 =======
 
+.. warning::
+
+  Geotrek-admin does not support pgRouting 4.0 yet.
+
+  If you manage PostgreSQL using the `PostgreSQL APT Repository <https://wiki.postgresql.org/wiki/Apt>`_, make sure pgRouting stays on a 3.x version and is not upgraded to 4.x.
+
+  The pgRouting packages provided by the default Ubuntu repositories for 22.04 and 24.04 are currently 3.x, so this issue mainly concerns installations using the PostgreSQL APT repository.
+
 .. _upgrade-geotrek-admin:
 
 Upgrade Geotrek-Admin
@@ -54,8 +62,8 @@ If you use Ubuntu Bionic 18.04 on your database host (on same or external Geotre
 .. md-tab-set::
     :name: upgrade-fromgta-tabs
 
-    .. md-tab-item:: On Debian packaging >= Ubuntu Focal 20.04 
-                    
+    .. md-tab-item:: On Debian packaging >= Ubuntu Focal 20.04
+
       **Installation with database on same host:**
 
       1. Backup your database : see :ref:`Maintenance <application-backup>`.
@@ -84,7 +92,7 @@ If you use Ubuntu Bionic 18.04 on your database host (on same or external Geotre
       1. Backup your database : ``docker compose run --rm web bash -c 'pg_dump --no-acl --no-owner -Fc -h postgres $POSTGRES_DB > `date +%Y%m%d%H%M`-database.backup'``
 
       2. Replace the docker image in ``docker-compose.yml`` for service ``postgres`` with an image that includes PostgreSQL, PostGIS and pgRouting version >=3.0.0 (`example with PostgreSQL 12, PostGIS 3.0 and pgRouting 3.0.0 <https://hubgw.docker.com/layers/pgrouting/pgrouting/12-3.0-3.0.0/images/sha256-382a2862cac07b0d3e57be9ddac587ad7a0d890ae2adc9fbae96a320a50194fb>`_). We highly recommend picking an image including the **same versions of PostgreSQL and PostGIS that you already use**. If you choose to pick later versions instead, you will need to delete your database, recreate it, and use ``pg_restore`` to restore the backup from step 1 (see :ref:`recreate user and database <recreate-user-database>` below).
-      
+
       3. Update Geotrek as usual
 
 .. _server-migration:
@@ -137,7 +145,7 @@ PostgreSQL
 
 .. note::
 
-  Geotrek-admin support **PostgreSQL >= 14**, **PostGIS >= 3.1** and **PgRouting >=3.0** for now.
+  Geotrek-admin supports **PostgreSQL >= 14**, **PostGIS >= 3.1** and **PgRouting = 3.x** for now.
 
   We recommend upgrading to **PostgreSQL 17**, **PostGIS 3.5.0** and **PgRouting 3.7.0**.
 

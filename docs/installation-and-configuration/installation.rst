@@ -27,11 +27,20 @@ In such a configuration the required system resources should be:
 If spreading the components on multiple hosts keep in mind the bottleneck will most likely be the CPU and RAM at the
 database server level.
 
+An Internet connection with open HTTP and HTTPS destination ports is required.
+
 Software requirements are :
 
 * Ubuntu Noble 24.04 LTS. Server flavor is recommended but any other flavors work too (desktop…)
 
-An Internet connection with open HTTP and HTTPS destination ports is required.
+.. warning::
+
+  Geotrek-admin does not support pgRouting 4.0 yet.
+
+  If you manage PostgreSQL using the `PostgreSQL APT Repository <https://wiki.postgresql.org/wiki/Apt>`_, make sure pgRouting stays on a 3.x version and is not upgraded to 4.x.
+
+  The pgRouting packages provided by the default Ubuntu repositories for 22.04 and 24.04 are currently 3.x, so this issue mainly concerns installations using the PostgreSQL APT repository.
+
 
 Information to prepare before installation
 ===========================================
