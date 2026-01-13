@@ -11,7 +11,7 @@ CHANGELOG
 
 **Documentation**
 
-* Add warning: do not upgrade pgRouting to 4.x (refs #5049)
+* Add warning: do not use pgRouting 4.x (refs #5049)
 
 2.122.1         (2026-01-08)
 ----------------------------
