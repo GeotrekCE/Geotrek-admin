@@ -9,6 +9,10 @@ CHANGELOG
 
 * Ubuntu focal 20.04 debian package is not supported anymore. Please update or migrate your server to Ubuntu 24.04.
 
+**Improvements**
+
+* 2D length are now computed with only two decimal places.
+
 
 2.122.1         (2026-01-08)
 ----------------------------
