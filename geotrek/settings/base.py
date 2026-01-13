@@ -456,7 +456,9 @@ MAPENTITY_CONFIG = {
             "radius": 5,
         },
         "detail": {"color": "#ffff00"},
-        "others": {"color": "#ffff00"}, # renvoie une fonction posant problème dans le template
+        "others": {
+            "color": "#ffff00"
+        },  # renvoie une fonction posant problème dans le template
         "autres": {"color": "#ffff00"},
         "print": {
             "path": {"weight": 1},
