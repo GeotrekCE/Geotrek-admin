@@ -4,14 +4,13 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0048_topology_length_2d'),
+        ("core", "0048_topology_length_2d"),
     ]
 
     operations = [
         migrations.RemoveField(
-            model_name='path',
-            name='length_2d',
+            model_name="path",
+            name="length_2d",
         ),
     ]

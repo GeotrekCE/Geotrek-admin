@@ -60,9 +60,13 @@ class Path(
 
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
     length_2d = models.GeneratedField(
-        expression=Round(LengthSpheroid(
-            Transform("geom", 4326), Value('SPHEROID["GRS_1980",6378137,298.257222101]')
-        ), 2),
+        expression=Round(
+            LengthSpheroid(
+                Transform("geom", 4326),
+                Value('SPHEROID["GRS_1980",6378137,298.257222101]'),
+            ),
+            2,
+        ),
         output_field=models.FloatField(),
         db_persist=True,
         verbose_name=_("Length 2D"),
@@ -499,9 +503,13 @@ class Topology(
         spatial_index=False,
     )
     length_2d = models.GeneratedField(
-        expression=Round(LengthSpheroid(
-            Transform("geom", 4326), Value('SPHEROID["GRS_1980",6378137,298.257222101]')
-        ), 2),
+        expression=Round(
+            LengthSpheroid(
+                Transform("geom", 4326),
+                Value('SPHEROID["GRS_1980",6378137,298.257222101]'),
+            ),
+            2,
+        ),
         output_field=models.FloatField(),
         db_persist=True,
         verbose_name=_("Length 2D"),

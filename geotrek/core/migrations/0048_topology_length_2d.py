@@ -8,15 +8,25 @@ import geotrek.common.functions
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0047_remove_topology_length_2d'),
+        ("core", "0047_remove_topology_length_2d"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='topology',
-            name='length_2d',
-            field=models.GeneratedField(db_persist=True, expression=django.db.models.functions.math.Round(geotrek.common.functions.LengthSpheroid(django.contrib.gis.db.models.functions.Transform('geom', 4326), models.Value('SPHEROID["GRS_1980",6378137,298.257222101]')), 2), output_field=models.FloatField(), verbose_name='Length 2D'),
+            model_name="topology",
+            name="length_2d",
+            field=models.GeneratedField(
+                db_persist=True,
+                expression=django.db.models.functions.math.Round(
+                    geotrek.common.functions.LengthSpheroid(
+                        django.contrib.gis.db.models.functions.Transform("geom", 4326),
+                        models.Value('SPHEROID["GRS_1980",6378137,298.257222101]'),
+                    ),
+                    2,
+                ),
+                output_field=models.FloatField(),
+                verbose_name="Length 2D",
+            ),
         ),
     ]
