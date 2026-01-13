@@ -13,6 +13,10 @@ CHANGELOG
 
 * 2D length are now computed with only two decimal places.
 
+**Documentation**
+
+* Add warning: do not use pgRouting 4.x (refs #5049)
+
 
 2.122.1         (2026-01-08)
 ----------------------------
