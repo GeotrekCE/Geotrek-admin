@@ -79,7 +79,7 @@ BEGIN
     FROM core_topology WHERE id = NEW.target_id INTO elevation;
 
     IF ST_GeometryType(elevation.draped) <> 'ST_Point' THEN
-        NEW.length := ROUND(ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]'), 2);
+        NEW.length := ROUND(CAST(ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]') as numeric), 2);
     END IF;
     NEW.geom_3d := elevation.draped;
     NEW.slope := elevation.slope;

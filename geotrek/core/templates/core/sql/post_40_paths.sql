@@ -85,7 +85,7 @@ BEGIN
     SELECT * FROM ft_elevation_infos(NEW.geom, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
     -- Update path geometry
     NEW.geom_3d := elevation.draped;
-    NEW.length := ROUND(ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]'), 2);
+    NEW.length := ROUND(CAST(ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]') as numeric), 2);
     NEW.slope := elevation.slope;
     NEW.min_elevation := elevation.min_elevation;
     NEW.max_elevation := elevation.max_elevation;
