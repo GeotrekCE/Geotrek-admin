@@ -32,7 +32,7 @@ BEGIN
         ELSE
             NEW.geom_3d := ST_Collect(NEW.geom_3d, elevation.draped);
         END IF;
-        NEW.length := NEW.length + ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]');
+        NEW.length := ROUND(CAST(NEW.length + ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]') as numeric), 2);
         length2d = ST_Length(geom);
         IF NEW.length + length2d > 0 THEN
             NEW.slope := (NEW.slope * NEW.length + elevation.slope * length2d) / (NEW.length + length2d);
