@@ -26,7 +26,7 @@ class BaseTopologyWidget(BaseGeometryWidget):
 
     def serialize(self, value):
         """Sérialise une topologie en JSON."""
-        return value.serialize() if value else ""
+        return value.serialize() if hasattr(value, "serialize") else ""
 
     def deserialize(self, value):
         """Désérialise une valeur en objet Topology."""
