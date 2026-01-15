@@ -1,12 +1,16 @@
-{% load leaflet_tags i18n static %}
+{% load i18n static %}
+
+<!DOCTYPE html>
 <html>
 <head>
-{#    {% leaflet_js %}#}
-{#    <script src="{% static "leaflet/proj4js.js" %}" type="text/javascript"></script>#}
-{#    <script src="{% static "proj4js/" %}{{ SRID }}.js" type="text/javascript"></script>#}
-
-    {% leaflet_css %}
+    <title>TOOLS : extents</title>
+    <link rel='stylesheet' href='https://unpkg.com/maplibre-gl@5.16.0/dist/maplibre-gl.css' />
+    <script src='https://unpkg.com/maplibre-gl@5.16.0/dist/maplibre-gl.js'></script>
     <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+        }
         #map {
             height: 100%;
             width: 50%;
@@ -51,42 +55,95 @@
                 <td>BOX{{ viewport_native }}</td>
             </tr>
             <tr class="mouse">
-                <td>{% trans "Mouse" %}</td>
+                <td>{% trans "Mouse" %} (WGS84)</td>
                 <td id="mouseposition"></td>
             </tr>
         </table>
     </div>
+<script>
+    // Create map
+    const map = new maplibregl.Map({
+        container: 'map',
+        style: 'https://tiles.openfreemap.org/styles/bright',
+        center: {{ CENTER }},
+        zoom: 5
+    });
 
-{#    <script type="text/javascript">#}
-{#        (function () {#}
-{#            var map = L.map('map');#}
-{#            map.fitBounds({{ viewport }});#}
-{##}
-{#            var mouseMarker = L.marker();#}
-{##}
-{#            L.tileLayer('http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);#}
-{##}
-{#            L.rectangle({{ path_extent }}, {fillOpacity: 0, color: '#009F5F'}).addTo(map);#}
-{#            L.rectangle({{ tiles_extent }}, {fillOpacity: 0, color: '#005EFF'}).addTo(map);#}
-{#            L.rectangle({{ viewport }}, {fillOpacity: 0, color: '#FF6E00'}).addTo(map);#}
-{#            {% if dem_extent %}#}
-{#                L.rectangle({{ dem_extent }}, {fillOpacity: 0, color: '#CF00FF'}).addTo(map);#}
-{#            {% endif %}#}
-{##}
-{#            map.on('click', function (e) {#}
-{#                mouseMarker.setLatLng(L.latLng(e.latlng.lat, e.latlng.lng))#}
-{#                           .addTo(map);#}
-{#                var source = new Proj4js.Proj('EPSG:{{ API_SRID }}'),#}
-{#                    dest = new Proj4js.Proj('EPSG:{{ SRID }}'),#}
-{#                    pos = Proj4js.transform(source,#}
-{#                                            dest,#}
-{#                                            {x: e.latlng.lng, y: e.latlng.lat}),#}
-{#                    td = document.getElementById('mouseposition');#}
-{#                td.innerHTML = 'POINT(' + pos.x + ', ' + pos.y + ')';#}
-{#            });#}
-{##}
-{#        })();#}
-{#    </script>#}
+    // Add rectangles
+    map.on('load', () => {
+        map.addSource('route', {
+            'type': 'geojson',
+            'data': {
+                type: "FeatureCollection",
+                features: [{
+                    type: "Feature",
+                    properties: {'color': '#009F5F'},
+                    geometry: {
+                        'type': 'LineString',
+                        'coordinates': {{ path_extent }}
+                    }
+                },
+                {
+                    type: "Feature",
+                    properties: {'color': '#005EFF'},
+                    geometry: {
+                        'type': 'LineString',
+                        'coordinates': {{ tiles_extent }}
+                    }
+                },
+                {
+                    type: "Feature",
+                    properties: {'color': '#CF00FF'},
+                    geometry: {
+                        'type': 'LineString',
+                        'coordinates': {{ dem_extent }}
+                    }
+                },
+                {
+                    type: "Feature",
+                    properties: {'color': '#FF6E00'},
+                    geometry: {
+                        'type': 'LineString',
+                        'coordinates': {{ viewport }}
+                    }
+                },
+                ]
+            }
+        });
+        map.addLayer({
+            'id': 'route',
+            'type': 'line',
+            'source': 'route',
+            'layout': {
+                'line-join': 'round',
+                'line-cap': 'round'
+            },
+            'paint': {
+                'line-color': ['get', 'color'],
+                'line-width': 5,
+                'line-opacity': 0.5,
+            }
+        });
+    });
 
+    // Add draggable marker
+    const coordinates = document.getElementById('mouseposition');
+
+    const marker = new maplibregl.Marker({draggable: true})
+        .setLngLat({{ CENTER }})
+        .addTo(map);
+
+    function onClick(e) {
+        console.log(e.lngLat.wrap());
+        const lngLat = e.lngLat.wrap();
+        marker.setLngLat(lngLat);
+        coordinates.style.display = 'block';
+        coordinates.innerHTML =
+            `POINT(${lngLat.lng}, ${lngLat.lat})`; // coordinates are given in WGS84
+    }
+
+    map.on('click', onClick);
+
+</script>
 </body>
 </html>
