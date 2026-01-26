@@ -351,7 +351,7 @@ ruamel-yaml==0.19.1
     # via drf-yasg
 sentry-sdk==2.50.0
     # via geotrek (setup.py)
-setuptools==80.9.0
+setuptools==80.10.2
     # via
     #   argdispatch
     #   zc-lockfile
