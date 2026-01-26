@@ -53,7 +53,7 @@ markupsafe==3.0.3
     #   -c ../requirements.txt
     #   jinja2
     #   sphinx-immaterial
-packaging==25.0
+packaging==26.0
     # via
     #   -c ../requirements.txt
     #   sphinx
