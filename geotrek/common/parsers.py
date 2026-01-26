@@ -1763,29 +1763,37 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         # Generate a mapping dictionnary between id and the related label
         for category, route in self.url_categories.items():
             if self.categories_keys_api_v2.get(category):
-                response = self.request_or_retry(f"{self.url}/api/v2/{route}")
                 self.field_options.setdefault(category, {})
                 self.field_options[category]["mapping"] = {}
                 if self.create_categories:
                     self.field_options[category]["create"] = True
-                results = response.json().get("results", [])
-                # for element in category url map the id with its label
-                for result in results:
-                    id_result = result["id"]
-                    label = result[self.categories_keys_api_v2[category]]
-                    if isinstance(result[self.categories_keys_api_v2[category]], dict):
-                        if label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
-                            self.field_options[category]["mapping"][id_result] = (
-                                self.replace_mapping(
-                                    label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE],
-                                    route,
+                next_url = f"{self.url}/api/v2/{route}"
+                while next_url:
+                    response = self.request_or_retry(next_url)
+                    response_data = response.json()
+                    results = response_data.get("results", [])
+                    # for element in category url map the id with its label
+                    for result in results:
+                        id_result = result["id"]
+                        label = result[self.categories_keys_api_v2[category]]
+                        if isinstance(
+                            result[self.categories_keys_api_v2[category]], dict
+                        ):
+                            if label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
+                                self.field_options[category]["mapping"][id_result] = (
+                                    self.replace_mapping(
+                                        label[
+                                            settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+                                        ],
+                                        route,
+                                    )
                                 )
-                            )
-                    else:
-                        if label:
-                            self.field_options[category]["mapping"][id_result] = (
-                                self.replace_mapping(label, category)
-                            )
+                        else:
+                            if label:
+                                self.field_options[category]["mapping"][id_result] = (
+                                    self.replace_mapping(label, category)
+                                )
+                    next_url = response_data["next"]
             else:
                 msg = f"{category} is not configured in categories_keys_api_v2"
                 raise ImproperlyConfigured(msg)
