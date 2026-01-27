@@ -5,6 +5,10 @@ CHANGELOG
 2.123.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Fix fetching published steps of parent treks with aggregator parser
+
 
 2.123.0         (2026-01-15)
 ----------------------------

@@ -262,8 +262,7 @@ class GeotrekTrekParser(GeotrekParser):
                 final_children[result["uuid"]] = []
                 for step in result["steps"]:
                     final_children[result["uuid"]].append(step["id"])
-                    if not any(step["published"].values()):
-                        steps_to_download += 1
+                    steps_to_download += 1
             self.nb = steps_to_download
 
             for key, value in final_children.items():
