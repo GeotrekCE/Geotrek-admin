@@ -920,8 +920,8 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @mock.patch("requests.head")
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
     def test_steps_import_deals_with_parsing_error(self, mocked_head, mocked_get):
-        """Test que la levée d'une exception (ici RowImportError) pendant l'import des étapes
-        n'interrompt pas tout le processus."""
+        """Test that an exception raised during the import of the steps (RowImportError in this test case) does not
+        stop all the import process."""
         self.mock_time = 0
         self.mock_json_order = [
             ("trekking", "structure.json"),
@@ -964,11 +964,11 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         treks = Trek.objects.all().order_by("date_insert")
         trek = treks[0]
         self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
-        # Seule la 2ème étape a été importée
+        # Only the 2nd step has been imported
         self.assertEqual(len(trek.children), 1)
         self.assertEqual(trek.children.first().name, "Foo")
 
-        # Import normal de l'étape pour la 2ème itinérance
+        # The step of the 2nd parent trek is imported normally
         trek2 = Trek.objects.all().order_by("date_insert")[2]
         self.assertEqual(trek2.name, "Découverte de la Cascade d'Ars")
         self.assertEqual(len(trek2.children), 1)
