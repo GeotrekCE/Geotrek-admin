@@ -940,6 +940,7 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
             ("trekking", "trek_difficulty.json"),
             ("trekking", "trek_route.json"),
             ("trekking", "trek_theme.json"),
+            ("trekking", "trek_theme_page_2.json"),
             ("trekking", "trek_practice.json"),
             ("trekking", "trek_accessibility.json"),
             ("trekking", "trek_network.json"),
