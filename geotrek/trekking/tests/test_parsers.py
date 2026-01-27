@@ -289,6 +289,14 @@ class TestGeotrekTrekParser(GeotrekTrekParser):
     }
 
 
+class TestGeotrekTrekParser2(TestGeotrekTrekParser):
+    def __init__(self, *args, **kwargs):
+        self.field_options["ambiance"] = {
+            "required": True,
+        }
+        super().__init__(*args, **kwargs)
+
+
 class TestGeotrek2TrekParser(GeotrekTrekParser):
     url = "https://test.fr"
 
@@ -907,6 +915,64 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
             "An error occurred in children generation: DownloadImportError",
             output.getvalue(),
         )
+
+    @mock.patch("requests.get")
+    @mock.patch("requests.head")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
+    def test_steps_import_deals_with_parsing_error(self, mocked_head, mocked_get):
+        """Test that an exception raised during the import of the steps (RowImportError in this test case) does not
+        stop all the import process."""
+        self.mock_time = 0
+        self.mock_json_order = [
+            ("trekking", "structure.json"),
+            ("trekking", "trek_difficulty.json"),
+            ("trekking", "trek_route.json"),
+            ("trekking", "trek_theme.json"),
+            ("trekking", "trek_practice.json"),
+            ("trekking", "trek_accessibility.json"),
+            ("trekking", "trek_network.json"),
+            ("trekking", "trek_label.json"),
+            ("trekking", "sources.json"),
+            ("trekking", "sources.json"),
+            ("trekking", "trek_ids.json"),
+            ("trekking", "trek.json"),
+            ("trekking", "trek_children_with_rowimporterror.json"),  # 2 itinérances
+            (
+                "trekking",
+                "trek_step_with_rowimporterror.json",
+            ),  # Step with missing required ambiance
+            ("trekking", "trek_published_step.json"),
+            ("trekking", "trek_published_step_2.json"),
+        ]
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        mocked_get.return_value.content = b""
+        mocked_head.return_value.status_code = 200
+        output = StringIO()
+
+        call_command(
+            "import",
+            "geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser2",
+            verbosity=2,
+            stdout=output,
+        )
+
+        self.assertEqual(Trek.objects.count(), 6)
+
+        treks = Trek.objects.all().order_by("date_insert")
+        trek = treks[0]
+        self.assertEqual(trek.name, "Boucle du Pic des Trois Seigneurs")
+        # Only the 2nd step has been imported
+        self.assertEqual(len(trek.children), 1)
+        self.assertEqual(trek.children.first().name, "Foo")
+
+        # The step of the 2nd parent trek is imported normally
+        trek2 = Trek.objects.all().order_by("date_insert")[2]
+        self.assertEqual(trek2.name, "Découverte de la Cascade d'Ars")
+        self.assertEqual(len(trek2.children), 1)
+        self.assertEqual(trek2.children.first().name, "Foo2")
 
     @mock.patch("requests.get")
     @mock.patch("requests.head")
