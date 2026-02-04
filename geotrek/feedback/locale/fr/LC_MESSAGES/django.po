@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-23 17:20+0000\n"
+"POT-Creation-Date: 2026-02-04 22:27+0100\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/feedback/fr/>\n"
@@ -292,12 +292,6 @@ msgstr "De nouveaux signalements ont été importés depuis Suricate."
 
 msgid "Please consult your reports in"
 msgstr "Consultez vos signalements sur"
-
-msgid "Statuses"
-msgstr "Statuts"
-
-msgid "Legend"
-msgstr "Légende"
 
 msgid "Some data could not be forwarded to Suricate yet - Please come back later"
 msgstr "Des informations n'ont pas encore pu être transmises à Suricate - Merci de vérifier plus tard"

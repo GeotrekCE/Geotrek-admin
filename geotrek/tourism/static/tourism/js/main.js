@@ -1,33 +1,3 @@
-window.addEventListener('entity:map', (event) => {
-    const map = window.MapEntity.currentMap.map;
-
-    ['touristiccontent', 'touristicevent'].forEach((modelname) => {
-        const layername = `${modelname}_layer`;
-        const layerUrl = window.SETTINGS.urls[layername];
-
-        let style = window.SETTINGS.map.styles[modelname] ?? window.SETTINGS.map.styles['autres'];
-
-        const nameHTML = tr(modelname);
-        const category = tr('Tourism');
-        let primaryKey = generateUniqueId();
-
-        // Show touristic content and events layers in application maps
-        const objectsLayer = new MaplibreObjectsLayer(null, {
-            style,
-            modelname: modelname,
-            readonly: true,
-            nameHTML: nameHTML,
-            category: category,
-            primaryKey: primaryKey,
-            dataUrl: layerUrl,
-            isLazy: true
-        });
-
-        objectsLayer.initialize(map.getMap());
-        objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
-    });
-});
-
 $(window).on('entity:view:filter', function (e, data) {
 
     // Date picker
