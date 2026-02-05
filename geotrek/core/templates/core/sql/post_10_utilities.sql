@@ -214,3 +214,82 @@ END;
 
 $$ LANGUAGE plpgsql;
 
+
+----------------------------------------------------------------------------------------------------------
+-- Returns whether a topology is valid or not. See https://github.com/GeotrekCE/Geotrek-admin/issues/4982
+----------------------------------------------------------------------------------------------------------
+
+CREATE FUNCTION {{ schema_geotrek }}.TopologyIsValid(topology_id integer) RETURNS boolean AS
+$$
+DECLARE
+    agg_count INTEGER;
+    is_point_topology BOOLEAN;
+    distinct_order_count INTEGER;
+    prev_path_id INTEGER;
+    agg_record RECORD;
+    current_point GEOMETRY;
+    prev_point GEOMETRY;
+BEGIN
+    -- A linear topology is valid if:
+    --     - its path aggregations don't contain duplicates (on the "order" column)
+    --     - its path aggregations are in the correct order and direction
+
+    -- Get the number of aggregations corresponding to this topology
+    SELECT COUNT(*) INTO agg_count
+    FROM core_pathaggregation
+    WHERE topo_object_id = topology_id;
+
+    -- Edge case: topology with no aggregations (decoupled from the network, but still valid)
+    IF agg_count = 0 THEN
+        RETURN TRUE;
+    END IF;
+
+    -- Edge case: point topology (all aggregations have start_position == end_position)
+    SELECT COUNT(*) = 0 INTO is_point_topology
+    FROM core_pathaggregation
+    WHERE topo_object_id = topology_id
+    AND start_position != end_position;
+
+    IF is_point_topology THEN
+        RETURN TRUE;
+    END IF;
+
+    -- Check that there are no duplicate orders
+    SELECT COUNT(DISTINCT "order") INTO distinct_order_count
+    FROM core_pathaggregation
+    WHERE topo_object_id = topology_id;
+
+    IF distinct_order_count != agg_count THEN
+        RETURN FALSE;
+    END IF;
+
+    -- Check the sequential connectivity
+    prev_path_id := NULL;
+
+    -- Loop on all aggregations for this topology
+    FOR agg_record IN
+        SELECT cpa.path_id, cpa.start_position, cpa.end_position, cp.geom
+        FROM core_pathaggregation cpa
+        JOIN core_path cp ON cpa.path_id = cp.id
+        WHERE cpa.topo_object_id = topology_id
+        ORDER BY cpa."order"
+    LOOP
+        -- Get the geometric point where this aggregation starts
+        current_point := ST_LineInterpolatePoint(agg_record.geom, agg_record.start_position);
+
+        -- Check that this aggregation starts where the previous one ended
+        IF prev_path_id IS NOT NULL THEN
+            IF NOT ST_Equals(prev_point, current_point) THEN
+                RETURN FALSE;
+            END IF;
+        END IF;
+
+        -- Store where this aggregation ends for the next iteration
+        prev_point := ST_LineInterpolatePoint(agg_record.geom, agg_record.end_position);
+        prev_path_id := agg_record.path_id;
+    END LOOP;
+
+    RETURN TRUE;
+END;
+
+$$ LANGUAGE plpgsql;
