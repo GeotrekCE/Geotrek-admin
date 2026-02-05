@@ -5,6 +5,10 @@ CHANGELOG
 2.124.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Warnings**
+
+- Topologies are no longer dependant on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
+
 **Performances**
 
 * Add autocomplete by API behaviour to Restricted area filters
