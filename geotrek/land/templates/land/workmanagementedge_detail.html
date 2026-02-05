@@ -6,6 +6,15 @@
         <tr>
             <th>{{ workmanagementedge|verbose:"organization" }}</th>
             <td>{{ workmanagementedge.organization }}</td>
+        </tr><tr>
+            <th>{{ workmanagementedge|verbose:"decoupled" }}</th>
+            <td>
+                {% if workmanagementedge.decoupled %}
+                    {% trans "Yes" %}
+                {% else %}
+                    {% trans "No" %}
+                {% endif %}
+            </td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}

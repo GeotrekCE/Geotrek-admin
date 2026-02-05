@@ -21,6 +21,16 @@
                 {% endif %}
             </td>
         </tr>
+        <tr>
+            <th>{{ landedge|verbose:"decoupled" }}</th>
+            <td>
+                {% if landedge.decoupled %}
+                    {% trans "Yes" %}
+                {% else %}
+                    {% trans "No" %}
+                {% endif %}
+            </td>
+        </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>

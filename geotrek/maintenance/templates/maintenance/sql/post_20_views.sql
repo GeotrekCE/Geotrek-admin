@@ -37,6 +37,7 @@ SELECT a.id,
        accessmean.label AS "Access",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
+       l.decoupled AS "Decoupled geometry",
        a.geom_3d
 FROM maintenance_intervention a
 LEFT JOIN

@@ -114,6 +114,16 @@
                 {{ intervention.area|stringformat:".1f" }}m&sup2;
             </td>
         </tr>
+        <tr>
+            <th>{{ intervention.target|verbose:"decoupled" }}</th>
+            <td>
+                {% if intervention.target.decoupled %}
+                    {% trans "Yes" %}
+                {% else %}
+                    {% trans "No" %}
+                {% endif %}
+            </td>
+        </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         <tr>
             <th>{{ intervention|verbose:"description" }}</th>
