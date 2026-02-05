@@ -8,6 +8,17 @@ CHANGELOG
 **Warnings**
 
 * Topologies no longer need to depend on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
+
+**Improvements**
+
+* Add a "Network-coupled" boolean field and its corresponding filter to the ``Topology`` model
+* Strengthen the "invalid topology" filter criteria
+* Remove the "invalid geometry" filter
+
+**Bug fixes**
+**Warnings**
+
+* Topologies no longer need to depend on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
 * From now, if a module is disabled by its setting, it is completely hidden from menu, layer tree, admin and API responses.
 * All geotrek modules are now installed by default. Please remove `geotrek.outdoor`, `geotrek.sensitivity`, `geotrek.diving` from you custom.py file. User setting to disable module if you don't want to use them.
   - `COURSE_MODEL_ENABLED = FALSE`
