@@ -18,9 +18,11 @@
 
 {% block extrabody %}
     {{ block.super }}
-    <script type="text/javascript">
-    L.ObjectsLayer.pointToLayer = function (geojson, latlng) {
-        return new L.Circle(latlng, {{ object.species.radius }});
-    };
-    </script>
+{#    l'affichage devrait normalement se faire depuis maplibreObjectsLayer comme un cercle et avec un rayon bien spécifique #}
+
+{#    <script type="text/javascript">#}
+{#    L.ObjectsLayer.pointToLayer = function (geojson, latlng) {#}
+{#        return new L.Circle(latlng, {{ object.species.radius }});#}
+{#    };#}
+{#    </script>#}
 {% endblock extrabody %}
