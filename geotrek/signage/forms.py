@@ -5,6 +5,7 @@ from django import forms
 from django.conf import settings
 from django.db.models import Max
 from django.forms.models import inlineformset_factory
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
@@ -129,6 +130,27 @@ class BladeForm(CommonForm):
     class Meta:
         model = Blade
         fields = ["id", "number", "direction", "type", "conditions", "color"]
+
+
+class BladeForm(BaseBladeForm):
+    topology = TopologyField(label="") if settings.TREKKING_TOPOLOGY_ENABLED else GeometryField(label="")
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            self.fields["topology"].initial = self.signage
+            self.fields["topology"].widget.modifiable = True
+        else:
+            self.fields["topology"].initial = self.signage.geom
+            self.fields["topology"].widget = MapWidget(attrs={"geom_type": "POINT"})
+            self.fields["topology"].widget.modifiable = False
+
+        self.fields["topology"].label = mark_safe("{}{} {}".format(
+            self.instance.signage_display,
+            _("On %s") % _(self.signage.kind.lower()),
+            f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
+        ))
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
