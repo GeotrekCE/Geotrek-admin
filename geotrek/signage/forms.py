@@ -219,8 +219,8 @@ class SignageForm(BaseSignageForm):
         Div(
             "structure",
             "name",
-            "description",
             "type",
+            "description",
             "conditions",
             "implantation_year",
             "published",
