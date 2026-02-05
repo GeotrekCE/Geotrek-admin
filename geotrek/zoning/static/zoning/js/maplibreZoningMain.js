@@ -4,8 +4,8 @@ window.addEventListener('entity:map', () => {
 
     // Regroupement des couches de terrain (districts, villes + zones restreintes)
     let landLayers = [
-        { url: window.SETTINGS.urls.district_layer, name: tr("Districts"), id: 'district' },
-        { url: window.SETTINGS.urls.city_layer, name: tr("Cities"), id: 'city' },
+        { url: window.SETTINGS.urls.district_layer, name: gettext("Districts"), id: 'district' },
+        { url: window.SETTINGS.urls.city_layer, name: gettext("Cities"), id: 'city' },
         ...window.SETTINGS.map['restricted_area_types']
     ].map((layer, index) => {
         layer.isActive = false;
