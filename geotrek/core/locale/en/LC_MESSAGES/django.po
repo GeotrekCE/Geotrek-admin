@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-09 11:30+0100\n"
+"POT-Creation-Date: 2026-02-13 16:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,9 +38,6 @@ msgid "Linestring invalid snapping."
 msgstr ""
 
 msgid "Valid topology"
-msgstr ""
-
-msgid "Valid geometry"
 msgstr ""
 
 msgid "Provider"
@@ -193,6 +190,9 @@ msgid "Offset"
 msgstr ""
 
 msgid "Kind"
+msgstr ""
+
+msgid "Network-coupled"
 msgstr ""
 
 msgid "Topology"
