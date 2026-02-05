@@ -468,10 +468,8 @@ msgstr "Externe Id"
 msgid "Yes"
 msgstr ""
 
-#, fuzzy
-#| msgid "None"
 msgid "No"
-msgstr "Keine"
+msgstr ""
 
 msgid "Elevation"
 msgstr "Elevation"
