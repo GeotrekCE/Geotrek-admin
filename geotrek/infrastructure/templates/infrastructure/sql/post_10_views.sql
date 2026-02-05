@@ -3,6 +3,7 @@
 
 CREATE VIEW {{ schema_geotrek }}.v_infrastructures AS WITH v_infra AS
     (SELECT e.geom,
+            e.decoupled,
             e.id,
             {% if PUBLISHED_BY_LANG %}
             {% for lang in MODELTRANSLATION_LANGUAGES %}
@@ -67,6 +68,7 @@ SELECT a.id,
        {% endif %}
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
+       a.decoupled AS "Decoupled geometry",
        a.geom
 FROM v_infra a
 LEFT JOIN infrastructure_infrastructuretype b ON a.type_id = b.id

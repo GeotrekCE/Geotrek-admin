@@ -71,6 +71,15 @@
             <td>{% if object.provider %}{{ object.provider.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
+        </tr><tr>
+            <th>{{ object|verbose:"decoupled" }}</th>
+            <td>
+                {% if object.decoupled %}
+                    {% trans "Yes" %}
+                {% else %}
+                    {% trans "No" %}
+                {% endif %}
+            </td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "common/publication_info_fragment.html" %}

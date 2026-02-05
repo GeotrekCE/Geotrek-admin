@@ -516,6 +516,13 @@ class Topology(
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
+    # The geometry is decoupled from the topology when it's not based on path aggregations
+    # or when the topology is invalid
+    # See https://github.com/GeotrekCE/Geotrek-admin/issues/4982
+    decoupled = models.BooleanField(
+        default=False, editable=False, verbose_name=_("Decoupled geometry")
+    )
+
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
     srid = settings.API_SRID
 

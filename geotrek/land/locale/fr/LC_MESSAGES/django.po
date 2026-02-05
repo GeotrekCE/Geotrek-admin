@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2026-02-05 14:49+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/land/fr/>\n"
@@ -105,6 +105,12 @@ msgstr "Types d'autorisation"
 msgid "Circulation edges"
 msgstr "Circulations"
 
+msgid "Yes"
+msgstr "Oui"
+
+msgid "No"
+msgstr "Non"
+
 msgid "Add a new land edge"
 msgstr "Ajouter un type foncier"
 
@@ -125,9 +131,3 @@ msgstr "Ajouter une nouvelle circulation"
 
 msgid "Competence"
 msgstr "Compétence"
-
-msgid "Yes"
-msgstr "Oui"
-
-msgid "No"
-msgstr "Non"

@@ -24,7 +24,8 @@ CREATE VIEW {{ schema_geotrek }}.v_signages AS WITH v_signage_tmp AS
             t.structure_id,
             t.type_id,
             CONCAT (e.min_elevation, 'm') AS elevation,
-            e.geom
+            e.geom,
+            e.decoupled
         FROM signage_signage t
             left join core_topology e on t.topo_object_id = e.id
             left join signage_signagetype b on t.type_id = b.id
@@ -69,6 +70,7 @@ SELECT a.id,
        {% endfor %}
        a.elevation AS "Elevation",
        a.publication_date AS "Insertion date",
+       a.decoupled AS "Decoupled geometry",
        a.geom
 FROM v_signage_tmp a
 LEFT JOIN signage_signagetype b ON a.type_id = b.id

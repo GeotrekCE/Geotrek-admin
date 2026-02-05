@@ -34,6 +34,16 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
+        <tr>
+            <th>{{ poi|verbose:"decoupled" }}</th>
+            <td>
+                {% if poi.decoupled %}
+                    {% trans "Yes" %}
+                {% else %}
+                    {% trans "No" %}
+                {% endif %}
+            </td>
+        </tr>
 
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "common/publication_info_fragment.html" %}
