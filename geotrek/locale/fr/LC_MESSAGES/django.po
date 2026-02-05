@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-24 10:47+0000\n"
+"POT-Creation-Date: 2026-02-05 10:11+0000\n"
 "PO-Revision-Date: 2020-09-23 07:10+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
@@ -35,3 +35,139 @@ msgstr "Geotrek-admin est en maintenance..."
 
 msgid "Please come back later."
 msgstr "Veuillez revenir plus tard."
+
+msgid "Powered by geotrek.fr"
+msgstr "Propulsé par geotrek.fr"
+
+msgid "Useful information"
+msgstr "Informations pratiques"
+
+msgid "Practice"
+msgstr "Pratique"
+
+msgid "Duration"
+msgstr "Durée"
+
+msgid "Length"
+msgstr "Longueur"
+
+msgid "Trek ascent"
+msgstr "Dénivelé positif"
+
+msgid "Difficulty"
+msgstr "Difficulté"
+
+msgid "Rating scale"
+msgstr "Échelle de cotation"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Themes"
+msgstr "Thèmes"
+
+msgid "Accessibility"
+msgstr "Accessibilité"
+
+msgid "Trek"
+msgstr "Itinéraire"
+
+msgid "Departure"
+msgstr "Départ"
+
+msgid "Arrival"
+msgstr "Arrivée"
+
+msgid "Markings"
+msgstr "Balisage"
+
+msgid "Cities"
+msgstr "Communes"
+
+msgid "Altimetric profile"
+msgstr "Profil altimétrique"
+
+msgid "Min elevation"
+msgstr "Altitude minimale"
+
+msgid "Max elevation"
+msgstr "Altitude maximale"
+
+msgid "Stages"
+msgstr "Étapes"
+
+msgid "On your path..."
+msgstr "Sur votre parcours…"
+
+msgid "All useful information"
+msgstr "Toutes les informations pratiques"
+
+msgid "Advices"
+msgstr "Conseils"
+
+msgid "Gear"
+msgstr "Équipement"
+
+msgid "How to come ?"
+msgstr "Comment s’y rendre ?"
+
+msgid "Transports"
+msgstr "Transports"
+
+msgid "Access"
+msgstr "Accès"
+
+msgid "Advised parking"
+msgstr "Stationnement conseillé"
+
+msgid "Accessibility level"
+msgstr "Niveau d’accessibilité"
+
+msgid "Slope"
+msgstr "Pente"
+
+msgid "Width"
+msgstr "Largeur"
+
+msgid "Signage"
+msgstr "Signalétique"
+
+msgid "Covering"
+msgstr "Revêtement"
+
+msgid "Exposure"
+msgstr "Exposition"
+
+msgid "Advice"
+msgstr "Recommandations"
+
+msgid "Environmental sensitive areas"
+msgstr "Zones environnementales sensibles"
+
+msgid ""
+"\n"
+"              Along your trek, you will go through sensitive areas related to the presence of a specific species or\n"
+"              environment. In these areas, an appropriate behaviour allows to contribute to their preservation. For\n"
+"              detailed information, specific forms are accessible for each area.\n"
+"            "
+msgstr ""
+"\n"
+"              Le long de votre itinéraire, vous traverserez des zones sensibles liées à la présence d’une espèce ou\n"
+"              d’un milieu particulier. Dans ces zones, un comportement adapté permet de contribuer à leur\n"
+"              préservation. Pour plus d’informations, des fiches spécifiques sont disponibles pour chaque zone.\n"
+"            "
+
+msgid "Sensitivity period:"
+msgstr "Période de sensibilité :"
+
+msgid "Contact:"
+msgstr "Contact :"
+
+msgid "Information desks"
+msgstr "Lieux de renseignement"
+
+msgid "Source"
+msgstr "Source"
+
+msgid "Attribution"
+msgstr "Attribution"

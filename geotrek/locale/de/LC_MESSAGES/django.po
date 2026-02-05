@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-24 10:47+0000\n"
+"POT-Creation-Date: 2026-02-05 10:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,4 +34,135 @@ msgid "Geotrek-admin is under maintenance..."
 msgstr ""
 
 msgid "Please come back later."
+msgstr ""
+
+msgid "Powered by geotrek.fr"
+msgstr ""
+
+msgid "Useful information"
+msgstr ""
+
+msgid "Practice"
+msgstr ""
+
+msgid "Duration"
+msgstr ""
+
+msgid "Length"
+msgstr ""
+
+msgid "Trek ascent"
+msgstr ""
+
+msgid "Difficulty"
+msgstr ""
+
+msgid "Rating scale"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Themes"
+msgstr ""
+
+msgid "Accessibility"
+msgstr ""
+
+msgid "Trek"
+msgstr ""
+
+msgid "Departure"
+msgstr ""
+
+msgid "Arrival"
+msgstr ""
+
+msgid "Markings"
+msgstr ""
+
+msgid "Cities"
+msgstr ""
+
+msgid "Altimetric profile"
+msgstr ""
+
+msgid "Min elevation"
+msgstr ""
+
+msgid "Max elevation"
+msgstr ""
+
+msgid "Stages"
+msgstr ""
+
+msgid "On your path..."
+msgstr ""
+
+msgid "All useful information"
+msgstr ""
+
+msgid "Advices"
+msgstr ""
+
+msgid "Gear"
+msgstr ""
+
+msgid "How to come ?"
+msgstr ""
+
+msgid "Transports"
+msgstr ""
+
+msgid "Access"
+msgstr ""
+
+msgid "Advised parking"
+msgstr ""
+
+msgid "Accessibility level"
+msgstr ""
+
+msgid "Slope"
+msgstr ""
+
+msgid "Width"
+msgstr ""
+
+msgid "Signage"
+msgstr ""
+
+msgid "Covering"
+msgstr ""
+
+msgid "Exposure"
+msgstr ""
+
+msgid "Advice"
+msgstr ""
+
+msgid "Environmental sensitive areas"
+msgstr ""
+
+msgid ""
+"\n"
+"              Along your trek, you will go through sensitive areas related to the presence of a specific species or\n"
+"              environment. In these areas, an appropriate behaviour allows to contribute to their preservation. For\n"
+"              detailed information, specific forms are accessible for each area.\n"
+"            "
+msgstr ""
+
+msgid "Sensitivity period:"
+msgstr ""
+
+msgid "Contact:"
+msgstr ""
+
+msgid "Information desks"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "Attribution"
 msgstr ""
