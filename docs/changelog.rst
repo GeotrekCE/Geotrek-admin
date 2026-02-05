@@ -5,6 +5,16 @@ CHANGELOG
 2.124.3+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Warnings**
+
+* Topologies no longer need to depend on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
+
+**Improvements**
+
+* Add a "Network-coupled" boolean field and its corresponding filter to the ``Topology`` model
+* Strengthen the "invalid topology" filter criteria
+* Remove the "invalid geometry" filter
+
 
 2.124.3         (2026-04-02)
 ----------------------------
