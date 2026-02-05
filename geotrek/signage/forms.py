@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.gis.forms.fields import GeometryField
 from django.db.models import Max
 from django.forms.models import inlineformset_factory
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from mapentity.widgets import MapWidget
 
@@ -132,38 +133,25 @@ class BaseBladeForm(CommonForm):
         fields = ["id", "number", "direction", "type", "conditions", "color"]
 
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
+class BladeForm(BaseBladeForm):
+    topology = TopologyField(label="") if settings.TREKKING_TOPOLOGY_ENABLED else GeometryField(label="")
 
-    class BladeForm(BaseBladeForm):
-        topology = TopologyField(label="")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
+        if settings.TREKKING_TOPOLOGY_ENABLED:
             self.fields["topology"].initial = self.signage
             self.fields["topology"].widget.modifiable = True
-            self.fields["topology"].label = "{}{} {}".format(
-                self.instance.signage_display,
-                _("On %s") % _(self.signage.kind.lower()),
-                f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
-            )
-
-else:
-
-    class BladeForm(BaseBladeForm):
-        topology = GeometryField(label="")
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
+        else:
             self.fields["topology"].initial = self.signage.geom
             self.fields["topology"].widget = MapWidget(attrs={"geom_type": "POINT"})
             self.fields["topology"].widget.modifiable = False
-            self.fields["topology"].label = "{}{} {}".format(
-                self.instance.signage_display,
-                _("On %s") % _(self.signage.kind.lower()),
-                f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
-            )
+
+        self.fields["topology"].label = mark_safe("{}{} {}".format(
+            self.instance.signage_display,
+            _("On %s") % _(self.signage.kind.lower()),
+            f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
+        ))
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
