@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0050_path_length_2d'),
+        ("core", "0050_path_length_2d"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='topology',
-            name='decoupled',
+            model_name="topology",
+            name="decoupled",
             field=models.BooleanField(default=False, editable=False),
         ),
     ]

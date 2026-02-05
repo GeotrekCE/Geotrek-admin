@@ -564,7 +564,14 @@ class ServiceFilter(MapEntityFilter):
 class ServiceFormatList(MapEntityFormat, ServiceList):
     filterset_class = ServiceFilterSet
     mandatory_columns = ["id"]
-    default_extra_columns = ["id", "eid", "type", "uuid", "decoupled", *AltimetryMixin.COLUMNS]
+    default_extra_columns = [
+        "id",
+        "eid",
+        "type",
+        "uuid",
+        "decoupled",
+        *AltimetryMixin.COLUMNS,
+    ]
 
 
 class ServiceDetail(MapEntityDetail):

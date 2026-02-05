@@ -2,16 +2,18 @@
 
 from django.contrib.gis.db.models.functions import GeoFunc
 from django.db import migrations
-from django.db.models import Q, CharField, Count
+from django.db.models import CharField, Count, Q
 
 
 class GeometryType(GeoFunc):
     """GeometryType postgis function"""
+
     output_field = CharField()
     function = "GeometryType"
 
+
 def decouple_topologies(apps, schema_editor):
-    Topology = apps.get_model('core', 'Topology')
+    Topology = apps.get_model("core", "Topology")
     topologies = Topology.objects.all().annotate(
         geometry_type=GeometryType("geom"),
         nb_aggregations=Count("aggregations"),
@@ -19,36 +21,40 @@ def decouple_topologies(apps, schema_editor):
 
     # Handle topologies with invalid geometries
     geometry_types_allowed = {
-        'TOPOLOGY': ["LINESTRING", "POINT"],
-        'TRAIL': ["LINESTRING"],
-        'INFRASTRUCTURE': ["LINESTRING", "POINT"],
-        'PHYSICALEDGE': ["LINESTRING"],
-        'LANDEDGE': ["LINESTRING"],
-        'COMPETENCEEDGE': ["LINESTRING"],
-        'WORKMANAGEMENTEDGE': ["LINESTRING"],
-        'SIGNAGEMANAGEMENTEDGE': ["LINESTRING"],
-        'CIRCULATIONEDGE': ["LINESTRING"],
-        'INTERVENTION': ["LINESTRING", "POINT"],
+        "TOPOLOGY": ["LINESTRING", "POINT"],
+        "TRAIL": ["LINESTRING"],
+        "INFRASTRUCTURE": ["LINESTRING", "POINT"],
+        "PHYSICALEDGE": ["LINESTRING"],
+        "LANDEDGE": ["LINESTRING"],
+        "COMPETENCEEDGE": ["LINESTRING"],
+        "WORKMANAGEMENTEDGE": ["LINESTRING"],
+        "SIGNAGEMANAGEMENTEDGE": ["LINESTRING"],
+        "CIRCULATIONEDGE": ["LINESTRING"],
+        "INTERVENTION": ["LINESTRING", "POINT"],
         "SIGNAGE": ["POINT"],
         "TREK": ["LINESTRING"],
-        "POI": ["POINT"]
+        "POI": ["POINT"],
     }
-    has_invalid_geom = Q(geom__isnull=True) | Q(geom__isvalid=False) | Q(geom__isempty=True)
+    has_invalid_geom = (
+        Q(geom__isnull=True) | Q(geom__isvalid=False) | Q(geom__isempty=True)
+    )
     for kind, allowed in geometry_types_allowed.items():
         has_invalid_geom |= Q(kind=kind) & ~Q(geometry_type__in=allowed)
 
     # Handle topologies with no path aggregation
     has_no_path_aggregation = Q(nb_aggregations=0)
 
-    topologies_to_decouple = topologies.filter(has_invalid_geom | has_no_path_aggregation)
+    topologies_to_decouple = topologies.filter(
+        has_invalid_geom | has_no_path_aggregation
+    )
     topologies_to_decouple.update(decoupled=True)
 
 
 class Migration(migrations.Migration):
-    """ Set all topologies with an invalid geometry/topology to "decoupled". """
+    """Set all topologies with an invalid geometry/topology to "decoupled"."""
 
     dependencies = [
-        ('core', '0051_topology_decoupled'),
+        ("core", "0051_topology_decoupled"),
     ]
 
     operations = [
