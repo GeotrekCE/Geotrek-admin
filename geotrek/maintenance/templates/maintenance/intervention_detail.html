@@ -7,6 +7,7 @@
             <th>{{ intervention|verbose:"name" }}</th>
             <td>{{ intervention.name }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=intervention.target %}
         <tr>
             <th>{{ intervention|verbose:"begin_date" }}</th>
             <td>{{ intervention.begin_date }}</td>
@@ -112,16 +113,6 @@
                 {% trans "L:" %} {{ intervention.length|stringformat:".2f" }}m ,
                 {% trans "W:" %} {{ intervention.width|stringformat:".2f" }}m :
                 {{ intervention.area|stringformat:".1f" }}m&sup2;
-            </td>
-        </tr>
-        <tr>
-            <th>{{ intervention.target|verbose:"decoupled" }}</th>
-            <td>
-                {% if intervention.target.decoupled %}
-                    {% trans "Yes" %}
-                {% else %}
-                    {% trans "No" %}
-                {% endif %}
             </td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}

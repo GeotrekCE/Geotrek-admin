@@ -12,6 +12,7 @@
             <th>{{ service|verbose:"type" }}</th>
             <td>{{ service.type }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=service %}
         <tr>
             <th>{% trans "External id" %}</th>
             <td>{{ service.get_eid }}</td>
@@ -20,16 +21,6 @@
             <th>{% trans "Provider" %}</th>
             <td>{% if service.provider %}{{ service.provide.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>{{ service|verbose:"decoupled" }}</th>
-            <td>
-                {% if service.decoupled %}
-                    {% trans "Yes" %}
-                {% else %}
-                    {% trans "No" %}
-                {% endif %}
             </td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}

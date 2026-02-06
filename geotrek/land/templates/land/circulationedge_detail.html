@@ -11,16 +11,7 @@
             <th>{{ circulationedge|verbose:"authorization_type" }}</th>
             <td>{{ circulationedge.authorization_type }}</td>
         </tr>
-        <tr>
-            <th>{{ circulationedge|verbose:"decoupled" }}</th>
-            <td>
-                {% if circulationedge.decoupled %}
-                    {% trans "Yes" %}
-                {% else %}
-                    {% trans "No" %}
-                {% endif %}
-            </td>
-        </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=circulationedge %}
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>

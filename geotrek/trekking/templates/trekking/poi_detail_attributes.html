@@ -16,6 +16,7 @@
             <th>{{ poi|verbose:"name" }}</th>
             <td>{{ poi.name }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=poi %}
         <tr>
             <th>{{ poi|verbose:"description" }}</th>
             <td>{% if poi.description %}{{ poi.description|safe|linebreaks }}
@@ -32,16 +33,6 @@
             <th>{% trans "Provider" %}</th>
             <td>{% if poi.provider %}{{ poi.provider.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>{{ poi|verbose:"decoupled" }}</th>
-            <td>
-                {% if poi.decoupled %}
-                    {% trans "Yes" %}
-                {% else %}
-                    {% trans "No" %}
-                {% endif %}
             </td>
         </tr>
 

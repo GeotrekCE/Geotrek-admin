@@ -7,6 +7,7 @@
             <th>{{ landedge|verbose:"land_type" }}</th>
             <td>{{ landedge.land_type }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=landedge %}
         <tr>
             <th>{{ landedge|verbose:"owner" }}</th>
             <td>{{ landedge.owner|safe }}</td>
@@ -15,16 +16,6 @@
             <th>{{ landedge|verbose:"agreement" }}</th>
             <td>
                 {% if landedge.agreement %}
-                    {% trans "Yes" %}
-                {% else %}
-                    {% trans "No" %}
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th>{{ landedge|verbose:"decoupled" }}</th>
-            <td>
-                {% if landedge.decoupled %}
                     {% trans "Yes" %}
                 {% else %}
                     {% trans "No" %}

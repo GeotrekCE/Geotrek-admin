@@ -11,7 +11,9 @@
         <tr>
             <th>{{ trail|verbose:"name" }}</th>
             <td>{{ trail.name }}</td>
-        </tr><tr>
+        </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=trail %}
+        <tr>
             <th>{{ trail|verbose:"departure" }}</th>
             <td>{{ trail.departure }}</td>
         </tr><tr>
@@ -32,15 +34,6 @@
         </tr><tr>
             <th>{{ trail|verbose:"comments" }}</th>
             <td>{{ trail.comments|safe|linebreaks }}</td>
-        </tr><tr>
-            <th>{{ trail|verbose:"decoupled" }}</th>
-            <td>
-                {% if trail.decoupled %}
-                    {% trans "Yes" %}
-                {% else %}
-                    {% trans "No" %}
-                {% endif %}
-            </td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
         {% include "mapentity/trackinfo_fragment.html" %}

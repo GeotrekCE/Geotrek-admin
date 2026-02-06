@@ -12,6 +12,7 @@
             <th>{{ object|verbose:"name" }}</th>
             <td>{{ object.name }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=object %}
         <tr>
             <th>{{ object|verbose:"type" }}</th>
             <td>{{ object.type }}</td>
@@ -57,15 +58,6 @@
             <th>{% trans "Provider" %}</th>
             <td>{% if object.provider %}{{ object.provider.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr><tr>
-            <th>{{ object|verbose:"decoupled" }}</th>
-            <td>
-                {% if object.decoupled %}
-                    {% trans "Yes" %}
-                {% else %}
-                    {% trans "No" %}
-                {% endif %}
             </td>
         </tr>
         {% include "altimetry/elevationinfo_fragment.html" %}
