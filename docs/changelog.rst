@@ -11,7 +11,7 @@ CHANGELOG
 
 **Improvements**
 
-* Add ``decoupled`` boolean field to the Topology model
+* Add ``coupled`` boolean field to the Topology model
 
 
 2.123.1         (2026-01-29)

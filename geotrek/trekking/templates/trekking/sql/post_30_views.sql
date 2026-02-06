@@ -4,7 +4,7 @@
 CREATE VIEW {{ schema_geotrek }}.v_treks AS WITH v_treks AS
     (SELECT e.geom,
             e.geom_3d,
-            e.decoupled,
+            e.coupled,
             e.id,
             e.length,
             e.slope,
@@ -145,7 +145,7 @@ SELECT a.id,
        {% endfor %}
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
-       a.decoupled AS "Decoupled geometry",
+       a.coupled AS "Network-coupled",
        a.geom
 FROM v_treks a
 LEFT JOIN trekking_difficultylevel b ON a.difficulty_id = b.id
@@ -217,7 +217,7 @@ LEFT JOIN
 
 CREATE VIEW {{ schema_geotrek }}.v_pois AS WITH v_poi AS
     (SELECT e.geom,
-            e.decoupled,
+            e.coupled,
             e.id,
             i.topo_object_id,
             {% for lang in MODELTRANSLATION_LANGUAGES %}
@@ -259,7 +259,7 @@ SELECT a.id,
        a.publication_date AS "Publication date",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
-       a.decoupled AS "Decoupled geometry",
+       a.coupled AS "Network-coupled",
        a.geom
 FROM v_poi a
 LEFT JOIN trekking_poitype b ON a.type_id = b.id
@@ -282,7 +282,7 @@ LEFT JOIN LATERAL (
 
 CREATE VIEW {{ schema_geotrek }}.v_services AS WITH v_services AS
     (SELECT e.geom,
-            e.decoupled,
+            e.coupled,
             e.id,
             i.topo_object_id,
             i.type_id,
@@ -308,7 +308,7 @@ SELECT a.id,
        END AS "Published",
        a.date_insert AS "Insertion date",
        a.date_update AS "Update date",
-       a.decoupled AS "Decoupled geometry",
+       a.coupled AS "Network-coupled",
        a.geom
 FROM v_services a
 LEFT JOIN trekking_servicetype b ON a.type_id = b.id

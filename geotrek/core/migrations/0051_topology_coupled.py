@@ -11,9 +11,9 @@ class Migration(migrations.Migration):
     operations = [
         migrations.AddField(
             model_name="topology",
-            name="decoupled",
+            name="coupled",
             field=models.BooleanField(
-                default=False, editable=False, verbose_name="Decoupled geometry"
+                default=True, editable=False, verbose_name="Network-coupled"
             ),
         ),
     ]

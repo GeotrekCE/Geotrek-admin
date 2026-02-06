@@ -47,14 +47,14 @@ def decouple_topologies(apps, schema_editor):
     topologies_to_decouple = topologies.filter(
         has_invalid_geom | has_no_path_aggregation
     )
-    topologies_to_decouple.update(decoupled=True)
+    topologies_to_decouple.update(coupled=False)
 
 
 class Migration(migrations.Migration):
     """Set all topologies with an invalid geometry/topology to "decoupled"."""
 
     dependencies = [
-        ("core", "0051_topology_decoupled"),
+        ("core", "0051_topology_coupled"),
     ]
 
     operations = [

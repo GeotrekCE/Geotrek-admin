@@ -155,7 +155,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
         "portal",
         "length_2d",
         "uuid",
-        "decoupled",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
@@ -372,7 +372,7 @@ class POIFormatList(MapEntityFormat, POIList):
         "districts",
         "areas",
         "uuid",
-        "decoupled",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
@@ -569,7 +569,7 @@ class ServiceFormatList(MapEntityFormat, ServiceList):
         "eid",
         "type",
         "uuid",
-        "decoupled",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
