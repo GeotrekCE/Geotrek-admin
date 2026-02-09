@@ -4,6 +4,12 @@
 {% if is_topology_model %}
     <tr>
         <th>{{ topo_object|verbose:"coupled" }}</th>
-        <td>{{ topo_object.coupled|yesno:_("yes,no") }}</td>
+        <td>
+            {% if topo_object.coupled %}
+                <i class="bi bi-check-circle text-success"></i>
+            {% else %}
+                <i class="bi bi-x-circle text-danger"></i>
+            {% endif %}
+        </td>
     </tr>
 {% endif %}
