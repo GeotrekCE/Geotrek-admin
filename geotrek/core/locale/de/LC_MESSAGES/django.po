@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-05 10:25+0000\n"
+"POT-Creation-Date: 2026-02-09 13:05+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/core/de/>\n"
@@ -195,7 +195,7 @@ msgstr ""
 msgid "Kind"
 msgstr ""
 
-msgid "Decoupled geometry"
+msgid "Network-coupled"
 msgstr ""
 
 msgid "Topology"
@@ -334,12 +334,6 @@ msgid "No routing found for this marker. Please move or delete it."
 msgstr ""
 
 msgid "No certification"
-msgstr ""
-
-msgid "Yes"
-msgstr ""
-
-msgid "No"
 msgstr ""
 
 msgid "Add"

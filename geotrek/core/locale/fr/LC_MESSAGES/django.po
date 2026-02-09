@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-05 10:25+0000\n"
+"POT-Creation-Date: 2026-02-09 13:05+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
@@ -195,8 +195,8 @@ msgstr "Décalage"
 msgid "Kind"
 msgstr "Type de topologie"
 
-msgid "Decoupled geometry"
-msgstr "Géometrie découplée"
+msgid "Network-coupled"
+msgstr "Couplé au réseau"
 
 msgid "Topology"
 msgstr "Topologie"
@@ -335,12 +335,6 @@ msgstr "Aucun routage n'a été trouvé pour ce marqueur. Veuillez le déplacer 
 
 msgid "No certification"
 msgstr "Aucune labellisation"
-
-msgid "Yes"
-msgstr "Oui"
-
-msgid "No"
-msgstr "Non"
 
 msgid "Add"
 msgstr "Ajouter"
