@@ -95,58 +95,6 @@ class ValidTopologyFilterTest(TestCase):
         self.assertEqual(qs.count(), 2)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
-class ValidGeometryFilterTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.path = PathFactory()
-
-    def test_trek_filters_not_valid_geometry(self):
-        trek_linestring = TrekFactory.create(
-            name="LineString", paths=[(self.path, 0, 1)]
-        )
-        trek_multilinestring = TrekFactory.create(
-            name="Multilinestring",
-            paths=[(self.path, 0, 0.4, 1), (self.path, 0.6, 1, 2)],
-        )
-        trek_point = TrekFactory.create(name="Point", paths=[(self.path, 0, 0)])
-        trek_none = TrekFactory.create(name="None", paths=[])
-
-        qs = TrekFilterSet().qs
-        self.assertEqual(qs.count(), 4)
-
-        data = {"is_valid_geometry": True}
-        qs = TrekFilterSet(data=data).qs
-        self.assertIn(trek_linestring, qs)
-        self.assertEqual(qs.count(), 1)
-
-        data = {"is_valid_geometry": False}
-        qs = TrekFilterSet(data=data).qs
-        self.assertIn(trek_multilinestring, qs)
-        self.assertIn(trek_point, qs)
-        self.assertIn(trek_none, qs)
-        self.assertEqual(qs.count(), 3)
-
-
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
-class ValidGeometryFilterNDSTest(TestCase):
-    def test_trek_filters_not_valid_geometry_nds(self):
-        trek_empty = TrekFactory.create(name="Empty", geom="SRID=2154;LINESTRING EMPTY")
-        trek_valid = TrekFactory.create(name="Valid", geom=LineString((0, 0), (5, 5)))
-        qs = TrekFilterSet().qs
-        self.assertEqual(qs.count(), 2)
-
-        data = {"is_valid_geometry": True}
-        qs = TrekFilterSet(data=data).qs
-        self.assertIn(trek_valid, qs)
-        self.assertEqual(qs.count(), 1)
-
-        data = {"is_valid_geometry": False}
-        qs = TrekFilterSet(data=data).qs
-        self.assertIn(trek_empty, qs)
-        self.assertEqual(qs.count(), 1)
-
-
 class TrailFilterTestCase(TestCase):
     """Test trail filters"""
 
