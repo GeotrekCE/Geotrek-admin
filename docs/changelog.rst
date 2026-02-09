@@ -12,6 +12,8 @@ CHANGELOG
 **Improvements**
 
 * Add ``coupled`` boolean field to the Topology model
+* Remove the 'invalid geometry' filter
+* Strengthen the 'invalid topology' filter criteria
 
 
 2.123.1         (2026-01-29)
