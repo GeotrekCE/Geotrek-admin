@@ -22,10 +22,6 @@ from .models import CertificationLabel, Comfort, Network, Path, Topology, Trail,
 
 
 class ValidTopologyFilterSet(FilterSet):
-    # Do not forget to add geometry_types_allowed on models if you add this filterset
-    # geometry_types_allowed = ["LINESTRING"] for example
-    # Types possible with topologies are linestring and points only
-
     if settings.TREKKING_TOPOLOGY_ENABLED:
         is_valid_topology = BooleanFilter(
             label=_("Valid topology"),
@@ -34,13 +30,6 @@ class ValidTopologyFilterSet(FilterSet):
                 attrs={"class": "form-control form-control-sm"}
             ),
         )
-    is_valid_geometry = BooleanFilter(
-        label=_("Valid geometry"),
-        method="filter_valid_geometry",
-        widget=widgets.NullBooleanSelect(
-            attrs={"class": "form-control form-control-sm"}
-        ),
-    )
 
     def filter_valid_topology(self, qs, name, value):
         if value is not None:
@@ -53,25 +42,6 @@ class ValidTopologyFilterSet(FilterSet):
             elif value is False:
                 qs = qs.filter(
                     Q(same_order=0) | Q(distinct_same_order__lt=F("same_order"))
-                )
-        return qs
-
-    def filter_valid_geometry(self, qs, name, value):
-        if value is not None:
-            qs = qs.annotate(geometry_type=GeometryType("geom"))
-            if value is True:
-                qs = (
-                    qs.filter(geom__isvalid=True)
-                    .exclude(geom__isnull=True)
-                    .exclude(geom__isempty=True)
-                    .filter(geometry_type__in=qs.model.geometry_types_allowed)
-                )
-            elif value is False:
-                qs = qs.filter(
-                    Q(geom__isnull=True)
-                    | Q(geom__isvalid=False)
-                    | Q(geom__isempty=True)
-                    | ~Q(geometry_type__in=qs.model.geometry_types_allowed)
                 )
         return qs
 
