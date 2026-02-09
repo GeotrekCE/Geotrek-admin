@@ -17,6 +17,8 @@ CHANGELOG
 
 * Get infinite scrolling on autocomplete API endpoint
 * Add ``coupled`` boolean field to the Topology model
+* Remove the 'invalid geometry' filter
+* Strengthen the 'invalid topology' filter criteria
 
 **CI**
 
