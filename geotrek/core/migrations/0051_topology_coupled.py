@@ -13,7 +13,7 @@ class Migration(migrations.Migration):
             model_name="topology",
             name="coupled",
             field=models.BooleanField(
-                default=True, editable=False, verbose_name="Network-coupled"
+                default=False, editable=False, verbose_name="Network-coupled"
             ),
         ),
     ]

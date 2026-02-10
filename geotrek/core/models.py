@@ -519,7 +519,7 @@ class Topology(
     # The geometry is coupled to the path network when the topology is valid and linked to path aggregations
     # See https://github.com/GeotrekCE/Geotrek-admin/issues/4982
     coupled = models.BooleanField(
-        default=True, editable=False, verbose_name=_("Network-coupled")
+        default=False, editable=False, verbose_name=_("Network-coupled")
     )
 
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """

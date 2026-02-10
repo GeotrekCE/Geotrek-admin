@@ -12,14 +12,14 @@ class GeometryType(GeoFunc):
     function = "GeometryType"
 
 
-def decouple_topologies(apps, schema_editor):
+def couple_topologies(apps, schema_editor):
     Topology = apps.get_model("core", "Topology")
     topologies = Topology.objects.all().annotate(
         geometry_type=GeometryType("geom"),
         nb_aggregations=Count("aggregations"),
     )
 
-    # Handle topologies with invalid geometries
+    # Coupled topologies' geometry types must be allowed
     geometry_types_allowed = {
         "TOPOLOGY": ["LINESTRING", "POINT"],
         "TRAIL": ["LINESTRING"],
@@ -35,28 +35,31 @@ def decouple_topologies(apps, schema_editor):
         "TREK": ["LINESTRING"],
         "POI": ["POINT"],
     }
-    has_invalid_geom = (
-        Q(geom__isnull=True) | Q(geom__isvalid=False) | Q(geom__isempty=True)
-    )
+    has_allowed_geometry_type = Q()
     for kind, allowed in geometry_types_allowed.items():
-        has_invalid_geom |= Q(kind=kind) & ~Q(geometry_type__in=allowed)
+        has_allowed_geometry_type |= Q(kind=kind, geometry_type__in=allowed)
 
-    # Handle topologies with no path aggregation
-    has_no_path_aggregation = Q(nb_aggregations=0)
-
-    topologies_to_decouple = topologies.filter(
-        has_invalid_geom | has_no_path_aggregation
+    # Coupled topologies must have a valid geometry
+    has_valid_geom = (
+        Q(geom__isnull=False) & Q(geom__isvalid=True) & Q(geom__isempty=False)
     )
-    topologies_to_decouple.update(coupled=False)
+
+    # Coupled topologies must have at least one path aggregation
+    has_path_aggregation = Q(nb_aggregations__gt=0)
+
+    topologies_to_couple = topologies.filter(
+        has_allowed_geometry_type & has_valid_geom & has_path_aggregation
+    )
+    topologies_to_couple.update(coupled=True)
 
 
 class Migration(migrations.Migration):
-    """Set all topologies with an invalid geometry/topology to "decoupled"."""
+    """Set all topologies with a valid geometry and path aggregations as "coupled"."""
 
     dependencies = [
         ("core", "0051_topology_coupled"),
     ]
 
     operations = [
-        migrations.RunPython(decouple_topologies, migrations.RunPython.noop),
+        migrations.RunPython(couple_topologies, migrations.RunPython.noop),
     ]
