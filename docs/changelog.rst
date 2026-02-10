@@ -2,8 +2,19 @@
 CHANGELOG
 =========
 
-2.123.0+dev     (XXXX-XX-XX)
+2.123.1+dev     (XXXX-XX-XX)
 ----------------------------
+
+
+2.123.1         (2026-01-29)
+----------------------------
+
+**Bug fixes**
+
+* Fix fetching published steps of parent treks with aggregator parser
+* Allows to add/edit trek despite missing service type pictogram
+* Trek aggregator now handles when child trek is not saved due to errors
+* Aggregator parser now fetches all category pages
 
 
 2.123.0         (2026-01-15)
