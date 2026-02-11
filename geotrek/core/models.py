@@ -12,6 +12,7 @@ from django.contrib.postgres.indexes import GistIndex
 from django.core.mail import mail_managers
 from django.db import DEFAULT_DB_ALIAS, connection, connections
 from django.db.models import ProtectedError, Value
+from django.db.models.functions import Round
 from django.db.models.query import QuerySet
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -59,8 +60,12 @@ class Path(
 
     geom = models.LineStringField(srid=settings.SRID, spatial_index=False)
     length_2d = models.GeneratedField(
-        expression=LengthSpheroid(
-            Transform("geom", 4326), Value('SPHEROID["GRS_1980",6378137,298.257222101]')
+        expression=Round(
+            LengthSpheroid(
+                Transform("geom", 4326),
+                Value('SPHEROID["GRS_1980",6378137,298.257222101]'),
+            ),
+            2,
         ),
         output_field=models.FloatField(),
         db_persist=True,
@@ -498,8 +503,12 @@ class Topology(
         spatial_index=False,
     )
     length_2d = models.GeneratedField(
-        expression=LengthSpheroid(
-            Transform("geom", 4326), Value('SPHEROID["GRS_1980",6378137,298.257222101]')
+        expression=Round(
+            LengthSpheroid(
+                Transform("geom", 4326),
+                Value('SPHEROID["GRS_1980",6378137,298.257222101]'),
+            ),
+            2,
         ),
         output_field=models.FloatField(),
         db_persist=True,

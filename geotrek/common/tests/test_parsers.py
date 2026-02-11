@@ -1976,6 +1976,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             ("trekking", "trek_difficulty.json"),
             ("trekking", "trek_route.json"),
             ("trekking", "trek_theme.json"),
+            ("trekking", "trek_theme_page_2.json"),
             ("trekking", "trek_practice.json"),
             ("trekking", "trek_accessibility.json"),
             ("trekking", "trek_network.json"),
@@ -2003,6 +2004,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             ("trekking", "trek_difficulty.json"),
             ("trekking", "trek_route.json"),
             ("trekking", "trek_theme.json"),
+            ("trekking", "trek_theme_page_2.json"),
             ("trekking", "trek_practice.json"),
             ("trekking", "trek_accessibility.json"),
             ("trekking", "trek_network.json"),
@@ -2059,6 +2061,8 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             string_parser,
         )
         self.assertEqual(Trek.objects.count(), 6)
+        trek = Trek.objects.get(name="Boucle du Pic des Trois Seigneurs")
+        self.assertIn("Lac et glacier", [theme.label for theme in trek.themes.all()])
         self.assertEqual(POI.objects.count(), 2)
         self.assertEqual(1, Trek.objects.get(name="Foo").information_desks.count())
         self.assertEqual(

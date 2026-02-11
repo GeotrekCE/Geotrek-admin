@@ -349,6 +349,7 @@ class MergePathTest(TestCase):
         self.assertAlmostEqual(
             a2_updated.start_position,
             (1 - a2.start_position) * (path_AB_original_length / path_AB.length),
+            places=3,
         )
         self.assertAlmostEqual(
             a2_updated.end_position,
@@ -360,22 +361,31 @@ class MergePathTest(TestCase):
             a3_updated.start_position,
             a3.start_position * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
+            places=3,
         )
         self.assertAlmostEqual(
             a3_updated.end_position,
-            a3.end_position * (path_CD_original_length / path_AB.length)
-            + path_AB_original_length / path_AB.length,
+            min(
+                a3.end_position * (path_CD_original_length / path_AB.length)
+                + path_AB_original_length / path_AB.length,
+                1,
+            ),
         )
 
         self.assertAlmostEqual(
             a4_updated.start_position,
             a4.start_position * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
+            places=3,
         )
         self.assertAlmostEqual(
             a4_updated.end_position,
-            a4.end_position * (path_CD_original_length / path_AB.length)
-            + path_AB_original_length / path_AB.length,
+            min(
+                a4.end_position * (path_CD_original_length / path_AB.length)
+                + path_AB_original_length / path_AB.length,
+                1,
+            ),
+            places=3,
         )
 
         # test offset changes
@@ -432,38 +442,51 @@ class MergePathTest(TestCase):
         self.assertAlmostEqual(
             a1_updated.end_position,
             a1.end_position * (path_AB_original_length / path_AB.length),
+            places=3,
         )
 
         self.assertAlmostEqual(
             a2_updated.start_position,
             a2.start_position * (path_AB_original_length / path_AB.length),
+            places=3,
         )
         self.assertAlmostEqual(
             a2_updated.end_position,
             a1.end_position * (path_AB_original_length / path_AB.length),
+            places=3,
         )
 
         # test pk recompute on path_2 : new pk = old pk * old_path_2_length / new_path_1_length + old_path_1_length / new_path_1_length
         self.assertAlmostEqual(
             a3_updated.start_position,
-            (1 - a3.start_position) * (path_CD_original_length / path_AB.length)
-            + path_AB_original_length / path_AB.length,
+            min(
+                (1 - a3.start_position) * (path_CD_original_length / path_AB.length)
+                + path_AB_original_length / path_AB.length,
+                1,
+            ),
+            places=3,
         )
         self.assertAlmostEqual(
             a3_updated.end_position,
             (1 - a3.end_position) * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
+            places=3,
         )
 
         self.assertAlmostEqual(
             a4_updated.start_position,
-            (1 - a4.start_position) * (path_CD_original_length / path_AB.length)
-            + path_AB_original_length / path_AB.length,
+            min(
+                (1 - a4.start_position) * (path_CD_original_length / path_AB.length)
+                + path_AB_original_length / path_AB.length,
+                1,
+            ),
+            places=3,
         )
         self.assertAlmostEqual(
             a4_updated.end_position,
             (1 - a4.end_position) * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
+            places=3,
         )
 
         # test offset changes
@@ -526,33 +549,45 @@ class MergePathTest(TestCase):
         self.assertAlmostEqual(
             a2_updated.start_position,
             (1 - a2.start_position) * (path_AB_original_length / path_AB.length),
+            places=3,
         )
         self.assertAlmostEqual(
             a2_updated.end_position,
             (1 - a1.end_position) * (path_AB_original_length / path_AB.length),
+            places=3,
         )
 
         # test pk recompute on path_2 : new pk = old pk * old_path_2_length / new_path_1_length + old_path_1_length / new_path_1_length
         self.assertAlmostEqual(
             a3_updated.start_position,
-            (1 - a3.start_position) * (path_CD_original_length / path_AB.length)
-            + path_AB_original_length / path_AB.length,
+            min(
+                (1 - a3.start_position) * (path_CD_original_length / path_AB.length)
+                + path_AB_original_length / path_AB.length,
+                1,
+            ),
+            places=3,
         )
         self.assertAlmostEqual(
             a3_updated.end_position,
             (1 - a3.end_position) * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
+            places=3,
         )
 
         self.assertAlmostEqual(
             a4_updated.start_position,
-            (1 - a4.start_position) * (path_CD_original_length / path_AB.length)
-            + path_AB_original_length / path_AB.length,
+            min(
+                (1 - a4.start_position) * (path_CD_original_length / path_AB.length)
+                + path_AB_original_length / path_AB.length,
+                1,
+            ),
+            places=3,
         )
         self.assertAlmostEqual(
             a4_updated.end_position,
             (1 - a4.end_position) * (path_CD_original_length / path_AB.length)
             + path_AB_original_length / path_AB.length,
+            places=3,
         )
 
         # test offset changes

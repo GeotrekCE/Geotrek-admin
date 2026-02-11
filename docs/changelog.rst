@@ -2,12 +2,35 @@
 CHANGELOG
 =========
 
-2.122.1+dev     (XXXX-XX-XX)
+2.123.1+dev     (XXXX-XX-XX)
+----------------------------
+
+
+2.123.1         (2026-01-29)
+----------------------------
+
+**Bug fixes**
+
+* Fix fetching published steps of parent treks with aggregator parser
+* Allows to add/edit trek despite missing service type pictogram
+* Trek aggregator now handles when child trek is not saved due to errors
+* Aggregator parser now fetches all category pages
+
+
+2.123.0         (2026-01-15)
 ----------------------------
 
 **Breaking changes**
 
 * Ubuntu focal 20.04 debian package is not supported anymore. Please update or migrate your server to Ubuntu 24.04.
+
+**Improvements**
+
+* 2D length are now computed with only two decimal places.
+
+**Documentation**
+
+* Add warning: do not use pgRouting 4.x (refs #5049)
 
 
 2.122.1         (2026-01-08)
