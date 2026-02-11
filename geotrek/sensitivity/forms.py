@@ -23,13 +23,22 @@ class PolygonMapWidget(MapWidget):
 
 class SensitiveAreaForm(CommonForm):
     geomfields = ["geom"]
+    name = forms.CharField(max_length=250, label=_("Name"), required=False)
     species = forms.ModelChoiceField(
         queryset=Species.objects.filter(category=Species.SPECIES),
         label=pgettext("Singular", "Species"),
     )
 
     class Meta:
-        fields = ["structure", "species", "published", "description", "contact", "geom"]
+        fields = [
+            "structure",
+            "species",
+            "name",
+            "published",
+            "description",
+            "contact",
+            "geom",
+        ]
         model = SensitiveArea
         widgets = {"geom": BubbleMapWidget()}
 
@@ -82,7 +91,6 @@ class RegulatorySensitiveAreaForm(CommonForm):
         if instance:
             species = instance.species
             kwargs["initial"] = {
-                "name": species.name,
                 "elevation": species.radius,
                 "pictogram": species.pictogram,
                 "practices": species.practices.all(),
@@ -101,7 +109,6 @@ class RegulatorySensitiveAreaForm(CommonForm):
         else:
             species = self.instance.species
         species.category = Species.REGULATORY
-        species.name = self.cleaned_data["name"]
         species.radius = self.cleaned_data["elevation"]
         species.pictogram = self.cleaned_data["pictogram"]
         species.url = self.cleaned_data["url"]
