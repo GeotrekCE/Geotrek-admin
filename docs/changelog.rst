@@ -5,6 +5,14 @@ CHANGELOG
 2.123.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Warnings**
+
+- Topologies are no longer dependant on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
+
+**Improvements**
+
+* Add ``coupled`` boolean field to the Topology model
+
 
 2.123.1         (2026-01-29)
 ----------------------------
