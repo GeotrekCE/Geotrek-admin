@@ -31,11 +31,10 @@ class SpeciesAdminTests(TestCase):
         queryset = self.admin.get_queryset(None)
         self.assertEqual(queryset.count(), 0)
 
+    def test_admin_changelist(self):
+        admin_user = UserFactory(is_staff=True, is_superuser=True)
+        self.client.force_login(admin_user)
 
-def test_admin_changelist(self):
-    admin_user = UserFactory(is_staff=True, is_superuser=True)
-    self.client.force_login(admin_user)
-
-    url = reverse("admin:sensitivity_species_changelist")
-    response = self.client.get(url)
-    self.assertEqual(response.status_code, 200)
+        url = reverse("admin:sensitivity_species_changelist")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)

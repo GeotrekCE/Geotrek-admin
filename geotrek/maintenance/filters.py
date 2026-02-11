@@ -240,7 +240,6 @@ class InterventionFilterSet(
             url="zoning:city-autocomplete",
             attrs={
                 "data-placeholder": _("City"),
-                #'data-theme': 'bootstrap4'
             },
         ),
     )
@@ -251,8 +250,7 @@ class InterventionFilterSet(
         widget=autocomplete.ModelSelect2Multiple(
             url="zoning:district-autocomplete",
             attrs={
-                "data-placeholder": _("City"),
-                # 'data-theme': 'bootstrap4'
+                "data-placeholder": _("District"),
             },
         ),
     )
@@ -303,7 +301,6 @@ class ProjectFilterSet(StructureRelatedFilterSet):
             url="zoning:city-autocomplete",
             attrs={
                 "data-placeholder": _("City"),
-                #'data-theme': 'bootstrap4'
             },
         ),
     )
@@ -314,8 +311,7 @@ class ProjectFilterSet(StructureRelatedFilterSet):
         widget=autocomplete.ModelSelect2Multiple(
             url="zoning:district-autocomplete",
             attrs={
-                "data-placeholder": _("City"),
-                # 'data-theme': 'bootstrap4'
+                "data-placeholder": _("District"),
             },
         ),
     )

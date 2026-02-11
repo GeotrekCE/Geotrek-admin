@@ -505,7 +505,7 @@ class BBoxMixin(models.Model):
     envelope = models.GeneratedField(
         expression=Envelope(Transform("geom", settings.API_SRID)),
         db_persist=True,
-        output_field=models.GeometryField(),
+        output_field=models.GeometryField(srid=settings.API_SRID),
     )
 
     @property
