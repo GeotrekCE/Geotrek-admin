@@ -65,6 +65,7 @@ class InfrastructureFormatList(MapEntityFormat, InfrastructureList):
         "maintenance_difficulty",
         "access",
         "uuid",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 

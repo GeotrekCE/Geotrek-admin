@@ -16,6 +16,7 @@ CHANGELOG
 **Improvements**
 
 * Get infinite scrolling on autocomplete API endpoint
+* Add ``coupled`` boolean field to the Topology model
 
 **CI**
 
