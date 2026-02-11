@@ -2093,7 +2093,9 @@ if "geotrek.signage" in settings.INSTALLED_APPS:
             read_only=True, source="geom3d_transformed", precision=7
         )
         attachments = AttachmentSerializer(many=True)
-        blades = BladeSerializer(source="blades_set", many=True)
+        # TODO: why did it use to refer to the related name `blades_set` for
+        # the `topology` field of Blade?
+        blades = BladeSerializer(source="blade_set", many=True)
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
         condition = serializers.SerializerMethodField(
             help_text=_(
