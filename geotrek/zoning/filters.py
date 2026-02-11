@@ -66,7 +66,7 @@ class ZoningFilterSet(FilterSet):
         widget=autocomplete.ModelSelect2Multiple(
             url="zoning:district-autocomplete",
             attrs={
-                "data-placeholder": _("City"),
+                "data-placeholder": _("District"),
             },
         ),
     )

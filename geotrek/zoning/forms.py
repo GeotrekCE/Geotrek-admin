@@ -16,7 +16,6 @@ class MapFilterForm(forms.Form):
                     url="zoning:city-autocomplete-bbox",
                     attrs={
                         "data-placeholder": _("City"),
-                        #'data-theme': 'bootstrap4'
                     },
                 ),
                 required=False,
@@ -29,7 +28,6 @@ class MapFilterForm(forms.Form):
                     url="zoning:district-autocomplete-bbox",
                     attrs={
                         "data-placeholder": _("District"),
-                        #'data-theme': 'bootstrap4'
                     },
                 ),
                 required=False,

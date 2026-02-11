@@ -52,7 +52,7 @@ class AutocompleteMixin:
             instance = qs.first()
             if instance is None:
                 return Response({})
-            serializer = self.serializer_autocomplete_class(qs.first())
+            serializer = self.serializer_autocomplete_class(instance)
             data = serializer.data
         else:
             q = self.request.query_params.get(
