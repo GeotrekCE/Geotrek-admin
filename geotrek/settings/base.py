@@ -28,6 +28,13 @@ def api_bbox(bbox, buffer):
     return tuple(native.extent)
 
 
+def get_maplibre_config(bbox, buffer):
+    xmin, ymin, xmax, ymax = api_bbox(bbox, buffer)
+    center = [(xmin + xmax) / 2, (ymin + ymax) / 2]
+    bounds = [[xmin, ymin], [xmax, ymax]]
+    return bounds, center
+
+
 ROOT_URL = ""
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAR_DIR = os.getenv("VAR_DIR", "/opt/geotrek-admin/var")
@@ -304,7 +311,6 @@ PROJECT_APPS += (
     "easy_thumbnails",
     "mapentity",
     "paperclip",  # paperclip should be load after mapentity for templates
-    "leaflet",  # After mapentity to allow it to patch settings
     "rest_framework",
     "rest_framework_gis",
     "embed_video",
@@ -314,6 +320,7 @@ PROJECT_APPS += (
     "mptt",
     "treebeard",
     "maintenance_mode",
+    "mapbox_baselayer",
 )
 
 INSTALLED_APPS = (
@@ -456,7 +463,10 @@ MAPENTITY_CONFIG = {
             "radius": 5,
         },
         "detail": {"color": "#ffff00"},
-        "others": {"color": "#ffff00"},
+        "others": {
+            "color": "#ffff00"
+        },  # renvoie une fonction posant problème dans le template
+        "autres": {"color": "#ffff00"},
         "print": {
             "path": {"weight": 1},
             "trek": {
@@ -500,50 +510,13 @@ ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
 ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
 ALTIMETRIC_AREA_MARGIN = 0.15
 
-# Let this be defined at instance-level
-LEAFLET_CONFIG = {
-    "SRID": 3857,
-    "TILES": [
-        (
-            "OpenTopoMap",
-            "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-            {
-                "attribution": 'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-                "maxNativeZoom": 17,
-                "maxZoom": 22,
-            },
-        ),
-        (
-            "OpenStreetMap",
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            {
-                "attribution": '&copy; <a href="https://www.openstreetmap.org/copyright">Contributeurs d\'OpenStreetMap</a>',
-                "maxNativeZoom": 19,
-                "maxZoom": 22,
-            },
-        ),
-    ],
-    "TILES_EXTENT": SPATIAL_EXTENT,
-    # Extent in API projection (Leaflet view default extent)
-    "SPATIAL_EXTENT": api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN),
-    "NO_GLOBALS": False,
-    "PLUGINS": {
-        "geotrek": {
-            "js": [
-                "vendor/leaflet.lineextremities.v0.1.1.js",
-                "vendor/leaflet.textpath.v1.1.0.js",
-                "common/points_reference.js",
-                "trekking/parking_location.js",
-            ]
-        },
-        "topofields": {
-            "js": [
-                "core/geotrek.forms.snap.js",
-                "core/geotrek.forms.topology.js",
-                "core/multipath.js",
-            ]
-        },
-    },
+
+BOUNDS, CENTER = get_maplibre_config(SPATIAL_EXTENT, VIEWPORT_MARGIN)
+MAPLIBRE_CONFIG_OVERRIDES = {
+    "DEFAULT_CENTER": CENTER,
+    "DEFAULT_ZOOM": 5,
+    "SCALE": "metric",
+    "BOUNDS": BOUNDS
 }
 
 # define forced layers from LEAFLET_CONFIG when map center in polygon
@@ -1056,8 +1029,10 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 MAPENTITY_CONFIG["TRANSLATED_LANGUAGES"] = [
     language for language in LANGUAGES_LIST if language[0] in MODELTRANSLATION_LANGUAGES
 ]
-LEAFLET_CONFIG["TILES_EXTENT"] = SPATIAL_EXTENT
-LEAFLET_CONFIG["SPATIAL_EXTENT"] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
+
+BOUNDS, CENTER = get_maplibre_config(SPATIAL_EXTENT, VIEWPORT_MARGIN)
+MAPLIBRE_CONFIG_OVERRIDES["BOUNDS"] = BOUNDS
+MAPLIBRE_CONFIG_OVERRIDES["DEFAULT_CENTER"] = CENTER
 
 if (
     SURICATE_WORKFLOW_ENABLED

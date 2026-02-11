@@ -105,7 +105,7 @@ django==5.2.11
     #   django-filter
     #   django-js-asset
     #   django-large-image
-    #   django-leaflet
+    #   django-mapbox-baselayer
     #   django-modelcluster
     #   django-modeltranslation
     #   django-tinymce
@@ -147,10 +147,10 @@ django-js-asset==3.1.2
     # via django-mptt
 django-large-image==0.10.2
     # via geotrek (setup.py)
-django-leaflet==0.19.post11
-    # via mapentity
 django-maintenance-mode==0.22.0
     # via geotrek (setup.py)
+django-mapbox-baselayer==1.2.0
+    # via mapentity
 django-modelcluster==6.4.1
     # via geotrek (setup.py)
 django-modeltranslation==0.19.19
@@ -243,7 +243,7 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.16.2
+mapentity @ git+https://github.com/makinacorpus/django-mapentity@253f17130eb91b851efd33f836ca40b5fe2b882c#egg=mapentity
     # via geotrek (setup.py)
 markdown==3.10.1
     # via geotrek (setup.py)
