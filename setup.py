@@ -17,7 +17,7 @@ setup(
     scripts=["manage.py"],
     install_requires=[
         "Django==5.2.*",
-        "mapentity",
+        "mapentity==8.17.0",
         "chardet",
         "cairosvg",
         "cairocffi",
@@ -25,6 +25,7 @@ setup(
         "pymemcache",
         "coreschema",
         "coreapi",
+        "django-autocomplete-light",
         "psycopg2",
         "pdfimpose",
         "Pillow",

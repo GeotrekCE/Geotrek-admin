@@ -1,4 +1,5 @@
 from django.conf import settings
+from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
 
 from geotrek.zoning import models as zoning_models
@@ -19,9 +20,50 @@ class CitySerializer(LandLayerSerializerMixin):
         fields = [*LandLayerSerializerMixin.Meta.fields, "name"]
 
 
+class CityAutoCompleteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="pk")
+    text = serializers.SerializerMethodField()
+
+    def get_text(self, obj):
+        return obj.name if not obj.code else f"{obj.name} ({obj.code})"
+
+    class Meta:
+        model = zoning_models.City
+        fields = ["id", "text"]
+
+
+class CityAutoCompleteBBoxSerializer(CityAutoCompleteSerializer):
+    id = serializers.SerializerMethodField()
+
+    def get_id(self, obj):
+        return ",".join([str(x) for x in obj.bbox])
+
+    class Meta(CityAutoCompleteSerializer.Meta):
+        pass
+
+
 class DistrictSerializer(LandLayerSerializerMixin):
     class Meta(LandLayerSerializerMixin.Meta):
         model = zoning_models.District
+
+
+class DistrictAutoCompleteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="pk")
+    text = serializers.CharField(source="name")
+
+    class Meta:
+        model = zoning_models.District
+        fields = ["id", "text"]
+
+
+class DistrictAutoCompleteBBoxSerializer(DistrictAutoCompleteSerializer):
+    id = serializers.SerializerMethodField()
+
+    def get_id(self, obj):
+        return ",".join([str(x) for x in obj.bbox])
+
+    class Meta(DistrictAutoCompleteSerializer.Meta):
+        pass
 
 
 class RestrictedAreaSerializer(LandLayerSerializerMixin):

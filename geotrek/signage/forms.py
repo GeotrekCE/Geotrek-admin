@@ -5,6 +5,8 @@ from django.conf import settings
 from django.contrib.gis.forms.fields import GeometryField
 from django.db.models import Max
 from django.forms.models import inlineformset_factory
+from django.templatetags.static import static
+from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from mapentity.widgets import MapWidget
 
@@ -141,11 +143,13 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
             super().__init__(*args, **kwargs)
 
             self.fields["topology"].initial = self.signage
+            self.fields["topology"].widget = PointTopologyWidget()
             self.fields["topology"].widget.modifiable = True
-            self.fields["topology"].label = "{}{} {}".format(
-                self.instance.signage_display,
-                _("On %s") % _(self.signage.kind.lower()),
-                f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
+            icon = self.signage._meta.model_name
+            title = _("On: %(target)s") % {"target": self.signage}
+
+            self.fields["topology"].label = mark_safe(
+                f'<img src="{static(f"images/{icon}-16.png")}" title="{title}" /><a href="{self.signage.get_detail_url()}">{title}</a>'
             )
 
 else:
@@ -159,10 +163,10 @@ else:
             self.fields["topology"].initial = self.signage.geom
             self.fields["topology"].widget = MapWidget(attrs={"geom_type": "POINT"})
             self.fields["topology"].widget.modifiable = False
-            self.fields["topology"].label = "{}{} {}".format(
-                self.instance.signage_display,
-                _("On %s") % _(self.signage.kind.lower()),
-                f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
+            icon = self.signage._meta.model_name
+            title = _("On: %(target)s") % {"target": self.signage}
+            self.fields["topology"].label = mark_safe(
+                f'<img src="{static(f"images/{icon}-16.png")}" title="{title}" /><a href="{self.signage.get_detail_url()}">{title}</a>'
             )
 
 

@@ -72,10 +72,7 @@
                         var new_select = $(this).clone(false);
                         $(this).after(new_select);
                         $(this).remove()
-                        new_select.chosen({
-                         no_results_text: "{% trans "No result" %}",
-                         placeholder_text_multiple: "{% trans "Choose value(s)" %}"
-                    });
+
                     })
                     // Update width of pictogram selector  
                     updatePictogramSelectorWidth();

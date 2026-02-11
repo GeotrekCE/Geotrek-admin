@@ -1,10 +1,10 @@
 from django.utils.translation import gettext_lazy as _
-from django_filters import FilterSet
+from mapentity.filters import MapEntityFilterSet
 
 from geotrek.common.filters import OptionalRangeFilter
 
 
-class AltimetryPointFilterSet(FilterSet):
+class AltimetryPointFilterSet(MapEntityFilterSet):
     elevation = OptionalRangeFilter(label=_("elevation"), method="filter_elevation")
 
     def filter_elevation(self, qs, name, value):

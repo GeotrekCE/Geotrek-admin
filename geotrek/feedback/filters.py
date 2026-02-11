@@ -1,3 +1,4 @@
+from dal import autocomplete
 from django.utils.translation import gettext_lazy as _
 from django_filters import ModelMultipleChoiceFilter, MultipleChoiceFilter
 from mapentity.filters import MapEntityFilterSet
@@ -13,15 +14,18 @@ class ReportFilterSet(ZoningFilterSet, MapEntityFilterSet):
         label=_("Creation year"),
         field_name="date_insert__year",
         choices=lambda: Report.objects.year_insert_choices(),
+        widget=autocomplete.Select2Multiple,
     )
     year_update = MultipleChoiceFilter(
         label=_("Update year"),
         field_name="date_update__year",
         choices=lambda: Report.objects.year_update_choices(),
+        widget=autocomplete.Select2Multiple,
     )
     provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(report__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple,
     )
 
     class Meta(MapEntityFilterSet.Meta):
