@@ -1,6 +1,6 @@
 import json
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from django.urls import reverse
 from mapentity.tests.factories import UserFactory
 from rest_framework.test import APITestCase
@@ -83,6 +83,7 @@ class DistrictViewSetTestCase(AutocompleteTestMixin, LandLayersViewsTest, APITes
     factory_class = DistrictFactory
 
 
+@override_settings(LAND_BBOX_AREAS_ENABLED=True)
 class RestrictedAreaViewTest(AutocompleteTestMixin, LandLayersViewsTest, APITestCase):
     layer = "restrictedarea"
     factory_class = RestrictedAreaFactory
