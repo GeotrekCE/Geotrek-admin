@@ -34,6 +34,150 @@ class AutocompleteTestMixin:
         self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(len(response.json()["results"]), 10)
 
+    def test_autocomplete_bbox_custom_page_size(self):
+        self.factory_class.create_batch(20, name="Test")
+        url = reverse(f"zoning:{self.layer}-autocomplete-bbox")
+        response = self.client.get(url, data={"q": "Test", "page_size": "5"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 5)
+        self.assertTrue(response.json()["pagination"]["more"])
+
+    def test_autocomplete_bbox_pagination_different_pages(self):
+        # Create items with predictable names for verification
+        items = [self.factory_class(name=f"Item{i:02d}") for i in range(25)]
+        url = reverse(f"zoning:{self.layer}-autocomplete-bbox")
+        
+        # Test first page
+        response = self.client.get(url, data={"page": "1", "page_size": "10"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 10)
+        self.assertTrue(response.json()["pagination"]["more"])
+        
+        # Test second page
+        response = self.client.get(url, data={"page": "2", "page_size": "10"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 10)
+        self.assertTrue(response.json()["pagination"]["more"])
+        
+        # Test third page (last page with 5 items)
+        response = self.client.get(url, data={"page": "3", "page_size": "10"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 5)
+        self.assertFalse(response.json()["pagination"]["more"])
+
+    def test_autocomplete_bbox_pagination_more_field_false(self):
+        self.factory_class.create_batch(5, name="Test")
+        url = reverse(f"zoning:{self.layer}-autocomplete-bbox")
+        response = self.client.get(url, data={"q": "Test", "page_size": "10"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 5)
+        self.assertFalse(response.json()["pagination"]["more"])
+
+    def test_autocomplete_bbox_pagination_more_field_true(self):
+        self.factory_class.create_batch(15, name="Test")
+        url = reverse(f"zoning:{self.layer}-autocomplete-bbox")
+        response = self.client.get(url, data={"q": "Test", "page_size": "10"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 10)
+        self.assertTrue(response.json()["pagination"]["more"])
+
+    def test_autocomplete_bbox_page_beyond_data(self):
+        self.factory_class.create_batch(5, name="Test")
+        url = reverse(f"zoning:{self.layer}-autocomplete-bbox")
+        response = self.client.get(url, data={"q": "Test", "page": "10", "page_size": "10"})
+        self.assertEqual(response.status_code, 200, response.json())
+        # Django's Paginator.get_page() returns the last page when page is beyond data
+        self.assertEqual(len(response.json()["results"]), 5)
+        self.assertFalse(response.json()["pagination"]["more"])
+
+    def test_autocomplete_bbox_invalid_page_parameter(self):
+        self.factory_class.create_batch(5, name="Test")
+        url = reverse(f"zoning:{self.layer}-autocomplete-bbox")
+        # Django's Paginator treats invalid page as page 1
+        response = self.client.get(url, data={"q": "Test", "page": "invalid"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 5)
+
+    def test_autocomplete_bbox_invalid_page_size_parameter(self):
+        self.factory_class.create_batch(15, name="Test")
+        url = reverse(f"zoning:{self.layer}-autocomplete-bbox")
+        # Django's Paginator will raise error on invalid page_size, but get_page handles it
+        response = self.client.get(url, data={"q": "Test", "page_size": "invalid"})
+        # Should default or handle gracefully
+        self.assertEqual(response.status_code, 200, response.json())
+
+    def test_autocomplete_custom_page_size(self):
+        self.factory_class.create_batch(20, name="Test")
+        url = reverse(f"zoning:{self.layer}-autocomplete")
+        response = self.client.get(url, data={"q": "Test", "page_size": "5"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 5)
+        self.assertTrue(response.json()["pagination"]["more"])
+
+    def test_autocomplete_pagination_different_pages(self):
+        # Create items with predictable names for verification
+        items = [self.factory_class(name=f"Item{i:02d}") for i in range(25)]
+        url = reverse(f"zoning:{self.layer}-autocomplete")
+        
+        # Test first page
+        response = self.client.get(url, data={"page": "1", "page_size": "10"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 10)
+        self.assertTrue(response.json()["pagination"]["more"])
+        
+        # Test second page
+        response = self.client.get(url, data={"page": "2", "page_size": "10"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 10)
+        self.assertTrue(response.json()["pagination"]["more"])
+        
+        # Test third page (last page with 5 items)
+        response = self.client.get(url, data={"page": "3", "page_size": "10"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 5)
+        self.assertFalse(response.json()["pagination"]["more"])
+
+    def test_autocomplete_pagination_more_field_false(self):
+        self.factory_class.create_batch(5, name="Test")
+        url = reverse(f"zoning:{self.layer}-autocomplete")
+        response = self.client.get(url, data={"q": "Test", "page_size": "10"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 5)
+        self.assertFalse(response.json()["pagination"]["more"])
+
+    def test_autocomplete_pagination_more_field_true(self):
+        self.factory_class.create_batch(15, name="Test")
+        url = reverse(f"zoning:{self.layer}-autocomplete")
+        response = self.client.get(url, data={"q": "Test", "page_size": "10"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 10)
+        self.assertTrue(response.json()["pagination"]["more"])
+
+    def test_autocomplete_page_beyond_data(self):
+        self.factory_class.create_batch(5, name="Test")
+        url = reverse(f"zoning:{self.layer}-autocomplete")
+        response = self.client.get(url, data={"q": "Test", "page": "10", "page_size": "10"})
+        self.assertEqual(response.status_code, 200, response.json())
+        # Django's Paginator.get_page() returns the last page when page is beyond data
+        self.assertEqual(len(response.json()["results"]), 5)
+        self.assertFalse(response.json()["pagination"]["more"])
+
+    def test_autocomplete_invalid_page_parameter(self):
+        self.factory_class.create_batch(5, name="Test")
+        url = reverse(f"zoning:{self.layer}-autocomplete")
+        # Django's Paginator treats invalid page as page 1
+        response = self.client.get(url, data={"q": "Test", "page": "invalid"})
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 5)
+
+    def test_autocomplete_invalid_page_size_parameter(self):
+        self.factory_class.create_batch(15, name="Test")
+        url = reverse(f"zoning:{self.layer}-autocomplete")
+        # Django's Paginator will raise error on invalid page_size, but get_page handles it
+        response = self.client.get(url, data={"q": "Test", "page_size": "invalid"})
+        # Should default or handle gracefully
+        self.assertEqual(response.status_code, 200, response.json())
+
     def test_autocomplete_by_id_exists(self):
         instance = self.factory_class()
         url = reverse(f"zoning:{self.layer}-autocomplete")
