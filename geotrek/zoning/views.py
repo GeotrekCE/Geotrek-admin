@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
+from django.core.paginator import Paginator
 from django.db.models import Q
 from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
@@ -29,19 +30,29 @@ class AutocompleteMixin:
     serializer_autocomplete_class = None
     serializer_autocomplete_bbox_class = None
 
-    @action(detail=False)
-    def autocomplete_bbox(self, request, *args, **kwargs):
-        qs = self.get_queryset_autocomplete_bbox()
-        q = self.request.query_params.get("q")
-        qs = qs.filter(self._get_filters(q)) if q else qs
-        serializer = self.serializer_autocomplete_bbox_class(qs[:10], many=True)
-        return Response({"results": serializer.data})
-
     def _get_filters(self, q):
         filters = Q()
         for field in self.autocomplete_search_fields:
             filters |= Q(**{f"{field}__icontains": q})
         return filters
+
+    def paginate_autocomplete(self, request, queryset):
+        page_number = request.query_params.get("page", 1)
+        page_size = request.query_params.get("page_size", 10)
+        paginator = Paginator(queryset, page_size)
+        paginated_qs = paginator.get_page(page_number)
+        return paginated_qs, paginated_qs.has_next()
+
+    @action(detail=False)
+    def autocomplete_bbox(self, request, *args, **kwargs):
+        qs = self.get_queryset_autocomplete_bbox()
+        q = self.request.query_params.get("q")
+
+        qs, has_more = self.paginate_autocomplete(self.request, qs.filter(self._get_filters(q)) if q else qs)
+
+        serializer = self.serializer_autocomplete_bbox_class(qs, many=True)
+        return Response({"results": serializer.data, "pagination": {"more": has_more}})
+
 
     @action(detail=False)
     def autocomplete(self, request, *args, **kwargs):
@@ -56,13 +67,14 @@ class AutocompleteMixin:
                 return Response({})
             serializer = self.serializer_autocomplete_class(instance)
             data = serializer.data
+
         else:
-            q = self.request.query_params.get(
-                "q"
-            )  # filter with q parameter is standard for select2 (dal)
-            qs = qs.filter(self._get_filters(q)) if q else qs
-            serializer = self.serializer_autocomplete_class(qs[:10], many=True)
-            data = {"results": serializer.data}
+            q = self.request.query_params.get("q")
+            qs, has_more = self.paginate_autocomplete(request, qs.filter(self._get_filters(q)) if q else qs)
+
+            serializer = self.serializer_autocomplete_class(qs, many=True)
+            data = {"results": serializer.data, "pagination": {"more": has_more}}
+
         return Response(data)
 
 

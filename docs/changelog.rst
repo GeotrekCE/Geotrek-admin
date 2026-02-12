@@ -6,11 +6,20 @@ CHANGELOG
 ----------------------------
 
 **Performances**
-* Add the select2 autocomplete behaviour to the restricted area filters
+
+* Add autocomplete by API behaviour to Restricted area filters
+
+**Improvements**
+
+* Get infinite scrolling on autocomplete API endpoint
 
 
 2.124.0         (2026-02-11)
 ----------------------------
+
+**Performances**
+
+* Add autocomplete by API behaviour to City and Districts filters
 
 
 2.123.1         (2026-01-29)
