@@ -130,10 +130,10 @@ class RestrictedAreaViewSet(
         return qs
 
     def get_queryset_autocomplete(self):
-        return self.model.objects.only("name", "id").order_by("name")
+        return self.model.objects.only("name", "id")
 
     def get_queryset_autocomplete_bbox(self):
-        return self.model.objects.only("name", "envelope").order_by("name")
+        return self.model.objects.only("name", "envelope")
 
 
 class DistrictViewSet(
