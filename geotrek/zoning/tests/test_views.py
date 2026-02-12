@@ -85,7 +85,9 @@ class AutocompleteTestMixin:
     def test_autocomplete_bbox_page_beyond_data(self):
         self.factory_class.create_batch(5, name="Test")
         url = reverse(f"zoning:{self.layer}-autocomplete-bbox")
-        response = self.client.get(url, data={"q": "Test", "page": "10", "page_size": "10"})
+        response = self.client.get(
+            url, data={"q": "Test", "page": "10", "page_size": "10"}
+        )
         self.assertEqual(response.status_code, 200, response.json())
         # Django's Paginator.get_page() returns the last page when page is beyond data
         self.assertEqual(len(response.json()["results"]), 5)
@@ -159,7 +161,9 @@ class AutocompleteTestMixin:
     def test_autocomplete_page_beyond_data(self):
         self.factory_class.create_batch(5, name="Test")
         url = reverse(f"zoning:{self.layer}-autocomplete")
-        response = self.client.get(url, data={"q": "Test", "page": "10", "page_size": "10"})
+        response = self.client.get(
+            url, data={"q": "Test", "page": "10", "page_size": "10"}
+        )
         self.assertEqual(response.status_code, 200, response.json())
         # Django's Paginator.get_page() returns the last page when page is beyond data
         self.assertEqual(len(response.json()["results"]), 5)
