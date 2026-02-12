@@ -43,22 +43,23 @@ class AutocompleteTestMixin:
         self.assertTrue(response.json()["pagination"]["more"])
 
     def test_autocomplete_bbox_pagination_different_pages(self):
-        # Create items with predictable names for verification
-        items = [self.factory_class(name=f"Item{i:02d}") for i in range(25)]
+        # Create 25 items to test pagination across multiple pages
+        for i in range(25):
+            self.factory_class(name=f"Item{i:02d}")
         url = reverse(f"zoning:{self.layer}-autocomplete-bbox")
-        
+
         # Test first page
         response = self.client.get(url, data={"page": "1", "page_size": "10"})
         self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(len(response.json()["results"]), 10)
         self.assertTrue(response.json()["pagination"]["more"])
-        
+
         # Test second page
         response = self.client.get(url, data={"page": "2", "page_size": "10"})
         self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(len(response.json()["results"]), 10)
         self.assertTrue(response.json()["pagination"]["more"])
-        
+
         # Test third page (last page with 5 items)
         response = self.client.get(url, data={"page": "3", "page_size": "10"})
         self.assertEqual(response.status_code, 200, response.json())
@@ -115,22 +116,23 @@ class AutocompleteTestMixin:
         self.assertTrue(response.json()["pagination"]["more"])
 
     def test_autocomplete_pagination_different_pages(self):
-        # Create items with predictable names for verification
-        items = [self.factory_class(name=f"Item{i:02d}") for i in range(25)]
+        # Create 25 items to test pagination across multiple pages
+        for i in range(25):
+            self.factory_class(name=f"Item{i:02d}")
         url = reverse(f"zoning:{self.layer}-autocomplete")
-        
+
         # Test first page
         response = self.client.get(url, data={"page": "1", "page_size": "10"})
         self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(len(response.json()["results"]), 10)
         self.assertTrue(response.json()["pagination"]["more"])
-        
+
         # Test second page
         response = self.client.get(url, data={"page": "2", "page_size": "10"})
         self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(len(response.json()["results"]), 10)
         self.assertTrue(response.json()["pagination"]["more"])
-        
+
         # Test third page (last page with 5 items)
         response = self.client.get(url, data={"page": "3", "page_size": "10"})
         self.assertEqual(response.status_code, 200, response.json())

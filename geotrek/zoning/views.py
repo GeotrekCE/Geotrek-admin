@@ -41,12 +41,12 @@ class AutocompleteMixin:
             page_number = int(request.query_params.get("page", 1))
         except (TypeError, ValueError):
             page_number = 1
-        
+
         try:
             page_size = int(request.query_params.get("page_size", 10))
         except (TypeError, ValueError):
             page_size = 10
-        
+
         paginator = Paginator(queryset, page_size)
         paginated_qs = paginator.get_page(page_number)
         return paginated_qs, paginated_qs.has_next()
