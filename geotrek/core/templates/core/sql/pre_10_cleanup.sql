@@ -8,6 +8,7 @@ DROP FUNCTION IF EXISTS st_line_extend(geometry, double precision, double precis
 DROP FUNCTION IF EXISTS ft_IsBefore(geometry, geometry) CASCADE;
 DROP FUNCTION IF EXISTS ft_IsAfter(geometry, geometry) CASCADE;
 DROP FUNCTION IF EXISTS ft_Smart_MakeLine(geometry[]) CASCADE;
+DROP FUNCTION IF EXISTS TopologyIsValid(integer) CASCADE;
 
 -- 20
 

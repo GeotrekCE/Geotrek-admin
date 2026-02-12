@@ -1,6 +1,5 @@
 from dal import autocomplete
 from django.conf import settings
-from django.db.models import Count, F, Q
 from django.forms import widgets
 from django.utils.translation import gettext_lazy as _
 from django_filters import (
@@ -12,17 +11,18 @@ from django_filters import (
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import RightFilter
-from geotrek.common.functions import GeometryType
 from geotrek.common.models import Provider
 from geotrek.maintenance import models as maintenance_models
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
+from .functions import TopologyIsValid
 
 from .models import CertificationLabel, Comfort, Network, Path, Topology, Trail, Usage
 
 
 class ValidTopologyFilterSet(FilterSet):
     if settings.TREKKING_TOPOLOGY_ENABLED:
+        coupled = BooleanFilter()
         is_valid_topology = BooleanFilter(
             label=_("Valid topology"),
             method="filter_valid_topology",
@@ -33,16 +33,8 @@ class ValidTopologyFilterSet(FilterSet):
 
     def filter_valid_topology(self, qs, name, value):
         if value is not None:
-            qs = qs.annotate(
-                distinct_same_order=Count("aggregations__order", distinct=True),
-                same_order=Count("aggregations__order"),
-            )
-            if value is True:
-                qs = qs.filter(same_order__gt=0, same_order=F("distinct_same_order"))
-            elif value is False:
-                qs = qs.filter(
-                    Q(same_order=0) | Q(distinct_same_order__lt=F("same_order"))
-                )
+            id_column = 'id' if qs.model == Topology else 'topo_object_id'
+            qs = qs.alias(topology_is_valid=TopologyIsValid(id_column)).filter(topology_is_valid=value)
         return qs
 
 

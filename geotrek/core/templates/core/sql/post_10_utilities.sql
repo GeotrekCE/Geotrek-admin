@@ -249,7 +249,6 @@ BEGIN
     FROM core_pathaggregation
     WHERE topo_object_id = topology_id
     AND start_position != end_position;
-    -- TODO: check que l'offset soit le même ? Et qu'il soit à 0 pour les intersections ?
 
     IF is_point_topology THEN
         RETURN TRUE;
@@ -264,7 +263,6 @@ BEGIN
         RETURN FALSE;
     END IF;
 
-    -- TODO: check que l'offset soit le même ? Ou reconstituer les géométries des start et end en prenant l'offset en compte ?
     -- Check the sequential connectivity
     prev_path_id := NULL;
 
@@ -292,33 +290,6 @@ BEGIN
     END LOOP;
 
     RETURN TRUE;
-
---     -- Get all path aggregations for this topology
---     SELECT
---         id,
---         start_position,
---         end_position,
---         "order",
---         path_id
---     FROM core_pathaggregation
---     WHERE topo_object_id = topology_id
---     INTO path_aggregs;
---
---     -- Check for duplicate orders amongst these path aggregations
---     IF EXISTS (
---         SELECT 1
---         FROM core_pathaggregation
---         WHERE topo_object_id = topology_id
---         GROUP BY "order"
---         HAVING COUNT(*) > 1
---     ) THEN
---         RETURN FALSE;
---     END IF;
---
---     -- TODO: un ponctuel sur une intersection a autant de path aggreg que de tronçons dans
---     -- l'intersection : cette fonction va retourner False, est-ce que c'est pertinent ?
---
---     -- RETURN ...;
 END;
 
 $$ LANGUAGE plpgsql;
