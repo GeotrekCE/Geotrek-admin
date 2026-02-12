@@ -8,6 +8,7 @@ Zoning models
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.indexes import GistIndex
+from django.db.models import Index
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.mixins.models import BBoxMixin, TimeStampedModelMixin
@@ -24,7 +25,7 @@ class RestrictedAreaType(models.Model):
 
 
 class RestrictedArea(TimeStampedModelMixin, BBoxMixin, models.Model):
-    name = models.CharField(max_length=250, verbose_name=_("Name"))
+    name = models.CharField(max_length=250, verbose_name=_("Name"), db_index=True)
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     area_type = models.ForeignKey(
         RestrictedAreaType, verbose_name=_("Restricted area"), on_delete=models.PROTECT
@@ -51,6 +52,7 @@ class RestrictedArea(TimeStampedModelMixin, BBoxMixin, models.Model):
         verbose_name_plural = _("Restricted areas")
         indexes = [
             GistIndex(name="restrictedarea_geom_gist_idx", fields=["geom"]),
+            Index(name="restrictedarea_type_name_idx", fields=["area_type_id", "name"]),
         ]
         constraints = [
             models.CheckConstraint(
