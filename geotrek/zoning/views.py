@@ -48,11 +48,12 @@ class AutocompleteMixin:
         qs = self.get_queryset_autocomplete_bbox()
         q = self.request.query_params.get("q")
 
-        qs, has_more = self.paginate_autocomplete(self.request, qs.filter(self._get_filters(q)) if q else qs)
+        qs, has_more = self.paginate_autocomplete(
+            self.request, qs.filter(self._get_filters(q)) if q else qs
+        )
 
         serializer = self.serializer_autocomplete_bbox_class(qs, many=True)
         return Response({"results": serializer.data, "pagination": {"more": has_more}})
-
 
     @action(detail=False)
     def autocomplete(self, request, *args, **kwargs):
@@ -70,7 +71,9 @@ class AutocompleteMixin:
 
         else:
             q = self.request.query_params.get("q")
-            qs, has_more = self.paginate_autocomplete(request, qs.filter(self._get_filters(q)) if q else qs)
+            qs, has_more = self.paginate_autocomplete(
+                request, qs.filter(self._get_filters(q)) if q else qs
+            )
 
             serializer = self.serializer_autocomplete_class(qs, many=True)
             data = {"results": serializer.data, "pagination": {"more": has_more}}
@@ -127,10 +130,10 @@ class RestrictedAreaViewSet(
         return qs
 
     def get_queryset_autocomplete(self):
-        return self.model.objects.only("name", "id")
+        return self.model.objects.only("name", "id").order_by("name")
 
     def get_queryset_autocomplete_bbox(self):
-        return self.model.objects.only("name", "envelope")
+        return self.model.objects.only("name", "envelope").order_by("name")
 
 
 class DistrictViewSet(
