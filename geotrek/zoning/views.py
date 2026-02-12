@@ -18,8 +18,8 @@ from .serializers import (
     DistrictAutoCompleteBBoxSerializer,
     DistrictAutoCompleteSerializer,
     DistrictSerializer,
-    RestrictedAreaSerializer,
     RestrictedAreaAutoCompleteSerializer,
+    RestrictedAreaSerializer,
 )
 
 
@@ -83,7 +83,9 @@ class LandGeoJSONAPIViewMixin:
         return super().list(request, *args, **kwargs)
 
 
-class RestrictedAreaViewSet(AutocompleteMixin, LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet):
+class RestrictedAreaViewSet(
+    AutocompleteMixin, LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet
+):
     model = RestrictedArea
     serializer_class = RestrictedAreaSerializer
     serializer_autocomplete_class = RestrictedAreaAutoCompleteSerializer

@@ -5,6 +5,9 @@ CHANGELOG
 2.124.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Performances**
+* Add the select2 autocomplete behaviour to the restricted area filters
+
 
 2.124.0         (2026-02-11)
 ----------------------------
