@@ -104,14 +104,6 @@ class RestrictedAreaViewTest(AutocompleteTestMixin, LandLayersViewsTest, APITest
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200, response.json())
 
-    # Restricted area do not have autocomplete bbox filter
-    def test_autocomplete_bbox_is_limit_by_10(self):
-        pass
-
-    # Restricted area do not have autocomplete bbox filter
-    def test_autocomplete_bbox_has_default_values(self):
-        pass
-
 
 class RestrictedAreasSerializationTest(TestCase):
     @classmethod

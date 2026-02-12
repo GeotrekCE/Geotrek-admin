@@ -18,6 +18,7 @@ from .serializers import (
     DistrictAutoCompleteBBoxSerializer,
     DistrictAutoCompleteSerializer,
     DistrictSerializer,
+    RestrictedAreaAutoCompleteBBoxSerializer,
     RestrictedAreaAutoCompleteSerializer,
     RestrictedAreaSerializer,
 )
@@ -89,6 +90,7 @@ class RestrictedAreaViewSet(
     model = RestrictedArea
     serializer_class = RestrictedAreaSerializer
     serializer_autocomplete_class = RestrictedAreaAutoCompleteSerializer
+    serializer_autocomplete_bbox_class = RestrictedAreaAutoCompleteBBoxSerializer
     autocomplete_search_fields = ["name"]
 
     def view_cache_key(self):
@@ -114,6 +116,9 @@ class RestrictedAreaViewSet(
 
     def get_queryset_autocomplete(self):
         return self.model.objects.only("name", "id")
+
+    def get_queryset_autocomplete_bbox(self):
+        return self.model.objects.only("name", "envelope")
 
 
 class DistrictViewSet(
