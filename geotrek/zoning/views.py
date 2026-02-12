@@ -39,12 +39,14 @@ class AutocompleteMixin:
     def paginate_autocomplete(self, request, queryset):
         try:
             page_number = int(request.query_params.get("page", 1))
-        except (TypeError, ValueError):
+        except ValueError:
+            # Handle invalid page parameter by defaulting to page 1
             page_number = 1
 
         try:
             page_size = int(request.query_params.get("page_size", 10))
-        except (TypeError, ValueError):
+        except ValueError:
+            # Handle invalid page_size parameter by defaulting to 10
             page_size = 10
 
         paginator = Paginator(queryset, page_size)

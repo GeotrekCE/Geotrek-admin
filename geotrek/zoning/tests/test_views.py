@@ -45,7 +45,7 @@ class AutocompleteTestMixin:
     def test_autocomplete_bbox_pagination_different_pages(self):
         # Create 25 items to test pagination across multiple pages
         for i in range(25):
-            self.factory_class(name=f"Item{i:02d}")
+            self.factory_class(name=f"Item{i}")
         url = reverse(f"zoning:{self.layer}-autocomplete-bbox")
 
         # Test first page
@@ -119,7 +119,7 @@ class AutocompleteTestMixin:
     def test_autocomplete_pagination_different_pages(self):
         # Create 25 items to test pagination across multiple pages
         for i in range(25):
-            self.factory_class(name=f"Item{i:02d}")
+            self.factory_class(name=f"Item{i}")
         url = reverse(f"zoning:{self.layer}-autocomplete")
 
         # Test first page
