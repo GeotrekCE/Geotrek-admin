@@ -102,9 +102,8 @@ class AutocompleteTestMixin:
     def test_autocomplete_bbox_invalid_page_size_parameter(self):
         self.factory_class.create_batch(15, name="Test")
         url = reverse(f"zoning:{self.layer}-autocomplete-bbox")
-        # Django's Paginator will raise error on invalid page_size, but get_page handles it
+        # View code handles invalid page_size by converting to int and defaulting to 10
         response = self.client.get(url, data={"q": "Test", "page_size": "invalid"})
-        # Should default or handle gracefully
         self.assertEqual(response.status_code, 200, response.json())
 
     def test_autocomplete_custom_page_size(self):
@@ -175,9 +174,8 @@ class AutocompleteTestMixin:
     def test_autocomplete_invalid_page_size_parameter(self):
         self.factory_class.create_batch(15, name="Test")
         url = reverse(f"zoning:{self.layer}-autocomplete")
-        # Django's Paginator will raise error on invalid page_size, but get_page handles it
+        # View code handles invalid page_size by converting to int and defaulting to 10
         response = self.client.get(url, data={"q": "Test", "page_size": "invalid"})
-        # Should default or handle gracefully
         self.assertEqual(response.status_code, 200, response.json())
 
     def test_autocomplete_by_id_exists(self):
