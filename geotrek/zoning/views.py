@@ -19,6 +19,7 @@ from .serializers import (
     DistrictAutoCompleteSerializer,
     DistrictSerializer,
     RestrictedAreaSerializer,
+    RestrictedAreaAutoCompleteSerializer,
 )
 
 
@@ -82,9 +83,11 @@ class LandGeoJSONAPIViewMixin:
         return super().list(request, *args, **kwargs)
 
 
-class RestrictedAreaViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet):
+class RestrictedAreaViewSet(AutocompleteMixin, LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewSet):
     model = RestrictedArea
     serializer_class = RestrictedAreaSerializer
+    serializer_autocomplete_class = RestrictedAreaAutoCompleteSerializer
+    autocomplete_search_fields = ["name"]
 
     def view_cache_key(self):
         """Used by the ``view_cache_response_content`` decorator."""
@@ -106,6 +109,9 @@ class RestrictedAreaViewSet(LandGeoJSONAPIViewMixin, viewsets.ReadOnlyModelViewS
             get_object_or_404(RestrictedAreaType, pk=type_pk)
             qs = qs.filter(area_type=type_pk)
         return qs
+
+    def get_queryset_autocomplete(self):
+        return self.model.objects.only("name", "id")
 
 
 class DistrictViewSet(

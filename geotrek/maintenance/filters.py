@@ -230,7 +230,12 @@ class InterventionFilterSet(
         label=_("Restricted area"),
         required=False,
         lookup_expr="intersects",
-        widget=autocomplete.Select2Multiple(),
+        widget=autocomplete.Select2Multiple(
+            url="zoning:restrictedarea-autocomplete",
+            attrs={
+                "data-placeholder": _("Restricted area"),
+            },
+        ),
     )
     city = InterventionIntersectionFilterCity(
         label=_("City"),
@@ -325,7 +330,12 @@ class ProjectFilterSet(StructureRelatedFilterSet):
         label=_("Restricted area"),
         lookup_expr="intersects",
         required=False,
-        widget=autocomplete.Select2Multiple(),
+        widget=autocomplete.ModelSelect2Multiple(
+            url="zoning:restrictedarea-autocomplete",
+            attrs={
+                "data-placeholder": _("Restricted area"),
+            },
+        ),
     )
     contractors = ModelMultipleChoiceFilter(
         label=_("Contractors"),

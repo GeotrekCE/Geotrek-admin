@@ -69,3 +69,12 @@ class DistrictAutoCompleteBBoxSerializer(DistrictAutoCompleteSerializer):
 class RestrictedAreaSerializer(LandLayerSerializerMixin):
     class Meta(LandLayerSerializerMixin.Meta):
         model = zoning_models.RestrictedArea
+
+
+class RestrictedAreaAutoCompleteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="pk")
+    text = serializers.CharField(source="name")
+
+    class Meta:
+        model = zoning_models.RestrictedArea
+        fields = ["id", "text"]

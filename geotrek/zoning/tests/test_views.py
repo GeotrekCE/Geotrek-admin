@@ -83,7 +83,7 @@ class DistrictViewSetTestCase(AutocompleteTestMixin, LandLayersViewsTest, APITes
     factory_class = DistrictFactory
 
 
-class RestrictedAreaViewTest(LandLayersViewsTest, APITestCase):
+class RestrictedAreaViewTest(AutocompleteTestMixin, LandLayersViewsTest, APITestCase):
     layer = "restrictedarea"
     factory_class = RestrictedAreaFactory
 
@@ -103,6 +103,14 @@ class RestrictedAreaViewTest(LandLayersViewsTest, APITestCase):
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200, response.json())
+        
+    # Restricted area do not have autocomplete bbox filter    
+    def test_autocomplete_bbox_is_limit_by_10(self):
+        pass
+
+    # Restricted area do not have autocomplete bbox filter   
+    def test_autocomplete_bbox_has_default_values(self):
+        pass
 
 
 class RestrictedAreasSerializationTest(TestCase):
