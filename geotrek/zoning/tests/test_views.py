@@ -94,7 +94,7 @@ class AutocompleteTestMixin:
     def test_autocomplete_bbox_invalid_page_parameter(self):
         self.factory_class.create_batch(5, name="Test")
         url = reverse(f"zoning:{self.layer}-autocomplete-bbox")
-        # Django's Paginator treats invalid page as page 1
+        # View error handling treats invalid page as page 1
         response = self.client.get(url, data={"q": "Test", "page": "invalid"})
         self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(len(response.json()["results"]), 5)
@@ -105,6 +105,8 @@ class AutocompleteTestMixin:
         # View code handles invalid page_size by converting to int and defaulting to 10
         response = self.client.get(url, data={"q": "Test", "page_size": "invalid"})
         self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 10)
+        self.assertTrue(response.json()["pagination"]["more"])
 
     def test_autocomplete_custom_page_size(self):
         self.factory_class.create_batch(20, name="Test")
@@ -166,7 +168,7 @@ class AutocompleteTestMixin:
     def test_autocomplete_invalid_page_parameter(self):
         self.factory_class.create_batch(5, name="Test")
         url = reverse(f"zoning:{self.layer}-autocomplete")
-        # Django's Paginator treats invalid page as page 1
+        # View error handling treats invalid page as page 1
         response = self.client.get(url, data={"q": "Test", "page": "invalid"})
         self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(len(response.json()["results"]), 5)
@@ -177,6 +179,8 @@ class AutocompleteTestMixin:
         # View code handles invalid page_size by converting to int and defaulting to 10
         response = self.client.get(url, data={"q": "Test", "page_size": "invalid"})
         self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 10)
+        self.assertTrue(response.json()["pagination"]["more"])
 
     def test_autocomplete_by_id_exists(self):
         instance = self.factory_class()
