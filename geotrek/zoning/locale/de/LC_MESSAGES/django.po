@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-26 13:34+0000\n"
+"POT-Creation-Date: 2026-02-12 10:06+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/de/>\n"
@@ -39,6 +39,9 @@ msgstr "Eingeschränkter Bereichstyp"
 msgid "Restricted area"
 msgstr "Regulatorische Zonierung"
 
+msgid "Restricted Area"
+msgstr "Regulatorische Zonierung"
+
 msgid "Restricted areas"
 msgstr "Regulatorische Zonierung"
 
@@ -67,6 +70,3 @@ msgstr "Die Geometrie des Feldes '{src}' ist ungültig."
 #, python-brace-format
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
 msgstr "Der Geometrietyp des Feldes '{src}' ist ungültig. Es sollte (Multi)Polygon, nicht {geom_type}"
-
-msgid "Restricted Area"
-msgstr "Regulatorische Zonierung"
