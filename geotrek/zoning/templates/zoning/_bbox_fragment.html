@@ -10,25 +10,20 @@
       {{ form.bbox_district }}
 {% endif %}
 
-{% if bbox_areas %}
-<label for="bbox_areas"></label>
-<select id="bbox_areas" class="chzn-select">
-    <option value="" selected>{% trans "Restricted Area" %}</option>
-    {% for bbox in bbox_areas %}
-        <option value="{{ bbox.1|join:',' }}">{{ bbox.0 }}</option>
-    {% endfor %}
-</select>
+
+{% if form.bbox_restrictedarea %}
+      {{ form.bbox_restrictedarea }}
 {% endif %}
 
 <script type="text/javascript">
     $(document).ready(function() {
-        $('#id_bbox_city, #id_bbox_district, #bbox_areas').on('change', function() {
+        $('#id_bbox_city, #id_bbox_district, #id_bbox_restrictedarea').on('change', function() {
             var mainmap = window.maps[0],
                 bboxval = $(this).val();
 
             // Clear other filters, but keep this one of course
             var self = this;
-            $('#id_bbox_city, #id_bbox_district, #bbox_areas').each(function() {
+            $('#id_bbox_city, #id_bbox_district, #id_bbox_restrictedarea').each(function() {
                 if (self != this) {
                     $(this).val('');
                     $(this).removeClass('filter-set');

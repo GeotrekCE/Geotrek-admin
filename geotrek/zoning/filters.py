@@ -78,5 +78,10 @@ class ZoningFilterSet(FilterSet):
     area = IntersectionFilterRestrictedArea(
         label=_("Restricted area"),
         required=False,
-        widget=autocomplete.Select2Multiple(),
+        widget=autocomplete.ModelSelect2Multiple(
+            url="zoning:restrictedarea-autocomplete",
+            attrs={
+                "data-placeholder": _("Restricted area"),
+            },
+        ),
     )

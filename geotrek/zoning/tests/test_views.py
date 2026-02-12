@@ -83,7 +83,7 @@ class DistrictViewSetTestCase(AutocompleteTestMixin, LandLayersViewsTest, APITes
     factory_class = DistrictFactory
 
 
-class RestrictedAreaViewTest(LandLayersViewsTest, APITestCase):
+class RestrictedAreaViewTest(AutocompleteTestMixin, LandLayersViewsTest, APITestCase):
     layer = "restrictedarea"
     factory_class = RestrictedAreaFactory
 
