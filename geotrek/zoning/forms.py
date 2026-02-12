@@ -39,7 +39,7 @@ class MapFilterForm(forms.Form):
                 widget=autocomplete.ModelSelect2(
                     url="zoning:restrictedarea-autocomplete-bbox",
                     attrs={
-                        "data-placeholder": _("Restricted Area"),
+                        "data-placeholder": _("Restricted area"),
                     },
                 ),
                 required=False,
