@@ -15,7 +15,7 @@ from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import PointTopologyWidget
 from geotrek.infrastructure.forms import BaseInfrastructureForm
-from geotrek.signage.models import Blade, Line, Signage, LinePictogram
+from geotrek.signage.models import Blade, Line, LinePictogram, Signage
 
 
 class LineForm(forms.ModelForm):
@@ -40,10 +40,9 @@ class LineForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout(*fields_for_layout)
         self.fields["pictograms"].widget = autocomplete.Select2Multiple(
-            attrs={'data-theme': 'bootstrap4'},
+            attrs={"data-theme": "bootstrap4"},
         )
         self.fields["pictograms"].queryset = LinePictogram.objects.all()
-
 
     class Meta:
         fields = (

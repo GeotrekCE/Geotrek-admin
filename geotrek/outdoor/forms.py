@@ -13,16 +13,12 @@ class SiteForm(CommonForm):
     orientation = forms.MultipleChoiceField(
         choices=Site.ORIENTATION_CHOICES,
         required=False,
-        widget=autocomplete.Select2Multiple(
-            attrs={"data-theme": 'bootstrap4'}
-        )
+        widget=autocomplete.Select2Multiple(attrs={"data-theme": "bootstrap4"}),
     )
     wind = forms.MultipleChoiceField(
         choices=Site.ORIENTATION_CHOICES,
         required=False,
-        widget=autocomplete.Select2Multiple(
-            attrs={"data-theme": 'bootstrap4'}
-        )
+        widget=autocomplete.Select2Multiple(attrs={"data-theme": "bootstrap4"}),
     )
 
     geomfields = ["geom"]
@@ -104,7 +100,9 @@ class SiteForm(CommonForm):
                 queryset=scale.ratings.all(),
                 required=False,
                 initial=ratings if ratings else None,
-                widget=autocomplete.Select2Multiple(attrs={"data-theme": "bootstrap4", 'data-width': "100%"}),
+                widget=autocomplete.Select2Multiple(
+                    attrs={"data-theme": "bootstrap4", "data-width": "100%"}
+                ),
             )
             right_after_type_index = self.fieldslayout[0].fields.index("type") + 1
             self.fieldslayout[0].insert(right_after_type_index, fieldname)
@@ -240,7 +238,9 @@ class CourseForm(CommonForm):
                 queryset=scale.ratings.all(),
                 required=False,
                 initial=ratings[0] if ratings else None,
-                widget=autocomplete.ListSelect2(attrs={"data-theme": "bootstrap4", 'data-width': "100%"}),
+                widget=autocomplete.ListSelect2(
+                    attrs={"data-theme": "bootstrap4", "data-width": "100%"}
+                ),
             )
             right_after_type_index = self.fieldslayout[0].fields.index("type") + 1
             self.fieldslayout[0].insert(right_after_type_index, fieldname)

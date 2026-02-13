@@ -16,8 +16,8 @@ from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
 from geotrek.feedback.models import WorkflowManager
 
-from .models import Intervention, InterventionJob, InterventionStatus, ManDay, Project
 from ..common.models import Organism
+from .models import Intervention, InterventionJob, InterventionStatus, ManDay, Project
 
 if "geotrek.feedback" in settings.INSTALLED_APPS:
     from geotrek.feedback.models import Report, ReportStatus, TimerEvent
@@ -38,7 +38,7 @@ class ManDayForm(forms.ModelForm):
         self.fields["nb_days"].widget.attrs["class"] = "input-mini"
         self.fields["job"].widget = autocomplete.ListSelect2(
             attrs={
-                "data-theme": 'bootstrap4',
+                "data-theme": "bootstrap4",
                 "class": "input-medium",
             }
         )
@@ -66,7 +66,7 @@ class FundingForm(forms.ModelForm):
         self.helper.layout = Layout("id", "amount", "organism")
         self.fields["organism"].widget.attrs["class"] = "input-xlarge"
         self.fields["organism"].widget = autocomplete.Select2Multiple(
-            attrs={'data-theme': 'bootstrap4'},
+            attrs={"data-theme": "bootstrap4"},
         )
         self.fields["organism"].queryset = Organism.objects.all()
 
