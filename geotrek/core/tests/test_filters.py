@@ -83,7 +83,7 @@ class ValidTopologyFilterTest(TestCase):
         cls.path3 = PathFactory(geom=LineStringInBounds((10, 10), (20, 10)))
 
     def test_valid_topology_no_aggregations(self):
-        """Topologies with path aggregations should be considered valid."""
+        """Topologies with no path aggregations should be considered valid."""
         POIFactory.create(name="POI", geom=PointInBounds(5, 0))
         TrekFactory.create(name="Trek", paths=[(self.path1, 0, 1)])
         PathAggregation.objects.all().delete()
@@ -213,70 +213,40 @@ class ValidTopologyFilterTest(TestCase):
 
         # This trek goes through the entirety of path1 and has one waypoint.
         # Its path aggregations orders is 0, 0, 1 instead of 0, 1, 2
-        trek_one_whole_path_one_waypoint = TrekFactory.create(name="Trek 1")
-        trek_one_whole_path_one_waypoint.add_path(
-            self.path1, start=0, end=0.5, order=0, reload=False
-        )
-        trek_one_whole_path_one_waypoint.add_path(
-            self.path1, start=0.5, end=0.5, order=0, reload=False
-        )  # Waypoint
-        trek_one_whole_path_one_waypoint.add_path(self.path1, start=0.5, end=1, order=1)
+        t1 = TrekFactory.create(name="Trek 1")
+        t1.add_path(self.path1, start=0, end=0.5, order=0, reload=False)
+        t1.add_path(self.path1, start=0.5, end=0.5, order=0, reload=False)  # Waypoint
+        t1.add_path(self.path1, start=0.5, end=1, order=1)
 
         # This trek goes through the entirety of path1 in reverse and has one waypoint.
         # Its path aggregations orders is 0, 0, 1 instead of 0, 1, 2
-        trek_one_whole_path_reverse_one_waypoint = TrekFactory.create(name="Trek 2")
-        trek_one_whole_path_reverse_one_waypoint.add_path(
-            self.path1, start=1, end=0.5, order=0, reload=False
-        )
-        trek_one_whole_path_reverse_one_waypoint.add_path(
-            self.path1, start=0.5, end=0.5, order=0, reload=False
-        )  # Waypoint
-        trek_one_whole_path_reverse_one_waypoint.add_path(
-            self.path1, start=0.5, end=0, order=1
-        )
+        t2 = TrekFactory.create(name="Trek 2")
+        t2.add_path(self.path1, start=1, end=0.5, order=0, reload=False)
+        t2.add_path(self.path1, start=0.5, end=0.5, order=0, reload=False)  # Waypoint
+        t2.add_path(self.path1, start=0.5, end=0, order=1)
 
         # This trek goes through a portion of path1 and has one waypoint.
         # Its path aggregations orders is 0, 0, 1 instead of 0, 1, 2
-        trek_one_path_portion_one_waypoint = TrekFactory.create(name="Trek 3")
-        trek_one_path_portion_one_waypoint.add_path(
-            self.path1, start=0.1, end=0.5, order=0, reload=False
-        )
-        trek_one_path_portion_one_waypoint.add_path(
-            self.path1, start=0.5, end=0.5, order=0, reload=False
-        )  # Waypoint
-        trek_one_path_portion_one_waypoint.add_path(
-            self.path1, start=0.5, end=0.9, order=1
-        )
+        t3 = TrekFactory.create(name="Trek 3")
+        t3.add_path(self.path1, start=0.1, end=0.5, order=0, reload=False)
+        t3.add_path(self.path1, start=0.5, end=0.5, order=0, reload=False)  # Waypoint
+        t3.add_path(self.path1, start=0.5, end=0.9, order=1)
 
         # This trek goes through the entirety of path1 and has two waypoints.
         # Its path aggregations orders is 0, 1, 2, 3, 1 instead of 0, 1, 2, 3, 4
-        trek_one_whole_path_two_waypoints = TrekFactory.create(name="Trek 4")
-        trek_one_whole_path_two_waypoints.add_path(
-            self.path1, start=0, end=0.3, order=0, reload=False
-        )
-        trek_one_whole_path_two_waypoints.add_path(
-            self.path1, start=0.3, end=0.3, order=1, reload=False
-        )  # Waypoint
-        trek_one_whole_path_two_waypoints.add_path(
-            self.path1, start=0.3, end=0.7, order=2, reload=False
-        )
-        trek_one_whole_path_two_waypoints.add_path(
-            self.path1, start=0.7, end=0.7, order=3, reload=False
-        )  # Waypoint
-        trek_one_whole_path_two_waypoints.add_path(
-            self.path1, start=0.7, end=1, order=1
-        )
+        t4 = TrekFactory.create(name="Trek 4")
+        t4.add_path(self.path1, start=0, end=0.3, order=0, reload=False)
+        t4.add_path(self.path1, start=0.3, end=0.3, order=1, reload=False)  # Waypoint
+        t4.add_path(self.path1, start=0.3, end=0.7, order=2, reload=False)
+        t4.add_path(self.path1, start=0.7, end=0.7, order=3, reload=False)  # Waypoint
+        t4.add_path(self.path1, start=0.7, end=1, order=1)
 
         # This trek goes through the entirety of paths 1, 2 and 3 and has no waypoint.
         # Its path aggregations orders is 0, 1, 0 instead of 0, 1, 2
-        trek_three_whole_paths_no_waypoint = TrekFactory.create(name="Trek 5")
-        trek_three_whole_paths_no_waypoint.add_path(
-            self.path1, start=0, end=1, order=0, reload=False
-        )
-        trek_three_whole_paths_no_waypoint.add_path(
-            self.path1, start=0, end=1, order=1, reload=False
-        )
-        trek_three_whole_paths_no_waypoint.add_path(self.path1, start=0, end=1, order=0)
+        t5 = TrekFactory.create(name="Trek 5")
+        t5.add_path(self.path1, start=0, end=1, order=0, reload=False)
+        t5.add_path(self.path1, start=0, end=1, order=1, reload=False)
+        t5.add_path(self.path1, start=0, end=1, order=0)
 
         # All these topologies should be considered invalid
         valid_qs = TrekFilterSet(data={"is_valid_topology": True}).qs
@@ -289,61 +259,37 @@ class ValidTopologyFilterTest(TestCase):
 
         # This trek goes through path1 and has one waypoint.
         # Its path aggregations orders is 0, 2, 1 instead of 0, 1, 2.
-        trek_one_path_one_waypoint_wrong_order = TrekFactory.create(name="Trek 1")
-        trek_one_path_one_waypoint_wrong_order.add_path(
-            self.path1, start=0, end=0.5, order=0, reload=False
-        )
-        trek_one_path_one_waypoint_wrong_order.add_path(
-            self.path1, start=0.5, end=0.5, order=2, reload=False
-        )  # Waypoint
-        trek_one_path_one_waypoint_wrong_order.add_path(
-            self.path1, start=0.5, end=1, order=1
-        )
+        t1 = TrekFactory.create(name="Trek 1")
+        t1.add_path(self.path1, start=0, end=0.5, order=0, reload=False)
+        t1.add_path(self.path1, start=0.5, end=0.5, order=2, reload=False)  # Waypoint
+        t1.add_path(self.path1, start=0.5, end=1, order=1)
 
         # This trek goes through path1 and has one waypoint.
         # Its path aggregations orders is 0, 2, 3 instead of 0, 1, 2.
-        trek_one_path_one_waypoint_missing_order = TrekFactory.create(name="Trek 2")
-        trek_one_path_one_waypoint_missing_order.add_path(
-            self.path1, start=0, end=0.5, order=0, reload=False
-        )
-        trek_one_path_one_waypoint_missing_order.add_path(
-            self.path1, start=0.5, end=0.5, order=2, reload=False
-        )  # Waypoint
-        trek_one_path_one_waypoint_missing_order.add_path(
-            self.path1, start=0.5, end=1, order=3
-        )
+        t2 = TrekFactory.create(name="Trek 2")
+        t2.add_path(self.path1, start=0, end=0.5, order=0, reload=False)
+        t2.add_path(self.path1, start=0.5, end=0.5, order=2, reload=False)  # Waypoint
+        t2.add_path(self.path1, start=0.5, end=1, order=3)
 
         # This trek goes through path1 and has one waypoint.
         # Its path aggregations orders is 1, 2, 3 instead of 0, 1, 2.
-        trek_one_path_one_waypoint_wrong_start = TrekFactory.create(name="Trek 3")
-        trek_one_path_one_waypoint_wrong_start.add_path(
-            self.path1, start=0, end=0.5, order=1, reload=False
-        )
-        trek_one_path_one_waypoint_wrong_start.add_path(
-            self.path1, start=0.5, end=0.5, order=2, reload=False
-        )  # Waypoint
-        trek_one_path_one_waypoint_wrong_start.add_path(
-            self.path1, start=0.5, end=1, order=3
-        )
+        t3 = TrekFactory.create(name="Trek 3")
+        t3.add_path(self.path1, start=0, end=0.5, order=1, reload=False)
+        t3.add_path(self.path1, start=0.5, end=0.5, order=2, reload=False)  # Waypoint
+        t3.add_path(self.path1, start=0.5, end=1, order=3)
 
         # This trek goes through path1 and path2 with no waypoint.
         # Its path aggregations orders is 1, 0 instead of 0, 1.
-        trek_two_paths_wrong_order = TrekFactory.create(name="Trek 4")
-        trek_two_paths_wrong_order.add_path(
-            self.path1, start=0, end=1, order=1, reload=False
-        )
-        trek_two_paths_wrong_order.add_path(self.path2, start=0, end=1, order=0)
+        t4 = TrekFactory.create(name="Trek 4")
+        t4.add_path(self.path1, start=0, end=1, order=1, reload=False)
+        t4.add_path(self.path2, start=0, end=1, order=0)
 
         # This trek goes through path1, path2 and path3 with no waypoint.
         # Its path aggregations orders is 1, 2, 0 instead of 0, 1, 2.
-        trek_three_paths_wrong_order = TrekFactory.create(name="Trek 5")
-        trek_three_paths_wrong_order.add_path(
-            self.path1, start=0, end=1, order=1, reload=False
-        )
-        trek_three_paths_wrong_order.add_path(
-            self.path2, start=0, end=1, order=2, reload=False
-        )
-        trek_three_paths_wrong_order.add_path(self.path3, start=0, end=1, order=0)
+        t5 = TrekFactory.create(name="Trek 5")
+        t5.add_path(self.path1, start=0, end=1, order=1, reload=False)
+        t5.add_path(self.path2, start=0, end=1, order=2, reload=False)
+        t5.add_path(self.path3, start=0, end=1, order=0)
 
         # All these topologies should be considered invalid
         valid_qs = TrekFilterSet(data={"is_valid_topology": True}).qs
@@ -356,14 +302,10 @@ class ValidTopologyFilterTest(TestCase):
 
         # This trek goes through path1, path2 and path3 with no waypoint.
         # The path aggregation for path2 has the wrong direction (1 to 0).
-        trek_three_paths_no_waypoint = TrekFactory.create(name="Trek 1")
-        trek_three_paths_no_waypoint.add_path(
-            self.path1, start=0, end=1, order=0, reload=False
+        TrekFactory.create(
+            name="Trek 1",
+            paths=[(self.path1, 0, 1), (self.path2, 1, 0), (self.path3, 0, 1)],
         )
-        trek_three_paths_no_waypoint.add_path(
-            self.path2, start=1, end=0, order=1, reload=False
-        )
-        trek_three_paths_no_waypoint.add_path(self.path3, start=0, end=1, order=2)
 
         # This topology should be considered invalid
         valid_qs = TrekFilterSet(data={"is_valid_topology": True}).qs
@@ -376,60 +318,52 @@ class ValidTopologyFilterTest(TestCase):
 
         # This trek goes through path1 and has one waypoint.
         # There is a gap between the waypoint (0.5) and the next aggregation (0.7).
-        trek_one_path_one_waypoint = TrekFactory.create(name="Trek 1")
-        trek_one_path_one_waypoint.add_path(
-            self.path1, start=0, end=0.5, order=0, reload=False
+        TrekFactory.create(
+            name="Trek 1",
+            paths=[
+                (self.path1, 0, 0.5),
+                (self.path1, 0.5, 0.5),  # Waypoint
+                (self.path1, 0.7, 1),
+            ],
         )
-        trek_one_path_one_waypoint.add_path(
-            self.path1, start=0.5, end=0.5, order=1, reload=False
-        )  # Waypoint
-        trek_one_path_one_waypoint.add_path(self.path1, start=0.7, end=1, order=2)
 
         # This trek goes through path1 in reverse and has one waypoint.
         # There is a gap between the waypoint (0.5) and the next aggregation (0.3).
-        trek_one_path_one_waypoint_reverse = TrekFactory.create(name="Trek 2")
-        trek_one_path_one_waypoint_reverse.add_path(
-            self.path1, start=1, end=0.5, order=0, reload=False
-        )
-        trek_one_path_one_waypoint_reverse.add_path(
-            self.path1, start=0.5, end=0.5, order=1, reload=False
-        )  # Waypoint
-        trek_one_path_one_waypoint_reverse.add_path(
-            self.path1, start=0.3, end=0, order=2
+        TrekFactory.create(
+            name="Trek 2",
+            paths=[
+                (self.path1, 1, 0.5),
+                (self.path1, 0.5, 0.5),  # Waypoint
+                (self.path1, 0.3, 0),
+            ],
         )
 
         # This trek goes through a portion of path1 and then a portion of path2.
         # There is a gap between the end of path1's covered portion and the start of path2's covered portion.
-        trek_two_paths_touching = TrekFactory.create(name="Trek 3")
-        trek_two_paths_touching.add_path(
-            self.path1, start=0, end=0.5, order=0, reload=False
+        TrekFactory.create(
+            name="Trek 3",
+            paths=[(self.path1, 0, 0.5), (self.path2, 0.5, 1)],
         )
-        trek_two_paths_touching.add_path(self.path2, start=0.5, end=1, order=1)
 
         # This trek goes through a portion of path2 and then a portion of path1, in reverse.
         # There is a gap between the end of path2's covered portion and the start of path1's covered portion.
-        trek_two_paths_touching_reverse = TrekFactory.create(name="Trek 4")
-        trek_two_paths_touching_reverse.add_path(
-            self.path2, start=1, end=0.5, order=0, reload=False
+        TrekFactory.create(
+            name="Trek 4",
+            paths=[(self.path2, 1, 0.5), (self.path1, 0.5, 0)],
         )
-        trek_two_paths_touching_reverse.add_path(self.path1, start=0.5, end=0, order=1)
 
         # This trek goes through the entirety of path1 and then path3
         # Paths 1 and 3 are not geometrically connected, which creates a gap in the topology
-        trek_two_paths_not_touching = TrekFactory.create(name="Trek 5")
-        trek_two_paths_not_touching.add_path(
-            self.path1, start=0, end=1, order=0, reload=False
+        TrekFactory.create(
+            name="Trek 5",
+            paths=[(self.path1, 0, 1), (self.path3, 0, 1)],
         )
-        trek_two_paths_not_touching.add_path(self.path3, start=0, end=1, order=1)
 
         # This trek goes through the entirety of path3 and then path1, in reverse
         # Paths 1 and 3 are not geometrically connected, which creates a gap in the topology
-        trek_two_paths_not_touching_reverse = TrekFactory.create(name="Trek 6")
-        trek_two_paths_not_touching_reverse.add_path(
-            self.path3, start=1, end=0, order=0, reload=False
-        )
-        trek_two_paths_not_touching_reverse.add_path(
-            self.path1, start=1, end=0, order=1
+        TrekFactory.create(
+            name="Trek 6",
+            paths=[(self.path3, 1, 0), (self.path1, 1, 0)],
         )
 
         # All these topologies should be considered invalid
@@ -443,60 +377,52 @@ class ValidTopologyFilterTest(TestCase):
 
         # This trek goes through path1 and has one waypoint.
         # There is an overlap between the first aggregation (0-0.7) and the last aggregation (0.3-1).
-        trek_one_waypoint = TrekFactory.create(name="Trek 1")
-        trek_one_waypoint.add_path(self.path1, start=0, end=0.7, order=0, reload=False)
-        trek_one_waypoint.add_path(
-            self.path1, start=0.7, end=0.7, order=1, reload=False
-        )  # Waypoint
-        trek_one_waypoint.add_path(self.path1, start=0.3, end=1, order=2)
+        TrekFactory.create(
+            name="Trek 1",
+            paths=[
+                (self.path1, 0, 0.7),
+                (self.path1, 0.7, 0.7),  # Waypoint
+                (self.path1, 0.3, 1),
+            ],
+        )
 
         # This trek goes through path1 in reverse and has one waypoint.
         # There is an overlap between the first aggregation (1-0.3) and the last aggregation (0.7-0).
-        trek_one_waypoint_reverse = TrekFactory.create(name="Trek 2")
-        trek_one_waypoint_reverse.add_path(
-            self.path1, start=1, end=0.3, order=0, reload=False
+        TrekFactory.create(
+            name="Trek 2",
+            paths=[
+                (self.path1, 1, 0.3),
+                (self.path1, 0.7, 0.7),  # Waypoint
+                (self.path1, 0.7, 0),
+            ],
         )
-        trek_one_waypoint_reverse.add_path(
-            self.path1, start=0.7, end=0.7, order=1, reload=False
-        )  # Waypoint
-        trek_one_waypoint_reverse.add_path(self.path1, start=0.7, end=0, order=2)
 
         # This trek goes through path1 with two aggregations.
         # Both aggregations have the same start and end points.
-        trek_duplicate_aggregations = TrekFactory.create(name="Trek 3")
-        trek_duplicate_aggregations.add_path(
-            self.path1, start=0, end=1, order=0, reload=False
+        TrekFactory.create(
+            name="Trek 3",
+            paths=[(self.path1, 0, 1), (self.path1, 0, 1)],
         )
-        trek_duplicate_aggregations.add_path(self.path1, start=0, end=1, order=1)
 
         # This trek goes through path1 in reverse with two aggregations.
         # Both aggregations have the same start and end points.
-        trek_duplicate_aggregations_reverse = TrekFactory.create(name="Trek 4")
-        trek_duplicate_aggregations_reverse.add_path(
-            self.path1, start=1, end=0, order=0, reload=False
-        )
-        trek_duplicate_aggregations_reverse.add_path(
-            self.path1, start=1, end=0, order=1
+        TrekFactory.create(
+            name="Trek 4",
+            paths=[(self.path1, 1, 0), (self.path1, 1, 0)],
         )
 
         # This trek goes through path1 with two aggregations.
         # The second aggregation (0.3-0.7) is fully contained within the first aggregation (0-1).
-        trek_aggregation_in_aggregation = TrekFactory.create(name="Trek 5")
-        trek_aggregation_in_aggregation.add_path(
-            self.path1, start=0, end=1, order=0, reload=False
-        )
-        trek_aggregation_in_aggregation.add_path(
-            self.path1, start=0.3, end=0.7, order=1
+        TrekFactory.create(
+            name="Trek 5",
+            paths=[(self.path1, 0, 1), (self.path1, 0.3, 0.7)],
         )
 
         # This trek goes through path1 in reverse with two aggregations.
         # The first aggregation (0.7-0.3) is fully contained within the second aggregation (1-0).
-        trek_aggregation_in_aggregation_reverse = TrekFactory.create(name="Trek 6")
-        trek_aggregation_in_aggregation_reverse.add_path(
-            self.path1, start=0.7, end=0.3, order=0, reload=False
-        )
-        trek_aggregation_in_aggregation_reverse.add_path(
-            self.path1, start=1, end=0, order=1
+        TrekFactory.create(
+            name="Trek 6",
+            paths=[(self.path1, 0.7, 0.3), (self.path1, 1, 0)],
         )
 
         # All these topologies should be considered invalid
