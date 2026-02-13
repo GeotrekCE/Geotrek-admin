@@ -21,12 +21,14 @@ from .models import CertificationLabel, Comfort, Network, Path, Topology, Trail,
 
 
 class ValidTopologyFilterSet(FilterSet):
-    if settings.TREKKING_TOPOLOGY_ENABLED:
-
-        class Meta:
-            model = Topology
+    class Meta:
+        model = Topology
+        if settings.TREKKING_TOPOLOGY_ENABLED:
             fields = ["coupled", "is_valid_topology"]
+        else:
+            fields = []
 
+    if settings.TREKKING_TOPOLOGY_ENABLED:
         is_valid_topology = BooleanFilter(
             label=_("Valid topology"),
             method="filter_valid_topology",
@@ -35,13 +37,13 @@ class ValidTopologyFilterSet(FilterSet):
             ),
         )
 
-    def filter_valid_topology(self, qs, name, value):
-        if value is not None:
-            id_column = "id" if qs.model == Topology else "topo_object_id"
-            qs = qs.alias(topology_is_valid=TopologyIsValid(id_column)).filter(
-                topology_is_valid=value
-            )
-        return qs
+        def filter_valid_topology(self, qs, name, value):
+            if value is not None:
+                id_column = "id" if qs.model == Topology else "topo_object_id"
+                qs = qs.alias(topology_is_valid=TopologyIsValid(id_column)).filter(
+                    topology_is_valid=value
+                )
+            return qs
 
 
 class TopologyFilter(RightFilter):
