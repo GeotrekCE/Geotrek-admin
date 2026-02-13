@@ -1,4 +1,5 @@
 from crispy_forms.layout import Div
+from dal import autocomplete
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -10,9 +11,19 @@ from geotrek.outdoor.models import Course, OrderedCourseChild, RatingScale, Site
 
 class SiteForm(CommonForm):
     orientation = forms.MultipleChoiceField(
-        choices=Site.ORIENTATION_CHOICES, required=False
+        choices=Site.ORIENTATION_CHOICES,
+        required=False,
+        widget=autocomplete.Select2Multiple(
+            attrs={"data-theme": 'bootstrap4'}
+        )
     )
-    wind = forms.MultipleChoiceField(choices=Site.ORIENTATION_CHOICES, required=False)
+    wind = forms.MultipleChoiceField(
+        choices=Site.ORIENTATION_CHOICES,
+        required=False,
+        widget=autocomplete.Select2Multiple(
+            attrs={"data-theme": 'bootstrap4'}
+        )
+    )
 
     geomfields = ["geom"]
 
@@ -93,6 +104,7 @@ class SiteForm(CommonForm):
                 queryset=scale.ratings.all(),
                 required=False,
                 initial=ratings if ratings else None,
+                widget=autocomplete.Select2Multiple(attrs={"data-theme": "bootstrap4", 'data-width': "100%"}),
             )
             right_after_type_index = self.fieldslayout[0].fields.index("type") + 1
             self.fieldslayout[0].insert(right_after_type_index, fieldname)
@@ -228,6 +240,7 @@ class CourseForm(CommonForm):
                 queryset=scale.ratings.all(),
                 required=False,
                 initial=ratings[0] if ratings else None,
+                widget=autocomplete.ListSelect2(attrs={"data-theme": "bootstrap4", 'data-width': "100%"}),
             )
             right_after_type_index = self.fieldslayout[0].fields.index("type") + 1
             self.fieldslayout[0].insert(right_after_type_index, fieldname)

@@ -17,7 +17,7 @@ setup(
     scripts=["manage.py"],
     install_requires=[
         "Django==5.2.*",
-        "mapentity==8.17.0",
+        "mapentity@git+https://github.com/makinacorpus/django-mapentity.git@select2_css#egg=mapentity",
         "chardet",
         "cairosvg",
         "cairocffi",

@@ -1,5 +1,6 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Div, Fieldset, Layout
+from dal import autocomplete
 from django import forms
 from django.conf import settings
 from django.contrib.gis.forms.fields import GeometryField
@@ -14,7 +15,7 @@ from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import PointTopologyWidget
 from geotrek.infrastructure.forms import BaseInfrastructureForm
-from geotrek.signage.models import Blade, Line, Signage
+from geotrek.signage.models import Blade, Line, Signage, LinePictogram
 
 
 class LineForm(forms.ModelForm):
@@ -38,6 +39,11 @@ class LineForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(*fields_for_layout)
+        self.fields["pictograms"].widget = autocomplete.Select2Multiple(
+            attrs={'data-theme': 'bootstrap4'},
+        )
+        self.fields["pictograms"].queryset = LinePictogram.objects.all()
+
 
     class Meta:
         fields = (

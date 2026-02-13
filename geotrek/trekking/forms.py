@@ -3,6 +3,7 @@ from copy import deepcopy
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Div, Layout, Submit
+from dal import autocomplete
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -176,7 +177,12 @@ class TrekForm(BaseTrekForm):
         if self.fields.get("structure"):
             self.fieldslayout[0][1][0].insert(0, "structure")
         self.fields["web_links"].widget = SelectMultipleWithPop(
-            choices=self.fields["web_links"].choices, add_url=WebLink.get_add_url()
+            choices=self.fields["web_links"].choices,
+            add_url=WebLink.get_add_url(),
+            attrs={
+                "data-theme": 'bootstrap4',
+                "data-width": '75%',
+            }
         )
         # Make sure (force) that name is required, in default language only
         self.fields[
