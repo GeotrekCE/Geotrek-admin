@@ -21,7 +21,12 @@ from .models import CertificationLabel, Comfort, Network, Path, Topology, Trail,
 
 
 class ValidTopologyFilterSet(FilterSet):
+
     if settings.TREKKING_TOPOLOGY_ENABLED:
+        class Meta:
+            model = Topology
+            fields = ["coupled", "is_valid_topology"]
+
         coupled = BooleanFilter()
         is_valid_topology = BooleanFilter(
             label=_("Valid topology"),
@@ -151,6 +156,7 @@ class TrailFilterSet(
         model = Trail
         fields = [
             *StructureRelatedFilterSet.Meta.fields,
+            *ValidTopologyFilterSet.Meta.fields,
             "name",
             "category",
             "departure",
