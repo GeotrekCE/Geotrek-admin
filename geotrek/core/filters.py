@@ -27,7 +27,6 @@ class ValidTopologyFilterSet(FilterSet):
             model = Topology
             fields = ["coupled", "is_valid_topology"]
 
-        coupled = BooleanFilter()
         is_valid_topology = BooleanFilter(
             label=_("Valid topology"),
             method="filter_valid_topology",
