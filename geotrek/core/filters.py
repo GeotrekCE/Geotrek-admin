@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.db.models import Count, F, Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import (
     BooleanFilter,
@@ -11,60 +10,35 @@ from django_filters import (
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import RightFilter
-from geotrek.common.functions import GeometryType
 from geotrek.common.models import Provider
 from geotrek.maintenance import models as maintenance_models
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
 
+from .functions import TopologyIsValid
 from .models import CertificationLabel, Comfort, Network, Path, Topology, Trail, Usage
 
 
 class ValidTopologyFilterSet(FilterSet):
-    # Do not forget to add geometry_types_allowed on models if you add this filterset
-    # geometry_types_allowed = ["LINESTRING"] for example
-    # Types possible with topologies are linestring and points only
+    class Meta:
+        model = Topology
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            fields = ["coupled", "is_valid_topology"]
+        else:
+            fields = []
 
     if settings.TREKKING_TOPOLOGY_ENABLED:
         is_valid_topology = BooleanFilter(
             label=_("Valid topology"), method="filter_valid_topology"
         )
-    is_valid_geometry = BooleanFilter(
-        label=_("Valid geometry"), method="filter_valid_geometry"
-    )
 
-    def filter_valid_topology(self, qs, name, value):
-        if value is not None:
-            qs = qs.annotate(
-                distinct_same_order=Count("aggregations__order", distinct=True),
-                same_order=Count("aggregations__order"),
-            )
-            if value is True:
-                qs = qs.filter(same_order__gt=0, same_order=F("distinct_same_order"))
-            elif value is False:
-                qs = qs.filter(
-                    Q(same_order=0) | Q(distinct_same_order__lt=F("same_order"))
+        def filter_valid_topology(self, qs, name, value):
+            if value is not None:
+                id_column = "id" if qs.model == Topology else "topo_object_id"
+                qs = qs.alias(topology_is_valid=TopologyIsValid(id_column)).filter(
+                    topology_is_valid=value
                 )
-        return qs
-
-    def filter_valid_geometry(self, qs, name, value):
-        if value is not None:
-            qs = qs.annotate(geometry_type=GeometryType("geom"))
-            if value is True:
-                qs = (
-                    qs.filter(geom__isvalid=True)
-                    .exclude(geom__isnull=True)
-                    .exclude(geom__isempty=True)
-                    .filter(geometry_type__in=qs.model.geometry_types_allowed)
-                )
-            elif value is False:
-                qs = qs.filter(
-                    Q(geom__isnull=True)
-                    | Q(geom__isvalid=False)
-                    | Q(geom__isempty=True)
-                    | ~Q(geometry_type__in=qs.model.geometry_types_allowed)
-                )
-        return qs
+            return qs
 
 
 class TopologyFilter(RightFilter):
@@ -180,6 +154,7 @@ class TrailFilterSet(
         model = Trail
         fields = [
             *StructureRelatedFilterSet.Meta.fields,
+            *ValidTopologyFilterSet.Meta.fields,
             "name",
             "category",
             "departure",

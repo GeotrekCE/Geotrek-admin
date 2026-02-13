@@ -55,6 +55,7 @@ class SignageFilterSet(
         model = Signage
         fields = [
             *StructureRelatedFilterSet.Meta.fields,
+            *ValidTopologyFilterSet.Meta.fields,
             "type",
             "conditions",
             "implantation_year",
