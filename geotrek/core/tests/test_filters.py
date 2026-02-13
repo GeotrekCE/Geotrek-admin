@@ -80,7 +80,7 @@ class ValidTopologyFilterTest(TestCase):
         """
         cls.path1 = PathFactory(geom=LineStringInBounds((0, 0), (10, 0)))
         cls.path2 = PathFactory(geom=LineStringInBounds((10, 0), (10, 10)))
-        cls.path3 = PathFactory(geom=LineStringInBounds((10, 10), (10, 20)))
+        cls.path3 = PathFactory(geom=LineStringInBounds((10, 10), (20, 10)))
 
     def test_valid_topology_no_aggregations(self):
         """Topologies with path aggregations should be considered valid."""
