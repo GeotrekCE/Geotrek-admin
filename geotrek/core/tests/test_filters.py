@@ -464,7 +464,9 @@ class ValidTopologyFilterTest(TestCase):
         # This trek goes through path1 with two aggregations.
         # Both aggregations have the same start and end points.
         trek_duplicate_aggregations = TrekFactory.create(name="Trek 3")
-        trek_duplicate_aggregations.add_path(self.path1, start=0, end=1, order=0, reload=False)
+        trek_duplicate_aggregations.add_path(
+            self.path1, start=0, end=1, order=0, reload=False
+        )
         trek_duplicate_aggregations.add_path(self.path1, start=0, end=1, order=1)
 
         # This trek goes through path1 in reverse with two aggregations.
@@ -480,7 +482,9 @@ class ValidTopologyFilterTest(TestCase):
         # This trek goes through path1 with two aggregations.
         # The second aggregation (0.3-0.7) is fully contained within the first aggregation (0-1).
         trek_aggregation_in_aggregation = TrekFactory.create(name="Trek 5")
-        trek_aggregation_in_aggregation.add_path(self.path1, start=0, end=1, order=0, reload=False)
+        trek_aggregation_in_aggregation.add_path(
+            self.path1, start=0, end=1, order=0, reload=False
+        )
         trek_aggregation_in_aggregation.add_path(
             self.path1, start=0.3, end=0.7, order=1
         )
