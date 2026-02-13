@@ -37,13 +37,22 @@ class PhysicalEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
 class CirculationEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = CirculationEdge
-        fields = [*ValidTopologyFilterSet.Meta.fields, "circulation_type", "authorization_type"]
+        fields = [
+            *ValidTopologyFilterSet.Meta.fields,
+            "circulation_type",
+            "authorization_type",
+        ]
 
 
 class LandEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = LandEdge
-        fields = [*ValidTopologyFilterSet.Meta.fields, "land_type", "owner", "agreement"]
+        fields = [
+            *ValidTopologyFilterSet.Meta.fields,
+            "land_type",
+            "owner",
+            "agreement",
+        ]
 
 
 class OrganismFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
