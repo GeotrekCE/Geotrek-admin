@@ -462,11 +462,19 @@ MAPENTITY_CONFIG = {
             "weight": 3,
             "radius": 5,
         },
-        "detail": {"color": "#ffff00"},
+        "detail": {
+            "weight": 1,
+            "opacity": 1,
+            "line-cap": "round",
+            "color": "#FFFF00",
+            "arrowColor": "#0000FF",
+            "arrowSize": 0.5,
+            "arrowOpacity": 0.5,
+            "arrowSpacing": 20,
+        },
         "others": {
             "color": "#ffff00"
-        },  # renvoie une fonction posant problème dans le template
-        "autres": {"color": "#ffff00"},
+        },
         "print": {
             "path": {"weight": 1},
             "trek": {

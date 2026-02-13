@@ -5,6 +5,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Div, Layout, Submit
 from django import forms
 from django.conf import settings
+from django.contrib.gis.forms import LineStringField
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.translation import gettext as _
@@ -47,15 +48,15 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 else:
 
     class BaseTrekForm(CommonForm):
+        geom = LineStringField()
         geomfields = ["geom", "parking_location", "points_reference"]
 
         class Meta(CommonForm.Meta):
             model = Trek
             fields = [*CommonForm.Meta.fields, "geom"]
             widgets = {
-                "geom": MapWidget(attrs={"geom_type": "LINESTRING"}),
-                "parking_location": MapWidget(attrs={"target_map": "geom", "custom_icon": '<span style="display:inline-block;width:18px;height:18px;background:#2196F3;color:#fff;text-align:center;font-weight:bold;line-height:18px;font-size:12px;">P</span>'}),
-                "points_reference": MapWidget(attrs={"target_map": "geom", "custom_icon": '<svg width="20" height="20" viewBox="0 0 20 20"><circle cx="10" cy="10" r="9" stroke="black" stroke-width="1" fill="white" /><circle cx="10" cy="10" r="3" fill="black" /></svg>'}),
+                "parking_location": MapWidget(attrs={"target_map": "geom", "custom_icon": 'markers/parking.svg'}),
+                "points_reference": MapWidget(attrs={"target_map": "geom", "custom_icon": 'markers/points.svg'}),
             }
 
 
