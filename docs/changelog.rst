@@ -7,7 +7,7 @@ CHANGELOG
 
 **Warnings**
 
-- Topologies are no longer dependant on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
+* Topologies are no longer dependant on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
 
 **Performances**
 
@@ -16,9 +16,9 @@ CHANGELOG
 **Improvements**
 
 * Get infinite scrolling on autocomplete API endpoint
-* Add ``coupled`` boolean field to the Topology model
-* Remove the 'invalid geometry' filter
-* Strengthen the 'invalid topology' filter criteria
+* Add a "Network-coupled" boolean field and its corresponding filter to the ``Topology`` model
+* Strengthen the "invalid topology" filter criteria
+* Remove the "invalid geometry" filter
 
 **CI**
 

@@ -15,14 +15,14 @@ from geotrek.common.models import Provider
 from geotrek.maintenance import models as maintenance_models
 from geotrek.maintenance.filters import InterventionFilterSet, ProjectFilterSet
 from geotrek.zoning.filters import ZoningFilterSet
-from .functions import TopologyIsValid
 
+from .functions import TopologyIsValid
 from .models import CertificationLabel, Comfort, Network, Path, Topology, Trail, Usage
 
 
 class ValidTopologyFilterSet(FilterSet):
-
     if settings.TREKKING_TOPOLOGY_ENABLED:
+
         class Meta:
             model = Topology
             fields = ["coupled", "is_valid_topology"]
@@ -37,8 +37,10 @@ class ValidTopologyFilterSet(FilterSet):
 
     def filter_valid_topology(self, qs, name, value):
         if value is not None:
-            id_column = 'id' if qs.model == Topology else 'topo_object_id'
-            qs = qs.alias(topology_is_valid=TopologyIsValid(id_column)).filter(topology_is_valid=value)
+            id_column = "id" if qs.model == Topology else "topo_object_id"
+            qs = qs.alias(topology_is_valid=TopologyIsValid(id_column)).filter(
+                topology_is_valid=value
+            )
         return qs
 
 

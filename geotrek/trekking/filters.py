@@ -93,4 +93,9 @@ class ServiceFilterSet(
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Service
-        fields = [*StructureRelatedFilterSet.Meta.fields, *ValidTopologyFilterSet.Meta.fields, "type", "provider"]
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
+            *ValidTopologyFilterSet.Meta.fields,
+            "type",
+            "provider",
+        ]
