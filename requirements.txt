@@ -82,7 +82,7 @@ coreschema==0.0.4
     #   drf-yasg
 crispy-bootstrap4==2025.6
     # via mapentity
-cssselect2==0.8.0
+cssselect2==0.9.0
     # via
     #   cairosvg
     #   svglib
