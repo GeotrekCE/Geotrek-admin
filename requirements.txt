@@ -250,7 +250,7 @@ lxml==4.9.3
     #   svglib
 mapentity==8.17.0
     # via geotrek (setup.py)
-markdown==3.10.1
+markdown==3.10.2
     # via geotrek (setup.py)
 markupsafe==3.0.3
     # via jinja2
