@@ -13,7 +13,7 @@ CHANGELOG
 
 * Get infinite scrolling on autocomplete API endpoint
 
-**Bug fixes**
+**CI**
 
 * Fix web and celery builds for translations linting in github action
 
