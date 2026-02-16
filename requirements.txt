@@ -164,7 +164,7 @@ django-mptt==0.18.0
     # via geotrek (setup.py)
 django-tinymce==5.0.0
     # via mapentity
-django-treebeard==4.8.0
+django-treebeard==5.0.2
     # via geotrek (setup.py)
 django-weasyprint==2.4.0
     # via
