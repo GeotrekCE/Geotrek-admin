@@ -274,7 +274,7 @@ paperclip==2.7.4
     # via
     #   geotrek (setup.py)
     #   mapentity
-papersize==1.6.1
+papersize==1.7.0
     # via pdfimpose
 pdfimpose==2.8.0
     # via geotrek (setup.py)
