@@ -9,6 +9,8 @@ class FormsetMixin:
         context = self.get_context_data()
         formset_form = context[self.context_name]
 
+        print("\n \nformset", formset_form.is_valid(), formset_form.errors)
+
         if formset_form.is_valid():
             response = super().form_valid(form)
             formset_form.instance = self.object
