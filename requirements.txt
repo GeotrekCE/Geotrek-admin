@@ -360,7 +360,6 @@ setuptools==80.10.2
     # via
     #   argdispatch
     #   zc-lockfile
-    #   zope-deferredimport
 shapely==2.1.2
     # via pyopenair
 simplekml==1.3.6
