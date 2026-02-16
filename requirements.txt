@@ -23,7 +23,7 @@ brotli==1.2.0
     # via fonttools
 btrees==6.3
     # via zodb
-cachetools==7.0.0
+cachetools==7.0.1
     # via large-image
 cairocffi==1.7.1
     # via
