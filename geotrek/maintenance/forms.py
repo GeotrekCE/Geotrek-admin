@@ -65,10 +65,7 @@ class FundingForm(forms.ModelForm):
         self.helper.form_tag = False
         self.helper.layout = Layout("id", "amount", "organism")
         self.fields["organism"].widget = autocomplete.ListSelect2(
-            attrs={
-                "data-theme": "bootstrap4",
-                "class": "input-xlarge"
-            },
+            attrs={"data-theme": "bootstrap4", "class": "input-xlarge"},
         )
         self.fields["organism"].queryset = Organism.objects.all()
 
