@@ -7,7 +7,7 @@ CHANGELOG
 
 **Warnings**
 
-* Topologies are no longer dependant on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
+* Topologies no longer need to depend on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
 
 **Performances**
 
