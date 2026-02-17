@@ -13,6 +13,10 @@ CHANGELOG
 
 * Get infinite scrolling on autocomplete API endpoint
 
+**Bug fixes**
+
+* Fix the appearance of the Select2 fields
+
 
 2.124.0         (2026-02-11)
 ----------------------------
