@@ -124,8 +124,8 @@ class MenuItemAdmin(BaseAdmin):
             None,
             {
                 "fields": [
-                    "_position",
-                    "_ref_node_id",
+                    "treebeard_position",
+                    "treebeard_ref_node",
                 ],
             },
         ),
