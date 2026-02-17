@@ -15,6 +15,21 @@ x-images:
       - .:/opt/geotrek-admin
 
 services:
+  postgres:
+    image: ${POSTGRES_IMAGE:-pgrouting/pgrouting:14-3.5-3.7}
+    env_file:
+      - .env
+    ports:
+      - "${POSTGRES_LOCAL_PORT:-5432}:5432"
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-geotrek}", "-d", "${POSTGRES_DB:-geotrekdb}"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
   redis:
     image: redis:alpine
     volumes:
@@ -29,6 +44,8 @@ services:
   celery:
     <<: [ *django ]
     depends_on:
+      postgres:
+        condition: service_healthy
       redis:
         condition: service_started
 
@@ -54,4 +71,5 @@ services:
           - ${SERVER_NAME:-geotrek.local}
 
 volumes:
+  postgres:
   redis:
