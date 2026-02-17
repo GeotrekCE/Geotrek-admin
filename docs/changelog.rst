@@ -17,6 +17,10 @@ CHANGELOG
 
 * Fix the appearance of the Select2 fields
 
+**CI**
+
+* Fix web and celery builds for translations linting in github action
+
 
 2.124.0         (2026-02-11)
 ----------------------------

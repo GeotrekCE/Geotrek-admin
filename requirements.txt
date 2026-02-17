@@ -23,7 +23,7 @@ brotli==1.2.0
     # via fonttools
 btrees==6.3
     # via zodb
-cachetools==7.0.0
+cachetools==7.0.1
     # via large-image
 cairocffi==1.7.1
     # via
@@ -80,9 +80,9 @@ coreschema==0.0.4
     #   geotrek (setup.py)
     #   coreapi
     #   drf-yasg
-crispy-bootstrap4==2025.6
+crispy-bootstrap4==2026.2
     # via mapentity
-cssselect2==0.8.0
+cssselect2==0.9.0
     # via
     #   cairosvg
     #   svglib
@@ -198,7 +198,7 @@ easy-thumbnails==2.10.1
     #   paperclip
 exceptiongroup==1.3.1
     # via celery
-filelock==3.20.3
+filelock==3.24.2
     # via django-large-image
 fiona==1.10.1
     # via
@@ -216,7 +216,7 @@ gpxpy==1.6.2
     # via mapentity
 greenlet==3.3.1
     # via gevent
-gunicorn==25.0.3
+gunicorn==25.1.0
     # via geotrek (setup.py)
 idna==3.11
     # via requests
@@ -250,7 +250,7 @@ lxml==4.9.3
     #   svglib
 mapentity==8.17.1
     # via geotrek (setup.py)
-markdown==3.10.1
+markdown==3.10.2
     # via geotrek (setup.py)
 markupsafe==3.0.3
     # via jinja2
@@ -304,7 +304,7 @@ pygal==3.1.0
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
-pymupdf==1.26.7
+pymupdf==1.27.1
     # via pdfimpose
 pyopenair==1.2.1
     # via geotrek (setup.py)
@@ -330,13 +330,13 @@ pyyaml==6.0.3
     # via drf-spectacular
 rcssmin==1.2.2
     # via django-compressor
-redis==7.1.0
+redis==7.1.1
     # via geotrek (setup.py)
 referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
-reportlab==4.4.9
+reportlab==4.4.10
     # via
     #   easy-thumbnails
     #   svglib
@@ -360,7 +360,6 @@ setuptools==80.10.2
     # via
     #   argdispatch
     #   zc-lockfile
-    #   zope-deferredimport
 shapely==2.1.2
     # via pyopenair
 simplekml==1.3.6
@@ -427,7 +426,7 @@ webencodings==0.5.1
     #   tinyhtml5
 xlrd==2.0.2
     # via geotrek (setup.py)
-xmltodict==1.0.2
+xmltodict==1.0.3
     # via tif2geojson
 zc-lockfile==4.0
     # via zodb
@@ -439,7 +438,7 @@ zodb==6.2
     # via appy
 zodbpickle==4.3
     # via zodb
-zope-deferredimport==6.0
+zope-deferredimport==6.1
     # via persistent
 zope-event==6.1
     # via gevent
@@ -454,5 +453,5 @@ zope-interface==8.2
     #   zope-proxy
 zope-proxy==7.1
     # via zope-deferredimport
-zopfli==0.4.0
+zopfli==0.4.1
     # via fonttools
