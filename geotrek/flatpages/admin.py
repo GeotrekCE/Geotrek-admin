@@ -46,8 +46,8 @@ class FlatPageAdmin(BaseAdmin):
         "cover_image",
         "cover_image_author",
         "content",
-        "_position",
-        "_ref_node_id",
+        "treebeard_position",
+        "treebeard_ref_node",
     )
 
     @admin.display(description=_("Portals"))
