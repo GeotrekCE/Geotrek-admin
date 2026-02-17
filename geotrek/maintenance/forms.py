@@ -1,5 +1,6 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Div, Fieldset, Layout
+from dal import autocomplete
 from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -15,6 +16,7 @@ from geotrek.core.fields import TopologyField
 from geotrek.core.models import Topology
 from geotrek.feedback.models import WorkflowManager
 
+from ..common.models import Organism
 from .models import Intervention, InterventionJob, InterventionStatus, ManDay, Project
 
 if "geotrek.feedback" in settings.INSTALLED_APPS:
@@ -34,7 +36,12 @@ class ManDayForm(forms.ModelForm):
         self.fields["nb_days"].widget.attrs["placeholder"] = _("Days")
         self.fields["nb_days"].label = ""
         self.fields["nb_days"].widget.attrs["class"] = "input-mini"
-        self.fields["job"].widget.attrs["class"] = "input-medium"
+        self.fields["job"].widget = autocomplete.ListSelect2(
+            attrs={
+                "data-theme": "bootstrap4",
+                "class": "input-medium",
+            }
+        )
         if self.instance and self.instance.pk:
             self.fields["job"].queryset = InterventionJob.objects.filter(
                 Q(active=True) | Q(id=self.instance.job_id)
@@ -57,7 +64,10 @@ class FundingForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout("id", "amount", "organism")
-        self.fields["organism"].widget.attrs["class"] = "input-xlarge"
+        self.fields["organism"].widget = autocomplete.ListSelect2(
+            attrs={"data-theme": "bootstrap4", "class": "input-xlarge"},
+        )
+        self.fields["organism"].queryset = Organism.objects.all()
 
 
 FundingFormSet = inlineformset_factory(

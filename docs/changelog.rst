@@ -13,6 +13,10 @@ CHANGELOG
 
 * Get infinite scrolling on autocomplete API endpoint
 
+**Bug fixes**
+
+* Fix the appearance of the Select2 fields
+
 **CI**
 
 * Fix web and celery builds for translations linting in github action
