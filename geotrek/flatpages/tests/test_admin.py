@@ -80,8 +80,8 @@ class FlatPageAdminFormViewsTestCase(TestCase):
             "content_fr",
             "content_es",
             "content_it",
-            "_position",
-            "_ref_node_id",
+            "treebeard_position",
+            "treebeard_ref_node",
         ]
         fields = _flatten(response.context["adminform"].fieldsets)
         self.assertEqual(len(fields), len(expected_fields))
@@ -186,8 +186,8 @@ class MenuItemAdminFormViewsTestCase(TestCase):
             "link_url_es",
             "link_url_it",
             "open_in_new_tab",
-            "_position",
-            "_ref_node_id",
+            "treebeard_position",
+            "treebeard_ref_node",
         ]
         fields = _flatten(response.context["adminform"].fieldsets)
         self.assertEqual(len(fields), len(expected_fields))
