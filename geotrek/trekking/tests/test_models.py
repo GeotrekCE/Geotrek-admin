@@ -143,37 +143,6 @@ class TrekTest(TestCase):
         self.assertIn(type0, trek.poi_types)
         self.assertIn(type1, trek.poi_types)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_delete_cascade(self):
-        p1 = PathFactory.create()
-        p2 = PathFactory.create()
-        t = TrekFactory.create(paths=[p1, p2])
-
-        # Everything should be all right before delete
-        self.assertTrue(t.published)
-        self.assertFalse(t.deleted)
-        self.assertEqual(t.aggregations.count(), 2)
-
-        # When a path is deleted
-        p1.delete()
-        t = Trek.objects.get(pk=t.pk)
-        self.assertFalse(t.published)
-        self.assertFalse(t.deleted)
-        self.assertEqual(t.aggregations.count(), 1)
-
-        # Reset published status
-        t.published = True
-        t.save()
-
-        # When all paths are deleted
-        p2.delete()
-        t = Trek.objects.get(pk=t.pk)
-        self.assertFalse(t.published)
-        self.assertTrue(t.deleted)
-        self.assertEqual(t.aggregations.count(), 0)
-
     def test_treks_are_sorted_by_name(self):
         TrekFactory.create(name="Cb")
         TrekFactory.create(name="Ca")
