@@ -3,13 +3,12 @@
 
 {% block mappanel %}
     {% if object.get_geom %}
-        {% load i18n static mapentity_tags leaflet_tags %}
+        {% load i18n static mapentity_tags %}
         <div id="detailmap"
              data-fitmaxzoom="{{ MAP_FIT_MAX_ZOOM }}"
              data-mapextent="{{ object|latlngbounds }}"
              data-readonly="{% if readonly %}readonly{% endif %}" data-feature-url="{{ object.get_layer_detail_url }}">
         </div>
-        {% leaflet_map "detailmap" fitextent=False creatediv=False %}
     {% else %}
         <p class="nomap">{{ empty_map_message }}</p>
     {% endif %}
