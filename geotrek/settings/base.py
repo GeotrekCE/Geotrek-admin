@@ -465,7 +465,7 @@ MAPENTITY_CONFIG = {
             "radius": 5,
         },
         "detail": {
-            "weight": 1,
+            "weight": 4,
             "opacity": 1,
             "line-cap": "round",
             "color": "#FFFF00",
@@ -474,9 +474,7 @@ MAPENTITY_CONFIG = {
             "arrowOpacity": 0.5,
             "arrowSpacing": 20,
         },
-        "others": {
-            "color": "#ffff00"
-        },
+        "others": {"color": "#ffff00"},
         "print": {
             "path": {"weight": 1},
             "trek": {
@@ -526,7 +524,7 @@ MAPLIBRE_CONFIG_OVERRIDES = {
     "DEFAULT_CENTER": CENTER,
     "DEFAULT_ZOOM": 5,
     "SCALE": "metric",
-    "BOUNDS": BOUNDS
+    "BOUNDS": BOUNDS,
 }
 
 # define forced layers from LEAFLET_CONFIG when map center in polygon

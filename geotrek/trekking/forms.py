@@ -55,8 +55,12 @@ else:
             model = Trek
             fields = [*CommonForm.Meta.fields, "geom"]
             widgets = {
-                "parking_location": MapWidget(attrs={"target_map": "geom", "custom_icon": 'markers/parking.svg'}),
-                "points_reference": MapWidget(attrs={"target_map": "geom", "custom_icon": 'markers/points.svg'}),
+                "parking_location": MapWidget(
+                    attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"}
+                ),
+                "points_reference": MapWidget(
+                    attrs={"target_map": "geom", "custom_icon": "markers/points.svg"}
+                ),
             }
 
 
