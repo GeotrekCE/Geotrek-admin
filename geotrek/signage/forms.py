@@ -134,7 +134,11 @@ class BaseBladeForm(CommonForm):
 
 
 class BladeForm(BaseBladeForm):
-    topology = TopologyField(label="") if settings.TREKKING_TOPOLOGY_ENABLED else GeometryField(label="")
+    topology = (
+        TopologyField(label="")
+        if settings.TREKKING_TOPOLOGY_ENABLED
+        else GeometryField(label="")
+    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -147,11 +151,13 @@ class BladeForm(BaseBladeForm):
             self.fields["topology"].widget = MapWidget(attrs={"geom_type": "POINT"})
             self.fields["topology"].widget.modifiable = False
 
-        self.fields["topology"].label = mark_safe("{}{} {}".format(
-            self.instance.signage_display,
-            _("On %s") % _(self.signage.kind.lower()),
-            f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
-        ))
+        self.fields["topology"].label = mark_safe(
+            "{}{} {}".format(
+                self.instance.signage_display,
+                _("On %s") % _(self.signage.kind.lower()),
+                f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
+            )
+        )
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
