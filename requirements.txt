@@ -247,7 +247,7 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity @ git+https://github.com/makinacorpus/django-mapentity@ec42965281106cbf548c3b9b32316ab686d5d268#egg=mapentity
+mapentity @ git+https://github.com/makinacorpus/django-mapentity@03ba2d710df83d7e7764c9f9447baf674ee7fc25#egg=mapentity
     # via geotrek (setup.py)
 markdown==3.10.1
     # via geotrek (setup.py)
@@ -256,7 +256,9 @@ markupsafe==3.0.3
 mbutil==0.3.0
     # via landez
 mercantile==1.2.1
-    # via django-vectortiles
+    # via
+    #   django-vectortiles
+    #   mapentity
 numpy==2.2.6
     # via
     #   large-image

@@ -3,9 +3,10 @@ from crispy_forms.layout import Div, Fieldset, Layout
 from django import forms
 from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
+from mapentity.widgets import MapWidget
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.fields import SnappedLineStringField, TopologyField
+from geotrek.core.fields import TopologyField
 from geotrek.core.models import CertificationTrail, Path, Trail
 from geotrek.core.widgets import LineTopologyWidget
 
@@ -51,8 +52,6 @@ class TopologyForm(CommonForm):
 
 
 class PathForm(CommonForm):
-    geom = SnappedLineStringField()
-
     reverse_geom = forms.BooleanField(
         required=False,
         label=_("Reverse path"),
@@ -63,6 +62,18 @@ class PathForm(CommonForm):
 
     class Meta(CommonForm.Meta):
         model = Path
+        widgets = {
+            "geom": MapWidget(
+                geom_type="LINESTRING",
+                attrs={
+                    "snapping_config": {
+                        "enabled": True,
+                        "layers": ["core.Path"],
+                        "snap_distance": 20,
+                    },
+                },
+            ),
+        }
         fields = [
             *CommonForm.Meta.fields,
             "structure",

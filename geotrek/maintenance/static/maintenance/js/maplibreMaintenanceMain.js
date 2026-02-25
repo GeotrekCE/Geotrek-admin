@@ -1,32 +1,32 @@
 //
 // Maintenance / interventions
 //
-window.addEventListener("entity:map", () => {
-    const map = window.MapEntity.currentMap.map;
-    const modelname = 'intervention';
-    const layername = 'intervention_layer';
-    const layerUrl = window.SETTINGS.urls[layername];
-
-    const style = window.SETTINGS.map.styles[modelname] ?? window.SETTINGS.map.styles['autres'];
-
-    const nameHTML = tr('Intervention');
-    const category = tr('Maintenance');
-    const primaryKey = generateUniqueId();
-
-    const objectsLayer = new MaplibreObjectsLayer(null, {
-        style: style,
-        modelname: modelname,
-        readonly: true,
-        nameHTML: nameHTML,
-        category: category,
-        primaryKey: primaryKey,
-        dataUrl: layerUrl,
-        isLazy: true
-    });
-
-    objectsLayer.initialize(map.getMap());
-    objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
-});
+// window.addEventListener("entity:map", () => {
+//     const map = window.MapEntity.currentMap.map;
+//     const modelname = 'intervention';
+//     const layername = 'intervention_layer';
+//     const layerUrl = window.SETTINGS.urls[layername];
+//
+//     const style = window.SETTINGS.map.styles[modelname] ?? window.SETTINGS.map.styles['others'];
+//
+//     const nameHTML = tr('Intervention');
+//     const category = tr('Maintenance');
+//     const primaryKey = generateUniqueId();
+//
+//     const objectsLayer = new MaplibreObjectsLayer(null, {
+//         style: style,
+//         modelname: modelname,
+//         readonly: true,
+//         nameHTML: nameHTML,
+//         category: category,
+//         primaryKey: primaryKey,
+//         dataUrl: layerUrl,
+//         isLazy: true
+//     });
+//
+//     objectsLayer.initialize(map.getMap());
+//     objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
+// });
 
 // Date picker with placeholder on input
 function setDatePickerConfig(idList) {

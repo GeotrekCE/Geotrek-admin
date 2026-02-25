@@ -111,7 +111,7 @@ class PathViewsTest(CommonTest):
             "arrival": "",
             "source": "",
             "valid": "on",
-            "geom": '{"geom": "LINESTRING (99.0 89.0, 100.0 88.0)", "snap": [null, null]}',
+            "geom": '{"geom": "LINESTRING (99.0 89.0, 100.0 88.0)"}',
         }
 
     def get_expected_popup_content(self):

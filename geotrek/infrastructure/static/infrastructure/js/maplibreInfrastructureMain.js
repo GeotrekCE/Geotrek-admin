@@ -9,7 +9,7 @@ window.addEventListener("entity:map", function (event) {
     const category = tr('Infrastructure');
     const primaryKey = generateUniqueId();
 
-    const style = window.SETTINGS.map.styles[modelname] ?? window.SETTINGS.map.styles['autres'];
+    const style = window.SETTINGS.map.styles[modelname] ?? window.SETTINGS.map.styles['others'];
 
     const objectsLayer = new MaplibreObjectsLayer(null, {
         style: style,
