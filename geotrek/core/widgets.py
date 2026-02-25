@@ -3,8 +3,6 @@ Widgets de topologie indépendants avec leur propre logique de rendu.
 Basés sur BaseGeometryWidget, complètement séparés de MapWidget.
 """
 
-import json
-
 from django.contrib.gis.forms.widgets import BaseGeometryWidget
 from django.core import validators
 from django.template.defaultfilters import slugify
@@ -116,22 +114,3 @@ class PointTopologyWidget(BaseTopologyWidget):
 class PointLineTopologyWidget(BaseTopologyWidget):
     is_line_topology = True
     is_point_topology = True
-
-
-# Garder SnappedLineStringWidget tel quel - pas de modification
-class SnappedLineStringWidget(BaseTopologyWidget):
-    # geometry_field_class = "MapEntity.GeometryField.GeometryFieldSnap"
-
-    def serialize(self, value):
-        geojson = super().serialize(value)
-        snaplist = []
-        if value:
-            snaplist = [None for c in range(len(value.coords))]
-        value = {"geom": geojson, "snap": snaplist}
-        return json.dumps(value)
-
-    def deserialize(self, value):
-        if isinstance(value, str) and value:
-            value = json.loads(value)
-            value = value["geom"]
-        return super().deserialize(value)

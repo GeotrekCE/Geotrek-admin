@@ -602,6 +602,7 @@ class ServiceViewSet(GeotrekMapentityViewSet):
     geojson_serializer_class = ServiceGeojsonSerializer
     filterset_class = ServiceFilterSet
     mapentity_list_class = ServiceList
+    vector_tiles_fields = ("id",)
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("type")
