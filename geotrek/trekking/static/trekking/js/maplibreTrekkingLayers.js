@@ -20,7 +20,7 @@ window.addEventListener("entity:map", function (event) {
         const nameHTML = tr(trekkingLayer.name);
         const category = tr('Trekking');
 
-       let style = window.SETTINGS.map.styles[trekkingLayer.id] ?? window.SETTINGS.map.styles['autres'];
+       let style = window.SETTINGS.map.styles[trekkingLayer.id] ?? window.SETTINGS.map.styles['others'];
 
         let primaryKey = generateUniqueId();
 
