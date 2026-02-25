@@ -109,6 +109,7 @@ class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
     geojson_serializer_class = PhysicalEdgeGeojsonSerializer
     filterset_class = PhysicalEdgeFilterSet
     mapentity_list_class = PhysicalEdgeList
+    vector_tiles_fields = ("id",)
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("physical_type")
@@ -178,6 +179,7 @@ class LandEdgeViewSet(GeotrekMapentityViewSet):
     geojson_serializer_class = LandEdgeGeojsonSerializer
     filterset_class = LandEdgeFilterSet
     mapentity_list_class = LandEdgeList
+    vector_tiles_fields = ("id",)
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("land_type")

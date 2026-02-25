@@ -2,7 +2,6 @@ from crispy_forms.layout import Div
 from django import forms
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
-from mapentity.widgets import MapWidget
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.forms import TopologyForm
@@ -34,12 +33,6 @@ else:
             label=_("Implantation year"), required=False
         )
         geomfields = ["geom"]
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["geom"].widget.modifiable
-            self.fields["geom"].widget = MapWidget(attrs={"geom_type": "POINT"})
-            self.fields["geom"].widget.modifiable = modifiable
 
         class Meta(CommonForm.Meta):
             model = Infrastructure

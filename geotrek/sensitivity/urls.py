@@ -1,5 +1,5 @@
 from django.urls import path, register_converter
-from mapentity.registry import MapEntityOptions, registry
+from mapentity.registry import registry
 
 from geotrek.common.urls import LangConverter
 
@@ -29,4 +29,4 @@ urlpatterns = [
     ),
 ]
 
-urlpatterns += registry.register(models.SensitiveArea, MapEntityOptions)
+urlpatterns += registry.register(models.SensitiveArea)
