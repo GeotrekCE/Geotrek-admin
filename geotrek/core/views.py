@@ -40,6 +40,7 @@ from geotrek.common.viewsets import GeotrekMapentityViewSet
 
 from .filters import PathFilterSet, TrailFilterSet
 from .forms import CertificationTrailFormSet, PathForm, TrailForm
+from .layers import PathVectorLayer
 from .models import AltimetryMixin, CertificationTrail, Path, Topology, Trail
 from .path_router import PathRouter
 from .serializers import (
@@ -48,7 +49,6 @@ from .serializers import (
     TrailGeojsonSerializer,
     TrailSerializer,
 )
-from .layers import PathVectorLayer
 
 logger = logging.getLogger(__name__)
 
