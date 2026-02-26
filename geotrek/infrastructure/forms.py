@@ -4,7 +4,7 @@ from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.forms import TopologyForm
+from geotrek.core.mixins.forms import TopologyForm
 
 from .models import Infrastructure
 
