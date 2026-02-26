@@ -8,6 +8,7 @@ from django.db import DEFAULT_DB_ALIAS, connections
 from django.test import TestCase
 
 from geotrek.common.tests.mixins import dictfetchall
+from geotrek.common.tests.utils import LineStringInBounds, PointInBounds
 from geotrek.common.utils import dbnow
 from geotrek.core.models import Path, PathAggregation, Topology
 from geotrek.core.tests.factories import (
@@ -224,16 +225,6 @@ class TopologyDeletionTest(TestCase):
         # Make sure object can be hidden from managers
         self.assertNotIn(topology, Topology.objects.existing())
         self.assertEqual(path.topology_set.existing().count(), 0)
-
-    def test_deleted_when_all_path_are_deleted(self):
-        topology = TopologyFactory.create()
-        self.assertFalse(topology.deleted)
-
-        for path in topology.paths.all():
-            path.delete()
-
-        topology.reload()
-        self.assertTrue(topology.deleted)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
@@ -478,8 +469,8 @@ class TopologyLineTest(TestCase):
     def test_topology_geom_with_intermediate_markers(self):
         # Intermediate (forced passage) markers for topologies
         # Use a bifurcation, make sure computed geometry is correct
-        #       +--p2---+
-        #   +---+-------+---+
+        #       ┌──p2───┐
+        #    ━━━┷━━━━━━━┷━━━
         #     p1   p3     p4
         p1 = PathFactory.create(geom=LineString((0, 0), (2, 0)))
         p2 = PathFactory.create(geom=LineString((2, 0), (2, 1), (4, 1), (4, 0)))
@@ -508,50 +499,6 @@ class TopologyLineTest(TestCase):
         """
         t2 = TopologyFactory.create(paths=[p1, p2, (p2, 0, 0), p4])
         self.assertEqual(t2.geom, t.geom)
-
-    def test_path_geom_update(self):
-        # Create a path
-        p = PathFactory.create(geom=LineString((0, 0), (4, 0)))
-
-        # Create a linear topology
-        t1 = TopologyFactory.create(offset=1, paths=[(p, 0, 0.5)])
-        t1_agg = t1.aggregations.get()
-
-        # Create a point topology
-        t2 = TopologyFactory.create(offset=-1, paths=[(p, 0.5, 0.5)])
-        t2_agg = t2.aggregations.get()
-
-        # Ensure linear topology is correct before path modification
-        self.assertEqual(t1.offset, 1)
-        self.assertEqual(t1.geom.coords, ((0, 1), (2, 1)))
-        self.assertEqual(t1_agg.start_position, 0.0)
-        self.assertEqual(t1_agg.end_position, 0.5)
-
-        # Ensure point topology is correct before path modification
-        self.assertEqual(t2.offset, -1)
-        self.assertEqual(t2.geom.coords, (2, -1))
-        self.assertEqual(t2_agg.start_position, 0.5)
-        self.assertEqual(t2_agg.end_position, 0.5)
-
-        # Modify path geometry and refresh computed data
-        p.geom = LineString((0, 2), (8, 2))
-        p.save()
-        t1.reload()
-        t1_agg = t1.aggregations.get()
-        t2.reload()
-        t2_agg = t2.aggregations.get()
-
-        # Ensure linear topology is correct after path modification
-        self.assertEqual(t1.offset, 1)
-        self.assertEqual(t1.geom.coords, ((0, 3), (4, 3)))
-        self.assertEqual(t1_agg.start_position, 0.0)
-        self.assertEqual(t1_agg.end_position, 0.5)
-
-        # Ensure point topology is correct before path modification
-        self.assertEqual(t2.offset, -3)
-        self.assertEqual(t2.geom.coords, (2, -1))
-        self.assertEqual(t2_agg.start_position, 0.25)
-        self.assertEqual(t2_agg.end_position, 0.25)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
@@ -896,7 +843,7 @@ class TopologySerialization(TestCase):
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
-class TopologyDerialization(TestCase):
+class TopologyDeserialization(TestCase):
     def test_deserialize_foreignkey(self):
         topology = TopologyFactory.create(offset=1)
         deserialized = Topology.deserialize(topology.pk)
@@ -1040,3 +987,855 @@ class TopologyOverlappingTest(TestCase):
 
         overlaps = Topology.overlapping(Trek.objects.all())
         self.assertEqual(list(overlaps), [])
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
+class PointTopologyPathNetworkCoupling(TestCase):
+    """Test the automatic coupling/decoupling behavior of point topologies."""
+
+    @classmethod
+    def setUpTestData(cls):
+        """
+                                (10,10)
+                               │
+                               │
+                               │
+                               ^ path2
+                               │
+                               │
+        (0,0) ━━━━━━━━>━━━━━━━━┙ (10,0)
+                    path1
+
+        ━>━ : direction of the path
+        """
+        cls.path1 = PathFactory(geom=LineStringInBounds((0, 0), (10, 0)))
+        cls.path2 = PathFactory(geom=LineStringInBounds((10, 0), (10, 10)))
+
+    #################################################################################
+    #                                     UTILS                                     #
+    #################################################################################
+
+    def create_point_topology(self, x, y):
+        """We cannot use PointTopologyFactory here because we need a workflow similar to when creating a topology via the interface or parsers."""
+        geom = PointInBounds(x, y)
+        geom.transform(settings.API_SRID)
+        topology = Topology._topologypoint(geom.x, geom.y)
+        topology.save()
+        topology.refresh_from_db()
+        return topology
+
+    def move_point_topology_geom(self, topo, x, y):
+        """Move the topology geometry by using a workflow similar to when modifying it via the interface or parsers."""
+        new_geom = PointInBounds(x, y)
+        new_geom.transform(settings.API_SRID)
+        tmp_topo = Topology._topologypoint(new_geom.x, new_geom.y, topo.kind)
+        topo.mutate(tmp_topo)
+        topo.refresh_from_db()
+
+    def decouple_topology_by_deleting_path_aggregations(self, topo):
+        """Decouple a topology by deleting all its path aggregations and refresh it from the database."""
+        PathAggregation.objects.filter(topo_object=topo).delete()
+        topo.refresh_from_db()
+
+    def add_path_aggregation_to_topology(self, topo, path, start, end):
+        topo.add_path(path, start, end)
+        topo.refresh_from_db()
+
+    #################################################################################
+    #                                     TESTS                                     #
+    #################################################################################
+
+    def test_points_move_and_stay_coupled(self):
+        """
+        1. Create a point topology not on a path (p1) -> it should be coupled
+        2. Change its geometry (p2, still not on a path) -> it should still be coupled
+        3. Change its geometry (p3, now on a path) -> it should still be coupled
+        4. Change its geometry (p4, on a path intersection) -> it should still be coupled
+
+                            │
+                            │
+            p1          p2  │
+             x          x   ^ path2
+                            │
+            p3              │
+        ━━━━━x━━━━>━━━━━━━━━x p4
+                path1
+
+        ━>━ : direction of the path
+         x  : position of the point topology
+        """
+
+        # p1
+        topology = self.create_point_topology(3, 3)
+        self.assertTrue(topology.coupled)
+
+        # p2
+        self.move_point_topology_geom(topology, 7, 3)
+        self.assertTrue(topology.coupled)
+
+        # p3
+        self.move_point_topology_geom(topology, 3, 0)
+        self.assertTrue(topology.coupled)
+
+        # p4
+        self.move_point_topology_geom(topology, 10, 0)
+        self.assertTrue(topology.coupled)
+
+    def test_points_get_decoupled_when_paths_are_deleted(self):
+        """
+        1. Create three point topologies:
+            - one that is not on a path (p1)
+            - one that is on a path (p2)
+            - one that is on a path intersection (p3)
+        2. Delete all paths
+            -> all the topologies should be decoupled
+            -> all the path aggregations should be deleted
+            -> their geometries should not have changed
+
+                            │
+            p1              │
+             x              ^ path2
+                            │
+            p2              │
+        ━━━━━x━━━━>━━━━━━━━━x p3
+                path1
+
+        ━>━ : direction of the path
+         x  : position of the point topology
+        """
+
+        # Create topologies
+        topo1 = self.create_point_topology(3, 3)
+        topo2 = self.create_point_topology(3, 0)
+        topo3 = self.create_point_topology(10, 0)
+
+        # Delete all paths
+        Path.objects.all().delete()
+        topo1.refresh_from_db()
+        topo2.refresh_from_db()
+        topo3.refresh_from_db()
+
+        # Check that the path aggregations have been deleted
+        self.assertFalse(PathAggregation.objects.all().exists())
+
+        # Check that the topologies have been decoupled
+        self.assertFalse(topo1.coupled)
+        self.assertFalse(topo2.coupled)
+        self.assertFalse(topo3.coupled)
+
+        # TODO in next PR: Check that their geometries have not changed
+        # self.assertAlmostEqual(topo1.geom.x, PointInBounds(3, 3).x)
+        # self.assertAlmostEqual(topo1.geom.y, PointInBounds(3, 3).y)
+        # self.assertAlmostEqual(topo2.geom.x, PointInBounds(3, 0).x)
+        # self.assertAlmostEqual(topo2.geom.y, PointInBounds(3, 0).y)
+        # self.assertAlmostEqual(topo3.geom.x, PointInBounds(10, 0).x)
+        # self.assertAlmostEqual(topo3.geom.y, PointInBounds(10, 0).y)
+
+    def test_point_on_intersection_doesnt_get_decoupled_when_one_path_is_deleted(self):
+        """
+        1. Create one point topology, on a path intersection
+        2. Delete one of the paths of the intersection
+            -> the topology should still be coupled
+            -> its geometry should not have changed
+
+                            │
+                            │
+                            ^ path2
+                            │
+                            │
+        ━━━━━━━━━━>━━━━━━━━━x p1
+                path1
+
+        ━>━ : direction of the path
+         x  : position of the point topology
+        """
+
+        # Create the topology and check its path aggregations and its coupling status
+        topology = Topology.objects.create()
+        topology.add_path(
+            self.path1, 1, 1
+        )  # The second path aggregation will be automatically created
+        topology.refresh_from_db()
+        self.assertTrue(topology.coupled)
+        self.assertEqual(
+            PathAggregation.objects.filter(topo_object=topology).count(), 2
+        )
+
+        # Delete path1 and check its path aggregations and its coupling status again
+        self.path1.delete()
+        self.assertTrue(topology.coupled)
+        self.assertEqual(
+            PathAggregation.objects.filter(topo_object=topology).count(), 1
+        )
+
+        # TODO in next PR: Check that its geometry has not changed
+
+    def test_modify_path_aggregations_points_stay_coupled(self):
+        """
+        1. Create three point topologies:
+            - one that is not on a path (p1)
+            - one that is on a path (p2)
+            - one that is on a path intersection (p3)
+        2. Modify their path aggregations
+            -> all the topologies should still be coupled
+            -> their geometries should have changed, except for the first one, which is not on a path
+
+                            │
+            p1              │
+             x              ^ path2
+                            │
+            p2              │
+        ━━━━━x━━━━>━━━━━━━━━x p3
+                path1
+
+        ━>━ : direction of the path
+         x  : position of the point topology
+        """
+
+        def move_path_aggregation_position(path_aggregation, new_position):
+            path_aggregation.start_position = new_position
+            path_aggregation.end_position = new_position
+            path_aggr1.save(update_fields=["start_position", "end_position"])
+            topo1.refresh_from_db()
+
+        # Change topo1's start and end positions: its geom should not change since its offset is not null
+        topo1 = self.create_point_topology(3, 3)
+        path_aggr1 = PathAggregation.objects.get(topo_object=topo1)
+        move_path_aggregation_position(path_aggr1, 0.5)
+        self.assertTrue(topo1.coupled)
+        # TODO in next PR: modification of the geometries
+        # self.assertAlmostEqual(topo1.geom.x, PointInBounds(3, 3).x)
+        # self.assertAlmostEqual(topo1.geom.y, PointInBounds(3, 3).y)
+
+        # Change topo2's start and end positions: its geom should change
+        topo2 = self.create_point_topology(3, 0)
+        path_aggr2 = PathAggregation.objects.get(topo_object=topo2)
+        move_path_aggregation_position(path_aggr2, 0.5)
+        self.assertTrue(topo2.coupled)
+        # TODO in next PR: modification of the geometries
+        # self.assertAlmostEqual(topo2.geom.x, PointInBounds(5, 0).x)
+        # self.assertAlmostEqual(topo2.geom.y, PointInBounds(5, 0).y)
+
+        # Change one of topo3's path aggregations positions: its geom should change
+        topo3 = self.create_point_topology(10, 0)
+        path_aggr3_qs = PathAggregation.objects.filter(topo_object=topo3)
+        path_aggr3 = path_aggr3_qs.first()
+        move_path_aggregation_position(path_aggr3, 0.5)
+        self.assertTrue(topo3.coupled)
+        # TODO in next PR: modification of the geometries
+        # self.assertAlmostEqual(topo3.geom.x, PointInBounds(5, 0).x)
+        # self.assertAlmostEqual(topo3.geom.y, PointInBounds(5, 0).y)
+
+    def test_add_path_aggregations_points_get_recoupled(self):
+        """
+        1. Create a point topology not on a path (p1)
+        2. Delete its path aggregation -> it should be decoupled
+        3. Add a path aggregation (p2, still not on a path) -> it should be recoupled
+        4. Delete its path aggregation -> it should be decoupled
+        5. Create a new point topology on a path (p3) -> it should be coupled
+        6. Delete its path aggregation -> it should be decoupled
+        7. Add a path aggregation (p4, on a path intersection) -> it should be recoupled
+
+                            │
+                            │
+            p1          p2  │
+             x          x   ^ path2
+                            │
+            p3              │
+        ━━━━━x━━━━>━━━━━━━━━x p4
+                path1
+
+        ━>━ : direction of the path
+         x  : position of the point topology
+        """
+        # TODO in next PR: modification of the geometries
+
+        # Create topology1 at p1
+        topology1 = self.create_point_topology(3, 3)
+        self.assertTrue(topology1.coupled)
+        self.decouple_topology_by_deleting_path_aggregations(topology1)
+        self.assertFalse(topology1.coupled)
+
+        # Move it to p2
+        self.add_path_aggregation_to_topology(topology1, self.path1, 0.5, 0.5)
+        self.assertTrue(topology1.coupled)
+        self.decouple_topology_by_deleting_path_aggregations(topology1)
+        self.assertFalse(topology1.coupled)
+
+        # Create topology2 at p3
+        topology2 = self.create_point_topology(3, 0)
+        self.assertTrue(topology2.coupled)
+        self.decouple_topology_by_deleting_path_aggregations(topology2)
+        self.assertFalse(topology2.coupled)
+
+        # Move it to p4
+        self.add_path_aggregation_to_topology(topology2, self.path1, 1, 1)
+        self.assertTrue(topology2.coupled)
+        self.decouple_topology_by_deleting_path_aggregations(topology2)
+        self.assertFalse(topology2.coupled)
+
+    def test_delete_path_aggregations_point_gets_decoupled_then_moves_and_gets_recoupled(
+        self,
+    ):
+        """
+        1. Create a point topology not on a path (p1)
+        2. Delete its path aggregation -> it should be decoupled
+        3. Change its geometry (p2, still not on a path) -> it should be recoupled
+        4. Delete its path aggregation -> it should be decoupled
+        5. Change its geometry (p3, now on a path) -> it should be recoupled
+        6. Delete its path aggregation -> it should be decoupled
+        7. Change its geometry (p4, on a path intersection) -> it should be recoupled
+        6. Delete its path aggregations -> it should be decoupled
+
+                            │
+                            │
+            p1          p2  │
+             x          x   ^ path2
+                            │
+            p3              │
+        ━━━━━x━━━━>━━━━━━━━━x p4
+                path1
+
+        ━>━ : direction of the path
+         x  : position of the point topology
+        """
+
+        # p1
+        topology = self.create_point_topology(3, 3)
+
+        # p2
+        self.decouple_topology_by_deleting_path_aggregations(topology)
+        self.assertFalse(topology.coupled)
+        self.move_point_topology_geom(topology, 7, 3)
+        self.assertTrue(topology.coupled)
+
+        # p3
+        self.decouple_topology_by_deleting_path_aggregations(topology)
+        self.assertFalse(topology.coupled)
+        self.move_point_topology_geom(topology, 3, 0)
+        self.assertTrue(topology.coupled)
+
+        # p4
+        self.decouple_topology_by_deleting_path_aggregations(topology)
+        self.assertFalse(topology.coupled)
+        self.move_point_topology_geom(topology, 10, 0)
+        self.assertTrue(topology.coupled)
+        self.decouple_topology_by_deleting_path_aggregations(topology)
+        self.assertFalse(topology.coupled)
+
+
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
+class LineTopologyPathNetworkCoupling(TestCase):
+    """
+    Test the automatic coupling/decoupling behavior of line topologies.
+    """
+
+    @classmethod
+    def setUpTestData(cls):
+        """
+                                     path3
+                       (10,10) ┍━━━━━━━>━━━━━━━━ (20, 10)
+                               │
+                               │
+                               │
+                               ^ path2
+                               │
+                               │
+        (0,0) ━━━━━━━━>━━━━━━━━┙ (10,0)
+                    path1
+
+        ━>━ : direction of the path
+        """
+        cls.path1 = PathFactory(geom=LineString((0, 0), (10, 0)))
+        cls.path2 = PathFactory(geom=LineString((10, 0), (10, 10)))
+        cls.path3 = PathFactory(geom=LineString((10, 10), (20, 10)))
+
+    #################################################################################
+    #                                     UTILS                                     #
+    #################################################################################
+
+    def create_line_topology(self, serialized):
+        """We cannot use TopologyFactory here because we need a workflow similar to when creating a topology via the interface."""
+        tmp_topo = Topology.deserialize(serialized)
+        topology = Topology.objects.create()
+        topology.mutate(tmp_topo)
+        topology.refresh_from_db()
+        return topology
+
+    #################################################################################
+    #                                     TESTS                                     #
+    #################################################################################
+
+    def test_move_path_line_stays_coupled_whole_path(self):
+        """
+        1. Create a line topology with no waypoint, on a whole path
+        2. Change the path geometry
+        3. The topology should still be coupled, and its geometry should have changed
+
+            Start                End
+            of topo             of topo
+        (0,0) ╠════════>>═════════╣ (10,0)
+              <┄┄┄┄┄┄ path1 ┄┄┄┄┄┄>
+
+        ──>>── : direction of the path
+        """
+
+        # Create the topology
+        serialized = f'[{{"positions":{{"0":[0,1]}},"paths":[{self.path1.pk}]}}]'
+        topology = self.create_line_topology(serialized)
+
+        # Check its geometry and status before moving the path
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0)))
+
+        # Move the path
+        self.path1.geom = LineString((0, 2), (10, 2))
+        self.path1.save()
+
+        # Check its geometry and status after moving the path
+        topology.refresh_from_db()
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.geom.coords, ((0, 2), (10, 2)))
+
+    def test_move_path_line_stays_coupled_portion_of_path(self):
+        """
+        1. Create a line topology with no waypoint, on a portion of one path
+        2. Change the path geometry
+        3. The topology should still be coupled, and its geometry should have changed
+
+                   Start              End
+                   (3,0)             (7,0)
+        (0,0) ──────╢══════════════════╟──── (10,0)
+              <┄┄┄┄┄┄┄┄┄┄┄ path1 ┄┄┄┄┄┄┄┄┄┄┄┄>
+        """
+
+        # Create the topology
+        serialized = f'[{{"positions":{{"0":[0.3,0.7]}},"paths":[{self.path1.pk}]}}]'
+        topology = self.create_line_topology(serialized)
+
+        # Check its geometry and status before moving the path
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.geom.coords, ((3, 0), (7, 0)))
+
+        # Move the path
+        self.path1.geom = LineString((0, 2), (10, 2))
+        self.path1.save()
+
+        # Check its geometry and status after moving the path
+        topology.refresh_from_db()
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.geom.coords, ((3, 2), (7, 2)))
+
+    def test_move_first_path_line_stays_coupled(self):
+        """
+        1. Create a line topology with no waypoint, on 3 paths
+        2. Change the first path geometry without breaking the network (path1 and path2 still touch)
+        3. The topology should still be coupled, and its geometry should have changed
+
+                                                     End
+                       (10,10) ╔═════════════════╣ (20, 10)
+                               ║     path3
+                               ║
+                               ║
+                               ║ path2
+                               ║
+        Start                  ║    path1 (after)
+        (0,0) ╠════════════════╝┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅
+                 path1       (10,0)            (20,0)
+               (before)
+
+        """
+
+        # Create the topology
+        serialized = (
+            f'[{{"positions":{{"0":[0,1], "1":[0,1], "3":[0,1]}},'
+            f'"paths":[{self.path1.pk}, {self.path2.pk}, {self.path3.pk}]}}]'
+        )
+        topology = self.create_line_topology(serialized)
+
+        # Check its geometry and status before moving the path
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
+
+        # Move the path
+        self.path1.geom = LineString((20, 0), (10, 0))
+        self.path1.save()
+
+        # Check its geometry and status after moving the path
+        topology.refresh_from_db()
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.geom.coords, ((20, 0), (10, 0), (10, 10), (20, 10)))
+
+    def test_move_middle_path_line_gets_decoupled_and_stays_decoupled(self):
+        """
+        1. Create a line topology with no waypoint, on 3 paths
+        2. Change the middle path geometry so that path2 and path3 no longer touch
+        3. The topology should be decoupled, and its geometry should not have changed
+        4. Change the first path geom so that path1 and path3 are touching
+        5. The topology should still be decoupled, and its geometry should not have changed
+
+           (10,0)           (10,10)              End
+              ┌────────────────╔═════════════════╣ (20, 10)
+              │                ║     path3
+              │ path1          ║
+              │ (after)        ║
+              │                ║ path2 (before)
+              │                ║
+        Start │                ║     path2 (after)
+        (0,0) ╠════════════════╝──────────────────
+                   path1     (10,0)            (20,0)
+                 (before)
+        """
+
+        # Create the topology
+        serialized = (
+            f'[{{"positions":{{"0":[0,1], "1":[0,1], "3":[0,1]}},'
+            f'"paths":[{self.path1.pk}, {self.path2.pk}, {self.path3.pk}]}}]'
+        )
+        topology = self.create_line_topology(serialized)
+
+        # Check its geometry and status before moving the path
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
+
+        # Move path2
+        self.path2.geom = LineString((10, 0), (20, 0))
+        self.path2.save()
+
+        # Check its geometry and status after moving the path
+        topology.refresh_from_db()
+        self.assertFalse(topology.coupled)
+        # TODO in next PR:
+        # self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
+
+        # Move path1
+        self.path1.geom = LineString((0, 0), (10, 0), (10, 10))
+        self.path1.save()
+
+        # Check its geometry and status after moving the path
+        topology.refresh_from_db()
+        self.assertFalse(topology.coupled)
+        # TODO in next PR:
+        # self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
+
+    def test_move_middle_path_line_with_waypoint_gets_decoupled_and_stays_decoupled(
+        self,
+    ):
+        """
+        1. Create a line topology with a waypoint, on 3 paths
+        2. Change the middle path geometry so that path2 and path3 no longer touch
+        3. The topology should be decoupled, and its geometry should not have changed
+        4. Change the first path geom
+        5. The topology should still be decoupled, and its geometry should not have changed
+
+                                                     End
+                       (10,10) ╔═════════════════╣ (20, 10)
+                               ║     path3
+                               ║
+                      waypoint ║
+                       (10,5)  ╫
+                               ║ path2 (before)
+                               ║
+                   path1       ║
+        Start     (before)     ║     path2 (after)
+        (0,0) ╠════════════════╝┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅┅
+                ╲             ╱ (10,0)         (20,0)
+                  ╲         ╱
+                    ╲     ╱
+                      ╲ ╱   path1 (after)
+                     (5,-5)
+        """
+
+        # Create the topology
+        serialized = (
+            f'[{{"positions":{{"0":[0,1], "1":[0,0.5]}}, "paths":[{self.path1.pk}, {self.path2.pk}]}},'
+            f'{{"positions":{{"0":[0.5,1], "1":[0,1]}}, "paths":[{self.path2.pk}, {self.path3.pk}]}}]'
+        )
+        topology = self.create_line_topology(serialized)
+
+        # Check its geometry and status before moving the path
+        self.assertTrue(topology.coupled)
+        self.assertEqual(
+            topology.geom.coords, ((0, 0), (10, 0), (10, 5), (10, 10), (20, 10))
+        )
+
+        # Move path2
+        self.path2.geom = LineString((10, 0), (20, 0))
+        self.path2.save()
+
+        # Check its geometry and status after moving the path
+        topology.refresh_from_db()
+        self.assertFalse(topology.coupled)
+        # TODO in next PR:
+        # self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 5), (10, 10), (20, 10)))
+
+        # Move path1
+        self.path1.geom = LineString((0, 0), (5, -5), (10, 0))
+        self.path1.save()
+
+        # Check its geometry and status after moving the path
+        topology.refresh_from_db()
+        self.assertFalse(topology.coupled)
+        # TODO in next PR:
+        # self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 5), (10, 10), (20, 10)))
+
+    def test_move_path_line_gets_recoupled(self):
+        """
+        1. Create an invalid line topology with no waypoint, on 3 paths
+        2. It should not be coupled
+        3. Change the middle path geometry so that path2 and path3 touch
+        4. The topology should be coupled, and it should have a correct geometry
+
+                                     End                                          End
+                                   (20,10)                                      (20,10)
+                      (10,10) ════════╣                         (10,10) ╔══════════╣
+                               path3                                    ║   path3
+                                                                        ║
+                                               ->                       ║ path2
+                                                                        ║
+        Start     path1       path2                   Start     path1   ║
+        (0,0) ╠═══════════╪═══════════                (0,0) ╠═══════════╝
+                       (10,0)      (20,0)                             (10,0)
+        """
+
+        # Set path2's geom
+        self.path2.geom = LineString((10, 0), (20, 0))
+        self.path2.save()
+
+        # Create the topology
+        serialized = (
+            f'[{{"positions":{{"0":[0,1], "1":[0,1], "3":[0,1]}},'
+            f'"paths":[{self.path1.pk}, {self.path2.pk}, {self.path3.pk}]}}]'
+        )
+        topology = self.create_line_topology(serialized)
+
+        # Check its coupling status before moving the path
+        self.assertFalse(topology.coupled)
+
+        # Move path2
+        self.path2.geom = LineString((10, 0), (10, 10))
+        self.path2.save()
+
+        # Check its geometry and status after moving the path
+        topology.refresh_from_db()
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
+
+    def test_move_path_line_with_waypoint_gets_recoupled(self):
+        """
+        1. Create an invalid line topology with a waypoint, on 3 paths
+        2. It should not be coupled
+        3. Change the middle path geometry so that path2 and path3 touch
+        4. The topology should be coupled, and it should have a correct geometry
+
+                                       End                                              End
+                                     (20,10)                                          (20,10)
+                      (10,10) ══════════╣                           (10,10) ╔══════════╣
+                                path3                                       ║   path3
+                                                                      path2 ║
+                                                   ->                       ╬  waypoint
+                                                                            ║
+        Start                   waypoint                  Start    path1    ║
+        (0,0) ╠═══════════╪═══════╬═══════                (0,0) ╠═══════════╝
+                path1  (10,0)   path2    (20,0)                             (10,0)
+        """
+
+        # Set path2's geom
+        self.path2.geom = LineString((10, 0), (20, 0))
+        self.path2.save()
+
+        # Create the topology
+        serialized = (
+            f'[{{"positions":{{"0":[0,1], "1":[0,0.5]}}, "paths":[{self.path1.pk}, {self.path2.pk}]}},'
+            f'{{"positions":{{"0":[0.5,1], "1":[0,1]}}, "paths":[{self.path2.pk}, {self.path3.pk}]}}]'
+        )
+        topology = self.create_line_topology(serialized)
+
+        # Check its coupling status before moving the path
+        self.assertFalse(topology.coupled)
+
+        # Move path2
+        self.path2.geom = LineString((10, 0), (10, 10))
+        self.path2.save()
+
+        # Check its geometry and status after moving the path
+        topology.refresh_from_db()
+        self.assertTrue(topology.coupled)
+        self.assertEqual(
+            topology.geom.coords, ((0, 0), (10, 0), (10, 5), (10, 10), (20, 10))
+        )
+
+    def test_delete_middle_path_line_gets_decoupled(self):
+        """
+        1. Create a line topology with no waypoint, on 3 paths
+        2. Delete the middle path
+        3. The topology should be decoupled, and its geometry should not have changed
+
+                                      End                                        End
+                                    (20,10)                                    (20,10)
+                  (10,10) ╔════════════╣                         (10,10) ══════════╣
+                          ║   path3
+                          ║
+                          ║ path2              ->
+                          ║
+        Start    path1    ║                            Start
+        (0,0) ╠═══════════╝                            (0,0) ╠════════════
+                          (10,0)                                       (10,0)
+        """
+
+        # Create the topology
+        serialized = (
+            f'[{{"positions":{{"0":[0,1], "1":[0,1], "3":[0,1]}},'
+            f'"paths":[{self.path1.pk}, {self.path2.pk}, {self.path3.pk}]}}]'
+        )
+        topology = self.create_line_topology(serialized)
+
+        # Check its geometry and status before deleting the path
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
+
+        # Delete path2
+        self.path2.delete()
+
+        # Check its geometry and status after deleting the path
+        topology.refresh_from_db()
+        self.assertFalse(topology.coupled)
+        # TODO in next PR:
+        # self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
+
+    def test_delete_first_path_line_stays_coupled(self):
+        """
+        1. Create a line topology with no waypoint, on 3 paths
+        2. Delete the first path
+        3. The topology should still be coupled, and its geometry should have changed
+
+                                      End                                       End
+                                    (20,10)                                   (20,10)
+                  (10,10) ╔════════════╣                    (10,10) ╔════════════╣
+                          ║   path3                                 ║   path3
+                          ║                                         ║
+                          ║ path2              ->                   ║
+                          ║                                         ║ path2
+        Start    path1    ║                                         ║
+        (0,0) ╠═══════════╝                                         ║
+                          (10,0)                             Start (10,0)
+        """
+
+        # Create the topology
+        serialized = (
+            f'[{{"positions":{{"0":[0,1], "1":[0,1], "3":[0,1]}},'
+            f'"paths":[{self.path1.pk}, {self.path2.pk}, {self.path3.pk}]}}]'
+        )
+        topology = self.create_line_topology(serialized)
+
+        # Check its geometry and status before deleting the path
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
+
+        # Delete path1
+        self.path1.delete()
+
+        # Check its geometry and status after deleting the path
+        topology.refresh_from_db()
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.geom.coords, ((10, 0), (10, 10), (20, 10)))
+
+    def test_delete_middle_path_line_with_detour_stays_coupled(self):
+        """
+        1. Create a line topology with a detour, on 3 paths
+        2. Delete the middle path (perpendicular to the others)
+        3. The topology should still be coupled, and its geometry should have changed
+
+
+                  (10,10) ╦ waypoint
+                          ║
+                          ║
+                          ║ path2              ->
+                          ║
+        Start    path1    ║   path3      End             Start    path1        path3      End
+        (0,0) ╠═══════════╩═══════════╣ (20,0)           (0,0) ╠═══════════╪═══════════╣ (20,0)
+                       (10,0)                                            (10,0)
+        """
+
+        # Set path3's geom
+        self.path3.geom = LineString((10, 0), (20, 0))
+        self.path3.save()
+
+        # Create the topology
+        serialized = (
+            f'[{{"positions":{{"0":[0,1], "1":[0,1]}}, "paths":[{self.path1.pk}, {self.path2.pk}]}},'
+            f'{{"positions":{{"0":[1,0], "1":[0,1]}}, "paths":[{self.path2.pk}, {self.path3.pk}]}}]'
+        )
+        topology = self.create_line_topology(serialized)
+
+        # Check its geometry and status before deleting the path
+        self.assertTrue(topology.coupled)
+        self.assertEqual(
+            topology.geom.coords, ((0, 0), (10, 0), (10, 10), (10, 0), (20, 0))
+        )
+
+        # Delete path2
+        self.path2.delete()
+
+        # Check its geometry and status after deleting the path
+        topology.refresh_from_db()
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (20, 0)))
+
+    def test_delete_all_paths_lines_get_decoupled(self):
+        """
+        1. Create a line topology with no waypoint, on a portion of a path
+        2. Create a line topology with a waypoint, on 3 whole paths
+        2. Delete all paths
+        3. The topologies should be decoupled, and their geometries should not have changed
+
+                   Topology 1:                                         Topology 2:
+
+                                                                                      End
+                                                                                    (20,10)
+                                                                   (10,10) ╔══════════╣
+                                                                           ║   path3
+                                                                     path2 ║
+                                                                           ╬  waypoint
+                Start        End                                           ║
+                (3,0)       (7,0)                         Start    path1   ║
+        (0,0) ────╢═══════════╟──── (10,0)               (0,0) ╠═══════════╝
+              <┄┄┄┄┄┄ path1 ┄┄┄┄┄┄>                                        (10,0)
+
+        """
+
+        # Create the first topology (no waypoint, portion of path1)
+        serialized1 = f'[{{"positions":{{"0":[0.3,0.7]}},"paths":[{self.path1.pk}]}}]'
+        topology1 = self.create_line_topology(serialized1)
+
+        # Check its geometry and status before deleting the paths
+        self.assertTrue(topology1.coupled)
+        self.assertEqual(topology1.geom.coords, ((3, 0), (7, 0)))
+
+        # Create the second topology (1 waypoint, on paths 1, 2 and 3)
+        serialized2 = (
+            f'[{{"positions":{{"0":[0,1], "1":[0,0.5]}}, "paths":[{self.path1.pk}, {self.path2.pk}]}},'
+            f'{{"positions":{{"0":[0.5,1], "1":[0,1]}}, "paths":[{self.path2.pk}, {self.path3.pk}]}}]'
+        )
+        topology2 = self.create_line_topology(serialized2)
+
+        # Check its geometry and status before moving the path
+        self.assertTrue(topology2.coupled)
+        self.assertEqual(
+            topology2.geom.coords, ((0, 0), (10, 0), (10, 5), (10, 10), (20, 10))
+        )
+
+        # Delete all paths
+        Path.objects.all().delete()
+
+        # Check topology1's geometry and status after deleting the paths
+        topology1.refresh_from_db()
+        self.assertFalse(topology1.coupled)
+        self.assertEqual(topology1.geom.coords, ((3, 0), (7, 0)))
+
+        # Check topology2's geometry and status after deleting the paths
+        topology2.refresh_from_db()
+        self.assertFalse(topology2.coupled)
+        self.assertEqual(
+            topology2.geom.coords, ((0, 0), (10, 0), (10, 5), (10, 10), (20, 10))
+        )
