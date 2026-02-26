@@ -78,78 +78,77 @@ BEGIN
 
     IF t_count = 0 OR NOT TopologyIsValid(topology_id) THEN
        -- If the topology is invalid or if there are no longer any path aggregations linked to this
-       -- topology, we decouple it from the path network.
-       -- TODO in a later PR: set geom_need_update to FALSE and exit the function
-        UPDATE core_topology SET coupled = FALSE WHERE id = topology_id;
+       -- topology, we decouple it from the path network, and we don't update its geometry.
+        UPDATE core_topology SET coupled = FALSE, geom_need_update = FALSE WHERE id = topology_id;
+        RETURN;
     ELSE
         UPDATE core_topology SET coupled = TRUE WHERE id = topology_id;
     END IF;
 
-    IF t_count > 0 THEN
-        IF (NOT lines_only AND t_count = 1) OR points_only THEN
-            -- Special case: the topology describe a point on the path
-            -- Note: We are faking a M-geometry in order to use LocateAlong.
-            -- This is handy because this function includes an offset parameter
-            -- which could be otherwise diffcult to handle.
-            SELECT geom, "offset" INTO egeom, t_offset FROM core_topology e WHERE e.id = topology_id;
-            -- RAISE NOTICE '% % % %', (t_offset = 0), (egeom IS NULL), (ST_IsEmpty(egeom)), (ST_X(egeom) = 0 AND ST_Y(egeom) = 0);
-            IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) OR (ST_X(egeom) = 0 AND ST_Y(egeom) = 0) THEN
-                -- ST_LocateAlong can give no point when we try to get the startpoint or the endpoint of the line
-                SELECT et.start_position INTO position_point FROM core_pathaggregation et WHERE et.topo_object_id = topology_id;
-                IF (position_point < 0.000000000000001) THEN
-                    SELECT ST_StartPoint(t.geom) INTO egeom
+    IF (NOT lines_only AND t_count = 1) OR points_only THEN
+        -- Special case: the topology describe a point on the path
+        -- Note: We are faking a M-geometry in order to use LocateAlong.
+        -- This is handy because this function includes an offset parameter
+        -- which could be otherwise difficult to handle.
+        SELECT geom, "offset" INTO egeom, t_offset FROM core_topology e WHERE e.id = topology_id;
+        -- RAISE NOTICE '% % % %', (t_offset = 0), (egeom IS NULL), (ST_IsEmpty(egeom)), (ST_X(egeom) = 0 AND ST_Y(egeom) = 0);
+        IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) OR (ST_X(egeom) = 0 AND ST_Y(egeom) = 0) THEN
+            -- ST_LocateAlong can give no point when we try to get the startpoint or the endpoint of the line
+            SELECT et.start_position INTO position_point FROM core_pathaggregation et WHERE et.topo_object_id = topology_id;
+            IF (position_point < 0.000000000000001) THEN
+                SELECT ST_StartPoint(t.geom) INTO egeom
+                FROM core_topology e, core_pathaggregation et, core_path t
+                WHERE e.id = topology_id AND et.topo_object_id = e.id AND et.path_id = t.id;
+            ELSIF (position_point > 0.999999999999999) THEN
+                SELECT ST_EndPoint(t.geom) INTO egeom
+                FROM core_topology e, core_pathaggregation et, core_path t
+                WHERE e.id = topology_id AND et.topo_object_id = e.id AND et.path_id = t.id;
+            ELSE
+                SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force2D(t.geom), 0, 1), et.start_position, e.offset), 1)
+                    INTO egeom
                     FROM core_topology e, core_pathaggregation et, core_path t
                     WHERE e.id = topology_id AND et.topo_object_id = e.id AND et.path_id = t.id;
-                ELSIF (position_point > 0.999999999999999) THEN
-                    SELECT ST_EndPoint(t.geom) INTO egeom
-                    FROM core_topology e, core_pathaggregation et, core_path t
-                    WHERE e.id = topology_id AND et.topo_object_id = e.id AND et.path_id = t.id;
-                ELSE
-                    SELECT ST_GeometryN(ST_LocateAlong(ST_AddMeasure(ST_Force2D(t.geom), 0, 1), et.start_position, e.offset), 1)
-                        INTO egeom
-                        FROM core_topology e, core_pathaggregation et, core_path t
-                        WHERE e.id = topology_id AND et.topo_object_id = e.id AND et.path_id = t.id;
-                END IF;
-            END IF;
-
-            egeom_3d := egeom;
-        ELSE
-            -- Regular case: the topology describe a line
-            -- NOTE: LineMerge and Line_Substring work on X and Y only. If two
-            -- points in the line have the same X/Y but a different Z, these
-            -- functions will see only on point. --> No problem in mountain path management.
-            FOR t_offset, t_geom, t_geom_3d IN SELECT e."offset", ST_SmartLineSubstring(t.geom, et.start_position, et.end_position),
-                                                                   ST_SmartLineSubstring(t.geom_3d, et.start_position, et.end_position)
-                   FROM core_topology e, core_pathaggregation et, core_path t
-                   WHERE e.id = topology_id AND et.topo_object_id = e.id AND et.path_id = t.id
-                     AND GeometryType(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position)) != 'POINT'
-                   ORDER BY et."order", et.id  -- /!\ We suppose that path aggregations were created in the right order
-            LOOP
-                tomerge := array_append(tomerge, t_geom);
-                tomerge_3d := array_append(tomerge_3d, t_geom_3d);
-            END LOOP;
-            SELECT * FROM ft_Smart_MakeLine(tomerge) INTO smart_makeline;
-            SELECT * FROM ft_Smart_MakeLine(tomerge_3d) INTO smart_makeline_3d;
-            egeom := smart_makeline.new_geometry;
-            egeom_3d := smart_makeline_3d.new_geometry;
-            -- Add some offset if necessary.
-            IF t_offset != 0 THEN
-                egeom := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom, 0, 1), 0, 1, t_offset), 1);
-                egeom_3d := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom_3d, 0, 1), 0, 1, t_offset), 1);
             END IF;
         END IF;
 
-        SELECT * FROM ft_elevation_infos(egeom_3d, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
-        UPDATE core_topology SET geom = ST_Force2D(egeom),
-                                 geom_3d = ST_Force3DZ(elevation.draped),
-                                 "length" = ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]'),
-                                 slope = elevation.slope,
-                                 min_elevation = elevation.min_elevation,
-                                 max_elevation = elevation.max_elevation,
-                                 ascent = elevation.positive_gain,
-                                 descent = elevation.negative_gain
-                             WHERE id = topology_id;
+        egeom_3d := egeom;
+    ELSE
+        -- Regular case: the topology describe a line
+        -- NOTE: LineMerge and Line_Substring work on X and Y only. If two
+        -- points in the line have the same X/Y but a different Z, these
+        -- functions will see only on point. --> No problem in mountain path management.
+        FOR t_offset, t_geom, t_geom_3d IN SELECT e."offset", ST_SmartLineSubstring(t.geom, et.start_position, et.end_position),
+                                                               ST_SmartLineSubstring(t.geom_3d, et.start_position, et.end_position)
+               FROM core_topology e, core_pathaggregation et, core_path t
+               WHERE e.id = topology_id AND et.topo_object_id = e.id AND et.path_id = t.id
+                 AND GeometryType(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position)) != 'POINT'
+               ORDER BY et."order", et.id  -- /!\ We suppose that path aggregations were created in the right order
+        LOOP
+            tomerge := array_append(tomerge, t_geom);
+            tomerge_3d := array_append(tomerge_3d, t_geom_3d);
+        END LOOP;
+        SELECT * FROM ft_Smart_MakeLine(tomerge) INTO smart_makeline;
+        SELECT * FROM ft_Smart_MakeLine(tomerge_3d) INTO smart_makeline_3d;
+        egeom := smart_makeline.new_geometry;
+        egeom_3d := smart_makeline_3d.new_geometry;
+        -- Add some offset if necessary.
+        IF t_offset != 0 THEN
+            egeom := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom, 0, 1), 0, 1, t_offset), 1);
+            egeom_3d := ST_GeometryN(ST_LocateBetween(ST_AddMeasure(egeom_3d, 0, 1), 0, 1, t_offset), 1);
+        END IF;
     END IF;
+
+    SELECT * FROM ft_elevation_infos(egeom_3d, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
+    UPDATE core_topology SET geom = ST_Force2D(egeom),
+                             geom_3d = ST_Force3DZ(elevation.draped),
+                             "length" = ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]'),
+                             slope = elevation.slope,
+                             min_elevation = elevation.min_elevation,
+                             max_elevation = elevation.max_elevation,
+                             ascent = elevation.positive_gain,
+                             descent = elevation.negative_gain
+                         WHERE id = topology_id;
+
     UPDATE core_topology SET geom_need_update = FALSE WHERE id = topology_id;
 END;
 $$ LANGUAGE plpgsql;
