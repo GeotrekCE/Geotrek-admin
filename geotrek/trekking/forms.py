@@ -14,9 +14,9 @@ from mapentity.widgets import MapWidget, SelectMultipleWithPop
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
 
+from ..core.mixins.forms import TopologyForm
 from .models import (
     POI,
     OrderedTrekChild,
