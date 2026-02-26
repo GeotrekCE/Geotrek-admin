@@ -1,74 +1,30 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from mapentity.views import (
-    MapEntityCreate,
-    MapEntityDelete,
-    MapEntityDetail,
-    MapEntityDocument,
-    MapEntityFilter,
-    MapEntityFormat,
-    MapEntityList,
-    MapEntityUpdate,
-)
+from mapentity import views as me_views
 
+from geotrek.altimetry.models import AltimetryMixin
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
-from geotrek.core.models import AltimetryMixin
 from geotrek.core.views import CreateFromTopologyMixin
 
-from .filters import (
-    CirculationEdgeFilterSet,
-    CompetenceEdgeFilterSet,
-    LandEdgeFilterSet,
-    PhysicalEdgeFilterSet,
-    SignageManagementEdgeFilterSet,
-    WorkManagementEdgeFilterSet,
-)
-from .forms import (
-    CirculationEdgeForm,
-    CompetenceEdgeForm,
-    LandEdgeForm,
-    PhysicalEdgeForm,
-    SignageManagementEdgeForm,
-    WorkManagementEdgeForm,
-)
-from .models import (
-    CirculationEdge,
-    CompetenceEdge,
-    LandEdge,
-    PhysicalEdge,
-    SignageManagementEdge,
-    WorkManagementEdge,
-)
-from .serializers import (
-    CirculationEdgeGeojsonSerializer,
-    CirculationEdgeSerializer,
-    CompetenceEdgeGeojsonSerializer,
-    CompetenceEdgeSerializer,
-    LandEdgeGeojsonSerializer,
-    LandEdgeSerializer,
-    PhysicalEdgeGeojsonSerializer,
-    PhysicalEdgeSerializer,
-    SignageManagementEdgeGeojsonSerializer,
-    SignageManagementEdgeSerializer,
-    WorkManagementEdgeGeojsonSerializer,
-    WorkManagementEdgeSerializer,
-)
+from . import filters, forms, layers, models, serializers
 
 
-class PhysicalEdgeList(CustomColumnsMixin, CreateFromTopologyMixin, MapEntityList):
-    queryset = PhysicalEdge.objects.existing()
+class PhysicalEdgeList(
+    CustomColumnsMixin, CreateFromTopologyMixin, me_views.MapEntityList
+):
+    queryset = models.PhysicalEdge.objects.existing()
     mandatory_columns = ["id", "physical_type"]
     default_extra_columns = ["length", "length_2d"]
 
 
-class PhysicalEdgeFilter(MapEntityFilter):
-    model = PhysicalEdge
-    filterset_class = PhysicalEdgeFilterSet
+class PhysicalEdgeFilter(me_views.MapEntityFilter):
+    model = models.PhysicalEdge
+    filterset_class = filters.PhysicalEdgeFilterSet
 
 
-class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
-    filterset_class = PhysicalEdgeFilterSet
+class PhysicalEdgeFormatList(me_views.MapEntityFormat, PhysicalEdgeList):
+    filterset_class = filters.PhysicalEdgeFilterSet
     mandatory_columns = ["id", "physical_type"]
     default_extra_columns = [
         "date_insert",
@@ -81,35 +37,37 @@ class PhysicalEdgeFormatList(MapEntityFormat, PhysicalEdgeList):
     ]
 
 
-class PhysicalEdgeDetail(MapEntityDetail):
-    queryset = PhysicalEdge.objects.existing()
+class PhysicalEdgeDetail(me_views.MapEntityDetail):
+    queryset = models.PhysicalEdge.objects.existing()
 
 
-class PhysicalEdgeDocument(MapEntityDocument):
-    model = PhysicalEdge
+class PhysicalEdgeDocument(me_views.MapEntityDocument):
+    model = models.PhysicalEdge
 
 
-class PhysicalEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
-    model = PhysicalEdge
-    form_class = PhysicalEdgeForm
+class PhysicalEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
+    model = models.PhysicalEdge
+    form_class = forms.PhysicalEdgeForm
 
 
-class PhysicalEdgeUpdate(MapEntityUpdate):
-    queryset = PhysicalEdge.objects.existing()
-    form_class = PhysicalEdgeForm
+class PhysicalEdgeUpdate(me_views.MapEntityUpdate):
+    queryset = models.PhysicalEdge.objects.existing()
+    form_class = forms.PhysicalEdgeForm
 
 
-class PhysicalEdgeDelete(MapEntityDelete):
-    model = PhysicalEdge
+class PhysicalEdgeDelete(me_views.MapEntityDelete):
+    model = models.PhysicalEdge
 
 
 class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
-    model = PhysicalEdge
-    serializer_class = PhysicalEdgeSerializer
-    geojson_serializer_class = PhysicalEdgeGeojsonSerializer
-    filterset_class = PhysicalEdgeFilterSet
+    model = models.PhysicalEdge
+    serializer_class = serializers.PhysicalEdgeSerializer
+    geojson_serializer_class = serializers.PhysicalEdgeGeojsonSerializer
+    filterset_class = filters.PhysicalEdgeFilterSet
     mapentity_list_class = PhysicalEdgeList
-    vector_tiles_fields = ("id",)
+
+    def get_layer_classes(self):
+        return [layers.PhysicalEdgeVectorLayer]
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("physical_type")
@@ -122,19 +80,19 @@ class PhysicalEdgeViewSet(GeotrekMapentityViewSet):
         return qs.defer("geom", "geom_3d")
 
 
-class LandEdgeList(CustomColumnsMixin, MapEntityList):
-    queryset = LandEdge.objects.existing()
+class LandEdgeList(CustomColumnsMixin, me_views.MapEntityList):
+    queryset = models.LandEdge.objects.existing()
     mandatory_columns = ["id", "land_type"]
     default_extra_columns = ["length", "length_2d"]
 
 
-class LandEdgeFilter(MapEntityFilter):
-    model = LandEdge
-    filterset_class = LandEdgeFilterSet
+class LandEdgeFilter(me_views.MapEntityFilter):
+    model = models.LandEdge
+    filterset_class = filters.LandEdgeFilterSet
 
 
-class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
-    filterset_class = LandEdgeFilterSet
+class LandEdgeFormatList(me_views.MapEntityFormat, LandEdgeList):
+    filterset_class = filters.LandEdgeFilterSet
     mandatory_columns = ["id"]
     default_extra_columns = [
         "land_type",
@@ -151,35 +109,37 @@ class LandEdgeFormatList(MapEntityFormat, LandEdgeList):
     ]
 
 
-class LandEdgeDetail(MapEntityDetail):
-    queryset = LandEdge.objects.existing()
+class LandEdgeDetail(me_views.MapEntityDetail):
+    queryset = models.LandEdge.objects.existing()
 
 
-class LandEdgeDocument(MapEntityDocument):
-    model = LandEdge
+class LandEdgeDocument(me_views.MapEntityDocument):
+    model = models.LandEdge
 
 
-class LandEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
-    model = LandEdge
-    form_class = LandEdgeForm
+class LandEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
+    model = models.LandEdge
+    form_class = forms.LandEdgeForm
 
 
-class LandEdgeUpdate(MapEntityUpdate):
-    queryset = LandEdge.objects.existing()
-    form_class = LandEdgeForm
+class LandEdgeUpdate(me_views.MapEntityUpdate):
+    queryset = models.LandEdge.objects.existing()
+    form_class = forms.LandEdgeForm
 
 
-class LandEdgeDelete(MapEntityDelete):
-    model = LandEdge
+class LandEdgeDelete(me_views.MapEntityDelete):
+    model = models.LandEdge
 
 
 class LandEdgeViewSet(GeotrekMapentityViewSet):
-    model = LandEdge
-    serializer_class = LandEdgeSerializer
-    geojson_serializer_class = LandEdgeGeojsonSerializer
-    filterset_class = LandEdgeFilterSet
+    model = models.LandEdge
+    serializer_class = serializers.LandEdgeSerializer
+    geojson_serializer_class = serializers.LandEdgeGeojsonSerializer
+    filterset_class = filters.LandEdgeFilterSet
     mapentity_list_class = LandEdgeList
-    vector_tiles_fields = ("id",)
+
+    def get_layer_classes(self):
+        return [layers.LandEdgeVectorLayer]
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("land_type")
@@ -190,19 +150,19 @@ class LandEdgeViewSet(GeotrekMapentityViewSet):
         return qs.defer("geom", "geom_3d")
 
 
-class CirculationEdgeList(CustomColumnsMixin, MapEntityList):
-    queryset = CirculationEdge.objects.existing()
+class CirculationEdgeList(CustomColumnsMixin, me_views.MapEntityList):
+    queryset = models.CirculationEdge.objects.existing()
     mandatory_columns = ["id", "circulation_type", "authorization_type"]
     default_extra_columns = ["length", "length_2d"]
 
 
-class CirculationEdgeFilter(MapEntityFilter):
-    model = CirculationEdge
-    filterset_class = CirculationEdgeFilterSet
+class CirculationEdgeFilter(me_views.MapEntityFilter):
+    model = models.CirculationEdge
+    filterset_class = filters.CirculationEdgeFilterSet
 
 
-class CirculationEdgeFormatList(MapEntityFormat, CirculationEdgeList):
-    filterset_class = CirculationEdgeFilterSet
+class CirculationEdgeFormatList(me_views.MapEntityFormat, CirculationEdgeList):
+    filterset_class = filters.CirculationEdgeFilterSet
     mandatory_columns = ["id"]
     default_extra_columns = [
         "circulation_type",
@@ -218,34 +178,37 @@ class CirculationEdgeFormatList(MapEntityFormat, CirculationEdgeList):
     ]
 
 
-class CirculationEdgeDetail(MapEntityDetail):
-    queryset = CirculationEdge.objects.existing()
+class CirculationEdgeDetail(me_views.MapEntityDetail):
+    queryset = models.CirculationEdge.objects.existing()
 
 
-class CirculationEdgeDocument(MapEntityDocument):
-    model = CirculationEdge
+class CirculationEdgeDocument(me_views.MapEntityDocument):
+    model = models.CirculationEdge
 
 
-class CirculationEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
-    model = CirculationEdge
-    form_class = CirculationEdgeForm
+class CirculationEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
+    model = models.CirculationEdge
+    form_class = forms.CirculationEdgeForm
 
 
-class CirculationEdgeUpdate(MapEntityUpdate):
-    queryset = CirculationEdge.objects.existing()
-    form_class = CirculationEdgeForm
+class CirculationEdgeUpdate(me_views.MapEntityUpdate):
+    queryset = models.CirculationEdge.objects.existing()
+    form_class = forms.CirculationEdgeForm
 
 
-class CirculationEdgeDelete(MapEntityDelete):
-    model = CirculationEdge
+class CirculationEdgeDelete(me_views.MapEntityDelete):
+    model = models.CirculationEdge
 
 
 class CirculationEdgeViewSet(GeotrekMapentityViewSet):
-    model = CirculationEdge
-    serializer_class = CirculationEdgeSerializer
-    geojson_serializer_class = CirculationEdgeGeojsonSerializer
-    filterset_class = CirculationEdgeFilterSet
+    model = models.CirculationEdge
+    serializer_class = serializers.CirculationEdgeSerializer
+    geojson_serializer_class = serializers.CirculationEdgeGeojsonSerializer
+    filterset_class = filters.CirculationEdgeFilterSet
     mapentity_list_class = CirculationEdgeList
+
+    def get_layer_classes(self):
+        return [layers.CirculationEdgeVectorLayer]
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("circulation_type")
@@ -256,19 +219,19 @@ class CirculationEdgeViewSet(GeotrekMapentityViewSet):
         return qs.defer("geom", "geom_3d")
 
 
-class CompetenceEdgeList(CustomColumnsMixin, MapEntityList):
-    queryset = CompetenceEdge.objects.existing()
+class CompetenceEdgeList(CustomColumnsMixin, me_views.MapEntityList):
+    queryset = models.CompetenceEdge.objects.existing()
     mandatory_columns = ["id", "organization"]
     default_extra_columns = ["length", "length_2d"]
 
 
-class CompetenceEdgeFilter(MapEntityFilter):
-    model = CompetenceEdge
-    filterset_class = CompetenceEdgeFilterSet
+class CompetenceEdgeFilter(me_views.MapEntityFilter):
+    model = models.CompetenceEdge
+    filterset_class = filters.CompetenceEdgeFilterSet
 
 
-class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
-    filterset_class = CompetenceEdgeFilterSet
+class CompetenceEdgeFormatList(me_views.MapEntityFormat, CompetenceEdgeList):
+    filterset_class = filters.CompetenceEdgeFilterSet
     mandatory_columns = ["id", "organization"]
     default_extra_columns = [
         "date_insert",
@@ -282,34 +245,37 @@ class CompetenceEdgeFormatList(MapEntityFormat, CompetenceEdgeList):
     ]
 
 
-class CompetenceEdgeDetail(MapEntityDetail):
-    queryset = CompetenceEdge.objects.existing()
+class CompetenceEdgeDetail(me_views.MapEntityDetail):
+    queryset = models.CompetenceEdge.objects.existing()
 
 
-class CompetenceEdgeDocument(MapEntityDocument):
-    model = CompetenceEdge
+class CompetenceEdgeDocument(me_views.MapEntityDocument):
+    model = models.CompetenceEdge
 
 
-class CompetenceEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
-    model = CompetenceEdge
-    form_class = CompetenceEdgeForm
+class CompetenceEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
+    model = models.CompetenceEdge
+    form_class = forms.CompetenceEdgeForm
 
 
-class CompetenceEdgeUpdate(MapEntityUpdate):
-    queryset = CompetenceEdge.objects.existing()
-    form_class = CompetenceEdgeForm
+class CompetenceEdgeUpdate(me_views.MapEntityUpdate):
+    queryset = models.CompetenceEdge.objects.existing()
+    form_class = forms.CompetenceEdgeForm
 
 
-class CompetenceEdgeDelete(MapEntityDelete):
-    model = CompetenceEdge
+class CompetenceEdgeDelete(me_views.MapEntityDelete):
+    model = models.CompetenceEdge
 
 
 class CompetenceEdgeViewSet(GeotrekMapentityViewSet):
-    model = CompetenceEdge
-    serializer_class = CompetenceEdgeSerializer
-    geojson_serializer_class = CompetenceEdgeGeojsonSerializer
-    filterset_class = CompetenceEdgeFilterSet
+    model = models.CompetenceEdge
+    serializer_class = serializers.CompetenceEdgeSerializer
+    geojson_serializer_class = serializers.CompetenceEdgeGeojsonSerializer
+    filterset_class = filters.CompetenceEdgeFilterSet
     mapentity_list_class = CompetenceEdgeList
+
+    def get_layer_classes(self):
+        return [layers.CompetenceEdgeVectorLayer]
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("organization")
@@ -320,19 +286,19 @@ class CompetenceEdgeViewSet(GeotrekMapentityViewSet):
         return qs.defer("geom", "geom_3d")
 
 
-class WorkManagementEdgeList(CustomColumnsMixin, MapEntityList):
-    queryset = WorkManagementEdge.objects.existing()
+class WorkManagementEdgeList(CustomColumnsMixin, me_views.MapEntityList):
+    queryset = models.WorkManagementEdge.objects.existing()
     mandatory_columns = ["id", "organization"]
     default_extra_columns = ["length", "length_2d"]
 
 
-class WorkManagementEdgeFilter(MapEntityFilter):
-    model = WorkManagementEdge
-    filterset_class = WorkManagementEdgeFilterSet
+class WorkManagementEdgeFilter(me_views.MapEntityFilter):
+    model = models.WorkManagementEdge
+    filterset_class = filters.WorkManagementEdgeFilterSet
 
 
-class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
-    filterset_class = WorkManagementEdgeFilterSet
+class WorkManagementEdgeFormatList(me_views.MapEntityFormat, WorkManagementEdgeList):
+    filterset_class = filters.WorkManagementEdgeFilterSet
     mandatory_columns = ["id", "organization"]
     default_extra_columns = [
         "date_insert",
@@ -346,34 +312,37 @@ class WorkManagementEdgeFormatList(MapEntityFormat, WorkManagementEdgeList):
     ]
 
 
-class WorkManagementEdgeDetail(MapEntityDetail):
-    queryset = WorkManagementEdge.objects.existing()
+class WorkManagementEdgeDetail(me_views.MapEntityDetail):
+    queryset = models.WorkManagementEdge.objects.existing()
 
 
-class WorkManagementEdgeDocument(MapEntityDocument):
-    model = WorkManagementEdge
+class WorkManagementEdgeDocument(me_views.MapEntityDocument):
+    model = models.WorkManagementEdge
 
 
-class WorkManagementEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
-    model = WorkManagementEdge
-    form_class = WorkManagementEdgeForm
+class WorkManagementEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
+    model = models.WorkManagementEdge
+    form_class = forms.WorkManagementEdgeForm
 
 
-class WorkManagementEdgeUpdate(MapEntityUpdate):
-    queryset = WorkManagementEdge.objects.existing()
-    form_class = WorkManagementEdgeForm
+class WorkManagementEdgeUpdate(me_views.MapEntityUpdate):
+    queryset = models.WorkManagementEdge.objects.existing()
+    form_class = forms.WorkManagementEdgeForm
 
 
-class WorkManagementEdgeDelete(MapEntityDelete):
-    model = WorkManagementEdge
+class WorkManagementEdgeDelete(me_views.MapEntityDelete):
+    model = models.WorkManagementEdge
 
 
 class WorkManagementEdgeViewSet(GeotrekMapentityViewSet):
-    model = WorkManagementEdge
-    serializer_class = WorkManagementEdgeSerializer
-    geojson_serializer_class = WorkManagementEdgeGeojsonSerializer
-    filterset_class = WorkManagementEdgeFilterSet
+    model = models.WorkManagementEdge
+    serializer_class = serializers.WorkManagementEdgeSerializer
+    geojson_serializer_class = serializers.WorkManagementEdgeGeojsonSerializer
+    filterset_class = filters.WorkManagementEdgeFilterSet
     mapentity_list_class = WorkManagementEdgeList
+
+    def get_layer_classes(self):
+        return [layers.WorkManagementEdgeVectorLayer]
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("organization")
@@ -384,19 +353,21 @@ class WorkManagementEdgeViewSet(GeotrekMapentityViewSet):
         return qs.defer("geom", "geom_3d")
 
 
-class SignageManagementEdgeList(CustomColumnsMixin, MapEntityList):
-    queryset = SignageManagementEdge.objects.existing()
+class SignageManagementEdgeList(CustomColumnsMixin, me_views.MapEntityList):
+    queryset = models.SignageManagementEdge.objects.existing()
     mandatory_columns = ["id", "organization"]
     default_extra_columns = ["length", "length_2d"]
 
 
-class SignageManagementEdgeFilter(MapEntityFilter):
-    model = SignageManagementEdge
-    filterset_class = SignageManagementEdgeFilterSet
+class SignageManagementEdgeFilter(me_views.MapEntityFilter):
+    model = models.SignageManagementEdge
+    filterset_class = filters.SignageManagementEdgeFilterSet
 
 
-class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList):
-    filterset_class = SignageManagementEdgeFilterSet
+class SignageManagementEdgeFormatList(
+    me_views.MapEntityFormat, SignageManagementEdgeList
+):
+    filterset_class = filters.SignageManagementEdgeFilterSet
     mandatory_columns = ["id", "organization"]
     default_extra_columns = [
         "date_insert",
@@ -410,34 +381,37 @@ class SignageManagementEdgeFormatList(MapEntityFormat, SignageManagementEdgeList
     ]
 
 
-class SignageManagementEdgeDetail(MapEntityDetail):
-    queryset = SignageManagementEdge.objects.existing()
+class SignageManagementEdgeDetail(me_views.MapEntityDetail):
+    queryset = models.SignageManagementEdge.objects.existing()
 
 
-class SignageManagementEdgeDocument(MapEntityDocument):
-    model = SignageManagementEdge
+class SignageManagementEdgeDocument(me_views.MapEntityDocument):
+    model = models.SignageManagementEdge
 
 
-class SignageManagementEdgeCreate(CreateFromTopologyMixin, MapEntityCreate):
-    model = SignageManagementEdge
-    form_class = SignageManagementEdgeForm
+class SignageManagementEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
+    model = models.SignageManagementEdge
+    form_class = forms.SignageManagementEdgeForm
 
 
-class SignageManagementEdgeUpdate(MapEntityUpdate):
-    queryset = SignageManagementEdge.objects.existing()
-    form_class = SignageManagementEdgeForm
+class SignageManagementEdgeUpdate(me_views.MapEntityUpdate):
+    queryset = models.SignageManagementEdge.objects.existing()
+    form_class = forms.SignageManagementEdgeForm
 
 
-class SignageManagementEdgeDelete(MapEntityDelete):
-    model = SignageManagementEdge
+class SignageManagementEdgeDelete(me_views.MapEntityDelete):
+    model = models.SignageManagementEdge
 
 
 class SignageManagementEdgeViewSet(GeotrekMapentityViewSet):
-    model = SignageManagementEdge
-    serializer_class = SignageManagementEdgeSerializer
-    geojson_serializer_class = SignageManagementEdgeGeojsonSerializer
-    filterset_class = SignageManagementEdgeFilterSet
+    model = models.SignageManagementEdge
+    serializer_class = serializers.SignageManagementEdgeSerializer
+    geojson_serializer_class = serializers.SignageManagementEdgeGeojsonSerializer
+    filterset_class = filters.SignageManagementEdgeFilterSet
     mapentity_list_class = SignageManagementEdgeList
+
+    def get_layer_classes(self):
+        return [layers.SignageManagementEdgeVectorLayer]
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("organization")
