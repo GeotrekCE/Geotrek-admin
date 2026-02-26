@@ -29,12 +29,12 @@ class EdgeForm(BaseForm):
     else:
         geom = LineStringField()
 
-    geom_fields = [
-        "geom",
-    ]
+        geom_fields = [
+            "geom",
+        ]
 
-    class Meta(BaseForm.Meta):
-        fields = [*BaseForm.Meta.fields, "geom"]
+        class Meta(BaseForm.Meta):
+            fields = [*BaseForm.Meta.fields, "geom"]
 
 
 class PhysicalEdgeForm(EdgeForm):
