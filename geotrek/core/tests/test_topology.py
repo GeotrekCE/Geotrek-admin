@@ -1104,10 +1104,23 @@ class PointTopologyPathNetworkCoupling(TestCase):
          x  : position of the point topology
         """
 
-        # Create topologies
+        # Create topologies and save their geometries coordinates
         topo1 = self.create_point_topology(3, 3)
+        geom_coords1 = topo1.geom.coords
         topo2 = self.create_point_topology(3, 0)
-        topo3 = self.create_point_topology(10, 0)
+        geom_coords2 = topo2.geom.coords
+        # Ensure that topo3 is on a path intersection
+        topo3 = Topology.objects.create()
+        topo3.add_path(self.path1, 1, 1)  # The second path aggregation will be created by triggers
+        topo3.refresh_from_db()
+        path_aggr3_qs = PathAggregation.objects.filter(topo_object=topo3)
+        self.assertEqual(path_aggr3_qs.count(), 2)
+        geom_coords3 = topo3.geom.coords
+
+        # Check their coupling status before deleting the paths
+        self.assertTrue(topo1.coupled)
+        self.assertTrue(topo2.coupled)
+        self.assertTrue(topo3.coupled)
 
         # Delete all paths
         Path.objects.all().delete()
@@ -1123,13 +1136,10 @@ class PointTopologyPathNetworkCoupling(TestCase):
         self.assertFalse(topo2.coupled)
         self.assertFalse(topo3.coupled)
 
-        # TODO in next PR: Check that their geometries have not changed
-        # self.assertAlmostEqual(topo1.geom.x, PointInBounds(3, 3).x)
-        # self.assertAlmostEqual(topo1.geom.y, PointInBounds(3, 3).y)
-        # self.assertAlmostEqual(topo2.geom.x, PointInBounds(3, 0).x)
-        # self.assertAlmostEqual(topo2.geom.y, PointInBounds(3, 0).y)
-        # self.assertAlmostEqual(topo3.geom.x, PointInBounds(10, 0).x)
-        # self.assertAlmostEqual(topo3.geom.y, PointInBounds(10, 0).y)
+        # Check that their geometries have not changed
+        self.assertEqual(topo1.geom.coords, geom_coords1)
+        self.assertEqual(topo2.geom.coords, geom_coords2)
+        self.assertEqual(topo3.geom.coords, geom_coords3)
 
     def test_point_on_intersection_doesnt_get_decoupled_when_one_path_is_deleted(self):
         """
@@ -1152,14 +1162,16 @@ class PointTopologyPathNetworkCoupling(TestCase):
 
         # Create the topology and check its path aggregations and its coupling status
         topology = Topology.objects.create()
-        topology.add_path(
-            self.path1, 1, 1
-        )  # The second path aggregation will be automatically created
+        # The second path aggregation will be created by triggers
+        topology.add_path(self.path1, 1, 1)
         topology.refresh_from_db()
         self.assertTrue(topology.coupled)
         self.assertEqual(
             PathAggregation.objects.filter(topo_object=topology).count(), 2
         )
+
+        # Save its geometry coordinates before deleting the path
+        geom_coords = topology.geom.coords
 
         # Delete path1 and check its path aggregations and its coupling status again
         self.path1.delete()
@@ -1168,7 +1180,8 @@ class PointTopologyPathNetworkCoupling(TestCase):
             PathAggregation.objects.filter(topo_object=topology).count(), 1
         )
 
-        # TODO in next PR: Check that its geometry has not changed
+        # Check that its geometry has not changed
+        self.assertEqual(topology.geom.coords, geom_coords)
 
     def test_modify_path_aggregations_points_stay_coupled(self):
         """
@@ -1181,65 +1194,84 @@ class PointTopologyPathNetworkCoupling(TestCase):
             -> their geometries should have changed, except for the first one, which is not on a path
 
                             │
-            p1              │
-             x              ^ path2
+            p1     p1'      │
+             x     x        ^ path2
                             │
-            p2              │
-        ━━━━━x━━━━>━━━━━━━━━x p3
-                path1
+             p2     p2'     │
+        ━━>━━━x━━━━x━━━━━━━━x p3
+           path1    p3'
 
         ━>━ : direction of the path
          x  : position of the point topology
         """
 
-        def move_path_aggregation_position(path_aggregation, new_position):
+        def move_path_aggregation_position(topology, path_aggregation, new_position):
             path_aggregation.start_position = new_position
             path_aggregation.end_position = new_position
-            path_aggr1.save(update_fields=["start_position", "end_position"])
-            topo1.refresh_from_db()
+            path_aggregation.save(update_fields=["start_position", "end_position"])
+            topology.refresh_from_db()
+
+        # Create the topologies
+        topo1 = self.create_point_topology(3, 3)
+        topo2 = self.create_point_topology(3, 0)
+        # Ensure that topo3 is on a path intersection
+        topo3 = Topology.objects.create()
+        topo3.add_path(self.path1, 1, 1)  # The second path aggregation will be created by triggers
+        topo3.refresh_from_db()
+        path_aggr3_qs = PathAggregation.objects.filter(topo_object=topo3)
+        self.assertEqual(path_aggr3_qs.count(), 2)
+
+        # Check their coupling status before modifying the path aggregations
+        self.assertTrue(topo1.coupled)
+        self.assertTrue(topo2.coupled)
+        self.assertTrue(topo3.coupled)
+
+        # Before modifying the path aggregations, check the geometries of topologies that will move
+        expected_original_geom2 = PointInBounds(3, 0)
+        self.assertAlmostEqual(topo2.geom.x, expected_original_geom2.x)
+        self.assertAlmostEqual(topo2.geom.y, expected_original_geom2.y)
+        expected_original_geom3 = PointInBounds(10, 0)
+        self.assertAlmostEqual(topo3.geom.x, expected_original_geom3.x)
+        self.assertAlmostEqual(topo3.geom.y, expected_original_geom3.y)
 
         # Change topo1's start and end positions: its geom should not change since its offset is not null
-        topo1 = self.create_point_topology(3, 3)
+        geom_coords1 = topo1.geom.coords
         path_aggr1 = PathAggregation.objects.get(topo_object=topo1)
-        move_path_aggregation_position(path_aggr1, 0.5)
+        move_path_aggregation_position(topo1, path_aggr1, 0.5)
         self.assertTrue(topo1.coupled)
-        # TODO in next PR: modification of the geometries
-        # self.assertAlmostEqual(topo1.geom.x, PointInBounds(3, 3).x)
-        # self.assertAlmostEqual(topo1.geom.y, PointInBounds(3, 3).y)
+        self.assertEqual(topo1.geom.coords, geom_coords1)
 
         # Change topo2's start and end positions: its geom should change
-        topo2 = self.create_point_topology(3, 0)
         path_aggr2 = PathAggregation.objects.get(topo_object=topo2)
-        move_path_aggregation_position(path_aggr2, 0.5)
+        move_path_aggregation_position(topo2, path_aggr2, 0.5)
         self.assertTrue(topo2.coupled)
-        # TODO in next PR: modification of the geometries
-        # self.assertAlmostEqual(topo2.geom.x, PointInBounds(5, 0).x)
-        # self.assertAlmostEqual(topo2.geom.y, PointInBounds(5, 0).y)
+        expected_geom = PointInBounds(5, 0)
+        self.assertAlmostEqual(topo2.geom.x, expected_geom.x)
+        self.assertAlmostEqual(topo2.geom.y, expected_geom.y)
 
         # Change one of topo3's path aggregations positions: its geom should change
-        topo3 = self.create_point_topology(10, 0)
-        path_aggr3_qs = PathAggregation.objects.filter(topo_object=topo3)
         path_aggr3 = path_aggr3_qs.first()
-        move_path_aggregation_position(path_aggr3, 0.5)
+        move_path_aggregation_position(topo3, path_aggr3, 0.5)
         self.assertTrue(topo3.coupled)
-        # TODO in next PR: modification of the geometries
-        # self.assertAlmostEqual(topo3.geom.x, PointInBounds(5, 0).x)
-        # self.assertAlmostEqual(topo3.geom.y, PointInBounds(5, 0).y)
+        self.assertAlmostEqual(topo3.geom.x, expected_geom.x)
+        self.assertAlmostEqual(topo3.geom.y, expected_geom.y)
 
     def test_add_path_aggregations_points_get_recoupled(self):
         """
         1. Create a point topology not on a path (p1)
         2. Delete its path aggregation -> it should be decoupled
-        3. Add a path aggregation (p2, still not on a path) -> it should be recoupled
-        4. Delete its path aggregation -> it should be decoupled
-        5. Create a new point topology on a path (p3) -> it should be coupled
-        6. Delete its path aggregation -> it should be decoupled
-        7. Add a path aggregation (p4, on a path intersection) -> it should be recoupled
+        3. Add a path aggregation (p2, still not on a path)
+        4. It should be recoupled and its geom should not have changed, since its offset is not null
+        5. Delete its path aggregation -> it should be decoupled
+        6. Create a new point topology on a path (p3) -> it should be coupled
+        7. Delete its path aggregation -> it should be decoupled
+        8. Add a path aggregation (p4, on a path intersection)
+        9. It should be recoupled and its geom should have changed
 
                             │
                             │
-            p1          p2  │
-             x          x   ^ path2
+            p1      p2      │
+             x      x       ^ path2
                             │
             p3              │
         ━━━━━x━━━━>━━━━━━━━━x p4
@@ -1248,17 +1280,18 @@ class PointTopologyPathNetworkCoupling(TestCase):
         ━>━ : direction of the path
          x  : position of the point topology
         """
-        # TODO in next PR: modification of the geometries
 
-        # Create topology1 at p1
+        # Create topology1 at p1 and save its geometry coordinates
         topology1 = self.create_point_topology(3, 3)
         self.assertTrue(topology1.coupled)
+        topo1_coords = topology1.geom.coords
         self.decouple_topology_by_deleting_path_aggregations(topology1)
         self.assertFalse(topology1.coupled)
 
         # Move it to p2
         self.add_path_aggregation_to_topology(topology1, self.path1, 0.5, 0.5)
         self.assertTrue(topology1.coupled)
+        self.assertEqual(topology1.geom.coords, topo1_coords)
         self.decouple_topology_by_deleting_path_aggregations(topology1)
         self.assertFalse(topology1.coupled)
 
@@ -1270,7 +1303,12 @@ class PointTopologyPathNetworkCoupling(TestCase):
 
         # Move it to p4
         self.add_path_aggregation_to_topology(topology2, self.path1, 1, 1)
+        path_aggr2_qs = PathAggregation.objects.filter(topo_object=topology2)
+        self.assertEqual(path_aggr2_qs.count(), 2)
         self.assertTrue(topology2.coupled)
+        expected_geom_p4 = PointInBounds(10, 0)
+        self.assertAlmostEqual(topology2.geom.x, expected_geom_p4.x)
+        self.assertAlmostEqual(topology2.geom.y, expected_geom_p4.y)
         self.decouple_topology_by_deleting_path_aggregations(topology2)
         self.assertFalse(topology2.coupled)
 
@@ -1505,8 +1543,7 @@ class LineTopologyPathNetworkCoupling(TestCase):
         # Check its geometry and status after moving the path
         topology.refresh_from_db()
         self.assertFalse(topology.coupled)
-        # TODO in next PR:
-        # self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
+        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
 
         # Move path1
         self.path1.geom = LineString((0, 0), (10, 0), (10, 10))
@@ -1515,8 +1552,7 @@ class LineTopologyPathNetworkCoupling(TestCase):
         # Check its geometry and status after moving the path
         topology.refresh_from_db()
         self.assertFalse(topology.coupled)
-        # TODO in next PR:
-        # self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
+        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
 
     def test_move_middle_path_line_with_waypoint_gets_decoupled_and_stays_decoupled(
         self,
@@ -1566,8 +1602,7 @@ class LineTopologyPathNetworkCoupling(TestCase):
         # Check its geometry and status after moving the path
         topology.refresh_from_db()
         self.assertFalse(topology.coupled)
-        # TODO in next PR:
-        # self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 5), (10, 10), (20, 10)))
+        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 5), (10, 10), (20, 10)))
 
         # Move path1
         self.path1.geom = LineString((0, 0), (5, -5), (10, 0))
@@ -1576,8 +1611,7 @@ class LineTopologyPathNetworkCoupling(TestCase):
         # Check its geometry and status after moving the path
         topology.refresh_from_db()
         self.assertFalse(topology.coupled)
-        # TODO in next PR:
-        # self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 5), (10, 10), (20, 10)))
+        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 5), (10, 10), (20, 10)))
 
     def test_move_path_line_gets_recoupled(self):
         """
@@ -1700,8 +1734,7 @@ class LineTopologyPathNetworkCoupling(TestCase):
         # Check its geometry and status after deleting the path
         topology.refresh_from_db()
         self.assertFalse(topology.coupled)
-        # TODO in next PR:
-        # self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
+        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0), (10, 10), (20, 10)))
 
     def test_delete_first_path_line_stays_coupled(self):
         """
