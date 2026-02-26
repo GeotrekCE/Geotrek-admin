@@ -1,8 +1,3 @@
--- 10
-
-DROP FUNCTION IF EXISTS troncons_unpublish_trek_d() CASCADE;
-DROP FUNCTION IF EXISTS paths_unpublish_trek_d() CASCADE;
-
 -- 20
 
 DROP FUNCTION IF EXISTS create_relationships_iu() CASCADE;

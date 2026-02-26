@@ -46,7 +46,6 @@ DROP FUNCTION IF EXISTS elevation_troncon_iu() CASCADE;
 DROP FUNCTION IF EXISTS elevation_path_iu() CASCADE;
 
 DROP FUNCTION IF EXISTS troncons_related_objects_d() CASCADE;
-DROP FUNCTION IF EXISTS paths_related_objects_d() CASCADE;
 
 DROP FUNCTION IF EXISTS troncon_latest_updated_d() CASCADE;
 DROP FUNCTION IF EXISTS path_latest_updated_d() CASCADE;
