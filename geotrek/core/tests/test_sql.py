@@ -46,7 +46,7 @@ class SQLDefaultValuesTest(TestCase):
     def test_pathaggregation(self):
         path = PathFactory.create()
         topology = TopologyFactory.create(paths=[])
-        self.assertIsNone(topology.geom)
+        self.assertEqual(topology.geom.wkt, "POINT (0 0)")
         with connection.cursor() as cur:
             cur.execute(f"""INSERT INTO core_pathaggregation
                            (
