@@ -98,6 +98,7 @@ django==5.2.11
     #   crispy-bootstrap4
     #   django-appconf
     #   django-appypod
+    #   django-autocomplete-light
     #   django-celery-results
     #   django-clearcache
     #   django-compressor
@@ -124,6 +125,8 @@ django==5.2.11
 django-appconf==1.2.0
     # via django-compressor
 django-appypod==2.0.7
+    # via mapentity
+django-autocomplete-light==3.12.1
     # via mapentity
 django-celery-results==2.6.0
     # via geotrek (setup.py)
@@ -247,7 +250,7 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity @ git+https://github.com/makinacorpus/django-mapentity@03ba2d710df83d7e7764c9f9447baf674ee7fc25#egg=mapentity
+mapentity @ git+https://github.com/makinacorpus/django-mapentity@ec0210df1897b8689038ecfd806b211561a68614#egg=mapentity
     # via geotrek (setup.py)
 markdown==3.10.1
     # via geotrek (setup.py)

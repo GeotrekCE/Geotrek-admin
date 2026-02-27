@@ -450,12 +450,42 @@ MAPENTITY_CONFIG = {
             "opacity": 0.5,
             "fillOpacity": 0.5,
         },
-        "land": {"weight": 4, "color": "red", "opacity": 1.0},
-        "physical": {"weight": 6, "color": "red", "opacity": 1.0},
-        "circulation": {"weight": 6, "color": "red", "opacity": 1.0},
-        "competence": {"weight": 4, "color": "red", "opacity": 1.0},
-        "workmanagement": {"weight": 4, "color": "red", "opacity": 1.0},
-        "signagemanagement": {"weight": 5, "color": "red", "opacity": 1.0},
+        "landedge": {
+            "weight": 4,
+            "color": ["get", "color"],
+            "default_color": "red",
+            "opacity": 1.0,
+        },
+        "physicaledge": {
+            "weight": 6,
+            "color": ["get", "color"],
+            "default_color": "red",
+            "opacity": 1.0,
+        },
+        "circulationedge": {
+            "weight": 6,
+            "color": ["get", "color"],
+            "default_color": "red",
+            "opacity": 1.0,
+        },
+        "competenceedge": {
+            "weight": 4,
+            "color": ["get", "color"],
+            "default_color": "red",
+            "opacity": 1.0,
+        },
+        "workmanagementedge": {
+            "weight": 4,
+            "color": ["get", "color"],
+            "default_color": "red",
+            "opacity": 1.0,
+        },
+        "signagemanagementedge": {
+            "weight": 5,
+            "color": ["get", "color"],
+            "default_color": "red",
+            "opacity": 1.0,
+        },
         "filelayer": {
             "color": "blue",
             "opacity": 1.0,
@@ -533,7 +563,7 @@ FORCED_LAYERS = []
 """ This *pool* of colors is used to colorized lands records.
 """
 COLORS_POOL = {
-    "land": [
+    "landedge": [
         "#f37e79",
         "#7998f3",
         "#bbf379",
@@ -542,7 +572,7 @@ COLORS_POOL = {
         "#9c79f3",
         "#7af379",
     ],
-    "physical": [
+    "physicaledge": [
         "#f3799d",
         "#79c1f3",
         "#e4f379",
@@ -551,7 +581,7 @@ COLORS_POOL = {
         "#f39779",
         "#797ff3",
     ],
-    "circulation": [
+    "circulationedge": [
         "#f37e79",
         "#7998f3",
         "#bbf379",
@@ -560,7 +590,7 @@ COLORS_POOL = {
         "#9c79f3",
         "#7af379",
     ],
-    "competence": [
+    "competenceedge": [
         "#a2f379",
         "#f379c6",
         "#79e9f3",
@@ -569,8 +599,8 @@ COLORS_POOL = {
         "#79f392",
         "#f37984",
     ],
-    "signagemanagement": ["#79a8f3", "#cbf379", "#f379ee", "#79f3e3", "#79f3d3"],
-    "workmanagement": ["#79a8f3", "#cbf379", "#f379ee", "#79f3e3", "#79f3d3"],
+    "signagemanagementedge": ["#79a8f3", "#cbf379", "#f379ee", "#79f3e3", "#79f3d3"],
+    "workmanagementedge": ["#79a8f3", "#cbf379", "#f379ee", "#79f3e3", "#79f3d3"],
     "restrictedarea": [
         "plum",
         "violet",
