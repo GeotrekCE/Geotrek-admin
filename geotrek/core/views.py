@@ -257,7 +257,9 @@ class PathViewSet(GeotrekMapentityViewSet):
     geojson_serializer_class = PathGeojsonSerializer
     filterset_class = PathFilterSet
     mapentity_list_class = PathList
-    layer_mapping = [PathVectorLayer]
+
+    def get_layer_classes(self):
+        return [PathVectorLayer]
 
     def get_permissions(self):
         if self.action == "route_geometry":
