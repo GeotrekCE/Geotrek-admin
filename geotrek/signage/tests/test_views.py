@@ -171,8 +171,6 @@ class BladeViewsTest(CommonTest):
         signa = SignageFactory.create()
         self._post_form(self._get_add_url() + f"?signage={signa.pk}")
 
-
-
     def test_creation_form_on_signage(self):
         signa = SignageFactory.create()
         signage = f"{signa}"
