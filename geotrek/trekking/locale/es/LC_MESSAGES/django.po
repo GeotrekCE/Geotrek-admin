@@ -495,18 +495,6 @@ msgstr ""
 msgid "KML"
 msgstr ""
 
-msgid "Trek's POIs"
-msgstr ""
-
-msgid "Trek's services"
-msgstr ""
-
-msgid "Trek's signages"
-msgstr ""
-
-msgid "Trek's infrastructures"
-msgstr ""
-
 msgid "Itinerancy"
 msgstr ""
 
