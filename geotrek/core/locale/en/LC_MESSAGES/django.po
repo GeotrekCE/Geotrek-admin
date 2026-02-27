@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-13 16:31+0000\n"
+"POT-Creation-Date: 2026-02-27 14:49+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,9 +32,6 @@ msgstr ""
 
 #, python-format
 msgid "Topology %s does not exist."
-msgstr ""
-
-msgid "Linestring invalid snapping."
 msgstr ""
 
 msgid "Valid topology"
@@ -68,6 +65,9 @@ msgid "Geometry is not valid."
 msgstr ""
 
 msgid "Certifications"
+msgstr ""
+
+msgid "path"
 msgstr ""
 
 #, python-format
@@ -339,13 +339,13 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
+msgid "Linestring invalid snapping."
+msgstr ""
+
 msgid "This field is required."
 msgstr ""
 
 msgid "Access to the requested resource is restricted. You have been redirected."
-msgstr ""
-
-msgid "path"
 msgstr ""
 
 msgid "You should select two paths"
