@@ -96,7 +96,7 @@ class ReportSerializationOptimizeTests(TestCase):
         cache = caches[settings.MAPENTITY_CONFIG["GEOJSON_LAYERS_CACHE_BACKEND"]]
 
         # There are 5 queries to get layer
-        with self.assertNumQueries(4):
+        with self.assertNumQueries(5):
             response = self.client.get(
                 reverse("feedback:report-drf-list", format="geojson")
             )
