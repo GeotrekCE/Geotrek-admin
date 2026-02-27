@@ -488,6 +488,7 @@ class TrailFormatList(MapEntityFormat, TrailList):
         "districts",
         "areas",
         "uuid",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 

@@ -33,6 +33,7 @@ class PhysicalEdgeFormatList(me_views.MapEntityFormat, PhysicalEdgeList):
         "districts",
         "areas",
         "uuid",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
@@ -105,6 +106,7 @@ class LandEdgeFormatList(me_views.MapEntityFormat, LandEdgeList):
         "areas",
         "uuid",
         "length_2d",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
@@ -174,6 +176,7 @@ class CirculationEdgeFormatList(me_views.MapEntityFormat, CirculationEdgeList):
         "areas",
         "uuid",
         "length_2d",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
@@ -241,6 +244,7 @@ class CompetenceEdgeFormatList(me_views.MapEntityFormat, CompetenceEdgeList):
         "areas",
         "uuid",
         "length_2d",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
@@ -308,6 +312,7 @@ class WorkManagementEdgeFormatList(me_views.MapEntityFormat, WorkManagementEdgeL
         "areas",
         "uuid",
         "length_2d",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
@@ -377,6 +382,7 @@ class SignageManagementEdgeFormatList(
         "areas",
         "uuid",
         "length_2d",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
