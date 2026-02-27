@@ -61,6 +61,7 @@ click==8.3.1
     #   click-repl
     #   cligj
     #   fiona
+    #   mercantile
 click-didyoumean==0.3.1
     # via celery
 click-plugins==1.1.1.2
@@ -106,11 +107,12 @@ django==5.2.11
     #   django-filter
     #   django-js-asset
     #   django-large-image
-    #   django-leaflet
+    #   django-mapbox-baselayer
     #   django-modelcluster
     #   django-modeltranslation
     #   django-tinymce
     #   django-treebeard
+    #   django-vectortiles
     #   django-weasyprint
     #   djangorestframework
     #   djangorestframework-gis
@@ -152,10 +154,10 @@ django-js-asset==3.1.2
     # via django-mptt
 django-large-image==0.10.2
     # via geotrek (setup.py)
-django-leaflet==0.19.post11
-    # via mapentity
 django-maintenance-mode==0.22.0
     # via geotrek (setup.py)
+django-mapbox-baselayer==1.2.1
+    # via mapentity
 django-modelcluster==6.4.1
     # via geotrek (setup.py)
 django-modeltranslation==0.19.19
@@ -166,6 +168,8 @@ django-tinymce==5.0.0
     # via mapentity
 django-treebeard==4.8.0
     # via geotrek (setup.py)
+django-vectortiles==1.0.2
+    # via mapentity
 django-weasyprint==2.4.0
     # via
     #   geotrek (setup.py)
@@ -248,7 +252,7 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity==8.17.1
+mapentity @ git+https://github.com/makinacorpus/django-mapentity@ec0210df1897b8689038ecfd806b211561a68614#egg=mapentity
     # via geotrek (setup.py)
 markdown==3.10.2
     # via geotrek (setup.py)
@@ -256,6 +260,10 @@ markupsafe==3.0.3
     # via jinja2
 mbutil==0.3.0
     # via landez
+mercantile==1.2.1
+    # via
+    #   django-vectortiles
+    #   mapentity
 numpy==2.2.6
     # via
     #   large-image

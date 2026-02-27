@@ -9,7 +9,6 @@ from django.forms.models import inlineformset_factory
 from django.templatetags.static import static
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from mapentity.widgets import MapWidget
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
@@ -139,37 +138,24 @@ class BaseBladeForm(CommonForm):
         fields = ["id", "number", "direction", "type", "conditions", "color"]
 
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
+class BladeForm(BaseBladeForm):
+    topology = (
+        TopologyField(label="")
+        if settings.TREKKING_TOPOLOGY_ENABLED
+        else GeometryField(label="")
+    )
 
-    class BladeForm(BaseBladeForm):
-        topology = TopologyField(label="")
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
+        if settings.TREKKING_TOPOLOGY_ENABLED:
             self.fields["topology"].initial = self.signage
             self.fields["topology"].widget = PointTopologyWidget()
             self.fields["topology"].widget.modifiable = True
+        else:
             icon = self.signage._meta.model_name
             title = _("On: %(target)s") % {"target": self.signage}
 
-            self.fields["topology"].label = mark_safe(
-                f'<img src="{static(f"images/{icon}-16.png")}" title="{title}" /><a href="{self.signage.get_detail_url()}">{title}</a>'
-            )
-
-else:
-
-    class BladeForm(BaseBladeForm):
-        topology = GeometryField(label="")
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
-            self.fields["topology"].initial = self.signage.geom
-            self.fields["topology"].widget = MapWidget(attrs={"geom_type": "POINT"})
-            self.fields["topology"].widget.modifiable = False
-            icon = self.signage._meta.model_name
-            title = _("On: %(target)s") % {"target": self.signage}
             self.fields["topology"].label = mark_safe(
                 f'<img src="{static(f"images/{icon}-16.png")}" title="{title}" /><a href="{self.signage.get_detail_url()}">{title}</a>'
             )
@@ -200,8 +186,8 @@ class SignageForm(BaseSignageForm):
         Div(
             "structure",
             "name",
-            "description",
             "type",
+            "description",
             "conditions",
             "implantation_year",
             "published",

@@ -19,7 +19,7 @@ class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 class PathGeojsonSerializer(MapentityGeojsonModelSerializer):
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = Path
-        fields = ["id", "name", "draft"]
+        fields = ["id", "name", "draft", "api_geom"]
 
 
 class TrailSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

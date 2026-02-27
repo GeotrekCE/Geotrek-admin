@@ -41,6 +41,7 @@ urlpatterns += [
     path("admin/", admin.site.urls),
     path("i18n/", include("django.conf.urls.i18n")),
     path("maintenance-mode/", include("maintenance_mode.urls")),
+    path("mapbox/", include("mapbox_baselayer.urls")),
 ]
 
 if "geotrek.core" in settings.INSTALLED_APPS:
