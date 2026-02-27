@@ -4,9 +4,12 @@ import os
 import shutil
 import uuid
 
+import mercantile
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Envelope, Transform
+from django.contrib.gis.geos import Polygon
+from django.core.exceptions import FieldError
 from django.core.files.storage import default_storage
 from django.core.mail import mail_managers
 from django.db.models import Count, Max
@@ -19,6 +22,7 @@ from django.utils.translation import gettext_lazy as _
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
 from mapentity.models import MapEntityMixin
+from mapentity.settings import app_settings
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.mixins.managers import NoDeleteManager
@@ -58,6 +62,32 @@ class TimeStampedModelMixin(models.Model):
         return self._meta.model.objects.aggregate(
             last_update=Max("date_update"), count=Count("pk")
         )
+
+    @classmethod
+    def latest_updated_with_count(cls, **kwargs):
+        try:
+            qs = cls.objects.all()
+
+            z, x, y = kwargs.get("z"), kwargs.get("x"), kwargs.get("y")
+            if z is not None and x is not None and y is not None:
+                extent = Polygon.from_bbox(mercantile.xy_bounds(int(x), int(y), int(z)))
+                extent.srid = 3857
+
+                # Get the SRID of the geometry field to transform extent to the correct SRID
+                geom_field = app_settings["GEOM_FIELD_NAME"]
+                geom_field_obj = cls._meta.get_field(geom_field)
+                target_srid = getattr(geom_field_obj, "srid", 4326) or 4326
+                extent.transform(target_srid)
+                qs = qs.filter(**{f"{geom_field}__intersects": extent})
+
+            # Aggregate Max date and Count in one query
+
+            date_field = app_settings["DATE_UPDATE_FIELD_NAME"]
+            agg = qs.aggregate(latest=Max(date_field), count=Count("pk"))
+            return agg["latest"], agg["count"]
+
+        except (cls.DoesNotExist, FieldError):
+            return None, 0
 
     @classmethod
     def latest_updated(cls):

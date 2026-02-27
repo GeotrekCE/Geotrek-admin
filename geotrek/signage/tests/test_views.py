@@ -171,17 +171,6 @@ class BladeViewsTest(CommonTest):
         signa = SignageFactory.create()
         self._post_form(self._get_add_url() + f"?signage={signa.pk}")
 
-    def _check_update_geom_permission(self, response):
-        if (
-            self.user.has_perm(
-                f"{self.model._meta.app_label}.change_geom_{self.model._meta.model_name}"
-            )
-            and settings.TREKKING_TOPOLOGY_ENABLED
-        ):
-            self.assertContains(response, ".modifiable = true;")
-        else:
-            self.assertContains(response, ".modifiable = false;")
-
     def test_creation_form_on_signage(self):
         signa = SignageFactory.create()
         signage = f"{signa}"

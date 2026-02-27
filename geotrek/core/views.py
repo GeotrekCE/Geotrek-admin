@@ -40,6 +40,7 @@ from geotrek.common.viewsets import GeotrekMapentityViewSet
 
 from .filters import PathFilterSet, TrailFilterSet
 from .forms import CertificationTrailFormSet, PathForm, TrailForm
+from .layers import PathVectorLayer
 from .models import AltimetryMixin, CertificationTrail, Path, Topology, Trail
 from .path_router import PathRouter
 from .serializers import (
@@ -257,6 +258,9 @@ class PathViewSet(GeotrekMapentityViewSet):
     filterset_class = PathFilterSet
     mapentity_list_class = PathList
 
+    def get_layer_classes(self):
+        return [PathVectorLayer]
+
     def get_permissions(self):
         if self.action == "route_geometry":
             return [permissions.IsAuthenticated()]
@@ -264,40 +268,15 @@ class PathViewSet(GeotrekMapentityViewSet):
 
     def view_cache_key(self):
         """Used by the ``view_cache_response_content`` decorator."""
-        language = self.request.LANGUAGE_CODE
-        no_draft = self.request.GET.get("_no_draft")
-        if no_draft:
-            latest_saved = Path.no_draft_latest_updated()
-        else:
-            latest_saved = Path.latest_updated()
-        geojson_lookup = None
-
-        if latest_saved:
-            geojson_lookup = "{}_path_{}{}_json_layer".format(
-                language,
-                latest_saved.strftime("%y%m%d%H%M%S%f"),
-                "_nodraft" if no_draft else "",
-            )
-        return geojson_lookup
+        return "no_draft" if self.request.GET.get("_no_draft") else "with_draft"
 
     def get_queryset(self):
         qs = self.model.objects.all()
         if self.format_kwarg == "geojson":
             if self.request.GET.get("_no_draft"):
                 qs = qs.exclude(draft=True)
-            # get display name if name is undefined to display tooltip on map feature hover
-            # Can't use annotate because it doesn't allow to use a model field name
-            # Can't use Case(When) in qs.extra
-            qs = qs.extra(
-                select={
-                    "name": "CASE WHEN name IS NULL OR name = '' THEN CONCAT(%s || ' ' || id) ELSE name END"
-                },
-                select_params=(_("path"),),
-            )
-
             qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
             qs = qs.only("id", "name", "draft")
-
         else:
             qs = qs.defer("geom", "geom_cadastre", "geom_3d")
         return qs
@@ -511,6 +490,7 @@ class TrailFormatList(MapEntityFormat, TrailList):
         "districts",
         "areas",
         "uuid",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 

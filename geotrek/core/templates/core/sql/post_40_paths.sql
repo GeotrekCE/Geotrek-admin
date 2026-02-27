@@ -100,31 +100,6 @@ BEFORE INSERT OR UPDATE OF geom ON core_path
 FOR EACH ROW EXECUTE PROCEDURE elevation_path_iu();
 
 
--------------------------------------------------------------------------------
--- Change status of related objects when paths are deleted
--------------------------------------------------------------------------------
-
-CREATE FUNCTION {{ schema_geotrek }}.paths_related_objects_d() RETURNS trigger SECURITY DEFINER AS $$
-DECLARE
-BEGIN
-    -- Mark empty topologies as deleted
-    UPDATE core_topology e
-        SET deleted = TRUE
-        FROM core_pathaggregation et
-        WHERE et.topo_object_id = e.id AND et.path_id = OLD.id AND NOT EXISTS(
-            SELECT * FROM core_pathaggregation
-            WHERE topo_object_id = e.id AND path_id != OLD.id
-        );
-
-    RETURN OLD;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER core_path_related_objects_d_tgr
-BEFORE DELETE ON core_path
-FOR EACH ROW EXECUTE PROCEDURE paths_related_objects_d();
-
-
 ---------------------------------------------------------------------
 -- Make sure cache key (base on lastest updated) is refresh on DELETE
 ---------------------------------------------------------------------

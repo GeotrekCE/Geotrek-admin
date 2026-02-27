@@ -36,17 +36,13 @@ class PathFormTest(TestCase):
         # Just intersecting
         form1 = PathForm(
             user=user,
-            data={
-                "geom": '{"geom": "LINESTRING(2.5 45.5, 3.5 45.5)", "snap": [null, null]}'
-            },
+            data={"geom": '{"geom": "LINESTRING(2.5 45.5, 3.5 45.5)"}'},
         )
         self.assertTrue(form1.is_valid(), str(form1.errors))
         # Overlapping
         form2 = PathForm(
             user=user,
-            data={
-                "geom": '{"geom": "LINESTRING(3 45.5, 3 46.5)", "snap": [null, null]}'
-            },
+            data={"geom": '{"geom": "LINESTRING(3 45.5, 3 46.5)"}'},
         )
         self.assertFalse(form2.is_valid(), str(form2.errors))
 
@@ -84,9 +80,7 @@ class PathFormTest(TestCase):
         # Just intersecting
         form1 = PathForm(
             user=user,
-            data={
-                "geom": '{"geom": "LINESTRING(2.5 45.5, 2.5 45.5)", "snap": [null, null]}'
-            },
+            data={"geom": '{"geom": "LINESTRING(2.5 45.5, 2.5 45.5)"}'},
         )
         self.assertFalse(form1.is_valid(), str(form1.errors))
 

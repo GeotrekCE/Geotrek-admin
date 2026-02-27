@@ -516,6 +516,12 @@ class Topology(
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
+    # The geometry is coupled to the path network when the topology is valid and linked to path aggregations
+    # See https://github.com/GeotrekCE/Geotrek-admin/issues/4982
+    coupled = models.BooleanField(
+        default=False, editable=False, verbose_name=_("Network-coupled")
+    )
+
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
     srid = settings.API_SRID
 
@@ -648,17 +654,13 @@ class Topology(
 
     def mutate(self, other):
         """
-        Take alls attributes of the other topology specified and
-        save them into this one. Optionnally deletes the other.
+        Take all attributes of the other topology specified and save them into this one.
         """
         self.offset = other.offset
         self.save(update_fields=["offset"])
         PathAggregation.objects.filter(topo_object=self).delete()
-        # The previous operation has put deleted = True (in triggers)
-        # and NULL in geom (see update_geometry_of_topology:: IF t_count = 0)
-        self.deleted = False
         self.geom = other.geom
-        self.save(update_fields=["deleted", "geom"])
+        self.save(update_fields=["geom"])
 
         # Now copy all agregations from other to self
         aggrs = other.aggregations.all()

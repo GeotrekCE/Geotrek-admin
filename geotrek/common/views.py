@@ -71,7 +71,7 @@ from .serializers import (
     HDViewPointSerializer,
 )
 from .tasks import import_datas, import_datas_from_web
-from .utils import leaflet_bounds
+from .utils import maplibre_bounds
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 from .viewsets import GeotrekMapentityViewSet
 
@@ -161,18 +161,21 @@ class CheckExtentsView(LoginRequiredMixin, TemplateView):
         dem_extent = api_bbox(dem_extent_native or (0, 0, 0, 0))
         tiles_extent_native = settings.SPATIAL_EXTENT
         tiles_extent = api_bbox(tiles_extent_native)
-        viewport_native = settings.LEAFLET_CONFIG["SPATIAL_EXTENT"]
+        viewport_native = tuple(
+            [coord for coords in settings.BOUNDS for coord in coords]
+        )
         viewport = api_bbox(viewport_native, srid=settings.API_SRID)
 
         return dict(
-            path_extent=leaflet_bounds(path_extent),
+            path_extent=maplibre_bounds(path_extent),
             path_extent_native=path_extent_native,
-            dem_extent=leaflet_bounds(dem_extent) if dem_extent else None,
+            dem_extent=maplibre_bounds(dem_extent) if dem_extent else None,
             dem_extent_native=dem_extent_native,
-            tiles_extent=leaflet_bounds(tiles_extent),
+            tiles_extent=maplibre_bounds(tiles_extent),
             tiles_extent_native=tiles_extent_native,
-            viewport=leaflet_bounds(viewport),
+            viewport=maplibre_bounds(viewport),
             viewport_native=viewport_native,
+            CENTER=settings.CENTER,
             SRID=settings.SRID,
             API_SRID=settings.API_SRID,
         )

@@ -1,6 +1,8 @@
 //
 // Touristic Content
 //
+
+/*
 var drawnItems;
 PublicLayerGeometryField = L.GeometryField.extend({
     // override _editionLayer to get the feature group (drawItems) global and make it accessible outside the leaflet draw event
@@ -34,7 +36,7 @@ $(window).on('entity:map:update entity:map:add', function (e, data) {
             placeLayer.addTo(map);
             // TODO : parametrize zoom level ?
             map.setView(placeLayer.getLatLng(), 12);
-            // synchronize place geom with the form 
+            // synchronize place geom with the form
             L.FieldStore.prototype.initialize("id_geom");
             L.FieldStore.prototype.save(placeLayer);
         }
@@ -176,3 +178,4 @@ function update_touristiccontent_types(n) {
     }
     $select.trigger('chosen:updated');
 }
+*/
