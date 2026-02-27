@@ -495,18 +495,6 @@ msgstr "GPX"
 msgid "KML"
 msgstr "KML"
 
-msgid "Trek's POIs"
-msgstr "POIs de l'itinéraire"
-
-msgid "Trek's services"
-msgstr "Services de l'itinéraire"
-
-msgid "Trek's signages"
-msgstr "Signalétiques de l'itinéraire"
-
-msgid "Trek's infrastructures"
-msgstr "Aménagements de l'itinéraire"
-
 msgid "Itinerancy"
 msgstr "Itinérance"
 
