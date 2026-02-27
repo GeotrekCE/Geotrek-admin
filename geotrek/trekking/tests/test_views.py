@@ -345,7 +345,7 @@ class TrekViewsTest(CommonTest):
 
     def test_badfield_goodgeom(self):
         bad_data, form_error = self.get_bad_data()
-        bad_data["parking_location"] = "POINT (1.0 1.0)"  # good data
+        bad_data["parking_location"] = "SRID=4326;POINT (1.0 1.0)"  # good data
 
         url = self.model.get_add_url()
         response = self.client.post(url, bad_data)
@@ -380,9 +380,9 @@ class TrekViewsTest(CommonTest):
         self.client.post(self.model.get_update_url(trek), good_data)
         self.assertIn(poi, trek.pois_excluded.all())
 
-    def test_detail_lother_language(self):
+    def test_detail_other_language(self):
         bad_data, form_error = self.get_bad_data()
-        bad_data["parking_location"] = "POINT (1.0 1.0)"  # good data
+        bad_data["parking_location"] = "SRID=4326;POINT (1.0 1.0)"  # good data
 
         url = self.model.get_add_url()
         response = self.client.post(url, bad_data)

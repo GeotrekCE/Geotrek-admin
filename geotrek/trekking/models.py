@@ -705,9 +705,7 @@ class Trek(
         )
 
     def get_printcontext(self):
-        maplayers = [
-            settings.MAPLIBRE_CONFIG_OVERRIDES["TILES"][0][0],  # tile name
-        ]
+        maplayers = []
         if settings.SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT:
             maplayers.append(gettext("Sensitive area"))
         if settings.SHOW_POIS_ON_MAP_SCREENSHOT:
