@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-04 22:27+0100\n"
+"POT-Creation-Date: 2026-01-09 11:30+0100\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/trekking/fr/>\n"
@@ -495,6 +495,18 @@ msgstr "GPX"
 msgid "KML"
 msgstr "KML"
 
+msgid "Trek's POIs"
+msgstr "POIs de l'itinéraire"
+
+msgid "Trek's services"
+msgstr "Services de l'itinéraire"
+
+msgid "Trek's signages"
+msgstr "Signalétiques de l'itinéraire"
+
+msgid "Trek's infrastructures"
+msgstr "Aménagements de l'itinéraire"
+
 msgid "Itinerancy"
 msgstr "Itinérance"
 
@@ -530,12 +542,6 @@ msgstr "Ajouter relation"
 
 msgid "Remove"
 msgstr "Supprimer"
-
-msgid "No result"
-msgstr "Pas de résultat"
-
-msgid "Choose value(s)"
-msgstr "Choisir valeur(s)"
 
 msgid "Powered by geotrek.fr"
 msgstr "Propulsé par geotrek.fr"

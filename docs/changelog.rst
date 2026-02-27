@@ -2,8 +2,36 @@
 CHANGELOG
 =========
 
-2.123.1+dev     (XXXX-XX-XX)
+2.124.1+dev     (XXXX-XX-XX)
 ----------------------------
+
+
+2.124.1         (2026-02-17)
+----------------------------
+
+**Performances**
+
+* Add autocomplete by API behaviour to Restricted area filters
+
+**Improvements**
+
+* Get infinite scrolling on autocomplete API endpoint
+
+**Bug fixes**
+
+* Fix the appearance of the Select2 fields
+
+**CI**
+
+* Fix web and celery builds for translations linting in github action
+
+
+2.124.0         (2026-02-11)
+----------------------------
+
+**Performances**
+
+* Add autocomplete by API behaviour to City and Districts filters
 
 
 2.123.1         (2026-01-29)

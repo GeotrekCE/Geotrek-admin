@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-05 10:06+0000\n"
+"POT-Creation-Date: 2026-01-09 11:30+0100\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/land/fr/>\n"
@@ -26,6 +26,9 @@ msgstr "Type foncier"
 
 msgid "Physical edge"
 msgstr "Type de voie"
+
+msgid "Circulation type"
+msgstr "Type de circulation"
 
 msgid "Circulation edge"
 msgstr "Circulation"
@@ -90,9 +93,6 @@ msgstr "Gestionnaires travaux"
 msgid "Signage management edges"
 msgstr "Gestionnaires signalétique"
 
-msgid "Circulation type"
-msgstr "Type de circulation"
-
 msgid "Circulation types"
 msgstr "Types de circulation"
 
@@ -122,6 +122,9 @@ msgstr "Ajouter un gestionnaire signalétique"
 
 msgid "Add a new circulation edge"
 msgstr "Ajouter une nouvelle circulation"
+
+msgid "Competence"
+msgstr "Compétence"
 
 msgid "Yes"
 msgstr "Oui"

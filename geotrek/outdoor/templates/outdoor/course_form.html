@@ -17,11 +17,6 @@
         });
     </script>
     <script type="text/javascript">
-            $('select[multiple]').chosen({
-                no_results_text: "{% trans "No result" %}",
-                placeholder_text_multiple: "{% trans "Choose value(s)" %}"
-            });
-
             $("#id_children_course").setSelectionOrder($("#id_hidden_ordered_children").val().split(","));
         });
     </script>

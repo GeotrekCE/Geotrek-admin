@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-04 22:27+0100\n"
+"POT-Creation-Date: 2026-01-09 11:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -494,6 +494,18 @@ msgstr ""
 msgid "KML"
 msgstr ""
 
+msgid "Trek's POIs"
+msgstr ""
+
+msgid "Trek's services"
+msgstr ""
+
+msgid "Trek's signages"
+msgstr ""
+
+msgid "Trek's infrastructures"
+msgstr ""
+
 msgid "Itinerancy"
 msgstr ""
 
@@ -528,12 +540,6 @@ msgid "Add relation"
 msgstr ""
 
 msgid "Remove"
-msgstr ""
-
-msgid "No result"
-msgstr ""
-
-msgid "Choose value(s)"
 msgstr ""
 
 msgid "Powered by geotrek.fr"

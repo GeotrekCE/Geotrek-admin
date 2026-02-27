@@ -1,4 +1,5 @@
 import django_filters.rest_framework
+from dal import autocomplete
 from django import forms
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.dates import timezone_today
@@ -27,14 +28,17 @@ class TypeFilter(ModelMultipleChoiceFilter):
 
 class TouristicContentFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     type1 = TypeFilter(
-        queryset=TouristicContentType1.objects.select_related("category").all()
+        queryset=TouristicContentType1.objects.select_related("category").all(),
+        widget=autocomplete.Select2Multiple,
     )
     type2 = TypeFilter(
-        queryset=TouristicContentType2.objects.select_related("category").all()
+        queryset=TouristicContentType2.objects.select_related("category").all(),
+        widget=autocomplete.Select2Multiple,
     )
     provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(touristiccontent__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple,
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -79,15 +83,25 @@ class CompletedFilter(django_filters.BooleanFilter):
 
 class TouristicEventFilterSet(ZoningFilterSet, StructureRelatedFilterSet):
     after = django_filters.DateFilter(
-        label=_("After"), lookup_expr="gte", field_name="end_date"
+        label=_("After"),
+        lookup_expr="gte",
+        field_name="end_date",
+        widget=forms.TextInput(attrs={"class": "form-control form-control-sm"}),
     )
     before = django_filters.DateFilter(
-        label=_("Before"), lookup_expr="lte", field_name="begin_date"
+        label=_("Before"),
+        lookup_expr="lte",
+        field_name="begin_date",
+        widget=forms.TextInput(attrs={"class": "form-control form-control-sm"}),
     )
-    completed = CompletedFilter(label=_("Completed"))
+    completed = CompletedFilter(
+        label=_("Completed"),
+        widget=forms.NullBooleanSelect(attrs={"class": "form-control form-control-sm"}),
+    )
     provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(touristicevent__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple,
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

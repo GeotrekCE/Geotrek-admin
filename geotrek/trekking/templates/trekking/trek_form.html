@@ -47,11 +47,6 @@
                 deleteText: '{% trans "Remove" %}'
             });
 
-            $('select[multiple]').chosen({
-                no_results_text: "{% trans "No result" %}",
-                placeholder_text_multiple: "{% trans "Choose value(s)" %}"
-            });
-
             /* Show advanced tab if error in there */
             if ($('.tab-content #advanced .error').length > 0) {
                 $('#tab-advanced').find('a').addClass('error').click();

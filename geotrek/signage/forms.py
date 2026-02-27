@@ -1,10 +1,12 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Div, Fieldset, Layout
+from dal import autocomplete
 from django import forms
 from django.conf import settings
 from django.contrib.gis.forms.fields import GeometryField
 from django.db.models import Max
 from django.forms.models import inlineformset_factory
+from django.templatetags.static import static
 from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 from mapentity.widgets import MapWidget
@@ -13,7 +15,7 @@ from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import PointTopologyWidget
 from geotrek.infrastructure.forms import BaseInfrastructureForm
-from geotrek.signage.models import Blade, Line, Signage
+from geotrek.signage.models import Blade, Line, LinePictogram, Signage
 
 
 class LineForm(forms.ModelForm):
@@ -37,6 +39,10 @@ class LineForm(forms.ModelForm):
         self.helper = FormHelper()
         self.helper.form_tag = False
         self.helper.layout = Layout(*fields_for_layout)
+        self.fields["pictograms"].widget = autocomplete.Select2Multiple(
+            attrs={"data-theme": "bootstrap4"},
+        )
+        self.fields["pictograms"].queryset = LinePictogram.objects.all()
 
     class Meta:
         fields = (
@@ -145,19 +151,32 @@ class BladeForm(BaseBladeForm):
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
             self.fields["topology"].initial = self.signage
+            self.fields["topology"].widget = PointTopologyWidget()
             self.fields["topology"].widget.modifiable = True
         else:
+            icon = self.signage._meta.model_name
+            title = _("On: %(target)s") % {"target": self.signage}
+
+            self.fields["topology"].label = mark_safe(
+                f'<img src="{static(f"images/{icon}-16.png")}" title="{title}" /><a href="{self.signage.get_detail_url()}">{title}</a>'
+            )
+
+else:
+
+    class BladeForm(BaseBladeForm):
+        topology = GeometryField(label="")
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+
             self.fields["topology"].initial = self.signage.geom
             self.fields["topology"].widget = MapWidget(attrs={"geom_type": "POINT"})
             self.fields["topology"].widget.modifiable = False
-
-        self.fields["topology"].label = mark_safe(
-            "{}{} {}".format(
-                self.instance.signage_display,
-                _("On %s") % _(self.signage.kind.lower()),
-                f'<a href="{self.signage.get_detail_url()}">{self.signage!s}</a>',
+            icon = self.signage._meta.model_name
+            title = _("On: %(target)s") % {"target": self.signage}
+            self.fields["topology"].label = mark_safe(
+                f'<img src="{static(f"images/{icon}-16.png")}" title="{title}" /><a href="{self.signage.get_detail_url()}">{title}</a>'
             )
-        )
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:

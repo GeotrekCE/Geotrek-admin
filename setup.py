@@ -25,6 +25,7 @@ setup(
         "pymemcache",
         "coreschema",
         "coreapi",
+        "django-autocomplete-light",
         "psycopg2",
         "pdfimpose",
         "Pillow",

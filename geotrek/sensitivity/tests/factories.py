@@ -35,7 +35,7 @@ class SpeciesFactory(factory.django.DjangoModelFactory):
     url = "http://url.com"
     period06 = True
     period07 = True
-    category = models.Species.SPECIES
+    category = models.Species.CategoryChoices.SPECIES
 
     @factory.post_generation
     def practices(obj, create, extracted=None, **kwargs):
@@ -50,7 +50,7 @@ class SpeciesFactory(factory.django.DjangoModelFactory):
 
 
 class RegulatorySpeciesFactory(SpeciesFactory):
-    category = models.Species.REGULATORY
+    category = models.Species.CategoryChoices.REGULATORY
 
 
 class SensitiveAreaFactory(StructureRelatedDefaultFactory):
