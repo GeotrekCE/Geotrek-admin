@@ -467,38 +467,41 @@ class TopologyLineTest(TestCase):
         self.assertEqual(len(t.geom.coords), 100)
 
     def test_topology_geom_with_intermediate_markers(self):
-        # Intermediate (forced passage) markers for topologies
-        # Use a bifurcation, make sure computed geometry is correct
-        #       ┌──p2───┐
-        #    ━━━┷━━━━━━━┷━━━
-        #     p1   p3     p4
+        """
+        Intermediate (forced passage) markers for topologies.
+        Use a bifurcation, make sure computed geometry is correct.
+              ┌──p2───┐
+           ━━━┷━━━━━━━┷━━━
+            p1   p3     p4
+        """
         p1 = PathFactory.create(geom=LineString((0, 0), (2, 0)))
         p2 = PathFactory.create(geom=LineString((2, 0), (2, 1), (4, 1), (4, 0)))
         p3 = PathFactory.create(geom=LineString((2, 0), (4, 0)))
         p4 = PathFactory.create(geom=LineString((4, 0), (6, 0)))
-        """
-        From p1 to p4, with point in the middle of p3
-        """
-        t = TopologyFactory.create(paths=[p1, p3, (p3, 0.5, 0.5), p4])
+
+        # From p1 to p4, with point in the middle of p3
+        t = TopologyFactory.create(paths=[p1, (p3, 0, 0.5), (p3, 0.5, 0.5), (p3, 0.5, 1), p4])
         self.assertEqual(
-            t.geom, LineString((0, 0), (2, 0), (4, 0), (6, 0), srid=settings.SRID)
+            t.geom, LineString((0, 0), (2, 0), (3, 0), (4, 0), (6, 0), srid=settings.SRID)
         )
-        """
-        From p1 to p4, through p2
-        """
-        t = TopologyFactory.create(paths=[p1, p2, (p2, 0.5, 0.5), p4])
+
+        # From p1 to p4, through p2
+        t2 = TopologyFactory.create(paths=[p1, (p2, 0, 0.5), (p2, 0.5, 0.5), (p2, 0.5, 1), p4])
         self.assertEqual(
-            t.geom,
+            t2.geom,
+            LineString(
+                (0, 0), (2, 0), (2, 1), (3, 1), (4, 1), (4, 0), (6, 0), srid=settings.SRID
+            ),
+        )
+
+        # From p1 to p4, though p2, but **with waypoint on a path intersection**
+        t3 = TopologyFactory.create(paths=[p1, (p2, 0, 0), p2, p4])
+        self.assertEqual(
+            t3.geom,
             LineString(
                 (0, 0), (2, 0), (2, 1), (4, 1), (4, 0), (6, 0), srid=settings.SRID
             ),
         )
-
-        """
-        From p1 to p4, though p2, but **with start/end at 0.0**
-        """
-        t2 = TopologyFactory.create(paths=[p1, p2, (p2, 0, 0), p4])
-        self.assertEqual(t2.geom, t.geom)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
