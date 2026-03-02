@@ -36,7 +36,7 @@ celery==5.6.2
     # via
     #   geotrek (setup.py)
     #   django-celery-results
-certifi==2026.1.4
+certifi==2026.2.25
     # via
     #   fiona
     #   requests
