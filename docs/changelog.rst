@@ -7,8 +7,7 @@ CHANGELOG
 
 **Documentation**
 
-* Add information about database users and map style configuration, and remove the mention of IGN Rando. 
-
+* Add information about database users and map style configuration, and remove the mention of IGN Rando (refs #5318)
 
 2.124.1         (2026-02-17)
 ----------------------------
