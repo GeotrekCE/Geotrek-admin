@@ -5,6 +5,10 @@ CHANGELOG
 2.124.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Documentation**
+
+* Add information about database users and map style configuration, and remove the mention of IGN Rando. 
+
 
 2.124.1         (2026-02-17)
 ----------------------------
