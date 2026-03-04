@@ -168,6 +168,12 @@ La fonctionnalité d’édition et de suppression de masse permet aux utilisateu
 
 Cette fonctionnalité est disponible dans la majorité des modules disposant d’une vue en liste (par exemple : itinéraires, contenus touristiques, événements, aménagements, etc.). Elle n’est pas disponible pour les modules « Signalements » et « Zones sensibles ».
 
+
+.. figure:: ../images/user-manual/bulk_actions.png
+   :alt: bulk actions button
+
+   Bouton d'actions de masse (suppression, modification) dans la vue liste
+
 Sélection multiple d’objets
 ---------------------------
 
@@ -199,6 +205,7 @@ La suppression de masse permet d’effacer définitivement plusieurs objets en u
 ----------------
 
 L’édition de masse permet d’appliquer une même modification à plusieurs objets simultanément.
+Les modification concerne uniquement les champs de type booleen et clé étrangère.
 
 **Étapes à suivre :**
 
@@ -209,3 +216,8 @@ L’édition de masse permet d’appliquer une même modification à plusieurs o
 5. Valider pour appliquer les changements à l’ensemble des objets sélectionnés.
 
 Seuls les champs explicitement modifiés seront mis à jour. Les champs laissés vides ou non modifiés resteront inchangés pour les objets concernés.
+
+.. figure:: ../images/user-manual/form_multi_update.png
+   :alt: bulk edition form
+
+   Formulaire d'édition de masse (module itinéraire)
