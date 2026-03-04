@@ -270,6 +270,16 @@ All layers colors can be customized from the settings. See `Leaflet reference <h
 
                 MAPENTITY_CONFIG['MAP_STYLES']['city']['opacity'] = 0.8
 
+            Example to override color, thickness, and opacity displayed in the PDF printout::
+
+                MAPENTITY_CONFIG['MAP_STYLES'] = {
+                    'print': {
+                        'path': {'weight': 1},
+                        'trek': {'color': 'blue', 'weight': 10, 'opacity': 0.5, 'arrowSize': 10},
+                    }
+                }
+
+
 Colors pool
 ~~~~~~~~~~~~
 

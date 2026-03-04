@@ -335,7 +335,7 @@ Cirkwi
 
 .. seealso::
 
-  To import Geotrek treks and POIs into Cirkwi's format you can check :ref:`this section (french)  <geotrek-ignrando-cirkwi-api>`.
+  To import Geotrek treks and POIs into Cirkwi's format you can check :ref:`this section (french)  <geotrek-cirkwi-api>`.
 
 
 .. _lei-parsers:

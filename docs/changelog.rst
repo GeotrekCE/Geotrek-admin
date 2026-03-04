@@ -9,6 +9,9 @@ CHANGELOG
 2.124.2         (2026-03-03)
 ----------------------------
 
+**Documentation**
+
+* Add information about database users and map style configuration, and remove the mention of IGN Rando (refs #5318)
 
 2.124.1         (2026-02-17)
 ----------------------------
