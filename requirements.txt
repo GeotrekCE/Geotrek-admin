@@ -330,7 +330,7 @@ pyyaml==6.0.3
     # via drf-spectacular
 rcssmin==1.2.2
     # via django-compressor
-redis==7.2.0
+redis==7.2.1
     # via geotrek (setup.py)
 referencing==0.37.0
     # via
