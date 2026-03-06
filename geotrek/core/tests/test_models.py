@@ -286,9 +286,6 @@ class PathVisibilityTest(TestCase):
     def setUpTestData(cls):
         cls.path = PathFactory()
         cls.invisible = PathFactory(visible=False)
-        cls.invisible.refresh_from_db()
-        cls.path.refresh_from_db()
-        # TODO: voir si sur master, cls.path.date_update a changé après un refresh_from_db
 
     def test_paths_are_visible_by_default(self):
         self.assertTrue(self.path.visible)

@@ -114,7 +114,7 @@ BEGIN
 --     END IF;
 
     is_root_call := NEW.is_being_split IS NOT TRUE;
-    UPDATE core_path SET is_being_split = True WHERE id = NEW.id;
+    UPDATE core_path SET is_being_split = TRUE WHERE id = NEW.id;
 
     -- Copy original geometry
     newgeom := NEW.geom;
@@ -254,7 +254,7 @@ BEGIN
             -- Before exiting the function, make sure geometries of topologies will be updated
             -- (only if this is the top-level call)
             IF is_root_call IS TRUE THEN
-                UPDATE core_path set is_being_split = False;
+                UPDATE core_path SET is_being_split = FALSE WHERE is_being_split = TRUE;
                 PERFORM update_geometry_of_topologies();
             END IF;
             RETURN NULL;
@@ -268,7 +268,7 @@ BEGIN
         -- Skip if intersections are 0,1 (means not crossing)
         IF array_length(intersections_on_current, 1) > 2 THEN
 
-            UPDATE core_path SET is_being_split = True where id = path.id;
+            UPDATE core_path SET is_being_split = TRUE WHERE id = path.id;
 
             -- RAISE NOTICE 'Current: % % intersecting on current % % : %', NEW.id, NEW.name, path.id, path.name, intersections_on_current;
 
@@ -478,7 +478,7 @@ BEGIN
     -- Before exiting the function, make sure geometries of topologies will be updated
     -- (only if this is the top-level call)
     IF is_root_call IS TRUE THEN
-        UPDATE core_path set is_being_split = False;
+        UPDATE core_path SET is_being_split = FALSE WHERE is_being_split = TRUE;
         PERFORM update_geometry_of_topologies();
     END IF;
     RETURN NULL;
