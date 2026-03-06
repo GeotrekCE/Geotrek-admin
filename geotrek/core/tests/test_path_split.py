@@ -5,7 +5,7 @@ from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 
 from geotrek.common.tests.utils import LineStringInBounds
-from geotrek.core.models import Path, Topology
+from geotrek.core.models import Path, Topology, PathAggregation
 from geotrek.core.tests.factories import (
     NetworkFactory,
     PathFactory,
@@ -557,22 +557,65 @@ class SplitPathTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SplitPathLineTopologyTest(TestCase):
+
+    def create_line_topology(self, serialized):
+        """We cannot use TopologyFactory here because we need a workflow similar to when creating a topology via the interface."""
+        tmp_topo = Topology.deserialize(serialized)
+        topology = Topology.objects.create()
+        topology.mutate(tmp_topo)
+        topology.refresh_from_db()
+        return topology
+
     def test_split_tee_1(self):
         """
-                 C
-        A +---===+===---+ B
-             A'  |  B'
-                 +      AB exists with topology A'B'.
-                 D      Add CD.
+        AB exists with topology A'B' from left to right. Add CD.
+
+                           C
+          A              (2,0)             B
+        (0,0) +-->---======+==>>==--->--+ (4,0)
+                     A'    │     B'
+                           ↓
+                           │
+                           +
+                           D
+                         (2,2)
+
+        ->-  direction of path
+        =>>=  direction of topology
+
         """
+        # FIXME: decoupled
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         # Create a topology
-        topology = TopologyFactory.create(paths=[(ab, 0.25, 0.75)])
+        # topology = TopologyFactory.create(paths=[(ab, 0.25, 0.75)])
+        # topogeom = topology.geom
+
+        serialized = f'[{{"positions":{{"0":[0.25,0.75]}},"paths":[{ab.pk}]}}]'
+        topology = self.create_line_topology(serialized)
         topogeom = topology.geom
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
+
+
         # Topology covers 1 path
         self.assertEqual(len(topology.paths.all()), 1)
         PathFactory.create(name="CD", geom=LineString((2, 0), (2, 2)))
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
+        print("before", topogeom)
+        print("after", topology.geom)
+
+
+
         # Topology now covers 2 paths
         self.assertEqual(len(topology.paths.all()), 2)
         # AB and AB2 has one topology each
@@ -590,18 +633,54 @@ class SplitPathLineTopologyTest(TestCase):
 
     def test_split_tee_1_reversed(self):
         """
-                 C
-        A +---===+===---+ B
-             A'  |  B'
-                 +      AB exists with topology A'B'.
-                 D      Add CD.
+        AB exists with topology B'A' from right to left. Add CD.
+
+                           C
+          A              (2,0)             B
+        (0,0) +-->--===<<==+======--->--+ (4,0)
+                     A'    │     B'
+                           ↓
+                           │
+                           +
+                           D
+                         (2,2)
+
+        ->-  direction of path
+        =>>=  direction of topology
+
         """
+        # FIXME: decoupled
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         # Create a topology
-        topology = TopologyFactory.create(paths=[(ab, 0.75, 0.25)])
+        # topology = TopologyFactory.create(paths=[(ab, 0.75, 0.25)])
+
+
+        serialized = f'[{{"positions":{{"0":[0.75,0.25]}},"paths":[{ab.pk}]}}]'
+        topology = self.create_line_topology(serialized)
+        topogeom = topology.geom
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
+
+
+
         # Topology covers 1 path
         self.assertEqual(len(topology.paths.all()), 1)
         PathFactory.create(name="CD", geom=LineString((2, 0), (2, 2)))
+
+
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
+        print("before", topogeom)
+        print("after", topology.geom)
+
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         # Topology now covers 2 paths
         self.assertEqual(len(topology.paths.all()), 2)
@@ -759,14 +838,27 @@ class SplitPathLineTopologyTest(TestCase):
                     +    AB, BE, EF exist. A topology exists along them.
                     D    Add CD.
         """
+        # FIXME: decoupled
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (2, 0)))
         be = PathFactory.create(name="BE", geom=LineString((2, 0), (4, 0)))
         ef = PathFactory.create(name="EF", geom=LineString((4, 0), (6, 0)))
         # Create a topology
-        topology = TopologyFactory.create(
-            paths=[(ab, 0.5, 1), (be, 0, 1), (ef, 0, 0.5)]
-        )
+        # topology = TopologyFactory.create(
+        #     paths=[(ab, 0.5, 1), (be, 0, 1), (ef, 0, 0.5)]
+        # )
+        # topogeom = topology.geom
+
+        serialized = f'[{{"positions":{{"0":[0.5,1], "1":[0,1], "2":[0,0.5]}},"paths":[{ab.pk}, {be.pk}, {ef.pk}]}}]'
+        topology = self.create_line_topology(serialized)
         topogeom = topology.geom
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
+
+
 
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(be.aggregations.all()), 1)
@@ -774,6 +866,17 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 3)
         # Create CD
         PathFactory.create(name="CD", geom=LineString((3, 0), (3, 2)))
+
+
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
+        print("before", topogeom)
+        print("after", topology.geom)
+
         # Topology now covers 4 paths
         self.assertEqual(len(topology.paths.all()), 4)
         # AB and EF have still their topology
@@ -805,16 +908,38 @@ class SplitPathLineTopologyTest(TestCase):
                     +    AB, BE, EF exist. A topology exists along them.
                     D    Add CD.
         """
+        # FIXME: decoupled
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (2, 0)))
         be = PathFactory.create(name="BE", geom=LineString((4, 0), (2, 0)))
         ef = PathFactory.create(name="EF", geom=LineString((4, 0), (6, 0)))
         # Create a topology
-        topology = TopologyFactory.create(
-            paths=[(ab, 0.5, 1), (be, 1, 0), (ef, 0, 0.5)]
-        )
+        # topology = TopologyFactory.create(
+        #     paths=[(ab, 0.5, 1), (be, 1, 0), (ef, 0, 0.5)]
+        # )
+
+        serialized = f'[{{"positions":{{"0":[0.5,1], "1":[1,0], "2":[0,0.5]}},"paths":[{ab.pk}, {be.pk}, {ef.pk}]}}]'
+        topology = self.create_line_topology(serialized)
+        topogeom = topology.geom
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
 
         # Create DC
         PathFactory.create(name="DC", geom=LineString((3, 0), (3, 2)))
+
+
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
+        print("before", topogeom)
+        print("after", topology.geom)
+
         # Topology now covers 4 paths
         topology.reload()
         self.assertEqual(len(topology.paths.all()), 4)
@@ -858,12 +983,33 @@ class SplitPathLineTopologyTest(TestCase):
                |   |
                +---+
         """
+        # FIXME: decoupled
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         # Create a topology
-        topology = TopologyFactory.create(paths=[(ab, 0.1, 0.9)])
+        # topology = TopologyFactory.create(paths=[(ab, 0.1, 0.9)])
+
+        serialized = f'[{{"positions":{{"0":[0.1,0.9]}},"paths":[{ab.pk}]}}]'
+        topology = self.create_line_topology(serialized)
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
+
         topogeom = topology.geom
         self.assertEqual(len(topology.paths.all()), 1)
         PathFactory.create(name="CD", geom=LineString((1, 2), (1, -2), (3, -2), (3, 2)))
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
+        print("before", topogeom)
+        print("after", topology.geom)
+
+
         self.assertEqual(len(topology.paths.all()), 3)
         self.assertEqual(len(ab.aggregations.all()), 1)
         aggr_ab = ab.aggregations.all()[0]
@@ -893,12 +1039,36 @@ class SplitPathLineTopologyTest(TestCase):
                |   |
                +---+
         """
+        # FIXME
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         # Create a topology
-        topology = TopologyFactory.create(paths=[(ab, 0.9, 0.1)])
+        # topology = TopologyFactory.create(paths=[(ab, 0.9, 0.1)])
+
+        serialized = f'[{{"positions":{{"0":[0.9,0.1]}},"paths":[{ab.pk}]}}]'
+        topology = self.create_line_topology(serialized)
+        topogeom = topology.geom
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
 
         self.assertEqual(len(topology.paths.all()), 1)
         PathFactory.create(name="CD", geom=LineString((1, 2), (1, -2), (3, -2), (3, 2)))
+
+
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
+        print("before", topogeom)
+        print("after", topology.geom)
+
+
+
         self.assertEqual(len(topology.paths.all()), 3)
         self.assertEqual(len(ab.aggregations.all()), 1)
         aggr_ab = ab.aggregations.all()[0]
@@ -1460,6 +1630,15 @@ class SplitPathPointTopologyTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SplitPathGenericTopologyTest(TestCase):
+
+    def create_line_topology(self, serialized):
+        """We cannot use TopologyFactory here because we need a workflow similar to when creating a topology via the interface."""
+        tmp_topo = Topology.deserialize(serialized)
+        topology = Topology.objects.create()
+        topology.mutate(tmp_topo)
+        topology.refresh_from_db()
+        return topology
+
     def test_add_simple_path(self):
         r"""
         A +--==          ==----+ C
@@ -1606,13 +1785,27 @@ class SplitPathGenericTopologyTest(TestCase):
                  ==+==
                    B
         """
+        # FIXME: decoupled
         ba = PathFactory.create(
             name="BA", geom=LineString((8, -2), (6, -2), (4, 0), (0, 0))
         )
         bc = PathFactory.create(
             name="BC", geom=LineString((8, -2), (10, -2), (12, 0), (14, 0))
         )
-        topology = TopologyFactory.create(paths=[(ba, 0.75, 0), (bc, 0, 0.75)])
+        # topology = TopologyFactory.create(paths=[(ba, 0.75, 0), (bc, 0, 0.75)])
+
+
+
+        serialized = f'[{{"positions":{{"0":[0.75,0], "1":[0,0.75]}},"paths":[{ba.pk}, {bc.pk}]}}]'
+        topology = self.create_line_topology(serialized)
+        topogeom = topology.geom
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
+
         self.assertEqual(len(topology.paths.all()), 2)
         originalgeom = LineString(
             (2.2071067811865475, 0),
@@ -1628,6 +1821,16 @@ class SplitPathGenericTopologyTest(TestCase):
 
         # Add a path
         de = PathFactory.create(name="DE", geom=LineString((4, 0), (12, 0)))
+
+        topology.refresh_from_db()
+        pa = PathAggregation.objects.filter(topo_object=topology)
+        for p in pa:
+            print(f"{p.path.pk=}, {p.start_position=}, {p.end_position=}, {p.order}")
+        print(topology.coupled)
+        print("before", topogeom)
+        print("after", topology.geom)
+
+
         self.assertEqual(len(Path.objects.all()), 5)
         ba_2 = Path.objects.filter(name="BA").exclude(pk=ba.pk)[0]
         bc_2 = Path.objects.filter(name="BC").exclude(pk=bc.pk)[0]
@@ -1657,3 +1860,5 @@ class SplitPathGenericTopologyTest(TestCase):
             (2.2071067811865470, 0), *originalgeom[1:], srid=settings.SRID
         )
         self.assertEqual(topology.geom, originalgeom)
+
+

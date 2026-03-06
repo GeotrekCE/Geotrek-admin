@@ -313,6 +313,8 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             )
         )
 
+    # FIXME
+
     def get_geometries(self, topology):
         geometries = []
         for pathagg in topology.aggregations.all():

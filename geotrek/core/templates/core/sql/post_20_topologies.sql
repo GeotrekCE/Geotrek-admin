@@ -34,7 +34,7 @@ FOR EACH ROW EXECUTE PROCEDURE topology_latest_updated_d();
 
 
 -------------------------------------------------------------------------------
--- Update geometry of a topology
+-- Update geometry of topologies
 -------------------------------------------------------------------------------
 
 CREATE FUNCTION {{ schema_geotrek }}.update_geometry_of_topology(topology_id integer) RETURNS void AS $$
@@ -60,6 +60,17 @@ DECLARE
 BEGIN
     -- If Geotrek-light, don't do anything
     IF NOT {{ TREKKING_TOPOLOGY_ENABLED }} THEN
+        RETURN;
+    END IF;
+
+    -- If any path linked to this topology is currently being split, don't do anything.
+    -- This function will be called again once the split is complete.
+    IF EXISTS (
+        SELECT 1
+        FROM core_pathaggregation cpa
+        JOIN core_path cp ON cp.id = cpa.path_id
+        WHERE cpa.topo_object_id = topology_id AND cp.is_being_split = TRUE
+    ) THEN
         RETURN;
     END IF;
 
@@ -150,6 +161,18 @@ BEGIN
                          WHERE id = topology_id;
 
     UPDATE core_topology SET geom_need_update = FALSE WHERE id = topology_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+DROP FUNCTION IF EXISTS update_geometry_of_topologies() CASCADE;
+CREATE FUNCTION {{ schema_geotrek }}.update_geometry_of_topologies() RETURNS void AS $$
+DECLARE
+    rec record;
+BEGIN
+    FOR rec IN SELECT * FROM core_topology WHERE geom_need_update = TRUE LOOP
+        PERFORM update_geometry_of_topology(rec.id);
+    END LOOP;
 END;
 $$ LANGUAGE plpgsql;
 
