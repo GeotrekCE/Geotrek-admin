@@ -28,6 +28,7 @@ from .filters import SensitiveAreaFilterSet
 from .forms import RegulatorySensitiveAreaForm, SensitiveAreaForm
 from .models import SensitiveArea, Species, SportPractice
 from .serializers import SensitiveAreaGeojsonSerializer, SensitiveAreaSerializer
+from .vector_layers import SensitivityVectorLayer
 
 logger = logging.getLogger(__name__)
 
@@ -124,6 +125,9 @@ class SensitiveAreaViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
             qs = qs.only("id", "species")
         return qs
+
+    def get_layer_classes(self):
+        return [SensitivityVectorLayer]
 
 
 class SensitiveAreaKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):

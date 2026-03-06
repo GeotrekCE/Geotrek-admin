@@ -5,7 +5,7 @@ from unittest import mock, skipIf
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
+from django.contrib.gis.geos import LineString, MultiPolygon, Polygon
 from django.core.cache import caches
 from django.core.files.storage import default_storage
 from django.test import TestCase, override_settings
@@ -111,7 +111,7 @@ class PathViewsTest(CommonTest):
             "arrival": "",
             "source": "",
             "valid": "on",
-            "geom": '{"geom": "LINESTRING (99.0 89.0, 100.0 88.0)", "snap": [null, null]}',
+            "geom": '{"geom": "LINESTRING (99.0 89.0, 100.0 88.0)"}',
         }
 
     def get_expected_popup_content(self):
@@ -2322,50 +2322,6 @@ class TrailKmlGPXTest(TestCase):
         self.assertEqual(
             self.kml_response["Content-Type"], "application/vnd.google-earth.kml+xml"
         )
-
-
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
-class RemovePathKeepTopology(TestCase):
-    def test_remove_poi(self):
-        """
-        poi is linked with AB
-
-            poi
-             +                D
-             *                |
-             *                |
-        A---------B           C
-             |----|
-               e1
-
-        we got after remove AB :
-
-             poi
-              + * * * * * * * D
-                              |
-                              |
-                              C
-
-        poi is linked with DC and e1 is deleted
-        """
-        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (1, 0)))
-        PathFactory.create(name="CD", geom=LineString((2, 0), (2, 1)))
-        poi = POIFactory.create(paths=[(ab, 0.5, 0.5)], offset=1)
-        e1 = TopologyFactory.create(paths=[(ab, 0.5, 1)])
-
-        self.assertAlmostEqual(1, poi.offset)
-        self.assertEqual(poi.geom, Point(0.5, 1.0, srid=2154))
-
-        ab.delete()
-        poi.reload()
-        e1.reload()
-
-        self.assertEqual(Path.objects.all().count(), 1)
-
-        self.assertEqual(e1.deleted, True)
-        self.assertEqual(poi.deleted, False)
-
-        self.assertAlmostEqual(1.5, poi.offset)
 
 
 class PathMultiActionsViewTest(

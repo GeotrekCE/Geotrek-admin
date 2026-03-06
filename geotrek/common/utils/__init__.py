@@ -182,5 +182,15 @@ def simplify_coords(coords):
     raise Exception(msg)
 
 
-def leaflet_bounds(bbox):
-    return [[bbox[1], bbox[0]], [bbox[3], bbox[2]]]
+def maplibre_bounds(bbox):
+    """
+    Transform a bbox (xmin, ymin, xmax, ymax) into Polygon coordinates
+    """
+    xmin, ymin, xmax, ymax = bbox
+    return [
+        [xmin, ymin],
+        [xmax, ymin],
+        [xmax, ymax],
+        [xmin, ymax],
+        [xmin, ymin],
+    ]
