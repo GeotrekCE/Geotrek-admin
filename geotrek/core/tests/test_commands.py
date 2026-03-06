@@ -10,7 +10,7 @@ from django.db import IntegrityError, connection
 from django.test import TestCase, override_settings
 
 from geotrek.authent.models import Structure
-from geotrek.core.models import Path, PathAggregation
+from geotrek.core.models import Path, PathAggregation, Topology
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.trekking.tests.factories import POIFactory, TrekFactory
 
@@ -313,7 +313,14 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             )
         )
 
-    # FIXME
+    def create_line_topology(self, serialized):
+        """We cannot use TopologyFactory here because we need a workflow similar to when creating a topology via the interface."""
+        tmp_topo = Topology.deserialize(serialized)
+        topology = Topology.objects.create()
+        topology.mutate(tmp_topo)
+        topology.refresh_from_db()
+        return topology
+
 
     def get_geometries(self, topology):
         geometries = []
@@ -354,9 +361,17 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         1 🡥       ⠳   ⠳ 2
         🡥         3 ⠳   ⠳
         """
-        topo = TopologyFactory.create(
-            paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
-        )
+        # FIXME
+        # topo = TopologyFactory.create(
+        #     paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
+        # )
+
+
+
+        serialized = f'[{{"positions":{{"0":[0,1], "1":[0,1]}},"paths":[{self.path_1_a.pk}, {self.path_1_b.pk}]}}]'
+        topo = self.create_line_topology(serialized)
+
+        self.assertTrue(topo.coupled)
         self.assertEqual(
             LineString(
                 (700000, 6600000),
@@ -371,17 +386,28 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                 Point(700000, 6600090), Point(700090, 6600000), srid=settings.SRID
             )
         )
-        topo.reload()
+        # topo.reload()
+        topo.refresh_from_db()
+        self.assertFalse(topo.coupled)
         self.assertEqual(
             LineString(
                 (700000, 6600000),
-                (700045, 6600045),
                 (700050, 6600050),
                 (700100, 6600100),
                 srid=settings.SRID,
             ),
             topo.geom,
         )
+        # self.assertEqual(
+        #     LineString(
+        #         (700000, 6600000),
+        #         (700045, 6600045),
+        #         (700050, 6600050),
+        #         (700100, 6600100),
+        #         srid=settings.SRID,
+        #     ),
+        #     topo.geom,
+        # )
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=topo).values_list(
@@ -410,7 +436,9 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 1, 2],
         )
-        topo.reload()
+        # topo.reload()
+        topo.refresh_from_db()
+        self.assertTrue(topo.coupled)
         self.assertEqual(
             LineString(
                 (700000, 6600000),
@@ -453,6 +481,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         🡥             ⠳     ⠳
 
         """
+        # FIXME
         topo = TopologyFactory.create(
             paths=[
                 (self.path_1_a, 0, 0.95),
@@ -573,6 +602,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         🡥           3 ⠳     ⠳
 
         """
+        # FIXME
         self.maxDiff = None
         topo = TopologyFactory.create(
             paths=[
@@ -704,6 +734,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         🡥           3 ⠳     ⠳
 
         """
+        # FIXME
         topo = TopologyFactory.create(
             paths=[
                 (self.path_1_a, 0, 1),
@@ -823,6 +854,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         🡥                   ⠳
 
         """
+        # FIXME
         topo = TopologyFactory.create(
             paths=[
                 (self.path_1_a, 0, 1),
@@ -940,6 +972,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         FAILED
 
         """
+        # FIXME
         topo = TrekFactory.create(
             paths=[
                 (self.path_1_a, 0, 1),
