@@ -8,7 +8,16 @@ from geotrek.core.models import PathAggregation, Topology
 
 
 class Command(BaseCommand):
-    help = """Reorder Pathaggregations of all topologies."""
+    help = """Reorder the path aggregations of topologies."""
+
+    def add_arguments(self, parser):
+        parser.add_argument(
+            '--topologies',
+            '-t',
+            nargs='+',
+            type=int,
+            help='IDs of topologies to reorder. If not provided, all non-deleted topologies are processed.',
+        )
 
     def get_geom_lines(self, topology):
         cursor = connection.cursor()
@@ -35,110 +44,125 @@ class Command(BaseCommand):
         fetched = cursor.fetchall()
         return fetched[0][1]
 
-    def handle(self, *args, **options):
-        topologies = Topology.objects.filter(deleted=False)
-        failed_topologies = []
-        num_updated_topologies = 0
-        for topology in topologies:
-            geom_lines = self.get_geom_lines(topology)
+    def reorder_aggregations_of_topology(self, topology):
+        """
+        Reorder path aggregations for a single topology.
+        Returns True if successful, False if the topology could not be reordered.
+        """
+        geom_lines = self.get_geom_lines(topology)
 
-            new_order = self.get_new_order(geom_lines)
-            if new_order == [] or (
+        new_order = self.get_new_order(geom_lines)
+        if new_order == [] or (
                 len(geom_lines) >= 2 and geom_lines[1][1] == "LINESTRING EMPTY"
-            ):
-                for field in topology._meta.get_fields():
-                    if isinstance(field, OneToOneRel) and hasattr(topology, field.name):
-                        failed_topologies.append(
-                            str(
-                                f"{getattr(topology, field.name).kind} id: {topology.pk}"
-                            )
+        ):
+            for field in topology._meta.get_fields():
+                if isinstance(field, OneToOneRel) and hasattr(topology, field.name):
+                    self.failed_topologies.append(
+                        str(
+                            f"{getattr(topology, field.name).kind} id: {topology.pk}"
                         )
+                    )
+                    return False
 
-            if len(new_order) <= 2 or (
+        if len(new_order) <= 2 or (
                 len(geom_lines) >= 2 and geom_lines[1][1] == "LINESTRING EMPTY"
-            ):
-                continue
-            order_maked_lines = new_order[1:]
-            orders = [result - 1 for result in order_maked_lines]
-            new_orders = {}
-            for x, geom_line in enumerate(geom_lines):
-                new_orders[geom_line[0]] = orders[x]
+        ):
+            return False
+        order_maked_lines = new_order[1:]
+        orders = [result - 1 for result in order_maked_lines]
+        new_orders = {}
+        for x, geom_line in enumerate(geom_lines):
+            new_orders[geom_line[0]] = orders[x]
 
-            # We generate a dict with id Pathaggregation as key and new order (without points)
+        # We generate a dict with id path aggregation as key and new order (without points)
 
-            # We get all the Points that we didn't get for smart make line
-            cursor = connection.cursor()
-            cursor.execute(f"""
-            SELECT et.id, ST_ASTEXT(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position))
-            FROM core_topology e, core_pathaggregation et, core_path t
-            WHERE e.id = {topology.pk} AND et.topo_object_id = e.id AND et.path_id = t.id
-            AND GeometryType(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position)) = 'POINT'
-            ORDER BY et."order", et.id
-            """)
-            points = cursor.fetchall()
-            id_order = 0
+        # We get all the Points that we didn't get for smart make line
+        cursor = connection.cursor()
+        cursor.execute(f"""
+                    SELECT et.id, ST_ASTEXT(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position))
+                    FROM core_topology e, core_pathaggregation et, core_path t
+                    WHERE e.id = {topology.pk} AND et.topo_object_id = e.id AND et.path_id = t.id
+                    AND GeometryType(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position)) = 'POINT'
+                    ORDER BY et."order", et.id
+                    """)
+        points = cursor.fetchall()
+        id_order = 0
 
-            dict_points = {}
-            for id_pa_point, geom_point_wkt in points:
-                dict_points[id_pa_point] = GEOSGeometry(
-                    geom_point_wkt, srid=settings.SRID
-                )
+        dict_points = {}
+        for id_pa_point, geom_point_wkt in points:
+            dict_points[id_pa_point] = GEOSGeometry(
+                geom_point_wkt, srid=settings.SRID
+            )
 
-            points_touching = {}
-            # Find points aggregations that touches lines
-            while id_order < len(orders) - 1:
-                geometries_points = dict_points.values()
-                order_actual = orders[id_order]
-                order_next = orders[id_order + 1]
-                actual_point_end = GEOSGeometry(
-                    geom_lines[order_actual][1], srid=settings.SRID
-                ).boundary[1]  # Get end point of the geometry
-                next_point_start = GEOSGeometry(
-                    geom_lines[order_next][1], srid=settings.SRID
-                ).boundary[0]  # Get start point of the geometry
-                if (
+        points_touching = {}
+        # Find points aggregations that touches lines
+        while id_order < len(orders) - 1:
+            geometries_points = dict_points.values()
+            order_actual = orders[id_order]
+            order_next = orders[id_order + 1]
+            actual_point_end = GEOSGeometry(
+                geom_lines[order_actual][1], srid=settings.SRID
+            ).boundary[1]  # Get end point of the geometry
+            next_point_start = GEOSGeometry(
+                geom_lines[order_next][1], srid=settings.SRID
+            ).boundary[0]  # Get start point of the geometry
+            if (
                     actual_point_end == next_point_start
                     and actual_point_end in geometries_points
-                ):
-                    for id_pa_point, point_geom in dict_points.items():
-                        if point_geom == actual_point_end:
-                            points_touching[id_pa_point] = id_order + 1
-                            dict_points.pop(id_pa_point)
-                            break
-                id_order += 1
+            ):
+                for id_pa_point, point_geom in dict_points.items():
+                    if point_geom == actual_point_end:
+                        points_touching[id_pa_point] = id_order + 1
+                        dict_points.pop(id_pa_point)
+                        break
+            id_order += 1
 
-            points_added = 0
-            # We add all points between the lines and remove points generated which should not be here (it happens)
-            for id_pa_point, order_point_touching in points_touching.items():
-                new_orders = {
-                    id_pa: new_order + 1
-                    if new_order >= order_point_touching + points_added
-                    else new_order
-                    for id_pa, new_order in new_orders.items()
-                }
-                new_orders[id_pa_point] = order_point_touching + points_added
-                points_added += 1
-            PathAggregation.objects.filter(topo_object=topology).exclude(
-                id__in=new_orders.keys()
-            ).delete()
+        points_added = 0
+        # We add all points between the lines and remove points generated which should not be here (it happens)
+        for id_pa_point, order_point_touching in points_touching.items():
+            new_orders = {
+                id_pa: new_order + 1
+                if new_order >= order_point_touching + points_added
+                else new_order
+                for id_pa, new_order in new_orders.items()
+            }
+            new_orders[id_pa_point] = order_point_touching + points_added
+            points_added += 1
+        PathAggregation.objects.filter(topo_object=topology).exclude(
+            id__in=new_orders.keys()
+        ).delete()
 
-            initial_order = PathAggregation.objects.filter(
-                topo_object=topology
-            ).values_list("id", flat=True)
+        initial_order = PathAggregation.objects.filter(
+            topo_object=topology
+        ).values_list("id", flat=True)
 
-            pas_updated = []
-            for pa_id in initial_order:
-                pa = PathAggregation.objects.get(id=pa_id)
-                if pa.order != new_orders[pa_id]:
-                    pa.order = new_orders[pa_id]
-                    pas_updated.append(pa)
-            PathAggregation.objects.bulk_update(pas_updated, ["order"])
-            if pas_updated:
+        pas_updated = []
+        for pa_id in initial_order:
+            pa = PathAggregation.objects.get(id=pa_id)
+            if pa.order != new_orders[pa_id]:
+                pa.order = new_orders[pa_id]
+                pas_updated.append(pa)
+        PathAggregation.objects.bulk_update(pas_updated, ["order"])
+        return pas_updated != []
+
+
+    def handle(self, *args, **options):
+        topology_ids = options.get('topologies')
+        if topology_ids:
+            qs = Topology.objects.filter(pk__in=topology_ids)
+        else:
+            qs = Topology.objects.filter(deleted=False)
+
+        self.failed_topologies = []
+        num_updated_topologies = 0
+        for topology in qs:
+            topo_was_reordered = self.reorder_aggregations_of_topology(topology)
+            if topo_was_reordered:
                 num_updated_topologies += 1
 
         if options["verbosity"]:
-            self.stdout.write(f"{num_updated_topologies} topologies has beeen updated")
+            self.stdout.write(f"{num_updated_topologies} topologies has been updated")
 
-        if options["verbosity"] and failed_topologies:
-            self.stdout.write("Topologies with errors :")
-            self.stdout.write("\n".join(failed_topologies))
+        if options["verbosity"] and self.failed_topologies:
+            self.stdout.write("Topologies with errors:")
+            self.stdout.write("\n".join(self.failed_topologies))
