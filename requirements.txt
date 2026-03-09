@@ -380,7 +380,7 @@ tinycss2==1.5.1
     #   cssselect2
     #   svglib
     #   weasyprint
-tinyhtml5==2.0.0
+tinyhtml5==2.1.0
     # via weasyprint
 transaction==5.0
     # via zodb
