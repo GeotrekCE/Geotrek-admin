@@ -531,7 +531,53 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                 [0, 1, 2],
             )
 
-    def test_split_no_reorder_needed(self):
+    def test_split_no_reorder_needed_one_path_aggregation(self):
+        """
+
+        ━━━━━━|==============|━━━━━━
+            Start           End
+
+        ━━ path 1_a
+        == topology
+        """
+
+        # Create a topology with one path aggregation
+        topo = TopologyFactory.create(paths=[(self.path_1_a, 0, 1)])
+
+        # Check its geometry and path aggregation
+        self.assertEqual(
+            LineString((700000, 6600000), (700050, 6600050), srid=settings.SRID),
+            topo.geom,
+        )
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0],
+        )
+
+        # Run the command
+        output = StringIO()
+        call_command("reorder_topologies", stdout=output)
+        self.assertEqual("0 topologies have been updated\n", output.getvalue())
+
+        # Check that its geometry and path aggregations have not changed
+        self.assertEqual(
+            LineString((700000, 6600000), (700050, 6600050), srid=settings.SRID),
+            topo.geom,
+        )
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0],
+        )
+
+    def test_split_no_reorder_needed_several_path_aggregations(self):
         """
         Part A
 
@@ -546,7 +592,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         🡥               ⠳
         """
 
-        # Create the topology
+        # Create a topology with several path aggregations
         topo = TopologyFactory.create(
             paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
         )
