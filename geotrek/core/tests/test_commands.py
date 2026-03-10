@@ -412,9 +412,9 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         # Run the command
         output = StringIO()
         call_command("reorder_topologies", stdout=output)
-        self.assertEqual("1 topology has been updated\n", output.getvalue())
 
         # Check that only the non-deleted topology has been reordered
+        self.assertEqual("1 topology has been updated\n", output.getvalue())
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=existing_topo).values_list(
@@ -510,9 +510,9 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         call_command(
             "reorder_topologies", stdout=output, ids=[existing_topo.pk, deleted_topo.pk]
         )
-        self.assertEqual("2 topologies have been updated\n", output.getvalue())
 
         # Check that only the last two topologies have been reordered
+        self.assertEqual("2 topologies have been updated\n", output.getvalue())
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=ignored_topo).values_list(
