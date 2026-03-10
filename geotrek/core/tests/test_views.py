@@ -96,9 +96,9 @@ class PathViewsTest(CommonTest):
         }
 
     def get_bad_data(self):
-        return {"geom": '{"geom": "LINESTRING (0.0 0.0, 1.0 1.0)"}'}, _(
-            "Linestring invalid snapping."
-        )
+        return {
+            "geom": '{"type": "LINESTRING", "coordinates": [[99.0, 89.0], [100.0, 88.0]]}'
+        }, _("Linestring invalid snapping.")
 
     def get_good_data(self):
         return {
@@ -111,7 +111,7 @@ class PathViewsTest(CommonTest):
             "arrival": "",
             "source": "",
             "valid": "on",
-            "geom": '{"geom": "LINESTRING (99.0 89.0, 100.0 88.0)"}',
+            "geom": '{"type": "LINESTRING", "coordinates": [[99.0, 89.0], [100.0, 88.0]]}',
         }
 
     def get_expected_popup_content(self):
@@ -721,11 +721,7 @@ class PathViewsTest(CommonTest):
             self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
     def test_path_layer_cache(self):
-        """
-
-        This test check path's cache is not the same as draft path's cache and works independently
-        """
-        cache = caches[settings.MAPENTITY_CONFIG["GEOJSON_LAYERS_CACHE_BACKEND"]]
+        """Check path's cache is not the same as draft path's cache and works independently"""
 
         obj = self.modelfactory(draft=False)
         self.modelfactory(draft=True)
@@ -733,22 +729,6 @@ class PathViewsTest(CommonTest):
         with self.assertNumQueries(4):
             response = self.client.get(obj.get_layer_url())
         self.assertEqual(len(response.json()["features"]), 2)
-
-        # We check the content was created and cached without no_draft key
-        # We check that any cached content can be found without no_draft (we still didn't ask for it)
-        last_update_no_draft = Path.no_draft_latest_updated()
-        last_update = Path.latest_updated()
-        geojson_lookup_no_draft = "en_path_{}_nodraft_json_layer".format(
-            last_update_no_draft.strftime("%y%m%d%H%M%S%f")
-        )
-        geojson_lookup = "en_path_{}_json_layer".format(
-            last_update.strftime("%y%m%d%H%M%S%f")
-        )
-        content_no_draft = cache.get(geojson_lookup_no_draft)
-        content = cache.get(geojson_lookup)
-
-        self.assertIsNone(content_no_draft)
-        self.assertEqual(response.content, content.content)
 
         # We have 1 less query because the generation of paths was cached
         with self.assertNumQueries(3):

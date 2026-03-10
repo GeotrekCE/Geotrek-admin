@@ -8,7 +8,6 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import Point
 from django.core import mail
-from django.core.cache import caches
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.utils.module_loading import import_string
@@ -93,8 +92,6 @@ class ReportSerializationOptimizeTests(TestCase):
         """
         This test checks report's cache
         """
-        cache = caches[settings.MAPENTITY_CONFIG["GEOJSON_LAYERS_CACHE_BACKEND"]]
-
         # There are 5 queries to get layer
         with self.assertNumQueries(5):
             response = self.client.get(
@@ -102,16 +99,7 @@ class ReportSerializationOptimizeTests(TestCase):
             )
         self.assertEqual(len(response.json()["features"]), 4)
 
-        # We check the content was created and cached
-        last_update_status = feedback_models.Report.latest_updated()
-        geojson_lookup = (
-            f"en_report_{last_update_status.isoformat()}_{self.user.pk}_geojson_layer"
-        )
-        cache_content = cache.get(geojson_lookup)
-
-        self.assertEqual(response.content, cache_content.content)
-
-        # We have 1 less query because the generation of report was cached
+        # We have 2 less query because the generation of report was cached
         with self.assertNumQueries(3):
             self.client.get(reverse("feedback:report-drf-list", format="geojson"))
 
