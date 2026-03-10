@@ -2,8 +2,6 @@ from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management.base import BaseCommand
 from django.db import connection
-from django.db.models import OneToOneRel
-from django.utils.translation import ngettext
 
 from geotrek.core.models import PathAggregation, Topology
 
@@ -19,13 +17,16 @@ def reorder_aggregations_of_topology(topology):
 
     def get_geom_lines(topo):
         """Returns all sublines for a topology."""
-        cursor.execute(f"""
+        cursor.execute(
+            """
                     SELECT et.id, ST_ASTEXT(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position))
                     FROM core_topology e, core_pathaggregation et, core_path t
                     WHERE e.id = %s AND et.topo_object_id = e.id AND et.path_id = t.id
                     AND GeometryType(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position)) != 'POINT'
                     ORDER BY et."order", et.id
-                    """, [topo.pk])
+                    """,
+            [topo.pk],
+        )
         geom_lines_order = cursor.fetchall()
         return geom_lines_order
 
@@ -44,7 +45,11 @@ def reorder_aggregations_of_topology(topology):
     geom_lines = get_geom_lines(topology)
     new_order = get_new_order(geom_lines)
 
-    if new_order == [] or len(geom_lines) >= 2 and geom_lines[1][1] == "LINESTRING EMPTY":
+    if (
+        new_order == []
+        or len(geom_lines) >= 2
+        and geom_lines[1][1] == "LINESTRING EMPTY"
+    ):
         return False, False  # Not reordered, failed
 
     if len(new_order) <= 2:
@@ -58,21 +63,22 @@ def reorder_aggregations_of_topology(topology):
     # We generate a dict with id path aggregation as key and new order (without points)
 
     # We get all the Points that we didn't get for smart make line
-    cursor.execute(f"""
+    cursor.execute(
+        """
                 SELECT et.id, ST_ASTEXT(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position))
                 FROM core_topology e, core_pathaggregation et, core_path t
                 WHERE e.id = %s AND et.topo_object_id = e.id AND et.path_id = t.id
                 AND GeometryType(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position)) = 'POINT'
                 ORDER BY et."order", et.id
-                """, [topology.pk])
+                """,
+        [topology.pk],
+    )
     points = cursor.fetchall()
     id_order = 0
 
     dict_points = {}
     for id_pa_point, geom_point_wkt in points:
-        dict_points[id_pa_point] = GEOSGeometry(
-            geom_point_wkt, srid=settings.SRID
-        )
+        dict_points[id_pa_point] = GEOSGeometry(geom_point_wkt, srid=settings.SRID)
 
     points_touching = {}
     # Find points aggregations that touches lines
@@ -87,8 +93,8 @@ def reorder_aggregations_of_topology(topology):
             geom_lines[order_next][1], srid=settings.SRID
         ).boundary[0]  # Get start point of the geometry
         if (
-                actual_point_end == next_point_start
-                and actual_point_end in geometries_points
+            actual_point_end == next_point_start
+            and actual_point_end in geometries_points
         ):
             for id_pa_point, point_geom in dict_points.items():
                 if point_geom == actual_point_end:
@@ -112,9 +118,9 @@ def reorder_aggregations_of_topology(topology):
         id__in=new_orders.keys()
     ).delete()
 
-    initial_order = PathAggregation.objects.filter(
-        topo_object=topology
-    ).values_list("id", flat=True)
+    initial_order = PathAggregation.objects.filter(topo_object=topology).values_list(
+        "id", flat=True
+    )
 
     pas_updated = []
     for pa_id in initial_order:
@@ -125,20 +131,21 @@ def reorder_aggregations_of_topology(topology):
     PathAggregation.objects.bulk_update(pas_updated, ["order"])
     return pas_updated != [], True  # Reordered or not, didn't fail
 
+
 class Command(BaseCommand):
     help = """Reorder the path aggregations of topologies."""
 
     def add_arguments(self, parser):
         parser.add_argument(
-            '--ids',
-            '-i',
-            nargs='+',
+            "--ids",
+            "-i",
+            nargs="+",
             type=int,
-            help='IDs of topologies to reorder. If not provided, all non-deleted topologies are processed.',
+            help="IDs of topologies to reorder. If not provided, all non-deleted topologies are processed.",
         )
 
     def handle(self, *args, **options):
-        topology_ids = options.get('ids')
+        topology_ids = options.get("ids")
         if topology_ids:
             qs = Topology.objects.filter(pk__in=topology_ids)
         else:

@@ -461,8 +461,10 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         🡥         3 ⠳   ⠳
         """
         # Create three similar topologies. One is deleted.
-        ignored_topo = TopologyFactory.create(  # This one will not be passed to the command
-            paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
+        ignored_topo = (
+            TopologyFactory.create(  # This one will not be passed to the command
+                paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
+            )
         )
         existing_topo = TopologyFactory.create(
             paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
@@ -505,7 +507,9 @@ class ReorderTopologiesPathAggregationTest(TestCase):
 
         # Run the command on the last two topologies
         output = StringIO()
-        call_command("reorder_topologies", stdout=output, ids=[existing_topo.pk, deleted_topo.pk])
+        call_command(
+            "reorder_topologies", stdout=output, ids=[existing_topo.pk, deleted_topo.pk]
+        )
         self.assertEqual("2 topologies have been updated\n", output.getvalue())
 
         # Check that only the last two topologies have been reordered
@@ -559,7 +563,9 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         )
         self.assertEqual(
             list(
-                PathAggregation.objects.filter(topo_object=topo).values_list("order", flat=True)
+                PathAggregation.objects.filter(topo_object=topo).values_list(
+                    "order", flat=True
+                )
             ),
             [0, 1],
         )
@@ -581,11 +587,12 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         )
         self.assertEqual(
             list(
-                PathAggregation.objects.filter(topo_object=topo).values_list("order", flat=True)
+                PathAggregation.objects.filter(topo_object=topo).values_list(
+                    "order", flat=True
+                )
             ),
             [0, 1],
         )
-
 
     def test_split_reorder_1(self):
         """
@@ -1266,7 +1273,6 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             topo.geom,
         )
-
 
 
 class MergePathsTest(TestCase):
