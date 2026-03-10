@@ -19,12 +19,12 @@ def reorder_aggregations_of_topology(topology):
         """Returns all sublines for a topology."""
         cursor.execute(
             """
-                    SELECT et.id, ST_ASTEXT(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position))
-                    FROM core_topology e, core_pathaggregation et, core_path t
-                    WHERE e.id = %s AND et.topo_object_id = e.id AND et.path_id = t.id
-                    AND GeometryType(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position)) != 'POINT'
-                    ORDER BY et."order", et.id
-                    """,
+            SELECT et.id, ST_ASTEXT(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position))
+            FROM core_topology e, core_pathaggregation et, core_path t
+            WHERE e.id = %s AND et.topo_object_id = e.id AND et.path_id = t.id
+            AND GeometryType(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position)) != 'POINT'
+            ORDER BY et."order", et.id
+            """,
             [topo.pk],
         )
         geom_lines_order = cursor.fetchall()
@@ -65,12 +65,12 @@ def reorder_aggregations_of_topology(topology):
     # We get all the Points that we didn't get for smart make line
     cursor.execute(
         """
-                SELECT et.id, ST_ASTEXT(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position))
-                FROM core_topology e, core_pathaggregation et, core_path t
-                WHERE e.id = %s AND et.topo_object_id = e.id AND et.path_id = t.id
-                AND GeometryType(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position)) = 'POINT'
-                ORDER BY et."order", et.id
-                """,
+        SELECT et.id, ST_ASTEXT(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position))
+        FROM core_topology e, core_pathaggregation et, core_path t
+        WHERE e.id = %s AND et.topo_object_id = e.id AND et.path_id = t.id
+        AND GeometryType(ST_SmartLineSubstring(t.geom, et.start_position, et.end_position)) = 'POINT'
+        ORDER BY et."order", et.id
+        """,
         [topology.pk],
     )
     points = cursor.fetchall()

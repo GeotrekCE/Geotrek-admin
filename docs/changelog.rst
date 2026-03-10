@@ -5,6 +5,10 @@ CHANGELOG
 2.124.2+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+* Add ``--ids`` option to the ``reorder_topologies`` command to process specific topologies by ID
+
 
 2.124.2         (2026-03-03)
 ----------------------------
