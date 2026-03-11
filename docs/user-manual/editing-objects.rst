@@ -159,3 +159,65 @@ Historique
 Tous les objets créés dans Geotrek-admin possèdent un historique donnant des renseignement sur la date de l'évènement, l'utilisateur à l'origine de l'évènement et l'action réalisée (modification, ajout de fichier, etc.)
 
 .. image:: ../images/user-manual/historique.png
+
+
+Édition et suppression de masse
+================================
+
+La fonctionnalité d’édition et de suppression de masse permet aux utilisateurs autorisés de sélectionner plusieurs objets dans un module et d’appliquer une modification ou une suppression groupée en une seule opération.
+
+Cette fonctionnalité est disponible dans la majorité des modules disposant d’une vue en liste (par exemple : itinéraires, contenus touristiques, événements, aménagements, etc.). Elle n’est pas disponible pour les modules « Signalements » et « Zones sensibles ».
+
+
+.. figure:: ../images/user-manual/bulk_actions.png
+   :alt: bulk actions button
+
+   Bouton d'actions de masse (suppression, modification) dans la vue liste
+
+Sélection multiple d’objets
+---------------------------
+
+La sélection multiple s’effectue depuis la vue en liste d’un module.
+
+**Option 1 : Sélection manuelle**
+
+Cochez les cases situées en début de ligne pour sélectionner les éléments à traiter.
+
+- La sélection manuelle est disponible uniquement sur une même page.
+
+**Option 2 : Sélection de l’ensemble des objets filtrés**
+
+Cochez la case située dans l’en-tête du tableau pour sélectionner l’ensemble des objets correspondant aux filtres appliqués.
+
+Suppression de masse
+--------------------
+
+La suppression de masse permet d’effacer définitivement plusieurs objets en une seule action.
+
+**Étapes à suivre :**
+
+1. Sélectionner les objets souhaités dans la liste.
+2. Ouvrir le menu d’actions situé au-dessus du tableau.
+3. Choisir l’action **Supprimer**.
+4. Confirmer l’opération pour procéder à la suppression.
+
+Édition de masse
+----------------
+
+L’édition de masse permet d’appliquer une même modification à plusieurs objets simultanément.
+Les modification concerne uniquement les champs de type booleen et clé étrangère.
+
+**Étapes à suivre :**
+
+1. Sélectionner les objets à modifier dans la liste.
+2. Ouvrir le menu d’actions.
+3. Choisir l’action **Modifier**.
+4. Renseigner uniquement les champs que vous souhaitez modifier.
+5. Valider pour appliquer les changements à l’ensemble des objets sélectionnés.
+
+Seuls les champs explicitement modifiés seront mis à jour. Les champs laissés vides ou non modifiés resteront inchangés pour les objets concernés.
+
+.. figure:: ../images/user-manual/form_multi_update.png
+   :alt: bulk edition form
+
+   Formulaire d'édition de masse (module itinéraire)

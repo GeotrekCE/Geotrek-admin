@@ -22,16 +22,14 @@ L'API Geotrek est le point central pour permettre les interconnexions avec diver
 APIs externes
 =============
 
-.. _geotrek-ignrando-cirkwi-api:
+.. _geotrek-cirkwi-api:
 
-Geotrek et IGNrando' / Cirkwi
+Geotrek et Cirkwi
 -------------------------------
 
-Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi pour pouvoir les importer directement dans IGNrando' `(voir cet article) <https://makina-corpus.com/sig-webmapping/geotrek-et-lign-ca-fonctionne>`_.
+Geotrek-admin est capable de produire un flux des itinéraires et POIs présents dans sa BDD au format Cirkwi.
 
-Exemple des randonnées et POIs du Parc national des Ecrins publiées sur IGNrando' depuis Geotrek-admin : https://ignrando.fr/fr/communautes/parc-national-des-ecrins
-
-Depuis cette version, 2 flux sont automatiquement générés par Geotrek-admin au format attendu par l'IGN :
+Depuis cette version, 2 flux sont automatiquement générés par Geotrek-admin au format attendu par Cirkwi :
 
 - [URL_GEOTREK-ADMIN]/api/cirkwi/circuits.xml
 - [URL_GEOTREK-ADMIN]/api/cirkwi/pois.xml
@@ -56,7 +54,7 @@ Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans le modu
 
    Ensemble des champs paramétrables pour le référentiel CIRKWI
 
-Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos propres typologies, il faut que vous renseigniez les correspondances entre les catégories de votre Geotrek et celles du référentiel IGN (Cirkwi) dans le module de configuration, comme indiqué `dans ce ticket Github <https://github.com/GeotrekCE/Geotrek-admin/issues/806>`_.
+Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez vos propres typologies, il faut que vous renseigniez les correspondances entre les catégories de votre Geotrek et celles de Cirkwi dans le module de configuration, comme indiqué `dans ce ticket Github <https://github.com/GeotrekCE/Geotrek-admin/issues/806>`_.
 
 * Pratique >> locomotion/loisirs
 * Accessibilite >> thematiques/tags
