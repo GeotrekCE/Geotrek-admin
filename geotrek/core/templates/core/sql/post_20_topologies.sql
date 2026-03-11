@@ -165,7 +165,6 @@ END;
 $$ LANGUAGE plpgsql;
 
 
-DROP FUNCTION IF EXISTS update_geometry_of_topologies() CASCADE;
 CREATE FUNCTION {{ schema_geotrek }}.update_geometry_of_topologies() RETURNS void AS $$
 DECLARE
     rec record;
