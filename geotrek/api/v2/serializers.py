@@ -30,29 +30,17 @@ from geotrek.api.v2.utils import build_url, get_translation_or_dict, is_publishe
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
 from geotrek.common.utils import simplify_coords
+from geotrek.core import models as core_models
+from geotrek.feedback import models as feedback_models
+from geotrek.flatpages import models as flatpages_models
 from geotrek.flatpages.models import MenuItem
-
-if "geotrek.core" in settings.INSTALLED_APPS:
-    from geotrek.core import models as core_models
-if "geotrek.feedback" in settings.INSTALLED_APPS:
-    from geotrek.feedback import models as feedback_models
-if "geotrek.tourism" in settings.INSTALLED_APPS:
-    from geotrek.tourism import models as tourism_models
-if "geotrek.trekking" in settings.INSTALLED_APPS:
-    from geotrek.trekking import models as trekking_models
-if "geotrek.sensitivity" in settings.INSTALLED_APPS:
-    from geotrek.sensitivity import models as sensitivity_models
-if "geotrek.zoning" in settings.INSTALLED_APPS:
-    from geotrek.zoning import models as zoning_models
-if "geotrek.outdoor" in settings.INSTALLED_APPS:
-    from geotrek.outdoor import models as outdoor_models
-if "geotrek.flatpages" in settings.INSTALLED_APPS:
-    from geotrek.flatpages import models as flatpages_models
-if "geotrek.infrastructure" in settings.INSTALLED_APPS:
-    from geotrek.infrastructure import models as infrastructure_models
-if "geotrek.signage" in settings.INSTALLED_APPS:
-    from geotrek.signage import models as signage_models
-
+from geotrek.infrastructure import models as infrastructure_models
+from geotrek.outdoor import models as outdoor_models
+from geotrek.sensitivity import models as sensitivity_models
+from geotrek.signage import models as signage_models
+from geotrek.tourism import models as tourism_models
+from geotrek.trekking import models as trekking_models
+from geotrek.zoning import models as zoning_models
 
 logger = logging.getLogger(__name__)
 
@@ -98,117 +86,124 @@ def override_serializer(format_output, base_serializer_class):
     return final_class
 
 
-if "geotrek.trekking" in settings.INSTALLED_APPS:
+class NetworkSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    label = serializers.SerializerMethodField()
 
-    class NetworkSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        label = serializers.SerializerMethodField()
+    def get_label(self, obj):
+        return get_translation_or_dict("network", self, obj)
 
-        def get_label(self, obj):
-            return get_translation_or_dict("network", self, obj)
+    class Meta:
+        model = trekking_models.TrekNetwork
+        fields = ("id", "label", "pictogram")
 
-        class Meta:
-            model = trekking_models.TrekNetwork
-            fields = ("id", "label", "pictogram")
 
-    class PracticeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        name = serializers.SerializerMethodField()
+class PracticeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
 
-        def get_name(self, obj):
-            return get_translation_or_dict("name", self, obj)
+    def get_name(self, obj):
+        return get_translation_or_dict("name", self, obj)
 
-        class Meta:
-            model = trekking_models.Practice
-            fields = (
-                "id",
-                "name",
-                "order",
-                "pictogram",
-            )
-
-    class TrekRatingScaleSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        name = serializers.SerializerMethodField()
-
-        def get_name(self, obj):
-            return get_translation_or_dict("name", self, obj)
-
-        class Meta:
-            model = trekking_models.RatingScale
-            fields = ("id", "name", "practice")
-
-    class TrekRatingSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        name = serializers.SerializerMethodField()
-        description = serializers.SerializerMethodField()
-
-        def get_name(self, obj):
-            return get_translation_or_dict("name", self, obj)
-
-        def get_description(self, obj):
-            return get_translation_or_dict("description", self, obj)
-
-        class Meta:
-            model = trekking_models.Rating
-            fields = ("id", "name", "description", "scale", "order", "color")
-
-    class TrekDifficultySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        label = serializers.SerializerMethodField()
-
-        def get_label(self, obj):
-            return get_translation_or_dict("difficulty", self, obj)
-
-        class Meta:
-            model = trekking_models.DifficultyLevel
-            fields = ("id", "cirkwi_level", "label", "pictogram")
-
-    class RouteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        route = serializers.SerializerMethodField()
-
-        def get_route(self, obj):
-            return get_translation_or_dict("route", self, obj)
-
-        class Meta:
-            model = trekking_models.Route
-            fields = ("id", "pictogram", "route")
-
-    class WebLinkCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        label = serializers.SerializerMethodField()
-
-        def get_label(self, obj):
-            return get_translation_or_dict("label", self, obj)
-
-        class Meta:
-            model = trekking_models.WebLinkCategory
-            fields = ("label", "id", "pictogram")
-
-    class WebLinkSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        name = serializers.SerializerMethodField()
-        category = WebLinkCategorySerializer()
-
-        def get_name(self, obj):
-            return get_translation_or_dict("name", self, obj)
-
-        class Meta:
-            model = trekking_models.WebLink
-            fields = ("name", "url", "category")
-
-    class ServiceTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        name = serializers.SerializerMethodField()
-
-        def get_name(self, obj):
-            return get_translation_or_dict("name", self, obj)
-
-        class Meta:
-            model = trekking_models.ServiceType
-            fields = ("id", "name", "practices", "pictogram")
-
-    class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom3d_transformed", precision=7
+    class Meta:
+        model = trekking_models.Practice
+        fields = (
+            "id",
+            "name",
+            "order",
+            "pictogram",
         )
-        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
-        class Meta:
-            model = trekking_models.Service
-            fields = ("id", "eid", "geometry", "provider", "structure", "type", "uuid")
+
+class TrekRatingScaleSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        return get_translation_or_dict("name", self, obj)
+
+    class Meta:
+        model = trekking_models.RatingScale
+        fields = ("id", "name", "practice")
+
+
+class TrekRatingSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        return get_translation_or_dict("name", self, obj)
+
+    def get_description(self, obj):
+        return get_translation_or_dict("description", self, obj)
+
+    class Meta:
+        model = trekking_models.Rating
+        fields = ("id", "name", "description", "scale", "order", "color")
+
+
+class TrekDifficultySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    label = serializers.SerializerMethodField()
+
+    def get_label(self, obj):
+        return get_translation_or_dict("difficulty", self, obj)
+
+    class Meta:
+        model = trekking_models.DifficultyLevel
+        fields = ("id", "cirkwi_level", "label", "pictogram")
+
+
+class RouteSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    route = serializers.SerializerMethodField()
+
+    def get_route(self, obj):
+        return get_translation_or_dict("route", self, obj)
+
+    class Meta:
+        model = trekking_models.Route
+        fields = ("id", "pictogram", "route")
+
+
+class WebLinkCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    label = serializers.SerializerMethodField()
+
+    def get_label(self, obj):
+        return get_translation_or_dict("label", self, obj)
+
+    class Meta:
+        model = trekking_models.WebLinkCategory
+        fields = ("label", "id", "pictogram")
+
+
+class WebLinkSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+    category = WebLinkCategorySerializer()
+
+    def get_name(self, obj):
+        return get_translation_or_dict("name", self, obj)
+
+    class Meta:
+        model = trekking_models.WebLink
+        fields = ("name", "url", "category")
+
+
+class ServiceTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        return get_translation_or_dict("name", self, obj)
+
+    class Meta:
+        model = trekking_models.ServiceType
+        fields = ("id", "name", "practices", "pictogram")
+
+
+class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    geometry = geo_serializers.GeometryField(
+        read_only=True, source="geom3d_transformed", precision=7
+    )
+    provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
+
+    class Meta:
+        model = trekking_models.Service
+        fields = ("id", "eid", "geometry", "provider", "structure", "type", "uuid")
 
 
 class ReservationSystemSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -438,809 +433,811 @@ class HDViewPointSerializer(TimeStampedSerializer):
         )
 
 
-if "geotrek.tourism" in settings.INSTALLED_APPS:
+class LabelAccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    label = serializers.SerializerMethodField()
 
-    class LabelAccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        label = serializers.SerializerMethodField()
+    def get_label(self, obj):
+        return get_translation_or_dict("label", self, obj)
 
-        def get_label(self, obj):
-            return get_translation_or_dict("label", self, obj)
+    class Meta:
+        model = tourism_models.LabelAccessibility
+        fields = ("id", "label", "pictogram")
 
-        class Meta:
-            model = tourism_models.LabelAccessibility
-            fields = ("id", "label", "pictogram")
 
-    class TouristicContentCategorySerializer(
-        DynamicFieldsMixin, serializers.ModelSerializer
-    ):
-        types = serializers.SerializerMethodField()
-        label = serializers.SerializerMethodField()
+class TouristicContentCategorySerializer(
+    DynamicFieldsMixin, serializers.ModelSerializer
+):
+    types = serializers.SerializerMethodField()
+    label = serializers.SerializerMethodField()
 
-        class Meta:
-            model = tourism_models.TouristicContentCategory
-            fields = ("id", "label", "order", "pictogram", "types")
+    class Meta:
+        model = tourism_models.TouristicContentCategory
+        fields = ("id", "label", "order", "pictogram", "types")
 
-        def get_types(self, obj):
-            request = self.context["request"]
-            portals = request.GET.get("portals")
-            if portals:
-                portals = portals.split(",")
-            language = request.GET.get("language")
-            return [
-                {
-                    "id": obj.id * 100 + i,
-                    "label": get_translation_or_dict(f"type{i}_label", self, obj),
-                    "values": [
-                        {
-                            "id": t.id,
-                            "label": get_translation_or_dict("label", self, t),
-                            "pictogram": t.pictogram.url if t.pictogram else None,
-                        }
-                        for t in obj.types.has_content_published_not_deleted_in_list(
-                            i, obj.pk, portals, language
-                        )
-                    ],
-                }
-                for i in (1, 2)
-            ]
-
-        def get_label(self, obj):
-            return get_translation_or_dict("label", self, obj)
-
-    class TouristicEventTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        type = serializers.SerializerMethodField()
-
-        def get_type(self, obj):
-            return get_translation_or_dict("type", self, obj)
-
-        class Meta:
-            model = tourism_models.TouristicEventType
-            fields = ("id", "pictogram", "type")
-
-    class TouristicModelSerializer(
-        PDFSerializerMixin, DynamicFieldsMixin, TimeStampedSerializer
-    ):
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom_transformed", precision=7
-        )
-        accessibility = serializers.SerializerMethodField()
-        external_id = serializers.CharField(source="eid")
-        cities = serializers.SerializerMethodField()
-        city_codes = serializers.SerializerMethodField()
-        districts = serializers.SerializerMethodField()
-        name = serializers.SerializerMethodField()
-        description = serializers.SerializerMethodField()
-        description_teaser = serializers.SerializerMethodField()
-        practical_info = serializers.SerializerMethodField()
-        pdf = serializers.SerializerMethodField("get_pdf_url")
-        published = serializers.SerializerMethodField()
-
-        def get_published(self, obj):
-            return get_translation_or_dict("published", self, obj)
-
-        def get_accessibility(self, obj):
-            return get_translation_or_dict("accessibility", self, obj)
-
-        def get_practical_info(self, obj):
-            return get_translation_or_dict("practical_info", self, obj)
-
-        def get_cities(self, obj):
-            return [city.id for city in obj.published_cities]
-
-        def get_city_codes(self, obj):
-            return [city.code for city in obj.published_cities if city.code]
-
-        def get_districts(self, obj):
-            return [district.pk for district in obj.published_districts]
-
-        def get_name(self, obj):
-            return get_translation_or_dict("name", self, obj)
-
-        def get_description(self, obj):
-            return get_translation_or_dict("description", self, obj)
-
-        def get_description_teaser(self, obj):
-            return get_translation_or_dict("description_teaser", self, obj)
-
-    class TouristicContentSerializer(TouristicModelSerializer):
-        attachments = AttachmentSerializer(many=True, source="sorted_attachments")
-        departure_city = serializers.SerializerMethodField()
-        departure_city_code = serializers.SerializerMethodField()
-        types = serializers.SerializerMethodField()
-        url = HyperlinkedIdentityField(view_name="apiv2:touristiccontent-detail")
-        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
-
-        class Meta(TimeStampedSerializer.Meta):
-            model = tourism_models.TouristicContent
-            fields = (
-                *TimeStampedSerializer.Meta.fields,
-                "id",
-                "accessibility",
-                "attachments",
-                "approved",
-                "category",
-                "description",
-                "description_teaser",
-                "departure_city",
-                "departure_city_code",
-                "geometry",
-                "label_accessibility",
-                "practical_info",
-                "url",
-                "cities",
-                "city_codes",
-                "districts",
-                "external_id",
-                "name",
-                "pdf",
-                "portal",
-                "provider",
-                "published",
-                "source",
-                "structure",
-                "themes",
-                "types",
-                "contact",
-                "email",
-                "website",
-                "reservation_system",
-                "reservation_id",
-                "uuid",
-            )
-
-        def get_types(self, obj):
-            return {
-                obj.category.id * 100 + i: [
-                    t.id for t in getattr(obj, f"type{i}").all()
-                ]
-                for i in (1, 2)
+    def get_types(self, obj):
+        request = self.context["request"]
+        portals = request.GET.get("portals")
+        if portals:
+            portals = portals.split(",")
+        language = request.GET.get("language")
+        return [
+            {
+                "id": obj.id * 100 + i,
+                "label": get_translation_or_dict(f"type{i}_label", self, obj),
+                "values": [
+                    {
+                        "id": t.id,
+                        "label": get_translation_or_dict("label", self, t),
+                        "pictogram": t.pictogram.url if t.pictogram else None,
+                    }
+                    for t in obj.types.has_content_published_not_deleted_in_list(
+                        i, obj.pk, portals, language
+                    )
+                ],
             }
+            for i in (1, 2)
+        ]
 
-        def get_departure_city(self, obj):
-            return obj.city.id if obj.city else None
+    def get_label(self, obj):
+        return get_translation_or_dict("label", self, obj)
 
-        def get_departure_city_code(self, obj):
-            return obj.city.code if obj.city and obj.city.code else None
 
-    class TouristicEventSerializer(TouristicModelSerializer):
-        organizers = serializers.SerializerMethodField()
-        organizer = serializers.SerializerMethodField()
-        organizers_id = serializers.PrimaryKeyRelatedField(
-            many=True, source="organizers", read_only=True
+class TouristicEventTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    type = serializers.SerializerMethodField()
+
+    def get_type(self, obj):
+        return get_translation_or_dict("type", self, obj)
+
+    class Meta:
+        model = tourism_models.TouristicEventType
+        fields = ("id", "pictogram", "type")
+
+
+class TouristicModelSerializer(
+    PDFSerializerMixin, DynamicFieldsMixin, TimeStampedSerializer
+):
+    geometry = geo_serializers.GeometryField(
+        read_only=True, source="geom_transformed", precision=7
+    )
+    accessibility = serializers.SerializerMethodField()
+    external_id = serializers.CharField(source="eid")
+    cities = serializers.SerializerMethodField()
+    city_codes = serializers.SerializerMethodField()
+    districts = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    description_teaser = serializers.SerializerMethodField()
+    practical_info = serializers.SerializerMethodField()
+    pdf = serializers.SerializerMethodField("get_pdf_url")
+    published = serializers.SerializerMethodField()
+
+    def get_published(self, obj):
+        return get_translation_or_dict("published", self, obj)
+
+    def get_accessibility(self, obj):
+        return get_translation_or_dict("accessibility", self, obj)
+
+    def get_practical_info(self, obj):
+        return get_translation_or_dict("practical_info", self, obj)
+
+    def get_cities(self, obj):
+        return [city.id for city in obj.published_cities]
+
+    def get_city_codes(self, obj):
+        return [city.code for city in obj.published_cities if city.code]
+
+    def get_districts(self, obj):
+        return [district.pk for district in obj.published_districts]
+
+    def get_name(self, obj):
+        return get_translation_or_dict("name", self, obj)
+
+    def get_description(self, obj):
+        return get_translation_or_dict("description", self, obj)
+
+    def get_description_teaser(self, obj):
+        return get_translation_or_dict("description_teaser", self, obj)
+
+
+class TouristicContentSerializer(TouristicModelSerializer):
+    attachments = AttachmentSerializer(many=True, source="sorted_attachments")
+    departure_city = serializers.SerializerMethodField()
+    departure_city_code = serializers.SerializerMethodField()
+    types = serializers.SerializerMethodField()
+    url = HyperlinkedIdentityField(view_name="apiv2:touristiccontent-detail")
+    provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
+
+    class Meta(TimeStampedSerializer.Meta):
+        model = tourism_models.TouristicContent
+        fields = (
+            *TimeStampedSerializer.Meta.fields,
+            "id",
+            "accessibility",
+            "attachments",
+            "approved",
+            "category",
+            "description",
+            "description_teaser",
+            "departure_city",
+            "departure_city_code",
+            "geometry",
+            "label_accessibility",
+            "practical_info",
+            "url",
+            "cities",
+            "city_codes",
+            "districts",
+            "external_id",
+            "name",
+            "pdf",
+            "portal",
+            "provider",
+            "published",
+            "source",
+            "structure",
+            "themes",
+            "types",
+            "contact",
+            "email",
+            "website",
+            "reservation_system",
+            "reservation_id",
+            "uuid",
         )
-        attachments = AttachmentSerializer(many=True, source="sorted_attachments")
-        url = HyperlinkedIdentityField(view_name="apiv2:touristicevent-detail")
-        begin_date = serializers.DateField()
-        end_date = serializers.SerializerMethodField()
-        type = serializers.SerializerMethodField()
-        cancellation_reason = serializers.SerializerMethodField()
-        place = serializers.SlugRelatedField(read_only=True, slug_field="name")
-        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
-        meeting_time = serializers.ReadOnlyField(
-            source="start_time",
-            help_text=_(
-                "This field is deprecated and will be removed in next releases. Please start using '%(field)s'"
-            )
-            % {"field": "start_time"},
-        )
-        participant_number = serializers.SerializerMethodField(
-            help_text=_(
-                "This field is deprecated and will be removed in next releases. Please start using '%(field)s'"
-            )
-            % {"field": "capacity"}
-        )
 
-        def get_cancellation_reason(self, obj):
-            if not obj.cancellation_reason:
-                return None
-            return get_translation_or_dict("label", self, obj.cancellation_reason)
+    def get_types(self, obj):
+        return {
+            obj.category.id * 100 + i: [t.id for t in getattr(obj, f"type{i}").all()]
+            for i in (1, 2)
+        }
 
-        def get_type(self, obj):
-            obj_type = obj.type
-            if obj_type:
-                return obj_type.pk
+    def get_departure_city(self, obj):
+        return obj.city.id if obj.city else None
+
+    def get_departure_city_code(self, obj):
+        return obj.city.code if obj.city and obj.city.code else None
+
+
+class TouristicEventSerializer(TouristicModelSerializer):
+    organizers = serializers.SerializerMethodField()
+    organizer = serializers.SerializerMethodField()
+    organizers_id = serializers.PrimaryKeyRelatedField(
+        many=True, source="organizers", read_only=True
+    )
+    attachments = AttachmentSerializer(many=True, source="sorted_attachments")
+    url = HyperlinkedIdentityField(view_name="apiv2:touristicevent-detail")
+    begin_date = serializers.DateField()
+    end_date = serializers.SerializerMethodField()
+    type = serializers.SerializerMethodField()
+    cancellation_reason = serializers.SerializerMethodField()
+    place = serializers.SlugRelatedField(read_only=True, slug_field="name")
+    provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
+    meeting_time = serializers.ReadOnlyField(
+        source="start_time",
+        help_text=_(
+            "This field is deprecated and will be removed in next releases. Please start using '%(field)s'"
+        )
+        % {"field": "start_time"},
+    )
+    participant_number = serializers.SerializerMethodField(
+        help_text=_(
+            "This field is deprecated and will be removed in next releases. Please start using '%(field)s'"
+        )
+        % {"field": "capacity"}
+    )
+
+    def get_cancellation_reason(self, obj):
+        if not obj.cancellation_reason:
             return None
+        return get_translation_or_dict("label", self, obj.cancellation_reason)
 
-        def get_participant_number(self, obj):
-            return str(obj.capacity)
+    def get_type(self, obj):
+        obj_type = obj.type
+        if obj_type:
+            return obj_type.pk
+        return None
 
-        def get_end_date(self, obj):
-            return obj.end_date or obj.begin_date
+    def get_participant_number(self, obj):
+        return str(obj.capacity)
 
-        def get_organizers(self, obj):
-            return ", ".join(map(lambda org: org.label, obj.organizers.all()))
+    def get_end_date(self, obj):
+        return obj.end_date or obj.begin_date
 
-        # for retrocompatibility of API
-        get_organizer = get_organizers
+    def get_organizers(self, obj):
+        return ", ".join(map(lambda org: org.label, obj.organizers.all()))
 
-        class Meta(TimeStampedSerializer.Meta):
-            model = tourism_models.TouristicEvent
-            fields = (
-                *TimeStampedSerializer.Meta.fields,
-                "id",
-                "accessibility",
-                "approved",
-                "attachments",
-                "begin_date",
-                "bookable",
-                "booking",
-                "cancellation_reason",
-                "cancelled",
-                "capacity",
-                "cities",
-                "city_codes",
-                "contact",
-                "description",
-                "description_teaser",
-                "districts",
-                "duration",
-                "email",
-                "end_date",
-                "end_time",
-                "external_id",
-                "geometry",
-                "meeting_point",
-                "meeting_time",
-                "name",
-                "organizers",
-                "organizer",
-                "organizers_id",
-                "participant_number",
-                "pdf",
-                "place",
-                "portal",
-                "practical_info",
-                "provider",
-                "published",
-                "source",
-                "speaker",
-                "start_time",
-                "structure",
-                "target_audience",
-                "themes",
-                "type",
-                "url",
-                "uuid",
-                "website",
-                "price",
-            )
+    # for retrocompatibility of API
+    get_organizer = get_organizers
 
-    class TouristicEventPlaceSerializer(serializers.ModelSerializer):
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom_transformed", precision=7
+    class Meta(TimeStampedSerializer.Meta):
+        model = tourism_models.TouristicEvent
+        fields = (
+            *TimeStampedSerializer.Meta.fields,
+            "id",
+            "accessibility",
+            "approved",
+            "attachments",
+            "begin_date",
+            "bookable",
+            "booking",
+            "cancellation_reason",
+            "cancelled",
+            "capacity",
+            "cities",
+            "city_codes",
+            "contact",
+            "description",
+            "description_teaser",
+            "districts",
+            "duration",
+            "email",
+            "end_date",
+            "end_time",
+            "external_id",
+            "geometry",
+            "meeting_point",
+            "meeting_time",
+            "name",
+            "organizers",
+            "organizer",
+            "organizers_id",
+            "participant_number",
+            "pdf",
+            "place",
+            "portal",
+            "practical_info",
+            "provider",
+            "published",
+            "source",
+            "speaker",
+            "start_time",
+            "structure",
+            "target_audience",
+            "themes",
+            "type",
+            "url",
+            "uuid",
+            "website",
+            "price",
         )
 
-        class Meta:
-            model = tourism_models.TouristicEventPlace
-            fields = ("id", "geometry", "name")
 
-    class TouristicEventOrganizerSerializer(serializers.ModelSerializer):
-        class Meta:
-            model = tourism_models.TouristicEventOrganizer
-            fields = ("id", "label")
+class TouristicEventPlaceSerializer(serializers.ModelSerializer):
+    geometry = geo_serializers.GeometryField(
+        read_only=True, source="geom_transformed", precision=7
+    )
 
-    class InformationDeskTypeSerializer(
-        DynamicFieldsMixin, serializers.ModelSerializer
-    ):
-        label = serializers.SerializerMethodField()
-
-        def get_label(self, obj):
-            return get_translation_or_dict("label", self, obj)
-
-        class Meta:
-            model = tourism_models.InformationDeskType
-            fields = ("id", "label", "pictogram")
-
-    class InformationDeskSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        accessibility = serializers.SerializerMethodField()
-        description = serializers.SerializerMethodField()
-        name = serializers.SerializerMethodField()
-        photo_url = serializers.SerializerMethodField()
-        type = InformationDeskTypeSerializer()
-        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
-
-        def get_accessibility(self, obj):
-            return get_translation_or_dict("accessibility", self, obj)
-
-        def get_description(self, obj):
-            return get_translation_or_dict("description", self, obj)
-
-        def get_name(self, obj):
-            return get_translation_or_dict("name", self, obj)
-
-        def get_photo_url(self, obj):
-            return build_url(self, obj.photo_url) if obj.photo_url else ""
-
-        class Meta:
-            model = tourism_models.InformationDesk
-            geo_field = "geom"
-            fields = (
-                "id",
-                "accessibility",
-                "description",
-                "email",
-                "label_accessibility",
-                "latitude",
-                "longitude",
-                "municipality",
-                "name",
-                "phone",
-                "photo_url",
-                "uuid",
-                "postal_code",
-                "provider",
-                "street",
-                "type",
-                "website",
-            )
+    class Meta:
+        model = tourism_models.TouristicEventPlace
+        fields = ("id", "geometry", "name")
 
 
-if "geotrek.core" in settings.INSTALLED_APPS:
+class TouristicEventOrganizerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = tourism_models.TouristicEventOrganizer
+        fields = ("id", "label")
 
-    class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        url = HyperlinkedIdentityField(view_name="apiv2:path-detail")
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom3d_transformed", precision=7
+
+class InformationDeskTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    label = serializers.SerializerMethodField()
+
+    def get_label(self, obj):
+        return get_translation_or_dict("label", self, obj)
+
+    class Meta:
+        model = tourism_models.InformationDeskType
+        fields = ("id", "label", "pictogram")
+
+
+class InformationDeskSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    accessibility = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    photo_url = serializers.SerializerMethodField()
+    type = InformationDeskTypeSerializer()
+    provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
+
+    def get_accessibility(self, obj):
+        return get_translation_or_dict("accessibility", self, obj)
+
+    def get_description(self, obj):
+        return get_translation_or_dict("description", self, obj)
+
+    def get_name(self, obj):
+        return get_translation_or_dict("name", self, obj)
+
+    def get_photo_url(self, obj):
+        return build_url(self, obj.photo_url) if obj.photo_url else ""
+
+    class Meta:
+        model = tourism_models.InformationDesk
+        geo_field = "geom"
+        fields = (
+            "id",
+            "accessibility",
+            "description",
+            "email",
+            "label_accessibility",
+            "latitude",
+            "longitude",
+            "municipality",
+            "name",
+            "phone",
+            "photo_url",
+            "uuid",
+            "postal_code",
+            "provider",
+            "street",
+            "type",
+            "website",
         )
-        length_2d = serializers.FloatField(source="length_2d_display")
-        length_3d = serializers.SerializerMethodField()
-        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
-
-        def get_length_3d(self, obj):
-            return round(obj.length, 1)
-
-        class Meta:
-            model = core_models.Path
-            fields = (
-                "arrival",
-                "comfort",
-                "comments",
-                "departure",
-                "geometry",
-                "id",
-                "length_2d",
-                "length_3d",
-                "name",
-                "networks",
-                "provider",
-                "source",
-                "stake",
-                "url",
-                "usages",
-                "uuid",
-            )
 
 
-if "geotrek.trekking" in settings.INSTALLED_APPS:
+class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name="apiv2:path-detail")
+    geometry = geo_serializers.GeometryField(
+        read_only=True, source="geom3d_transformed", precision=7
+    )
+    length_2d = serializers.FloatField(source="length_2d_display")
+    length_3d = serializers.SerializerMethodField()
+    provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
-    class TrekSerializer(
-        PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer
-    ):
-        url = HyperlinkedIdentityField(view_name="apiv2:trek-detail")
-        published = serializers.SerializerMethodField()
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom3d_transformed", precision=7
+    def get_length_3d(self, obj):
+        return round(obj.length, 1)
+
+    class Meta:
+        model = core_models.Path
+        fields = (
+            "arrival",
+            "comfort",
+            "comments",
+            "departure",
+            "geometry",
+            "id",
+            "length_2d",
+            "length_3d",
+            "name",
+            "networks",
+            "provider",
+            "source",
+            "stake",
+            "url",
+            "usages",
+            "uuid",
         )
-        length_2d = serializers.FloatField(source="length_2d_display")
-        length_3d = serializers.SerializerMethodField()
-        name = serializers.SerializerMethodField()
-        access = serializers.SerializerMethodField()
-        accessibility_advice = serializers.SerializerMethodField()
-        accessibility_covering = serializers.SerializerMethodField()
-        accessibility_exposure = serializers.SerializerMethodField()
-        accessibility_signage = serializers.SerializerMethodField()
-        accessibility_slope = serializers.SerializerMethodField()
-        accessibility_width = serializers.SerializerMethodField()
-        ambiance = serializers.SerializerMethodField()
-        description = serializers.SerializerMethodField()
-        description_teaser = serializers.SerializerMethodField()
-        departure = serializers.SerializerMethodField()
-        disabled_infrastructure = serializers.SerializerMethodField()
-        departure_geom = serializers.SerializerMethodField()
-        arrival = serializers.SerializerMethodField()
-        external_id = serializers.CharField(source="eid")
-        second_external_id = serializers.CharField(source="eid2")
-        create_datetime = serializers.DateTimeField(source="topo_object.date_insert")
-        update_datetime = serializers.DateTimeField(source="topo_object.date_update")
-        attachments = AttachmentSerializer(many=True, source="sorted_attachments")
-        attachments_accessibility = AttachmentAccessibilitySerializer(many=True)
-        gear = serializers.SerializerMethodField()
-        gpx = serializers.SerializerMethodField("get_gpx_url")
-        kml = serializers.SerializerMethodField("get_kml_url")
-        pdf = serializers.SerializerMethodField("get_pdf_url")
-        advice = serializers.SerializerMethodField()
-        advised_parking = serializers.SerializerMethodField()
-        parking_location = serializers.SerializerMethodField()
-        ratings_description = serializers.SerializerMethodField()
-        children = serializers.ReadOnlyField(source="children_id")
-        parents = serializers.ReadOnlyField(source="parents_id")
-        public_transport = serializers.SerializerMethodField()
-        elevation_area_url = serializers.SerializerMethodField()
-        elevation_svg_url = serializers.SerializerMethodField()
-        altimetric_profile = serializers.SerializerMethodField(
-            "get_altimetric_profile_url"
+
+
+class TrekSerializer(
+    PDFSerializerMixin, DynamicFieldsMixin, serializers.ModelSerializer
+):
+    url = HyperlinkedIdentityField(view_name="apiv2:trek-detail")
+    published = serializers.SerializerMethodField()
+    geometry = geo_serializers.GeometryField(
+        read_only=True, source="geom3d_transformed", precision=7
+    )
+    length_2d = serializers.FloatField(source="length_2d_display")
+    length_3d = serializers.SerializerMethodField()
+    name = serializers.SerializerMethodField()
+    access = serializers.SerializerMethodField()
+    accessibility_advice = serializers.SerializerMethodField()
+    accessibility_covering = serializers.SerializerMethodField()
+    accessibility_exposure = serializers.SerializerMethodField()
+    accessibility_signage = serializers.SerializerMethodField()
+    accessibility_slope = serializers.SerializerMethodField()
+    accessibility_width = serializers.SerializerMethodField()
+    ambiance = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    description_teaser = serializers.SerializerMethodField()
+    departure = serializers.SerializerMethodField()
+    disabled_infrastructure = serializers.SerializerMethodField()
+    departure_geom = serializers.SerializerMethodField()
+    arrival = serializers.SerializerMethodField()
+    external_id = serializers.CharField(source="eid")
+    second_external_id = serializers.CharField(source="eid2")
+    create_datetime = serializers.DateTimeField(source="topo_object.date_insert")
+    update_datetime = serializers.DateTimeField(source="topo_object.date_update")
+    attachments = AttachmentSerializer(many=True, source="sorted_attachments")
+    attachments_accessibility = AttachmentAccessibilitySerializer(many=True)
+    gear = serializers.SerializerMethodField()
+    gpx = serializers.SerializerMethodField("get_gpx_url")
+    kml = serializers.SerializerMethodField("get_kml_url")
+    pdf = serializers.SerializerMethodField("get_pdf_url")
+    advice = serializers.SerializerMethodField()
+    advised_parking = serializers.SerializerMethodField()
+    parking_location = serializers.SerializerMethodField()
+    ratings_description = serializers.SerializerMethodField()
+    children = serializers.ReadOnlyField(source="children_id")
+    parents = serializers.ReadOnlyField(source="parents_id")
+    public_transport = serializers.SerializerMethodField()
+    elevation_area_url = serializers.SerializerMethodField()
+    elevation_svg_url = serializers.SerializerMethodField()
+    altimetric_profile = serializers.SerializerMethodField("get_altimetric_profile_url")
+    points_reference = serializers.SerializerMethodField()
+    previous = serializers.ReadOnlyField(source="previous_id")
+    next = serializers.ReadOnlyField(source="next_id")
+    cities = serializers.SerializerMethodField()
+    city_codes = serializers.SerializerMethodField()
+    districts = serializers.SerializerMethodField()
+    departure_city = serializers.SerializerMethodField()
+    departure_city_code = serializers.SerializerMethodField()
+    labels = serializers.SerializerMethodField()
+    web_links = WebLinkSerializer(many=True)
+    view_points = HDViewPointSerializer(many=True)
+    provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
+
+    def get_gear(self, obj):
+        return get_translation_or_dict("gear", self, obj)
+
+    def get_published(self, obj):
+        return get_translation_or_dict("published", self, obj)
+
+    def get_name(self, obj):
+        return get_translation_or_dict("name", self, obj)
+
+    def get_description(self, obj):
+        return self._replace_image_paths_with_urls(
+            get_translation_or_dict("description", self, obj)
         )
-        points_reference = serializers.SerializerMethodField()
-        previous = serializers.ReadOnlyField(source="previous_id")
-        next = serializers.ReadOnlyField(source="next_id")
-        cities = serializers.SerializerMethodField()
-        city_codes = serializers.SerializerMethodField()
-        districts = serializers.SerializerMethodField()
-        departure_city = serializers.SerializerMethodField()
-        departure_city_code = serializers.SerializerMethodField()
-        labels = serializers.SerializerMethodField()
-        web_links = WebLinkSerializer(many=True)
-        view_points = HDViewPointSerializer(many=True)
-        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
-        def get_gear(self, obj):
-            return get_translation_or_dict("gear", self, obj)
+    def get_access(self, obj):
+        return get_translation_or_dict("access", self, obj)
 
-        def get_published(self, obj):
-            return get_translation_or_dict("published", self, obj)
+    def get_accessibility_advice(self, obj):
+        return get_translation_or_dict("accessibility_advice", self, obj)
 
-        def get_name(self, obj):
-            return get_translation_or_dict("name", self, obj)
+    def get_accessibility_covering(self, obj):
+        return get_translation_or_dict("accessibility_covering", self, obj)
 
-        def get_description(self, obj):
-            return self._replace_image_paths_with_urls(
-                get_translation_or_dict("description", self, obj)
-            )
+    def get_accessibility_exposure(self, obj):
+        return get_translation_or_dict("accessibility_exposure", self, obj)
 
-        def get_access(self, obj):
-            return get_translation_or_dict("access", self, obj)
+    def get_accessibility_signage(self, obj):
+        return get_translation_or_dict("accessibility_signage", self, obj)
 
-        def get_accessibility_advice(self, obj):
-            return get_translation_or_dict("accessibility_advice", self, obj)
+    def get_accessibility_slope(self, obj):
+        return get_translation_or_dict("accessibility_slope", self, obj)
 
-        def get_accessibility_covering(self, obj):
-            return get_translation_or_dict("accessibility_covering", self, obj)
+    def get_accessibility_width(self, obj):
+        return get_translation_or_dict("accessibility_width", self, obj)
 
-        def get_accessibility_exposure(self, obj):
-            return get_translation_or_dict("accessibility_exposure", self, obj)
-
-        def get_accessibility_signage(self, obj):
-            return get_translation_or_dict("accessibility_signage", self, obj)
-
-        def get_accessibility_slope(self, obj):
-            return get_translation_or_dict("accessibility_slope", self, obj)
-
-        def get_accessibility_width(self, obj):
-            return get_translation_or_dict("accessibility_width", self, obj)
-
-        def get_ambiance(self, obj):
-            return self._replace_image_paths_with_urls(
-                get_translation_or_dict("ambiance", self, obj)
-            )
-
-        def get_disabled_infrastructure(self, obj):
-            return get_translation_or_dict("accessibility_infrastructure", self, obj)
-
-        def get_departure(self, obj):
-            return get_translation_or_dict("departure", self, obj)
-
-        def get_departure_geom(self, obj):
-            return (
-                obj.start_point.transform(settings.API_SRID, clone=True).coords
-                if obj.start_point
-                else None
-            )
-
-        def get_arrival(self, obj):
-            return get_translation_or_dict("arrival", self, obj)
-
-        def get_description_teaser(self, obj):
-            return self._replace_image_paths_with_urls(
-                get_translation_or_dict("description_teaser", self, obj)
-            )
-
-        def get_length_3d(self, obj):
-            return round(obj.length, 1)
-
-        def get_gpx_url(self, obj):
-            return build_url(
-                self,
-                reverse(
-                    "trekking:trek_gpx_detail",
-                    kwargs={"lang": get_language(), "pk": obj.pk, "slug": obj.slug},
-                ),
-            )
-
-        def get_kml_url(self, obj):
-            return build_url(
-                self,
-                reverse(
-                    "trekking:trek_kml_detail",
-                    kwargs={"lang": get_language(), "pk": obj.pk, "slug": obj.slug},
-                ),
-            )
-
-        def get_advice(self, obj):
-            return get_translation_or_dict("advice", self, obj)
-
-        def get_advised_parking(self, obj):
-            return get_translation_or_dict("advised_parking", self, obj)
-
-        def get_parking_location(self, obj):
-            if not obj.parking_location:
-                return None
-            point = obj.parking_location.transform(settings.API_SRID, clone=True)
-            return [round(point.x, 7), round(point.y, 7)]
-
-        def get_ratings_description(self, obj):
-            return get_translation_or_dict("ratings_description", self, obj)
-
-        def get_public_transport(self, obj):
-            return get_translation_or_dict("public_transport", self, obj)
-
-        def get_elevation_area_url(self, obj):
-            return build_url(self, reverse("apiv2:trek-dem", args=(obj.pk,)))
-
-        def get_elevation_svg_url(self, obj):
-            return build_url(
-                self,
-                reverse("apiv2:trek-profile", args=(obj.pk,))
-                + f"?language={get_language()}&format=svg",
-            )
-
-        def get_altimetric_profile_url(self, obj):
-            return build_url(self, reverse("apiv2:trek-profile", args=(obj.pk,)))
-
-        def get_points_reference(self, obj):
-            if not obj.points_reference:
-                return None
-            geojson = obj.points_reference.transform(
-                settings.API_SRID, clone=True
-            ).geojson
-            return json.loads(geojson)
-
-        def get_cities(self, obj):
-            return [city.id for city in obj.published_cities]
-
-        def get_city_codes(self, obj):
-            return [city.code for city in obj.published_cities if city.code]
-
-        def get_districts(self, obj):
-            return [district.pk for district in obj.published_districts]
-
-        def get_labels(self, obj):
-            return [label.pk for label in obj.published_labels]
-
-        def get_departure_city(self, obj):
-            return obj.departure_city.id if obj.departure_city else None
-
-        def get_departure_city_code(self, obj):
-            return (
-                obj.departure_city.code
-                if obj.departure_city and obj.departure_city.code
-                else None
-            )
-
-        def _replace_image_paths_with_urls(self, data):
-            def replace(html_content):
-                if not html_content:
-                    return html_content
-                soup = BeautifulSoup(html_content, features="html.parser")
-                imgs = soup.find_all("img")
-                for img in imgs:
-                    if img.attrs["src"][0] == "/":
-                        img["src"] = self.context.get("request").build_absolute_uri(
-                            img.attrs["src"]
-                        )
-                return str(soup)
-
-            try:
-                for k, v in data.items():
-                    data[k] = replace(v)
-            except AttributeError:
-                data = replace(data)
-
-            return data
-
-        class Meta:
-            model = trekking_models.Trek
-            fields = (
-                "id",
-                "access",
-                "accessibilities",
-                "accessibility_advice",
-                "accessibility_covering",
-                "accessibility_exposure",
-                "accessibility_level",
-                "accessibility_signage",
-                "accessibility_slope",
-                "accessibility_width",
-                "advice",
-                "advised_parking",
-                "altimetric_profile",
-                "ambiance",
-                "arrival",
-                "ascent",
-                "attachments",
-                "attachments_accessibility",
-                "children",
-                "cities",
-                "city_codes",
-                "create_datetime",
-                "departure",
-                "departure_city",
-                "departure_city_code",
-                "departure_geom",
-                "descent",
-                "description",
-                "description_teaser",
-                "difficulty",
-                "districts",
-                "disabled_infrastructure",
-                "duration",
-                "elevation_area_url",
-                "elevation_svg_url",
-                "external_id",
-                "gear",
-                "geometry",
-                "gpx",
-                "information_desks",
-                "kml",
-                "labels",
-                "length_2d",
-                "length_3d",
-                "max_elevation",
-                "min_elevation",
-                "name",
-                "networks",
-                "next",
-                "parents",
-                "parking_location",
-                "pdf",
-                "points_reference",
-                "portal",
-                "practice",
-                "provider",
-                "ratings",
-                "ratings_description",
-                "previous",
-                "public_transport",
-                "published",
-                "reservation_system",
-                "reservation_id",
-                "route",
-                "second_external_id",
-                "source",
-                "structure",
-                "themes",
-                "update_datetime",
-                "url",
-                "uuid",
-                "view_points",
-                "web_links",
-            )
-
-    class TourSerializer(TrekSerializer):
-        url = HyperlinkedIdentityField(view_name="apiv2:tour-detail")
-        count_children = serializers.SerializerMethodField()
-        steps = serializers.SerializerMethodField()
-
-        def get_count_children(self, obj):
-            return obj.count_children
-
-        def get_steps(self, obj):
-            qs = (
-                obj.children.select_related("topo_object", "difficulty")
-                .prefetch_related(
-                    "topo_object__aggregations", "themes", "networks", "attachments"
-                )
-                .annotate(
-                    geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
-                )
-            )
-            FinalClass = override_serializer(
-                self.context.get("request").GET.get("format"), TrekSerializer
-            )
-            return FinalClass(qs, many=True, context=self.context).data
-
-        class Meta(TrekSerializer.Meta):
-            fields = (*TrekSerializer.Meta.fields, "count_children", "steps")
-
-    class POITypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        label = serializers.SerializerMethodField()
-
-        def get_label(self, obj):
-            return get_translation_or_dict("label", self, obj)
-
-        class Meta:
-            model = trekking_models.POIType
-            fields = ("id", "label", "pictogram")
-
-    class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        url = HyperlinkedIdentityField(view_name="apiv2:poi-detail")
-        type_label = serializers.SerializerMethodField()
-        type_pictogram = serializers.FileField(source="type.pictogram")
-        name = serializers.SerializerMethodField()
-        description = serializers.SerializerMethodField()
-        external_id = serializers.CharField(source="eid")
-        published = serializers.SerializerMethodField()
-        create_datetime = serializers.DateTimeField(source="topo_object.date_insert")
-        update_datetime = serializers.DateTimeField(source="topo_object.date_update")
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom3d_transformed", precision=7
+    def get_ambiance(self, obj):
+        return self._replace_image_paths_with_urls(
+            get_translation_or_dict("ambiance", self, obj)
         )
-        attachments = AttachmentSerializer(many=True, source="sorted_attachments")
-        view_points = HDViewPointSerializer(many=True)
-        provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
-        def get_type_label(self, obj):
-            return get_translation_or_dict("label", self, obj.type)
+    def get_disabled_infrastructure(self, obj):
+        return get_translation_or_dict("accessibility_infrastructure", self, obj)
 
-        def get_published(self, obj):
-            return get_translation_or_dict("published", self, obj)
+    def get_departure(self, obj):
+        return get_translation_or_dict("departure", self, obj)
 
-        def get_name(self, obj):
-            return get_translation_or_dict("name", self, obj)
+    def get_departure_geom(self, obj):
+        return (
+            obj.start_point.transform(settings.API_SRID, clone=True).coords
+            if obj.start_point
+            else None
+        )
 
-        def get_description(self, obj):
-            return get_translation_or_dict("description", self, obj)
+    def get_arrival(self, obj):
+        return get_translation_or_dict("arrival", self, obj)
 
-        class Meta:
-            model = trekking_models.POI
-            fields = (
-                "id",
-                "description",
-                "external_id",
-                "geometry",
-                "name",
-                "attachments",
-                "provider",
-                "published",
-                "structure",
-                "type",
-                "type_label",
-                "type_pictogram",
-                "url",
-                "uuid",
-                "create_datetime",
-                "update_datetime",
-                "view_points",
+    def get_description_teaser(self, obj):
+        return self._replace_image_paths_with_urls(
+            get_translation_or_dict("description_teaser", self, obj)
+        )
+
+    def get_length_3d(self, obj):
+        return round(obj.length, 1)
+
+    def get_gpx_url(self, obj):
+        return build_url(
+            self,
+            reverse(
+                "trekking:trek_gpx_detail",
+                kwargs={"lang": get_language(), "pk": obj.pk, "slug": obj.slug},
+            ),
+        )
+
+    def get_kml_url(self, obj):
+        return build_url(
+            self,
+            reverse(
+                "trekking:trek_kml_detail",
+                kwargs={"lang": get_language(), "pk": obj.pk, "slug": obj.slug},
+            ),
+        )
+
+    def get_advice(self, obj):
+        return get_translation_or_dict("advice", self, obj)
+
+    def get_advised_parking(self, obj):
+        return get_translation_or_dict("advised_parking", self, obj)
+
+    def get_parking_location(self, obj):
+        if not obj.parking_location:
+            return None
+        point = obj.parking_location.transform(settings.API_SRID, clone=True)
+        return [round(point.x, 7), round(point.y, 7)]
+
+    def get_ratings_description(self, obj):
+        return get_translation_or_dict("ratings_description", self, obj)
+
+    def get_public_transport(self, obj):
+        return get_translation_or_dict("public_transport", self, obj)
+
+    def get_elevation_area_url(self, obj):
+        return build_url(self, reverse("apiv2:trek-dem", args=(obj.pk,)))
+
+    def get_elevation_svg_url(self, obj):
+        return build_url(
+            self,
+            reverse("apiv2:trek-profile", args=(obj.pk,))
+            + f"?language={get_language()}&format=svg",
+        )
+
+    def get_altimetric_profile_url(self, obj):
+        return build_url(self, reverse("apiv2:trek-profile", args=(obj.pk,)))
+
+    def get_points_reference(self, obj):
+        if not obj.points_reference:
+            return None
+        geojson = obj.points_reference.transform(settings.API_SRID, clone=True).geojson
+        return json.loads(geojson)
+
+    def get_cities(self, obj):
+        return [city.id for city in obj.published_cities]
+
+    def get_city_codes(self, obj):
+        return [city.code for city in obj.published_cities if city.code]
+
+    def get_districts(self, obj):
+        return [district.pk for district in obj.published_districts]
+
+    def get_labels(self, obj):
+        return [label.pk for label in obj.published_labels]
+
+    def get_departure_city(self, obj):
+        return obj.departure_city.id if obj.departure_city else None
+
+    def get_departure_city_code(self, obj):
+        return (
+            obj.departure_city.code
+            if obj.departure_city and obj.departure_city.code
+            else None
+        )
+
+    def _replace_image_paths_with_urls(self, data):
+        def replace(html_content):
+            if not html_content:
+                return html_content
+            soup = BeautifulSoup(html_content, features="html.parser")
+            imgs = soup.find_all("img")
+            for img in imgs:
+                if img.attrs["src"][0] == "/":
+                    img["src"] = self.context.get("request").build_absolute_uri(
+                        img.attrs["src"]
+                    )
+            return str(soup)
+
+        try:
+            for k, v in data.items():
+                data[k] = replace(v)
+        except AttributeError:
+            data = replace(data)
+
+        return data
+
+    class Meta:
+        model = trekking_models.Trek
+        fields = (
+            "id",
+            "access",
+            "accessibilities",
+            "accessibility_advice",
+            "accessibility_covering",
+            "accessibility_exposure",
+            "accessibility_level",
+            "accessibility_signage",
+            "accessibility_slope",
+            "accessibility_width",
+            "advice",
+            "advised_parking",
+            "altimetric_profile",
+            "ambiance",
+            "arrival",
+            "ascent",
+            "attachments",
+            "attachments_accessibility",
+            "children",
+            "cities",
+            "city_codes",
+            "create_datetime",
+            "departure",
+            "departure_city",
+            "departure_city_code",
+            "departure_geom",
+            "descent",
+            "description",
+            "description_teaser",
+            "difficulty",
+            "districts",
+            "disabled_infrastructure",
+            "duration",
+            "elevation_area_url",
+            "elevation_svg_url",
+            "external_id",
+            "gear",
+            "geometry",
+            "gpx",
+            "information_desks",
+            "kml",
+            "labels",
+            "length_2d",
+            "length_3d",
+            "max_elevation",
+            "min_elevation",
+            "name",
+            "networks",
+            "next",
+            "parents",
+            "parking_location",
+            "pdf",
+            "points_reference",
+            "portal",
+            "practice",
+            "provider",
+            "ratings",
+            "ratings_description",
+            "previous",
+            "public_transport",
+            "published",
+            "reservation_system",
+            "reservation_id",
+            "route",
+            "second_external_id",
+            "source",
+            "structure",
+            "themes",
+            "update_datetime",
+            "url",
+            "uuid",
+            "view_points",
+            "web_links",
+        )
+
+
+class TourSerializer(TrekSerializer):
+    url = HyperlinkedIdentityField(view_name="apiv2:tour-detail")
+    count_children = serializers.SerializerMethodField()
+    steps = serializers.SerializerMethodField()
+
+    def get_count_children(self, obj):
+        return obj.count_children
+
+    def get_steps(self, obj):
+        qs = (
+            obj.children.select_related("topo_object", "difficulty")
+            .prefetch_related(
+                "topo_object__aggregations", "themes", "networks", "attachments"
             )
+            .annotate(
+                geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
+            )
+        )
+        FinalClass = override_serializer(
+            self.context.get("request").GET.get("format"), TrekSerializer
+        )
+        return FinalClass(qs, many=True, context=self.context).data
 
-    class ThemeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        label = serializers.SerializerMethodField()
+    class Meta(TrekSerializer.Meta):
+        fields = (*TrekSerializer.Meta.fields, "count_children", "steps")
 
-        def get_label(self, obj):
-            return get_translation_or_dict("label", self, obj)
 
-        class Meta:
-            model = trekking_models.Theme
-            fields = ("id", "label", "pictogram")
+class POITypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    label = serializers.SerializerMethodField()
 
-    class AnnotationCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        label = serializers.SerializerMethodField()
+    def get_label(self, obj):
+        return get_translation_or_dict("label", self, obj)
 
-        def get_label(self, obj):
-            return get_translation_or_dict("label", self, obj)
+    class Meta:
+        model = trekking_models.POIType
+        fields = ("id", "label", "pictogram")
 
-        class Meta:
-            model = common_models.AnnotationCategory
-            fields = ("id", "label", "pictogram")
 
-    class AccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        name = serializers.SerializerMethodField()
+class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    url = HyperlinkedIdentityField(view_name="apiv2:poi-detail")
+    type_label = serializers.SerializerMethodField()
+    type_pictogram = serializers.FileField(source="type.pictogram")
+    name = serializers.SerializerMethodField()
+    description = serializers.SerializerMethodField()
+    external_id = serializers.CharField(source="eid")
+    published = serializers.SerializerMethodField()
+    create_datetime = serializers.DateTimeField(source="topo_object.date_insert")
+    update_datetime = serializers.DateTimeField(source="topo_object.date_update")
+    geometry = geo_serializers.GeometryField(
+        read_only=True, source="geom3d_transformed", precision=7
+    )
+    attachments = AttachmentSerializer(many=True, source="sorted_attachments")
+    view_points = HDViewPointSerializer(many=True)
+    provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
-        def get_name(self, obj):
-            return get_translation_or_dict("name", self, obj)
+    def get_type_label(self, obj):
+        return get_translation_or_dict("label", self, obj.type)
 
-        class Meta:
-            model = trekking_models.Accessibility
-            fields = ("id", "name", "pictogram")
+    def get_published(self, obj):
+        return get_translation_or_dict("published", self, obj)
 
-    class AccessibilityLevelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        name = serializers.SerializerMethodField()
+    def get_name(self, obj):
+        return get_translation_or_dict("name", self, obj)
 
-        def get_name(self, obj):
-            return get_translation_or_dict("name", self, obj)
+    def get_description(self, obj):
+        return get_translation_or_dict("description", self, obj)
 
-        class Meta:
-            model = trekking_models.AccessibilityLevel
-            fields = ("id", "name")
+    class Meta:
+        model = trekking_models.POI
+        fields = (
+            "id",
+            "description",
+            "external_id",
+            "geometry",
+            "name",
+            "attachments",
+            "provider",
+            "published",
+            "structure",
+            "type",
+            "type_label",
+            "type_pictogram",
+            "url",
+            "uuid",
+            "create_datetime",
+            "update_datetime",
+            "view_points",
+        )
+
+
+class ThemeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    label = serializers.SerializerMethodField()
+
+    def get_label(self, obj):
+        return get_translation_or_dict("label", self, obj)
+
+    class Meta:
+        model = trekking_models.Theme
+        fields = ("id", "label", "pictogram")
+
+
+class AnnotationCategorySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    label = serializers.SerializerMethodField()
+
+    def get_label(self, obj):
+        return get_translation_or_dict("label", self, obj)
+
+    class Meta:
+        model = common_models.AnnotationCategory
+        fields = ("id", "label", "pictogram")
+
+
+class AccessibilitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        return get_translation_or_dict("name", self, obj)
+
+    class Meta:
+        model = trekking_models.Accessibility
+        fields = ("id", "name", "pictogram")
+
+
+class AccessibilityLevelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    name = serializers.SerializerMethodField()
+
+    def get_name(self, obj):
+        return get_translation_or_dict("name", self, obj)
+
+    class Meta:
+        model = trekking_models.AccessibilityLevel
+        fields = ("id", "name")
 
 
 if "geotrek.sensitivity" in settings.INSTALLED_APPS:

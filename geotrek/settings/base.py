@@ -343,6 +343,9 @@ INSTALLED_APPS = (
     "geotrek.flatpages",
     "geotrek.feedback",
     "geotrek.api",
+    "geotrek.diving",
+    "geotrek.sensitivity",
+    "geotrek.outdoor",
 )
 
 CACHES = {

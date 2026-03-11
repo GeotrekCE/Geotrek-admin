@@ -122,19 +122,17 @@ class TrekViewSet(DetailSerializerMixin, viewsets.ReadOnlyModelViewSet):
         ).data
         return response.Response(data)
 
-    if "geotrek.sensitivity" in settings.INSTALLED_APPS:
-
-        @decorators.action(detail=True, methods=["get"])
-        def sensitive_areas(self, request, *args, **kwargs):
-            trek = self.get_object()
-            root_pk = self.request.GET.get("root_pk") or trek.pk
-            qs = (
-                trek.sensitive_areas.filter(published=True)
-                .prefetch_related("species")
-                .annotate(geom2d_transformed=Transform(F("geom"), settings.API_SRID))
-                .order_by("pk")
-            )
-            data = api_serializers_sensitivity.SensitiveAreaListSerializer(
-                qs, many=True, context={"root_pk": root_pk}
-            ).data
-            return response.Response(data)
+    @decorators.action(detail=True, methods=["get"])
+    def sensitive_areas(self, request, *args, **kwargs):
+        trek = self.get_object()
+        root_pk = self.request.GET.get("root_pk") or trek.pk
+        qs = (
+            trek.sensitive_areas.filter(published=True)
+            .prefetch_related("species")
+            .annotate(geom2d_transformed=Transform(F("geom"), settings.API_SRID))
+            .order_by("pk")
+        )
+        data = api_serializers_sensitivity.SensitiveAreaListSerializer(
+            qs, many=True, context={"root_pk": root_pk}
+        ).data
+        return response.Response(data)
