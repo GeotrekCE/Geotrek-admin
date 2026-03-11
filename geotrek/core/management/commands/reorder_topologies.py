@@ -9,7 +9,7 @@ from geotrek.core.models import PathAggregation, Topology
 def reorder_aggregations_of_topology(topology):
     """
     Reorder path aggregations for a topology.
-    Returns a tuple (reordered, failed):
+    Returns a tuple (reordered, succeeded):
     - reordered: True if the topology was reordered, False if it didn't need reordering or failed.
     - succeeded: False if the topology could not be reordered because it failed, True otherwise.
     """
@@ -118,18 +118,15 @@ def reorder_aggregations_of_topology(topology):
         id__in=new_orders.keys()
     ).delete()
 
-    initial_order = PathAggregation.objects.filter(topo_object=topology).values_list(
-        "id", flat=True
-    )
+    updated_aggregations = []
+    topo_aggregations = PathAggregation.objects.filter(topo_object=topology)
+    for aggregation in topo_aggregations:
+        if aggregation.order != new_orders[aggregation.id]:
+            aggregation.order = new_orders[aggregation.id]
+            updated_aggregations.append(aggregation)
+    PathAggregation.objects.bulk_update(updated_aggregations, ["order"])
 
-    pas_updated = []
-    for pa_id in initial_order:
-        pa = PathAggregation.objects.get(id=pa_id)
-        if pa.order != new_orders[pa_id]:
-            pa.order = new_orders[pa_id]
-            pas_updated.append(pa)
-    PathAggregation.objects.bulk_update(pas_updated, ["order"])
-    return pas_updated != [], True  # Reordered or not, didn't fail
+    return updated_aggregations != [], True  # Reordered or not, didn't fail
 
 
 class Command(BaseCommand):
