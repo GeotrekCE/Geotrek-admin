@@ -10,8 +10,8 @@ def reorder_aggregations_of_topology(topology):
     """
     Reorder path aggregations for a topology.
     Returns a tuple (reordered, succeeded):
-    - reordered: True if the topology was reordered, False if it didn't need reordering or failed.
-    - succeeded: False if the topology could not be reordered because it failed, True otherwise.
+    - reordered: True if the topology was reordered, False if it didn't need reordering or reordering was not possible.
+    - succeeded: True if the reordering process completed successfully (even if no change was needed), False if it failed.
     """
     cursor = connection.cursor()
 
