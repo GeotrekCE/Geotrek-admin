@@ -6,7 +6,6 @@ from django.contrib.gis.db.models.functions import Transform
 from django.db.models import CharField, F, Value
 from django.db.models.functions import Concat
 from django.urls.base import reverse
-from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from mapentity import views as mapentity_views
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
@@ -186,14 +185,5 @@ class ReportViewSet(GeotrekMapentityViewSet):
         return qs
 
     def view_cache_key(self):
-        """Used by the ``view_cache_response_content`` decorator."""
-        language = get_language()
-        geojson_lookup = None
-        latest_saved = feedback_models.Report.latest_updated()
-        if latest_saved:
-            geojson_lookup = "{}_report_{}_{}_geojson_layer".format(
-                language,
-                latest_saved.isoformat(),
-                self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else "",
-            )
-        return geojson_lookup
+        """unique cache by user if workflow enabled, otherwise common cache for all users"""
+        return str(self.request.user.pk) if settings.SURICATE_WORKFLOW_ENABLED else ""
