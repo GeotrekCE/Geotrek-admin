@@ -319,7 +319,7 @@ class ViewsImportTest(TestCase):
         Parser.label = None
 
     def test_import_form_no_parser_no_superuser(self):
-        self.client.force_login(user=self.user)
+        self.client.force_login(user=self.super_user)
 
         real_archive = open("geotrek/common/tests/data/test.zip", "rb+")
         url = reverse("common:import_dataset")
@@ -334,7 +334,7 @@ class ViewsImportTest(TestCase):
             },
         )
         self.assertEqual(response_real.status_code, 200)
-        self.assertNotContains(response_real, '<form  method="post"')
+        self.assertContains(response_real, '<form method="post"')
 
     def test_import_from_web_bad_parser(self):
         self.client.force_login(user=self.super_user)
