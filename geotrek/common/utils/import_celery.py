@@ -2,7 +2,8 @@ import importlib
 import os
 
 from django.conf import settings
-if 'geotrek.sensitivity' in settings.INSTALLED_APPS:
+
+if "geotrek.sensitivity" in settings.INSTALLED_APPS:
     import geotrek.sensitivity.parsers  # noqa
 import geotrek.zoning.parsers  # noqa
 from geotrek.common.parsers import Parser
