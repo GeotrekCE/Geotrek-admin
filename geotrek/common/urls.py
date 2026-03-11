@@ -24,7 +24,7 @@ urlpatterns = [
         views.import_update_json,
         name="import_update_json",
     ),
-    path("commands/import", views.import_view, name="import_dataset"),
+    path("commands/import", views.ImportDatasetView.as_view(), name="import_dataset"),
     path(
         "hdviewpoint/annotate/<int:pk>",
         views.HDViewPointAnnotate.as_view(),

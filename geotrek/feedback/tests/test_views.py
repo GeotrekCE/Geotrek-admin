@@ -89,17 +89,15 @@ class ReportSerializationOptimizeTests(TestCase):
 
     @test_for_workflow_mode
     def test_report_layer_cache(self):
-        """
-        This test checks report's cache
-        """
-        # There are 5 queries to get layer
-        with self.assertNumQueries(5):
+        """Checks report's cache"""
+        # There are 4 queries to get layer
+        with self.assertNumQueries(4):
             response = self.client.get(
                 reverse("feedback:report-drf-list", format="geojson")
             )
         self.assertEqual(len(response.json()["features"]), 4)
 
-        # We have 2 less query because the generation of report was cached
+        # We have 1 less query because the generation of report was cached
         with self.assertNumQueries(3):
             self.client.get(reverse("feedback:report-drf-list", format="geojson"))
 
