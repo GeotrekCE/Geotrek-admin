@@ -2,11 +2,11 @@ import re
 from collections import ChainMap
 from unittest import mock, skipIf
 
+import bs4
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import LineString, MultiPolygon, Polygon
-from django.core.cache import caches
 from django.core.files.storage import default_storage
 from django.test import TestCase, override_settings
 from django.urls import reverse
@@ -673,52 +673,6 @@ class PathViewsTest(CommonTest):
         self.modelfactory(draft=True)
         response = self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
         self.assertEqual(len(response.json()["features"]), 2)
-
-    def test_draft_path_layer_cache(self):
-        """
-
-        This test check draft path's cache is not the same as path's cache and works independently
-        """
-        cache = caches[settings.MAPENTITY_CONFIG["GEOJSON_LAYERS_CACHE_BACKEND"]]
-
-        obj = self.modelfactory(draft=False)
-        self.modelfactory(draft=True)
-
-        with self.assertNumQueries(4):
-            response = self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
-        self.assertEqual(len(response.json()["features"]), 1)
-
-        # We check the content was created and cached with no_draft key
-        # We check that any cached content can be found with no_draft (we still didn't ask for it)
-        last_update = Path.no_draft_latest_updated()
-        last_update_draft = Path.latest_updated()
-        geojson_lookup = "en_path_{}_nodraft_json_layer".format(
-            last_update.strftime("%y%m%d%H%M%S%f")
-        )
-        geojson_lookup_last_update_draft = "en_path_{}_json_layer".format(
-            last_update_draft.strftime("%y%m%d%H%M%S%f")
-        )
-        content = cache.get(geojson_lookup)
-        content_draft = cache.get(geojson_lookup_last_update_draft)
-
-        self.assertEqual(response.content, content.content)
-        self.assertIsNone(content_draft)
-
-        # We have 1 less query because the generation of paths was cached
-        with self.assertNumQueries(3):
-            self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
-
-        self.modelfactory(draft=True)
-
-        # Cache was not updated, the path was a draft
-        with self.assertNumQueries(3):
-            self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
-
-        self.modelfactory(draft=False)
-
-        # Cache was updated, the path was not a draft : we get 7 queries
-        with self.assertNumQueries(4):
-            self.client.get(obj.get_layer_url(), {"_no_draft": "true"})
 
     def test_path_layer_cache(self):
         """Check path's cache is not the same as draft path's cache and works independently"""
@@ -2241,8 +2195,6 @@ class TrailViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
 
     def test_add_trail_from_existing_topology_does_not_use_pk(self):
-        import bs4
-
         trail = TrailFactory(offset=3.14)
         response = self.client.get(Trail.get_add_url() + f"?topology={trail.pk}")
         soup = bs4.BeautifulSoup(response.content, features="html.parser")
