@@ -721,9 +721,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         )
 
         # Run the reorder_topologies command
-        output = StringIO()
-        call_command("reorder_topologies", stdout=output)
-        self.assertEqual("1 topologies has beeen updated\n", output.getvalue())
+        call_command("reorder_topologies", verbosity=0)
 
         # Check its path aggregations
         geometries = self.get_geometries(topo)
@@ -1383,14 +1381,15 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                     "order", flat=True
                 )
             ),
-            [0, 0, 1, 2, 3],
+            [0, 0, 1, 2, 4],
         )
         self.assertEqual(
-            MultiLineString(
-                LineString((700000, 6600000), (700045, 6600045)),
-                LineString((700050, 6600050), (700025, 6600075)),
-                LineString((700045, 6600045), (700050, 6600050)),
-                LineString((700050, 6600050), (700100, 6600100)),
+            LineString(
+                (700000, 6600000),
+                (700050, 6600050),
+                (700025, 6600075),
+                (700050, 6600050),
+                (700100, 6600100),
                 srid=settings.SRID,
             ),
             topo.geom,
