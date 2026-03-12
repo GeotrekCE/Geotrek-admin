@@ -20,6 +20,7 @@ from geotrek.common.mixins.models import (
 from geotrek.common.models import Theme
 from geotrek.common.utils import format_coordinates, intersecting, spatial_reference
 from geotrek.core.models import Topology
+from geotrek.tourism import models as tourism_models
 from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
@@ -240,47 +241,45 @@ Dive.add_property(
     _("Published Services"),
 )
 
-if "geotrek.tourism" in settings.INSTALLED_APPS:
-    from geotrek.tourism import models as tourism_models
 
-    tourism_models.TouristicContent.add_property(
-        "dives", lambda self: intersecting(Dive, self), _("Dives")
-    )
-    tourism_models.TouristicContent.add_property(
-        "published_dives",
-        lambda self: intersecting(Dive, self).filter(published=True),
-        _("Published dives"),
-    )
-    tourism_models.TouristicEvent.add_property(
-        "dives", lambda self: intersecting(Dive, self), _("Dives")
-    )
-    tourism_models.TouristicEvent.add_property(
-        "published_dives",
-        lambda self: intersecting(Dive, self).filter(published=True),
-        _("Published dives"),
-    )
+tourism_models.TouristicContent.add_property(
+    "dives", lambda self: intersecting(Dive, self), _("Dives")
+)
+tourism_models.TouristicContent.add_property(
+    "published_dives",
+    lambda self: intersecting(Dive, self).filter(published=True),
+    _("Published dives"),
+)
+tourism_models.TouristicEvent.add_property(
+    "dives", lambda self: intersecting(Dive, self), _("Dives")
+)
+tourism_models.TouristicEvent.add_property(
+    "published_dives",
+    lambda self: intersecting(Dive, self).filter(published=True),
+    _("Published dives"),
+)
 
-    Dive.add_property(
-        "touristic_contents",
-        lambda self: intersecting(tourism_models.TouristicContent, self),
-        _("Touristic contents"),
-    )
-    Dive.add_property(
-        "published_touristic_contents",
-        lambda self: intersecting(tourism_models.TouristicContent, self).filter(
-            published=True
-        ),
-        _("Published touristic contents"),
-    )
-    Dive.add_property(
-        "touristic_events",
-        lambda self: intersecting(tourism_models.TouristicEvent, self),
-        _("Touristic events"),
-    )
-    Dive.add_property(
-        "published_touristic_events",
-        lambda self: intersecting(tourism_models.TouristicEvent, self).filter(
-            published=True
-        ),
-        _("Published touristic events"),
-    )
+Dive.add_property(
+    "touristic_contents",
+    lambda self: intersecting(tourism_models.TouristicContent, self),
+    _("Touristic contents"),
+)
+Dive.add_property(
+    "published_touristic_contents",
+    lambda self: intersecting(tourism_models.TouristicContent, self).filter(
+        published=True
+    ),
+    _("Published touristic contents"),
+)
+Dive.add_property(
+    "touristic_events",
+    lambda self: intersecting(tourism_models.TouristicEvent, self),
+    _("Touristic events"),
+)
+Dive.add_property(
+    "published_touristic_events",
+    lambda self: intersecting(tourism_models.TouristicEvent, self).filter(
+        published=True
+    ),
+    _("Published touristic events"),
+)

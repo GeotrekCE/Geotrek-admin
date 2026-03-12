@@ -1,3 +1,7 @@
-{% load static %}
+{% load static geotrek_tags %}
+{% settings_value "INTERVENTION_MODEL_ENABLED" as intervention_enabled %}
+{% settings_value "PROJECT_MODEL_ENABLED" as project_enabled %}
+{% if intervention_enabled or PROJECT_MODEL_ENABLED %}
 
 <script type="text/javascript" src="{% static 'maintenance/js/maplibreMaintenanceMain.js' %}"></script>
+{% endif %}
