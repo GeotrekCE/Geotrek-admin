@@ -679,7 +679,6 @@ class PathViewsTest(CommonTest):
 
         This test check draft path's cache is not the same as path's cache and works independently
         """
-        # FIXME
         cache = caches[settings.MAPENTITY_CONFIG["GEOJSON_LAYERS_CACHE_BACKEND"]]
 
         obj = self.modelfactory(draft=False)

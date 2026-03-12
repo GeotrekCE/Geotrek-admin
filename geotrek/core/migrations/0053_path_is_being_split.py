@@ -14,6 +14,7 @@ class Migration(migrations.Migration):
             name="is_being_split",
             field=models.BooleanField(
                 default=False,
+                db_default=False,
                 editable=False,
                 help_text="Internal field preventing geometry updates on related topologies during path splitting",
             ),

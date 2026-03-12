@@ -106,13 +106,6 @@ DECLARE
     is_root_call boolean;  -- True if this is the first (non-recursive) call
 BEGIN
 
-    IF NEW.is_being_split = TRUE THEN
-       is_root_call := False;
-    ELSE
-       is_root_call := True;
-       UPDATE core_path SET is_being_split = True where id = NEW.id;
-    END IF;
-
     is_root_call := NEW.is_being_split IS NOT TRUE;
     UPDATE core_path SET is_being_split = TRUE WHERE id = NEW.id;
 
