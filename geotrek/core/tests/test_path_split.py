@@ -592,9 +592,9 @@ class SplitPathLineTopologyTest(TestCase):
         topo_geom = topology.geom
 
         # Check its path aggregation
-        qs_before = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs_before), 1)
-        aggregation = qs_before.first()
+        qs = PathAggregation.objects.filter(topo_object=topology)
+        self.assertEqual(len(qs), 1)
+        aggregation = qs.first()
         self.assertEqual(aggregation.path, ab)
         self.assertEqual(aggregation.start_position, 0.25)
         self.assertEqual(aggregation.end_position, 0.75)
@@ -651,9 +651,9 @@ class SplitPathLineTopologyTest(TestCase):
         topo_geom = topology.geom
 
         # Check its path aggregation
-        qs_before = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs_before), 1)
-        aggregation = qs_before.first()
+        qs = PathAggregation.objects.filter(topo_object=topology)
+        self.assertEqual(len(qs), 1)
+        aggregation = qs.first()
         self.assertEqual(aggregation.path, ab)
         self.assertEqual(aggregation.start_position, 0.75)
         self.assertEqual(aggregation.end_position, 0.25)
@@ -701,9 +701,9 @@ class SplitPathLineTopologyTest(TestCase):
         topo_geom = topology.geom
 
         # Check its path aggregation
-        qs_before = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs_before), 1)
-        aggregation = qs_before.first()
+        qs = PathAggregation.objects.filter(topo_object=topology)
+        self.assertEqual(len(qs), 1)
+        aggregation = qs.first()
         self.assertEqual(aggregation.path, ab)
         self.assertEqual(aggregation.start_position, 0.5)
         self.assertEqual(aggregation.end_position, 0.75)
@@ -746,9 +746,9 @@ class SplitPathLineTopologyTest(TestCase):
         topo_geom = topology.geom
 
         # Check its path aggregation
-        qs_before = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs_before), 1)
-        aggregation = qs_before.first()
+        qs = PathAggregation.objects.filter(topo_object=topology)
+        self.assertEqual(len(qs), 1)
+        aggregation = qs.first()
         self.assertEqual(aggregation.path, ab)
         self.assertEqual(aggregation.start_position, 0.75)
         self.assertEqual(aggregation.end_position, 0.5)
@@ -791,9 +791,9 @@ class SplitPathLineTopologyTest(TestCase):
         topo_geom = topology.geom
 
         # Check its path aggregation
-        qs_before = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs_before), 1)
-        aggregation = qs_before.first()
+        qs = PathAggregation.objects.filter(topo_object=topology)
+        self.assertEqual(len(qs), 1)
+        aggregation = qs.first()
         self.assertEqual(aggregation.path, ab)
         self.assertEqual(aggregation.start_position, 0.3)
         self.assertEqual(aggregation.end_position, 0.6)
@@ -837,9 +837,9 @@ class SplitPathLineTopologyTest(TestCase):
         topo_geom = topology.geom
 
         # Check its path aggregation
-        qs_before = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs_before), 1)
-        aggregation = qs_before.first()
+        qs = PathAggregation.objects.filter(topo_object=topology)
+        self.assertEqual(len(qs), 1)
+        aggregation = qs.first()
         self.assertEqual(aggregation.path, ab)
         self.assertEqual(aggregation.start_position, 0.45)
         self.assertEqual(aggregation.end_position, 0.15)
@@ -993,9 +993,9 @@ class SplitPathLineTopologyTest(TestCase):
         topo_geom = topology.geom
 
         # Check its path aggregation
-        qs_before = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs_before), 1)
-        aggregation = qs_before.first()
+        qs = PathAggregation.objects.filter(topo_object=topology)
+        self.assertEqual(len(qs), 1)
+        aggregation = qs.first()
         self.assertEqual(aggregation.path, ab)
         self.assertEqual(aggregation.start_position, 0.1)
         self.assertEqual(aggregation.end_position, 0.9)
@@ -1050,9 +1050,9 @@ class SplitPathLineTopologyTest(TestCase):
         topo_geom = topology.geom
 
         # Check its path aggregation
-        qs_before = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs_before), 1)
-        aggregation = qs_before.first()
+        qs = PathAggregation.objects.filter(topo_object=topology)
+        self.assertEqual(len(qs), 1)
+        aggregation = qs.first()
         self.assertEqual(aggregation.path, ab)
         self.assertEqual(aggregation.start_position, 0.9)
         self.assertEqual(aggregation.end_position, 0.1)
