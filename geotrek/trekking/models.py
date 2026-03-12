@@ -49,6 +49,7 @@ from geotrek.common.utils import (
 )
 from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.maintenance.models import Intervention, Project
+from geotrek.signage.models import Blade
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking.managers import (
     POIManager,
@@ -59,10 +60,6 @@ from geotrek.trekking.managers import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-if "geotrek.signage" in settings.INSTALLED_APPS:
-    from geotrek.signage.models import Blade
 
 
 class OrderedTrekChild(models.Model):

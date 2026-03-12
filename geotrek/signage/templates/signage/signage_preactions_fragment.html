@@ -1,6 +1,6 @@
-{% load i18n signage_tags %}
+{% load i18n signage_tags geotrek_tags %}
 
-{% blades_enabled as is_blades_enabled %}
+{% settings_value "BLADE_ENABLED" as is_blades_enabled %}
 
 {% if appname == "signage" and is_blades_enabled %}
 <div class="btn-group" role="group">

@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail_attributes.html" %}
-{% load i18n signage_tags mapentity_tags %}
+{% load i18n signage_tags mapentity_tags geotrek_tags %}
 
 {% block attributes %}
 
@@ -78,7 +78,7 @@
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 
-    {% blades_enabled as is_blades_enabled %}
+    {% settings_value "BLADE_ENABLED" as is_blades_enabled %}
     {% if is_blades_enabled and perms.signage.read_blade %}
         {% direction_on_lines_enabled as is_direction_on_lines_enabled %}
         <h3>{% trans "Blades" %}</h3>
