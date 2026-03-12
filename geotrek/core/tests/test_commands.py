@@ -3,7 +3,7 @@ from io import StringIO
 from unittest import mock, skipIf
 
 from django.conf import settings
-from django.contrib.gis.geos import GEOSGeometry, LineString, Point
+from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString, Point
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db import IntegrityError, connection
@@ -11,7 +11,7 @@ from django.test import TestCase, override_settings
 
 from geotrek.authent.models import Structure
 from geotrek.core.models import Path, PathAggregation, Topology
-from geotrek.core.tests.factories import PathFactory
+from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import POIFactory
 
