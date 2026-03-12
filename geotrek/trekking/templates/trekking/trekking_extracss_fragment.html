@@ -1,3 +1,9 @@
-{% load static %}
+{% load static geotrek_tags %}
+{% settings_value "TREKKING_MODEL_ENABLED" as trek_enabled %}
+{% settings_value "POI_MODEL_ENABLED" as poi_enabled %}
+{% settings_value "SERVICE_MODEL_ENABLED" as service_enabled %}
+
+{% if trek_enabled or poi_enabled or service_enabled %}
 {# loaded by MapEntity, used to inject custom CSS at project level #}
 <link rel="stylesheet" href="{% static "trekking/css/style.css" %}" />
+{% endif %}

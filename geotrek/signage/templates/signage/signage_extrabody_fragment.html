@@ -1,8 +1,12 @@
-{% load i18n %}
+{% load i18n geotrek_tags %}
 
+{% settings_value "SIGNAGE_MODEL_ENABLED" as signage_enabled %}
+
+{% if signage_enabled %}
 <script type="text/javascript">
     {#MapEntity.i18n['Signages'] = "{% trans "Signages" %}";#}
     {#MapEntity.i18n['Signage'] = "{% trans "Signage" %}";#}
 
     window.SETTINGS.urls['signage_layer'] = "{% url "signage:signage-drf-list" format="geojson" %}";
 </script>
+{% endif %}

@@ -692,6 +692,7 @@ SITE_MODEL_ENABLED = True
 COURSE_MODEL_ENABLED = True
 # This model is necessary for most of the other. Can be add in case if the paths will not be change by anyone.
 PATH_MODEL_ENABLED = True
+SENSITIVE_AREA_MODEL_ENABLED = True
 
 
 TREKKING_TOPOLOGY_ENABLED = True

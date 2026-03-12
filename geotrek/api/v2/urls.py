@@ -24,106 +24,124 @@ router.register(
     api_views.AnnotationCategoryViewSet,
     basename="annotation-category",
 )
-router.register("path", api_views.PathViewSet, basename="path")
-router.register(
-    "infrastructure", api_views.InfrastructureViewSet, basename="infrastructure"
-)
-router.register(
-    "infrastructure_type",
-    api_views.InfrastructureTypeViewSet,
-    basename="infrastructure-type",
-)
-router.register(
-    "infrastructure_condition",
-    api_views.InfrastructureConditionViewSet,
-    basename="infrastructure-condition",
-)
-router.register(
-    "infrastructure_usage_difficulty_level",
-    api_views.InfrastructureUsageDifficultyLevelViewSet,
-    basename="infrastructure-usage-difficulty",
-)
-router.register(
-    "infrastructure_maintenance_difficulty_level",
-    api_views.InfrastructureMaintenanceDifficultyLevelViewSet,
-    basename="infrastructure-maintenance-difficulty",
-)
-router.register("feedback_report", api_views.ReportViewSet, basename="feedback-report")
-router.register(
-    "feedback_status", api_views.ReportStatusViewSet, basename="feedback-status"
-)
-router.register(
-    "feedback_category",
-    api_views.ReportCategoryViewSet,
-    basename="feedback-category",
-)
-router.register(
-    "feedback_activity",
-    api_views.ReportActivityViewSet,
-    basename="feedback-activity",
-)
-router.register(
-    "feedback_magnitude",
-    api_views.ReportProblemMagnitudeViewSet,
-    basename="feedback-magnitude",
-)
-router.register("trek", api_views.TrekViewSet, basename="trek")
-router.register("poi", api_views.POIViewSet, basename="poi")
-router.register("poi_type", api_views.POITypeViewSet, basename="poitype")
-router.register("tour", api_views.TourViewSet, basename="tour")
-router.register(
-    "trek_accessibility", api_views.AccessibilityViewSet, basename="accessibility"
-)
-router.register(
-    "trek_accessibility_level",
-    api_views.AccessibilityLevelViewSet,
-    basename="accessibility-level",
-)
-router.register("trek_route", api_views.RouteViewSet, basename="route")
-router.register("trek_difficulty", api_views.DifficultyViewSet, basename="difficulty")
-router.register("trek_network", api_views.NetworkViewSet, basename="network")
-router.register("trek_practice", api_views.PracticeViewSet, basename="practice")
-router.register(
-    "trek_ratingscale",
-    api_views.TrekRatingScaleViewSet,
-    basename="trek-ratingscale",
-)
-router.register("trek_rating", api_views.TrekRatingViewSet, basename="trek-rating")
-router.register(
-    "weblink_category",
-    api_views.WebLinkCategoryViewSet,
-    basename="weblink-category",
-)
-router.register("service_type", api_views.ServiceTypeViewSet, basename="servicetype")
-router.register("service", api_views.ServiceViewSet, basename="service")
-router.register(
-    "touristiccontent_category",
-    api_views.TouristicContentCategoryViewSet,
-    basename="touristiccontentcategory",
-)
-router.register(
-    "touristiccontent",
-    api_views.TouristicContentViewSet,
-    basename="touristiccontent",
-)
-router.register(
-    "touristicevent", api_views.TouristicEventViewSet, basename="touristicevent"
-)
-router.register(
-    "touristicevent_type",
-    api_views.TouristicEventTypeViewSet,
-    basename="touristiceventtype",
-)
-router.register(
-    "touristicevent_place",
-    api_views.TouristicEventPlaceViewSet,
-    basename="touristiceventplace",
-)
-router.register(
-    "touristicevent_organizer",
-    api_views.TouristicEventOrganizerViewSet,
-    basename="touristiceventorganizer",
-)
+if settings.PATH_MODEL_ENABLED:
+    router.register("path", api_views.PathViewSet, basename="path")
+
+if settings.INFRASTRUCTURE_MODEL_ENABLED:
+    router.register(
+        "infrastructure", api_views.InfrastructureViewSet, basename="infrastructure"
+    )
+    router.register(
+        "infrastructure_type",
+        api_views.InfrastructureTypeViewSet,
+        basename="infrastructure-type",
+    )
+    router.register(
+        "infrastructure_condition",
+        api_views.InfrastructureConditionViewSet,
+        basename="infrastructure-condition",
+    )
+    router.register(
+        "infrastructure_usage_difficulty_level",
+        api_views.InfrastructureUsageDifficultyLevelViewSet,
+        basename="infrastructure-usage-difficulty",
+    )
+    router.register(
+        "infrastructure_maintenance_difficulty_level",
+        api_views.InfrastructureMaintenanceDifficultyLevelViewSet,
+        basename="infrastructure-maintenance-difficulty",
+    )
+if settings.REPORT_MODEL_ENABLED:
+    router.register(
+        "feedback_report", api_views.ReportViewSet, basename="feedback-report"
+    )
+    router.register(
+        "feedback_status", api_views.ReportStatusViewSet, basename="feedback-status"
+    )
+    router.register(
+        "feedback_category",
+        api_views.ReportCategoryViewSet,
+        basename="feedback-category",
+    )
+    router.register(
+        "feedback_activity",
+        api_views.ReportActivityViewSet,
+        basename="feedback-activity",
+    )
+    router.register(
+        "feedback_magnitude",
+        api_views.ReportProblemMagnitudeViewSet,
+        basename="feedback-magnitude",
+    )
+if settings.POI_MODEL_ENABLED:
+    router.register("poi", api_views.POIViewSet, basename="poi")
+    router.register("poi_type", api_views.POITypeViewSet, basename="poitype")
+if settings.TREKKING_MODEL_ENABLED:
+    router.register("trek", api_views.TrekViewSet, basename="trek")
+    router.register("tour", api_views.TourViewSet, basename="tour")
+    router.register(
+        "trek_accessibility", api_views.AccessibilityViewSet, basename="accessibility"
+    )
+    router.register(
+        "trek_accessibility_level",
+        api_views.AccessibilityLevelViewSet,
+        basename="accessibility-level",
+    )
+    router.register("trek_route", api_views.RouteViewSet, basename="route")
+    router.register(
+        "trek_difficulty", api_views.DifficultyViewSet, basename="difficulty"
+    )
+    router.register("trek_network", api_views.NetworkViewSet, basename="network")
+    router.register("trek_practice", api_views.PracticeViewSet, basename="practice")
+    router.register(
+        "trek_ratingscale",
+        api_views.TrekRatingScaleViewSet,
+        basename="trek-ratingscale",
+    )
+    router.register("trek_rating", api_views.TrekRatingViewSet, basename="trek-rating")
+    router.register(
+        "weblink_category",
+        api_views.WebLinkCategoryViewSet,
+        basename="weblink-category",
+    )
+
+if settings.SERVICE_MODEL_ENABLED:
+    router.register(
+        "service_type", api_views.ServiceTypeViewSet, basename="servicetype"
+    )
+    router.register("service", api_views.ServiceViewSet, basename="service")
+
+if settings.TOURISTICCONTENT_MODEL_ENABLED:
+    router.register(
+        "touristiccontent_category",
+        api_views.TouristicContentCategoryViewSet,
+        basename="touristiccontentcategory",
+    )
+    router.register(
+        "touristiccontent",
+        api_views.TouristicContentViewSet,
+        basename="touristiccontent",
+    )
+if settings.TOURISTICEVENT_MODEL_ENABLED:
+    router.register(
+        "touristicevent", api_views.TouristicEventViewSet, basename="touristicevent"
+    )
+    router.register(
+        "touristicevent_type",
+        api_views.TouristicEventTypeViewSet,
+        basename="touristiceventtype",
+    )
+    router.register(
+        "touristicevent_place",
+        api_views.TouristicEventPlaceViewSet,
+        basename="touristiceventplace",
+    )
+    router.register(
+        "touristicevent_organizer",
+        api_views.TouristicEventOrganizerViewSet,
+        basename="touristiceventorganizer",
+    )
+
 router.register(
     "informationdesk", api_views.InformationDeskViewSet, basename="informationdesk"
 )
@@ -137,17 +155,26 @@ router.register(
     api_views.LabelAccessibilityViewSet,
     basename="labelaccessibility",
 )
-router.register(
-    "sensitivearea", api_views.SensitiveAreaViewSet, basename="sensitivearea"
-)
-router.register(
-    "sensitivearea_practice",
-    api_views.SportPracticeViewSet,
-    basename="sportpractice",
-)
-router.register("sensitivearea_species", api_views.SpeciesViewSet, basename="species")
+
+if settings.SENSITIVE_AREA_MODEL_ENABLED:
+    router.register(
+        "sensitivearea", api_views.SensitiveAreaViewSet, basename="sensitivearea"
+    )
+    router.register(
+        "sensitivearea_practice",
+        api_views.SportPracticeViewSet,
+        basename="sportpractice",
+    )
+    router.register(
+        "sensitivearea_species", api_views.SpeciesViewSet, basename="species"
+    )
+
 router.register("city", api_views.CityViewSet, basename="city")
 router.register("district", api_views.DistrictViewSet, basename="district")
+
+if settings.COURSE_MODEL_ENABLED:
+    router.register("outdoor_course", api_views.CourseViewSet, basename="course")
+
 router.register("outdoor_site", api_views.SiteViewSet, basename="site")
 router.register(
     "outdoor_practice",
@@ -167,7 +194,7 @@ router.register(
 router.register(
     "outdoor_rating", api_views.OutdoorRatingViewSet, basename="outdoor-rating"
 )
-router.register("outdoor_course", api_views.CourseViewSet, basename="course")
+
 router.register("flatpage", api_views.FlatPageViewSet, basename="flatpage")
 router.register("signage", api_views.SignageViewSet, basename="signage")
 router.register("signage_type", api_views.SignageTypeViewSet, basename="signage-type")
