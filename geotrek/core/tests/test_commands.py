@@ -3,7 +3,7 @@ from io import StringIO
 from unittest import mock, skipIf
 
 from django.conf import settings
-from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString, Point
+from django.contrib.gis.geos import GEOSGeometry, LineString, Point
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db import IntegrityError, connection
@@ -11,9 +11,9 @@ from django.test import TestCase, override_settings
 
 from geotrek.authent.models import Structure
 from geotrek.core.models import Path, PathAggregation, Topology
-from geotrek.core.tests.factories import PathFactory, TopologyFactory
+from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.models import Trek
-from geotrek.trekking.tests.factories import POIFactory, TrekFactory
+from geotrek.trekking.tests.factories import POIFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
@@ -1005,7 +1005,9 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             f'{{"positions":{{"0":[0.5,1], "1":[0,1]}}, "paths":[{self.path_2_a.pk}, {self.path_1_b.pk}]}}]'
         )
         topo = self.create_line_topology(serialized)
-        PathAggregation.objects.get(topo_object=topo, path=self.path_2_a, start_position=0.5, end_position=1).delete()
+        PathAggregation.objects.get(
+            topo_object=topo, path=self.path_2_a, start_position=0.5, end_position=1
+        ).delete()
 
         # Check its geometry and coupling status
         topo.refresh_from_db()

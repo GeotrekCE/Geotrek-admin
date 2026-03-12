@@ -5,7 +5,7 @@ from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 
 from geotrek.common.tests.utils import LineStringInBounds
-from geotrek.core.models import Path, Topology, PathAggregation
+from geotrek.core.models import Path, PathAggregation, Topology
 from geotrek.core.tests.factories import (
     NetworkFactory,
     PathFactory,
@@ -557,7 +557,6 @@ class SplitPathTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SplitPathLineTopologyTest(TestCase):
-
     def create_line_topology(self, serialized):
         """We cannot use TopologyFactory here because we need a workflow similar to when creating a topology via the interface."""
         tmp_topo = Topology.deserialize(serialized)
@@ -603,7 +602,9 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a new path CD, intersecting path AB and the topology
         PathFactory.create(name="CD", geom=LineString((2, 0), (2, 2)))
         ac = ab  # AB has been shrunk into AC
-        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk).first()  # CB is a copy of AB
+        cb = (
+            Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
+        )  # CB is a copy of AB
 
         # The topology now has two path aggregations (one on AC, one on BC)
         topology.refresh_from_db()
@@ -660,7 +661,9 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a new path CD, intersecting path AB and the topology
         PathFactory.create(name="CD", geom=LineString((2, 0), (2, 2)))
         ac = ab  # AB has been shrunk into AC
-        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk).first()  # CB is a copy of AB
+        cb = (
+            Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
+        )  # CB is a copy of AB
 
         # The topology now has two path aggregations (one on AC, one on BC)
         topology.refresh_from_db()
@@ -708,7 +711,9 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a new path CD, intersecting path AB but not the topology
         PathFactory.create(name="CD", geom=LineString((1, 0), (1, 2)))
         ac = ab  # AB has been shrunk into AC
-        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk).first()  # CB is a copy of AB
+        cb = (
+            Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
+        )  # CB is a copy of AB
 
         # AC no longer has any topology linked to it
         self.assertEqual(len(ac.aggregations.all()), 0)
@@ -751,7 +756,9 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a new path CD, intersecting path AB but not the topology
         PathFactory.create(name="CD", geom=LineString((1, 0), (1, 2)))
         ac = ab  # AB has been shrunk into AC
-        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk).first()  # CB is a copy of AB
+        cb = (
+            Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
+        )  # CB is a copy of AB
 
         # AC no longer has any topology linked to it
         self.assertEqual(len(ac.aggregations.all()), 0)
@@ -794,7 +801,9 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a new path CD, intersecting path AB but not the topology
         PathFactory.create(name="CD", geom=LineString((3, 0), (3, 2)))
         ac = ab  # AB has been shrunk into AC
-        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk).first()  # CB is a copy of AB
+        cb = (
+            Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
+        )  # CB is a copy of AB
 
         # The topology is still linked to AC
         self.assertEqual(len(ac.aggregations.all()), 1)
@@ -838,7 +847,9 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a new path CD, intersecting path AB but not the topology
         PathFactory.create(name="CD", geom=LineString((3, 0), (3, 2)))
         ac = ab  # AB has been shrunk into AC
-        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk).first()  # CB is a copy of AB
+        cb = (
+            Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
+        )  # CB is a copy of AB
 
         # The topology is still linked to AC
         self.assertEqual(len(ac.aggregations.all()), 1)
@@ -883,7 +894,9 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a new path CD, intersecting path BE and the topology
         PathFactory.create(name="CD", geom=LineString((3, 0), (3, 2)))
         bc = be  # BE has been shrunk into BC
-        ce = Path.objects.filter(name="BE").exclude(pk=be.pk).first()  # CE is a copy of BE
+        ce = (
+            Path.objects.filter(name="BE").exclude(pk=be.pk).first()
+        )  # CE is a copy of BE
 
         # The topology now covers 4 paths
         topology.refresh_from_db()
@@ -933,7 +946,9 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a new path CD, intersecting path BE and the topology
         PathFactory.create(name="DC", geom=LineString((3, 0), (3, 2)))
         bc = be  # BE has been shrunk into BC
-        ce = Path.objects.filter(name="BE").exclude(pk=be.pk).first()  # CE is a copy of BE
+        ce = (
+            Path.objects.filter(name="BE").exclude(pk=be.pk).first()
+        )  # CE is a copy of BE
 
         # Topology now covers 4 paths
         topology.refresh_from_db()
@@ -1608,7 +1623,6 @@ class SplitPathPointTopologyTest(TestCase):
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SplitPathGenericTopologyTest(TestCase):
-
     def create_line_topology(self, serialized):
         """We cannot use TopologyFactory here because we need a workflow similar to when creating a topology via the interface."""
         tmp_topo = Topology.deserialize(serialized)
@@ -1824,5 +1838,3 @@ class SplitPathGenericTopologyTest(TestCase):
         self.assertAlmostEqual(topology.geom.coords[0][1], topo_geom.coords[0][1])
         self.assertAlmostEqual(topology.geom.coords[-1][0], topo_geom.coords[-1][0])
         self.assertAlmostEqual(topology.geom.coords[-1][1], topo_geom.coords[-1][1])
-
-

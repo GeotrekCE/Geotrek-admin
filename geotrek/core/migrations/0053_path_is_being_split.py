@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0052_set_topologies_as_decoupled'),
+        ("core", "0052_set_topologies_as_decoupled"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='path',
-            name='is_being_split',
-            field=models.BooleanField(default=False, editable=False, help_text='Internal field preventing geometry updates on related topologies during path splitting'),
+            model_name="path",
+            name="is_being_split",
+            field=models.BooleanField(
+                default=False,
+                editable=False,
+                help_text="Internal field preventing geometry updates on related topologies during path splitting",
+            ),
         ),
     ]

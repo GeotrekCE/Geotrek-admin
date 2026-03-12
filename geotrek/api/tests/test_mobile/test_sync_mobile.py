@@ -180,7 +180,10 @@ class SyncMobileTilesTest(VarTmpTestCase):
 
             trek_multi = TrekFactory.create(published=True)
             cursor = connection.cursor()
-            cursor.execute("""UPDATE core_topology SET geom=ST_GeomFromText('SRID=2154;MULTILINESTRING ((0 0, 0 1), (0 2, 0 3))') WHERE id=%s""", [trek_multi.id])
+            cursor.execute(
+                """UPDATE core_topology SET geom=ST_GeomFromText('SRID=2154;MULTILINESTRING ((0 0, 0 1), (0 2, 0 3))') WHERE id=%s""",
+                [trek_multi.id],
+            )
 
             trek_point = TrekFactory.create(
                 published=True,
