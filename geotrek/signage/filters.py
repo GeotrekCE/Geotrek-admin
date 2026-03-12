@@ -91,7 +91,7 @@ class SignageFilterSet(
 
 
 class BladeFilterSet(MapEntityFilterSet):
-    bbox = PolygonTopologyFilter(field_name="topology", lookup_expr="intersects")
+    bbox = PolygonFilter(field_name="signage__geom", lookup_expr="intersects")
     structure = ModelMultipleChoiceFilter(
         field_name="signage__structure",
         queryset=Structure.objects.all(),

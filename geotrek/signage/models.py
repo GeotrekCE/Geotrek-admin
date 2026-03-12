@@ -18,7 +18,6 @@ from geotrek.common.mixins.models import (
 from geotrek.common.models import Organism
 from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import (
-    classproperty,
     collate_c,
     format_coordinates,
     intersecting,
@@ -315,12 +314,6 @@ class Blade(
     conditions = models.ManyToManyField(
         BladeCondition, related_name="blades", verbose_name=_("Condition"), blank=True
     )
-    topology = models.ForeignKey(
-        Topology,
-        related_name="blades_set",
-        verbose_name=_("Blades"),
-        on_delete=models.CASCADE,
-    )
     colorblade_verbose_name = _("Color")
     printedelevation_verbose_name = _("Printed elevation")
     direction_verbose_name = _("Direction")
@@ -337,20 +330,10 @@ class Blade(
     def zoning_property(self):
         return self.signage
 
-    @classproperty
-    def geomfield(cls):
-        return Topology._meta.get_field("geom")
-
     def __str__(self):
         return settings.BLADE_CODE_FORMAT.format(
             signagecode=self.signage.code, bladenumber=self.number
         )
-
-    def set_topology(self, topology):
-        self.topology = topology
-        if not self.is_signage:
-            msg = "Expecting a signage"
-            raise ValueError(msg)
 
     @property
     def conditions_display(self):
@@ -363,18 +346,8 @@ class Blade(
         return self.signage.paths.all()
 
     @property
-    def is_signage(self):
-        if self.topology:
-            return self.topology.kind == Signage.KIND
-        return False
-
-    @property
     def geom(self):
         return self.signage.geom
-
-    @geom.setter
-    def geom(self, value):
-        self._geom = value
 
     @property
     def signage_display(self):
@@ -432,12 +405,6 @@ class Blade(
     def distance(self, to_cls):
         """Distance to associate this blade to another class"""
         return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
-
-
-@receiver(pre_delete, sender=Topology)
-def log_cascade_deletion_from_blade_topology(sender, instance, using, **kwargs):
-    # Blade are deleted when Topology are deleted
-    log_cascade_deletion(sender, instance, Blade, "topology")
 
 
 @receiver(pre_delete, sender=Signage)
