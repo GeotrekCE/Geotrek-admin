@@ -157,6 +157,13 @@ class Path(
     objects = PathManager()
     include_invisible = PathInvisibleManager()
 
+    is_being_split = models.BooleanField(
+        default=False,
+        db_default=False,
+        editable=False,
+        help_text="Internal field preventing geometry updates on related topologies during path splitting",
+    )
+
     is_reversed = False
     can_duplicate = False
 
