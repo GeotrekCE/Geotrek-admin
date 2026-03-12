@@ -1,9 +1,12 @@
 {% extends "mapentity/base_site.html" %}
-{% load i18n static mapentity_tags leaflet_tags %}
+{% load i18n static mapentity_tags %}
 
 {% block head %}
   {% block title %}{{ object }} | {{ block.super }}{% endblock title %}
   {{ block.super }}
+        <script type="text/javascript" src="{% static 'common/js/annotations.js' %}"></script>
+    <script type="text/javascript" src="{% static 'common/js/hdviewpoint_viewer.js' %}"></script>
+    <script type="text/javascript" src="{% static 'common/js/geojs-1.10.17-min.js' %}"></script>
 {% endblock head %}
 {% block mainpanel %}
 <div class="details-panel detail col-12 col-lg-7 {{ object.modelname }}">
@@ -89,12 +92,14 @@
             {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
             {{object.annotations|json_script:"geojson_annotations"}}
             <div id="hdviewpoint-map"><span class="loader-wrapper"><span class="loader"></span></span></div>
-            <script type="text/javascript" src="{% static 'common/js/geojs-1.10.17-min.js' %}"></script>
+
+              <script type="text/javascript" src="{% static 'common/js/geojs-1.10.17-min.js' %}"></script>
             <script>
-              $(window).on('detailmap:ready', function (e, data) {
+              $(window).on('entity:map:detail', function (e) {
                 initializeViewer("{{base_tile_url}}");
               });
             </script>
+
           {% endblock detailspanel %}
         </div>
       {% if ACTION_HISTORY_ENABLED %}
@@ -154,6 +159,6 @@
 {% endblock mainpanel %}
 {% block extrabody %}
   {{ block.super}}
-  <script type="text/javascript" src="{% static 'mapentity/mapentity.detail.js' %}"></script>
-  <script type="text/javascript" src="{% static 'common/js/hdviewpoint_viewer.js' %}"></script>
+{#  <script type="text/javascript" src="{% static 'mapentity/mapentity.detail.js' %}"></script>#}
+{#  <script type="text/javascript" src="{% static 'common/js/hdviewpoint_viewer.js' %}"></script>#}
 {% endblock %}

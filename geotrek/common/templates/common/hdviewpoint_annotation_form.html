@@ -33,7 +33,7 @@
         {% endblock mainform %}
     </div>
     {% url 'common:hdviewpoint-drf-detail' object.pk as base_tile_url %}
-    {{object.annotations|json_script:"geojson_annotations"}}
+    {{  object.annotations|json_script:"geojson_annotations"  }}
     <div id="hdviewpoint-map" class='large'><span class="loader-wrapper"><span class="loader"></span></span></div>
     <script type="text/javascript" src="{% static 'common/js/annotations.js' %}"></script>
     <script type="text/javascript" src="{% static 'common/js/hdviewpoint_viewer.js' %}"></script>

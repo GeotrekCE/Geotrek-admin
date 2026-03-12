@@ -5,6 +5,7 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Div, Layout, Submit
 from django import forms
 from django.conf import settings
+from django.contrib.gis.forms import LineStringField
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.translation import gettext as _
@@ -13,9 +14,9 @@ from mapentity.widgets import MapWidget, SelectMultipleWithPop
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.forms import TopologyForm
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
 
+from ..core.mixins.forms import TopologyForm
 from .models import (
     POI,
     OrderedTrekChild,
@@ -47,21 +48,20 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 else:
 
     class BaseTrekForm(CommonForm):
-        geomfields = ["geom"]
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["geom"].widget.modifiable
-            self.fields["geom"].widget = MapWidget(attrs={"geom_type": "LINESTRING"})
-            self.fields["geom"].widget.modifiable = modifiable
-            self.fields["points_reference"].label = ""
-            self.fields["points_reference"].widget.target_map = "geom"
-            self.fields["parking_location"].label = ""
-            self.fields["parking_location"].widget.target_map = "geom"
+        geom = LineStringField()
+        geomfields = ["geom", "parking_location", "points_reference"]
 
         class Meta(CommonForm.Meta):
             model = Trek
             fields = [*CommonForm.Meta.fields, "geom"]
+            widgets = {
+                "parking_location": MapWidget(
+                    attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"}
+                ),
+                "points_reference": MapWidget(
+                    attrs={"target_map": "geom", "custom_icon": "markers/points.svg"}
+                ),
+            }
 
 
 class TrekForm(BaseTrekForm):

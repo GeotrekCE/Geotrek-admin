@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-2.124.1+dev     (XXXX-XX-XX)
+2.124.2+dev     (XXXX-XX-XX)
 ----------------------------
 
 **Warnings**
@@ -15,6 +15,18 @@ CHANGELOG
 * Don't update the geometry of a topology when it's decoupled from the path network
 * Strengthen the "invalid topology" filter criteria
 * Remove the "invalid geometry" filter
+
+**Improvements**
+
+* Add ``--ids`` option to the ``reorder_topologies`` command to process specific topologies by ID
+
+
+2.124.2         (2026-03-03)
+----------------------------
+
+**Documentation**
+
+* Add information about database users and map style configuration, and remove the mention of IGN Rando (refs #5318)
 
 
 2.124.1         (2026-02-17)

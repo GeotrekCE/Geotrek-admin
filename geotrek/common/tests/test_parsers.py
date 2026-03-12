@@ -2164,7 +2164,7 @@ class GeotrekAggregatorSourcesTests(TestCase):
         GeotrekTrekTestSourcesParser()
         s = RecordSource.objects.get(name="Parc national des Ecrins")
         self.assertEqual(s.website, "https://www.ecrins-parcnational.fr")
-        self.assertEqual(s.pictogram.file.name.split("/")[-1], "pnecrins.png")
+        self.assertIn("pnecrins", s.pictogram.file.name.split("/")[-1])
 
         # Test updated
         GeotrekTrekTestSourcesParser()

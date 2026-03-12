@@ -14,11 +14,11 @@ babel==2.17.0
     # via
     #   sphinx
     #   sphinx-intl
-certifi==2026.1.4
+certifi==2026.2.25
     # via
     #   -c ../requirements.txt
     #   requests
-charset-normalizer==3.4.4
+charset-normalizer==3.4.5
     # via
     #   -c ../requirements.txt
     #   requests

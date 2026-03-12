@@ -1001,7 +1001,7 @@ Load Signage
 .. note::
 
     * **Optional fields** : Comment, SRID, Encoding
-    * **Required fields** : Structure, Name
+    * **Required fields** : Structure, Name, Type
     * **Geometric type** : Point
     * **Expected formats** (supported by GDAL) : Shapefile, Geojson, Geopackage
     * **Template** : :download:`signage.geojson <../files/import/signage.geojson>`
