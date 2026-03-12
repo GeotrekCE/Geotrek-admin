@@ -613,8 +613,8 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(cb.aggregations.all()), 1)
 
         # The path aggregations positions have been adjusted
-        aggr_ac = ac.aggregations.all()[0]
-        aggr_cb = cb.aggregations.all()[0]
+        aggr_ac = ac.aggregations.first()
+        aggr_cb = cb.aggregations.first()
         self.assertEqual((0.5, 1.0), (aggr_ac.start_position, aggr_ac.end_position))
         self.assertEqual((0.0, 0.5), (aggr_cb.start_position, aggr_cb.end_position))
 
@@ -672,8 +672,8 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(cb.aggregations.all()), 1)
 
         # The path aggregations positions have been adjusted
-        aggr_ac = ac.aggregations.all()[0]
-        aggr_cb = cb.aggregations.all()[0]
+        aggr_ac = ac.aggregations.first()
+        aggr_cb = cb.aggregations.first()
         self.assertAlmostEqual(1, aggr_ac.start_position)
         self.assertAlmostEqual(0.5, aggr_ac.end_position)
         self.assertAlmostEqual(0.5, aggr_cb.start_position)
@@ -722,7 +722,7 @@ class SplitPathLineTopologyTest(TestCase):
         topology.refresh_from_db()
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(cb.aggregations.all()), 1)
-        self.assertEqual(topology.paths.all()[0].pk, cb.pk)
+        self.assertEqual(topology.paths.first().pk, cb.pk)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])
@@ -767,7 +767,7 @@ class SplitPathLineTopologyTest(TestCase):
         topology.refresh_from_db()
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(cb.aggregations.all()), 1)
-        self.assertEqual(topology.paths.all()[0].pk, cb.pk)
+        self.assertEqual(topology.paths.first().pk, cb.pk)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])
@@ -1114,8 +1114,8 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 2)
         self.assertEqual(len(cd.aggregations.all()), 1)
         self.assertEqual(len(cd2.aggregations.all()), 1)
-        aggr_cd = cd.aggregations.all()[0]
-        aggr_cd2 = cd2.aggregations.all()[0]
+        aggr_cd = cd.aggregations.first()
+        aggr_cd2 = cd2.aggregations.first()
         self.assertAlmostEqual(0.5, aggr_cd.start_position)
         self.assertAlmostEqual(1, aggr_cd.end_position)
         self.assertAlmostEqual(0, aggr_cd2.start_position)
@@ -1142,7 +1142,7 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(cd.aggregations.all()), 1)
         self.assertEqual(len(cd2.aggregations.all()), 0)
-        aggr_cd = cd.aggregations.all()[0]
+        aggr_cd = cd.aggregations.first()
         self.assertAlmostEqual(0.25, aggr_cd.start_position)
         self.assertAlmostEqual(0.5, aggr_cd.end_position)
 
@@ -1167,7 +1167,7 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(cd.aggregations.all()), 0)
         self.assertEqual(len(cd2.aggregations.all()), 1)
-        aggr_cd2 = cd2.aggregations.all()[0]
+        aggr_cd2 = cd2.aggregations.first()
         self.assertAlmostEqual(0.25, aggr_cd2.start_position)
         self.assertAlmostEqual(0.625, aggr_cd2.end_position)
 
@@ -1277,11 +1277,11 @@ class SplitPathPointTopologyTest(TestCase):
 
         self.assertEqual(len(topology.paths.all()), 3)
         self.assertEqual(len(ab.aggregations.all()), 1)
-        aggr_ab = ab.aggregations.all()[0]
+        aggr_ab = ab.aggregations.first()
         self.assertEqual(len(cb.aggregations.all()), 1)
-        aggr_cb = cb.aggregations.all()[0]
+        aggr_cb = cb.aggregations.first()
         self.assertEqual(len(cd.aggregations.all()), 1)
-        aggr_cd = cd.aggregations.all()[0]
+        aggr_cd = cd.aggregations.first()
         self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
         self.assertEqual((0.0, 0.0), (aggr_cb.start_position, aggr_cb.end_position))
         self.assertEqual((0.0, 0.0), (aggr_cd.start_position, aggr_cd.end_position))
@@ -1300,7 +1300,7 @@ class SplitPathPointTopologyTest(TestCase):
         PathFactory.create(geom=LineString((2, 0), (2, 2)))
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(ab.aggregations.all()), 1)
-        aggr_ab = ab.aggregations.all()[0]
+        aggr_ab = ab.aggregations.first()
         self.assertEqual((0.5, 0.5), (aggr_ab.start_position, aggr_ab.end_position))
 
     def test_split_tee_3(self):
@@ -1319,7 +1319,7 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(ab.aggregations.all()), 0)
         self.assertEqual(len(cb.aggregations.all()), 1)
-        aggr_cb = cb.aggregations.all()[0]
+        aggr_cb = cb.aggregations.first()
         self.assertEqual((0.5, 0.5), (aggr_cb.start_position, aggr_cb.end_position))
 
     def test_split_tee_4(self):
@@ -1339,7 +1339,7 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(cb.aggregations.all()), 0)
-        aggr_ab = ab.aggregations.all()[0]
+        aggr_ab = ab.aggregations.first()
         self.assertEqual((0.0, 0.0), (aggr_ab.start_position, aggr_ab.end_position))
 
     def test_split_tee_5(self):
@@ -1359,7 +1359,7 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(ab.aggregations.all()), 0)
         self.assertEqual(len(cb.aggregations.all()), 1)
-        aggr_cb = cb.aggregations.all()[0]
+        aggr_cb = cb.aggregations.first()
         self.assertEqual((1.0, 1.0), (aggr_cb.start_position, aggr_cb.end_position))
 
     def test_split_tee_6(self):
@@ -1377,7 +1377,7 @@ class SplitPathPointTopologyTest(TestCase):
         poi.transform(settings.API_SRID)
         topology = Topology.deserialize({"lat": poi.y, "lng": poi.x})
         topology.save()
-        aggr = topology.aggregations.all()[0]
+        aggr = topology.aggregations.first()
         position = topology.geom.coords
 
         self.assertAlmostEqual(3, topology.offset, places=6)
@@ -1387,7 +1387,7 @@ class SplitPathPointTopologyTest(TestCase):
         # Add CD
         PathFactory.create(name="CD", geom=LineString((4, 0), (4, 2)))
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
-        aggr_ab = ab.aggregations.all()[0]
+        aggr_ab = ab.aggregations.first()
 
         topology.reload()
         self.assertAlmostEqual(3, topology.offset, places=6)
@@ -1413,7 +1413,7 @@ class SplitPathPointTopologyTest(TestCase):
         poi.transform(settings.API_SRID)
         topology = Topology.deserialize({"lat": poi.y, "lng": poi.x})
         topology.save()
-        aggr = topology.aggregations.all()[0]
+        aggr = topology.aggregations.first()
         position = topology.geom.coords
 
         self.assertAlmostEqual(3, topology.offset, places=6)
@@ -1430,7 +1430,7 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(cb.aggregations.all()), 1)
         self.assertAlmostEqual(3, topology.offset, places=6)
         self.assertEqual(position, topology.geom.coords)
-        aggr_cb = cb.aggregations.all()[0]
+        aggr_cb = cb.aggregations.first()
         self.assertAlmostEqual(0.75, aggr_cb.start_position, places=6)
         self.assertAlmostEqual(0.75, aggr_cb.end_position, places=6)
 
@@ -1460,10 +1460,10 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(ab.aggregations.all()), 1)
         self.assertEqual(len(topology.paths.all()), 4)
 
-        aggr_ab = ab.aggregations.all()[0]
-        aggr_ab2 = ab2.aggregations.all()[0]
-        aggr_cd = cd.aggregations.all()[0]
-        aggr_cd2 = cd2.aggregations.all()[0]
+        aggr_ab = ab.aggregations.first()
+        aggr_ab2 = ab2.aggregations.first()
+        aggr_cd = cd.aggregations.first()
+        aggr_cd2 = cd2.aggregations.first()
         self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
         self.assertEqual((0.0, 0.0), (aggr_ab2.start_position, aggr_ab2.end_position))
         self.assertEqual((1.0, 1.0), (aggr_cd.start_position, aggr_cd.end_position))
@@ -1489,7 +1489,7 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(cd.aggregations.all()), 1)
         self.assertEqual(len(cd2.aggregations.all()), 0)
-        aggr_cd = cd.aggregations.all()[0]
+        aggr_cd = cd.aggregations.first()
         self.assertEqual((0.5, 0.5), (aggr_cd.start_position, aggr_cd.end_position))
 
     def test_split_on_update_3(self):
@@ -1512,7 +1512,7 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(cd.aggregations.all()), 0)
         self.assertEqual(len(cd2.aggregations.all()), 1)
-        aggr_cd2 = cd2.aggregations.all()[0]
+        aggr_cd2 = cd2.aggregations.first()
         self.assertEqual((0.5, 0.5), (aggr_cd2.start_position, aggr_cd2.end_position))
 
     def test_split_on_update_4(self):
@@ -1535,7 +1535,7 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(cd.aggregations.all()), 1)
         self.assertEqual(len(cd2.aggregations.all()), 0)
-        aggr_cd = cd.aggregations.all()[0]
+        aggr_cd = cd.aggregations.first()
         self.assertEqual((0.0, 0.0), (aggr_cd.start_position, aggr_cd.end_position))
 
     def test_split_on_update_5(self):
@@ -1558,7 +1558,7 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(topology.paths.all()), 1)
         self.assertEqual(len(cd.aggregations.all()), 0)
         self.assertEqual(len(cd2.aggregations.all()), 1)
-        aggr_cd2 = cd2.aggregations.all()[0]
+        aggr_cd2 = cd2.aggregations.first()
         self.assertEqual((1.0, 1.0), (aggr_cd2.start_position, aggr_cd2.end_position))
 
     def test_split_on_update_6(self):
@@ -1584,9 +1584,9 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(cd.aggregations.all()), 1)
         self.assertEqual(len(topology.paths.all()), 3)
 
-        aggr_ab = ab.aggregations.all()[0]
-        aggr_db = db.aggregations.all()[0]
-        aggr_cd = cd.aggregations.all()[0]
+        aggr_ab = ab.aggregations.first()
+        aggr_db = db.aggregations.first()
+        aggr_cd = cd.aggregations.first()
         self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
         self.assertEqual((0.0, 0.0), (aggr_db.start_position, aggr_db.end_position))
         self.assertEqual((1.0, 1.0), (aggr_cd.start_position, aggr_cd.end_position))
@@ -1613,9 +1613,9 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual(len(cd.aggregations.all()), 1)
         self.assertEqual(len(topology.paths.all()), 3)
 
-        aggr_ab = ab.aggregations.all()[0]
-        aggr_cb = cb.aggregations.all()[0]
-        aggr_cd = cd.aggregations.all()[0]
+        aggr_ab = ab.aggregations.first()
+        aggr_cb = cb.aggregations.first()
+        aggr_cd = cd.aggregations.first()
         self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
         self.assertEqual((0.0, 0.0), (aggr_cb.start_position, aggr_cb.end_position))
         self.assertEqual((0.0, 0.0), (aggr_cd.start_position, aggr_cd.end_position))
@@ -1680,10 +1680,10 @@ class SplitPathGenericTopologyTest(TestCase):
         self.assertEqual(len(bc.aggregations.all()), 1)
         self.assertEqual(len(bc_2.aggregations.all()), 1)
         self.assertEqual(len(de.aggregations.all()), 0)
-        aggr_ab = ab.aggregations.all()[0]
-        aggr_ab2 = ab_2.aggregations.all()[0]
-        aggr_bc = bc.aggregations.all()[0]
-        aggr_bc2 = bc_2.aggregations.all()[0]
+        aggr_ab = ab.aggregations.first()
+        aggr_ab2 = ab_2.aggregations.first()
+        aggr_bc = bc.aggregations.first()
+        aggr_bc2 = bc_2.aggregations.first()
         self.assertAlmostEqual(0.551776695296637, aggr_ab.start_position)
         self.assertAlmostEqual(1, aggr_ab.end_position)
         self.assertAlmostEqual(0, aggr_ab2.start_position)
@@ -1745,10 +1745,10 @@ class SplitPathGenericTopologyTest(TestCase):
         self.assertEqual(len(cb.aggregations.all()), 1)
         self.assertEqual(len(cb_2.aggregations.all()), 1)
         self.assertEqual(len(de.aggregations.all()), 0)
-        aggr_ab = ab.aggregations.all()[0]
-        aggr_ab2 = ab_2.aggregations.all()[0]
-        aggr_cb = cb.aggregations.all()[0]
-        aggr_cb2 = cb_2.aggregations.all()[0]
+        aggr_ab = ab.aggregations.first()
+        aggr_ab2 = ab_2.aggregations.first()
+        aggr_cb = cb.aggregations.first()
+        aggr_cb2 = cb_2.aggregations.first()
         self.assertAlmostEqual(0.551776695296637, aggr_ab.start_position)
         self.assertAlmostEqual(1, aggr_ab.end_position)
         self.assertAlmostEqual(0, aggr_ab2.start_position)
@@ -1820,10 +1820,10 @@ class SplitPathGenericTopologyTest(TestCase):
         self.assertEqual(len(be.aggregations.all()), 1)
         self.assertEqual(len(ec.aggregations.all()), 1)
         self.assertEqual(len(de.aggregations.all()), 0)
-        aggr_bd = bd.aggregations.all()[0]
-        aggr_da = da.aggregations.all()[0]
-        aggr_be = be.aggregations.all()[0]
-        aggr_ec = ec.aggregations.all()[0]
+        aggr_bd = bd.aggregations.first()
+        aggr_da = da.aggregations.first()
+        aggr_be = be.aggregations.first()
+        aggr_ec = ec.aggregations.first()
         self.assertAlmostEqual(0.448223304703363, aggr_da.start_position)
         self.assertAlmostEqual(0, aggr_da.end_position)
         self.assertAlmostEqual(1, aggr_bd.start_position)
