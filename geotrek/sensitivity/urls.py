@@ -3,7 +3,7 @@ from mapentity.registry import registry
 
 from geotrek.common.urls import LangConverter
 
-from . import models, views
+from . import entities, models, views
 
 app_name = "sensitivity"
 
@@ -29,4 +29,6 @@ urlpatterns = [
     ),
 ]
 
-urlpatterns += registry.register(models.SensitiveArea)
+urlpatterns += registry.register(
+    models.SensitiveArea, options=entities.SensitiveAreaEntityOptions
+)

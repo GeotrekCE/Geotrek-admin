@@ -1,6 +1,8 @@
-{% load static outdoor_tags %}
+{% load static geotrek_tags %}
 
-{% is_outdoor_enabled as enabled %}
-{% if enabled %}
+{% settings_value "COURSE_MODEL_ENABLED" as course_enabled %}
+{% settings_value "SITE_MODEL_ENABLED" as site_enabled %}
+
+{% if site_enabled or course_enabled %}
 <script type="text/javascript" src="{% static 'outdoor/js/main.js' %}"></script>
 {% endif %}

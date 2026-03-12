@@ -1,6 +1,9 @@
-{% load i18n tourism_tags %}
+{% load i18n tourism_tags geotrek_tags %}
 
-{% is_tourism_enabled as enabled %}
+{% settings_value "TOURISM_ENABLED" as enabled %}
+{% settings_value "TOURISTICCONTENT_MODEL_ENABLED" as tc_enabled %}
+{% settings_value "TOURISTICEVENT_MODEL_ENABLED" as te_enabled %}
+
 {% if enabled %}
 
 <script type="leaflet-template" id="tourism-popup-template">
@@ -18,9 +21,12 @@
     {##}
     {#MapEntity.i18n['touristiccontent'] = "{% trans "Touristic content" %}";#}
     {#MapEntity.i18n['touristicevent'] = "{% trans "Touristic event" %}";#}
-
+    {% if tc_enabled %}
     window.SETTINGS.urls['touristiccontent_layer'] = "{% url "tourism:touristiccontent-drf-list" format="geojson" %}";
+    {% endif %}
+    {% if te_enabled %}
     window.SETTINGS.urls['touristicevent_layer'] = "{% url "tourism:touristicevent-drf-list" format="geojson" %}";
+    {% endif %}
 </script>
 
 {% if modelname == "touristiccontent" %}

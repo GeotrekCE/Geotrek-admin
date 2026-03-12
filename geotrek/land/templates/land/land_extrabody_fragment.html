@@ -1,4 +1,7 @@
-{% load static i18n %}
+{% load static i18n geotrek_tags %}
+{% settings_value "LANDEDGE_MODEL_ENABLED" as landedge_enabled %}
+
+{% if landedge_enabled %}
 <script type="text/javascript">
     {#MapEntity.i18n['Land edges'] = "{% trans "Land edges" %}";#}
     {#MapEntity.i18n['Circulation edges'] = "{% trans "Circulation edges" %}";#}
@@ -23,3 +26,4 @@
 </script>
 
 <script type="text/javascript" src="{% static "land/js/maplibreLandMain.js" %}"></script>
+{% endif %}

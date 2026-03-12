@@ -354,6 +354,26 @@ This parameter allows enabling or disabling the Course module:
 
                 COURSE_MODEL_ENABLED = False
 
+Sensitive area model enabled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This parameter allows enabling or disabling the Sensitive area module:
+
+.. md-tab-set::
+    :name: sensitive-area-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+
+                SENSITIVE_AREA_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+
+                SENSITIVE_AREA_MODEL_ENABLED = False
+
 Flatpages enabled
 ~~~~~~~~~~~~~~~~~~~~
 
