@@ -1,5 +1,7 @@
-{% load static i18n feedback_tags %}
+{% load static i18n feedback_tags geotrek_tags %}
+{% settings_value "REPORT_MODEL_ENABLED" as feedback_enabled %}
 
+{% if feedback_enabled %}
 {% suricate_workflow_enabled as suricate_workflow_enabled %}
 {% enable_report_colors_per_status as enable_report_colors_per_status %}
 
@@ -26,3 +28,4 @@
 
     window.SETTINGS.urls['report_layer'] = "{% url "feedback:report-drf-list" format="geojson" %}";
 </script>
+{% endif %}

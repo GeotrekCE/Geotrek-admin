@@ -1,7 +1,6 @@
 import json
 
 from django import template
-from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 
 from geotrek.tourism.models import TouristicContentCategory, TouristicEventPlace
@@ -30,11 +29,6 @@ def touristic_content_categories():
         for category in TouristicContentCategory.objects.prefetch_related("types").all()
     }
     return json.dumps(categories)
-
-
-@register.simple_tag
-def is_tourism_enabled():
-    return settings.TOURISM_ENABLED
 
 
 @register.simple_tag

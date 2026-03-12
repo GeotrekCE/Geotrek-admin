@@ -1,8 +1,10 @@
-{% load i18n %}
-
+{% load i18n geotrek_tags %}
+{% settings_value "INTERVENTION_MODEL_ENABLED" as intervention_enabled %}
+{% if intervention_enabled %}
 <script type="text/javascript">
     {#MapEntity.i18n['Intervention'] = "{% trans "Intervention" %}";#}
     {#MapEntity.i18n['Maintenance'] = "{% trans "Maintenance" %}";#}
 
     window.SETTINGS.urls['intervention_layer'] = "{% url "maintenance:intervention-drf-list" format="geojson" %}";
 </script>
+{% endif %}

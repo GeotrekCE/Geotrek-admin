@@ -1,8 +1,12 @@
-{% load i18n %}
+{% load i18n geotrek_tags %}
 
+{% settings_value "SENSITE_AREA_MODEL_ENABLED" as sensitive_area_enabled %}
+
+{% if sensitive_area_enabled %}
 <script type="text/javascript">
     {#MapEntity.i18n['Sensitivity'] = "{% trans "Sensitivity" %}";#}
     {#MapEntity.i18n['sensitivearea'] = "{% trans "Sensitive area" %}";#}
 
     window.SETTINGS.urls['sensitivearea_layer'] = "{% url "sensitivity:sensitivearea-drf-list" format="geojson" %}";
 </script>
+{% endif %}
