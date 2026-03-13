@@ -3,16 +3,17 @@ from io import StringIO
 from unittest import mock, skipIf
 
 from django.conf import settings
-from django.contrib.gis.geos import GEOSGeometry, LineString, MultiLineString, Point
+from django.contrib.gis.geos import GEOSGeometry, LineString, Point
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.db import IntegrityError, connection
 from django.test import TestCase, override_settings
 
 from geotrek.authent.models import Structure
-from geotrek.core.models import Path, PathAggregation
+from geotrek.core.models import Path, PathAggregation, Topology
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
-from geotrek.trekking.tests.factories import POIFactory, TrekFactory
+from geotrek.trekking.models import Trek
+from geotrek.trekking.tests.factories import POIFactory
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
@@ -312,6 +313,14 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                 Point(700050, 6600050), Point(700100, 6600000), srid=settings.SRID
             )
         )
+
+    def create_line_topology(self, serialized):
+        """We cannot use TopologyFactory here because we need a workflow similar to when creating a topology via the interface."""
+        tmp_topo = Topology.deserialize(serialized)
+        topology = Trek.objects.create()
+        topology.mutate(tmp_topo)
+        topology.refresh_from_db()
+        return topology
 
     def get_geometries(self, topology):
         geometries = []
@@ -666,9 +675,13 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         1 🡥       ⠳   ⠳ 2
         🡥         3 ⠳   ⠳
         """
-        topo = TopologyFactory.create(
-            paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
-        )
+
+        # Create a topology
+        serialized = f'[{{"positions":{{"0":[0,1], "1":[0,1]}},"paths":[{self.path_1_a.pk}, {self.path_1_b.pk}]}}]'
+        topo = self.create_line_topology(serialized)
+
+        # Check its geometry and coupling status
+        self.assertTrue(topo.coupled)
         self.assertEqual(
             LineString(
                 (700000, 6600000),
@@ -678,22 +691,17 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             topo.geom,
         )
+
+        # Add a new path intersecting path 1_a
         PathFactory.create(
             geom=LineString(
                 Point(700000, 6600090), Point(700090, 6600000), srid=settings.SRID
             )
         )
-        topo.reload()
-        self.assertEqual(
-            LineString(
-                (700000, 6600000),
-                (700045, 6600045),
-                (700050, 6600050),
-                (700100, 6600100),
-                srid=settings.SRID,
-            ),
-            topo.geom,
-        )
+
+        # The topology should be decoupled and its geometry should not have changed
+        topo.refresh_from_db()
+        self.assertFalse(topo.coupled)
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=topo).values_list(
@@ -702,7 +710,20 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 0, 1],
         )
+        self.assertEqual(
+            LineString(
+                (700000, 6600000),
+                (700050, 6600050),
+                (700100, 6600100),
+                srid=settings.SRID,
+            ),
+            topo.geom,
+        )
+
+        # Run the reorder_topologies command
         call_command("reorder_topologies", verbosity=0)
+
+        # Check its path aggregations
         geometries = self.get_geometries(topo)
         self.assertEqual(
             geometries,
@@ -720,7 +741,10 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 1, 2],
         )
-        topo.reload()
+
+        # The topology should be recoupled and its geometry should have been updated
+        topo.refresh_from_db()
+        self.assertTrue(topo.coupled)
         self.assertEqual(
             LineString(
                 (700000, 6600000),
@@ -763,16 +787,17 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         🡥             ⠳     ⠳
 
         """
-        topo = TopologyFactory.create(
-            paths=[
-                (self.path_1_a, 0, 0.95),
-                (self.path_1_a, 0.95, 0.95),
-                (self.path_1_a, 0.95, 0.5),
-                (self.path_1_a, 0.5, 0.5),
-                (self.path_1_a, 0.5, 1),
-                (self.path_1_b, 0, 1),
-            ]
+
+        # Create a topology
+        serialized = (
+            f'[{{"positions":{{"0":[0,0.95]}}, "paths":[{self.path_1_a.pk}]}},'
+            f'{{"positions":{{"0":[0.95,0.5]}}, "paths":[{self.path_1_a.pk}]}},'
+            f'{{"positions":{{"0":[0.5,1], "1":[0,1]}}, "paths":[{self.path_1_a.pk}, {self.path_1_b.pk}]}}]'
         )
+        topo = self.create_line_topology(serialized)
+
+        # Check its geometry and coupling status
+        self.assertTrue(topo.coupled)
         self.assertEqual(
             LineString(
                 (700000, 6600000),
@@ -784,11 +809,17 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             topo.geom,
         )
+
+        # Add a new path intersecting path 1_a
         PathFactory.create(
             geom=LineString(
                 Point(700000, 6600090), Point(700090, 6600000), srid=settings.SRID
             )
         )
+
+        # The topology should be decoupled and its geometry should not have changed
+        topo.refresh_from_db()
+        self.assertFalse(topo.coupled)
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=topo).values_list(
@@ -797,22 +828,22 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 0, 1, 2, 2, 3, 4, 4, 5],
         )
-        topo.reload()
         self.assertEqual(
             LineString(
                 (700000, 6600000),
-                (700045, 6600045),
                 (700047.5, 6600047.5),
-                (700045, 6600045),
                 (700025, 6600025),
-                (700045, 6600045),
                 (700050, 6600050),
                 (700100, 6600100),
                 srid=settings.SRID,
             ),
             topo.geom,
         )
+
+        # Run the reorder_topologies command
         call_command("reorder_topologies", verbosity=0)
+
+        # Check its path aggregations
         geometries = self.get_geometries(topo)
         self.assertEqual(
             geometries,
@@ -828,7 +859,6 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                 LineString((700050, 6600050), (700100, 6600100), srid=2154).ewkt,
             ],
         )
-
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=topo).values_list(
@@ -837,6 +867,10 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 1, 2, 3, 4, 5, 6, 7, 8],
         )
+
+        # The topology should be recoupled and its geometry should have been updated
+        topo.refresh_from_db()
+        self.assertTrue(topo.coupled)
         self.assertEqual(
             LineString(
                 (700000, 6600000),
@@ -883,15 +917,49 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         🡥           3 ⠳     ⠳
 
         """
-        self.maxDiff = None
-        topo = TopologyFactory.create(
-            paths=[
-                (self.path_1_a, 0, 1),
-                (self.path_2_a, 1, 0.1),
-                (self.path_2_a, 0.1, 0.1),
-                (self.path_2_a, 0.1, 1),
-                (self.path_1_b, 0, 1),
-            ]
+
+        # Create a topology
+        serialized = (
+            f'[{{"positions":{{"0":[0,1], "1":[1,0.1]}}, "paths":[{self.path_1_a.pk}, {self.path_2_a.pk}]}},'
+            f'{{"positions":{{"0":[0.1,1], "1":[0,1]}}, "paths":[{self.path_2_a.pk}, {self.path_1_b.pk}]}}]'
+        )
+        topo = self.create_line_topology(serialized)
+
+        # Check its geometry and coupling status
+        self.assertTrue(topo.coupled)
+        self.assertEqual(
+            LineString(
+                (700000, 6600000),
+                (700050, 6600050),
+                (700005, 6600095),
+                (700050, 6600050),
+                (700100, 6600100),
+                srid=settings.SRID,
+            ),
+            topo.geom,
+        )
+
+        # Add a new path intersecting paths 1_a, 2_a and 1_b
+        PathFactory.create(
+            geom=LineString(
+                Point(700070, 6600000),
+                Point(700020, 6600050),
+                Point(700060, 6600090),
+                Point(700100, 6600050),
+                srid=settings.SRID,
+            )
+        )
+
+        # The topology should be decoupled and its geometry should not have changed
+        topo.refresh_from_db()
+        self.assertFalse(topo.coupled)
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0, 0, 1, 1, 2, 3, 3, 4, 4],
         )
         self.assertEqual(
             LineString(
@@ -904,40 +972,11 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             topo.geom,
         )
-        PathFactory.create(
-            geom=LineString(
-                Point(700070, 6600000),
-                Point(700020, 6600050),
-                Point(700060, 6600090),
-                Point(700100, 6600050),
-                srid=settings.SRID,
-            )
-        )
-        topo.reload()
-        self.assertEqual(
-            LineString(
-                (700000, 6600000),
-                (700035, 6600035),
-                (700050, 6600050),
-                (700035, 6600065),
-                (700007.1428571428, 6600092.857142857),
-                (700035, 6600065),
-                (700050, 6600050),
-                (700075, 6600075),
-                (700100, 6600100),
-                srid=settings.SRID,
-            ),
-            topo.geom,
-        )
-        self.assertEqual(
-            list(
-                PathAggregation.objects.filter(topo_object=topo).values_list(
-                    "order", flat=True
-                )
-            ),
-            [0, 0, 1, 1, 2, 3, 3, 4, 4],
-        )
+
+        # Run the reorder_topologies command
         call_command("reorder_topologies", verbosity=0)
+
+        # Check its path aggregations
         geometries = self.get_geometries(topo)
         self.assertEqual(
             geometries,
@@ -957,7 +996,6 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                 LineString((700075, 6600075), (700100, 6600100), srid=2154).ewkt,
             ],
         )
-
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=topo).values_list(
@@ -966,7 +1004,10 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 1, 2, 3, 4, 5, 6, 7, 8],
         )
-        topo.reload()
+
+        # The topology should be recoupled and its geometry should have been updated
+        topo.refresh_from_db()
+        self.assertTrue(topo.coupled)
         self.assertEqual(
             LineString(
                 (700000, 6600000),
@@ -1014,14 +1055,49 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         🡥           3 ⠳     ⠳
 
         """
-        topo = TopologyFactory.create(
-            paths=[
-                (self.path_1_a, 0, 1),
-                (self.path_2_a, 1, 0.5),
-                (self.path_2_a, 0.5, 0.5),
-                (self.path_2_a, 0.5, 1),
-                (self.path_1_b, 0, 1),
-            ]
+
+        # Create a topology
+        serialized = (
+            f'[{{"positions":{{"0":[0,1], "1":[1,0.5]}}, "paths":[{self.path_1_a.pk}, {self.path_2_a.pk}]}},'
+            f'{{"positions":{{"0":[0.5,1], "1":[0,1]}}, "paths":[{self.path_2_a.pk}, {self.path_1_b.pk}]}}]'
+        )
+        topo = self.create_line_topology(serialized)
+
+        # Check its geometry and coupling status
+        self.assertTrue(topo.coupled)
+        self.assertEqual(
+            LineString(
+                (700000, 6600000),
+                (700050, 6600050),
+                (700025, 6600075),
+                (700050, 6600050),
+                (700100, 6600100),
+                srid=settings.SRID,
+            ),
+            topo.geom,
+        )
+
+        # Add a new path intersecting paths 1_a, 2_a and 1_b
+        PathFactory.create(
+            geom=LineString(
+                Point(700070, 6600000),
+                Point(700020, 6600050),
+                Point(700060, 6600090),
+                Point(700100, 6600050),
+                srid=settings.SRID,
+            )
+        )
+
+        # The topology should be decoupled and its geometry should not have changed
+        topo.refresh_from_db()
+        self.assertFalse(topo.coupled)
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0, 0, 1, 3, 4, 4],
         )
         self.assertEqual(
             LineString(
@@ -1034,38 +1110,11 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             topo.geom,
         )
-        PathFactory.create(
-            geom=LineString(
-                Point(700070, 6600000),
-                Point(700020, 6600050),
-                Point(700060, 6600090),
-                Point(700100, 6600050),
-                srid=settings.SRID,
-            )
-        )
-        topo.reload()
-        self.assertEqual(
-            LineString(
-                (700000, 6600000),
-                (700035, 6600035),
-                (700050, 6600050),
-                (700035, 6600065),
-                (700050, 6600050),
-                (700075, 6600075),
-                (700100, 6600100),
-                srid=settings.SRID,
-            ),
-            topo.geom,
-        )
-        self.assertEqual(
-            list(
-                PathAggregation.objects.filter(topo_object=topo).values_list(
-                    "order", flat=True
-                )
-            ),
-            [0, 0, 1, 3, 4, 4],
-        )
+
+        # Run the reorder_topologies command
         call_command("reorder_topologies", verbosity=0)
+
+        # Check its path aggregations
         geometries = self.get_geometries(topo)
         self.assertEqual(
             geometries,
@@ -1078,7 +1127,6 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                 LineString((700075, 6600075), (700100, 6600100), srid=2154).ewkt,
             ],
         )
-
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=topo).values_list(
@@ -1087,7 +1135,10 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 1, 2, 3, 4, 5],
         )
-        topo.reload()
+
+        # The topology should be recoupled and its geometry should have been updated
+        topo.refresh_from_db()
+        self.assertTrue(topo.coupled)
         self.assertEqual(
             LineString(
                 (700000, 6600000),
@@ -1133,15 +1184,16 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         🡥                   ⠳
 
         """
-        topo = TopologyFactory.create(
-            paths=[
-                (self.path_1_a, 0, 1),
-                (self.path_2_a, 1, 0.5),
-                (self.path_2_a, 0.5, 0.5),
-                (self.path_2_a, 0.5, 1),
-                (self.path_1_b, 0, 1),
-            ]
+
+        # Create a topology
+        serialized = (
+            f'[{{"positions":{{"0":[0,1], "1":[1,0.5]}}, "paths":[{self.path_1_a.pk}, {self.path_2_a.pk}]}},'
+            f'{{"positions":{{"0":[0.5,1], "1":[0,1]}}, "paths":[{self.path_2_a.pk}, {self.path_1_b.pk}]}}]'
         )
+        topo = self.create_line_topology(serialized)
+
+        # Check its geometry and coupling status
+        self.assertTrue(topo.coupled)
         self.assertEqual(
             LineString(
                 (700000, 6600000),
@@ -1153,6 +1205,8 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             topo.geom,
         )
+
+        # Change path 1_b's geometry. It is now intersecting path 2_a exactly on the topology waypoint.
         self.path_1_b.geom = LineString(
             Point(700050, 6600050),
             Point(700100, 6600100),
@@ -1161,21 +1215,10 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             srid=settings.SRID,
         )
         self.path_1_b.save()
-        topo.reload()
-        self.assertEqual(
-            LineString(
-                (700000, 6600000),
-                (700050, 6600050),
-                (700025, 6600075),
-                (700050, 6600050),
-                (700100, 6600100),
-                (700050, 6600100),
-                (700025, 6600075),
-                (700000, 6600050),
-                srid=settings.SRID,
-            ),
-            topo.geom,
-        )
+
+        # The topology should be decoupled and its geometry should not have changed
+        topo.refresh_from_db()
+        self.assertFalse(topo.coupled)
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=topo).values_list(
@@ -1183,8 +1226,23 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                 )
             ),
             [0, 1, 1, 2, 2, 2, 3, 3, 4, 4],
-        )  # /!\ Duplicated Point
+        )  # /!\ Duplicated waypoint
+        self.assertEqual(
+            LineString(
+                (700000, 6600000),
+                (700050, 6600050),
+                (700025, 6600075),
+                (700050, 6600050),
+                (700100, 6600100),
+                srid=settings.SRID,
+            ),
+            topo.geom,
+        )
+
+        # Run the reorder_topologies command
         call_command("reorder_topologies", verbosity=0)
+
+        # Check its path aggregations
         geometries = self.get_geometries(topo)
         self.assertEqual(
             geometries,
@@ -1204,7 +1262,6 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                 LineString((700025, 6600075), (700000, 6600050), srid=2154).ewkt,
             ],
         )
-
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=topo).values_list(
@@ -1213,7 +1270,10 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 1, 2, 3, 4, 5, 6],
         )
-        topo.reload()
+
+        # The topology should be recoupled and its geometry should have been updated
+        topo.refresh_from_db()
+        self.assertTrue(topo.coupled)
         self.assertEqual(
             LineString(
                 (700000, 6600000),
@@ -1250,49 +1310,63 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         FAILED
 
         """
-        topo = TrekFactory.create(
-            paths=[
-                (self.path_1_a, 0, 1),
-                (self.path_2_a, 1, 0.5),
-                (self.path_2_a, 0.5, 0.5),
-                # (self.path_2_a, 0.5, 1), Doesn't exist in this test => MultiLinestring
-                (self.path_1_b, 0, 1),
-            ]
+
+        # Create a topology and make it invalid by deleting one of its path aggregations
+        serialized = (
+            f'[{{"positions":{{"0":[0,1], "1":[1,0.5]}}, "paths":[{self.path_1_a.pk}, {self.path_2_a.pk}]}},'
+            f'{{"positions":{{"0":[0.5,1], "1":[0,1]}}, "paths":[{self.path_2_a.pk}, {self.path_1_b.pk}]}}]'
         )
+        topo = self.create_line_topology(serialized)
+        PathAggregation.objects.get(
+            topo_object=topo, path=self.path_2_a, start_position=0.5, end_position=1
+        ).delete()
+
+        # Check its geometry and coupling status
+        topo.refresh_from_db()
+        self.assertFalse(topo.coupled)
         self.assertEqual(
-            MultiLineString(
-                LineString((700000, 6600000), (700050, 6600050)),
-                LineString((700050, 6600050), (700025, 6600075)),
-                LineString((700050, 6600050), (700100, 6600100)),
+            LineString(
+                (700000, 6600000),
+                (700050, 6600050),
+                (700025, 6600075),
+                (700050, 6600050),
+                (700100, 6600100),
                 srid=settings.SRID,
             ),
             topo.geom,
         )
+
+        # Add a new path intersecting path 1_a
         PathFactory.create(
             geom=LineString(
                 Point(700000, 6600090), Point(700090, 6600000), srid=settings.SRID
             )
         )
-        topo.reload()
 
+        # The topology should still be decoupled and its geometry should not have changed
+        topo.refresh_from_db()
+        self.assertFalse(topo.coupled)
         self.assertEqual(
             list(
                 PathAggregation.objects.filter(topo_object=topo).values_list(
                     "order", flat=True
                 )
             ),
-            [0, 0, 1, 2, 3],
+            [0, 0, 1, 2, 4],
         )
         self.assertEqual(
-            MultiLineString(
-                LineString((700000, 6600000), (700045, 6600045)),
-                LineString((700050, 6600050), (700025, 6600075)),
-                LineString((700045, 6600045), (700050, 6600050)),
-                LineString((700050, 6600050), (700100, 6600100)),
+            LineString(
+                (700000, 6600000),
+                (700050, 6600050),
+                (700025, 6600075),
+                (700050, 6600050),
+                (700100, 6600100),
                 srid=settings.SRID,
             ),
             topo.geom,
         )
+
+        # Run the reorder_topologies command: it should fail
         output = StringIO()
         call_command("reorder_topologies", stdout=output)
         self.assertIn(
@@ -1307,14 +1381,15 @@ class ReorderTopologiesPathAggregationTest(TestCase):
                     "order", flat=True
                 )
             ),
-            [0, 0, 1, 2, 3],
+            [0, 0, 1, 2, 4],
         )
         self.assertEqual(
-            MultiLineString(
-                LineString((700000, 6600000), (700045, 6600045)),
-                LineString((700050, 6600050), (700025, 6600075)),
-                LineString((700045, 6600045), (700050, 6600050)),
-                LineString((700050, 6600050), (700100, 6600100)),
+            LineString(
+                (700000, 6600000),
+                (700050, 6600050),
+                (700025, 6600075),
+                (700050, 6600050),
+                (700100, 6600100),
                 srid=settings.SRID,
             ),
             topo.geom,

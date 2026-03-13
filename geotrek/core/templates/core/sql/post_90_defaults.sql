@@ -25,6 +25,7 @@ ALTER TABLE core_path ALTER COLUMN max_elevation SET DEFAULT 0;
 ALTER TABLE core_path ALTER COLUMN slope SET DEFAULT 0.0;
 ALTER TABLE core_path ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE core_path ALTER COLUMN date_update SET DEFAULT now();
+ALTER TABLE core_path ALTER COLUMN is_being_split SET DEFAULT FALSE;
 
 -- structure
 
