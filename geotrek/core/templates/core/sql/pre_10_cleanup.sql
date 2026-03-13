@@ -8,6 +8,7 @@ DROP FUNCTION IF EXISTS st_line_extend(geometry, double precision, double precis
 DROP FUNCTION IF EXISTS ft_IsBefore(geometry, geometry) CASCADE;
 DROP FUNCTION IF EXISTS ft_IsAfter(geometry, geometry) CASCADE;
 DROP FUNCTION IF EXISTS ft_Smart_MakeLine(geometry[]) CASCADE;
+DROP FUNCTION IF EXISTS TopologyIsValid(integer) CASCADE;
 
 -- 20
 
@@ -16,6 +17,7 @@ DROP FUNCTION IF EXISTS topology_latest_updated_d() CASCADE;
 
 DROP FUNCTION IF EXISTS update_geometry_of_evenement(integer) CASCADE;
 DROP FUNCTION IF EXISTS update_geometry_of_topology(integer) CASCADE;
+DROP FUNCTION IF EXISTS update_geometry_of_topologies() CASCADE;
 
 DROP FUNCTION IF EXISTS update_evenement_geom_when_offset_changes() CASCADE;
 DROP FUNCTION IF EXISTS update_topology_geom_when_offset_changes() CASCADE;
@@ -45,7 +47,6 @@ DROP FUNCTION IF EXISTS elevation_troncon_iu() CASCADE;
 DROP FUNCTION IF EXISTS elevation_path_iu() CASCADE;
 
 DROP FUNCTION IF EXISTS troncons_related_objects_d() CASCADE;
-DROP FUNCTION IF EXISTS paths_related_objects_d() CASCADE;
 
 DROP FUNCTION IF EXISTS troncon_latest_updated_d() CASCADE;
 DROP FUNCTION IF EXISTS path_latest_updated_d() CASCADE;

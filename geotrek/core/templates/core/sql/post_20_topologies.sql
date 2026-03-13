@@ -34,7 +34,7 @@ FOR EACH ROW EXECUTE PROCEDURE topology_latest_updated_d();
 
 
 -------------------------------------------------------------------------------
--- Update geometry of a topology
+-- Update geometry of topologies
 -------------------------------------------------------------------------------
 
 CREATE FUNCTION {{ schema_geotrek }}.update_geometry_of_topology(topology_id integer) RETURNS void AS $$
@@ -63,6 +63,17 @@ BEGIN
         RETURN;
     END IF;
 
+    -- If any path linked to this topology is currently being split, don't do anything.
+    -- This function will be called again once the split is complete.
+    IF EXISTS (
+        SELECT 1
+        FROM core_pathaggregation cpa
+        JOIN core_path cp ON cp.id = cpa.path_id
+        WHERE cpa.topo_object_id = topology_id AND cp.is_being_split = TRUE
+    ) THEN
+        RETURN;
+    END IF;
+
     -- See what kind of topology we have
     SELECT bool_and(et.start_position != et.end_position), bool_and(et.start_position = et.end_position), count(*)
         INTO lines_only, points_only, t_count
@@ -76,14 +87,20 @@ BEGIN
 
     -- RAISE NOTICE 'update_geometry_of_topology (lines_only:% points_only:% t_count:%)', lines_only, points_only, t_count;
 
-    IF t_count = 0 THEN
-        -- No more paths, close this topology
-        UPDATE core_topology SET deleted = true, geom = NULL, "length" = 0 WHERE id = topology_id;
-    ELSIF (NOT lines_only AND t_count = 1) OR points_only THEN
+    IF t_count = 0 OR NOT TopologyIsValid(topology_id) THEN
+       -- If the topology is invalid or if there are no longer any path aggregations linked to this
+       -- topology, we decouple it from the path network, and we don't update its geometry.
+        UPDATE core_topology SET coupled = FALSE, geom_need_update = FALSE WHERE id = topology_id;
+        RETURN;
+    ELSE
+        UPDATE core_topology SET coupled = TRUE WHERE id = topology_id;
+    END IF;
+
+    IF (NOT lines_only AND t_count = 1) OR points_only THEN
         -- Special case: the topology describe a point on the path
         -- Note: We are faking a M-geometry in order to use LocateAlong.
         -- This is handy because this function includes an offset parameter
-        -- which could be otherwise diffcult to handle.
+        -- which could be otherwise difficult to handle.
         SELECT geom, "offset" INTO egeom, t_offset FROM core_topology e WHERE e.id = topology_id;
         -- RAISE NOTICE '% % % %', (t_offset = 0), (egeom IS NULL), (ST_IsEmpty(egeom)), (ST_X(egeom) = 0 AND ST_Y(egeom) = 0);
         IF t_offset = 0 OR egeom IS NULL OR ST_IsEmpty(egeom) OR (ST_X(egeom) = 0 AND ST_Y(egeom) = 0) THEN
@@ -132,19 +149,29 @@ BEGIN
         END IF;
     END IF;
 
-    IF t_count > 0 THEN
-        SELECT * FROM ft_elevation_infos(egeom_3d, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
-        UPDATE core_topology SET geom = ST_Force2D(egeom),
-                                 geom_3d = ST_Force3DZ(elevation.draped),
-                                 "length" = ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]'),
-                                 slope = elevation.slope,
-                                 min_elevation = elevation.min_elevation,
-                                 max_elevation = elevation.max_elevation,
-                                 ascent = elevation.positive_gain,
-                                 descent = elevation.negative_gain
-                             WHERE id = topology_id;
-    END IF;
+    SELECT * FROM ft_elevation_infos(egeom_3d, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
+    UPDATE core_topology SET geom = ST_Force2D(egeom),
+                             geom_3d = ST_Force3DZ(elevation.draped),
+                             "length" = ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]'),
+                             slope = elevation.slope,
+                             min_elevation = elevation.min_elevation,
+                             max_elevation = elevation.max_elevation,
+                             ascent = elevation.positive_gain,
+                             descent = elevation.negative_gain
+                         WHERE id = topology_id;
+
     UPDATE core_topology SET geom_need_update = FALSE WHERE id = topology_id;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE FUNCTION {{ schema_geotrek }}.update_geometry_of_topologies() RETURNS void AS $$
+DECLARE
+    rec record;
+BEGIN
+    FOR rec IN SELECT * FROM core_topology WHERE geom_need_update = TRUE LOOP
+        PERFORM update_geometry_of_topology(rec.id);
+    END LOOP;
 END;
 $$ LANGUAGE plpgsql;
 

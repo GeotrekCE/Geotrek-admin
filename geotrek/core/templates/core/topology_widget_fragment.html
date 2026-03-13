@@ -1,11 +1,96 @@
-{% extends "leaflet/widget.html" %}
+{% load static %}
+
+<style>
+    {% block map_css %}
+        #{{ id_map }} {
+        width: 100%;
+        height: 100%;
+        }
+        {% if not display_raw %}
+            #{{ id }} {
+            display: none;
+            }
+        {% endif %}
+    {% endblock map_css %}
+</style>
+
 {% block map %}
-    {{ block.super }}
-    {% include "core/toast_wrong_topology_route.html" %}
+    {% if not target_map %}
+        <div id="{{ id_map }}" class="maplibre-map"></div>
+        {% include "core/toast_wrong_topology_route.html" %}
+    {% endif %}
 {% endblock map %}
 
 {% block vars %}
-    {{ block.super }}
     {{ module }}.is_point_topology = {{ is_point_topology|yesno:"true,false" }};
     {{ module }}.is_line_topology = {{ is_line_topology|yesno:"true,false" }};
 {% endblock vars %}
+
+
+<script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', function () {
+        const fieldId = '{{ id }}';
+        const options = {
+            modifiable: 'true',
+            geomType: 'POINT',
+        };
+        const targetMapId = '{{ target_map|default:"" }}';
+        if (targetMapId) {
+            // Se branche sur une carte existante définie par target_map
+            window.addEventListener('map:init', function (e) {
+                if (e.detail.fieldId === 'id_' + targetMapId) {
+                    const sharedMap = e.detail.map;
+                    new MaplibreTopologyField(sharedMap, fieldId, options);
+                }
+            });
+        } else {
+            // Ce champ est responsable de créer la carte
+            const mapId = '{{ id_map }}';
+            const {BOUNDS, DEFAULT_CENTER, DEFAULT_ZOOM, SCALE, TILES} = window.SETTINGS.map.maplibreConfig;
+            const bounds = [BOUNDS[0], BOUNDS[1]];
+
+            const map = new MaplibreMap(mapId, DEFAULT_CENTER, DEFAULT_ZOOM, bounds, SCALE);
+            const layerManager = new MaplibreLayerManager();
+
+            map.getMap().on('load', function () {
+                // Ajout de la couche d’objets contextuels
+                const modelname = document.body.getAttribute('data-modelname');
+                console.log('modelname : ', modelname);
+                const layerUrl = window.SETTINGS.urls.layer.replace(/modelname/g, modelname);
+                const style = window.SETTINGS.map.styles.others;
+                const objectsLayer = new MaplibreObjectsLayer(null, {
+                    style: typeof style === "function" ? {} : style,
+                    modelname: modelname,
+                    readonly: true,
+                    nameHTML: '<span style="color:' + style['color'] + ';">&#x25A3;</span>&nbsp;' + modelname,
+                    category: tr("Objects"),
+                    dataUrl: layerUrl,
+                    primaryKey: generateUniqueId(),
+                    isLazy: false,
+                });
+                objectsLayer.initialize(map.getMap());
+
+                // Base layers
+                TILES.forEach(([tileName, tileUrl, tileAttribution]) => {
+                    layerManager.addBaseLayer(tileName, {
+                        id: tileName + '-base',
+                        tiles: [tileUrl],
+                        attribution: tileAttribution,
+                    });
+                });
+
+                map.getMap().addControl(new MaplibreLayerControl(layerManager), 'top-right');
+                map.getMap().addControl(new MaplibreFileLayerControl({
+                    layerOptions: {
+                        style: window.SETTINGS.map.styles.filelayer,
+                    }
+                }), 'top-left');
+                map.getMap().addControl(new MaplibreResetViewControl(bounds), 'top-left');
+
+            });
+        }
+    });
+</script>
+
+{% if display_raw %}<p>Geometry:</p>{% endif %}
+<textarea id="{{ id }}" class="required" cols="150" rows="10" name="{{ name }}">{{ serialized }}</textarea>

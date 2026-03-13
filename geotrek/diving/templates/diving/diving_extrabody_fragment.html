@@ -1,6 +1,11 @@
-{% load static i18n %}
+{% load static i18n geotrek_tags %}
+{% settings_value "DIVE_MODEL_ENABLED" as dive_enabled %}
+
+{% if dive_enabled %}
 <script type="text/javascript">
-    MapEntity.i18n['Dives'] = "{% trans "Dives" %}";
-    MapEntity.i18n['Diving'] = "{% trans "Diving" %}";
+    {#MapEntity.i18n['Dives'] = "{% trans "Dives" %}";#}
+    {#MapEntity.i18n['Diving'] = "{% trans "Diving" %}";#}
+
     window.SETTINGS.urls['dive_layer'] = "{% url "diving:dive-drf-list" format="geojson" %}";
 </script>
+{% endif %}
