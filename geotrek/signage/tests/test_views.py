@@ -171,6 +171,9 @@ class BladeViewsTest(CommonTest):
         signa = SignageFactory.create()
         self._post_form(self._get_add_url() + f"?signage={signa.pk}")
 
+    def _check_update_geom_permission(self, response):
+        """Don't test because a blade has no geom"""
+
     def test_creation_form_on_signage(self):
         signa = SignageFactory.create()
         signage = f"{signa}"

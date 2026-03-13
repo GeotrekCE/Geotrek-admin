@@ -361,7 +361,6 @@ class BladeMultiUpdate(MapEntityMultiUpdate):
 
     def get_editable_fields(self):
         editable_fields = super().get_editable_fields()
-        editable_fields.remove("topology")
         editable_fields.remove("signage")
         return editable_fields
 

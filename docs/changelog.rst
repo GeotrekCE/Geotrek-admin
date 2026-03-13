@@ -22,6 +22,7 @@ CHANGELOG
 * Remove the "invalid geometry" filter
 * From now, if a module is disabled by its setting, it is completely hidden from menu, layer tree, admin and API responses.
 * Add ``--ids`` option to the ``reorder_topologies`` command to process specific topologies by ID
+* Remove blade double link (keep signage ForeignKey and remove topology ForeignKey) (#3009)
 
 
 2.124.2         (2026-03-03)
