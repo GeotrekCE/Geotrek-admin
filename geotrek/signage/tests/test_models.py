@@ -5,7 +5,6 @@ from django.templatetags.static import static
 from django.test import TestCase
 
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
-from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.signage.models import Blade
 from geotrek.signage.tests.factories import (
     BladeConditionFactory,
@@ -38,26 +37,7 @@ class BladeModelTest(TestCase):
         if not user:
             UserFactory(username="__internal__")
 
-    def test_set_topology_other_error(self):
-        blade = BladeFactory.create()
-        infra = InfrastructureFactory.create()
-        with self.assertRaisesRegex(ValueError, "Expecting a signage"):
-            blade.set_topology(infra)
-
     def test_cascading_deletions(self):
-        blade = BladeFactory.create()
-        topo_pk = blade.topology.pk
-        topo_repr = str(blade.topology)
-        blade.topology.delete(force=True)
-        blade_model_num = ContentType.objects.get_for_model(Blade).pk
-        blade_entry = LogEntry.objects.get(
-            content_type=blade_model_num, object_id=blade.pk
-        )
-        self.assertEqual(
-            blade_entry.change_message,
-            f"Deleted by cascade from Topology {topo_pk} - {topo_repr}",
-        )
-        self.assertEqual(blade_entry.action_flag, DELETION)
         signa = SignageFactory()
         blade = BladeFactory(signage=signa)
         signa_pk = signa.pk

@@ -3,16 +3,11 @@ from crispy_forms.layout import Div, Fieldset, Layout
 from dal import autocomplete
 from django import forms
 from django.conf import settings
-from django.contrib.gis.forms.fields import GeometryField
 from django.db.models import Max
 from django.forms.models import inlineformset_factory
-from django.templatetags.static import static
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
-from mapentity.widgets import MapWidget
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.fields import TopologyField
 from geotrek.core.widgets import PointTopologyWidget
 from geotrek.infrastructure.forms import BaseInfrastructureForm
 from geotrek.signage.models import Blade, Line, LinePictogram, Signage
@@ -60,9 +55,7 @@ class LineForm(forms.ModelForm):
 LineFormset = inlineformset_factory(Blade, Line, form=LineForm, extra=1)
 
 
-class BaseBladeForm(CommonForm):
-    geomfields = ["topology"]
-
+class BladeForm(CommonForm):
     fieldslayout = (
         [
             Div(
@@ -103,12 +96,11 @@ class BaseBladeForm(CommonForm):
             del self.fields["direction"]
 
     def save(self, *args, **kwargs):
-        self.instance.set_topology(self.signage)
         self.instance.signage = self.signage
         return super(CommonForm, self).save(*args, **kwargs)
 
     def clean_number(self):
-        blades = self.signage.blade_set.all()
+        blades = self.signage.blades.all()
         if self.instance.pk:
             blades = blades.exclude(number=self.instance.number)
         already_used = ", ".join(
@@ -122,7 +114,7 @@ class BaseBladeForm(CommonForm):
         return self.cleaned_data["number"]
 
     def _set_number_field_initial_value(self):
-        value_max = self.signage.blade_set.all().aggregate(max=Max("number"))["max"]
+        value_max = self.signage.blades.all().aggregate(max=Max("number"))["max"]
         if settings.BLADE_CODE_TYPE is int:
             if not value_max:
                 self.fields["number"].initial = "1"
@@ -137,42 +129,6 @@ class BaseBladeForm(CommonForm):
     class Meta:
         model = Blade
         fields = ["id", "number", "direction", "type", "conditions", "color"]
-
-
-if settings.TREKKING_TOPOLOGY_ENABLED:
-
-    class BladeForm(BaseBladeForm):
-        topology = TopologyField(label="")
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
-            self.fields["topology"].initial = self.signage
-            self.fields["topology"].widget = PointTopologyWidget()
-            self.fields["topology"].widget.modifiable = True
-            icon = self.signage._meta.model_name
-            title = _("On: %(target)s") % {"target": self.signage}
-
-            self.fields["topology"].label = mark_safe(
-                f'<img src="{static(f"images/{icon}-16.png")}" title="{title}" /><a href="{self.signage.get_detail_url()}">{title}</a>'
-            )
-
-else:
-
-    class BladeForm(BaseBladeForm):
-        topology = GeometryField(label="")
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
-            self.fields["topology"].initial = self.signage.geom
-            self.fields["topology"].widget = MapWidget(attrs={"geom_type": "POINT"})
-            self.fields["topology"].widget.modifiable = False
-            icon = self.signage._meta.model_name
-            title = _("On: %(target)s") % {"target": self.signage}
-            self.fields["topology"].label = mark_safe(
-                f'<img src="{static(f"images/{icon}-16.png")}" title="{title}" /><a href="{self.signage.get_detail_url()}">{title}</a>'
-            )
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
