@@ -65,18 +65,12 @@ CREATE TRIGGER core_pathaggregation_geometry_tgr
 AFTER INSERT OR UPDATE OR DELETE ON core_pathaggregation
 FOR EACH ROW EXECUTE PROCEDURE ft_topologies_paths_geometry();
 
-
 DROP TRIGGER IF EXISTS core_pathaggregation_geometry_statement_tgr ON core_pathaggregation;
 DROP FUNCTION IF EXISTS ft_topologies_paths_geometry_statement() CASCADE;
 
 CREATE FUNCTION {{ schema_geotrek }}.ft_topologies_paths_geometry_statement() RETURNS trigger SECURITY DEFINER AS $$
-DECLARE
-    rec record;
 BEGIN
-    FOR rec IN SELECT * FROM core_topology WHERE geom_need_update = TRUE LOOP
-        PERFORM update_geometry_of_topology(rec.id);
-    END LOOP;
-
+    PERFORM update_geometry_of_topologies();
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
