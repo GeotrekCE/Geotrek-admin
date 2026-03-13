@@ -4,6 +4,8 @@ module.exports = defineConfig({
   projectId: 'ktpy7v',
   e2e: {
     baseUrl: 'http://geotrek.local:8000',
+    supportFile: 'support/e2e.js',
+    specPattern: 'e2e/**/*.cy.js',
     allowCypressEnv: false,
     viewportWidth: 1280,
     viewportHeight: 720,
