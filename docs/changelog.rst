@@ -17,6 +17,7 @@ CHANGELOG
 **Improvements**
 
 * Add a "Network-coupled" boolean field and its corresponding filter to the ``Topology`` model
+* Don't update the geometry of a topology when it's decoupled from the path network
 * Strengthen the "invalid topology" filter criteria
 * Remove the "invalid geometry" filter
 

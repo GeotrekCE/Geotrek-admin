@@ -17,6 +17,7 @@ DROP FUNCTION IF EXISTS topology_latest_updated_d() CASCADE;
 
 DROP FUNCTION IF EXISTS update_geometry_of_evenement(integer) CASCADE;
 DROP FUNCTION IF EXISTS update_geometry_of_topology(integer) CASCADE;
+DROP FUNCTION IF EXISTS update_geometry_of_topologies() CASCADE;
 
 DROP FUNCTION IF EXISTS update_evenement_geom_when_offset_changes() CASCADE;
 DROP FUNCTION IF EXISTS update_topology_geom_when_offset_changes() CASCADE;

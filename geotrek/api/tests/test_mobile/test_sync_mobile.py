@@ -10,6 +10,7 @@ from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiLineString, Point
 from django.core import management
 from django.core.management.base import CommandError
+from django.db import connection
 from django.db.models import Q
 from django.http import HttpResponse, StreamingHttpResponse
 from django.test import TestCase
@@ -176,9 +177,14 @@ class SyncMobileTilesTest(VarTmpTestCase):
         )
         if settings.TREKKING_TOPOLOGY_ENABLED:
             p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
-            trek_multi = TrekFactory.create(
-                published=True, paths=[(p, 0, 0.1), (p, 0.2, 0.3)]
+
+            trek_multi = TrekFactory.create(published=True)
+            cursor = connection.cursor()
+            cursor.execute(
+                """UPDATE core_topology SET geom=ST_GeomFromText('SRID=2154;MULTILINESTRING ((0 0, 0 1), (0 2, 0 3))') WHERE id=%s""",
+                [trek_multi.id],
             )
+
             trek_point = TrekFactory.create(
                 published=True,
                 paths=[
