@@ -153,6 +153,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
     permission_classes = [IsAuthenticated]
     filterset_class = ReportEmailFilterSet
     mapentity_list_class = ReportList
+    vector_tiles_fields = ("id",)
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("status")

@@ -1,4 +1,6 @@
-from geotrek.core.forms import TopologyForm
+from django.conf import settings
+from django.contrib.gis.forms import LineStringField
+
 from geotrek.core.widgets import LineTopologyWidget
 
 from .models import (
@@ -10,13 +12,29 @@ from .models import (
     WorkManagementEdge,
 )
 
+if settings.TREKKING_TOPOLOGY_ENABLED:
+    from ..core.mixins.forms import TopologyForm as BaseForm
+else:
+    from geotrek.common.forms import CommonForm as BaseForm
 
-class EdgeForm(TopologyForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        modifiable = self.fields["topology"].widget.modifiable
-        self.fields["topology"].widget = LineTopologyWidget()
-        self.fields["topology"].widget.modifiable = modifiable
+
+class EdgeForm(BaseForm):
+    if settings.TREKKING_TOPOLOGY_ENABLED:
+
+        def __init__(self, *args, **kwargs):
+            super().__init__(*args, **kwargs)
+            modifiable = self.fields["topology"].widget.modifiable
+            self.fields["topology"].widget = LineTopologyWidget()
+            self.fields["topology"].widget.modifiable = modifiable
+    else:
+        geom = LineStringField()
+
+        geom_fields = [
+            "geom",
+        ]
+
+        class Meta(BaseForm.Meta):
+            fields = [*BaseForm.Meta.fields, "geom"]
 
 
 class PhysicalEdgeForm(EdgeForm):

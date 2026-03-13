@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-09 11:30+0100\n"
+"POT-Creation-Date: 2026-02-27 14:46+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
@@ -33,9 +33,6 @@ msgstr "La topologie n'est pas valide."
 #, python-format
 msgid "Topology %s does not exist."
 msgstr "La topologie %s n'existe pas."
-
-msgid "Linestring invalid snapping."
-msgstr "La ligne a un snapping invalide."
 
 msgid "Valid topology"
 msgstr "Topologie valide"
@@ -72,6 +69,9 @@ msgstr "La géométrie n'est pas valide."
 
 msgid "Certifications"
 msgstr "Labellisations"
+
+msgid "path"
+msgstr "tronçon"
 
 #, python-format
 msgid "You need to add a network of paths before importing '%(model)s' objects"
@@ -339,14 +339,14 @@ msgstr "Ajouter"
 msgid "Remove"
 msgstr "Supprimer"
 
+msgid "Linestring invalid snapping."
+msgstr "La ligne a un snapping invalide."
+
 msgid "This field is required."
 msgstr "Ce champ est requis."
 
 msgid "Access to the requested resource is restricted. You have been redirected."
 msgstr "L'accès à cette ressource est restreint. Vous avez été redirigé."
-
-msgid "path"
-msgstr "tronçon"
 
 msgid "You should select two paths"
 msgstr "Vous devez sélectionner 2 tronçons"
