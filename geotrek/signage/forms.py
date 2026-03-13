@@ -100,7 +100,7 @@ class BladeForm(CommonForm):
         return super(CommonForm, self).save(*args, **kwargs)
 
     def clean_number(self):
-        blades = self.signage.blade_set.all()
+        blades = self.signage.blades.all()
         if self.instance.pk:
             blades = blades.exclude(number=self.instance.number)
         already_used = ", ".join(
@@ -114,7 +114,7 @@ class BladeForm(CommonForm):
         return self.cleaned_data["number"]
 
     def _set_number_field_initial_value(self):
-        value_max = self.signage.blade_set.all().aggregate(max=Max("number"))["max"]
+        value_max = self.signage.blades.all().aggregate(max=Max("number"))["max"]
         if settings.BLADE_CODE_TYPE is int:
             if not value_max:
                 self.fields["number"].initial = "1"

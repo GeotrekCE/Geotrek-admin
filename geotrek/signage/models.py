@@ -1,9 +1,11 @@
 import os
 
 from django.conf import settings
+from django.contrib.gis.geos import GeometryCollection, Point
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.utils.functional import classproperty
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
@@ -179,7 +181,7 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 
     @property
     def order_blades(self):
-        return self.blade_set.existing().order_by(collate_c("number"))
+        return self.blades.existing().order_by(collate_c("number"))
 
     @property
     def coordinates(self):
@@ -295,7 +297,10 @@ class Blade(
     NoDeleteMixin,
 ):
     signage = models.ForeignKey(
-        Signage, verbose_name=_("Signage"), on_delete=models.CASCADE
+        Signage,
+        verbose_name=_("Signage"),
+        on_delete=models.CASCADE,
+        related_name="blades",
     )
     number = models.CharField(verbose_name=_("Number"), max_length=250)
     direction = models.ForeignKey(
@@ -344,6 +349,13 @@ class Blade(
     @property
     def paths(self):
         return self.signage.paths.all()
+
+    @classproperty
+    def geomfield(cls):
+        # Fake field, TODO: still better than overkill code in views, but can do neater.
+        c = GeometryCollection([Point((0, 0), (1, 1))], srid=settings.SRID)
+        c.name = "geom"
+        return c
 
     @property
     def geom(self):
