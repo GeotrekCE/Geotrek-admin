@@ -382,7 +382,7 @@ tinycss2==1.5.1
     #   weasyprint
 tinyhtml5==2.1.0
     # via weasyprint
-transaction==5.0
+transaction==5.1
     # via zodb
 typing-extensions==4.15.0
     # via
