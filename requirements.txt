@@ -113,7 +113,6 @@ django==5.2.12
     #   django-treebeard
     #   django-weasyprint
     #   djangorestframework
-    #   djangorestframework-gis
     #   drf-extensions
     #   drf-spectacular
     #   drf-yasg
@@ -145,9 +144,7 @@ django-embed-video==1.4.10
     #   mapentity
     #   paperclip
 django-filter==25.2
-    # via
-    #   djangorestframework-gis
-    #   mapentity
+    # via mapentity
 django-js-asset==3.1.2
     # via django-mptt
 django-large-image==0.10.2
@@ -170,7 +167,7 @@ django-weasyprint==2.4.0
     # via
     #   geotrek (setup.py)
     #   mapentity
-djangorestframework==3.16.1
+djangorestframework==3.17.0
     # via
     #   django-large-image
     #   djangorestframework-datatables
@@ -181,7 +178,7 @@ djangorestframework==3.16.1
     #   mapentity
 djangorestframework-datatables==0.7.2
     # via mapentity
-djangorestframework-gis==1.2.0
+djangorestframework-gis==1.0
     # via mapentity
 drf-dynamic-fields==0.4.0
     # via geotrek (setup.py)
