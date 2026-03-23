@@ -10,7 +10,7 @@ asgiref==3.11.1
     # via django
 async-timeout==5.0.1
     # via redis
-attrs==25.4.0
+attrs==26.1.0
     # via
     #   fiona
     #   jsonschema
