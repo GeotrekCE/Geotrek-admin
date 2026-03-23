@@ -36,8 +36,8 @@ class FlatPageAdmin(BaseAdmin):
     form = movenodeform_factory(flatpages_models.FlatPage, form=FlatPageForm)
 
     # Due to an issue with `modeltranslation` we have to specify fields explicitly even though
-    # FlatPagesAdmin inherits ModelAdmin. This is required to show treebeard's fields, `_position`
-    # and `_ref_node_id`.
+    # FlatPagesAdmin inherits ModelAdmin. This is required to show treebeard's fields, `treebeard_position`
+    # and `treebeard_ref_node`.
     fields = (
         "title",
         "published",
@@ -46,8 +46,8 @@ class FlatPageAdmin(BaseAdmin):
         "cover_image",
         "cover_image_author",
         "content",
-        "_position",
-        "_ref_node_id",
+        "treebeard_position",
+        "treebeard_ref_node",
     )
 
     @admin.display(description=_("Portals"))
@@ -124,8 +124,8 @@ class MenuItemAdmin(BaseAdmin):
             None,
             {
                 "fields": [
-                    "_position",
-                    "_ref_node_id",
+                    "treebeard_position",
+                    "treebeard_ref_node",
                 ],
             },
         ),
