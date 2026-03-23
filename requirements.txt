@@ -318,7 +318,7 @@ python-fsutil==0.16.0
     # via django-maintenance-mode
 python-magic==0.4.27
     # via paperclip
-pytz==2025.2
+pytz==2026.1.post1
     # via
     #   datetime
     #   drf-yasg
