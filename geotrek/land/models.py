@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.contrib.gis.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
@@ -10,9 +9,7 @@ from geotrek.common.models import Organism
 from geotrek.common.signals import log_cascade_deletion
 from geotrek.core.models import Path, Topology
 from geotrek.maintenance.models import Intervention, Project
-
-if "geotrek.signage" in settings.INSTALLED_APPS:
-    from geotrek.signage.models import Blade
+from geotrek.signage.models import Blade
 
 
 class Status(GeotrekMapEntityMixin):
@@ -117,10 +114,9 @@ Project.add_property(
     lambda self: self.edges_by_attr("physical_edges"),
     _("Physical edges"),
 )
-if "geotrek.signage" in settings.INSTALLED_APPS:
-    Blade.add_property(
-        "physical_edges", lambda self: self.signage.physical_edges, _("Physical edges")
-    )
+Blade.add_property(
+    "physical_edges", lambda self: self.signage.physical_edges, _("Physical edges")
+)
 
 
 class LandType(StructureOrNoneRelated):
@@ -212,10 +208,7 @@ Intervention.add_property(
 Project.add_property(
     "land_edges", lambda self: self.edges_by_attr("land_edges"), _("Land edges")
 )
-if "geotrek.signage" in settings.INSTALLED_APPS:
-    Blade.add_property(
-        "land_edges", lambda self: self.signage.land_edges, _("Land edges")
-    )
+Blade.add_property("land_edges", lambda self: self.signage.land_edges, _("Land edges"))
 
 
 class CompetenceEdge(GeotrekMapEntityMixin, Topology):
@@ -300,12 +293,11 @@ Project.add_property(
     lambda self: self.edges_by_attr("competence_edges"),
     _("Competence edges"),
 )
-if "geotrek.signage" in settings.INSTALLED_APPS:
-    Blade.add_property(
-        "competence_edges",
-        lambda self: self.signage.competence_edges,
-        _("Competence edges"),
-    )
+Blade.add_property(
+    "competence_edges",
+    lambda self: self.signage.competence_edges,
+    _("Competence edges"),
+)
 
 
 class WorkManagementEdge(GeotrekMapEntityMixin, Topology):
@@ -388,10 +380,9 @@ Project.add_property(
     lambda self: self.edges_by_attr("work_edges"),
     _("Work management edges"),
 )
-if "geotrek.signage" in settings.INSTALLED_APPS:
-    Blade.add_property(
-        "work_edges", lambda self: self.signage.work_edges, _("Work management edges")
-    )
+Blade.add_property(
+    "work_edges", lambda self: self.signage.work_edges, _("Work management edges")
+)
 
 
 class SignageManagementEdge(GeotrekMapEntityMixin, Topology):
@@ -476,12 +467,11 @@ Project.add_property(
     lambda self: self.edges_by_attr("signage_edges"),
     _("Signage management edges"),
 )
-if "geotrek.signage" in settings.INSTALLED_APPS:
-    Blade.add_property(
-        "signage_edges",
-        lambda self: self.signage.signage_edges,
-        _("Signage management edges"),
-    )
+Blade.add_property(
+    "signage_edges",
+    lambda self: self.signage.signage_edges,
+    _("Signage management edges"),
+)
 
 
 class CirculationType(StructureOrNoneRelated):
@@ -599,9 +589,8 @@ Project.add_property(
     lambda self: self.edges_by_attr("circulation_edges"),
     _("Circulation edges"),
 )
-if "geotrek.signage" in settings.INSTALLED_APPS:
-    Blade.add_property(
-        "circulation_edges",
-        lambda self: self.signage.circulation_edges,
-        _("Circulation edges"),
-    )
+Blade.add_property(
+    "circulation_edges",
+    lambda self: self.signage.circulation_edges,
+    _("Circulation edges"),
+)

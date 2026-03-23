@@ -102,7 +102,12 @@ DECLARE
 
     intersections_on_new float8[];
     intersections_on_current float8[];
+
+    is_root_call boolean;  -- True if this is the first (non-recursive) call
 BEGIN
+
+    is_root_call := NEW.is_being_split IS NOT TRUE;
+    UPDATE core_path SET is_being_split = TRUE WHERE id = NEW.id;
 
     -- Copy original geometry
     newgeom := NEW.geom;
@@ -216,7 +221,8 @@ BEGIN
                                                  comfort_id,
                                                  eid,
                                                  geom,
-                                                 draft)
+                                                 draft,
+                                                 is_being_split)
                             VALUES (NEW.structure_id,
                                     NEW.visible,
                                     NEW.valid,
@@ -230,13 +236,20 @@ BEGIN
                                     NEW.comfort_id,
                                     NEW.eid,
                                     segment,
-                                    NEW.draft)
+                                    NEW.draft,
+                                    True)
                             RETURNING id INTO tid_clone;
                     END IF;
                 END IF;
             END LOOP;
 
             -- Recursive triggers did all the work. Stop here.
+            -- Before exiting the function, make sure geometries of topologies will be updated
+            -- (only if this is the top-level call)
+            IF is_root_call IS TRUE THEN
+                UPDATE core_path SET is_being_split = FALSE WHERE is_being_split = TRUE;
+                PERFORM update_geometry_of_topologies();
+            END IF;
             RETURN NULL;
         END IF;
 
@@ -247,6 +260,9 @@ BEGIN
 
         -- Skip if intersections are 0,1 (means not crossing)
         IF array_length(intersections_on_current, 1) > 2 THEN
+
+            UPDATE core_path SET is_being_split = TRUE WHERE id = path.id;
+
             -- RAISE NOTICE 'Current: % % intersecting on current % % : %', NEW.id, NEW.name, path.id, path.name, intersections_on_current;
 
             SELECT array_agg(id) INTO existing_et FROM core_pathaggregation et WHERE et.path_id = path.id;
@@ -291,7 +307,8 @@ BEGIN
                                                  comfort_id,
                                                  eid,
                                                  geom,
-                                                 draft)
+                                                 draft,
+                                                 is_being_split)
                             VALUES (path.structure_id,
                                     path.visible,
                                     path.valid,
@@ -305,7 +322,8 @@ BEGIN
                                     path.comfort_id,
                                     path.eid,
                                     segment,
-                                    path.draft)
+                                    path.draft,
+                                    True)
                             RETURNING id INTO tid_clone;
 
                         -- Copy N-N relations
@@ -448,6 +466,13 @@ BEGIN
 
     IF array_length(intersections_on_new, 1) > 0 OR array_length(intersections_on_current, 1) > 0 THEN
         -- RAISE NOTICE 'Done %-% (%).', NEW.id, NEW.name, ST_AsText(NEW.geom);
+    END IF;
+
+    -- Before exiting the function, make sure geometries of topologies will be updated
+    -- (only if this is the top-level call)
+    IF is_root_call IS TRUE THEN
+        UPDATE core_path SET is_being_split = FALSE WHERE is_being_split = TRUE;
+        PERFORM update_geometry_of_topologies();
     END IF;
     RETURN NULL;
 END;

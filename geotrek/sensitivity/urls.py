@@ -1,9 +1,9 @@
 from django.urls import path, register_converter
-from mapentity.registry import MapEntityOptions, registry
+from mapentity.registry import registry
 
 from geotrek.common.urls import LangConverter
 
-from . import models, views
+from . import entities, models, views
 
 app_name = "sensitivity"
 
@@ -29,4 +29,6 @@ urlpatterns = [
     ),
 ]
 
-urlpatterns += registry.register(models.SensitiveArea, MapEntityOptions)
+urlpatterns += registry.register(
+    models.SensitiveArea, options=entities.SensitiveAreaEntityOptions
+)

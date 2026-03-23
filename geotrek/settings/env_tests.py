@@ -13,9 +13,6 @@ ALLOWED_HOSTS = ['localhost']
 CELERY_ALWAYS_EAGER = True
 
 INSTALLED_APPS += (
-    'geotrek.diving',
-    'geotrek.sensitivity',
-    'geotrek.outdoor',
     'drf_yasg',
 )
 

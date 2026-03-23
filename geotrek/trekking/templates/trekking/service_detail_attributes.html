@@ -12,6 +12,7 @@
             <th>{{ service|verbose:"type" }}</th>
             <td>{{ service.type }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=service %}
         <tr>
             <th>{% trans "External id" %}</th>
             <td>{{ service.get_eid }}</td>

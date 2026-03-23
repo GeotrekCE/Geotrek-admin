@@ -15,34 +15,36 @@
       {{ form.bbox_restrictedarea }}
 {% endif %}
 
-<script type="text/javascript">
-    $(document).ready(function() {
-        $('#id_bbox_city, #id_bbox_district, #id_bbox_restrictedarea').on('change', function() {
-            var mainmap = window.maps[0],
-                bboxval = $(this).val();
+    <script type="text/javascript">
+        window.addEventListener('entity:map:ready', function (event) {
+            const map = event.detail.map.getMap();
 
-            // Clear other filters, but keep this one of course
-            var self = this;
-            $('#id_bbox_city, #id_bbox_district, #id_bbox_restrictedarea').each(function() {
-                if (self != this) {
-                    $(this).val('');
+            $('#id_bbox_city, #id_bbox_district, #id_bbox_restrictedarea').on('change', function () {
+                const bboxval = $(this).val();
+
+                // Clear other filters, but keep this one of course
+                var self = this;
+                $('#id_bbox_city, #id_bbox_district, #id_bbox_restrictedarea').each(function () {
+                    if (self != this) {
+                        $(this).val('');
+                        $(this).removeClass('filter-set');
+                    }
+                });
+
+                // Fit selected bbox, or whole map
+                if (bboxval) {
+                    var bbox = $.map(bboxval.split(','), parseFloat); // minx,miny,maxx,maxy
+                    // MapLibre format: [[west, south], [east, north]] = [[minx, miny], [maxx, maxy]]
+                    map.fitBounds([[bbox[0], bbox[1]], [bbox[2], bbox[3]]]);
+                    $(this).addClass('filter-set');
+                } else {
+                    var maxBounds = map.getMaxBounds();
+                    if (maxBounds) {
+                        map.fitBounds(maxBounds);
+                    }
                     $(this).removeClass('filter-set');
                 }
             });
-
-            // Fit selected bbox, or whole map
-            if (bboxval) {
-                var bbox = $.map(bboxval.split(','), parseFloat); // minx,miny,maxx,maxy
-                mainmap.fitBounds([ [bbox[1], bbox[0]], [bbox[3], bbox[2]] ]);
-                $(this).addClass('filter-set');
-            }
-            else {
-                if(mainmap.options.maxBounds) {
-                    mainmap.fitBounds(mainmap.options.maxBounds);
-                }
-                $(this).removeClass('filter-set');
-            }
         });
-    });
-</script>
+    </script>
 <!-- end land/bbox.html -->

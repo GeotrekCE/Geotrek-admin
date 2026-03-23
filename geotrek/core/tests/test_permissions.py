@@ -6,6 +6,7 @@ from django.contrib.gis.geos import LineString
 from django.test import TestCase
 from mapentity.tests.factories import UserFactory
 
+from geotrek.common.tests.utils import LineStringInBounds
 from geotrek.core.models import Path
 from geotrek.core.tests.factories import ComfortFactory, PathFactory
 
@@ -27,11 +28,11 @@ class PermissionDraftPath(TestCase):
             "arrival": "",
             "source": "",
             "valid": "on",
-            "geom": '{"geom": "LINESTRING (99.0 89.0, 100.0 88.0)", "snap": [null, null]}',
+            "geom": '{"type": "LINESTRING", "coordinates": [[99.0, 89.0], [100.0, 88.0]]}',
         }
 
     def test_permission_view_add_path_with_draft_permission(self):
-        """Check draft checkbox visible if user have add_draft_path permission"""
+        """Check draft checkbox visible if user has add_draft_path permission"""
         user = UserFactory.create()
         user.user_permissions.add(Permission.objects.get(codename="add_path"))
         user.user_permissions.add(Permission.objects.get(codename="add_draft_path"))
@@ -334,7 +335,7 @@ class PermissionDraftPath(TestCase):
         Check save path without permission change_path save with draft=True
         """
         draft_path = PathFactory(
-            name="draft", geom=LineString((0, 2), (4, 2)), draft=True
+            name="draft", geom=LineStringInBounds((0, 2), (4, 2)), draft=True
         )
         user = UserFactory.create()
         user.user_permissions.add(Permission.objects.get(codename="change_path"))
@@ -344,7 +345,7 @@ class PermissionDraftPath(TestCase):
         data = self.get_good_data()
         data["draft"] = True
         response = self.client.post(f"/path/edit/{draft_path.pk}/", data)
-        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.status_code, 302, response.content)
         self.assertTrue(Path.objects.get(pk=draft_path.pk).draft)
 
         # You can change a draft path to a normal path.

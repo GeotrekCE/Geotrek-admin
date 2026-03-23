@@ -10,10 +10,8 @@ from geotrek.api.mobile.views_sync import (
 )
 
 router = routers.DefaultRouter()
-if "geotrek.flatpages" in settings.INSTALLED_APPS:
-    router.register("flatpages", api_mobile.FlatPageViewSet, basename="flatpage")
-if "geotrek.trekking" in settings.INSTALLED_APPS:
-    router.register("treks", api_mobile.TrekViewSet, basename="treks")
+router.register("flatpages", api_mobile.FlatPageViewSet, basename="flatpage")
+router.register("treks", api_mobile.TrekViewSet, basename="treks")
 app_name = "apimobile"
 _urlpatterns = []
 if "drf_yasg" in settings.INSTALLED_APPS:
