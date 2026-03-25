@@ -36,6 +36,7 @@ from geotrek.trekking.models import (
     Route,
     Service,
     Trek,
+    TrekNetwork,
 )
 from geotrek.trekking.parsers import (
     ApidaePOIParser,
@@ -1378,10 +1379,9 @@ class ApidaeTrekParserTests(TestCase):
         self.assertTrue(trek.practice is not None)
         self.assertEqual(trek.practice.name, "Pédestre")
 
-        self.assertEqual(trek.networks.count(), 2)
+        self.assertEqual(trek.networks.count(), 1)
         networks = trek.networks.all()
-        self.assertIn("Hiking itinerary", [n.network for n in networks])
-        self.assertIn("Pedestrian sports", [n.network for n in networks])
+        self.assertEqual(networks[0].network, "Hiking itinerary")
 
         self.assertEqual(Attachment.objects.count(), 1)
         photo = Attachment.objects.first()
@@ -1743,6 +1743,21 @@ class ApidaeTrekParserTests(TestCase):
 
         self.assertEqual(Trek.objects.count(), 1)
         self.assertEqual(Theme.objects.count(), 0)
+
+    @mock.patch("requests.get")
+    def test_trek_network_with_unknown_id_is_not_imported(self, mocked_get):
+        assert 12341234 not in ApidaeTrekParser.activites_ids_as_networks
+
+        mocked_get.side_effect = self.make_dummy_get("trek_with_unknown_network.json")
+
+        call_command(
+            "import",
+            "geotrek.trekking.tests.test_parsers.TestApidaeTrekParser",
+            verbosity=0,
+        )
+
+        self.assertEqual(Trek.objects.count(), 1)
+        self.assertEqual(TrekNetwork.objects.count(), 0)
 
     @mock.patch("requests.get")
     def test_links_to_child_treks_are_set(self, mocked_get):

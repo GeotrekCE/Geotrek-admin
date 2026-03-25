@@ -10,6 +10,10 @@ CHANGELOG
 * Add ``--ids`` option to the ``reorder_topologies`` command to process specific topologies by ID
 * Remove blade double link (keep signage ForeignKey and remove topology ForeignKey) (#3009)
 
+**Bug fixes**
+
+* Add forgotten filter on white-listed networks in Apidae Trek Parser
+
 
 2.124.2         (2026-03-03)
 ----------------------------

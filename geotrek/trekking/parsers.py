@@ -830,7 +830,10 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         default_translation_fieldname = self._get_default_translation_src()
         filtered_activities = []
         for activity in activities:
-            if default_translation_fieldname in activity:
+            if (
+                activity["id"] in self.activites_ids_as_networks
+                and default_translation_fieldname in activity
+            ):
                 filtered_activities.append(activity[default_translation_fieldname])
         return self.apply_filter(dst="networks", src=src, val=filtered_activities)
 
