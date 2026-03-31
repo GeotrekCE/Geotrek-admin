@@ -56,6 +56,7 @@ setup(
         "django-treebeard",
         "easy-thumbnails[svg]",
         "django-maintenance-mode",
+        "bcrypt",
         # prod,
         "gunicorn[gevent]",
         "sentry-sdk",

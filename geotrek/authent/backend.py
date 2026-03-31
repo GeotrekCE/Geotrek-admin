@@ -3,7 +3,7 @@ from collections import namedtuple
 
 from django.conf import settings
 from django.contrib.auth.backends import ModelBackend
-from django.contrib.auth.base_user import check_password
+from django.contrib.auth.hashers import check_password
 from django.contrib.auth.models import Group, User
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
@@ -28,24 +28,35 @@ class DatabaseBackend(ModelBackend):
 
     def authenticate(self, request=None, username=None, password=None):
         credentials = self.query_credentials(username)
-        if credentials and check_password(password, credentials.password):
-            try:
-                user = User.objects.get(username=username)
-            except User.DoesNotExist:
-                user = User.objects.create_user(
-                    username, credentials.email, "password_never_used"
-                )
 
-            if credentials.level == 0:
-                user.is_active = False
-                user.save()
-                return None  # no right
+        if not credentials:
+            return None
 
-            self._update_infos(user, credentials)
-            self._update_groups(user, credentials)
+        # Verify using Django's check_password with the bcrypt_native hasher prefix
+        # This will call NativeBcryptPasswordHasher.verify()
+        password_with_prefix = f"bcrypt_native${credentials.password}"
+        if not check_password(password, password_with_prefix):
+            return None
 
-            return user
-        return None
+        try:
+            user = User.objects.get(username=username)
+        except User.DoesNotExist:
+            user = User.objects.create_user(
+                username, credentials.email, "password_never_used"
+            )
+            # Store the external bcrypt hash with hasher prefix
+            user.password = password_with_prefix
+            user.save()
+
+        if credentials.level == 0:
+            user.is_active = False
+            user.save()
+            return None  # no right
+
+        self._update_infos(user, credentials)
+        self._update_groups(user, credentials)
+
+        return user
 
     def _update_infos(self, user, credentials):
         # Update infos

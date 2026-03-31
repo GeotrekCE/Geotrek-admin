@@ -1,5 +1,5 @@
+import bcrypt
 from django.conf import settings
-from django.contrib.auth.hashers import make_password
 from django.contrib.auth.models import Group
 from django.core.exceptions import ImproperlyConfigured
 from django.db import connections
@@ -34,8 +34,13 @@ def query_db(sqlquery):
     AUTHENT_DATABASE="default",
     AUTHENT_TABLENAME="authent_table",
     AUTHENTICATION_BACKENDS=("geotrek.authent.backend.DatabaseBackend",),
+    PASSWORD_HASHERS=["geotrek.authent.hashers.NativeBcryptPasswordHasher"],
 )
 class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
+    def make_password(self, pwd):
+        pwd = pwd.encode("utf-8")
+        return bcrypt.hashpw(pwd, bcrypt.gensalt()).decode("utf-8")
+
     @classmethod
     def setUpTestData(cls):
         cls.backend = DatabaseBackend()
@@ -76,7 +81,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
         )
         query_db(
             "INSERT INTO {} (username, password) VALUES ('toto', '{}')".format(
-                settings.AUTHENT_TABLENAME, make_password("totopwd")
+                settings.AUTHENT_TABLENAME, self.make_password("totopwd")
             )
         )
         # Valid returns a user
@@ -91,7 +96,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
     def test_login(self):
         query_db(
             "INSERT INTO {} (username, password) VALUES ('harold', '{}')".format(
-                settings.AUTHENT_TABLENAME, make_password("kumar")
+                settings.AUTHENT_TABLENAME, self.make_password("kumar")
             )
         )
         success = self.client.login(username="harold", password="kumar")
@@ -102,7 +107,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
     def test_update(self):
         query_db(
             "INSERT INTO {} (username, password) VALUES ('marc', '{}')".format(
-                settings.AUTHENT_TABLENAME, make_password("maronnier")
+                settings.AUTHENT_TABLENAME, self.make_password("maronnier")
             )
         )
         success = self.client.login(username="marc", password="maronnier")
@@ -110,7 +115,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
         self.client.logout()
         query_db(
             "UPDATE {} SET password = '{}' WHERE username = 'marc'".format(
-                settings.AUTHENT_TABLENAME, make_password("maronier")
+                settings.AUTHENT_TABLENAME, self.make_password("maronier")
             )
         )
         success = self.client.login(username="marc", password="maronnier")
@@ -121,7 +126,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
     def test_userprofile(self):
         query_db(
             "INSERT INTO {} (username, password, first_name, last_name, structure, lang) VALUES ('aladeen', '{}', 'Ala', 'Deen', 'Walydia', 'ar')".format(
-                settings.AUTHENT_TABLENAME, make_password("aladeen")
+                settings.AUTHENT_TABLENAME, self.make_password("aladeen")
             )
         )
         user = self.backend.authenticate(username="aladeen", password="aladeen")
@@ -133,7 +138,7 @@ class AuthentDatabaseTest(AuthentFixturesMixin, TestCase):
     def test_usergroups(self):
         query_db(
             "INSERT INTO {} (username, password) VALUES ('a', '{}')".format(
-                settings.AUTHENT_TABLENAME, make_password("a")
+                settings.AUTHENT_TABLENAME, self.make_password("a")
             )
         )
         user = self.backend.authenticate(username="a", password="a")
