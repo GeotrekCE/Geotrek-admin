@@ -16,7 +16,7 @@ CHANGELOG
 
 **Documentation**
 
-* Add backup & restore section and update index 
+* Add backup & restore section and update index (refs #5376)
 
 2.124.2         (2026-03-03)
 ----------------------------
