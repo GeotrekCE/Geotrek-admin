@@ -65,6 +65,7 @@ Modules de gestion
           :alt: Aménagement
      - :ref:`Aménagement <les-amenagements>` 🗺️
      - | Décrit et localise les ouvrages, le mobilier, les équipements.
+         Gestion avec des informations, du suivi, des travaux.
    * - .. figure:: ../images/user-manual/modules/signaletique.png
           :alt: Signalétique
      - :ref:`Signalétique <la-signaletique>` 🗺️
@@ -115,10 +116,10 @@ Modules de valorisation
        | flore, patrimoine, équipements...).
    * - .. figure:: ../images/user-manual/modules/service.png
      - :ref:`Services <services>`
-     - | Informations pratiques comme les points d'eau, passages 
-       | délicats... selon la typologie souhaitée. Ils n'ont pas de 
-       | description ni de nom, ni de photo et sont uniquement affichés 
-       | sur la carte de l'itinéraire sous forme de pictogramme. 
+     - | Informations pratiques de type ponctuel comme les points d'eau, 
+         passages délicats... selon la typologie souhaitée. Ils n'ont pas 
+         de description ni de nom, ni de photo et sont uniquement affichés 
+         sur la carte de l'itinéraire sous forme de pictogramme. 
    * - .. figure:: ../images/user-manual/modules/contenustouristiques.png
      - :ref:`Contenus touristiques <contenus-touristiques>`
      - | Correspond aux services touristiques pouvant être importés 

@@ -14,6 +14,9 @@ CHANGELOG
 
 * Add forgotten filter on white-listed networks in Apidae Trek Parser
 
+**Documentation**
+
+* Add backup & restore section and update index 
 
 2.124.2         (2026-03-03)
 ----------------------------

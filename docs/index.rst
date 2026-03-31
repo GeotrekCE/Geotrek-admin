@@ -58,7 +58,7 @@ Geotrek-admin's documentation
         Learn by doing
 
     .. grid-item-card:: Install & Configure
-        :link: basic-configuration-update
+        :link: installation
         :link-type: ref
         :link-alt: basic configuration
 
@@ -67,6 +67,7 @@ Geotrek-admin's documentation
         Set up and adapt Geotrek.
 
         - Ubuntu install
+        - Backup & restore
         - Config & users
         - Maintenance
         +++
@@ -193,6 +194,7 @@ You can explore **Geotrek-admin** in action through the demonstration website:
 
     installation-and-configuration/installation
     installation-and-configuration/upgrade
+    installation-and-configuration/backuprestore
     installation-and-configuration/configuration
     installation-and-configuration/maintenance
     installation-and-configuration/exploitation-commands
