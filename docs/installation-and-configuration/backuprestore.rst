@@ -77,15 +77,15 @@ For example:
     sudo -u postgres psql -c "CREATE USER geotrek PASSWORD 'geotrek';"
 
 .. note::
-   
+
    Installation commands may vary depending on the operating system, PostgreSQL version, and package source (distribution repository or official PostgreSQL repository).
 
    For instance, on Ubuntu 24.04 (Noble), the following command can be used:
 
-    .. code-block:: bash
+   .. code-block:: bash
 
-        sudo apt install postgresql-17-pgrouting
-        sudo -u postgres psql -c "CREATE USER geotrek PASSWORD 'geotrek';"
+      sudo apt install postgresql-17-pgrouting
+      sudo -u postgres psql -c "CREATE USER geotrek PASSWORD 'geotrek';"
 
 Database creation
 ------------------
@@ -132,4 +132,4 @@ Once all components have been restored, the application can be started following
 
 .. note::
 
-    Follow :ref:`Fresh installation section <installation>` method to use an existing database rather than creating a new one.
+    Follow :ref:`Fresh installation <fresh-installation>` method to use an existing database rather than creating a new one.
