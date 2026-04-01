@@ -5,6 +5,7 @@ from unittest import skipIf
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.admin.models import DELETION, LogEntry
+from django.contrib.auth.hashers import BCryptSHA256PasswordHasher
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import (
     LineString,
@@ -38,6 +39,8 @@ from geotrek.trekking.tests.factories import (
     WebLinkFactory,
 )
 from geotrek.zoning.tests.factories import CityFactory, DistrictFactory
+
+BCryptSHA256PasswordHasher
 
 
 class TrekTest(TestCase):

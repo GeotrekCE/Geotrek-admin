@@ -150,17 +150,13 @@ class InterventionTest(TestCase):
         """
         infra = InfrastructureFactory.create()
         sign = SignageFactory.create()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            geometry_extern = LineString(
-                Point(700200, 6600100), Point(700300, 6600300), rid=settings.SRID
-            )
-            path_extern = PathFactory.create(geom=geometry_extern)
-            SignageFactory.create(paths=[(path_extern, 1, 1)])
-            InfrastructureFactory.create(paths=[(path_extern, 1, 1)])
-        else:
-            geometry_extern = Point(700300, 6600300, srid=settings.SRID)
-            SignageFactory.create(geom=geometry_extern)
-            InfrastructureFactory.create(geom=geometry_extern)
+        geometry_extern = LineString(
+            Point(700200, 6600100), Point(700300, 6600300), rid=settings.SRID
+        )
+        path_extern = PathFactory.create(geom=geometry_extern)
+        SignageFactory.create(paths=[(path_extern, 1, 1)])
+        InfrastructureFactory.create(paths=[(path_extern, 1, 1)])
+
         interv = InterventionFactory.create(target=infra)
         proj = ProjectFactory.create()
 
