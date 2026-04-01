@@ -456,14 +456,7 @@ class Trek(
 
     @property
     def poi_types(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            # Can't use values_list and must add 'ordering' because of bug:
-            # https://code.djangoproject.com/ticket/14930
-            values = self.pois.values("ordering", "type")
-        else:
-            values = self.pois.values("type")
-        pks = [value["type"] for value in values]
-        return POIType.objects.filter(pk__in=set(pks))
+        return POIType.objects.filter(pk__in=self.pois.values_list("type", flat=True))
 
     @property
     def length_kilometer(self):
@@ -956,7 +949,7 @@ class POI(
 
     @classmethod
     def topology_all_pois(cls, topology, queryset=None):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
+        if topology.coupled:
             qs = cls.overlapping(topology, all_objects=queryset)
         else:
             object_geom = topology.geom.transform(settings.SRID, clone=True).buffer(
