@@ -335,8 +335,6 @@ class Path(
         self.reload()
 
     def delete(self, *args, **kwargs):
-        if not settings.TREKKING_TOPOLOGY_ENABLED:
-            return super().delete(*args, **kwargs)
         topologies = self.topology_set.all()
         if topologies.exists() and not settings.ALLOW_PATH_DELETION_TOPOLOGY:
             raise ProtectedError(
@@ -347,26 +345,25 @@ class Path(
             )
         topologies_list = list(topologies)
         r = super().delete(*args, **kwargs)
-        if not Path.objects.exists():
-            return r
-        for topology in topologies_list:
-            if isinstance(topology.geom, Point):
-                closest = self.closest(topology.geom, self)
-                position, offset = closest.interpolate(topology.geom)
-                new_topology = Topology.objects.create()
-                aggrobj = PathAggregation(
-                    topo_object=new_topology,
-                    start_position=position,
-                    end_position=position,
-                    path=closest,
-                )
-                aggrobj.save()
-                point = Point(topology.geom.x, topology.geom.y, srid=settings.SRID)
-                new_topology.geom = point
-                new_topology.offset = offset
-                new_topology.position = position
-                new_topology.save()
-                topology.mutate(new_topology)
+        if Path.objects.exists():
+            for topology in topologies_list:
+                if isinstance(topology.geom, Point):
+                    closest = self.closest(topology.geom, self)
+                    position, offset = closest.interpolate(topology.geom)
+                    new_topology = Topology.objects.create()
+                    aggrobj = PathAggregation(
+                        topo_object=new_topology,
+                        start_position=position,
+                        end_position=position,
+                        path=closest,
+                    )
+                    aggrobj.save()
+                    point = Point(topology.geom.x, topology.geom.y, srid=settings.SRID)
+                    new_topology.geom = point
+                    new_topology.offset = offset
+                    new_topology.position = position
+                    new_topology.save()
+                    topology.mutate(new_topology)
         return r
 
     @property
@@ -549,7 +546,7 @@ class Topology(
         return "{} ({})".format(_("Topology"), self.pk)
 
     def ispoint(self):
-        if not settings.TREKKING_TOPOLOGY_ENABLED or not self.pk:
+        if not self.pk:
             return self.geom and self.geom.geom_type == "Point"
         return all(
             [a.start_position == a.end_position for a in self.aggregations.all()]
@@ -690,9 +687,9 @@ class Topology(
         return self
 
     def save(self, *args, **kwargs):
-        # HACK: these fields are readonly from the Django point of view
-        # but they can be changed at DB level. Since Django write all fields
-        # to DB anyway, it is important to update it before writting
+        # HACK: these fields are readonly from the Django point of view,
+        # but they can be changed at DB level. Since Django writes all fields
+        # to DB anyway, it is important to update it before writing
         if self.pk and settings.TREKKING_TOPOLOGY_ENABLED:
             existing = self.__class__.objects.get(pk=self.pk)
             self.length = existing.length
@@ -731,7 +728,7 @@ class Topology(
             objdict = dict(kind=self.kind, lng=point.x, lat=point.y)
             if with_pk:
                 objdict["pk"] = self.pk
-            if settings.TREKKING_TOPOLOGY_ENABLED and self.offset == 0:
+            if self.offset == 0:
                 objdict["snap"] = self.aggregations.all()[0].path.pk
         else:
             # Line topology

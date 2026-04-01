@@ -821,7 +821,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             ),
         ) as f:
             trek_geojson = json.load(f)
-            if settings.TREKKING_TOPOLOGY_ENABLED:
+            if self.trek_1.coupled:
                 self.assertEqual(len(trek_geojson["features"]), 2)
             else:
                 # Without dynamic segmentation it used a buffer so we get all the pois normally linked
