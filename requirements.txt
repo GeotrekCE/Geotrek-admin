@@ -15,6 +15,8 @@ attrs==26.1.0
     #   fiona
     #   jsonschema
     #   referencing
+bcrypt==5.0.0
+    # via django-flask-authent-backend
 beautifulsoup4==4.14.3
     # via mapentity
 billiard==4.2.4
@@ -104,6 +106,7 @@ django==5.2.12
     #   django-crispy-forms
     #   django-embed-video
     #   django-filter
+    #   django-flask-authent-backend
     #   django-js-asset
     #   django-large-image
     #   django-leaflet
@@ -148,6 +151,8 @@ django-filter==25.2
     # via
     #   djangorestframework-gis
     #   mapentity
+django-flask-authent-backend @ git+https://github.com/PnX-SI/django-flask-authent-backend@e51797347062fe83fbc845b0dddfa5393aece004
+    # via geotrek (setup.py)
 django-js-asset==3.1.2
     # via django-mptt
 django-large-image==0.10.2

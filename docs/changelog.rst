@@ -7,6 +7,7 @@ CHANGELOG
 
 **Improvements**
 
+* Remove ``DatabaseBackend`` from core and add ``django-flask-authent-backend`` as external dependencies (#5382)
 * Add ``--ids`` option to the ``reorder_topologies`` command to process specific topologies by ID
 * Remove blade double link (keep signage ForeignKey and remove topology ForeignKey) (#3009)
 

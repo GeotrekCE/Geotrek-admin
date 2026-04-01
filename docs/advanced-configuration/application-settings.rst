@@ -234,14 +234,15 @@ To enable this feature, fill these fields in ``/opt/geotrek-admin/var/conf/custo
         'PORT': '<port>',
     }
     AUTHENT_TABLENAME = '<table name>'
-    AUTHENTICATION_BACKENDS = ['geotrek.authent.backend.DatabaseBackend']
+    AUTHENTICATION_BACKENDS = ['django_flask_authent_backend.DatabaseBackend']
+    PASSWORD_HASHERS += ["django_flask_authent_backend.NativeBcryptPasswordHasher"]
 
 Expected columns in table/view are :
 
 * ``username`` : string (*unique*)
 * ``first_name`` : string
 * ``last_name``: string
-* ``password`` : string (simple md5 encoded, or full hashed and salted password)
+* ``password`` : string (full hashed and salted password)
 * ``email`` : string
 * ``level`` : integer (1: readonly, 2: redactor, 3: path manager, 4: trekking manager, 5: management and trekking editor, 6: administrator)
 * ``structure`` : string

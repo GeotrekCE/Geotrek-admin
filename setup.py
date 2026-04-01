@@ -56,6 +56,7 @@ setup(
         "django-treebeard",
         "easy-thumbnails[svg]",
         "django-maintenance-mode",
+        "django-flask-authent-backend @ git+https://github.com/PnX-SI/django-flask-authent-backend@e51797347062fe83fbc845b0dddfa5393aece004",
         # prod,
         "gunicorn[gevent]",
         "sentry-sdk",
