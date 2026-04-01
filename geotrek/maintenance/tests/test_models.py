@@ -150,25 +150,21 @@ class InterventionTest(TestCase):
         """
         infra = InfrastructureFactory.create()
         sign = SignageFactory.create()
-        geometry_extern = LineString(
-            Point(700200, 6600100), Point(700300, 6600300), rid=settings.SRID
-        )
-        path_extern = PathFactory.create(geom=geometry_extern)
-        SignageFactory.create(paths=[(path_extern, 1, 1)])
-        InfrastructureFactory.create(paths=[(path_extern, 1, 1)])
-
+        geometry_extern = Point(700300, 6600300, srid=settings.SRID)
+        sign_2 = SignageFactory.create(geom=geometry_extern)
+        InfrastructureFactory.create(geom=geometry_extern)
         interv = InterventionFactory.create(target=infra)
         proj = ProjectFactory.create()
 
         self.assertEqual(interv.target, infra)
 
-        self.assertEqual(list(interv.signages), [sign])
+        self.assertEqual(list(interv.signages), [sign, sign_2])
         self.assertEqual(list(interv.infrastructures), [infra])
 
         interv.target = sign
         interv.save()
 
-        self.assertEqual(list(interv.signages), [sign])
+        self.assertEqual(list(interv.signages), [sign, sign_2])
         self.assertEqual(list(interv.infrastructures), [infra])
 
         self.assertFalse(interv.in_project)
