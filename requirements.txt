@@ -140,8 +140,9 @@ django-crispy-forms==2.6
     # via
     #   crispy-bootstrap4
     #   mapentity
-django-embed-video==1.4.10
+django-embed-video @ git+https://github.com/jazzband/django-embed-video.git@2b644987acb178d9113854b0c370b178a3a67a5e#egg=django-embed-video
     # via
+    #   geotrek (setup.py)
     #   mapentity
     #   paperclip
 django-filter==25.2
