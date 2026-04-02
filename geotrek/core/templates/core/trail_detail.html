@@ -9,6 +9,6 @@
 {% endblock download %}
 
 {% block mappanel %}
-    {# {{ block.super }} #}
-    {# {% include "altimetry/altimetric_profile_fragment.html" with profile_url="core:trail_profile_svg" %} #}
+    {{ block.super }}
+    {% include "altimetry/altimetric_profile_fragment.html" with profile_url="core:trail_profile_svg" %}
 {% endblock mappanel %}
