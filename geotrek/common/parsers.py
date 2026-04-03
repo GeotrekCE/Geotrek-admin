@@ -1303,7 +1303,6 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
                 if subval.split(self.separator2)[0]
             ]
 
-
     def filter_geom(self, src, val):
         lng, lat = val
         if not lng or not lat:

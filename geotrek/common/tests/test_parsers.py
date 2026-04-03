@@ -1628,9 +1628,8 @@ class TourInSoftParserTests(TestCase):
 
     def test_get_nb_v2(self):
         class TestTourParser(TourInSoftParser):
-            root = {
-                "d": {"__count": "3"}
-            }
+            root = {"d": {"__count": "3"}}
+
             def __init__(self):
                 self.model = Trek
                 super().__init__()
@@ -1642,9 +1641,7 @@ class TourInSoftParserTests(TestCase):
     def test_get_nb_v3(self):
         class TestTourParser(TourInSoftParser):
             version_tourinsoft = 3
-            root = {
-                "value": ["1", "2", "3"]
-            }
+            root = {"value": ["1", "2", "3"]}
 
             def __init__(self):
                 self.model = Trek
@@ -1653,6 +1650,7 @@ class TourInSoftParserTests(TestCase):
         parser = TestTourParser()
         nb = parser.get_nb()
         self.assertEqual(nb, 3)
+
 
 class TourismSystemParserTest(TestCase):
     @mock.patch("geotrek.common.parsers.HTTPBasicAuth")
