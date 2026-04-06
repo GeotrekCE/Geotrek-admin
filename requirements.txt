@@ -288,7 +288,7 @@ persistent==6.5
     # via
     #   btrees
     #   zodb
-pillow==12.1.1
+pillow==12.2.0
     # via
     #   geotrek (setup.py)
     #   cairosvg
