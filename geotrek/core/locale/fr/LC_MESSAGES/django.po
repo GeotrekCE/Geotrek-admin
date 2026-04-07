@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-09 11:30+0100\n"
+"POT-Creation-Date: 2026-02-13 16:31+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
@@ -39,9 +39,6 @@ msgstr "La ligne a un snapping invalide."
 
 msgid "Valid topology"
 msgstr "Topologie valide"
-
-msgid "Valid geometry"
-msgstr "Géometrie valide"
 
 msgid "Provider"
 msgstr "Fournisseur"
@@ -194,6 +191,9 @@ msgstr "Décalage"
 
 msgid "Kind"
 msgstr "Type de topologie"
+
+msgid "Network-coupled"
+msgstr "Couplé au réseau"
 
 msgid "Topology"
 msgstr "Topologie"
