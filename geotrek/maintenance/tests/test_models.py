@@ -158,7 +158,10 @@ class InterventionTest(TestCase):
 
         self.assertEqual(interv.target, infra)
 
-        self.assertEqual(list(interv.signages), [sign, sign_2])
+        self.assertEqual(
+            list(sorted(interv.signages.values_list("pk", flat=True))),
+            sorted([sign.pk, sign_2.pk]),
+        )
         self.assertEqual(list(interv.infrastructures), [infra])
 
         interv.target = sign
