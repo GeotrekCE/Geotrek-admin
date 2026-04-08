@@ -1050,9 +1050,8 @@ POPUP_CONTENT = {
     "service": [],
 }
 
-# Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv("ENV", "prod")
-assert ENV in ("prod", "dev", "tests", "tests_nds")
+assert ENV in ("prod", "dev", "tests")
 env_settings_file = os.path.join(os.path.dirname(__file__), f"env_{ENV}.py")
 with open(env_settings_file) as f:
     logger.info("Read env configuration from %s", env_settings_file)
