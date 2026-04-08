@@ -157,6 +157,12 @@ class Path(
     objects = PathManager()
     include_invisible = PathInvisibleManager()
 
+    is_being_split = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text="Internal field preventing geometry updates on related topologies during path splitting",
+    )
+
     is_reversed = False
     can_duplicate = False
 
@@ -167,19 +173,6 @@ class Path(
     @classproperty
     def length_2d_verbose_name(cls):
         return _("2D Length")
-
-    @classmethod
-    def no_draft_latest_updated(cls):
-        try:
-            latest = (
-                cls.objects.filter(draft=False)
-                .only("date_update")
-                .latest("date_update")
-                .get_date_update()
-            )
-        except cls.DoesNotExist:
-            latest = None
-        return latest
 
     @property
     def length_2d_display(self):
@@ -342,8 +335,6 @@ class Path(
         self.reload()
 
     def delete(self, *args, **kwargs):
-        if not settings.TREKKING_TOPOLOGY_ENABLED:
-            return super().delete(*args, **kwargs)
         topologies = self.topology_set.all()
         if topologies.exists() and not settings.ALLOW_PATH_DELETION_TOPOLOGY:
             raise ProtectedError(
@@ -354,26 +345,25 @@ class Path(
             )
         topologies_list = list(topologies)
         r = super().delete(*args, **kwargs)
-        if not Path.objects.exists():
-            return r
-        for topology in topologies_list:
-            if isinstance(topology.geom, Point):
-                closest = self.closest(topology.geom, self)
-                position, offset = closest.interpolate(topology.geom)
-                new_topology = Topology.objects.create()
-                aggrobj = PathAggregation(
-                    topo_object=new_topology,
-                    start_position=position,
-                    end_position=position,
-                    path=closest,
-                )
-                aggrobj.save()
-                point = Point(topology.geom.x, topology.geom.y, srid=settings.SRID)
-                new_topology.geom = point
-                new_topology.offset = offset
-                new_topology.position = position
-                new_topology.save()
-                topology.mutate(new_topology)
+        if Path.objects.exists():
+            for topology in topologies_list:
+                if isinstance(topology.geom, Point):
+                    closest = self.closest(topology.geom, self)
+                    position, offset = closest.interpolate(topology.geom)
+                    new_topology = Topology.objects.create()
+                    aggrobj = PathAggregation(
+                        topo_object=new_topology,
+                        start_position=position,
+                        end_position=position,
+                        path=closest,
+                    )
+                    aggrobj.save()
+                    point = Point(topology.geom.x, topology.geom.y, srid=settings.SRID)
+                    new_topology.geom = point
+                    new_topology.offset = offset
+                    new_topology.position = position
+                    new_topology.save()
+                    topology.mutate(new_topology)
         return r
 
     @property
@@ -411,42 +401,37 @@ class Path(
         return ", ".join([str(n) for n in self.networks.all()])
 
     def topologies_by_path(self, default_dict):
-        if "geotrek.core" in settings.INSTALLED_APPS:
-            for trail in self.trails:
-                default_dict[_("Trails")].append(
-                    {"name": trail.name, "url": trail.get_detail_url()}
-                )
-        if "geotrek.trekking" in settings.INSTALLED_APPS:
-            for trek in self.treks:
-                default_dict[_("Treks")].append(
-                    {"name": trek.name, "url": trek.get_detail_url()}
-                )
-            for service in self.services:
-                default_dict[_("Services")].append(
-                    {"name": service.type.name, "url": service.get_detail_url()}
-                )
-            for poi in self.pois:
-                default_dict[_("Pois")].append(
-                    {"name": poi.name, "url": poi.get_detail_url()}
-                )
-        if "geotrek.signage" in settings.INSTALLED_APPS:
-            for signage in self.signages:
-                default_dict[_("Signages")].append(
-                    {"name": signage.name, "url": signage.get_detail_url()}
-                )
-        if "geotrek.infrastructure" in settings.INSTALLED_APPS:
-            for infrastructure in self.infrastructures:
-                default_dict[_("Infrastructures")].append(
-                    {
-                        "name": infrastructure.name,
-                        "url": infrastructure.get_detail_url(),
-                    }
-                )
-        if "geotrek.maintenance" in settings.INSTALLED_APPS:
-            for intervention in self.interventions:
-                default_dict[_("Interventions")].append(
-                    {"name": intervention.name, "url": intervention.get_detail_url()}
-                )
+        for trail in self.trails:
+            default_dict[_("Trails")].append(
+                {"name": trail.name, "url": trail.get_detail_url()}
+            )
+        for trek in self.treks:
+            default_dict[_("Treks")].append(
+                {"name": trek.name, "url": trek.get_detail_url()}
+            )
+        for service in self.services:
+            default_dict[_("Services")].append(
+                {"name": service.type.name, "url": service.get_detail_url()}
+            )
+        for poi in self.pois:
+            default_dict[_("Pois")].append(
+                {"name": poi.name, "url": poi.get_detail_url()}
+            )
+        for signage in self.signages:
+            default_dict[_("Signages")].append(
+                {"name": signage.name, "url": signage.get_detail_url()}
+            )
+        for infrastructure in self.infrastructures:
+            default_dict[_("Infrastructures")].append(
+                {
+                    "name": infrastructure.name,
+                    "url": infrastructure.get_detail_url(),
+                }
+            )
+        for intervention in self.interventions:
+            default_dict[_("Interventions")].append(
+                {"name": intervention.name, "url": intervention.get_detail_url()}
+            )
 
     def merge_path(self, path_to_merge):
         """
@@ -516,6 +501,12 @@ class Topology(
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
+    # The geometry is coupled to the path network when the topology is valid and linked to path aggregations
+    # See https://github.com/GeotrekCE/Geotrek-admin/issues/4982
+    coupled = models.BooleanField(
+        default=False, editable=False, verbose_name=_("Network-coupled")
+    )
+
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
     srid = settings.API_SRID
 
@@ -555,7 +546,7 @@ class Topology(
         return "{} ({})".format(_("Topology"), self.pk)
 
     def ispoint(self):
-        if not settings.TREKKING_TOPOLOGY_ENABLED or not self.pk:
+        if not self.pk:
             return self.geom and self.geom.geom_type == "Point"
         return all(
             [a.start_position == a.end_position for a in self.aggregations.all()]
@@ -648,17 +639,13 @@ class Topology(
 
     def mutate(self, other):
         """
-        Take alls attributes of the other topology specified and
-        save them into this one. Optionnally deletes the other.
+        Take all attributes of the other topology specified and save them into this one.
         """
         self.offset = other.offset
         self.save(update_fields=["offset"])
         PathAggregation.objects.filter(topo_object=self).delete()
-        # The previous operation has put deleted = True (in triggers)
-        # and NULL in geom (see update_geometry_of_topology:: IF t_count = 0)
-        self.deleted = False
         self.geom = other.geom
-        self.save(update_fields=["deleted", "geom"])
+        self.save(update_fields=["geom"])
 
         # Now copy all agregations from other to self
         aggrs = other.aggregations.all()
@@ -700,9 +687,9 @@ class Topology(
         return self
 
     def save(self, *args, **kwargs):
-        # HACK: these fields are readonly from the Django point of view
-        # but they can be changed at DB level. Since Django write all fields
-        # to DB anyway, it is important to update it before writting
+        # HACK: these fields are readonly from the Django point of view,
+        # but they can be changed at DB level. Since Django writes all fields
+        # to DB anyway, it is important to update it before writing
         if self.pk and settings.TREKKING_TOPOLOGY_ENABLED:
             existing = self.__class__.objects.get(pk=self.pk)
             self.length = existing.length
@@ -741,7 +728,7 @@ class Topology(
             objdict = dict(kind=self.kind, lng=point.x, lat=point.y)
             if with_pk:
                 objdict["pk"] = self.pk
-            if settings.TREKKING_TOPOLOGY_ENABLED and self.offset == 0:
+            if self.offset == 0:
                 objdict["snap"] = self.aggregations.all()[0].path.pk
         else:
             # Line topology

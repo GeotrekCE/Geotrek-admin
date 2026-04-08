@@ -1,9 +1,12 @@
 {% load i18n geotrek_tags mapentity_tags %}
 
+{% settings_value "TRAIL_MODEL_ENABLED" as trail_enabled %}
+{% settings_value "PATH_MODEL_ENABLED" as path_enabled %}
+
+{% if trail_enabled or path_enabled %}
 <h3>{% trans "Management" %}</h3>
 <table class="table">
-
-  {% if modelname != "path" and appname != "outdoor" %}
+  {% if modelname != "path" and appname != "outdoor" and path_enabled %}
   <tr>
     <th>{% trans "Paths" %}</th>
     <td class="paths">
@@ -20,7 +23,6 @@
   </tr>
   {% endif %}
 
-  {% settings_value "TRAIL_MODEL_ENABLED" as trail_enabled %}
   {% if trail_enabled and modelname != "trail" %}
     <tr>
         <th>{% trans "Trails" %}</th>
@@ -38,3 +40,4 @@
   {% endif %}
 
 </table>
+{% endif %}

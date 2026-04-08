@@ -5,6 +5,22 @@ CHANGELOG
 2.124.3+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Warnings**
+
+* Topologies no longer need to depend on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
+* All geotrek modules are now installed by default. Please remove `geotrek.outdoor`, `geotrek.sensitivity`, `geotrek.diving` from you custom.py file. User setting to disable module if you don't want to use them.
+  - `COURSE_MODEL_ENABLED = FALSE`
+  - `SITE_MODEL_ENABLED = FALSE`  # for outdoor module
+  - `SENSITIVE_AREA_MODEL_ENABLED = FALSE`  # for sensitivity module
+  - `DIVE_MODEL_ENABLED = FALSE`  # for diving module
+
+**Improvements**
+
+* Add a "Network-coupled" boolean field and its corresponding filter to the ``Topology`` model
+* Don't update the geometry of a topology when it's decoupled from the path network
+* Strengthen the "invalid topology" filter criteria
+* Remove the "invalid geometry" filter
+
 
 2.124.3         (2026-04-02)
 ----------------------------
@@ -16,6 +32,7 @@ CHANGELOG
 **Improvements**
 
 * Remove ``DatabaseBackend`` from core and add ``django-flask-authent-backend`` as external dependencies (#5382)
+* From now, if a module is disabled by its setting, it is completely hidden from menu, layer tree, admin and API responses.
 * Add ``--ids`` option to the ``reorder_topologies`` command to process specific topologies by ID
 * Remove blade double link (keep signage ForeignKey and remove topology ForeignKey) (#3009)
 

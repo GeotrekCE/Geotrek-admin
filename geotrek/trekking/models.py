@@ -49,6 +49,7 @@ from geotrek.common.utils import (
 )
 from geotrek.core.models import Path, Topology, simplify_coords
 from geotrek.maintenance.models import Intervention, Project
+from geotrek.signage.models import Blade
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking.managers import (
     POIManager,
@@ -59,10 +60,6 @@ from geotrek.trekking.managers import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-if "geotrek.signage" in settings.INSTALLED_APPS:
-    from geotrek.signage.models import Blade
 
 
 class OrderedTrekChild(models.Model):
@@ -459,14 +456,7 @@ class Trek(
 
     @property
     def poi_types(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            # Can't use values_list and must add 'ordering' because of bug:
-            # https://code.djangoproject.com/ticket/14930
-            values = self.pois.values("ordering", "type")
-        else:
-            values = self.pois.values("type")
-        pks = [value["type"] for value in values]
-        return POIType.objects.filter(pk__in=set(pks))
+        return POIType.objects.filter(pk__in=self.pois.values_list("type", flat=True))
 
     @property
     def length_kilometer(self):
@@ -705,9 +695,7 @@ class Trek(
         )
 
     def get_printcontext(self):
-        maplayers = [
-            settings.LEAFLET_CONFIG["TILES"][0][0],
-        ]
+        maplayers = []
         if settings.SHOW_SENSITIVE_AREAS_ON_MAP_SCREENSHOT:
             maplayers.append(gettext("Sensitive area"))
         if settings.SHOW_POIS_ON_MAP_SCREENSHOT:
@@ -961,7 +949,7 @@ class POI(
 
     @classmethod
     def topology_all_pois(cls, topology, queryset=None):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
+        if topology.coupled:
             qs = cls.overlapping(topology, all_objects=queryset)
         else:
             object_geom = topology.geom.transform(settings.SRID, clone=True).buffer(

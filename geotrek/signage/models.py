@@ -159,7 +159,7 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 
     @classmethod
     def topology_signages(cls, topology, queryset=None):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
+        if topology.coupled:
             qs = cls.overlapping(topology, all_objects=queryset)
         else:
             area = topology.geom.buffer(settings.TREK_SIGNAGE_INTERSECTION_MARGIN)

@@ -176,23 +176,6 @@ To run a specific test suite:
     
                 docker compose run --rm -e ENV=tests web ./manage.py test
 
-You can run test with non dynamic segmentation :
-
-.. md-tab-set::
-    :name: test-nds-tabs
-
-    .. md-tab-item:: With Make
-
-            .. code-block:: python
-    
-                make tests_nds
-
-    .. md-tab-item:: With Docker
-
-         .. code-block:: python
-    
-                docker compose run --rm -e ENV=tests_nds web ./manage.py test
-
 **Cypress tests :**
 
 Create an empty project with Docker :

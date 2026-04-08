@@ -88,6 +88,7 @@ quality: lint format
 
 messages:
 	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete --no-wrap --ignore var/cache
+	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete --no-wrap -d djangojs --ignore var/cache
 
 compilemessages:
 	$(docker_compose) run --rm web ./manage.py compilemessages
@@ -102,17 +103,11 @@ coverage:
 	rm ./var/.coverage* || true
 	@$(PRINT_COLOR) "$(COLOR_SUCCESS) ### Start coverage ### $(COLOR_RESET)\n"
 	$(docker_compose) run -e ENV=tests web coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test $(test_name) --noinput --parallel -v $(verbose_level)
-	$(docker_compose) run -e ENV=tests_nds web coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test $(test_name) --noinput --parallel -v $(verbose_level)
 	$(docker_compose) run -e ENV=tests web bash -c "coverage combine && coverage $(report)"
 	rm ./var/.coverage*
 
-test:
+tests:
 	$(docker_compose) run -e ENV=tests --rm web ./manage.py test $(test_name) --shuffle --noinput --parallel
-
-test_nds:
-	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test $(test_name) --shuffle --noinput --parallel
-
-tests: test test_nds
 
 update:
 	$(docker_compose) run web update.sh
