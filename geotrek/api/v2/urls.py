@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.urls import include, path
 from django.views.generic import RedirectView
+from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework import routers
 
 from geotrek.api.v2 import views as api_views
@@ -212,14 +213,19 @@ if "geotrek.signage" in settings.INSTALLED_APPS:
 
 app_name = "apiv2"
 _urlpatterns = []
-if "drf_yasg" in settings.INSTALLED_APPS:
-    _urlpatterns.append(
+if "drf_spectacular" in settings.INSTALLED_APPS:
+    _urlpatterns += [
+        path(
+            "schema/",
+            api_views.APIV2SchemaView.as_view(),
+            name="schema",
+        ),
         path(
             "",
-            api_views.schema_view.with_ui("swagger", cache_timeout=0),
+            SpectacularSwaggerView.as_view(url_name="apiv2:schema"),
             name="schema-swagger-ui",
-        )
-    )
+        ),
+    ]
 _urlpatterns += [
     path("config/", api_views.ConfigView.as_view(), name="config"),
     path(
