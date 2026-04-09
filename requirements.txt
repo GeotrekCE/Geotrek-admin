@@ -182,7 +182,7 @@ drf-dynamic-fields==0.4.0
     # via geotrek (setup.py)
 drf-extensions==0.8.0
     # via geotrek (setup.py)
-drf-spectacular==0.29.0
+drf-spectacular @ git+https://github.com/submarcos/drf-spectacular.git@095baf762c5308babb6dc0ac485ad97a54d5f985#egg=drf-spectacular
     # via
     #   geotrek (setup.py)
     #   django-large-image
