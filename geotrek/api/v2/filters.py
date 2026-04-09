@@ -151,7 +151,7 @@ class GeotrekInBBoxFilter(InBBOXFilter):
 
 class GeotrekDistanceToPointFilter(DistanceToPointFilter):
     """
-    Override DRF gis DistanceToPointFilter with OpenAPI field descriptors
+    Override DRF gis DistanceToPointFilter with spectacular field descriptors
     """
 
     def get_filter_point(self, request, **kwargs):
@@ -339,7 +339,15 @@ class GeotrekPOIFilter(BaseFilterBackend):
                 "required": False,
                 "in": "query",
                 "description": _(
-                    "Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas."
+                    "Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "courses",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or multiple course id. It will show only the POIs related to this outdoor course. If multiple courses, they should be separated by commas."
                 ),
                 "schema": {"type": "string"},
             },
