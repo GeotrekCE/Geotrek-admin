@@ -5,7 +5,6 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import GeometryCollection
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.indexes import GistIndex
 from django.db.models import Q
@@ -130,6 +129,13 @@ class Intervention(
         related_name="interventions",
         on_delete=models.SET_NULL,
         verbose_name=_("Project"),
+    )
+    geom = models.GeometryField(
+        verbose_name=_("Location"),
+        srid=settings.SRID,
+        editable=False,
+        null=True,
+        spatial_index=True,
     )
     description = models.TextField(
         blank=True, verbose_name=_("Description"), help_text=_("Remarks and notes")
@@ -302,18 +308,7 @@ class Intervention(
 
     @classproperty
     def geomfield(cls):
-        return Topology._meta.get_field("geom")
-
-    @property
-    def geom(self):
-        if self._geom is None:
-            if self.target:
-                self._geom = self.target.geom
-        return self._geom
-
-    @geom.setter
-    def geom(self, value):
-        self._geom = value
+        return cls._meta.get_field("geom")
 
     @property
     def api_geom(self):
@@ -594,6 +589,13 @@ class Project(
     eid = models.CharField(
         verbose_name=_("External id"), max_length=1024, blank=True, null=True
     )
+    geom = models.GeometryField(
+        verbose_name=_("Location"),
+        srid=settings.SRID,
+        editable=False,
+        null=True,
+        spatial_index=True,
+    )
 
     objects = ProjectManager()
 
@@ -606,7 +608,6 @@ class Project(
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._geom = None
 
     @property
     def paths(self):
@@ -651,40 +652,13 @@ class Project(
 
     @classproperty
     def geomfield(cls):
-        from django.contrib.gis.geos import LineString
-
-        # Fake field, TODO: still better than overkill code in views, but can do neater.
-        c = GeometryCollection([LineString((0, 0), (1, 1))], srid=settings.SRID)
-        c.name = "geom"
-        return c
-
-    @property
-    def geom(self):
-        """Merge all interventions geometry into a collection"""
-        if self._geom is None:
-            interventions = Intervention.objects.existing().filter(project=self)
-            geoms = []
-            for i in interventions:
-                geom = i.geom
-                if geom is not None:
-                    if isinstance(geom, GeometryCollection):
-                        for sub_geom in geom:
-                            geoms.append(sub_geom)
-                    else:
-                        geoms.append(geom)
-            if geoms:
-                self._geom = GeometryCollection(*geoms, srid=settings.SRID)
-        return self._geom
+        return cls._meta.get_field("geom")
 
     @property
     def api_geom(self):
         if not self.geom:
             return None
         return self.geom.transform(settings.API_SRID, clone=True)
-
-    @geom.setter
-    def geom(self, value):
-        self._geom = value
 
     @property
     def name_display(self):
