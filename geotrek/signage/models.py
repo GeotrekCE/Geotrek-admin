@@ -1,9 +1,11 @@
 import os
 
 from django.conf import settings
+from django.contrib.gis.geos import GeometryCollection, Point
 from django.db import models
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
+from django.utils.functional import classproperty
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 
@@ -18,7 +20,6 @@ from geotrek.common.mixins.models import (
 from geotrek.common.models import Organism
 from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import (
-    classproperty,
     collate_c,
     format_coordinates,
     intersecting,
@@ -180,7 +181,7 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 
     @property
     def order_blades(self):
-        return self.blade_set.existing().order_by(collate_c("number"))
+        return self.blades.existing().order_by(collate_c("number"))
 
     @property
     def coordinates(self):
@@ -296,7 +297,10 @@ class Blade(
     NoDeleteMixin,
 ):
     signage = models.ForeignKey(
-        Signage, verbose_name=_("Signage"), on_delete=models.CASCADE
+        Signage,
+        verbose_name=_("Signage"),
+        on_delete=models.CASCADE,
+        related_name="blades",
     )
     number = models.CharField(verbose_name=_("Number"), max_length=250)
     direction = models.ForeignKey(
@@ -315,12 +319,6 @@ class Blade(
     conditions = models.ManyToManyField(
         BladeCondition, related_name="blades", verbose_name=_("Condition"), blank=True
     )
-    topology = models.ForeignKey(
-        Topology,
-        related_name="blades_set",
-        verbose_name=_("Blades"),
-        on_delete=models.CASCADE,
-    )
     colorblade_verbose_name = _("Color")
     printedelevation_verbose_name = _("Printed elevation")
     direction_verbose_name = _("Direction")
@@ -337,20 +335,10 @@ class Blade(
     def zoning_property(self):
         return self.signage
 
-    @classproperty
-    def geomfield(cls):
-        return Topology._meta.get_field("geom")
-
     def __str__(self):
         return settings.BLADE_CODE_FORMAT.format(
             signagecode=self.signage.code, bladenumber=self.number
         )
-
-    def set_topology(self, topology):
-        self.topology = topology
-        if not self.is_signage:
-            msg = "Expecting a signage"
-            raise ValueError(msg)
 
     @property
     def conditions_display(self):
@@ -362,23 +350,20 @@ class Blade(
     def paths(self):
         return self.signage.paths.all()
 
-    @property
-    def is_signage(self):
-        if self.topology:
-            return self.topology.kind == Signage.KIND
-        return False
+    @classproperty
+    def geomfield(cls):
+        # Fake field, TODO: still better than overkill code in views, but can do neater.
+        c = GeometryCollection([Point((0, 0), (1, 1))], srid=settings.SRID)
+        c.name = "geom"
+        return c
 
     @property
     def geom(self):
         return self.signage.geom
 
-    @geom.setter
-    def geom(self, value):
-        self._geom = value
-
     @property
     def signage_display(self):
-        return f'<img src="{settings.STATIC_URL}images/signage-16.png" title="Signage">'
+        return f'<img src="{settings.STATIC_URL}images/signage-16.png" title="{_("Signage")}" />'
 
     @property
     def order_lines(self):
@@ -432,12 +417,6 @@ class Blade(
     def distance(self, to_cls):
         """Distance to associate this blade to another class"""
         return settings.TREK_SIGNAGE_INTERSECTION_MARGIN
-
-
-@receiver(pre_delete, sender=Topology)
-def log_cascade_deletion_from_blade_topology(sender, instance, using, **kwargs):
-    # Blade are deleted when Topology are deleted
-    log_cascade_deletion(sender, instance, Blade, "topology")
 
 
 @receiver(pre_delete, sender=Signage)

@@ -1,9 +1,10 @@
+from dal import autocomplete
 from django.conf import settings
 from django.db.models import Count, F, Q
+from django.forms import widgets
 from django.utils.translation import gettext_lazy as _
 from django_filters import (
     BooleanFilter,
-    CharFilter,
     FilterSet,
     ModelMultipleChoiceFilter,
 )
@@ -27,10 +28,18 @@ class ValidTopologyFilterSet(FilterSet):
 
     if settings.TREKKING_TOPOLOGY_ENABLED:
         is_valid_topology = BooleanFilter(
-            label=_("Valid topology"), method="filter_valid_topology"
+            label=_("Valid topology"),
+            method="filter_valid_topology",
+            widget=widgets.NullBooleanSelect(
+                attrs={"class": "form-control form-control-sm"}
+            ),
         )
     is_valid_geometry = BooleanFilter(
-        label=_("Valid geometry"), method="filter_valid_geometry"
+        label=_("Valid geometry"),
+        method="filter_valid_geometry",
+        widget=widgets.NullBooleanSelect(
+            attrs={"class": "form-control form-control-sm"}
+        ),
     )
 
     def filter_valid_topology(self, qs, name, value):
@@ -124,26 +133,30 @@ class TopologyFilter(RightFilter):
 class PathFilterSet(
     AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureRelatedFilterSet
 ):
-    name = CharFilter(label=_("Name"), lookup_expr="icontains")
-    comments = CharFilter(label=_("Comments"), lookup_expr="icontains")
     provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(path__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple(),
     )
     networks = ModelMultipleChoiceFilter(
-        queryset=Network.objects.all().select_related("structure")
+        queryset=Network.objects.all().select_related("structure"),
+        widget=autocomplete.Select2Multiple(),
     )
     usages = ModelMultipleChoiceFilter(
-        queryset=Usage.objects.all().select_related("structure")
+        queryset=Usage.objects.all().select_related("structure"),
+        widget=autocomplete.Select2Multiple(),
     )
     comfort = ModelMultipleChoiceFilter(
-        queryset=Comfort.objects.all().select_related("structure")
+        queryset=Comfort.objects.all().select_related("structure"),
+        widget=autocomplete.Select2Multiple(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = Path
         fields = [
             *StructureRelatedFilterSet.Meta.fields,
+            "name",
+            "comments",
             "valid",
             "networks",
             "usages",
@@ -160,20 +173,16 @@ class TrailFilterSet(
     ZoningFilterSet,
     StructureRelatedFilterSet,
 ):
-    """Trail filter set"""
-
-    name = CharFilter(label=_("Name"), lookup_expr="icontains")
-    departure = CharFilter(label=_("Departure"), lookup_expr="icontains")
-    arrival = CharFilter(label=_("Arrival"), lookup_expr="icontains")
-    comments = CharFilter(label=_("Comments"), lookup_expr="icontains")
     certification_labels = ModelMultipleChoiceFilter(
         field_name="certifications__certification_label",
         label=_("Certification labels"),
         queryset=CertificationLabel.objects.all(),
+        widget=autocomplete.Select2Multiple(),
     )
     provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(trail__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -197,5 +206,11 @@ class TopologyFilterTrail(TopologyFilter):
 if settings.TRAIL_MODEL_ENABLED:
     for filterset in (PathFilterSet, InterventionFilterSet, ProjectFilterSet):
         filterset.add_filters(
-            {"trail": TopologyFilterTrail(label=_("Trail"), required=False)}
+            {
+                "trail": TopologyFilterTrail(
+                    label=_("Trail"),
+                    required=False,
+                    widget=autocomplete.Select2Multiple(),
+                )
+            }
         )

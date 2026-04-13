@@ -28,17 +28,12 @@ class TrekGPXSerializer(GPXSerializer):
 
 
 class TrekSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    length_2d = serializers.ReadOnlyField()
+    length_2d = serializers.SerializerMethodField()
     name = serializers.CharField(source="name_display")
-    difficulty = serializers.SlugRelatedField("difficulty", read_only=True)
-    practice = serializers.SlugRelatedField("name", read_only=True)
-    themes = serializers.CharField(source="themes_display")
     thumbnail = serializers.CharField(source="thumbnail_display")
-    structure = serializers.SlugRelatedField("name", read_only=True)
-    reservation_system = serializers.SlugRelatedField("name", read_only=True)
-    accessibilities = serializers.CharField(source="accessibilities_display")
-    portal = serializers.CharField(source="portal_display")
-    source = serializers.CharField(source="source_display")
+
+    def get_length_2d(self, obj):
+        return round(obj.length_2d_display)
 
     class Meta:
         model = trekking_models.Trek
@@ -59,9 +54,7 @@ class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
 
 class POISerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source="name_display")
-    type = serializers.CharField(source="type_display")
     thumbnail = serializers.CharField(source="thumbnail_display")
-    structure = serializers.SlugRelatedField("name", read_only=True)
 
     class Meta:
         model = trekking_models.POI

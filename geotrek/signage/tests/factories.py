@@ -106,7 +106,6 @@ class BladeFactory(factory.django.DjangoModelFactory):
     type = factory.SubFactory(BladeTypeFactory)
     direction = factory.SubFactory(BladeDirectionFactory)
     color = factory.SubFactory(BladeColorFactory)
-    topology = factory.SubFactory(PointTopologyFactory)
     signage = factory.SubFactory(SignageFactory)
 
     @factory.post_generation

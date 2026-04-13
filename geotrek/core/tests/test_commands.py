@@ -326,6 +326,320 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             geometries.append(GEOSGeometry(geom, srid=settings.SRID).ewkt)
         return geometries
 
+    def test_split_no_ids_option(self):
+        """
+        When not using the --ids option, only non-deleted topologies should be processed.
+
+        Part A
+
+        ⠳               🡥
+          ⠳           🡥
+            ⠳       🡥
+              ⠳   🡥
+                🡥              🡥  Topologies
+              🡥   ⠳            ⠳ Paths (1 2)
+            🡥       ⠳
+        1 🡥           ⠳ 2
+        🡥               ⠳
+
+        Part B
+
+        ⠳               🡥
+          ⠳           🡥
+        ⠳   ⠳       🡥
+          ⠳   ⠳   🡥
+             ⠳  🡥              🡥  Topologies
+              🡥   ⠳            ⠳ Paths (1 2 3)
+            🡥   ⠳   ⠳
+        1 🡥       ⠳   ⠳ 2
+        🡥         3 ⠳   ⠳
+        """
+        # Create two similar topologies. One is deleted.
+        existing_topo = TopologyFactory.create(
+            paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
+        )
+        deleted_topo = TopologyFactory.create(
+            paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
+        )
+        deleted_topo.deleted = True
+        deleted_topo.save()
+
+        # Check their geometries
+        self.assertEqual(
+            LineString(
+                (700000, 6600000),
+                (700050, 6600050),
+                (700100, 6600100),
+                srid=settings.SRID,
+            ),
+            existing_topo.geom,
+        )
+        self.assertEqual(
+            LineString(
+                (700000, 6600000),
+                (700050, 6600050),
+                (700100, 6600100),
+                srid=settings.SRID,
+            ),
+            deleted_topo.geom,
+        )
+
+        # Create a new path intersecting path 1_a
+        PathFactory.create(
+            geom=LineString(
+                Point(700000, 6600090), Point(700090, 6600000), srid=settings.SRID
+            )
+        )
+
+        # Check that both topologies now have disordered path aggregations
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=existing_topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0, 0, 1],
+        )
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=deleted_topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0, 0, 1],
+        )
+
+        # Run the command
+        output = StringIO()
+        call_command("reorder_topologies", stdout=output)
+
+        # Check that only the non-deleted topology has been reordered
+        self.assertEqual("1 topology has been updated\n", output.getvalue())
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=existing_topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0, 1, 2],
+        )
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=deleted_topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0, 0, 1],
+        )
+
+    def test_split_ids_option(self):
+        """
+        When using the --ids option, only the given topologies should be processed (even if deleted).
+
+        Part A
+
+        ⠳               🡥
+          ⠳           🡥
+            ⠳       🡥
+              ⠳   🡥
+                🡥              🡥  Topologies
+              🡥   ⠳            ⠳ Paths (1 2)
+            🡥       ⠳
+        1 🡥           ⠳ 2
+        🡥               ⠳
+
+        Part B
+
+        ⠳               🡥
+          ⠳           🡥
+        ⠳   ⠳       🡥
+          ⠳   ⠳   🡥
+             ⠳  🡥              🡥  Topologies
+              🡥   ⠳            ⠳ Paths (1 2 3)
+            🡥   ⠳   ⠳
+        1 🡥       ⠳   ⠳ 2
+        🡥         3 ⠳   ⠳
+        """
+        # Create three similar topologies. One is deleted.
+        ignored_topo = (
+            TopologyFactory.create(  # This one will not be passed to the command
+                paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
+            )
+        )
+        existing_topo = TopologyFactory.create(
+            paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
+        )
+        deleted_topo = TopologyFactory.create(
+            paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
+        )
+        deleted_topo.deleted = True
+        deleted_topo.save()
+
+        # Check their geometries
+        for topo in [ignored_topo, existing_topo, deleted_topo]:
+            self.assertEqual(
+                LineString(
+                    (700000, 6600000),
+                    (700050, 6600050),
+                    (700100, 6600100),
+                    srid=settings.SRID,
+                ),
+                topo.geom,
+            )
+
+        # Create a new path intersecting path 1_a
+        PathFactory.create(
+            geom=LineString(
+                Point(700000, 6600090), Point(700090, 6600000), srid=settings.SRID
+            )
+        )
+
+        # Check that all topologies now have disordered path aggregations
+        for topo in [ignored_topo, existing_topo, deleted_topo]:
+            self.assertEqual(
+                list(
+                    PathAggregation.objects.filter(topo_object=topo).values_list(
+                        "order", flat=True
+                    )
+                ),
+                [0, 0, 1],
+            )
+
+        # Run the command on the last two topologies
+        output = StringIO()
+        call_command(
+            "reorder_topologies", stdout=output, ids=[existing_topo.pk, deleted_topo.pk]
+        )
+
+        # Check that only the last two topologies have been reordered
+        self.assertEqual("2 topologies have been updated\n", output.getvalue())
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=ignored_topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0, 0, 1],
+        )
+        for topo in [existing_topo, deleted_topo]:
+            self.assertEqual(
+                list(
+                    PathAggregation.objects.filter(topo_object=topo).values_list(
+                        "order", flat=True
+                    )
+                ),
+                [0, 1, 2],
+            )
+
+    def test_split_no_reorder_needed_one_path_aggregation(self):
+        """
+
+        ━━━━━━|==============|━━━━━━
+            Start           End
+
+        ━━ path 1_a
+        == topology
+        """
+
+        # Create a topology with one path aggregation
+        topo = TopologyFactory.create(paths=[(self.path_1_a, 0, 1)])
+
+        # Check its geometry and path aggregation
+        self.assertEqual(
+            LineString((700000, 6600000), (700050, 6600050), srid=settings.SRID),
+            topo.geom,
+        )
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0],
+        )
+
+        # Run the command
+        output = StringIO()
+        call_command("reorder_topologies", stdout=output)
+        self.assertEqual("0 topologies have been updated\n", output.getvalue())
+
+        # Check that its geometry and path aggregations have not changed
+        self.assertEqual(
+            LineString((700000, 6600000), (700050, 6600050), srid=settings.SRID),
+            topo.geom,
+        )
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0],
+        )
+
+    def test_split_no_reorder_needed_several_path_aggregations(self):
+        """
+        Part A
+
+        ⠳               🡥
+          ⠳           🡥
+            ⠳       🡥
+              ⠳   🡥
+                🡥              🡥  Topo 1
+              🡥   ⠳            ⠳ Paths (1 2)
+            🡥       ⠳
+        1 🡥           ⠳ 2
+        🡥               ⠳
+        """
+
+        # Create a topology with several path aggregations
+        topo = TopologyFactory.create(
+            paths=[(self.path_1_a, 0, 1), (self.path_1_b, 0, 1)]
+        )
+
+        # Check its geometry and path aggregations
+        self.assertEqual(
+            LineString(
+                (700000, 6600000),
+                (700050, 6600050),
+                (700100, 6600100),
+                srid=settings.SRID,
+            ),
+            topo.geom,
+        )
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0, 1],
+        )
+
+        # Run the command
+        output = StringIO()
+        call_command("reorder_topologies", stdout=output)
+        self.assertEqual("0 topologies have been updated\n", output.getvalue())
+
+        # Check that its geometry and path aggregations have not changed
+        self.assertEqual(
+            LineString(
+                (700000, 6600000),
+                (700050, 6600050),
+                (700100, 6600100),
+                srid=settings.SRID,
+            ),
+            topo.geom,
+        )
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0, 1],
+        )
+
     def test_split_reorder_1(self):
         """
         Part A
@@ -388,9 +702,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 0, 1],
         )
-        output = StringIO()
-        call_command("reorder_topologies", stdout=output)
-        self.assertEqual("1 topologies has beeen updated\n", output.getvalue())
+        call_command("reorder_topologies", verbosity=0)
         geometries = self.get_geometries(topo)
         self.assertEqual(
             geometries,
@@ -971,10 +1283,41 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 0, 1, 2, 3],
         )
+        self.assertEqual(
+            MultiLineString(
+                LineString((700000, 6600000), (700045, 6600045)),
+                LineString((700050, 6600050), (700025, 6600075)),
+                LineString((700045, 6600045), (700050, 6600050)),
+                LineString((700050, 6600050), (700100, 6600100)),
+                srid=settings.SRID,
+            ),
+            topo.geom,
+        )
         output = StringIO()
         call_command("reorder_topologies", stdout=output)
         self.assertIn(
-            f"Topologies with errors :\nTREK id: {topo.pk}\n", output.getvalue()
+            f"Topologies with errors:\nTREK id: {topo.pk}\n", output.getvalue()
+        )
+
+        # Check that its geometry and path aggregations have not changed
+        topo.reload()
+        self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0, 0, 1, 2, 3],
+        )
+        self.assertEqual(
+            MultiLineString(
+                LineString((700000, 6600000), (700045, 6600045)),
+                LineString((700050, 6600050), (700025, 6600075)),
+                LineString((700045, 6600045), (700050, 6600050)),
+                LineString((700050, 6600050), (700100, 6600100)),
+                srid=settings.SRID,
+            ),
+            topo.geom,
         )
 
 

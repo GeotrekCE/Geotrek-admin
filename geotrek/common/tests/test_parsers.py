@@ -1559,7 +1559,7 @@ class XMLParserTests(TestCase):
 
 
 class TourInSoftParserTests(TestCase):
-    def test_attachment(self):
+    def test_attachment_v2(self):
         class TestTourParser(TourInSoftParser):
             separator = "##"
             separator2 = "||"
@@ -1592,6 +1592,64 @@ class TourInSoftParserTests(TestCase):
                 "",
                 ("Mél|chateau.senonches@gmail.Com#Instagram|#chateaudesenonches", ""),
             )
+
+    def test_attachment_v3(self):
+        class TestTourParser(TourInSoftParser):
+            version_tourinsoft = 3
+
+            def __init__(self):
+                self.model = Trek
+                super().__init__()
+
+        media = [
+            {
+                "Photo": {
+                    "Url": "url1",
+                    "Titre": "titre1",
+                    "Credit": "credit1",
+                }
+            }
+        ]
+        parser = TestTourParser()
+        result = parser.filter_attachments("", media)
+        self.assertListEqual(result, [("url1", "titre1", "credit1")])
+
+    def test_attachment_v3_without_attachments(self):
+        class TestTourParser(TourInSoftParser):
+            version_tourinsoft = 3
+
+            def __init__(self):
+                self.model = Trek
+                super().__init__()
+
+        parser = TestTourParser()
+        result = parser.filter_attachments("", [])
+        self.assertListEqual(result, [])
+
+    def test_get_nb_v2(self):
+        class TestTourParser(TourInSoftParser):
+            root = {"d": {"__count": "3"}}
+
+            def __init__(self):
+                self.model = Trek
+                super().__init__()
+
+        parser = TestTourParser()
+        nb = parser.get_nb()
+        self.assertEqual(nb, 3)
+
+    def test_get_nb_v3(self):
+        class TestTourParser(TourInSoftParser):
+            version_tourinsoft = 3
+            root = {"value": ["1", "2", "3"]}
+
+            def __init__(self):
+                self.model = Trek
+                super().__init__()
+
+        parser = TestTourParser()
+        nb = parser.get_nb()
+        self.assertEqual(nb, 3)
 
 
 class TourismSystemParserTest(TestCase):
@@ -1976,6 +2034,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             ("trekking", "trek_difficulty.json"),
             ("trekking", "trek_route.json"),
             ("trekking", "trek_theme.json"),
+            ("trekking", "trek_theme_page_2.json"),
             ("trekking", "trek_practice.json"),
             ("trekking", "trek_accessibility.json"),
             ("trekking", "trek_network.json"),
@@ -2003,6 +2062,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             ("trekking", "trek_difficulty.json"),
             ("trekking", "trek_route.json"),
             ("trekking", "trek_theme.json"),
+            ("trekking", "trek_theme_page_2.json"),
             ("trekking", "trek_practice.json"),
             ("trekking", "trek_accessibility.json"),
             ("trekking", "trek_network.json"),
@@ -2059,6 +2119,8 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             string_parser,
         )
         self.assertEqual(Trek.objects.count(), 6)
+        trek = Trek.objects.get(name="Boucle du Pic des Trois Seigneurs")
+        self.assertIn("Lac et glacier", [theme.label for theme in trek.themes.all()])
         self.assertEqual(POI.objects.count(), 2)
         self.assertEqual(1, Trek.objects.get(name="Foo").information_desks.count())
         self.assertEqual(

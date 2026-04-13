@@ -54,7 +54,9 @@
 # AUTHENT_DATABASE = 'your_authent_dbname'
 # AUTHENT_TABLENAME = 'your_authent_table_name'
 # if AUTHENT_TABLENAME:
-#     AUTHENTICATION_BACKENDS = ('geotrek.authent.backend.DatabaseBackend',)
+#     AUTHENTICATION_BACKENDS = ['django_flask_authent_backend.DatabaseBackend']
+#     PASSWORD_HASHERS += ["django_flask_authent_backend.NativeBcryptPasswordHasher"]  # For native bcrypt from external apps
+
 
 # IF YOU USE SSL
 

@@ -1,3 +1,4 @@
+from dal import autocomplete
 from django.conf import settings
 from django.contrib.gis.geos import GeometryCollection
 from django.db.models import Q
@@ -190,7 +191,7 @@ class InterventionFilterSet(
         widget=OneLineRangeWidget(
             attrs={
                 "type": "text",
-                "class": "minmax-field",
+                "class": "minmax-field form-control form-control-sm",
                 "title": _("Filter by begin date range"),
             },
         ),
@@ -200,7 +201,7 @@ class InterventionFilterSet(
         widget=OneLineRangeWidget(
             attrs={
                 "type": "text",
-                "class": "minmax-field",
+                "class": "minmax-field form-control form-control-sm",
                 "title": _("Filter by end date range"),
             },
         ),
@@ -210,24 +211,53 @@ class InterventionFilterSet(
         choices=lambda: Intervention.objects.year_choices(),
         method="filter_year",
         label=_("Year"),
+        widget=autocomplete.Select2Multiple(),
     )
     on = ChoiceFilter(
         field_name="target_type__model",
         choices=ON_CHOICES,
         label=_("On"),
         empty_label=_("On"),
+        widget=autocomplete.Select2(),
     )
     area_type = InterventionIntersectionFilterRestrictedAreaType(
-        label=_("Restricted area type"), required=False, lookup_expr="intersects"
+        label=_("Restricted area type"),
+        required=False,
+        lookup_expr="intersects",
+        widget=autocomplete.Select2Multiple(),
     )
     area = InterventionIntersectionFilterRestrictedArea(
-        label=_("Restricted area"), required=False, lookup_expr="intersects"
+        label=_("Restricted area"),
+        required=False,
+        lookup_expr="intersects",
+        widget=autocomplete.Select2Multiple(
+            url="zoning:restrictedarea-autocomplete",
+            attrs={
+                "data-placeholder": _("Restricted area"),
+            },
+        ),
     )
     city = InterventionIntersectionFilterCity(
-        label=_("City"), required=False, lookup_expr="intersects"
+        label=_("City"),
+        required=False,
+        lookup_expr="intersects",
+        widget=autocomplete.ModelSelect2Multiple(
+            url="zoning:city-autocomplete",
+            attrs={
+                "data-placeholder": _("City"),
+            },
+        ),
     )
     district = InterventionIntersectionFilterDistrict(
-        label=_("District"), required=False, lookup_expr="intersects"
+        label=_("District"),
+        required=False,
+        lookup_expr="intersects",
+        widget=autocomplete.ModelSelect2Multiple(
+            url="zoning:district-autocomplete",
+            attrs={
+                "data-placeholder": _("District"),
+            },
+        ),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -266,23 +296,52 @@ class ProjectFilterSet(StructureRelatedFilterSet):
         label=_("Year of activity"),
         method="filter_year",
         choices=lambda: Project.objects.year_choices(),
+        widget=autocomplete.Select2Multiple(),
     )
     city = ProjectIntersectionFilterCity(
-        label=_("City"), lookup_expr="intersects", required=False
+        label=_("City"),
+        lookup_expr="intersects",
+        required=False,
+        widget=autocomplete.ModelSelect2Multiple(
+            url="zoning:city-autocomplete",
+            attrs={
+                "data-placeholder": _("City"),
+            },
+        ),
     )
     district = ProjectIntersectionFilterDistrict(
-        label=_("District"), lookup_expr="intersects", required=False
+        label=_("District"),
+        lookup_expr="intersects",
+        required=False,
+        widget=autocomplete.ModelSelect2Multiple(
+            url="zoning:district-autocomplete",
+            attrs={
+                "data-placeholder": _("District"),
+            },
+        ),
     )
     area_type = ProjectIntersectionFilterRestrictedAreaType(
-        label=_("Restricted area type"), lookup_expr="intersects", required=False
+        label=_("Restricted area type"),
+        lookup_expr="intersects",
+        required=False,
+        widget=autocomplete.Select2Multiple(),
     )
     area = ProjectIntersectionFilterRestrictedArea(
-        label=_("Restricted area"), lookup_expr="intersects", required=False
+        label=_("Restricted area"),
+        lookup_expr="intersects",
+        required=False,
+        widget=autocomplete.ModelSelect2Multiple(
+            url="zoning:restrictedarea-autocomplete",
+            attrs={
+                "data-placeholder": _("Restricted area"),
+            },
+        ),
     )
     contractors = ModelMultipleChoiceFilter(
         label=_("Contractors"),
         queryset=Contractor.objects.all(),
         method="filter_contractors",
+        widget=autocomplete.Select2Multiple(),
     )
 
     class Meta(StructureRelatedFilterSet.Meta):

@@ -202,25 +202,16 @@ class InterventionTest(TestCase):
 
     def test_denormalized_fields(self):
         infra = InfrastructureFactory.create()
-        infra.save()
-
-        def create_interv():
-            interv = InterventionFactory.create(target=infra)
-            return interv
+        interv = InterventionFactory.create(target=infra)
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
             self.assertNotEqual(infra.length, 0.0)
-
-            # After setting related infrastructure
-            interv = create_interv()
-            self.assertEqual(interv.length, infra.length)
 
             # After update related infrastructure
             infra.length = 3.14
             infra.save()
             interv.reload()
-        else:
-            interv = create_interv()
+
         self.assertEqual(interv.length, infra.length)
 
     @skipIf(

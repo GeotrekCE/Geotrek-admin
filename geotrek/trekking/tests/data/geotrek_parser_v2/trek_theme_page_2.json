@@ -1,0 +1,17 @@
+{
+  "count": 1,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 8,
+      "label": {
+        "fr": "Lac et glacier",
+        "en": null,
+        "es": null,
+        "it": null
+      },
+      "pictogram": "https://foo.fr/media/upload/theme-lake.png"
+    }
+  ]
+}

@@ -158,25 +158,30 @@ class TrekForm(BaseTrekForm):
 
     def __init__(self, *args, **kwargs):
         self.fieldslayout = deepcopy(self.base_fieldslayout)
-        self.fieldslayout[0][1][0].append(
-            HTML(
-                '<div class="controls">{}{}</div>'.format(
-                    _("Insert service:"),
-                    "".join(
-                        [
-                            f'<a class="servicetype" data-url="{t.pictogram.url}" data-name={t.name}">'
-                            f'<img src="{t.pictogram.url}"></a>'
-                            for t in ServiceType.objects.all()
-                        ]
-                    ),
-                )
+        service_types = ServiceType.objects.all()
+        if any(st.pictogram for st in service_types):
+            label = _("Insert service:")
+            pictogram_links = "".join(
+                [
+                    f'<a class="servicetype" data-url="{t.pictogram.url}" data-name={t.name}">'
+                    f'<img src="{t.pictogram.url}"></a>'
+                    for t in service_types
+                    if t.pictogram
+                ]
             )
-        )
+            self.fieldslayout[0][1][0].append(
+                HTML(f'<div class="controls">{label}{pictogram_links}</div>')
+            )
         super().__init__(*args, **kwargs)
         if self.fields.get("structure"):
             self.fieldslayout[0][1][0].insert(0, "structure")
         self.fields["web_links"].widget = SelectMultipleWithPop(
-            choices=self.fields["web_links"].choices, add_url=WebLink.get_add_url()
+            choices=self.fields["web_links"].choices,
+            add_url=WebLink.get_add_url(),
+            attrs={
+                "data-theme": "bootstrap4",
+                "data-width": "75%",
+            },
         )
         # Make sure (force) that name is required, in default language only
         self.fields[

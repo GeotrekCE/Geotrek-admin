@@ -14,15 +14,15 @@ babel==2.17.0
     # via
     #   sphinx
     #   sphinx-intl
-certifi==2026.1.4
+certifi==2026.2.25
     # via
     #   -c ../requirements.txt
     #   requests
-charset-normalizer==3.4.4
+charset-normalizer==3.4.7
     # via
     #   -c ../requirements.txt
     #   requests
-click==8.3.1
+click==8.3.2
     # via
     #   -c ../requirements.txt
     #   sphinx-intl
@@ -49,7 +49,7 @@ markupsafe==3.0.3
     #   -c ../requirements.txt
     #   jinja2
     #   sphinx-immaterial
-packaging==25.0
+packaging==26.0
     # via
     #   -c ../requirements.txt
     #   sphinx
@@ -61,9 +61,9 @@ pydantic-core==2.41.4
     # via pydantic
 pydantic-extra-types==2.10.6
     # via sphinx-immaterial
-pygments==2.19.2
+pygments==2.20.0
     # via sphinx
-requests==2.32.5
+requests==2.33.1
     # via
     #   -c ../requirements.txt
     #   sphinx
@@ -83,7 +83,7 @@ sphinx-autobuild==2024.10.3
     # via -r requirements.in
 sphinx-design==0.6.1
     # via -r requirements.in
-sphinx-immaterial==0.13.8
+sphinx-immaterial==0.13.9
     # via -r requirements.in
 sphinx-intl==2.3.2
     # via -r requirements.in
@@ -101,6 +101,8 @@ sphinxcontrib-serializinghtml==2.0.0
     # via sphinx
 starlette==0.49.1
     # via sphinx-autobuild
+tomli==2.4.1
+    # via sphinx
 typing-extensions==4.15.0
     # via
     #   -c ../requirements.txt

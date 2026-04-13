@@ -262,8 +262,7 @@ class GeotrekTrekParser(GeotrekParser):
                 final_children[result["uuid"]] = []
                 for step in result["steps"]:
                     final_children[result["uuid"]].append(step["id"])
-                    if not any(step["published"].values()):
-                        steps_to_download += 1
+                    steps_to_download += 1
             self.nb = steps_to_download
 
             for key, value in final_children.items():
@@ -287,6 +286,8 @@ class GeotrekTrekParser(GeotrekParser):
                         # we have to retrieve the missing ones first
                         self.fetch_missing_categories_for_tour_steps(child_trek)
                         self.parse_row(child_trek)
+                        if not self.obj.pk:
+                            continue
                         trek_child_instance = self.obj
                         OrderedTrekChild.objects.update_or_create(
                             parent=trek_parent_instance[0],
@@ -829,7 +830,10 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         default_translation_fieldname = self._get_default_translation_src()
         filtered_activities = []
         for activity in activities:
-            if default_translation_fieldname in activity:
+            if (
+                activity["id"] in self.activites_ids_as_networks
+                and default_translation_fieldname in activity
+            ):
                 filtered_activities.append(activity[default_translation_fieldname])
         return self.apply_filter(dst="networks", src=src, val=filtered_activities)
 

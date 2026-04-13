@@ -367,7 +367,7 @@ class LengthTest(TestCase):
         # before smoothing: (1 101 0, 21 101 0, 41 101 0, 61 101 3, 81 101 5, 81 99 15)
         # after smoothing:  (1 101 0, 21 101 0, 41 101 0, 61 101 1, 81 101 3, 81 99  9)
         # length: 20 + 20 + (20 ** 2 + 1) ** .5 + (20 ** 2 + 2 ** 2) ** .5 + (2 ** 2 + 6 ** 2) ** .5
-        self.assertEqual(round(self.path.length, 9), 83.203851919)
+        self.assertEqual(self.path.length, 83.2)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")

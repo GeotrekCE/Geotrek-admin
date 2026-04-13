@@ -1251,35 +1251,57 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
 
     def get_nb(self):
         if self.version_tourinsoft == 3:
-            return int(self.root["odata.count"])
+            return len(self.root["value"])
         return int(self.root["d"]["__count"])
 
+    def parse_data(self, params):
+        response = self.request_or_retry(self.url, params=params)
+        self.root = response.json()
+        self.nb = self.get_nb()
+        for row in self.items:
+            yield {self.normalize_field_name(src): val for src, val in row.items()}
+
     def next_row(self):
-        skip = 0
-        while True:
+        if self.version_tourinsoft == 3:
+            params = {
+                "format": "json",
+            }
+            yield from self.parse_data(params)
+
+        elif self.version_tourinsoft == 2:
+            skip = 0
             params = {
                 "$format": "json",
                 "$inlinecount": "allpages",
                 "$top": 1000,
-                "$skip": skip,
+                "$skip": 0,
             }
-            response = self.request_or_retry(self.url, params=params)
-            self.root = response.json()
-            self.nb = self.get_nb()
-            for row in self.items:
-                yield {self.normalize_field_name(src): val for src, val in row.items()}
-            skip += 1000
-            if skip >= self.nb:
-                return
+            while True:
+                yield from self.parse_data(params)
+                skip += 1000
+                params["$skip"] = skip
+                if skip >= self.nb:
+                    return
 
     def filter_attachments(self, src, val):
         if not val:
             return []
-        return [
-            subval.split(self.separator2)
-            for subval in val.split(self.separator)
-            if subval.split(self.separator2)[0]
-        ]
+        if self.version_tourinsoft == 3:
+            return [
+                (
+                    entry["Photo"]["Url"],
+                    entry["Photo"]["Titre"],
+                    entry["Photo"]["Credit"],
+                )
+                for entry in val
+                if entry["Photo"] is not None
+            ]
+        elif self.version_tourinsoft == 2:
+            return [
+                subval.split(self.separator2)
+                for subval in val.split(self.separator)
+                if subval.split(self.separator2)[0]
+            ]
 
     def filter_geom(self, src, val):
         lng, lat = val
@@ -1763,29 +1785,37 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         # Generate a mapping dictionnary between id and the related label
         for category, route in self.url_categories.items():
             if self.categories_keys_api_v2.get(category):
-                response = self.request_or_retry(f"{self.url}/api/v2/{route}")
                 self.field_options.setdefault(category, {})
                 self.field_options[category]["mapping"] = {}
                 if self.create_categories:
                     self.field_options[category]["create"] = True
-                results = response.json().get("results", [])
-                # for element in category url map the id with its label
-                for result in results:
-                    id_result = result["id"]
-                    label = result[self.categories_keys_api_v2[category]]
-                    if isinstance(result[self.categories_keys_api_v2[category]], dict):
-                        if label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
-                            self.field_options[category]["mapping"][id_result] = (
-                                self.replace_mapping(
-                                    label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE],
-                                    route,
+                next_url = f"{self.url}/api/v2/{route}"
+                while next_url:
+                    response = self.request_or_retry(next_url)
+                    response_data = response.json()
+                    results = response_data.get("results", [])
+                    # for element in category url map the id with its label
+                    for result in results:
+                        id_result = result["id"]
+                        label = result[self.categories_keys_api_v2[category]]
+                        if isinstance(
+                            result[self.categories_keys_api_v2[category]], dict
+                        ):
+                            if label[settings.MODELTRANSLATION_DEFAULT_LANGUAGE]:
+                                self.field_options[category]["mapping"][id_result] = (
+                                    self.replace_mapping(
+                                        label[
+                                            settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+                                        ],
+                                        route,
+                                    )
                                 )
-                            )
-                    else:
-                        if label:
-                            self.field_options[category]["mapping"][id_result] = (
-                                self.replace_mapping(label, category)
-                            )
+                        else:
+                            if label:
+                                self.field_options[category]["mapping"][id_result] = (
+                                    self.replace_mapping(label, category)
+                                )
+                    next_url = response_data["next"]
             else:
                 msg = f"{category} is not configured in categories_keys_api_v2"
                 raise ImproperlyConfigured(msg)

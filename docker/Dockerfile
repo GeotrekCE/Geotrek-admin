@@ -78,12 +78,13 @@ FROM base AS build
 
 USER root
 
-RUN apt-get update -qq && apt-get install -y -qq  \
-    git \
-    build-essential \
-    graphviz \
-    libpq-dev &&\
-    apt-get clean all && rm -rf /var/lib/apt/lists/* && rm -rf /var/cache/apt/*
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt,sharing=locked \
+    apt-get update -qq && apt-get install -y -qq  \
+        git \
+        build-essential \
+        graphviz \
+        libpq-dev
 
 USER geotrek
 

@@ -104,7 +104,7 @@ DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
 #
 AUTHENTICATION_BACKENDS = ("django.contrib.auth.backends.ModelBackend",)
 
-# Settings required for geotrek.authent.backend.DatabaseBackend :
+# Settings required for django_flask_authent_backend.DatabaseBackend :
 AUTHENT_DATABASE = None
 AUTHENT_TABLENAME = None
 AUTHENT_GROUPS_MAPPING = {
@@ -292,6 +292,8 @@ PROJECT_APPS += (
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "dal",
+    "dal_select2",
     "clearcache",
     "django.contrib.admin",
     "django.contrib.admindocs",
@@ -832,7 +834,6 @@ PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.Argon2PasswordHasher",
     "django.contrib.auth.hashers.BCryptSHA256PasswordHasher",
     "django.contrib.auth.hashers.ScryptPasswordHasher",
-    "geotrek.authent.hashers.UnsaltedMD5PasswordHasher",  # Used for extern authent
 ]
 
 EMAIL_SUBJECT_PREFIX = f"[{TITLE}] "

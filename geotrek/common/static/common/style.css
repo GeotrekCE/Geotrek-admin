@@ -1,5 +1,12 @@
 #mainfilter input.minmax-field {
     width: calc(60% - 1.9rem);
+    border-radius: 1px !important;
+
+}
+
+#mainfilter .form-row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
 }
 
 .caption-detail {
