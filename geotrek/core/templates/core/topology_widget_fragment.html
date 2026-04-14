@@ -1,4 +1,4 @@
-{% load static %}
+{% load i18n static %}
 
 <style>
     {% block map_css %}
@@ -16,6 +16,7 @@
 
 {% block map %}
     {% if not target_map %}
+        <link rel='stylesheet' href="{% static 'vendor/PATCHED-mapbox-gl-path/mapbox-gl-path.css' %}" />
         <div id="{{ id_map }}" class="maplibre-map"></div>
         {% include "core/toast_wrong_topology_route.html" %}
     {% endif %}
@@ -26,69 +27,377 @@
     {{ module }}.is_line_topology = {{ is_line_topology|yesno:"true,false" }};
 {% endblock vars %}
 
+<script type="module">
+    import MapboxPathControl from "{% static 'vendor/PATCHED-mapbox-gl-path/PATCHED-mapbox-gl-path.js' %}";
 
-<script type="text/javascript">
     document.addEventListener('DOMContentLoaded', function () {
         const fieldId = '{{ id }}';
         const options = {
             modifiable: 'true',
             geomType: 'POINT',
         };
+        console.log('fieldId', fieldId);
+        console.log('options', options);
+
         const targetMapId = '{{ target_map|default:"" }}';
+        console.log('targetMapId', targetMapId);
+
         if (targetMapId) {
             // Se branche sur une carte existante définie par target_map
             window.addEventListener('map:init', function (e) {
                 if (e.detail.fieldId === 'id_' + targetMapId) {
                     const sharedMap = e.detail.map;
-                    new MaplibreTopologyField(sharedMap, fieldId, options);
+                    new MaplibreGeometryField(sharedMap, fieldId, options);
                 }
             });
         } else {
-            // Ce champ est responsable de créer la carte
-            const mapId = '{{ id_map }}';
-            const {BOUNDS, DEFAULT_CENTER, DEFAULT_ZOOM, SCALE, TILES} = window.SETTINGS.map.maplibreConfig;
-            const bounds = [BOUNDS[0], BOUNDS[1]];
 
-            const map = new MaplibreMap(mapId, DEFAULT_CENTER, DEFAULT_ZOOM, bounds, SCALE);
-            const layerManager = new MaplibreLayerManager();
+            const initialLineString = {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                      [
+                        1.444187,
+                        43.584461
+                      ],
+                      [
+                        1.444174,
+                        43.583902
+                      ],
+                      [
+                        1.447712,
+                        43.584401
+                      ],
+                      [
+                        1.448439,
+                        43.584258
+                      ],
+                      [
+                        1.450551,
+                        43.583664
+                      ],
+                      [
+                        1.450716,
+                        43.583681
+                      ],
+                      [
+                        1.456207,
+                        43.585915
+                      ]
+                    ]
+                  },
+                  "properties": {
+                    "index": 0,
+                    "isFollowingDirections": true,
+                    "directionID": 2
+                  }
+                }
+            const initialFeatureCollection = {
+              "type": "FeatureCollection",
+              "features": [
+                {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [
+                      1.4445662176173926,
+                      43.58445067008731
+                    ]
+                  },
+                  "properties": {
+                    "index": 0
+                  }
+                },
+                {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "Point",
+                    "coordinates": [
+                      1.4561261842558224,
+                      43.5860158022156
+                    ]
+                  },
+                  "properties": {
+                    "index": 1
+                  }
+                },
+                {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                      [
+                        1.444187,
+                        43.584461
+                      ],
+                      [
+                        1.444174,
+                        43.583902
+                      ],
+                      [
+                        1.447712,
+                        43.584401
+                      ],
+                      [
+                        1.448439,
+                        43.584258
+                      ],
+                      [
+                        1.450551,
+                        43.583664
+                      ],
+                      [
+                        1.450716,
+                        43.583681
+                      ],
+                      [
+                        1.456207,
+                        43.585915
+                      ]
+                    ]
+                  },
+                  "properties": {
+                    "index": 0,
+                    "isFollowingDirections": true,
+                    "directionID": 2
+                  }
+                },
+                {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                      [
+                        1.4445662176173926,
+                        43.58445067008731
+                      ],
+                      [
+                        1.444187,
+                        43.584461
+                      ]
+                    ]
+                  },
+                  "properties": {
+                    "index": 0,
+                    "isPhantomJunction": true,
+                    "isDeparture": true
+                  }
+                },
+                {
+                  "type": "Feature",
+                  "geometry": {
+                    "type": "LineString",
+                    "coordinates": [
+                      [
+                        1.456207,
+                        43.585915
+                      ],
+                      [
+                        1.4561261842558224,
+                        43.5860158022156
+                      ]
+                    ]
+                  },
+                  "properties": {
+                    "index": 0,
+                    "isPhantomJunction": true,
+                    "isDeparture": false
+                  }
+                }
+              ]
+            }
 
-            map.getMap().on('load', function () {
-                // Ajout de la couche d’objets contextuels
-                const modelname = document.body.getAttribute('data-modelname');
-                console.log('modelname : ', modelname);
-                const layerUrl = window.SETTINGS.urls.layer.replace(/modelname/g, modelname);
-                const style = window.SETTINGS.map.styles.others;
-                const objectsLayer = new MaplibreObjectsLayer(null, {
-                    style: typeof style === "function" ? {} : style,
-                    modelname: modelname,
-                    readonly: true,
-                    nameHTML: '<span style="color:' + style['color'] + ';">&#x25A3;</span>&nbsp;' + modelname,
-                    category: tr("Objects"),
-                    dataUrl: layerUrl,
-                    primaryKey: generateUniqueId(),
-                    isLazy: false,
-                });
-                objectsLayer.initialize(map.getMap());
-
-                // Base layers
-                TILES.forEach(([tileName, tileUrl, tileAttribution]) => {
-                    layerManager.addBaseLayer(tileName, {
-                        id: tileName + '-base',
-                        tiles: [tileUrl],
-                        attribution: tileAttribution,
-                    });
-                });
-
-                map.getMap().addControl(new MaplibreLayerControl(layerManager), 'top-right');
-                map.getMap().addControl(new MaplibreFileLayerControl({
-                    layerOptions: {
-                        style: window.SETTINGS.map.styles.filelayer,
-                    }
-                }), 'top-left');
-                map.getMap().addControl(new MaplibreResetViewControl(bounds), 'top-left');
-
+            const map = new maplibregl.Map({
+                container: 'map',
+                style: 'https://tiles.openfreemap.org/styles/bright',
+                center: [1.470006, 43.576803],
+                zoom: 12
             });
+
+            async function getRoute(coordinates) {
+                return fetch(
+                    `https://router.project-osrm.org/route/v1/driving/${coordinates.join(
+                    ";"
+                    )}?geometries=geojson`,
+                    {
+                        method: "GET",
+                        headers: { "Content-Type": "application/json" },
+                    }
+                )
+                    .then((response) => response.json())
+                    .then((data) =>
+                    data.code === "Ok"
+                        ? {
+                            coordinates: data.routes[0].geometry.coordinates,
+                            waypoints: {
+                                departure: data.waypoints[0].location,
+                                arrival: data.waypoints[1].location,
+                            },
+                        }
+                        : undefined
+                    );
+            }
+
+            function initMapControl () {
+                const mapboxPathControl = new MapboxPathControl({
+                    translate: (text) => {
+                        const locales = { // TODO
+                            "gl-pathControl.createPoint": "Create point",
+                            "gl-pathControl.createIntermediatePoint": "Create intermediate point",
+                            "gl-pathControl.deletePoint": "Delete point",
+                            "gl-pathControl.loopPoint": "Round trip",
+                            "gl-pathControl.oneWayPoint": "One way"
+                        }
+                        return locales[text]
+                    },
+                    directionsThemes: [
+                        {
+                            id: 1,
+                            name: 'Tracé sur tronçons',
+                            selected: true,
+                            getPathByCoordinates: getRoute,
+                        }
+                    ],
+                    //featureCollection: initialFeatureCollection,
+                    //lineString: initialLineString,
+                    layersCustomisation: {
+                        pointLayerList: [
+                          // {
+                          //   // First Point layer to display the "glow"
+                          //   paint: {
+                          //     "circle-radius": 14,
+                          //     "circle-color": "#f7d4bc",
+                          //   },
+                          // },
+                          {
+                            // Second Point layer to display white circle
+                            paint: {
+                              "circle-radius": 10,
+                              "circle-color": "#ffffff",
+                              "circle-stroke-width": 2,
+                              "circle-stroke-color": "#846b8a",
+                            },
+                          },
+                          {
+                            // Third Point layer to Alphabetical indexes
+                            paint: {
+                              "text-color": "#000",
+                            },
+                            type: "symbol",
+                            layout: {
+                              "text-size": 14,
+                              "text-allow-overlap": true,
+                            },
+                          },
+                        ],
+                        lineLayerList: [
+                          // {
+                          //   // First LineString layer to display the "glow"
+                          //   paint: { "line-width": 8, "line-color": "#f7d4bc" },
+                          // },
+                          {
+                            // Second LineString layer to display the path
+                            paint: { "line-width": 4, "line-color": "#846b8a" },
+                          },
+                          {
+                            // Third LineString layer to the arrow icon
+                            type: "symbol",
+                            layout: {
+                              "icon-image": "arrow",
+                              "icon-size": 0.6,
+                              "symbol-placement": "line",
+                              "icon-allow-overlap": true,
+                            },
+                          },
+                        ],
+                        phantomJunctionLineLayerList: [
+                          {
+                            paint: {
+                              "line-width": 4,
+                              "line-color": "#c98bb9",
+                              "line-dasharray": [1, 1],
+                            },
+                          },
+                        ],
+                    }
+                });
+
+                map.addControl(mapboxPathControl, "top-left");
+            }
+
+            function loadArrowImage() {
+                map.loadImage(
+                  "{% static 'vendor/PATCHED-mapbox-gl-path/assets/arrow.png' %}",
+                  (error, image) => {
+                  if (error) throw error;
+                  map.addImage('arrow', image, {pixelRatio: 2});
+                  }
+                );
+            }
+
+            map.on('load', () => {
+            loadArrowImage();  // FIXME: currently not displayed
+            initMapControl();
+        });
+
         }
+
+        //const targetMapId = '{{ target_map|default:"" }}';
+        //if (targetMapId) {
+        //    // Se branche sur une carte existante définie par target_map
+        //    window.addEventListener('map:init', function (e) {
+        //        if (e.detail.fieldId === 'id_' + targetMapId) {
+        //            const sharedMap = e.detail.map;
+        //            new MaplibreTopologyField(sharedMap, fieldId, options);
+        //        }
+        //    });
+        //} else {
+        //    // Ce champ est responsable de créer la carte
+        //    const mapId = '{{ id_map }}';
+        //    const {BOUNDS, DEFAULT_CENTER, DEFAULT_ZOOM, SCALE, TILES} = window.SETTINGS.map.maplibreConfig;
+        //    const bounds = [BOUNDS[0], BOUNDS[1]];
+//
+        //    const map = new MaplibreMap(mapId, DEFAULT_CENTER, DEFAULT_ZOOM, bounds, SCALE);
+        //    const layerManager = new MaplibreLayerManager();
+//
+        //    map.getMap().on('load', function () {
+        //        // Ajout de la couche d’objets contextuels
+        //        const modelname = document.body.getAttribute('data-modelname');
+        //        console.log('modelname : ', modelname);
+        //        const layerUrl = window.SETTINGS.urls.layer.replace(/modelname/g, modelname);
+        //        const style = window.SETTINGS.map.styles.others;
+        //        const objectsLayer = new MaplibreObjectsLayer(null, {
+        //            style: typeof style === "function" ? {} : style,
+        //            modelname: modelname,
+        //            readonly: true,
+        //            nameHTML: '<span style="color:' + style['color'] + ';">&#x25A3;</span>&nbsp;' + modelname,
+        //            category: tr("Objects"),
+        //            dataUrl: layerUrl,
+        //            primaryKey: generateUniqueId(),
+        //            isLazy: false,
+        //        });
+        //        objectsLayer.initialize(map.getMap());
+//
+        //        // Base layers
+        //        TILES.forEach(([tileName, tileUrl, tileAttribution]) => {
+        //            layerManager.addBaseLayer(tileName, {
+        //                id: tileName + '-base',
+        //                tiles: [tileUrl],
+        //                attribution: tileAttribution,
+        //            });
+        //        });
+//
+        //        map.getMap().addControl(new MaplibreLayerControl(layerManager), 'top-right');
+        //        map.getMap().addControl(new MaplibreFileLayerControl({
+        //            layerOptions: {
+        //                style: window.SETTINGS.map.styles.filelayer,
+        //            }
+        //        }), 'top-left');
+        //        map.getMap().addControl(new MaplibreResetViewControl(bounds), 'top-left');
+//
+  //          });
+    //    }
     });
 </script>
 

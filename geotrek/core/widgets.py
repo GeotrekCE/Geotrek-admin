@@ -50,7 +50,7 @@ class BaseTopologyWidget(BaseGeometryWidget):
             {
                 "id": map_id,
                 "id_css": map_id_css,
-                "id_map": map_id_css + "_map",
+                "id_map": "map", # map_id_css + "_map",
                 "modifiable": self.modifiable,
                 "is_line_topology": self.is_line_topology,
                 "is_point_topology": self.is_point_topology,
