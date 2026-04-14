@@ -481,7 +481,6 @@ class Topology(
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
     geom_need_update = models.BooleanField(default=False, editable=False)
     geom = models.GeometryField(
-        editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
         srid=settings.SRID,
         null=True,
         default=None,
@@ -687,22 +686,45 @@ class Topology(
         return self
 
     def save(self, *args, **kwargs):
-        # HACK: these fields are readonly from the Django point of view,
-        # but they can be changed at DB level. Since Django writes all fields
-        # to DB anyway, it is important to update it before writing
-        if self.pk and settings.TREKKING_TOPOLOGY_ENABLED:
+        print(f"{self.geom_changed}")
+        if self.pk:
             existing = self.__class__.objects.get(pk=self.pk)
-            self.length = existing.length
-            # In the case of points, the geom can be set by Django. Don't override.
-            point_geom_not_set = self.ispoint() and self.geom is None
-            geom_already_in_db = not self.ispoint() and existing.geom is not None
-            if point_geom_not_set or geom_already_in_db:
-                self.geom = existing.geom
-        else:
-            if not self.deleted and self.geom is None:
-                # We cannot have NULL geometry. So we use an empty one,
-                # it will be computed or overwritten by triggers.
-                self.geom = fromstr("POINT (0 0)")
+            # If the geometry is modified, decouple the topology from the path network
+            print(f"{existing.geom=}, {self.geom=}")
+            print(f"{existing.geom.ewkt=}, {self.geom.ewkt=}")
+            transformed_geom = self.geom
+            if existing.geom != self.geom:
+                print('hey')
+                self.coupled = False
+            else:
+                print('ho')
+                # FIXME: compare the geoms correctly (currntly not the same srid)
+            # length is readonly from the Django point of view, but it can be changed at DB level.
+            # Since Django writes all fields to DB anyway, it is important to update it before writing
+            self.length = existing.length  # TODO: not if geom has changed
+            # TODO: ensure that geom_3d and altimetry data is updated too
+
+        if not self.deleted and self.geom is None:
+            # We cannot have NULL geometry. So we use an empty one.
+            # The geom will be computed or overwritten by triggers.
+            self.geom = fromstr("POINT (0 0)")
+            # TODO: check that it's overwritten by triggers
+
+
+
+        # if self.pk and settings.TREKKING_TOPOLOGY_ENABLED:
+        #     existing = self.__class__.objects.get(pk=self.pk)
+        #     self.length = existing.length  # TODO
+        #     # In the case of points, the geom can be set by Django. Don't override.
+        #     point_geom_not_set = self.ispoint() and self.geom is None
+        #     geom_already_in_db = not self.ispoint() and existing.geom is not None
+        #     if point_geom_not_set or geom_already_in_db:
+        #         self.geom = existing.geom
+        # else:
+        #     if not self.deleted and self.geom is None:
+        #         # We cannot have NULL geometry. So we use an empty one,
+        #         # it will be computed or overwritten by triggers.
+        #         self.geom = fromstr("POINT (0 0)")
 
         if not self.kind:
             if self.KIND == "TOPOLOGYMIXIN":

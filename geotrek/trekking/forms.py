@@ -46,6 +46,7 @@ if settings.TREKKING_TOPOLOGY_ENABLED:
 
         class Meta(TopologyForm.Meta):
             model = Trek
+
 else:
 
     class BaseTrekForm(CommonForm):
