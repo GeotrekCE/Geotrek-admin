@@ -47,7 +47,7 @@ class TrekNetworkAdmin(MergeActionMixin, TabbedTranslationAdmin):
 class PracticeAdmin(MergeActionMixin, TabbedTranslationAdmin):
     list_display = ("id", "name", "order", "cirkwi", "distance", "pictogram_img")
     search_fields = ("name",)
-    merge_field = "network"
+    merge_field = "name"
 
 
 class AccessibilityAdmin(MergeActionMixin, TabbedTranslationAdmin):
