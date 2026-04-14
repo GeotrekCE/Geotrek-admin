@@ -1,0 +1,51 @@
+.mapbox-gl-path-container {
+  display: none;
+}
+
+.mapbox-gl-path-popup-button {
+  appearance: none;
+  cursor: pointer;
+  display: block;
+  border: none;
+  margin: 0.3rem 0;
+  background: transparent;
+}
+
+.mapbox-gl-path-popup-button:hover,
+.mapbox-gl-path-popup-button:focus {
+  color: skyblue;
+  text-decoration: underline;
+}
+
+.mapbox-gl-path-popup-button::before {
+  display: inline-block;
+  margin-right: 0.2rem;
+}
+
+.mapbox-gl-path-popup-delete::before {
+  content: "❌";
+}
+
+.mapbox-gl-path-popup-createPointOnLine::before {
+  content: "󠀫➕";
+}
+
+.mapbox-gl-path-popup-createIntermediatePointOnLine::before {
+  content: "󠀫➗";
+}
+
+.mapbox-gl-path-popup-loop::before {
+  content: "󠀫🔄";
+}
+
+.mapbox-gl-path-popup-oneWay::before {
+  content: "󠀫↪️";
+}
+
+.mapbox-gl-path-popup-disableFollowDirectionMode {
+  display: none;
+}
+
+.mapbox-gl-path-popup-enableFollowDirectionMode {
+  display: none;
+}
