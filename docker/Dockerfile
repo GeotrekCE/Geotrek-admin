@@ -1,5 +1,5 @@
-ARG BASE_IMAGE=ubuntu:noble
-ARG PYTHON_VERSION=3.12
+ARG BASE_IMAGE=ubuntu:resolute
+ARG PYTHON_VERSION=3.13
 
 FROM ${BASE_IMAGE} AS base
 
@@ -63,7 +63,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         libxml2-dev \
         libxslt-dev \
         libpangocairo-1.0-0 \
-        libgdk-pixbuf2.0-dev \
+        libgdk-pixbuf*2.0-dev \
         libffi-dev \
         fonts-dejavu-core \
         libvips && \

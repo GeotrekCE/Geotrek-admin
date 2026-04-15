@@ -1,11 +1,10 @@
-ARG DISTRO=ubuntu:noble
+ARG DISTRO=ubuntu:resolute
 
 FROM ${DISTRO} AS base
 
 
 RUN apt-get update -qq -o Acquire::Languages=none && \
     env DEBIAN_FRONTEND=noninteractive apt-get install -yqq \
-    curl \
     lsb-release \
     nano \
     dpkg-dev \
@@ -14,7 +13,6 @@ RUN apt-get update -qq -o Acquire::Languages=none && \
     git \
     devscripts \
     equivs
-
 
 WORKDIR /dpkg-build
 
@@ -32,8 +30,8 @@ COPY VERSION ./VERSION
 COPY manage.py ./manage.py
 COPY MANIFEST.in ./MANIFEST.in
 
-RUN if test "$(lsb_release -cs)" = 'noble' ; then \
-      sed -i 's/python3.10/python3.12/g' debian/rules; \
+RUN if test "$(lsb_release -cs)" = 'resolute' ; then \
+      sed -i 's/python3.12/python3.13/g' debian/rules; \
     fi
 
 RUN sed -i -re "1s/..UNRELEASED/.ubuntu$(lsb_release -rs)) $(lsb_release -cs)/" debian/changelog \
