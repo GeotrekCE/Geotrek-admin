@@ -376,7 +376,6 @@
                 // Ajout de la couche d’objets contextuels
                 const modelname = document.body.getAttribute('data-modelname');
                 const objects_verbose_name = document.body.getAttribute('data-objectsname');
-                console.log('modelname : ', modelname);
                 const layerUrl = window.SETTINGS.urls.layer.replace(/modelname/g, modelname);
                 const tilejsonUrl = window.SETTINGS.urls.tilejson ? window.SETTINGS.urls.tilejson.replace(/modelname/g, modelname) : undefined;
                 const style = window.SETTINGS.map.styles.others;
@@ -396,6 +395,7 @@
                 objectsLayer.initialize(map.getMap());
 
                 // Initialize additional layers
+                let pathLayerSettings = null;
                 window.SETTINGS.layers.forEach((model) => {
                     const nameHTML = model.name;
                     const additionalModelname = model.id;
@@ -406,29 +406,38 @@
                     let additionalStyle = window.SETTINGS.map.styles[additionalModelname] ?? window.SETTINGS.map.styles['others'];
                     let primaryKey = generateUniqueId();
 
-                    if (additionalModelname !== modelname) {
-                        const additionalObjectsLayer = new MaplibreObjectsLayer(null, {
-                            style: additionalStyle,
-                            modelname: additionalModelname,
-                            readonly: true,
-                            nameHTML: nameHTML,
-                            category: category,
-                            primaryKey: primaryKey,
-                            dataUrl: additionalLayerUrl,
-                            tilejsonUrl: additionalTilejsonUrl,
-                            isLazy: true,
-                            displayPopup: true,
-                        });
+                    const additionalObjectsLayer = new MaplibreObjectsLayer(null, {
+                        style: additionalStyle,
+                        modelname: additionalModelname,
+                        readonly: true,
+                        nameHTML: nameHTML,
+                        category: category,
+                        primaryKey: primaryKey,
+                        dataUrl: additionalLayerUrl,
+                        tilejsonUrl: additionalTilejsonUrl,
+                        isLazy: true,
+                        displayPopup: true,
+                    });
 
-                        additionalObjectsLayer.layerManager = layerManager;
-                        additionalObjectsLayer.initialize(map.getMap());
-                        additionalObjectsLayer.registerLazyLayer(additionalModelname, category, nameHTML, primaryKey, additionalLayerUrl);
+                    additionalObjectsLayer.layerManager = layerManager;
+                    additionalObjectsLayer.initialize(map.getMap());
+                    additionalObjectsLayer.registerLazyLayer(additionalModelname, category, nameHTML, primaryKey, additionalLayerUrl);
+
+                    // Paths are displayed by default - load its layer
+                    if (additionalModelname === 'path') {
+                        if (tilejsonUrl) {
+                            additionalObjectsLayer.loadMVT(additionalTilejsonUrl);
+                        } else {
+                            additionalObjectsLayer.load(additionalLayerUrl);
+                        }
                     }
+
                 });
 
                 const layerControl = new MaplibreLayerControl(layerManager);
                 map.getMap().addControl(layerControl, 'top-right');
 
+                // TODO
                 // Restauration du contexte pour le widget
                 //const mapentityContext = new MaplibreMapentityContext(bounds, layerManager);
                 //const mapViewContext = getURLParameter("context");
@@ -438,15 +447,6 @@
                 //await mapentityContext.restoreFullContext(map.getMap(), mapViewContext, {
                 //    prefix: 'widget-' + fieldId,
                 //});
-
-
-//
-                //// chargement des couches
-                //if (tilejsonUrl) {
-                //    objectsLayer.loadMVT(tilejsonUrl);
-                //} else {
-                //    objectsLayer.load(layerUrl);
-                //}
             }
 
             function initFileLayerControl() {
