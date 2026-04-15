@@ -4,8 +4,8 @@
     <style>
         {% block map_css %}
             #{{ id_map }} {
-            width: 100%;
-            height: 100%;
+                width: 100%;
+                height: 100%;
             }
             {% if not display_raw %}
                 #{{ id }} {
@@ -16,11 +16,9 @@
     </style>
 
     {% block map %}
-        {% if not target_map %}
-            <link rel='stylesheet' href="{% static 'vendor/PATCHED-mapbox-gl-path/mapbox-gl-path.css' %}" />
-            <div id="{{ id_map }}" class="maplibre-map"></div>
-            {% include "core/toast_wrong_topology_route.html" %}
-        {% endif %}
+        <link rel='stylesheet' href="{% static 'vendor/PATCHED-mapbox-gl-path/mapbox-gl-path.css' %}" />
+        <div id="{{ id_map }}" class="maplibre-map"></div>
+        {% include "core/toast_wrong_topology_route.html" %}
     {% endblock map %}
 
     {% block vars %}
@@ -44,7 +42,7 @@
         const targetMapId = '{{ target_map|default:"" }}';
         console.log('targetMapId', targetMapId);
 
-        if (targetMapId) {
+        if (targetMapId) { // TODO
             // Se branche sur une carte existante définie par target_map
             window.addEventListener('map:init', function (e) {
                 if (e.detail.fieldId === 'id_' + targetMapId) {
@@ -318,15 +316,15 @@
                     }
                 });
 
-                map.addControl(mapboxPathControl, "top-left");
+                map.getMap().addControl(mapboxPathControl, "top-left");
             }
 
             function loadArrowImage() {
-                map.loadImage(
+                map.getMap().loadImage(
                   "{% static 'vendor/PATCHED-mapbox-gl-path/assets/arrow.png' %}",
                   (error, image) => {
                   if (error) throw error;
-                  map.addImage('arrow', image, {pixelRatio: 2});
+                  map.getMap().addImage('arrow', image, {pixelRatio: 2});
                   }
                 );
             }
@@ -344,8 +342,8 @@
                 layerManager._map = null;
                 layerManager._eventListeners = [];
 
-                window.mapentity_map = map;
-                layerManager.initialize(map);
+                window.mapentity_map = map.getMap();
+                layerManager.initialize(map.getMap());
 
                 // Chargement des base layers en premier depuis les settings
                 const baseLayersData = window.SETTINGS.map?.baseLayers || {};
@@ -392,7 +390,7 @@
                 });
                 // Override the singleton layerManager for this objectsLayer
                 objectsLayer.layerManager = layerManager;
-                objectsLayer.initialize(map);
+                objectsLayer.initialize(map.getMap());
 
                 // Initialize additional layers
                 window.SETTINGS.layers.forEach((model) => {
@@ -420,13 +418,13 @@
                         });
 
                         additionalObjectsLayer.layerManager = layerManager;
-                        additionalObjectsLayer.initialize(map);
+                        additionalObjectsLayer.initialize(map.getMap());
                         additionalObjectsLayer.registerLazyLayer(additionalModelname, category, nameHTML, primaryKey, additionalLayerUrl);
                     }
                 });
 
                 const layerControl = new MaplibreLayerControl(layerManager);
-                map.addControl(layerControl, 'top-right');
+                map.getMap().addControl(layerControl, 'top-right');
 
                 // Restauration du contexte pour le widget
                 //const mapentityContext = new MaplibreMapentityContext(bounds, layerManager);
@@ -439,14 +437,17 @@
                 //});
             }
 
-            const map = new maplibregl.Map({
-                container: 'map',
-                style: 'https://tiles.openfreemap.org/styles/bright',
-                center: [1.470006, 43.576803],
-                zoom: 12
-            });
+            const mapId = '{{ id_map }}'; // TODO
+            // TODO: check that TILES works:
+            const { BOUNDS, DEFAULT_CENTER, DEFAULT_ZOOM, SCALE, TILES, MAX_ZOOM } = window.SETTINGS.map.maplibreConfig;
+            const bounds = [BOUNDS[0], BOUNDS[1]];
 
-            map.on('load', async function () {
+            const map = new MaplibreMap(mapId, DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, bounds, SCALE);
+            console.log('MAX_ZOOM', MAX_ZOOM)
+
+
+
+            map.getMap().on('load', async function () {
                 loadArrowImage();  // FIXME: currently not displayed
                 await addLayers();
                 initMapControl();
@@ -469,10 +470,10 @@
         //    const mapId = '{{ id_map }}';
         //    const {BOUNDS, DEFAULT_CENTER, DEFAULT_ZOOM, SCALE, TILES} = window.SETTINGS.map.maplibreConfig;
         //    const bounds = [BOUNDS[0], BOUNDS[1]];
-//
+        //
         //    const map = new MaplibreMap(mapId, DEFAULT_CENTER, DEFAULT_ZOOM, bounds, SCALE);
         //    const layerManager = new MaplibreLayerManager();
-//
+        //
         //    map.getMap().on('load', function () {
         //        // Ajout de la couche d’objets contextuels
         //        const modelname = document.body.getAttribute('data-modelname');
@@ -490,7 +491,7 @@
         //            isLazy: false,
         //        });
         //        objectsLayer.initialize(map.getMap());
-//
+        //
         //        // Base layers
         //        TILES.forEach(([tileName, tileUrl, tileAttribution]) => {
         //            layerManager.addBaseLayer(tileName, {
@@ -499,7 +500,7 @@
         //                attribution: tileAttribution,
         //            });
         //        });
-//
+        //
         //        map.getMap().addControl(new MaplibreLayerControl(layerManager), 'top-right');
         //        map.getMap().addControl(new MaplibreFileLayerControl({
         //            layerOptions: {
@@ -507,9 +508,9 @@
         //            }
         //        }), 'top-left');
         //        map.getMap().addControl(new MaplibreResetViewControl(bounds), 'top-left');
-//
-  //          });
-    //    }
+        //
+        //     });
+        // }
     });
 </script>
 
