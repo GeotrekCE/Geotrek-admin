@@ -244,6 +244,7 @@
                   }
                 );
 
+                // Add mapbox-gl-path control
                 const mapboxPathControl = new MapboxPathControl({
                     translate: (text) => {
                         const locales = { // TODO
@@ -438,12 +439,7 @@
                 //    prefix: 'widget-' + fieldId,
                 //});
 
-                //map.getMap().addControl(new MaplibreFileLayerControl({
-                //    layerOptions: {
-                //        style: window.SETTINGS.map.styles.filelayer,
-                //    }
-                //}), 'top-left');
-                //map.getMap().addControl(new MaplibreResetViewControl(bounds), 'top-left');
+
 //
                 //// chargement des couches
                 //if (tilejsonUrl) {
@@ -451,6 +447,15 @@
                 //} else {
                 //    objectsLayer.load(layerUrl);
                 //}
+            }
+
+            function initFileLayerControl() {
+                map.getMap().addControl(new MaplibreFileLayerControl({
+                    layerOptions: {
+                        style: window.SETTINGS.map.styles.filelayer,
+                    }
+                }), 'top-left');
+                map.getMap().addControl(new MaplibreResetViewControl(bounds), 'top-left');
             }
 
             const mapId = '{{ id_map }}'; // TODO
@@ -463,6 +468,7 @@
             map.getMap().on('load', async function () {
                 await addLayers();
                 initRoutingControl();
+                initFileLayerControl();
                 // TODO: controller for resetting the route
                 // FIXME: utiliser un controller clicable pour commencer/mettre en pause le routing.
                 //  Actuellement, quand on utilise le controller pour mesurer les distances, ça
