@@ -234,6 +234,9 @@
 
             function initRoutingControl () {
 
+                // TODO: controller for resetting the route
+                // TODO: utiliser un controller cliquable pour commencer/mettre en pause le routing.
+
                 // Load the arrow image which displays the route's direction
                 // FIXME: currently not displayed
                 map.getMap().loadImage(
@@ -349,6 +352,7 @@
                 layerManager.initialize(map.getMap());
 
                 // Chargement des base layers en premier depuis les settings
+                // TODO: tester
                 const baseLayersData = window.SETTINGS.map?.baseLayers || {};
                 const { base_layers, overlay_layers } = baseLayersData;
 
@@ -458,23 +462,19 @@
                 map.getMap().addControl(new MaplibreResetViewControl(bounds), 'top-left');
             }
 
+            // Init the map
             const mapId = '{{ id_map }}'; // TODO
             // TODO: check that TILES works:
             const { BOUNDS, DEFAULT_CENTER, DEFAULT_ZOOM, SCALE, TILES, MAX_ZOOM } = window.SETTINGS.map.maplibreConfig;
             const bounds = [BOUNDS[0], BOUNDS[1]];
-
             const map = new MaplibreMap(mapId, DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, bounds, SCALE);
 
             map.getMap().on('load', async function () {
                 await addLayers();
                 initRoutingControl();
                 initFileLayerControl();
-                // TODO: controller for resetting the route
-                // FIXME: utiliser un controller clicable pour commencer/mettre en pause le routing.
-                //  Actuellement, quand on utilise le controller pour mesurer les distances, ça
-                //  crée des points de passage
+                // FIXME: Actuellement, quand on utilise le controller pour mesurer les distances, ça crée des points de passage
             });
-
         }
     });
 </script>
