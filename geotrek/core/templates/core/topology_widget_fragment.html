@@ -1,31 +1,33 @@
 {% load i18n static %}
 
-<style>
-    {% block map_css %}
-        #{{ id_map }} {
-        width: 100%;
-        height: 100%;
-        }
-        {% if not display_raw %}
-            #{{ id }} {
-            display: none;
+{% if not target_map %}
+    <style>
+        {% block map_css %}
+            #{{ id_map }} {
+            width: 100%;
+            height: 100%;
             }
+            {% if not display_raw %}
+                #{{ id }} {
+                display: none;
+                }
+            {% endif %}
+        {% endblock map_css %}
+    </style>
+
+    {% block map %}
+        {% if not target_map %}
+            <link rel='stylesheet' href="{% static 'vendor/PATCHED-mapbox-gl-path/mapbox-gl-path.css' %}" />
+            <div id="{{ id_map }}" class="maplibre-map"></div>
+            {% include "core/toast_wrong_topology_route.html" %}
         {% endif %}
-    {% endblock map_css %}
-</style>
+    {% endblock map %}
 
-{% block map %}
-    {% if not target_map %}
-        <link rel='stylesheet' href="{% static 'vendor/PATCHED-mapbox-gl-path/mapbox-gl-path.css' %}" />
-        <div id="{{ id_map }}" class="maplibre-map"></div>
-        {% include "core/toast_wrong_topology_route.html" %}
-    {% endif %}
-{% endblock map %}
-
-{% block vars %}
-    {{ module }}.is_point_topology = {{ is_point_topology|yesno:"true,false" }};
-    {{ module }}.is_line_topology = {{ is_line_topology|yesno:"true,false" }};
-{% endblock vars %}
+    {% block vars %}
+        {{ module }}.is_point_topology = {{ is_point_topology|yesno:"true,false" }};
+        {{ module }}.is_line_topology = {{ is_line_topology|yesno:"true,false" }};
+    {% endblock vars %}
+{% endif %}
 
 <script type="module">
     import MapboxPathControl from "{% static 'vendor/PATCHED-mapbox-gl-path/PATCHED-mapbox-gl-path.js' %}";
@@ -208,13 +210,6 @@
               ]
             }
 
-            const map = new maplibregl.Map({
-                container: 'map',
-                style: 'https://tiles.openfreemap.org/styles/bright',
-                center: [1.470006, 43.576803],
-                zoom: 12
-            });
-
             async function getRoute(coordinates) {
                 return fetch(
                     `https://router.project-osrm.org/route/v1/driving/${coordinates.join(
@@ -336,10 +331,127 @@
                 );
             }
 
-            map.on('load', () => {
-            loadArrowImage();  // FIXME: currently not displayed
-            initMapControl();
-        });
+            async function addLayers() {
+                // Créer un layerManager dédié au widget (pas le singleton de la carte principale)
+                const layerManager = Object.create(MaplibreLayerManager.prototype);
+                layerManager.layers = {
+                    baseLayers: {},
+                    overlays: {},
+                    lazyOverlays: {},
+                    layerGroups: {}
+                };
+                layerManager.restoredContext = null;
+                layerManager._map = null;
+                layerManager._eventListeners = [];
+
+                window.mapentity_map = map;
+                layerManager.initialize(map);
+
+                // Chargement des base layers en premier depuis les settings
+                const baseLayersData = window.SETTINGS.map?.baseLayers || {};
+                const { base_layers, overlay_layers } = baseLayersData;
+
+                if (base_layers) {
+                    for (const layer of base_layers) {
+                        await layerManager.addLayerFromUrl(layer.name, {
+                            id: 'mapbox-base-' + layer.slug,
+                            url: layer.url,
+                            isBaseLayer: true,
+                            attribution: layer.attribution || ''
+                        });
+                    }
+                }
+                if (overlay_layers) {
+                    for (const layer of overlay_layers) {
+                        await layerManager.addLayerFromUrl(layer.name, {
+                            id: 'mapbox-overlay-' + layer.slug,
+                            url: layer.url,
+                            isBaseLayer: false,
+                            attribution: layer.attribution || ''
+                        });
+                    }
+                }
+
+                // Ajout de la couche d’objets contextuels
+                const modelname = document.body.getAttribute('data-modelname');
+                const objects_verbose_name = document.body.getAttribute('data-objectsname');
+                console.log('modelname : ', modelname);
+                const layerUrl = window.SETTINGS.urls.layer.replace(/modelname/g, modelname);
+                const tilejsonUrl = window.SETTINGS.urls.tilejson ? window.SETTINGS.urls.tilejson.replace(/modelname/g, modelname) : undefined;
+                const style = window.SETTINGS.map.styles.others;
+                const objectsLayer = new MaplibreObjectsLayer(null, {
+                    style: typeof style === "function" ? {} : style,
+                    modelname: modelname,
+                    readonly: true,
+                    nameHTML: '<span style="color:' + style['color'] + ';">&#x25A3;</span>&nbsp;' + objects_verbose_name,
+                    category: '{% trans "Objects" %}',
+                    dataUrl: layerUrl,
+                    tilejsonUrl: tilejsonUrl,
+                    primaryKey: generateUniqueId(),
+                    isLazy: false,
+                });
+                // Override the singleton layerManager for this objectsLayer
+                objectsLayer.layerManager = layerManager;
+                objectsLayer.initialize(map);
+
+                // Initialize additional layers
+                window.SETTINGS.layers.forEach((model) => {
+                    const nameHTML = model.name;
+                    const additionalModelname = model.id;
+                    const category = model.category;
+                    const additionalLayerUrl = model.url;
+                    const additionalTilejsonUrl = model.tilejsonUrl;
+
+                    let additionalStyle = window.SETTINGS.map.styles[additionalModelname] ?? window.SETTINGS.map.styles['others'];
+                    let primaryKey = generateUniqueId();
+
+                    if (additionalModelname !== modelname) {
+                        const additionalObjectsLayer = new MaplibreObjectsLayer(null, {
+                            style: additionalStyle,
+                            modelname: additionalModelname,
+                            readonly: true,
+                            nameHTML: nameHTML,
+                            category: category,
+                            primaryKey: primaryKey,
+                            dataUrl: additionalLayerUrl,
+                            tilejsonUrl: additionalTilejsonUrl,
+                            isLazy: true,
+                            displayPopup: true,
+                        });
+
+                        additionalObjectsLayer.layerManager = layerManager;
+                        additionalObjectsLayer.initialize(map);
+                        additionalObjectsLayer.registerLazyLayer(additionalModelname, category, nameHTML, primaryKey, additionalLayerUrl);
+                    }
+                });
+
+                const layerControl = new MaplibreLayerControl(layerManager);
+                map.addControl(layerControl, 'top-right');
+
+                // Restauration du contexte pour le widget
+                //const mapentityContext = new MaplibreMapentityContext(bounds, layerManager);
+                //const mapViewContext = getURLParameter("context");
+                //if (mapViewContext) {
+                //    layerManager.restoredContext = { restoredFromUrl: true };
+                //}
+                //await mapentityContext.restoreFullContext(map.getMap(), mapViewContext, {
+                //    prefix: 'widget-' + fieldId,
+                //});
+            }
+
+            const map = new maplibregl.Map({
+                container: 'map',
+                style: 'https://tiles.openfreemap.org/styles/bright',
+                center: [1.470006, 43.576803],
+                zoom: 12
+            });
+
+            map.on('load', async function () {
+                loadArrowImage();  // FIXME: currently not displayed
+                await addLayers();
+                initMapControl();
+                // TODO: controller for resetting the route
+            });
 
         }
 
