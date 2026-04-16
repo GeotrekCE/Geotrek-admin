@@ -45,12 +45,9 @@ idna==3.11
 imagesize==1.4.1
     # via sphinx
 jinja2==3.1.6
-    # via
-    #   -c ../requirements.txt
-    #   sphinx
+    # via sphinx
 markupsafe==3.0.3
     # via
-    #   -c ../requirements.txt
     #   jinja2
     #   sphinx-immaterial
 packaging==26.0

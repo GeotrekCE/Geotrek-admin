@@ -813,11 +813,11 @@ In Geotrek-rando it enables correlated pictures to be displayed in the slideshow
 """
 TREK_WITH_POIS_PICTURES = False
 
-SWAGGER_SETTINGS = {
-    "USE_SESSION_AUTH": False,
-    "APIS_SORTER": "alpha",
-    "JSON_EDITOR": True,
-    "API_V2_DESCRIPTION": "New Geotrek API",
+SPECTACULAR_SETTINGS = {
+    "TITLE": TITLE,
+    "DESCRIPTION": "Geotrek Public API",
+    "VERSION": VERSION,
+    "SERVE_INCLUDE_SCHEMA": False,
 }
 
 API_IS_PUBLIC = True
@@ -962,6 +962,7 @@ ACCESSIBILITY_ATTACHMENTS_ENABLED = True
 USE_X_FORWARDED_HOST = False
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "STRICT_JSON": False,  # allow serialize float NaN values
 }
 

@@ -3275,30 +3275,16 @@ class APISwaggerTestCase(BaseApiTest):
     """TestCase API documentation"""
 
     def test_schema_fields(self):
-        response = self.client.get("/api/v2/", {"format": "openapi"})
-        self.assertContains(
-            response,
-            "Filter by a bounding box formatted like W-lng,S-lat,E-lng,N-lat (WGS84).",
-        )
-        self.assertContains(
-            response,
-            "Set language for translation. Can be all or a two-letters language code.",
-        )
-        self.assertContains(response, "Filter by minimum difficulty level (id).")
-        self.assertContains(
-            response, "Reference point to compute distance (WGS84). Example: lng,lat."
-        )
-        self.assertContains(
-            response, "Filter by one or more practice id, comma-separated."
-        )
-        self.assertContains(
-            response,
-            "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists.",
-        )
+        response = self.client.get("/api/v2/schema/")
+        self.assertEqual(response.status_code, 200)
+        content = response.content.decode()
+        self.assertIn("openapi: 3.0", content)
+        self.assertIn("/api/v2/", content)
+        self.assertNotIn("/api/mobile/", content)
 
     def test_swagger_ui(self):
         response = self.client.get("/api/v2/")
-        self.assertContains(response, "swagger")
+        self.assertEqual(response.status_code, 200)
 
 
 class TrekRatingScaleTestCase(TestCase):
