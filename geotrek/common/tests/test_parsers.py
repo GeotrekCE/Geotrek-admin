@@ -1559,7 +1559,7 @@ class XMLParserTests(TestCase):
 
 
 class TourInSoftParserTests(TestCase):
-    def test_attachment(self):
+    def test_attachment_v2(self):
         class TestTourParser(TourInSoftParser):
             separator = "##"
             separator2 = "||"
@@ -1592,6 +1592,64 @@ class TourInSoftParserTests(TestCase):
                 "",
                 ("Mél|chateau.senonches@gmail.Com#Instagram|#chateaudesenonches", ""),
             )
+
+    def test_attachment_v3(self):
+        class TestTourParser(TourInSoftParser):
+            version_tourinsoft = 3
+
+            def __init__(self):
+                self.model = Trek
+                super().__init__()
+
+        media = [
+            {
+                "Photo": {
+                    "Url": "url1",
+                    "Titre": "titre1",
+                    "Credit": "credit1",
+                }
+            }
+        ]
+        parser = TestTourParser()
+        result = parser.filter_attachments("", media)
+        self.assertListEqual(result, [("url1", "titre1", "credit1")])
+
+    def test_attachment_v3_without_attachments(self):
+        class TestTourParser(TourInSoftParser):
+            version_tourinsoft = 3
+
+            def __init__(self):
+                self.model = Trek
+                super().__init__()
+
+        parser = TestTourParser()
+        result = parser.filter_attachments("", [])
+        self.assertListEqual(result, [])
+
+    def test_get_nb_v2(self):
+        class TestTourParser(TourInSoftParser):
+            root = {"d": {"__count": "3"}}
+
+            def __init__(self):
+                self.model = Trek
+                super().__init__()
+
+        parser = TestTourParser()
+        nb = parser.get_nb()
+        self.assertEqual(nb, 3)
+
+    def test_get_nb_v3(self):
+        class TestTourParser(TourInSoftParser):
+            version_tourinsoft = 3
+            root = {"value": ["1", "2", "3"]}
+
+            def __init__(self):
+                self.model = Trek
+                super().__init__()
+
+        parser = TestTourParser()
+        nb = parser.get_nb()
+        self.assertEqual(nb, 3)
 
 
 class TourismSystemParserTest(TestCase):

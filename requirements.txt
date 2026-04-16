@@ -2,7 +2,7 @@
 #    uv pip compile setup.py -o requirements.txt
 amqp==5.3.1
     # via kombu
-appy==1.0.20
+appy==1.0.21
     # via django-appypod
 argdispatch==1.5.0
     # via pdfimpose
@@ -49,7 +49,7 @@ cffi==2.0.0
     #   persistent
     #   pyvips
     #   weasyprint
-chardet==7.2.0
+chardet==7.4.2
     # via geotrek (setup.py)
 charset-normalizer==3.4.7
     # via
@@ -84,7 +84,7 @@ datetime==6.0
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==5.2.12
+django==5.2.13
     # via
     #   geotrek (setup.py)
     #   crispy-bootstrap4
@@ -162,7 +162,7 @@ django-tinymce==5.0.0
     # via mapentity
 django-treebeard==4.8.0
     # via geotrek (setup.py)
-django-weasyprint==2.4.0
+django-weasyprint==2.5.0
     # via
     #   geotrek (setup.py)
     #   mapentity
@@ -205,11 +205,11 @@ geojson==3.2.0
     # via
     #   geotrek (setup.py)
     #   tif2geojson
-gevent==25.9.1
+gevent==26.4.0
     # via gunicorn
 gpxpy==1.6.2
     # via mapentity
-greenlet==3.3.2
+greenlet==3.4.0
     # via gevent
 gunicorn==25.3.0
     # via geotrek (setup.py)
@@ -300,12 +300,19 @@ python-dateutil==2.9.0.post0
     # via celery
 python-dotenv==1.2.2
     # via geotrek (setup.py)
-python-fsutil==0.16.0
+python-fsutil==0.16.1
     # via django-maintenance-mode
 python-magic==0.4.27
     # via paperclip
+<<<<<<< drf_spectacular
 pytz==2025.2
     # via datetime
+=======
+pytz==2026.1.post1
+    # via
+    #   datetime
+    #   drf-yasg
+>>>>>>> master
 pyvips==3.1.1
     # via large-image-source-vips
 pyxdg==0.28
@@ -420,7 +427,7 @@ zope-deferredimport==6.1.1
     # via persistent
 zope-event==6.1
     # via gevent
-zope-interface==8.2
+zope-interface==8.3
     # via
     #   btrees
     #   datetime

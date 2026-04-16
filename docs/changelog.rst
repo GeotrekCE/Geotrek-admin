@@ -5,6 +5,11 @@ CHANGELOG
 2.124.3+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Adapting TourInsoft parsers to the v3 API
+* Fix trek practice merge
+
 
 2.124.3         (2026-04-02)
 ----------------------------
