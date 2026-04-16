@@ -29,6 +29,7 @@
 
 <script type="module">
     import MapboxPathControl from "{% static 'vendor/PATCHED-mapbox-gl-path/PATCHED-mapbox-gl-path.js' %}";
+    import MaplibrePathRoutingControl from "{% static 'vendor/PATCHED-mapbox-gl-path/MaplibrePathRoutingControl.js' %}";
 
     document.addEventListener('DOMContentLoaded', function () {
         const fieldId = '{{ id }}';
@@ -233,6 +234,10 @@
             }
 
             function initRoutingControl () {
+
+                map.getMap().addControl(new MaplibrePathRoutingControl(), 'top-left');
+
+
 
                 // TODO: controller for resetting the route
                 // TODO: utiliser un controller cliquable pour commencer/mettre en pause le routing.
@@ -453,7 +458,7 @@
                 //});
             }
 
-            function initFileLayerControl() {
+            function initAdditionalControls() {
                 map.getMap().addControl(new MaplibreFileLayerControl({
                     layerOptions: {
                         style: window.SETTINGS.map.styles.filelayer,
@@ -472,7 +477,7 @@
             map.getMap().on('load', async function () {
                 await addLayers();
                 initRoutingControl();
-                initFileLayerControl();
+                initAdditionalControls();
                 // FIXME: Actuellement, quand on utilise le controller pour mesurer les distances, ça crée des points de passage
             });
         }
