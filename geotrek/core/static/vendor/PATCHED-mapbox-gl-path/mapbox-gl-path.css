@@ -1,5 +1,26 @@
 .mapbox-gl-path-container {
-  display: none;
+  pointer-events: auto;
+  user-select: none;
+  background-color: #ffffff;
+  color: #000000;
+  padding: 8px;
+  border-bottom-left-radius: 8px;
+}
+
+.mapbox-gl-path-container select {
+  margin-left: 8px;
+}
+
+.mapbox-gl-path-theme-selection__checkbox-label {
+  cursor: pointer;
+}
+
+/* UseFul for demo page */
+.mapbox-gl-path-theme-selection {
+  height: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: all 0.3ms ease;
 }
 
 .mapbox-gl-path-popup-button {
@@ -42,10 +63,58 @@
   content: "󠀫↪️";
 }
 
-.mapbox-gl-path-popup-disableFollowDirectionMode {
-  display: none;
+.mapbox-gl-path-popup-disableFollowDirectionMode::before {
+  content: "󠀫—";
 }
 
-.mapbox-gl-path-popup-enableFollowDirectionMode {
-  display: none;
+.mapbox-gl-path-popup-enableFollowDirectionMode::before {
+  content: "󠀫〰️";
+}
+
+.mapbox-gl-path-theme-selection__checkbox:checked
+  ~ .mapbox-gl-path-theme-selection {
+  height: auto;
+  padding: 0.3rem 0;
+  opacity: 1;
+  margin: 0.6rem 0 0;
+  border-top: 1px solid #eaeaea;
+}
+
+.mapbox-gl-path-theme-selection__radio {
+  position: absolute;
+  opacity: 0;
+}
+
+.mapbox-gl-path-theme-selection__radio-label {
+  margin: 0.5rem 0;
+  position: relative;
+  height: 2rem;
+  display: block;
+  cursor: pointer;
+}
+
+.mapbox-gl-path-theme-selection__radio-label::before {
+  display: inline-block;
+  width: 2rem;
+  height: 2rem;
+  margin-right: 0.5rem;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.mapbox-gl-path-theme-selection__radio:checked
+  + .mapbox-gl-path-theme-selection__radio-label::before {
+  background: lightblue;
+  border-color: SkyBlue;
+}
+
+.mapbox-gl-path-theme-selection__radio-label[for*="1"]::before {
+  content: "🚴";
+}
+.mapbox-gl-path-theme-selection__radio-label[for*="2"]::before {
+  content: "🚶";
 }
