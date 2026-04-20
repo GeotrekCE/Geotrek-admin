@@ -440,7 +440,7 @@ zconfig==4.3
     # via zodb
 zipp==3.23.0
     # via importlib-metadata
-zodb==6.2
+zodb==6.3
     # via appy
 zodbpickle==4.3
     # via zodb
