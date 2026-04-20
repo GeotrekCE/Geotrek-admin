@@ -267,7 +267,7 @@ numpy==2.2.6
     #   large-image
     #   large-image-source-vips
     #   shapely
-packaging==26.0
+packaging==26.1
     # via
     #   drf-extensions
     #   drf-yasg
