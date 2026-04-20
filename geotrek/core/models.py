@@ -519,9 +519,10 @@ class Topology(
             GistIndex(name="topology_geom_gist_idx", fields=["geom"]),
             GistIndex(name="topology_geom_3d_gist_idx", fields=["geom_3d"]),
         ]
+        # TODO: suppr dernière migration + la refaire
         permissions = [
-            ("route_on_path_network", _("Can route on the path network")),
-            ("route_off_path_network", _("Can route off the path network")),
+            ("geometry_on_path_network", _("Can draw geometries coupled to the path network")),
+            ("geometry_off_path_network", _("Can draw geometries uncoupled from the path network")),
         ]
 
     def __init__(self, *args, **kwargs):
