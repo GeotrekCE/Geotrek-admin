@@ -49,7 +49,7 @@ cffi==2.0.0
     #   persistent
     #   pyvips
     #   weasyprint
-chardet==7.4.2
+chardet==7.4.3
     # via geotrek (setup.py)
 charset-normalizer==3.4.7
     # via
