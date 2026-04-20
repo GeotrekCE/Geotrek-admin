@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-11 16:35+0000\n"
+"POT-Creation-Date: 2026-04-20 14:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -201,6 +201,12 @@ msgstr ""
 msgid "Topologies"
 msgstr ""
 
+msgid "Can route on the path network"
+msgstr ""
+
+msgid "Can route off the path network"
+msgstr ""
+
 msgid "Start position"
 msgstr ""
 
@@ -328,6 +334,9 @@ msgid "The marker was not dropped on a path."
 msgstr ""
 
 msgid "No routing found for this marker. Please move or delete it."
+msgstr ""
+
+msgid "Objects"
 msgstr ""
 
 msgid "No certification"
