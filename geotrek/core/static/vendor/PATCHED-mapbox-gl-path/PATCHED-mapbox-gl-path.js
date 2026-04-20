@@ -8342,7 +8342,8 @@ class MapboxPathControl {
         const pathControlContainer = document.createElement("div");
         if (this.directionsThemes && this.directionsThemes.length > 0) {
             const hasSelectedDirectionThemes = this.directionsThemes.some(({ selected }) => selected === true);
-            pathControlContainer.className = "mapbox-gl-path-container";
+            // TODO: patch
+            pathControlContainer.className = "mapbox-gl-path-container maplibregl-ctrl maplibregl-ctrl-group";
             const pathControlCheckbox = createElement("input", {
                 className: "mapbox-gl-path-theme-selection__checkbox",
                 id: "checkbox-path",
