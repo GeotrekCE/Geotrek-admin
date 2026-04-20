@@ -519,6 +519,10 @@ class Topology(
             GistIndex(name="topology_geom_gist_idx", fields=["geom"]),
             GistIndex(name="topology_geom_3d_gist_idx", fields=["geom_3d"]),
         ]
+        permissions = [
+            ("route_on_path_network", _("Can route on the path network")),
+            ("route_off_path_network", _("Can route off the path network")),
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
