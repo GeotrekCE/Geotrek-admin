@@ -233,24 +233,16 @@
                     );
             }
 
-            function initRoutingControl () {
+            async function initRoutingControl () {
 
                 //map.getMap().addControl(new MaplibrePathRoutingControl(), 'top-left');
-
-
 
                 // TODO: controller for resetting the route
                 // TODO: utiliser un controller cliquable pour commencer/mettre en pause le routing.
 
                 // Load the arrow image which displays the route's direction
-                // FIXME: currently not displayed
-                map.getMap().loadImage(
-                  "{% static 'vendor/PATCHED-mapbox-gl-path/assets/arrow.png' %}",
-                  (error, image) => {
-                  if (error) throw error;
-                  map.getMap().addImage('arrow', image, {pixelRatio: 2});
-                  }
-                );
+                const image = await map.getMap().loadImage("{% static 'vendor/PATCHED-mapbox-gl-path/assets/arrow.png' %}");
+                map.getMap().addImage('arrow', image.data);
 
                 // Add mapbox-gl-path control
                 const mapboxPathControl = new MapboxPathControl({
