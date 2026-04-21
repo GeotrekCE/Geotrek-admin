@@ -29,6 +29,8 @@ setup(
         "psycopg2",
         "pdfimpose",
         "Pillow",
+        "pmtiles",
+        "mercantile",
         "simplekml",
         "pygal",
         "paperclip",
