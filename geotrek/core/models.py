@@ -530,6 +530,14 @@ class Topology(
         if not self.pk and not self.kind:
             self.kind = self.__class__.KIND
 
+    def get_update_off_network_url(self, on_network=True):
+        """TODO: docstring"""
+        url = super().get_update_url()
+        url = url.replace("edit", "edit-off-network")
+        print('\n\n\n', url, '\n\n\n')
+        return url
+        # return reverse(self._entity.url_name(ENTITY_UPDATE), args=[str(self.pk)])
+
     @property
     def paths(self):  # noqa
         return Path.objects.filter(aggregations__topo_object=self)
