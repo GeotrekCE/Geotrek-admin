@@ -547,6 +547,7 @@ class TrekForm(TopologyForm):
 
         # TODO: explain in a comment how the topology/geometry fields work
         if self.topological:
+            self.fields["geom"].widget = forms.HiddenInput()
             self.geomfields = ["topology"]
             modifiable = self.fields["topology"].widget.modifiable
             self.fields["topology"].widget = LineTopologyWidget()
@@ -556,16 +557,12 @@ class TrekForm(TopologyForm):
             self.fields["parking_location"].label = ""
             self.fields["parking_location"].widget.target_map = "topology"
         else:
+            self.fields["topology"].widget = forms.HiddenInput()
             self.geomfields = ["geom", "parking_location", "points_reference"]
             self.fields["parking_location"].widget = MapWidget(
                     attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"})
             self.fields["points_reference"].widget = MapWidget(
                     attrs={"target_map": "geom", "custom_icon": "markers/points.svg"})
-
-        if self.topological:
-            self.fields["geom"].widget = forms.HiddenInput()
-        else:
-            self.fields["topology"].widget = forms.HiddenInput()
 
         if self.fields.get("structure"):
             self.fieldslayout[0][1][0].insert(0, "structure")
