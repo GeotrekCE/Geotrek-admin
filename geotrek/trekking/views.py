@@ -298,6 +298,12 @@ class TrekUpdate(MapEntityUpdate):
     queryset = Trek.objects.existing()
     form_class = TrekForm
 
+    def get_form_kwargs(self):
+        """TODO: docstring"""
+        kwargs = super().get_form_kwargs()
+        kwargs['topological'] = self.request.GET.get('topological', 'true') == 'true'
+        return kwargs
+
     @same_structure_required("trekking:trek_detail")
     def dispatch(self, *args, **kwargs):
         return super().dispatch(*args, **kwargs)
