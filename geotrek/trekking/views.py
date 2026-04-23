@@ -54,8 +54,7 @@ from geotrek.signage.serializers import SignageAPIGeojsonSerializer
 from geotrek.zoning.models import City, District, RestrictedArea
 
 from .filters import POIFilterSet, ServiceFilterSet, TrekFilterSet
-from .forms import POIForm, ServiceForm, TrekForm, WebLinkCreateFormPopup, OnNetworkTrekForm, \
-    OffNetworkTrekForm
+from .forms import POIForm, ServiceForm, TrekForm, WebLinkCreateFormPopup
 from .models import POI, Service, Trek, WebLink
 from .serializers import (
     POIGeojsonSerializer,
@@ -297,14 +296,14 @@ class TrekCreate(CreateFromTopologyMixin, MapEntityCreate):
 
 class TrekUpdate(MapEntityUpdate):
     queryset = Trek.objects.existing()
-    #form_class = TrekForm
+    form_class = TrekForm
 
-    def get_form_class(self):
-        """TODO: docstring"""
-        topological = self.request.GET.get('topological', 'true') == 'true'
-        if topological:
-            return OnNetworkTrekForm
-        return OffNetworkTrekForm
+    # def get_form_class(self):
+    #     """TODO: docstring"""
+    #     topological = self.request.GET.get('topological', 'true') == 'true'
+    #     if topological:
+    #         return OnNetworkTrekForm
+    #     return OffNetworkTrekForm
 
     @same_structure_required("trekking:trek_detail")
     def dispatch(self, *args, **kwargs):
