@@ -28,15 +28,13 @@ from .models import (
     WebLink,
 )
 
+
 if settings.TREKKING_TOPOLOGY_ENABLED:
 
     class BaseTrekForm(TopologyForm):
         def __init__(self, *args, **kwargs):
             super().__init__(*args, **kwargs)
             modifiable = self.fields["topology"].widget.modifiable
-            # TODO: We should change LeafletWidget to keep modifiable.
-            # Init of TopologyForm -> commonForm -> mapentityForm
-            # already add a leafletwidget with modifiable
             self.fields["topology"].widget = LineTopologyWidget()
             self.fields["topology"].widget.modifiable = modifiable
             self.fields["points_reference"].label = ""
@@ -394,7 +392,6 @@ class TrekForm(BaseTrekForm):
             "pois_excluded",
             "hidden_ordered_children",
         ]
-
 
 #
 # class BaseTrekForm(CommonForm):
@@ -797,405 +794,374 @@ class TrekForm(BaseTrekForm):
 #             }
 
 
-class TrekForm(TopologyForm):
-    geom = LineStringField()
-    children = forms.ModelMultipleChoiceField(
-        label=_("Children"),
-        help_text=_("Select children in order"),
-        queryset=Trek.objects.existing(),
-        required=False,
-        widget=ModelSelect2Multiple(),
-    )
-    hidden_ordered_children = forms.CharField(
-        label=_("Hidden ordered children"),
-        widget=forms.widgets.HiddenInput(),
-        required=False,
-    )
-    leftpanel_scrollable = False
-
-    base_fieldslayout = [
-        Div(
-            HTML(
-                """<ul class="nav nav-tabs">
-    <li id="tab-main" class="nav-item">
-        <a class="nav-link active" href="#main" data-toggle="tab"><i class="bi bi-card-list"></i> {}</a>
-    </li>
-    <li id="tab-advanced" class="nav-item">
-        <a class="nav-link" href="#advanced" data-toggle="tab"><i class="bi bi-list-ul"></i> {}</a>
-    </li>
-    <li id="tab-accessibility" class="nav-item">
-        <a class="nav-link" href="#accessibility" data-toggle="tab"><i class="bi bi-eye-slash-fill"></i> {}</a>
-    </li>
-</ul>""".format(_("Main"), _("Advanced"), _("Accessibility"))
-            ),
-            Div(
-                Div(
-                    "name",
-                    "review",
-                    "published",
-                    "departure",
-                    "arrival",
-                    "duration",
-                    "difficulty",
-                    "practice",
-                    "ratings_description",
-                    "route",
-                    "access",
-                    "description_teaser",
-                    "ambiance",
-                    "description",
-                    css_id="main",
-                    css_class="scrollable tab-pane active",
-                ),
-                Div(
-                    "points_reference",
-                    "advised_parking",
-                    "parking_location",
-                    "public_transport",
-                    "advice",
-                    "gear",
-                    "themes",
-                    "labels",
-                    "networks",
-                    "web_links",
-                    "information_desks",
-                    "source",
-                    "portal",
-                    "children",
-                    "hidden_ordered_children",
-                    "eid",
-                    "eid2",
-                    "reservation_system",
-                    "reservation_id",
-                    "pois_excluded",
-                    css_id="advanced",  # used in Javascript for activating tab if error
-                    css_class="scrollable tab-pane",
-                ),
-                Div(
-                    "accessibilities",
-                    "accessibility_level",
-                    "accessibility_infrastructure",
-                    "accessibility_slope",
-                    "accessibility_covering",
-                    "accessibility_exposure",
-                    "accessibility_width",
-                    "accessibility_advice",
-                    "accessibility_signage",
-                    css_id="accessibility",  # used in Javascript for activating tab if error
-                    css_class="scrollable tab-pane",
-                ),
-                css_class="tab-content",
-            ),
-            css_class="tabbable",
-        ),
-    ]
-
-    def __init__(self, *args, **kwargs):
-        # Store ordered_ids before calling super().__init__()
-        self._ordered_children_ids = []
-        self.topological = kwargs.pop('topological', True)
-
-        self.fieldslayout = deepcopy(self.base_fieldslayout)
-        service_types = ServiceType.objects.all()
-        if any(st.pictogram for st in service_types):
-            label = _("Insert service:")
-            pictogram_links = "".join(
-                [
-                    f'<a class="servicetype" data-url="{t.pictogram.url}" data-name={t.name}">'
-                    f'<img src="{t.pictogram.url}"></a>'
-                    for t in service_types
-                    if t.pictogram
-                ]
-            )
-            self.fieldslayout[0][1][0].append(
-                HTML(f'<div class="controls">{label}{pictogram_links}</div>')
-            )
-
-        if not self.topological:
-            super().__init__(*args, **kwargs)
-        else:
-            super(TopologyForm, self).__init__(*args, **kwargs)
-
-        # TODO: explain in a comment how the topology/geometry fields work
-        if self.topological:
-            self.fields["geom"].widget = forms.HiddenInput()
-            self.geomfields = ["topology"]
-            modifiable = self.fields["topology"].widget.modifiable
-            self.fields["topology"].widget = LineTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-            self.fields["points_reference"].label = ""
-            self.fields["points_reference"].widget.target_map = "topology"
-            self.fields["parking_location"].label = ""
-            self.fields["parking_location"].widget.target_map = "topology"
-        else:
-            #self.fields.pop("topology")
-            self.fields["topology"].widget = forms.HiddenInput()
-            self.geomfields = ["geom", "parking_location", "points_reference"]
-            self.fields["parking_location"].widget = MapWidget(
-                    attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"})
-            self.fields["points_reference"].widget = MapWidget(
-                    attrs={"target_map": "geom", "custom_icon": "markers/points.svg"})
-
-        if self.fields.get("structure"):
-            self.fieldslayout[0][1][0].insert(0, "structure")
-        self.fields["web_links"].widget = SelectMultipleWithPop(
-            choices=self.fields["web_links"].choices,
-            add_url=WebLink.get_add_url(),
-            attrs={
-                "data-theme": "bootstrap4",
-                "data-width": "75%",
-            },
-        )
-        # Make sure (force) that name is required, in default language only
-        self.fields[
-            build_localized_fieldname("name", settings.LANGUAGE_CODE)
-        ].required = True
-
-        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
-            self.fields.pop("points_reference")
-        else:
-            # Edit points of reference with custom edition JavaScript class
-            self.fields[
-                "points_reference"
-            ].widget.geometry_field_class = "PointsReferenceField"
-
-        self.fields[
-            "parking_location"
-        ].widget.geometry_field_class = "ParkingLocationField"
-        self.fields["duration"].widget.attrs["min"] = "0"
-
-        # Since we use chosen() in trek_form.html, we don't need the default help text
-        for f in [
-            "themes",
-            "networks",
-            "accessibilities",
-            "web_links",
-            "information_desks",
-            "source",
-            "portal",
-        ]:
-            self.fields[f].help_text = ""
-
-        if self.instance and self.instance.pk:
-            queryset_children = OrderedTrekChild.objects.filter(
-                parent__id=self.instance.pk
-            ).order_by("order")
-            ordered_children_ids = list(
-                queryset_children.values_list("child__id", flat=True)
-            )
-            self._ordered_children_ids = ordered_children_ids
-
-            # init multiple children field with data
-            all_children = Trek.objects.existing().exclude(pk=self.instance.pk)
-
-            # Set initial with ordered IDs
-            self.fields["children"].initial = ordered_children_ids
-            # init hidden field with children order
-            self.fields["hidden_ordered_children"].initial = ",".join(
-                str(x) for x in ordered_children_ids
-            )
-
-            # Force the queryset to render options in the correct order
-            # by using Case/When to preserve the order
-            if ordered_children_ids:
-                from django.db.models import Case, IntegerField, Value, When
-
-                preserved = Case(
-                    *[
-                        When(pk=pk, then=Value(i))
-                        for i, pk in enumerate(ordered_children_ids)
-                    ],
-                    default=Value(len(ordered_children_ids) + 1),
-                    output_field=IntegerField(),
-                )
-
-                self.fields["children"].queryset = all_children.annotate(
-                    custom_order=preserved
-                ).order_by("custom_order", "name")
-            else:
-                self.fields["children"].queryset = all_children
-
-        for scale in RatingScale.objects.all():
-            ratings = None
-            if self.instance.pk:
-                ratings = self.instance.ratings.filter(scale=scale)
-            fieldname = f"rating_scale_{scale.pk}"
-            self.fields[fieldname] = forms.ModelChoiceField(
-                label=scale.name,
-                queryset=scale.ratings.all(),
-                required=False,
-                initial=ratings[0] if ratings else None,
-            )
-            right_after_type_index = (
-                self.fieldslayout[0][1][0].fields.index("practice") + 1
-            )
-            self.fieldslayout[0][1][0].insert(right_after_type_index, fieldname)
-
-        if self.instance.pk:
-            self.fields["pois_excluded"].queryset = self.instance.all_pois.all()
-        else:
-            self.fieldslayout[0][1][1].remove("pois_excluded")
-
-    def clean(self, *args, **kwargs):
-        cleaned_data = super().clean(*args, **kwargs)
-        if self.topological and "geom" in self.errors:
-            del self.errors["geom"]
-        elif not self.topological and "topology" in self.errors:
-            del self.errors["topology"]
-        practice = self.cleaned_data["practice"]
-        for scale in RatingScale.objects.all():
-            if self.cleaned_data.get(f"rating_scale_{scale.pk}"):
-                try:
-                    practice.rating_scales.get(pk=scale.pk)
-                except RatingScale.DoesNotExist:
-                    raise ValidationError(
-                        _(
-                            "One of the rating scale used is not part of the practice chosen"
-                        )
-                    )
-        return cleaned_data
-
-    def clean_children(self):
-        """
-        Check the trek is not parent and child at the same time
-        """
-        children = self.cleaned_data["children"]
-        if (
-            children
-            and self.instance
-            and self.instance.pk
-            and self.instance.trek_parents.exists()
-        ):
-            raise ValidationError(
-                _("Cannot add children because this trek is itself a child.")
-            )
-        for child in children:
-            if child.trek_children.exists():
-                raise ValidationError(
-                    _("Cannot use parent trek %(name)s as a child trek.")
-                    % {"name": child.name}
-                )
-        return children
-
-    def save(self, *args, **kwargs):
-        """
-        Custom form save override - ordered children management
-        """
-        sid = transaction.savepoint()
-
-        try:
-            if not self.topological:
-                return_value = super(TopologyForm, self).save(*args, **kwargs)
-            else:
-                return_value = super().save(*args, **kwargs)
-
-            # Save ratings
-            if return_value.practice:
-                field = getattr(return_value, "ratings")
-                to_remove = list(
-                    field.exclude(scale__practice=return_value.practice).values_list(
-                        "pk", flat=True
-                    )
-                )
-                to_add = []
-                for scale in return_value.practice.rating_scales.all():
-                    rating = self.cleaned_data.get(f"rating_scale_{scale.pk}")
-                    needs_removal = field.filter(scale=scale)
-                    if rating:
-                        needs_removal = needs_removal.exclude(pk=rating.pk)
-                        to_add.append(rating.pk)
-                    to_remove += list(needs_removal.values_list("pk", flat=True))
-                field.remove(*to_remove)
-                field.add(*to_add)
-
-            # Save ordered children links only (do not delete Trek objects)
-            selected_children = list(self.cleaned_data.get("children") or [])
-            selected_ids = [child.pk for child in selected_children]
-            ordered_ids = []
-
-            raw_ordering = self.cleaned_data.get("hidden_ordered_children", "")
-            if raw_ordering:
-                for value in raw_ordering.split(","):
-                    value = value.strip()
-                    if not value:
-                        continue
-                    try:
-                        child_id = int(value)
-                    except ValueError:
-                        continue
-                    if child_id in selected_ids and child_id not in ordered_ids:
-                        ordered_ids.append(child_id)
-
-            # Keep selected items even if they were not present in the hidden order.
-            for child_id in selected_ids:
-                if child_id not in ordered_ids:
-                    ordered_ids.append(child_id)
-
-            return_value.trek_children.all().delete()
-            for order, child_id in enumerate(ordered_ids):
-                OrderedTrekChild.objects.create(
-                    parent=return_value,
-                    child_id=child_id,
-                    order=order,
-                )
-
-            transaction.savepoint_commit(sid)
-            return return_value
-
-        except Exception as exc:
-            transaction.savepoint_rollback(sid)
-            raise exc
-
-    class Meta(TopologyForm.Meta):
-        model = Trek
-        fields = [
-            *TopologyForm.Meta.fields,
-            "geom",
-            "structure",
-            "name",
-            "review",
-            "published",
-            "labels",
-            "departure",
-            "arrival",
-            "duration",
-            "difficulty",
-            "route",
-            "ambiance",
-            "access",
-            "description_teaser",
-            "description",
-            "ratings_description",
-            "points_reference",
-            "accessibility_infrastructure",
-            "advised_parking",
-            "parking_location",
-            "public_transport",
-            "advice",
-            "gear",
-            "themes",
-            "networks",
-            "practice",
-            "accessibilities",
-            "accessibility_level",
-            "accessibility_signage",
-            "accessibility_slope",
-            "accessibility_covering",
-            "accessibility_exposure",
-            "accessibility_width",
-            "accessibility_advice",
-            "web_links",
-            "information_desks",
-            "source",
-            "portal",
-            "children",
-            "hidden_ordered_children",
-            "eid",
-            "eid2",
-            "reservation_system",
-            "reservation_id",
-            "pois_excluded",
-        ]
+# class TrekForm(TopologyForm):
+#     geom = LineStringField()
+# children = forms.ModelMultipleChoiceField(
+#     label=_("Children"),
+#     help_text=_("Select children in order"),
+#     queryset=Trek.objects.existing(),
+#     required=False,
+#     widget=ModelSelect2Multiple(),
+# )
+# hidden_ordered_children = forms.CharField(
+#     label=_("Hidden ordered children"),
+#     widget=forms.widgets.HiddenInput(),
+#     required=False,
+# )
+#
+#     leftpanel_scrollable = False
+#
+#     base_fieldslayout = [
+#         Div(
+#             HTML(
+#                 """<ul class="nav nav-tabs">
+#     <li id="tab-main" class="nav-item">
+#         <a class="nav-link active" href="#main" data-toggle="tab"><i class="bi bi-card-list"></i> {}</a>
+#     </li>
+#     <li id="tab-advanced" class="nav-item">
+#         <a class="nav-link" href="#advanced" data-toggle="tab"><i class="bi bi-list-ul"></i> {}</a>
+#     </li>
+#     <li id="tab-accessibility" class="nav-item">
+#         <a class="nav-link" href="#accessibility" data-toggle="tab"><i class="bi bi-eye-slash-fill"></i> {}</a>
+#     </li>
+# </ul>""".format(_("Main"), _("Advanced"), _("Accessibility"))
+#             ),
+#             Div(
+#                 Div(
+#                     "name",
+#                     "review",
+#                     "published",
+#                     "departure",
+#                     "arrival",
+#                     "duration",
+#                     "difficulty",
+#                     "practice",
+#                     "ratings_description",
+#                     "route",
+#                     "access",
+#                     "description_teaser",
+#                     "ambiance",
+#                     "description",
+#                     css_id="main",
+#                     css_class="scrollable tab-pane active",
+#                 ),
+#                 Div(
+#                     "points_reference",
+#                     "advised_parking",
+#                     "parking_location",
+#                     "public_transport",
+#                     "advice",
+#                     "gear",
+#                     "themes",
+#                     "labels",
+#                     "networks",
+#                     "web_links",
+#                     "information_desks",
+#                     "source",
+#                     "portal",
+#                     "children_trek",
+#                     "eid",
+#                     "eid2",
+#                     "reservation_system",
+#                     "reservation_id",
+#                     "pois_excluded",
+#                     "hidden_ordered_children",
+#                     css_id="advanced",  # used in Javascript for activating tab if error
+#                     css_class="scrollable tab-pane",
+#                 ),
+#                 Div(
+#                     "accessibilities",
+#                     "accessibility_level",
+#                     "accessibility_infrastructure",
+#                     "accessibility_slope",
+#                     "accessibility_covering",
+#                     "accessibility_exposure",
+#                     "accessibility_width",
+#                     "accessibility_advice",
+#                     "accessibility_signage",
+#                     css_id="accessibility",  # used in Javascript for activating tab if error
+#                     css_class="scrollable tab-pane",
+#                 ),
+#                 css_class="tab-content",
+#             ),
+#             css_class="tabbable",
+#         ),
+#     ]
+#
+#     def __init__(self, *args, **kwargs):
+#         self.topological = kwargs.pop('topological', True)
+#
+#         self.fieldslayout = deepcopy(self.base_fieldslayout)
+#         service_types = ServiceType.objects.all()
+#         if any(st.pictogram for st in service_types):
+#             label = _("Insert service:")
+#             pictogram_links = "".join(
+#                 [
+#                     f'<a class="servicetype" data-url="{t.pictogram.url}" data-name={t.name}">'
+#                     f'<img src="{t.pictogram.url}"></a>'
+#                     for t in service_types
+#                     if t.pictogram
+#                 ]
+#             )
+#             self.fieldslayout[0][1][0].append(
+#                 HTML(f'<div class="controls">{label}{pictogram_links}</div>')
+#             )
+#
+#         if not self.topological:
+#             super().__init__(*args, **kwargs)
+#         else:
+#             super(TopologyForm, self).__init__(*args, **kwargs)
+#
+#         # TODO: explain in a comment how the topology/geometry fields work
+#         if self.topological:
+#             self.fields["geom"].widget = forms.HiddenInput()
+#             self.geomfields = ["topology"]
+#             modifiable = self.fields["topology"].widget.modifiable
+#             self.fields["topology"].widget = LineTopologyWidget()
+#             self.fields["topology"].widget.modifiable = modifiable
+#             self.fields["points_reference"].label = ""
+#             self.fields["points_reference"].widget.target_map = "topology"
+#             self.fields["parking_location"].label = ""
+#             self.fields["parking_location"].widget.target_map = "topology"
+#         else:
+#             #self.fields.pop("topology")
+#             self.fields["topology"].widget = forms.HiddenInput()
+#             self.geomfields = ["geom", "parking_location", "points_reference"]
+#             self.fields["parking_location"].widget = MapWidget(
+#                     attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"})
+#             self.fields["points_reference"].widget = MapWidget(
+#                     attrs={"target_map": "geom", "custom_icon": "markers/points.svg"})
+#
+#         if self.fields.get("structure"):
+#             self.fieldslayout[0][1][0].insert(0, "structure")
+#         self.fields["web_links"].widget = SelectMultipleWithPop(
+#             choices=self.fields["web_links"].choices,
+#             add_url=WebLink.get_add_url(),
+#             attrs={
+#                 "data-theme": "bootstrap4",
+#                 "data-width": "75%",
+#             },
+#         )
+#         # Make sure (force) that name is required, in default language only
+#         self.fields[
+#             build_localized_fieldname("name", settings.LANGUAGE_CODE)
+#         ].required = True
+#
+#         if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
+#             self.fields.pop("points_reference")
+#         else:
+#             # Edit points of reference with custom edition JavaScript class
+#             self.fields[
+#                 "points_reference"
+#             ].widget.geometry_field_class = "PointsReferenceField"
+#
+#         self.fields[
+#             "parking_location"
+#         ].widget.geometry_field_class = "ParkingLocationField"
+#         self.fields["duration"].widget.attrs["min"] = "0"
+#
+#         # Since we use chosen() in trek_form.html, we don't need the default help text
+#         for f in [
+#             "themes",
+#             "networks",
+#             "accessibilities",
+#             "web_links",
+#             "information_desks",
+#             "source",
+#             "portal",
+#         ]:
+#             self.fields[f].help_text = ""
+#
+#         if self.instance and self.instance.pk:
+#             queryset_children = OrderedTrekChild.objects.filter(
+#                 parent__id=self.instance.pk
+#             ).order_by("order")
+#             # init multiple children field with data
+#             self.fields["children_trek"].queryset = Trek.objects.existing().exclude(
+#                 pk=self.instance.pk
+#             )
+#             self.fields["children_trek"].initial = [
+#                 c.child.pk for c in self.instance.trek_children.all()
+#             ]
+#
+#             # init hidden field with children order
+#             self.fields["hidden_ordered_children"].initial = ",".join(
+#                 str(x) for x in queryset_children.values_list("child__id", flat=True)
+#             )
+#
+#         for scale in RatingScale.objects.all():
+#             ratings = None
+#             if self.instance.pk:
+#                 ratings = self.instance.ratings.filter(scale=scale)
+#             fieldname = f"rating_scale_{scale.pk}"
+#             self.fields[fieldname] = forms.ModelChoiceField(
+#                 label=scale.name,
+#                 queryset=scale.ratings.all(),
+#                 required=False,
+#                 initial=ratings[0] if ratings else None,
+#             )
+#             right_after_type_index = (
+#                 self.fieldslayout[0][1][0].fields.index("practice") + 1
+#             )
+#             self.fieldslayout[0][1][0].insert(right_after_type_index, fieldname)
+#
+#         if self.instance.pk:
+#             self.fields["pois_excluded"].queryset = self.instance.all_pois.all()
+#         else:
+#             self.fieldslayout[0][1][1].remove("pois_excluded")
+#
+#     def clean(self, *args, **kwargs):
+#         cleaned_data = super().clean(*args, **kwargs)
+#         if self.topological and "geom" in self.errors:
+#             del self.errors["geom"]
+#         elif not self.topological and "topology" in self.errors:
+#             del self.errors["topology"]
+#         practice = self.cleaned_data["practice"]
+#         for scale in RatingScale.objects.all():
+#             if self.cleaned_data.get(f"rating_scale_{scale.pk}"):
+#                 try:
+#                     practice.rating_scales.get(pk=scale.pk)
+#                 except RatingScale.DoesNotExist:
+#                     raise ValidationError(
+#                         _(
+#                             "One of the rating scale used is not part of the practice chosen"
+#                         )
+#                     )
+#         return cleaned_data
+#
+#     def clean_children_trek(self):
+#         """
+#         Check the trek is not parent and child at the same time
+#         """
+#         children = self.cleaned_data["children_trek"]
+#         if children and self.instance and self.instance.trek_parents.exists():
+#             raise ValidationError(
+#                 _("Cannot add children because this trek is itself a child.")
+#             )
+#         for child in children:
+#             if child.trek_children.exists():
+#                 raise ValidationError(
+#                     _("Cannot use parent trek %(name)s as a child trek.")
+#                     % {"name": child.name}
+#                 )
+#         return children
+#
+#     def save(self, *args, **kwargs):
+#         """
+#         Custom form save override - ordered children management
+#         """
+#         sid = transaction.savepoint()
+#
+#         try:
+#             if not self.topological:
+#                 return_value = super(TopologyForm, self).save(*args, **kwargs)
+#             else:
+#                 return_value = super().save(*args, **kwargs)
+#
+#             # Save ratings
+#             # TODO : Go through practice and not rating_scales
+#             if return_value.practice:
+#                 field = getattr(return_value, "ratings")
+#                 to_remove = list(
+#                     field.exclude(scale__practice=return_value.practice).values_list(
+#                         "pk", flat=True
+#                     )
+#                 )
+#                 to_add = []
+#                 for scale in return_value.practice.rating_scales.all():
+#                     rating = self.cleaned_data.get(f"rating_scale_{scale.pk}")
+#                     needs_removal = field.filter(scale=scale)
+#                     if rating:
+#                         needs_removal = needs_removal.exclude(pk=rating.pk)
+#                         to_add.append(rating.pk)
+#                     to_remove += list(needs_removal.values_list("pk", flat=True))
+#                 field.remove(*to_remove)
+#                 field.add(*to_add)
+#
+#             # save ordered children
+#             ordering = []
+#
+#             if self.cleaned_data["hidden_ordered_children"]:
+#                 ordering = self.cleaned_data["hidden_ordered_children"].split(",")
+#
+#             order = 0
+#
+#             # add and update
+#             for value in ordering:
+#                 child, created = OrderedTrekChild.objects.get_or_create(
+#                     parent=self.instance, child=Trek.objects.get(pk=value)
+#                 )
+#                 child.order = order
+#                 child.save()
+#                 order += 1
+#
+#             # delete
+#             new_list_children = self.cleaned_data["children_trek"].values_list(
+#                 "pk", flat=True
+#             )
+#
+#             for child_relation in self.instance.trek_children.all():
+#                 # if existant child not in selection, deletion
+#                 if child_relation.child_id not in new_list_children:
+#                     child_relation.delete()
+#
+#             transaction.savepoint_commit(sid)
+#             return return_value
+#
+#         except Exception as exc:
+#             transaction.savepoint_rollback(sid)
+#             raise exc
+#
+#     class Meta(TopologyForm.Meta):
+#         model = Trek
+#         fields = [
+#             *TopologyForm.Meta.fields,
+#             "geom",
+#             "structure",
+#             "name",
+#             "review",
+#             "published",
+#             "labels",
+#             "departure",
+#             "arrival",
+#             "duration",
+#             "difficulty",
+#             "route",
+#             "ambiance",
+#             "access",
+#             "description_teaser",
+#             "description",
+#             "ratings_description",
+#             "points_reference",
+#             "accessibility_infrastructure",
+#             "advised_parking",
+#             "parking_location",
+#             "public_transport",
+#             "advice",
+#             "gear",
+#             "themes",
+#             "networks",
+#             "practice",
+#             "accessibilities",
+#             "accessibility_level",
+#             "accessibility_signage",
+#             "accessibility_slope",
+#             "accessibility_covering",
+#             "accessibility_exposure",
+#             "accessibility_width",
+#             "accessibility_advice",
+#             "web_links",
+#             "information_desks",
+#             "source",
+#             "portal",
+#             "children_trek",
+#             "eid",
+#             "eid2",
+#             "reservation_system",
+#             "reservation_id",
+#             "pois_excluded",
+#             "hidden_ordered_children",
+#         ]
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
