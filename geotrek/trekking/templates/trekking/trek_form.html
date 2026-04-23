@@ -16,8 +16,7 @@
             $('#id_children_trek_chosen').find('ul').sortable();
         });
     </script>
-
-    <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
+    <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}{% if not form.topological %}?topological=false{% endif %}" class="form-horizontal" method="POST">
         {% crispy form %}
     </form>
 {% endblock mainform %}
