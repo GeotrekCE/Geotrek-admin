@@ -27,42 +27,7 @@ from .models import (
     WebLink,
 )
 
-
-if settings.TREKKING_TOPOLOGY_ENABLED:
-
-    class BaseTrekForm(TopologyForm):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["topology"].widget.modifiable
-            self.fields["topology"].widget = LineTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-            self.fields["points_reference"].label = ""
-            self.fields["points_reference"].widget.target_map = "topology"
-            self.fields["parking_location"].label = ""
-            self.fields["parking_location"].widget.target_map = "topology"
-
-        class Meta(TopologyForm.Meta):
-            model = Trek
-else:
-
-    class BaseTrekForm(CommonForm):
-        geom = LineStringField()
-        geomfields = ["geom", "parking_location", "points_reference"]
-
-        class Meta(CommonForm.Meta):
-            model = Trek
-            fields = [*CommonForm.Meta.fields, "geom"]
-            widgets = {
-                "parking_location": MapWidget(
-                    attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"}
-                ),
-                "points_reference": MapWidget(
-                    attrs={"target_map": "geom", "custom_icon": "markers/points.svg"}
-                ),
-            }
-
-
-class TrekForm(BaseTrekForm):
+class TrekForm(CommonForm):
     children_trek = forms.ModelMultipleChoiceField(
         label=_("Children"),
         queryset=Trek.objects.all(),
@@ -250,6 +215,7 @@ class TrekForm(BaseTrekForm):
             self.fieldslayout[0][1][1].remove("pois_excluded")
 
     def clean(self):
+        # TODO: check if super execution order is still ok for on-network
         cleaned_data = super().clean()
         practice = self.cleaned_data["practice"]
         for scale in RatingScale.objects.all():
@@ -288,6 +254,7 @@ class TrekForm(BaseTrekForm):
         sid = transaction.savepoint()
 
         try:
+            # TODO: check if super execution order is still ok for on-network
             return_value = super().save(self, *args, **kwargs)
             # Save ratings
             # TODO : Go through practice and not rating_scales
@@ -343,9 +310,10 @@ class TrekForm(BaseTrekForm):
             transaction.savepoint_rollback(sid)
             raise exc
 
-    class Meta(BaseTrekForm.Meta):
+    class Meta(CommonForm.Meta):
+        model = Trek
         fields = [
-            *BaseTrekForm.Meta.fields,
+            *CommonForm.Meta.fields,
             "structure",
             "name",
             "review",
@@ -391,6 +359,32 @@ class TrekForm(BaseTrekForm):
             "pois_excluded",
             "hidden_ordered_children",
         ]
+
+class OnNetworkTrekForm(TrekForm, TopologyForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        modifiable = self.fields["topology"].widget.modifiable
+        self.fields["topology"].widget = LineTopologyWidget()
+        self.fields["topology"].widget.modifiable = modifiable
+        self.fields["points_reference"].label = ""
+        self.fields["points_reference"].widget.target_map = "topology"
+        self.fields["parking_location"].label = ""
+        self.fields["parking_location"].widget.target_map = "topology"
+
+class OffNetworkTrekForm(TrekForm):
+    geom = LineStringField()
+    geomfields = ["geom", "parking_location", "points_reference"]
+
+    class Meta(TrekForm.Meta):
+        fields = [*TrekForm.Meta.fields, "geom"]
+        widgets = {
+            "parking_location": MapWidget(
+                attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"}
+            ),
+            "points_reference": MapWidget(
+                attrs={"target_map": "geom", "custom_icon": "markers/points.svg"}
+            ),
+        }
 
 #
 # class BaseTrekForm(CommonForm):
