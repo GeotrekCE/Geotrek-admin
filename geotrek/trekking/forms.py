@@ -362,6 +362,7 @@ class TrekForm(CommonForm):
         ]
 
 class OnNetworkTrekForm(TrekForm, TopologyForm):
+    topological = True
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         modifiable = self.fields["topology"].widget.modifiable
@@ -373,6 +374,7 @@ class OnNetworkTrekForm(TrekForm, TopologyForm):
         self.fields["parking_location"].widget.target_map = "topology"
 
 class OffNetworkTrekForm(TrekForm):
+    topological = False
     geom = LineStringField()
     geomfields = ["geom", "parking_location", "points_reference"]
 

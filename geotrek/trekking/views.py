@@ -301,7 +301,7 @@ class TrekUpdate(MapEntityUpdate):
     def get_form_class(self):
         """TODO: docstring"""
         topological = self.request.GET.get('topological', 'true') == 'true'
-        if settings.TREKKING_TOPOLOGY_ENABLED:#topological:
+        if topological:
             return OnNetworkTrekForm
         return OffNetworkTrekForm
 
