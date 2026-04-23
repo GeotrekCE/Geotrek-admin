@@ -701,14 +701,9 @@ class Topology(
         if self.pk:
             existing = self.__class__.objects.get(pk=self.pk)
             # If the geometry is modified, decouple the topology from the path network
-            print(f"{existing.geom=}, {self.geom=}")
-            print(f"{existing.geom.ewkt=}, {self.geom.ewkt=}")
             transformed_geom = self.geom
             if existing.geom != self.geom:
-                print('hey')
                 self.coupled = False
-            else:
-                print('ho')
                 # FIXME: compare the geoms correctly (currntly not the same srid)
                 ...
             # length is readonly from the Django point of view, but it can be changed at DB level.
