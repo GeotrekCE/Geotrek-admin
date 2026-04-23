@@ -521,14 +521,8 @@ class Topology(
         ]
         # TODO: suppr dernière migration + la refaire
         permissions = [
-            (
-                "geometry_on_path_network",
-                _("Can draw geometries coupled to the path network"),
-            ),
-            (
-                "geometry_off_path_network",
-                _("Can draw geometries uncoupled from the path network"),
-            ),
+            ("can_draw_on_path_network", _("Can draw geometries coupled to the path network")),
+            ("can_draw_off_path_network", _("Can draw geometries uncoupled from the path network")),
         ]
 
     def __init__(self, *args, **kwargs):
@@ -704,13 +698,18 @@ class Topology(
         return self
 
     def save(self, *args, **kwargs):
+        print(f"{self.geom_changed}")
         if self.pk:
             existing = self.__class__.objects.get(pk=self.pk)
             # If the geometry is modified, decouple the topology from the path network
-            # transformed_geom = self.geom
+            print(f"{existing.geom=}, {self.geom=}")
+            print(f"{existing.geom.ewkt=}, {self.geom.ewkt=}")
+            transformed_geom = self.geom
             if existing.geom != self.geom:
+                print('hey')
                 self.coupled = False
             else:
+                print('ho')
                 # FIXME: compare the geoms correctly (currntly not the same srid)
                 ...
             # length is readonly from the Django point of view, but it can be changed at DB level.
