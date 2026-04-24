@@ -14,6 +14,7 @@ class SyncMobileForm(forms.Form):
     def helper(self):
         helper = FormHelper()
         helper.form_id = "form-sync"
+        # TODO: here
         helper.form_action = reverse("apimobile:sync_mobiles")
         helper.form_class = "search"
         # submit button with boostrap attributes, disabled by default
