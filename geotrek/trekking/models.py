@@ -415,7 +415,7 @@ class Trek(
     capture_map_image_waitfor = (
         ".poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded"
     )
-
+    # children = models.ManyToManyField('trekking.Trek', through=OrderedTrekChild, related_name="parents")
     geometry_types_allowed = ["LINESTRING"]
     objects = TrekManager()
 

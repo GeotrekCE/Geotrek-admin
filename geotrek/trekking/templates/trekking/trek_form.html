@@ -3,20 +3,13 @@
 {% load i18n crispy_forms_tags static %}
 
 {% block mainform %}
-
-    <script type="text/javascript" src="{% static 'trekking/chosen.order.jquery.min.js' %}"></script>
-    <script type="text/javascript" src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
-
-    <script type="text/javascript">
-        $(function(){
-            $("#id_children_trek").change(function(){
-               $("#id_hidden_ordered_children").val($("#id_children_trek").getSelectionOrder().toString());
-            });
-
-            $('#id_children_trek_chosen').find('ul').sortable();
+    <script>
+        $(document).ready(function() {
+            if (window.initOrderedChildrenSelect2) {
+                window.initOrderedChildrenSelect2('#id_children', '#id_hidden_ordered_children', '#mainform');
+            }
         });
     </script>
-
     <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
         {% crispy form %}
     </form>
@@ -26,6 +19,7 @@
 {% block extrabody %}
     {{ block.super }}
     <script type="text/javascript" src="{% static "common/js/form.js" %}"></script>
+    <script type="text/javascript" src="{% static "common/js/ordered_children_select2.js" %}"></script>
     <script type="text/javascript">
         MapEntity.i18n['Add a point of reference'] = "{% trans "Add a point of reference" %}";
         MapEntity.i18n['Move points of reference'] = "{% trans "Move points of reference" %}";
@@ -65,8 +59,6 @@
                 tinymce.get(id).execCommand('mceInsertContent', false, '<img src="' + url + '" alt="' + name + '" />');
                 return false;
             });
-
-            $("#id_children_trek").setSelectionOrder($("#id_hidden_ordered_children").val().split(","));
         });
 
     </script>

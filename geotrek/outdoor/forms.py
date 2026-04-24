@@ -249,17 +249,37 @@ class CourseForm(CommonForm):
             queryset_children = OrderedCourseChild.objects.filter(
                 parent__id=self.instance.pk
             ).order_by("order")
-            # init multiple children field with data
-            self.fields["children_course"].queryset = Course.objects.exclude(
-                pk=self.instance.pk
+            ordered_children_ids = list(
+                queryset_children.values_list("child__id", flat=True)
             )
-            self.fields["children_course"].initial = [
-                c.child.pk for c in self.instance.course_children.all()
-            ]
+            # init multiple children field with data
+            all_children = Course.objects.exclude(pk=self.instance.pk)
+
+            # Set initial with ordered IDs
+            self.fields["children_course"].initial = ordered_children_ids
             # init hidden field with children order
             self.fields["hidden_ordered_children"].initial = ",".join(
-                str(x) for x in queryset_children.values_list("child__id", flat=True)
+                str(x) for x in ordered_children_ids
             )
+
+            # Force the queryset to render options in the correct order
+            if ordered_children_ids:
+                from django.db.models import Case, IntegerField, Value, When
+
+                preserved = Case(
+                    *[
+                        When(pk=pk, then=Value(i))
+                        for i, pk in enumerate(ordered_children_ids)
+                    ],
+                    default=Value(len(ordered_children_ids) + 1),
+                    output_field=IntegerField(),
+                )
+                self.fields["children_course"].queryset = all_children.annotate(
+                    custom_order=preserved
+                ).order_by("custom_order")
+            else:
+                self.fields["children_course"].queryset = all_children
+
             self.fields["pois_excluded"].queryset = self.instance.all_pois.all()
         else:
             self.fieldslayout[0].remove("pois_excluded")

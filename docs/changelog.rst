@@ -5,10 +5,15 @@ CHANGELOG
 2.124.3+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Warnings**
+
+* If you come from a version greater than equal to 2.124.0 and have edit courses with child or itinerancies, please check child order.
+
 **Bug fixes**
 
 * Adapting TourInsoft parsers to the v3 API
 * Fix trek practice merge
+* Fix ordered children for trek and courses. (#5412)
 
 
 2.124.3         (2026-04-02)

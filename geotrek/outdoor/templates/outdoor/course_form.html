@@ -1,23 +1,22 @@
 {% extends "mapentity/mapentity_form.html" %}
 
-{% load i18n static %}
+{% load i18n static crispy_forms_tags %}
+
+{% block mainform %}
+    <script>
+        $(document).ready(function() {
+            if (window.initOrderedChildrenSelect2) {
+                window.initOrderedChildrenSelect2('#id_children_course', '#id_hidden_ordered_children', '#mainform');
+            }
+        });
+    </script>
+    <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
+        {% crispy form %}
+    </form>
+{% endblock mainform %}
 
 {% block extrabody %}
     {{ block.super }}
     <script type="text/javascript" src="{% static "common/js/form.js" %}"></script>
-    <script type="text/javascript" src="{% static 'trekking/chosen.order.jquery.min.js' %}"></script>
-    <script type="text/javascript" src="https://code.jquery.com/ui/1.11.3/jquery-ui.min.js"></script>
-    <script type="text/javascript">
-        $(function(){
-            $("#id_children_course").change(function(){
-               $("#id_hidden_ordered_children").val($("#id_children_course").getSelectionOrder().toString());
-            });
-
-            $('#id_children_course_chosen').find('ul').sortable();
-        });
-    </script>
-    <script type="text/javascript">
-            $("#id_children_course").setSelectionOrder($("#id_hidden_ordered_children").val().split(","));
-        });
-    </script>
+    <script type="text/javascript" src="{% static "common/js/ordered_children_select2.js" %}"></script>
 {% endblock extrabody %}
