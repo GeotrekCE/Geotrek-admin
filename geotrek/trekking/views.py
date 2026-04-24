@@ -300,6 +300,8 @@ class TrekUpdate(MapEntityUpdate):
 
     def get_form_class(self):
         """TODO: docstring"""
+        # TODO: check la permission ici
+        # TODO: ou si aucun tronçon / module tronçons désactivé -> off (un setting)
         topological = self.request.GET.get('topological', 'true') == 'true'
         if topological:
             return OnNetworkTrekForm
