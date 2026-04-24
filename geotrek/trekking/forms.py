@@ -14,9 +14,9 @@ from mapentity.widgets import MapWidget, SelectMultipleWithPop
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
+from geotrek.core.mixins.forms import TopologyForm, OnNetworkTopologyFormMixin, OffNetworkTopologyFormMixin
+from geotrek.core.widgets import PointTopologyWidget
 
-from ..core.mixins.forms import TopologyForm
 from .models import (
     POI,
     OrderedTrekChild,
@@ -27,7 +27,8 @@ from .models import (
     WebLink,
 )
 
-class TrekForm(CommonForm):
+
+class BaseTrekForm(CommonForm):
     children_trek = forms.ModelMultipleChoiceField(
         label=_("Children"),
         queryset=Trek.objects.all(),
@@ -313,7 +314,6 @@ class TrekForm(CommonForm):
     class Meta(CommonForm.Meta):
         model = Trek
         fields = [
-            *CommonForm.Meta.fields,
             "structure",
             "name",
             "review",
@@ -360,25 +360,28 @@ class TrekForm(CommonForm):
             "hidden_ordered_children",
         ]
 
-class OnNetworkTrekForm(TrekForm, TopologyForm):
-    topological = True
+
+# TODO: delete
+class TrekForm(BaseTrekForm):
+    pass
+
+class OnNetworkTrekForm(BaseTrekForm, OnNetworkTopologyFormMixin):
+    class Meta(BaseTrekForm.Meta, OnNetworkTopologyFormMixin.Meta):
+        fields = [*OnNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        modifiable = self.fields["topology"].widget.modifiable
-        self.fields["topology"].widget = LineTopologyWidget()
-        self.fields["topology"].widget.modifiable = modifiable
         self.fields["points_reference"].label = ""
         self.fields["points_reference"].widget.target_map = "topology"
         self.fields["parking_location"].label = ""
         self.fields["parking_location"].widget.target_map = "topology"
 
-class OffNetworkTrekForm(TrekForm):
-    topological = False
-    geom = LineStringField()
-    geomfields = ["geom", "parking_location", "points_reference"]
 
-    class Meta(TrekForm.Meta):
-        fields = [*TrekForm.Meta.fields, "geom"]
+class OffNetworkTrekForm(BaseTrekForm, OffNetworkTopologyFormMixin):
+    geomfields = [*OffNetworkTopologyFormMixin.geomfields, "parking_location", "points_reference"]
+
+    class Meta(BaseTrekForm.Meta, OffNetworkTopologyFormMixin.Meta):
+        fields = [*OffNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
         widgets = {
             "parking_location": MapWidget(
                 attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"}
@@ -387,6 +390,7 @@ class OffNetworkTrekForm(TrekForm):
                 attrs={"target_map": "geom", "custom_icon": "markers/points.svg"}
             ),
         }
+
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
 
