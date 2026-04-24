@@ -520,7 +520,6 @@ class Topology(
             GistIndex(name="topology_geom_3d_gist_idx", fields=["geom_3d"]),
         ]
         permissions = [
-            ("can_draw_on_path_network", _("Can draw geometries coupled to the path network")),
             ("can_draw_off_path_network", _("Can draw geometries uncoupled from the path network")),
         ]
 
