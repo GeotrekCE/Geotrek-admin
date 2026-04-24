@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-09 11:29+0100\n"
+"POT-Creation-Date: 2026-04-24 19:56+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Spanish <https://weblate.makina-corpus.net/projects/geotrek-admin/trekking/es/>\n"
@@ -40,12 +40,6 @@ msgstr ""
 
 msgid "Trek"
 msgstr "Itinerario"
-
-msgid "Children"
-msgstr ""
-
-msgid "Select children in order"
-msgstr ""
 
 msgid "Hidden ordered children"
 msgstr ""

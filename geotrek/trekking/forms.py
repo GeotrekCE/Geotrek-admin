@@ -3,6 +3,7 @@ from copy import deepcopy
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Div, Layout, Submit
+from dal_select2.widgets import ModelSelect2Multiple
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -65,18 +66,14 @@ else:
 
 
 class TrekForm(BaseTrekForm):
-    children_trek = forms.ModelMultipleChoiceField(
-        label=_("Children"),
-        queryset=Trek.objects.all(),
-        required=False,
-        help_text=_("Select children in order"),
+    children = forms.ModelMultipleChoiceField(
+        queryset=Trek.objects.existing(), required=False, widget=ModelSelect2Multiple()
     )
     hidden_ordered_children = forms.CharField(
         label=_("Hidden ordered children"),
         widget=forms.widgets.HiddenInput(),
         required=False,
     )
-
     leftpanel_scrollable = False
 
     base_fieldslayout = [
@@ -127,13 +124,13 @@ class TrekForm(BaseTrekForm):
                     "information_desks",
                     "source",
                     "portal",
-                    "children_trek",
+                    "children",
+                    "hidden_ordered_children",
                     "eid",
                     "eid2",
                     "reservation_system",
                     "reservation_id",
                     "pois_excluded",
-                    "hidden_ordered_children",
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane",
                 ),
@@ -157,6 +154,8 @@ class TrekForm(BaseTrekForm):
     ]
 
     def __init__(self, *args, **kwargs):
+        # Store ordered_ids before calling super().__init__()
+        self._ordered_children_ids = []
         self.fieldslayout = deepcopy(self.base_fieldslayout)
         service_types = ServiceType.objects.all()
         if any(st.pictogram for st in service_types):
@@ -217,18 +216,40 @@ class TrekForm(BaseTrekForm):
             queryset_children = OrderedTrekChild.objects.filter(
                 parent__id=self.instance.pk
             ).order_by("order")
-            # init multiple children field with data
-            self.fields["children_trek"].queryset = Trek.objects.existing().exclude(
-                pk=self.instance.pk
+            ordered_children_ids = list(
+                queryset_children.values_list("child__id", flat=True)
             )
-            self.fields["children_trek"].initial = [
-                c.child.pk for c in self.instance.trek_children.all()
-            ]
+            self._ordered_children_ids = ordered_children_ids
 
+            # init multiple children field with data
+            all_children = Trek.objects.existing().exclude(pk=self.instance.pk)
+
+            # Set initial with ordered IDs
+            self.fields["children"].initial = ordered_children_ids
             # init hidden field with children order
             self.fields["hidden_ordered_children"].initial = ",".join(
-                str(x) for x in queryset_children.values_list("child__id", flat=True)
+                str(x) for x in ordered_children_ids
             )
+
+            # Force the queryset to render options in the correct order
+            # by using Case/When to preserve the order
+            if ordered_children_ids:
+                from django.db.models import Case, IntegerField, Value, When
+
+                preserved = Case(
+                    *[
+                        When(pk=pk, then=Value(i))
+                        for i, pk in enumerate(ordered_children_ids)
+                    ],
+                    default=Value(len(ordered_children_ids) + 1),
+                    output_field=IntegerField(),
+                )
+
+                self.fields["children"].queryset = all_children.annotate(
+                    custom_order=preserved
+                ).order_by("custom_order")
+            else:
+                self.fields["children"].queryset = all_children
 
         for scale in RatingScale.objects.all():
             ratings = None
@@ -266,12 +287,17 @@ class TrekForm(BaseTrekForm):
                     )
         return cleaned_data
 
-    def clean_children_trek(self):
+    def clean_children(self):
         """
         Check the trek is not parent and child at the same time
         """
-        children = self.cleaned_data["children_trek"]
-        if children and self.instance and self.instance.trek_parents.exists():
+        children = self.cleaned_data["children"]
+        if (
+            children
+            and self.instance
+            and self.instance.pk
+            and self.instance.trek_parents.exists()
+        ):
             raise ValidationError(
                 _("Cannot add children because this trek is itself a child.")
             )
@@ -283,25 +309,30 @@ class TrekForm(BaseTrekForm):
                 )
         return children
 
-    def save(self, *args, **kwargs):
+    def save(self, commit=True):
         """
         Custom form save override - ordered children management
         """
-        sid = transaction.savepoint()
+        instance = super().save(commit=commit)
 
-        try:
-            return_value = super().save(self, *args, **kwargs)
+        # Django contract: when commit=False, caller is responsible for saving
+        # instance and then calling form.save_m2m().
+        if not commit:
+            return instance
+
+        # Related updates require a persisted instance.
+        with transaction.atomic():
             # Save ratings
             # TODO : Go through practice and not rating_scales
-            if return_value.practice:
-                field = getattr(return_value, "ratings")
+            if instance.practice:
+                field = getattr(instance, "ratings")
                 to_remove = list(
-                    field.exclude(scale__practice=return_value.practice).values_list(
+                    field.exclude(scale__practice=instance.practice).values_list(
                         "pk", flat=True
                     )
                 )
                 to_add = []
-                for scale in return_value.practice.rating_scales.all():
+                for scale in instance.practice.rating_scales.all():
                     rating = self.cleaned_data.get(f"rating_scale_{scale.pk}")
                     needs_removal = field.filter(scale=scale)
                     if rating:
@@ -311,39 +342,38 @@ class TrekForm(BaseTrekForm):
                 field.remove(*to_remove)
                 field.add(*to_add)
 
-            # save ordered children
-            ordering = []
+            # Save ordered children links only (do not delete Trek objects)
+            selected_children = list(self.cleaned_data.get("children") or [])
+            selected_ids = [child.pk for child in selected_children]
+            ordered_ids = []
 
-            if self.cleaned_data["hidden_ordered_children"]:
-                ordering = self.cleaned_data["hidden_ordered_children"].split(",")
+            raw_ordering = self.cleaned_data.get("hidden_ordered_children", "")
+            if raw_ordering:
+                for value in raw_ordering.split(","):
+                    value = value.strip()
+                    if not value:
+                        continue
+                    try:
+                        child_id = int(value)
+                    except ValueError:
+                        continue
+                    if child_id in selected_ids and child_id not in ordered_ids:
+                        ordered_ids.append(child_id)
 
-            order = 0
+            # Keep selected items even if they were not present in the hidden order.
+            for child_id in selected_ids:
+                if child_id not in ordered_ids:
+                    ordered_ids.append(child_id)
 
-            # add and update
-            for value in ordering:
-                child, created = OrderedTrekChild.objects.get_or_create(
-                    parent=self.instance, child=Trek.objects.get(pk=value)
+            instance.trek_children.all().delete()
+            for order, child_id in enumerate(ordered_ids):
+                OrderedTrekChild.objects.create(
+                    parent=instance,
+                    child_id=child_id,
+                    order=order,
                 )
-                child.order = order
-                child.save()
-                order += 1
 
-            # delete
-            new_list_children = self.cleaned_data["children_trek"].values_list(
-                "pk", flat=True
-            )
-
-            for child_relation in self.instance.trek_children.all():
-                # if existant child not in selection, deletion
-                if child_relation.child_id not in new_list_children:
-                    child_relation.delete()
-
-            transaction.savepoint_commit(sid)
-            return return_value
-
-        except Exception as exc:
-            transaction.savepoint_rollback(sid)
-            raise exc
+        return instance
 
     class Meta(BaseTrekForm.Meta):
         fields = [
@@ -385,13 +415,13 @@ class TrekForm(BaseTrekForm):
             "information_desks",
             "source",
             "portal",
-            "children_trek",
+            "children",
+            "hidden_ordered_children",
             "eid",
             "eid2",
             "reservation_system",
             "reservation_id",
             "pois_excluded",
-            "hidden_ordered_children",
         ]
 
 
