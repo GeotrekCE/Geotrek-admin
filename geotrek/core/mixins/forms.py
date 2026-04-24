@@ -1,3 +1,4 @@
+from django.forms import ModelForm
 from django.contrib.gis.forms import LineStringField
 
 from geotrek.common.forms import CommonForm
@@ -44,7 +45,7 @@ class TopologyForm(CommonForm):
             instance.mutate(topology)
         return instance
 
-class OnNetworkTopologyFormMixin(CommonForm):
+class OnNetworkTopologyFormMixin(ModelForm):
     """
     This form is a bit specific :
 
@@ -60,8 +61,8 @@ class OnNetworkTopologyFormMixin(CommonForm):
     topology = TopologyField(label="")
     geomfields = ["topology"]
 
-    class Meta(CommonForm.Meta):
-        fields = [*CommonForm.Meta.fields, "topology"]
+    class Meta:
+        fields = ["topology"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -87,11 +88,11 @@ class OnNetworkTopologyFormMixin(CommonForm):
         return instance
 
 
-class OffNetworkTopologyFormMixin(CommonForm):
+class OffNetworkTopologyFormMixin(ModelForm):
     topological = False
     geom = LineStringField()
     geomfields = ["geom"]
 
-    class Meta(CommonForm.Meta):
-        fields = [*CommonForm.Meta.fields, "geom"]
+    class Meta:
+        fields = ["geom"]
 
