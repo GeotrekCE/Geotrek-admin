@@ -44,7 +44,7 @@ class TopologyForm(CommonForm):
             instance.mutate(topology)
         return instance
 
-class OnNetworkTopologyFormMixin:
+class OnNetworkTopologyFormMixin(CommonForm):
     """
     This form is a bit specific :
 
@@ -60,8 +60,8 @@ class OnNetworkTopologyFormMixin:
     topology = TopologyField(label="")
     geomfields = ["topology"]
 
-    class Meta:
-        fields = ["topology"]
+    class Meta(CommonForm.Meta):
+        fields = [*CommonForm.Meta.fields, "topology"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -87,11 +87,11 @@ class OnNetworkTopologyFormMixin:
         return instance
 
 
-class OffNetworkTopologyFormMixin:
+class OffNetworkTopologyFormMixin(CommonForm):
     topological = False
     geom = LineStringField()
     geomfields = ["geom"]
 
-    class Meta:
-        fields = ["geom"]
+    class Meta(CommonForm.Meta):
+        fields = [*CommonForm.Meta.fields, "geom"]
 
