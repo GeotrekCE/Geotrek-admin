@@ -366,8 +366,8 @@ class BaseTrekForm(CommonForm):
 class TrekForm(BaseTrekForm):
     pass
 
-class OnNetworkTrekForm(BaseTrekForm, OnNetworkTopologyFormMixin):
-    class Meta(BaseTrekForm.Meta, OnNetworkTopologyFormMixin.Meta):
+class OnNetworkTrekForm(OnNetworkTopologyFormMixin, BaseTrekForm):
+    class Meta(OnNetworkTopologyFormMixin.Meta, BaseTrekForm.Meta):
         fields = [*OnNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
 
     def __init__(self, *args, **kwargs):
