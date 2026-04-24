@@ -1,8 +1,11 @@
 {% extends "mapentity/mapentity_form.html" %}
 
-{% load i18n static crispy_forms_tags %}
+{% load static %}
 
-{% block mainform %}
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript" src="{% static "common/js/form.js" %}"></script>
+    <script type="text/javascript" src="{% static "common/js/ordered_children_select2.js" %}"></script>
     <script>
         $(document).ready(function() {
             if (window.initOrderedChildrenSelect2) {
@@ -10,13 +13,4 @@
             }
         });
     </script>
-    <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
-        {% crispy form %}
-    </form>
-{% endblock mainform %}
-
-{% block extrabody %}
-    {{ block.super }}
-    <script type="text/javascript" src="{% static "common/js/form.js" %}"></script>
-    <script type="text/javascript" src="{% static "common/js/ordered_children_select2.js" %}"></script>
 {% endblock extrabody %}
