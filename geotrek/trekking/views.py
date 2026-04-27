@@ -296,16 +296,20 @@ class TrekCreate(CreateFromTopologyMixin, MapEntityCreate):
 
 class TrekUpdate(MapEntityUpdate):
     queryset = Trek.objects.existing()
-    # form_class = TrekForm
 
     def get_form_class(self):
-        """TODO: docstring"""
-        # TODO: check la permission ici
-        # TODO: ou si aucun tronçon / module tronçons désactivé -> off (un setting)
+        """
+        - Returns OffNetworkTrekForm (free drawing) if the Path model is disabled or if the user
+        requested to draw off the path network and has permission to do so.
+        - Otherwise, returns OnNetworkTrekForm (routing on paths).
+        """
+        if not settings.PATH_MODEL_ENABLED:
+            return OffNetworkTrekForm
         topological = self.request.GET.get('topological', 'true') == 'true'
-        if topological:
-            return OnNetworkTrekForm
-        return OffNetworkTrekForm
+        can_draw_off_path_network = self.request.user.has_perm("core.can_draw_off_path_network")
+        if not topological and can_draw_off_path_network:
+            return OffNetworkTrekForm
+        return OnNetworkTrekForm
 
     @same_structure_required("trekking:trek_detail")
     def dispatch(self, *args, **kwargs):
