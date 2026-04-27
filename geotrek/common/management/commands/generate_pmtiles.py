@@ -1,3 +1,5 @@
+import time
+
 from django.core.management.base import BaseCommand
 
 from geotrek.common.utils.generate_pmtiles import generate_pmtiles
@@ -33,6 +35,11 @@ class Command(BaseCommand):
         minzoom = options["minzoom"]
         maxzoom = options["maxzoom"]
 
+        start = time.perf_counter()
+
         self.stdout.write("Start generating pmtiles...")
         generate_pmtiles(baselayer_id, minzoom, maxzoom)
         self.stdout.write("PMTiles available")
+
+        end = time.perf_counter()
+        self.stdout.write(f"time: {end - start} seconds")

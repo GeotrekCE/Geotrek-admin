@@ -1,14 +1,32 @@
 import os
 from shutil import copy as copyfile
+from unittest import mock
+from unittest.mock import MagicMock
 
+import requests
 from django.conf import settings
 from django.contrib.gis.geos import GeometryCollection, GEOSGeometry, MultiPoint, Point
 from django.test import SimpleTestCase, TestCase
 from django.test.utils import override_settings
+from mapbox_baselayer.models import BaseLayerTile, MapBaseLayer
+from pmtiles.tile import TileType
+from requests import HTTPError
 
 from ..parsers import Parser
 from ..utils import format_coordinates, simplify_coords, spatial_reference, uniquify
 from ..utils.file_infos import get_encoding_file
+from ..utils.generate_pmtiles import (
+    PATH,
+    RETRY_COUNT,
+    TMP_PATH,
+    generate_pmtiles,
+    get_baselayer,
+    get_json,
+    get_or_retry,
+    get_tile_type,
+    get_tile_url,
+    get_zooms,
+)
 from ..utils.import_celery import create_tmp_destination, subclasses
 from ..utils.parsers import (
     GeomValueError,
@@ -336,3 +354,200 @@ class TestConvertEncodingFiles(TestCase):
 
         encoding = get_encoding_file(new_file_name)
         self.assertEqual(encoding, "utf-8")
+
+
+class TestGeneratePmtiles(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.raster_base_layer = MapBaseLayer.objects.create(
+            name="Raster layer",
+            base_layer_type="raster",
+            sprite="http://mystyle",
+            glyphs="http://mystyle",
+            min_zoom=1,
+            max_zoom=9,
+        )
+        cls.tile = BaseLayerTile.objects.create(
+            base_layer=cls.raster_base_layer, url="http://tiles/{x}/{y}/{z}"
+        )
+        cls.mapbox_base_layer = MapBaseLayer.objects.create(
+            name="Mapbox layer",
+            order=0,
+            base_layer_type="mapbox",
+            map_box_url="mapbox://mystyle",
+        )
+
+        cls.json_style = {
+            "sources": {"source 1": {"tiles": ["http://tiles/{x}/{y}/{z}"]}},
+            "layers": [],
+        }
+
+    def _make_raise_for_status(self, succeed):
+        def raise_for_status():
+            if not succeed:
+                url = "http://url.com"
+                msg = "Error"
+                raise requests.exceptions.HTTPError(url, 500, msg, None, None)
+
+        return raise_for_status
+
+    def test_get_baselayer(self):
+        # get existent baselayer
+        baselayer = get_baselayer(self.raster_base_layer.pk)
+        self.assertEqual(baselayer, self.raster_base_layer)
+
+        # get non existent baselayer
+        with self.assertRaisesRegex(
+            MapBaseLayer.DoesNotExist, "MapBaseLayer 9999 does not exist"
+        ):
+            get_baselayer(9999)
+
+    def test_get_zooms(self):
+        # zooms in bounderies
+        zooms = get_zooms(1, 6, self.raster_base_layer)
+        self.assertEqual(zooms, [1, 2, 3, 4, 5, 6])
+
+        # min zoom out of bounderies
+        with self.assertLogs(
+            "geotrek.common.utils.generate_pmtiles", level="WARNING"
+        ) as log:
+            zooms = get_zooms(0, 6, self.raster_base_layer)
+            self.assertEqual(zooms, [1, 2, 3, 4, 5, 6])
+            self.assertTrue("Baselayer min zoom has been selected: 1" in log.output[0])
+
+        # max zoom out of bounderies
+        with self.assertLogs(
+            "geotrek.common.utils.generate_pmtiles", level="WARNING"
+        ) as log:
+            zooms = get_zooms(4, 10, self.raster_base_layer)
+            self.assertEqual(zooms, [4, 5, 6, 7, 8, 9])
+            self.assertTrue("Baselayer max zoom has been selected: 9" in log.output[0])
+
+        # min zoom = None
+        with self.assertLogs(
+            "geotrek.common.utils.generate_pmtiles", level="WARNING"
+        ) as log:
+            zooms = get_zooms(None, 6, self.raster_base_layer)
+            self.assertEqual(zooms, [1, 2, 3, 4, 5, 6])
+            self.assertTrue("Baselayer min zoom has been selected: 1" in log.output[0])
+
+        # max zoom = None
+        with self.assertLogs(
+            "geotrek.common.utils.generate_pmtiles", level="WARNING"
+        ) as log:
+            zooms = get_zooms(4, None, self.raster_base_layer)
+            self.assertEqual(zooms, [4, 5, 6, 7, 8, 9])
+            self.assertTrue("Baselayer max zoom has been selected: 9" in log.output[0])
+
+        # get non existent baselayer
+        with self.assertRaisesRegex(
+            MapBaseLayer.DoesNotExist, "MapBaseLayer 9999 does not exist"
+        ):
+            get_baselayer(9999)
+
+    @mock.patch("geotrek.common.utils.generate_pmtiles.requests.get")
+    def test_get_json(self, mocked):
+        raster_json = get_json(self.raster_base_layer)
+        self.assertEqual(raster_json, self.raster_base_layer.tilejson)
+
+        mocked.return_value.status_code = 200
+        mocked.return_value.json.return_value = self.json_style
+
+        vector_json = get_json(self.mapbox_base_layer)
+        self.assertEqual(vector_json, self.json_style)
+
+    def test_get_tile_url(self):
+        data = {
+            "sources": {
+                "source 1": {
+                    "tiles": [
+                        "http://tiles1_1/{x}/{y}/{z}",
+                        "http://tiles1_2/{x}/{y}/{z}",
+                    ]
+                },
+                "source 2": {
+                    "tiles": [
+                        "http://tiles2_1/{x}/{y}/{z}",
+                        "http://tiles2_2/{x}/{y}/{z}",
+                    ]
+                },
+            }
+        }
+        tile_url = get_tile_url(data)
+        self.assertEqual(tile_url, "http://tiles1_1/{x}/{y}/{z}")
+
+    @mock.patch("geotrek.common.utils.generate_pmtiles.requests.get")
+    def test_get_or_retry_good_request(self, mocked):
+        mocked.return_value.raise_for_status.side_effect = self._make_raise_for_status(
+            succeed=True
+        )
+        mocked.return_value.content = b""
+
+        response = get_or_retry("http://url.com")
+        self.assertEqual(response.content, b"")
+
+    @mock.patch("geotrek.common.utils.generate_pmtiles.requests.get")
+    def test_get_or_retry_wrong_request(self, mocked):
+        mocked.return_value.raise_for_status.side_effect = self._make_raise_for_status(
+            succeed=False
+        )
+        mocked.return_value.content = b""
+
+        with self.assertRaises(HTTPError):
+            get_or_retry("http://url.com")
+
+        self.assertEqual(mocked.call_count, RETRY_COUNT)
+
+    def test_get_tile_type(self):
+        self.assertEqual(get_tile_type(self.raster_base_layer), TileType.PNG)
+        self.assertEqual(get_tile_type(self.mapbox_base_layer), TileType.MVT)
+
+    @mock.patch("geotrek.common.utils.generate_pmtiles.requests.get")
+    def _run_generate_pmtiles_test(self, base_layer, succeed, mocked):
+        slug = base_layer.slug
+
+        self.assertFalse(os.path.exists(f"{TMP_PATH}{slug}.pmtiles"))
+        self.assertFalse(os.path.exists(f"{PATH}{slug}.pmtiles"))
+        self.assertFalse(os.path.exists(f"{PATH}{slug}.json"))
+
+        side_effect = self._make_raise_for_status(succeed)
+
+        style_response = MagicMock()
+        style_response.raise_for_status.side_effect = side_effect
+        style_response.json.return_value = self.json_style
+
+        tile_response = MagicMock()
+        tile_response.raise_for_status.side_effect = side_effect
+        tile_response.content = b"fake-tile-data"
+
+        mocked.side_effect = lambda url, *args, **kwargs: (
+            style_response if url == base_layer.real_url else tile_response
+        )
+
+        # keep small zoom interval to generate files quickly
+        generate_pmtiles(base_layer.pk, 1, 3)
+
+    def _check_files(self, base_layer, succeed):
+        slug = base_layer.slug
+
+        self.assertEqual(os.path.exists(f"{TMP_PATH}{slug}.pmtiles"), not succeed)
+        self.assertEqual(os.path.exists(f"{PATH}{slug}.pmtiles"), succeed)
+        self.assertEqual(os.path.exists(f"{PATH}{slug}.json"), succeed)
+
+        path = PATH if succeed else TMP_PATH
+        os.remove(f"{path}{slug}.pmtiles")
+        if succeed:
+            os.remove(f"{PATH}{slug}.json")
+
+    def test_generate_raster_pmtiles(self):
+        self._run_generate_pmtiles_test(self.raster_base_layer, True)
+        self._check_files(self.raster_base_layer, True)
+
+    def test_generate_mapbox_pmtiles(self):
+        self._run_generate_pmtiles_test(self.mapbox_base_layer, True)
+        self._check_files(self.mapbox_base_layer, True)
+
+    def test_generate_incorrect_raster_pmtiles(self):
+        with self.assertRaises(HTTPError):
+            self._run_generate_pmtiles_test(self.raster_base_layer, False)
+        self._check_files(self.raster_base_layer, False)

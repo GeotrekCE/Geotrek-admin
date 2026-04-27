@@ -27,13 +27,13 @@ def get_baselayer(pk):
 
 
 def get_zooms(min_zoom, max_zoom, baselayer):
-    if min_zoom < baselayer.min_zoom or min_zoom is None:
+    if min_zoom is None or min_zoom < baselayer.min_zoom:
         min_zoom = baselayer.min_zoom
         msg = _("Baselayer min zoom has been selected: %(min_zoom)s") % {
             "min_zoom": baselayer.min_zoom
         }
         logger.warning(msg)
-    if max_zoom > baselayer.max_zoom or max_zoom is None:
+    if max_zoom is None or max_zoom > baselayer.max_zoom:
         max_zoom = baselayer.max_zoom
         msg = _("Baselayer max zoom has been selected: %(max_zoom)s ") % {
             "max_zoom": baselayer.max_zoom
@@ -80,30 +80,33 @@ def generate_pmtiles(baselayer_id, min_zoom=None, max_zoom=None):
     # get MapBaseLayer
     baselayer = get_baselayer(baselayer_id)
     zooms = get_zooms(min_zoom, max_zoom, baselayer)
+
     # convert SPATIAL_EXTENT projection to 4326
     bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
     bbox.srid = settings.SRID
     bbox.transform(settings.API_SRID)
     west, south, east, north = bbox.extent
 
-    # identify tiles to load
-    tiles = list(mercantile.tiles(west, south, east, north, zooms))
-
-    # generate pmtiles
     data = get_json(baselayer)
     tile_url = get_tile_url(data)
     filename_tiles = f"{baselayer.slug}.pmtiles"
 
     with open(f"{TMP_PATH}{filename_tiles}", "wb") as f:
         writer = Writer(f)
+        # compute the tiles for each zoom level separately to avoid overusing memory.
+        for zoom in zooms:
+            # identify tiles to load
+            tiles = list(mercantile.tiles(west, south, east, north, [zoom]))
 
-        for tile in tiles:
-            tile_id = zxy_to_tileid(tile.z, tile.x, tile.y)
-            url = tile_url.format(z=tile.z, x=tile.x, y=tile.y)
-            response = get_or_retry(url)
-            tile = response.content
+            # generate pmtiles
+            for tile in tiles:
+                tile_id = zxy_to_tileid(tile.z, tile.x, tile.y)
+                url = tile_url.format(z=tile.z, x=tile.x, y=tile.y)
+                logger.info(url)
+                response = get_or_retry(url)
+                tile = response.content
 
-            writer.write_tile(tile_id, tile)
+                writer.write_tile(tile_id, tile)
 
         writer.finalize(
             {
