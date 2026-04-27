@@ -224,7 +224,7 @@ greenlet==3.4.0
     # via gevent
 gunicorn==25.3.0
     # via geotrek (setup.py)
-idna==3.11
+idna==3.13
     # via requests
 importlib-metadata==9.0.0
     # via pygal
