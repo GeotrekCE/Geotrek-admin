@@ -534,6 +534,9 @@ class TestGeneratePmtiles(TestCase):
         self.assertEqual(os.path.exists(f"{PATH}{slug}.pmtiles"), succeed)
         self.assertEqual(os.path.exists(f"{PATH}{slug}.json"), succeed)
 
+    def _clear_files(self, base_layer, succeed):
+        slug = base_layer.slug
+
         path = PATH if succeed else TMP_PATH
         os.remove(f"{path}{slug}.pmtiles")
         if succeed:
@@ -542,12 +545,15 @@ class TestGeneratePmtiles(TestCase):
     def test_generate_raster_pmtiles(self):
         self._run_generate_pmtiles_test(self.raster_base_layer, True)
         self._check_files(self.raster_base_layer, True)
+        self._clear_files(self.raster_base_layer, True)
 
     def test_generate_mapbox_pmtiles(self):
         self._run_generate_pmtiles_test(self.mapbox_base_layer, True)
         self._check_files(self.mapbox_base_layer, True)
+        self._clear_files(self.mapbox_base_layer, True)
 
     def test_generate_incorrect_raster_pmtiles(self):
         with self.assertRaises(HTTPError):
             self._run_generate_pmtiles_test(self.raster_base_layer, False)
         self._check_files(self.raster_base_layer, False)
+        self._clear_files(self.raster_base_layer, False)

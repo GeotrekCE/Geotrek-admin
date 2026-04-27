@@ -1,18 +1,20 @@
 import os
 from io import StringIO
 from unittest import mock
-from unittest.mock import PropertyMock, patch
+from unittest.mock import MagicMock, PropertyMock, patch
 
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 from easy_thumbnails.models import Thumbnail
+from mapbox_baselayer.models import BaseLayerTile, MapBaseLayer
 
 from geotrek import __version__
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common.models import TargetPortal
 from geotrek.common.tests.factories import AttachmentFactory, TargetPortalFactory
+from geotrek.common.utils.generate_pmtiles import PATH, TMP_PATH
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.models import Path, Usage
 from geotrek.core.tests.factories import PathFactory, UsageFactory
@@ -252,3 +254,61 @@ class CheckVersionsCommandTestCase(TestCase):
             "pgRouting version  : 3.0.0"
         )
         self.assertEqual(self.output.getvalue().strip(), expected_result)
+
+
+class CheckGeneratePmtilesCommandTestCase(TestCase):
+    def setUp(self):
+        self.output = StringIO()
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.base_layer = MapBaseLayer.objects.create(
+            name="Raster layer",
+            base_layer_type="raster",
+            sprite="http://mystyle",
+            glyphs="http://mystyle",
+            min_zoom=0,
+            max_zoom=9,
+        )
+        cls.tile = BaseLayerTile.objects.create(
+            base_layer=cls.base_layer, url="http://tiles/{x}/{y}/{z}"
+        )
+
+        cls.json_style = {
+            "sources": {"source 1": {"tiles": ["http://tiles/{x}/{y}/{z}"]}},
+            "layers": [],
+        }
+
+    @mock.patch("geotrek.common.utils.generate_pmtiles.requests.get")
+    def _run_command(self, slug, mocked):
+        slug = self.base_layer.slug
+        self.assertFalse(os.path.exists(f"{TMP_PATH}{slug}.pmtiles"))
+        self.assertFalse(os.path.exists(f"{PATH}{slug}.pmtiles"))
+        self.assertFalse(os.path.exists(f"{PATH}{slug}.json"))
+
+        style_response = MagicMock()
+        style_response.raise_for_status = None
+        style_response.json.return_value = self.json_style
+
+        tile_response = MagicMock()
+        tile_response.raise_for_status.side_effect = None
+        tile_response.content = b"fake-tile-data"
+
+        mocked.side_effect = lambda url, *args, **kwargs: (
+            style_response if url == self.base_layer.real_url else tile_response
+        )
+
+        call_command("generate_pmtiles", 1, 0, 3, stdout=self.output)
+
+        self.assertFalse(os.path.exists(f"{TMP_PATH}{slug}.pmtiles"))
+        self.assertTrue(os.path.exists(f"{PATH}{slug}.pmtiles"))
+        self.assertTrue(os.path.exists(f"{PATH}{slug}.json"))
+
+    def _clear_files(self):
+        slug = self.base_layer.slug
+        os.remove(f"{PATH}{slug}.pmtiles")
+        os.remove(f"{PATH}{slug}.json")
+
+    def test_generate_pmtiles(self):
+        self._run_command(self.base_layer)
+        self._clear_files()
