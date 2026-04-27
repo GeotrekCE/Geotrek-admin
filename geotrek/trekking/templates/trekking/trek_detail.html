@@ -14,7 +14,7 @@
     <a class="dropdown-item" href="{% url 'trekking:trek_kml_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
 {% endblock download %}
 {% block buttons_before_action %}
-    {% if perms.core.can_draw_off_path_network %}
+    {% if can_draw_off_path_network %}
         <a class="dropdown-item" href="{{ object.get_update_url }}?topological=false">
         <i class="bi bi-pencil-square text-primary"></i> {% trans "Modifier hors tronçons" %}</a>
     {% endif %}

@@ -212,6 +212,7 @@ class TrekDetail(CompletenessMixin, MapEntityDetail):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["can_edit"] = self.get_object().same_structure(self.request.user)
+        context['can_draw_off_path_network'] = not settings.PATH_MODEL_ENABLED or self.request.user.has_perm("core.can_draw_off_path_network")
         context["labels"] = Label.objects.all()
         context["accessibility_form"] = AttachmentAccessibilityForm(
             request=self.request, object=self.get_object()
