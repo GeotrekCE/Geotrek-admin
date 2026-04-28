@@ -2,6 +2,11 @@ from django.conf import settings
 from django.urls import include, path
 from django.views.generic import RedirectView
 from rest_framework import routers
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 from geotrek.api.v2 import views as api_views
 
@@ -232,6 +237,9 @@ _urlpatterns += [
     ),
     path("version", api_views.GeotrekVersionAPIView.as_view()),
     path("", include(router.urls)),
+    path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
 ]
 if "geotrek.flatpages" in settings.INSTALLED_APPS:
     _urlpatterns += [
