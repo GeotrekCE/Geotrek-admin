@@ -307,6 +307,7 @@ PROJECT_APPS += (
     "mapentity",
     "paperclip",  # paperclip should be load after mapentity for templates
     "leaflet",  # After mapentity to allow it to patch settings
+    "rest_framework_simplejwt",
     "rest_framework",
     "rest_framework_gis",
     "embed_video",
