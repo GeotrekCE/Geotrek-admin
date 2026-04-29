@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import Polygon
-from django.contrib.contenttypes.models import ContentType
 from rest_framework import permissions, response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -118,6 +117,7 @@ class ConfigView(APIView):
 
 class GTAMConfigView(APIView):
     """GTAM Configuration endpoint that gives information on: the user, default language, map, ..."""
+
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
@@ -125,11 +125,16 @@ class GTAMConfigView(APIView):
         app_label = model[0]
         model_name = model[1]
 
-        all_permissions = Permission.objects.filter(content_type__app_label=app_label, content_type__model=model_name)
-        permissions_name = [perm.codename.replace(f'_{model_name}', '') for perm in all_permissions]
+        all_permissions = Permission.objects.filter(
+            content_type__app_label=app_label, content_type__model=model_name
+        )
+        permissions_name = [
+            perm.codename.replace(f"_{model_name}", "") for perm in all_permissions
+        ]
 
         return {
-            perm_name: user.has_perm(perm.codename) for perm_name, perm in zip(permissions_name, all_permissions)
+            perm_name: user.has_perm(perm.codename)
+            for perm_name, perm in zip(permissions_name, all_permissions)
         }
 
     def get(self, request, *args, **kwargs):
@@ -137,7 +142,7 @@ class GTAMConfigView(APIView):
             "settings": {
                 "language": "fr",
                 "intervalSync": {
-                    "references": 24 * 7, # move settings in database
+                    "references": 24 * 7,  # move settings in database
                 },
                 "maps": {
                     "layers": [
@@ -147,20 +152,31 @@ class GTAMConfigView(APIView):
                             "name": "Scan IGN VT",
                             "options": {
                                 "center": [6.2278745, 44.8030050],
-                                "maxBounds": [[5.7236380, 44.3790430], [6.7321110, 45.2269670]],
+                                "maxBounds": [
+                                    [5.7236380, 44.3790430],
+                                    [6.7321110, 45.2269670],
+                                ],
                                 "maxZoom": 15,
                                 "minZoom": 0,
                                 "zoom": 10,
-                            }
+                            },
                         }
                     ]
                 },
                 "rights": {
-                    "signage": self.get_model_permissions(request.user, ("signage","signage")),
-                    "infrastructure": self.get_model_permissions(request.user, ("infrastructure","infrastructure")),
-                    "intervention": self.get_model_permissions(request.user, ("maintenance","intervention")),
-                    "report": self.get_model_permissions(request.user, ("feedback","report")),
-                }
+                    "signage": self.get_model_permissions(
+                        request.user, ("signage", "signage")
+                    ),
+                    "infrastructure": self.get_model_permissions(
+                        request.user, ("infrastructure", "infrastructure")
+                    ),
+                    "intervention": self.get_model_permissions(
+                        request.user, ("maintenance", "intervention")
+                    ),
+                    "report": self.get_model_permissions(
+                        request.user, ("feedback", "report")
+                    ),
+                },
             }
         }
         return response.Response(data)
