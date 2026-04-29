@@ -227,6 +227,7 @@ if "drf_yasg" in settings.INSTALLED_APPS:
     )
 _urlpatterns += [
     path("config/", api_views.ConfigView.as_view(), name="config"),
+    path("gtamconfig/", api_views.GTAMConfigView.as_view(), name="gtam-config"),
     path(
         "sportpractice/",
         RedirectView.as_view(pattern_name="apiv2:sportpractice-list", permanent=True),
@@ -236,10 +237,10 @@ _urlpatterns += [
         RedirectView.as_view(pattern_name="apiv2:sportpractice-detail", permanent=True),
     ),
     path("version", api_views.GeotrekVersionAPIView.as_view()),
-    path("", include(router.urls)),
     path("token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
     path("token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path("token/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    path("", include(router.urls)),
 ]
 if "geotrek.flatpages" in settings.INSTALLED_APPS:
     _urlpatterns += [
