@@ -227,11 +227,15 @@ class GTAMConfigView(APIView):
                 },
             },
             "user": {
-                "rights": self.get_all_permissions(user),
-                "structure": {
+                "attachedStructure": {
                     "id": user_profile.structure.id,
                     "label": user_profile.structure.name,
                 },
+                "email": user.email,
+                "firstName": user.first_name,
+                "lastName": user.last_name,
+                "rights": self.get_all_permissions(user),
+                "userName": user.username,
             },
         }
         return response.Response(data)
