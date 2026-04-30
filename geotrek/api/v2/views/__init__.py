@@ -205,7 +205,6 @@ class GTAMConfigView(APIView):
         center = [(west + east) / 2, (south + north) / 2]
         data = {
             "settings": {
-                "language": "fr",
                 "intervalSyncInHours": {
                     "references": 24 * 7,  # move settings in database
                 },
