@@ -6,6 +6,7 @@ from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from geotrek import __version__
+from geotrek.authent.models import UserProfile
 
 from .authent import StructureViewSet  # noqa
 from .common import (
@@ -121,27 +122,91 @@ class GTAMConfigView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_model_permissions(self, user, model):
-        app_label = model[0]
-        model_name = model[1]
+    models = {
+        "signage": [
+            ("signage", "signage"),
+            ("signage", "direction"),
+            ("signage", "sealing"),
+            ("signage", "signagecondition"),
+            ("signage", "signagetype"),
+            ("signage", "blade"),
+            ("signage", "bladecondition"),
+            ("signage", "bladetype"),
+            ("signage", "color"),
+            ("signage", "line"),
+            ("signage", "linepictogram"),
+        ],
+        "infrastructure": [
+            ("infrastructure", "infrastructure"),
+            ("infrastructure", "infrastructurecondition"),
+            ("infrastructure", "infrastructuretype"),
+            ("infrastructure", "infrastructureaccessmean"),
+            ("infrastructure", "infrastructuremaintenancedifficultylevel"),
+            ("infrastructure", "infrastructureusagedifficultylevel"),
+        ],
+        "intervention": [
+            ("maintenance", "intervention"),
+            ("maintenance", "interventiondisorder"),
+            ("maintenance", "interventionjob"),
+            ("maintenance", "interventionstatus"),
+            ("maintenance", "interventiontype"),
+            ("maintenance", "manday"),
+            ("maintenance", "contractor"),
+            ("maintenance", "funding"),
+        ],
+        "report": [
+            ("feedback", "report"),
+            ("feedback", "attachedmessage"),
+            ("feedback", "pendingemail"),
+            ("feedback", "predefinedemail"),
+            ("feedback", "reportactivity"),
+            ("feedback", "reportcategory"),
+            ("feedback", "reportproblemmagnitude"),
+            ("feedback", "reportstatus"),
+            ("feedback", "selectableuser"),
+            ("feedback", "timerevent"),
+            ("feedback", "workflowdistrict"),
+            ("feedback", "workflowmanager"),
+        ],
+    }
 
-        all_permissions = Permission.objects.filter(
-            content_type__app_label=app_label, content_type__model=model_name
-        )
-        permissions_name = [
-            perm.codename.replace(f"_{model_name}", "") for perm in all_permissions
-        ]
+    def get_model_permissions(self, user, model):
+        app_label, model_name = model
 
         return {
-            perm_name: user.has_perm(perm.codename)
-            for perm_name, perm in zip(permissions_name, all_permissions)
+            perm.codename.replace(f"_{model_name}", ""): user.has_perm(
+                f"{app_label}.{perm.codename}"
+            )
+            for perm in Permission.objects.filter(
+                content_type__app_label=app_label, content_type__model=model_name
+            )
         }
 
+    def get_all_permissions(self, user):
+        permissions = {}
+        for module, models in self.models.items():
+            module_permissions = {}
+            for model in models:
+                module_permissions[model[1]] = self.get_model_permissions(user, model)
+            permissions[module] = module_permissions
+        return permissions
+
     def get(self, request, *args, **kwargs):
+        user = request.user
+        user_profile = UserProfile.objects.get(user=user)
+
+        # convert SPATIAL_EXTENT projection to 4326
+        bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
+        bbox.srid = settings.SRID
+        bbox.transform(settings.API_SRID)
+        west, south, east, north = bbox.extent
+
+        max_bounds = [[west, south], [east, north]]
+        center = [(west + east) / 2, (south + north) / 2]
         data = {
             "settings": {
                 "language": "fr",
-                "intervalSync": {
+                "intervalSyncInHours": {
                     "references": 24 * 7,  # move settings in database
                 },
                 "maps": {
@@ -151,33 +216,24 @@ class GTAMConfigView(APIView):
                             "json_style_url": "https://fake.urls.com/json_style",
                             "name": "Scan IGN VT",
                             "options": {
-                                "center": [6.2278745, 44.8030050],
-                                "maxBounds": [
-                                    [5.7236380, 44.3790430],
-                                    [6.7321110, 45.2269670],
-                                ],
-                                "maxZoom": 15,
-                                "minZoom": 0,
-                                "zoom": 10,
+                                "attribution": "© IGN - GeoPortail",
+                                "center": center,
+                                "maxBounds": max_bounds,
+                                "maxZoom": 15,  # use pmtiles metadata: https://github.com/protomaps/PMTiles/blob/0cebcaeade40034b86facb6e7da4ec726b9053fb/python/pmtiles/pmtiles/reader.py#L37-L42
+                                "minZoom": 0,  # use pmtiles metadata: https://github.com/protomaps/PMTiles/blob/0cebcaeade40034b86facb6e7da4ec726b9053fb/python/pmtiles/pmtiles/reader.py#L37-L42
+                                "zoom": 0,
                             },
                         }
                     ]
                 },
-                "rights": {
-                    "signage": self.get_model_permissions(
-                        request.user, ("signage", "signage")
-                    ),
-                    "infrastructure": self.get_model_permissions(
-                        request.user, ("infrastructure", "infrastructure")
-                    ),
-                    "intervention": self.get_model_permissions(
-                        request.user, ("maintenance", "intervention")
-                    ),
-                    "report": self.get_model_permissions(
-                        request.user, ("feedback", "report")
-                    ),
+            },
+            "user": {
+                "rights": self.get_all_permissions(user),
+                "structure": {
+                    "id": user_profile.structure.id,
+                    "label": user_profile.structure.name,
                 },
-            }
+            },
         }
         return response.Response(data)
 
