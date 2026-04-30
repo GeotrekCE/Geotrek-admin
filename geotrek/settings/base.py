@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+from datetime import timedelta
 
 from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 from django.contrib.gis.geos import fromstr
@@ -964,6 +965,10 @@ USE_X_FORWARDED_HOST = False
 
 REST_FRAMEWORK = {
     "STRICT_JSON": False,  # allow serialize float NaN values
+}
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=5),
 }
 
 ALLOW_PATH_DELETION_TOPOLOGY = True
