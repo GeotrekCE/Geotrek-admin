@@ -398,7 +398,7 @@ typing-extensions==4.15.0
     #   exceptiongroup
     #   large-image
     #   referencing
-tzdata==2026.1
+tzdata==2026.2
     # via
     #   kombu
     #   mapentity
