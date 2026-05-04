@@ -457,7 +457,7 @@ zope-interface==8.3
     #   transaction
     #   zodb
     #   zope-proxy
-zope-proxy==7.1
+zope-proxy==7.2
     # via zope-deferredimport
 zopfli==0.4.1
     # via fonttools
