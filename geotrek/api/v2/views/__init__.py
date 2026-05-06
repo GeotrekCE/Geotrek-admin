@@ -122,73 +122,42 @@ class GTAMConfigView(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
-    models = {
-        "signage": [
-            ("signage", "signage"),
-            ("signage", "direction"),
-            ("signage", "sealing"),
-            ("signage", "signagecondition"),
-            ("signage", "signagetype"),
-            ("signage", "blade"),
-            ("signage", "bladecondition"),
-            ("signage", "bladetype"),
-            ("signage", "color"),
-            ("signage", "line"),
-            ("signage", "linepictogram"),
-        ],
-        "infrastructure": [
-            ("infrastructure", "infrastructure"),
-            ("infrastructure", "infrastructurecondition"),
-            ("infrastructure", "infrastructuretype"),
-            ("infrastructure", "infrastructureaccessmean"),
-            ("infrastructure", "infrastructuremaintenancedifficultylevel"),
-            ("infrastructure", "infrastructureusagedifficultylevel"),
-        ],
-        "intervention": [
-            ("maintenance", "intervention"),
-            ("maintenance", "interventiondisorder"),
-            ("maintenance", "interventionjob"),
-            ("maintenance", "interventionstatus"),
-            ("maintenance", "interventiontype"),
-            ("maintenance", "manday"),
-            ("maintenance", "contractor"),
-            ("maintenance", "funding"),
-        ],
-        "report": [
-            ("feedback", "report"),
-            ("feedback", "attachedmessage"),
-            ("feedback", "pendingemail"),
-            ("feedback", "predefinedemail"),
-            ("feedback", "reportactivity"),
-            ("feedback", "reportcategory"),
-            ("feedback", "reportproblemmagnitude"),
-            ("feedback", "reportstatus"),
-            ("feedback", "selectableuser"),
-            ("feedback", "timerevent"),
-            ("feedback", "workflowdistrict"),
-            ("feedback", "workflowmanager"),
-        ],
+    models = [
+        ("signage", "signage"),
+        ("infrastructure", "infrastructure"),
+        ("maintenance", "intervention"),
+        ("feedback", "report"),
+    ]
+
+    map_permissions = {
+        "add": "create",
+        "change": "update",
+        "change_geom": "update_geom",
+        "delete": "delete",
+        "read": "read",
     }
 
     def get_model_permissions(self, user, model):
         app_label, model_name = model
 
-        return {
-            perm.codename.replace(f"_{model_name}", ""): user.has_perm(
-                f"{app_label}.{perm.codename}"
-            )
-            for perm in Permission.objects.filter(
-                content_type__app_label=app_label, content_type__model=model_name
-            )
-        }
+        permissions = Permission.objects.filter(
+            content_type__app_label=app_label,
+            content_type__model=model_name,
+        )
+
+        result = {}
+        for perm in permissions:
+            action = perm.codename.replace(f"_{model_name}", "")
+            if action in self.map_permissions:
+                mapped_action = self.map_permissions[action]
+                result[mapped_action] = user.has_perm(f"{app_label}.{perm.codename}")
+
+        return result
 
     def get_all_permissions(self, user):
         permissions = {}
-        for module, models in self.models.items():
-            module_permissions = {}
-            for model in models:
-                module_permissions[model[1]] = self.get_model_permissions(user, model)
-            permissions[module] = module_permissions
+        for model in self.models:
+            permissions[model[1]] = self.get_model_permissions(user, model)
         return permissions
 
     def get(self, request, *args, **kwargs):
@@ -234,7 +203,7 @@ class GTAMConfigView(APIView):
                 "email": user.email,
                 "firstName": user.first_name,
                 "lastName": user.last_name,
-                "rights": self.get_all_permissions(user),
+                "permissions": self.get_all_permissions(user),
                 "userName": user.username,
             },
         }
