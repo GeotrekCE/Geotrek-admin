@@ -2439,8 +2439,10 @@ class OpenStreetMapTestParser(TestCase):
 
 
 class OpenStreetMapAttachmentParserMixinTests(TestCase):
-    @mock.patch("geotrek.common.parsers.Parser.request_or_retry")
-    def configure_attachment_filter(cls, mocked, status_code=200):
+    def setUp(self):
+        self.osm_attachment_parser = OpenStreetMapTest()
+
+    def configure_attachment_filter(self, status_code, mocked):
         def mocked_json():
             filename = os.path.join(
                 os.path.dirname(__file__), "data", "OSM_attachments.json"
@@ -2448,18 +2450,21 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
             with open(filename) as f:
                 return json.load(f)
 
-        mocked.json = mocked_json
-        mocked.status_code = status_code
+        mocked.return_value.json = mocked_json
+        mocked.return_value.status_code = status_code
 
-        cls.osm_attachment_parser = OpenStreetMapTest()
+        return mocked
 
-    def test_wikimedia_commons(self):
-        self.configure_attachment_filter()
+    @mock.patch("geotrek.common.parsers.requests.get")
+    def test_wikimedia_commons(self, mocked):
+        mocked = self.configure_attachment_filter(200, mocked)
         wikimedia_commons = "File:Cime_de_Clot_Châtel_@_Crête_de_Puy_Salié.jpg"
 
         attachment = self.osm_attachment_parser.filter_attachments(
             "attachments", (wikimedia_commons, None)
         )[0]
+
+        mocked.assert_called()
 
         self.assertEqual(
             attachment[0],
@@ -2470,7 +2475,6 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
         self.assertEqual(attachment[3], "Cime de Clot Châtel @ Crête de Puy Salié")
 
     def test_image(self):
-        self.configure_attachment_filter()
         image = "https://live.staticflickr.com/2773/4163386790_ffb7131db9_b.jpg"
 
         attachment = self.osm_attachment_parser.filter_attachments(
@@ -2485,14 +2489,17 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
         self.assertEqual(attachment[2], "")
         self.assertEqual(attachment[3], "")
 
-    def test_missing_reference_wikimedia_commons(self):
-        self.configure_attachment_filter(status_code=404)
+    @mock.patch("geotrek.common.parsers.requests.get")
+    def test_missing_reference_wikimedia_commons(self, mocked):
+        mocked = self.configure_attachment_filter(404, mocked)
         wikimedia_commons = "File:Cime_de_Clot__de_Puy_Salié.jpg"
 
         attachment = self.osm_attachment_parser.filter_attachments(
             "attachments", (wikimedia_commons, None)
         )
         warnings = self.osm_attachment_parser.warnings
+
+        mocked.assert_called()
 
         self.assertEqual(attachment, [])
 
