@@ -23,9 +23,9 @@ billiard==4.2.4
     # via celery
 brotli==1.2.0
     # via fonttools
-btrees==6.3
+btrees==6.4
     # via zodb
-cachetools==7.0.5
+cachetools==7.1.1
     # via large-image
 cairocffi==1.7.1
     # via
@@ -162,7 +162,7 @@ django-leaflet==0.19.post11
     # via mapentity
 django-maintenance-mode==0.22.0
     # via geotrek (setup.py)
-django-modelcluster==6.4.1
+django-modelcluster==6.5
     # via geotrek (setup.py)
 django-modeltranslation==0.20.3
     # via mapentity
@@ -324,7 +324,7 @@ python-fsutil==0.16.1
     # via django-maintenance-mode
 python-magic==0.4.27
     # via paperclip
-pytz==2026.1.post1
+pytz==2026.2
     # via
     #   datetime
     #   drf-yasg
@@ -418,7 +418,7 @@ vine==5.1.0
     #   amqp
     #   celery
     #   kombu
-wcwidth==0.6.0
+wcwidth==0.7.0
     # via prompt-toolkit
 weasyprint==68.1
     # via
@@ -457,7 +457,7 @@ zope-interface==8.3
     #   transaction
     #   zodb
     #   zope-proxy
-zope-proxy==7.1
+zope-proxy==7.2
     # via zope-deferredimport
 zopfli==0.4.1
     # via fonttools
