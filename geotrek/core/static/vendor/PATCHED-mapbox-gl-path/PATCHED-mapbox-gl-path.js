@@ -8215,6 +8215,8 @@ const defaultLocales = {
     "gl-pathControl.deletePoint": "Delete point",
     "gl-pathControl.loopPoint": "Round trip",
     "gl-pathControl.oneWayPoint": "One way",
+    "gl-pathControl.interactiveMode": "Edition mode",
+    "gl-pathControl.snapMode": "Snap to layer",
 };
 
 function createElement(tagName, props = {}) {
@@ -8223,48 +8225,6 @@ function createElement(tagName, props = {}) {
         element.setAttribute("type", "button");
     }
     return Object.assign(element, props);
-}
-function selectThemesElement({ props, themes, themeSelectionType, }) {
-    const pathControlSelection = createElement("div", {
-        className: `mapbox-gl-path-theme-selection mapbox-gl-path-theme-selection--${themeSelectionType}`,
-    });
-    // Find the selected index or pick the first one
-    let selectedIndex = themes.findIndex(({ selected }) => selected);
-    if (selectedIndex === -1) {
-        selectedIndex = 0;
-    }
-    // Build a select tag
-    if (themeSelectionType === "select") {
-        const select = createElement("select", props);
-        themes.forEach((theme, index) => {
-            const pathControlSelectOption = createElement("option", {
-                name: "mapbox-gl-path-theme-selection",
-                selected: selectedIndex === index,
-                textContent: theme.name,
-                value: theme.id.toString(),
-            });
-            select.append(pathControlSelectOption);
-        });
-        pathControlSelection.append(select);
-    }
-    // Build a radio list tag
-    if (themeSelectionType === "radioList") {
-        themes.forEach((theme, index) => {
-            const id = `${theme.name.split(" ").join("-")}-${theme.id.toString()}`;
-            const pathControlRadioLabel = createElement("div", {
-                className: "mapbox-gl-path-theme-selection__item",
-            });
-            const pathControlRadio = createElement("input", Object.assign({ className: "mapbox-gl-path-theme-selection__radio", checked: selectedIndex === index, id, name: "mapbox-gl-path-theme-selection", type: "radio", value: theme.id.toString() }, props));
-            const pathControlLabel = createElement("label", {
-                className: "mapbox-gl-path-theme-selection__radio-label",
-                htmlFor: id,
-                textContent: theme.name,
-            });
-            pathControlRadioLabel.append(pathControlRadio, pathControlLabel);
-            pathControlSelection.append(pathControlRadioLabel);
-        });
-    }
-    return pathControlSelection;
 }
 
 class MapboxPathControl {
@@ -8278,6 +8238,8 @@ class MapboxPathControl {
         this.onMovePointFunction = (event) => this.onMovePoint(event);
         this.onClickMapFunction = (event) => this.onClickMapEnqueue(event);
         this.onContextMenuMapFunction = (event) => this.handleActionsPanel(event);
+        this.onMouseMoveSnapFunction = (event) => this.onMouseMoveSnap(event);
+        this.onZoomFunction = () => this.onZoom();
         this.onMouseDownPointFunction = (event) => this.onMouseDownPoint(event);
         this.changeDirectionsModeOnPreviousLineWithDebounce = lodash_debounce(this.changeDirectionsModeOnLine, 500, { maxWait: 1000 });
         this.changeDirectionsModeOnNextLineWithDebounce = lodash_debounce(this.changeDirectionsModeOnLine, 500, { maxWait: 1000 });
@@ -8286,17 +8248,47 @@ class MapboxPathControl {
         });
         this.isFollowingDirections = false;
         this.isLoopTrail = false;
-        this.themeSelectionType = "radioList";
+        this.isInteractive = true;
+        this.snapMinZoom = 12;
+        this.isSnapping = false;
+        this.showSnapControl = true;
+        this.showDirectionsControl = true;
+        this.isDragging = false;
         this.configureMap = () => {
             this.initializeSourceAndLayers();
-            this.initializeEvents();
+            if (this.isInteractive) {
+                this.initializeEvents();
+            }
             if (this.referencePoints.length > 0) {
                 this.updateSource();
             }
         };
         if (parameters) {
-            const { directionsThemes, layersCustomisation, featureCollection, lineString, themeSelectionType, translate, useRightClickToHandleActionPanel, } = parameters;
-            this.translate = translate || translateMock(defaultLocales);
+            const { directionsThemes, layersCustomisation, featureCollection, lineString, translate, useRightClickToHandleActionPanel, interactive = true, snapLayers, snapMinZoom, defaultSnapping = false, showSnapControl = true, defaultRouting = false, showDirectionsControl = true, } = parameters;
+            this.isInteractive = interactive;
+            this.snapLayers = snapLayers;
+            if (snapMinZoom !== undefined) {
+                this.snapMinZoom = snapMinZoom;
+            }
+            this.isSnapping = defaultSnapping;
+            this.showSnapControl = showSnapControl;
+            this.isFollowingDirections = defaultRouting;
+            this.showDirectionsControl = showDirectionsControl;
+            const defaultTranslate = translateMock(defaultLocales);
+            this.translate = (key, params = {}) => {
+                if (translate) {
+                    try {
+                        const translated = translate(key, params);
+                        if (translated !== undefined && translated !== null && translated !== key) {
+                            return translated;
+                        }
+                    }
+                    catch (e) {
+                        console.warn(`Translation failed for key ${key}:`, e);
+                    }
+                }
+                return defaultTranslate(key, params);
+            };
             if (directionsThemes && directionsThemes.length > 0) {
                 this.directionsThemes = directionsThemes;
                 this.selectedDirectionsTheme =
@@ -8304,9 +8296,6 @@ class MapboxPathControl {
                         directionsThemes[0];
             }
             this.layersCustomisation = layersCustomisation;
-            if (themeSelectionType) {
-                this.themeSelectionType = themeSelectionType;
-            }
             this.useRightClickToHandleActionPanel = Boolean(useRightClickToHandleActionPanel);
             if (featureCollection) {
                 this.setFeatureCollection(featureCollection);
@@ -8316,9 +8305,47 @@ class MapboxPathControl {
             }
         }
     }
+    getBBox(point, tolerance = 10) {
+        return [
+            [point.x - tolerance, point.y - tolerance],
+            [point.x + tolerance, point.y + tolerance]
+        ];
+    }
+    getSnapTolerance() {
+        const zoom = this.map ? this.map.getZoom() : 14;
+        if (zoom <= 10)
+            return 6;
+        if (zoom >= 18)
+            return 24;
+        return 6 + ((zoom - 10) / (18 - 10)) * (24 - 6);
+    }
+    enable() {
+        if (!this.isInteractive) {
+            this.isInteractive = true;
+            if (this.map) {
+                this.initializeEvents();
+                if (this.isSnapping) {
+                    if (this.map.getZoom() < this.snapMinZoom) {
+                        this.map.getCanvas().style.cursor = "not-allowed";
+                    }
+                    else {
+                        this.map.getCanvas().style.cursor = "crosshair";
+                    }
+                }
+            }
+        }
+    }
+    disable() {
+        if (this.isInteractive) {
+            this.isInteractive = false;
+            if (this.map) {
+                this.removeEvents();
+                this.map.getCanvas().style.cursor = "";
+            }
+        }
+    }
     onAdd(currentMap) {
         this.map = currentMap;
-        console.log(this.map)
         this.pathControl = this.createUI();
         this.map.once("idle", this.configureMap);
         return this.pathControl;
@@ -8340,36 +8367,88 @@ class MapboxPathControl {
     }
     createUI() {
         const pathControlContainer = document.createElement("div");
-        if (this.directionsThemes && this.directionsThemes.length > 0) {
-            const hasSelectedDirectionThemes = this.directionsThemes.some(({ selected }) => selected === true);
-            // TODO: patch
-            pathControlContainer.className = "mapbox-gl-path-container maplibregl-ctrl maplibregl-ctrl-group";
-            const pathControlCheckbox = createElement("input", {
-                className: "mapbox-gl-path-theme-selection__checkbox",
-                id: "checkbox-path",
-                onchange: (event) => (this.isFollowingDirections = event.target.checked),
-                type: "checkbox",
-            });
-            if (hasSelectedDirectionThemes) {
-                pathControlCheckbox.setAttribute("checked", hasSelectedDirectionThemes.toString());
-                this.isFollowingDirections = true;
-            }
-            const pathControlLabel = createElement("label", {
-                className: "mapbox-gl-path-theme-selection__checkbox-label",
-                htmlFor: "checkbox-path",
-                textContent: this.translate("gl-pathControl.followDirection"),
-            });
-            const pathControlSelect = selectThemesElement({
-                props: {
-                    onchange: (event) => {
-                        var _a;
-                        this.selectedDirectionsTheme = (_a = this.directionsThemes) === null || _a === void 0 ? void 0 : _a.find((directionsTheme) => directionsTheme.id === Number(event.target.value));
-                    },
+        pathControlContainer.className = "mapboxgl-ctrl mapboxgl-ctrl-group maplibregl-ctrl maplibregl-ctrl-group";
+        const btnEdit = createElement("button", {
+            className: `mapboxgl-ctrl-icon maplibregl-ctrl-icon mapbox-gl-path-btn-edit ${this.isInteractive ? "mapbox-gl-path-active" : ""}`,
+            title: this.translate("gl-pathControl.interactiveMode"),
+            onclick: () => {
+                if (this.isInteractive) {
+                    this.disable();
+                    btnEdit.classList.remove("mapbox-gl-path-active");
+                }
+                else {
+                    this.enable();
+                    btnEdit.classList.add("mapbox-gl-path-active");
+                }
+            },
+        });
+        pathControlContainer.append(btnEdit);
+        if (this.snapLayers && this.snapLayers.length > 0 && this.showSnapControl) {
+            const btnSnap = createElement("button", {
+                className: `mapboxgl-ctrl-icon maplibregl-ctrl-icon mapbox-gl-path-btn-snap ${this.isSnapping ? "mapbox-gl-path-active" : ""}`,
+                title: this.translate("gl-pathControl.snapMode"),
+                textContent: "🧲",
+                onclick: () => {
+                    this.isSnapping = !this.isSnapping;
+                    if (this.isSnapping) {
+                        btnSnap.classList.add("mapbox-gl-path-active");
+                        if (this.map && this.isInteractive) {
+                            if (this.map.getZoom() < this.snapMinZoom) {
+                                this.map.getCanvas().style.cursor = "not-allowed";
+                            }
+                            else {
+                                this.map.getCanvas().style.cursor = "crosshair";
+                            }
+                        }
+                    }
+                    else {
+                        btnSnap.classList.remove("mapbox-gl-path-active");
+                        if (this.map && this.isInteractive) {
+                            this.map.getCanvas().style.cursor = "";
+                        }
+                    }
                 },
-                themes: this.directionsThemes,
-                themeSelectionType: this.themeSelectionType,
             });
-            pathControlContainer.append(pathControlCheckbox, pathControlLabel, pathControlSelect);
+            pathControlContainer.append(btnSnap);
+        }
+        if (this.directionsThemes && this.directionsThemes.length > 0 && this.showDirectionsControl) {
+            const themeButtons = [];
+            this.directionsThemes.forEach((theme) => {
+                var _a;
+                let icon = "〰️";
+                const themeName = theme.name.toLowerCase();
+                if (themeName.includes("voiture") || themeName.includes("car"))
+                    icon = "🚗";
+                if (themeName.includes("piéton") || themeName.includes("walk"))
+                    icon = "🚶";
+                if (themeName.includes("vélo") || themeName.includes("cycl"))
+                    icon = "🚴";
+                const btnTheme = createElement("button", {
+                    className: `mapboxgl-ctrl-icon maplibregl-ctrl-icon mapbox-gl-path-btn-theme`,
+                    title: theme.name,
+                    textContent: icon,
+                    onclick: () => {
+                        var _a;
+                        if (this.isFollowingDirections &&
+                            ((_a = this.selectedDirectionsTheme) === null || _a === void 0 ? void 0 : _a.id) === theme.id) {
+                            this.isFollowingDirections = false;
+                            btnTheme.classList.remove("mapbox-gl-path-active");
+                        }
+                        else {
+                            themeButtons.forEach((b) => b.classList.remove("mapbox-gl-path-active"));
+                            this.isFollowingDirections = true;
+                            this.selectedDirectionsTheme = theme;
+                            btnTheme.classList.add("mapbox-gl-path-active");
+                        }
+                    },
+                });
+                if (this.isFollowingDirections &&
+                    ((_a = this.selectedDirectionsTheme) === null || _a === void 0 ? void 0 : _a.id) === theme.id) {
+                    btnTheme.classList.add("mapbox-gl-path-active");
+                }
+                themeButtons.push(btnTheme);
+                pathControlContainer.append(btnTheme);
+            });
         }
         return pathControlContainer;
     }
@@ -8428,33 +8507,75 @@ class MapboxPathControl {
         this.map.on("mouseenter", pointCircleLayerId, () => this.handleMapCursor("pointer"));
         this.map.on("mouseleave", pointCircleLayerId, () => this.handleMapCursor(""));
         this.map.on("mouseenter", betweenPointsLineLayerId, () => this.handleMapCursor("pointer"));
-        this.map.on("mouseleave", betweenPointsLineLayerId, () => this.handleMapCursor(""));
+        this.map.on("mouseleave", betweenPointsLineLayerId, () => {
+            if (!this.isSnapping)
+                this.handleMapCursor("");
+        });
+        if (this.snapLayers && this.snapLayers.length > 0) {
+            this.map.on("mousemove", this.onMouseMoveSnapFunction);
+            this.map.on("zoom", this.onZoomFunction);
+        }
     }
     removeEvents() {
         this.map.off("click", this.onClickMapFunction);
         this.map.off("contextmenu", this.onContextMenuMapFunction);
         this.map.off("mousemove", this.onMovePointFunction);
         this.map.off("mousedown", pointCircleLayerId, this.onMouseDownPointFunction);
+        if (this.snapLayers && this.snapLayers.length > 0) {
+            this.map.off("mousemove", this.onMouseMoveSnapFunction);
+            this.map.off("zoom", this.onZoomFunction);
+        }
     }
-    drawNewLine(fromCoordinates, toCoordinates) {
+    drawNewLine(fromCoordinates, toCoordinates, snapFeatureId) {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
+            const previousReferencePoint = this.referencePoints[this.referencePoints.length - 1];
+            const fromSnappedId = (_a = previousReferencePoint === null || previousReferencePoint === void 0 ? void 0 : previousReferencePoint.properties) === null || _a === void 0 ? void 0 : _a.snapFeatureId;
+            const toSnappedId = snapFeatureId;
             const line = this.isFollowingDirections
-                ? yield this.selectedDirectionsTheme.getPathByCoordinates([
-                    fromCoordinates,
-                    toCoordinates,
-                ])
+                ? yield this.selectedDirectionsTheme.getPathByCoordinates([fromCoordinates, toCoordinates], { fromSnappedId, toSnappedId })
                 : [fromCoordinates, toCoordinates];
             if (line) {
                 this.createNewPointAndLine(toCoordinates, this.isFollowingDirections, this.isFollowingDirections
                     ? line.coordinates
                     : line, undefined, undefined, this.isFollowingDirections
                     ? line.waypoints
-                    : undefined);
+                    : undefined, snapFeatureId);
             }
         });
     }
     handleMapCursor(cursor) {
-        this.map.getCanvas().style.cursor = cursor;
+        if (this.map) {
+            this.map.getCanvas().style.cursor = cursor;
+        }
+    }
+    onMouseMoveSnap(event) {
+        this.lastMouseMoveEvent = event;
+        if (!this.isSnapping || this.isDragging)
+            return;
+        if (this.map.getZoom() < this.snapMinZoom) {
+            this.handleMapCursor("not-allowed");
+            return;
+        }
+        const interactiveFeatures = this.map.queryRenderedFeatures(event.point, {
+            layers: [pointCircleLayerId, betweenPointsLineLayerId],
+        });
+        if (interactiveFeatures.length > 0) {
+            this.handleMapCursor("pointer");
+            return;
+        }
+        const snapFeatures = this.map.queryRenderedFeatures(this.getBBox(event.point, this.getSnapTolerance()), { layers: this.snapLayers });
+        if (snapFeatures.length > 0) {
+            this.handleMapCursor("crosshair");
+        }
+        else {
+            this.handleMapCursor("not-allowed");
+        }
+    }
+    onZoom() {
+        if (this.lastMouseMoveEvent) {
+            this.onMouseMoveSnap(this.lastMouseMoveEvent);
+        }
     }
     onClickMapEnqueue(event) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -8471,6 +8592,7 @@ class MapboxPathControl {
         });
     }
     handleClickMap(event) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             if (this.actionsPanel.isOpen()) {
                 this.actionsPanel.remove();
@@ -8479,13 +8601,31 @@ class MapboxPathControl {
             if (!this.useRightClickToHandleActionPanel) {
                 this.handleActionsPanel(event);
             }
-            const referencePointOrLineIsUnderMouse = Boolean(this.map.queryRenderedFeatures(event.point, {
-                layers: [pointCircleLayerId, betweenPointsLineLayerId],
-            }).length);
+            const referencePointOrLineIsUnderMouse = Boolean(this.map.queryRenderedFeatures(this.isSnapping ? this.getBBox(event.point, this.getSnapTolerance()) : event.point, { layers: [pointCircleLayerId, betweenPointsLineLayerId] }).length);
             if (referencePointOrLineIsUnderMouse) {
                 return;
             }
-            const newPointCoordinates = event.lngLat.toArray();
+            let newPointCoordinates = event.lngLat.toArray();
+            let snappedFeatureId;
+            if (this.isSnapping && this.snapLayers && this.snapLayers.length > 0) {
+                if (this.map.getZoom() < this.snapMinZoom) {
+                    return;
+                }
+                const snapFeatures = this.map.queryRenderedFeatures(this.getBBox(event.point, this.getSnapTolerance()), { layers: this.snapLayers });
+                if (snapFeatures.length === 0) {
+                    return;
+                }
+                const snappedFeature = snapFeatures[0];
+                if (snappedFeature.geometry.type === "LineString" ||
+                    snappedFeature.geometry.type === "MultiLineString") {
+                    const pointHovered = point(newPointCoordinates);
+                    const snappedPoint = nearestPointOnLine(snappedFeature, pointHovered);
+                    if (snappedPoint) {
+                        newPointCoordinates = snappedPoint.geometry.coordinates;
+                        snappedFeatureId = (_b = (_a = snappedFeature.properties) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : snappedFeature.id;
+                    }
+                }
+            }
             if (this.isLoopTrail) {
                 const newPoint = point(newPointCoordinates);
                 let nearestLineString = this.linesBetweenReferencePoints[0];
@@ -8501,8 +8641,8 @@ class MapboxPathControl {
                 const { features: [from, to = from], } = newLines;
                 this.selectedReferencePointIndex =
                     nearestLineString.properties.index + 1;
-                this.createNewPointAndLine(nearestPointInLineString.geometry.coordinates, nearestLineString.properties.isFollowingDirections, from.geometry.coordinates, to.geometry.coordinates, nearestLineString.properties.index);
-                this.movePointHandler(newPointCoordinates);
+                this.createNewPointAndLine(nearestPointInLineString.geometry.coordinates, nearestLineString.properties.isFollowingDirections, from.geometry.coordinates, to.geometry.coordinates, nearestLineString.properties.index, undefined, snappedFeatureId);
+                this.movePointHandler(newPointCoordinates, snappedFeatureId);
                 this.syncIndex();
                 this.updateSource();
                 return;
@@ -8511,17 +8651,15 @@ class MapboxPathControl {
                 ? this.referencePoints[this.referencePoints.length - 1]
                 : null;
             if (previousReferencePoint) {
-                yield this.drawNewLine(previousReferencePoint.geometry.coordinates, newPointCoordinates);
+                yield this.drawNewLine(previousReferencePoint.geometry.coordinates, newPointCoordinates, snappedFeatureId);
             }
             else {
-                this.createNewPointAndLine(newPointCoordinates);
+                this.createNewPointAndLine(newPointCoordinates, undefined, undefined, undefined, undefined, undefined, snappedFeatureId);
             }
         });
     }
     handleActionsPanel(event) {
-        const featuresUnderMouse = this.map.queryRenderedFeatures(event.point, {
-            layers: [pointCircleLayerId, betweenPointsLineLayerId],
-        });
+        const featuresUnderMouse = this.map.queryRenderedFeatures(this.isSnapping ? this.getBBox(event.point, this.getSnapTolerance()) : event.point, { layers: [pointCircleLayerId, betweenPointsLineLayerId] });
         if (featuresUnderMouse.length > 0) {
             featuresUnderMouse.find((feature) => feature.layer.id === pointCircleLayerId)
                 ? this.handleActionsPanelMenuPoint(event)
@@ -8531,9 +8669,7 @@ class MapboxPathControl {
     }
     handleActionsPanelMenuPoint(event) {
         event.preventDefault();
-        const referencePointsUnderMouse = this.map.queryRenderedFeatures(event.point, {
-            layers: [pointCircleLayerId],
-        });
+        const referencePointsUnderMouse = this.map.queryRenderedFeatures(this.isSnapping ? this.getBBox(event.point, this.getSnapTolerance()) : event.point, { layers: [pointCircleLayerId] });
         if (referencePointsUnderMouse.length > 0) {
             const deleteButton = createElement("button", {
                 className: "mapbox-gl-path-popup-button mapbox-gl-path-popup-delete",
@@ -8559,29 +8695,36 @@ class MapboxPathControl {
                 actionsPanelContainer.append(loopOrOneWayButton);
             }
             this.selectedReferencePointIndex = referencePointsUnderMouse[0].properties.index;
+            const popupCoordinates = referencePointsUnderMouse[0].geometry.coordinates;
             this.actionsPanel
-                .setLngLat(event.lngLat)
+                .setLngLat(popupCoordinates)
                 .setDOMContent(actionsPanelContainer)
                 .addTo(this.map);
         }
     }
     handleActionsPanelMenuLine(event) {
+        const isSnapAuthorized = !this.isSnapping ||
+            (this.map.getZoom() >= this.snapMinZoom &&
+                this.snapLayers &&
+                this.map.queryRenderedFeatures(this.getBBox(event.point, this.getSnapTolerance()), {
+                    layers: this.snapLayers,
+                }).length > 0);
         const createPointOnLineButton = createElement("button", {
             className: "mapbox-gl-path-popup-button mapbox-gl-path-popup-createPointOnLine",
             onclick: () => this.createNewPointOnLine(event),
             textContent: this.translate("gl-pathControl.createPoint"),
+            disabled: !isSnapAuthorized,
         });
         const createIntermediatePointOnLineButton = createElement("button", {
             className: "mapbox-gl-path-popup-button mapbox-gl-path-popup-createIntermediatePointOnLine",
             onclick: () => this.createIntermediatePointOnLine(event),
             textContent: this.translate("gl-pathControl.createIntermediatePoint"),
+            disabled: !isSnapAuthorized,
         });
-        const lineUnderMouse = this.map.queryRenderedFeatures(event.point, {
-            layers: [betweenPointsLineLayerId],
-        });
+        const lineUnderMouse = this.map.queryRenderedFeatures(this.isSnapping ? this.getBBox(event.point, this.getSnapTolerance()) : event.point, { layers: [betweenPointsLineLayerId] });
         const actionsPanelContainer = document.createElement("div");
         actionsPanelContainer.append(createPointOnLineButton, createIntermediatePointOnLineButton);
-        if (this.directionsThemes && this.directionsThemes.length > 0) {
+        if (this.directionsThemes && this.directionsThemes.length > 0 && this.showDirectionsControl) {
             const isFollowingDirectionsText = lineUnderMouse[0].properties
                 .isFollowingDirections
                 ? "disableFollowDirectionMode"
@@ -8595,24 +8738,30 @@ class MapboxPathControl {
             });
             actionsPanelContainer.append(changePathModeOnLineButton);
         }
+        const lineUnderMouseIndex = lineUnderMouse[0].properties.index;
+        const actualLine = this.linesBetweenReferencePoints.find(line => line.properties.index === lineUnderMouseIndex);
+        if (!actualLine)
+            return;
+        const currentLineString = lineString(actualLine.geometry.coordinates);
+        const clickedPoint = point(event.lngLat.toArray());
+        const nearestPointOnPath = nearestPointOnLine(currentLineString, clickedPoint);
         this.actionsPanel
-            .setLngLat(event.lngLat)
+            .setLngLat(nearestPointOnPath.geometry.coordinates)
             .setDOMContent(actionsPanelContainer)
             .addTo(this.map);
     }
     onMouseDownPoint(event) {
         event.preventDefault();
-        const referencePointsUnderMouse = this.map.queryRenderedFeatures(event.point, {
-            layers: [pointCircleLayerId],
-        });
+        const referencePointsUnderMouse = this.map.queryRenderedFeatures(this.isSnapping ? this.getBBox(event.point, this.getSnapTolerance()) : event.point, { layers: [pointCircleLayerId] });
         if (referencePointsUnderMouse.length > 0) {
+            this.isDragging = true;
             this.handleMapCursor("grab");
             this.selectedReferencePointIndex = referencePointsUnderMouse[0].properties.index;
             this.map.on("mousemove", this.onMovePointFunction);
             this.map.once("mouseup", () => this.onUpPoint());
         }
     }
-    movePointHandler(coordinates) {
+    movePointHandler(coordinates, snappedFeatureId) {
         let previousLine = this.linesBetweenReferencePoints[this.selectedReferencePointIndex - 1];
         if (!previousLine && this.isLoopTrail) {
             previousLine = this.linesBetweenReferencePoints[this.referencePoints.length - 1];
@@ -8626,6 +8775,12 @@ class MapboxPathControl {
             this.actionsPanel.remove();
         }
         this.referencePoints[this.selectedReferencePointIndex].geometry.coordinates = coordinates;
+        if (snappedFeatureId !== undefined) {
+            this.referencePoints[this.selectedReferencePointIndex].properties.snapFeatureId = snappedFeatureId;
+        }
+        else {
+            delete this.referencePoints[this.selectedReferencePointIndex].properties.snapFeatureId;
+        }
         if (previousLine) {
             if (previousLine.properties.isFollowingDirections) {
                 this.changeDirectionsModeOnPreviousLineWithDebounce(previousLine, true);
@@ -8652,15 +8807,47 @@ class MapboxPathControl {
         }
     }
     onMovePoint(event) {
-        const eventCoordinates = event.lngLat.toArray();
-        this.movePointHandler(eventCoordinates);
+        var _a, _b;
+        let eventCoordinates = event.lngLat.toArray();
+        let snappedFeatureId;
+        if (this.isSnapping && this.snapLayers && this.snapLayers.length > 0) {
+            if (this.map.getZoom() < this.snapMinZoom) {
+                return;
+            }
+            const snapFeatures = this.map.queryRenderedFeatures(this.getBBox(event.point, this.getSnapTolerance()), { layers: this.snapLayers });
+            if (snapFeatures.length === 0) {
+                return;
+            }
+            const snappedFeature = snapFeatures[0];
+            if (snappedFeature.geometry.type === "LineString" ||
+                snappedFeature.geometry.type === "MultiLineString") {
+                const pointHovered = point(eventCoordinates);
+                const snappedPoint = nearestPointOnLine(snappedFeature, pointHovered);
+                if (snappedPoint) {
+                    eventCoordinates = snappedPoint.geometry.coordinates;
+                    snappedFeatureId = (_b = (_a = snappedFeature.properties) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : snappedFeature.id;
+                }
+            }
+        }
+        this.movePointHandler(eventCoordinates, snappedFeatureId);
         this.updateSource();
     }
     onUpPoint() {
+        this.isDragging = false;
         this.map.off("mousemove", this.onMovePointFunction);
-        this.handleMapCursor("grab");
+        if (this.isSnapping) {
+            if (this.map.getZoom() < this.snapMinZoom) {
+                this.handleMapCursor("not-allowed");
+            }
+            else {
+                this.handleMapCursor("crosshair");
+            }
+        }
+        else {
+            this.handleMapCursor("grab");
+        }
     }
-    createNewPointAndLine(newPointCoordinates, isFollowingDirections, previousLineCoordinates, nextLineCoordinates, currentLineIndex = this.linesBetweenReferencePoints.length, waypoints) {
+    createNewPointAndLine(newPointCoordinates, isFollowingDirections, previousLineCoordinates, nextLineCoordinates, currentLineIndex = this.linesBetweenReferencePoints.length, waypoints, snapFeatureId) {
         var _a, _b, _c, _d;
         const referencePoint = {
             type: "Feature",
@@ -8668,7 +8855,7 @@ class MapboxPathControl {
                 type: "Point",
                 coordinates: newPointCoordinates,
             },
-            properties: { index: this.referencePoints.length },
+            properties: Object.assign({ index: this.referencePoints.length }, (snapFeatureId !== undefined && { snapFeatureId })),
         };
         this.referencePoints.splice(currentLineIndex + 1, 0, referencePoint);
         const directionID = this.selectedDirectionsTheme.id;
@@ -8725,16 +8912,35 @@ class MapboxPathControl {
         this.updateSource();
     }
     createNewPointOnLine(event) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
-            const lineUnderMouse = this.map.queryRenderedFeatures(event.point, {
-                layers: [betweenPointsLineLayerId],
-            });
+            const lineUnderMouse = this.map.queryRenderedFeatures(this.isSnapping ? this.getBBox(event.point, this.getSnapTolerance()) : event.point, { layers: [betweenPointsLineLayerId] });
+            let snappedFeatureId;
+            let clickCoordinates = event.lngLat.toArray();
+            if (this.isSnapping && this.snapLayers && this.snapLayers.length > 0) {
+                const snapFeatures = this.map.queryRenderedFeatures(this.getBBox(event.point, this.getSnapTolerance()), { layers: this.snapLayers });
+                if (snapFeatures.length > 0) {
+                    const snappedFeature = snapFeatures[0];
+                    snappedFeatureId = (_b = (_a = snappedFeature.properties) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : snappedFeature.id;
+                    if (snappedFeature.geometry.type === "LineString" ||
+                        snappedFeature.geometry.type === "MultiLineString") {
+                        const snappedPoint = nearestPointOnLine(snappedFeature, point(clickCoordinates));
+                        if (snappedPoint) {
+                            clickCoordinates = snappedPoint.geometry.coordinates;
+                        }
+                    }
+                }
+            }
             if (lineUnderMouse.length > 0) {
-                const currentLineString = lineString(lineUnderMouse[0].geometry.coordinates);
-                const currentPoint = point(event.lngLat.toArray());
+                const lineUnderMouseIndex = lineUnderMouse[0].properties.index;
+                const actualLine = this.linesBetweenReferencePoints.find(line => line.properties.index === lineUnderMouseIndex);
+                if (!actualLine)
+                    return;
+                const currentLineString = lineString(actualLine.geometry.coordinates);
+                const currentPoint = point(clickCoordinates);
                 const nearestPoint = nearestPointOnLine(currentLineString, currentPoint);
                 const previousReferencePoint = this.referencePoints[this.referencePoints.length - 1];
-                this.drawNewLine(previousReferencePoint.geometry.coordinates, nearestPoint.geometry.coordinates);
+                this.drawNewLine(previousReferencePoint.geometry.coordinates, nearestPoint.geometry.coordinates, snappedFeatureId);
                 this.map.fire("MapboxPathControl.create", {
                     featureCollection: this.getFeatureCollection(),
                     createdPoint: currentPoint,
@@ -8745,23 +8951,42 @@ class MapboxPathControl {
         });
     }
     createIntermediatePointOnLine(event) {
-        const lineUnderMouse = this.map.queryRenderedFeatures(event.point, {
-            layers: [betweenPointsLineLayerId],
-        });
+        var _a, _b;
+        const lineUnderMouse = this.map.queryRenderedFeatures(this.isSnapping ? this.getBBox(event.point, this.getSnapTolerance()) : event.point, { layers: [betweenPointsLineLayerId] });
+        let snappedFeatureId;
+        let clickCoordinates = event.lngLat.toArray();
+        if (this.isSnapping && this.snapLayers && this.snapLayers.length > 0) {
+            const snapFeatures = this.map.queryRenderedFeatures(this.getBBox(event.point, this.getSnapTolerance()), { layers: this.snapLayers });
+            if (snapFeatures.length > 0) {
+                const snappedFeature = snapFeatures[0];
+                snappedFeatureId = (_b = (_a = snappedFeature.properties) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : snappedFeature.id;
+                if (snappedFeature.geometry.type === "LineString" ||
+                    snappedFeature.geometry.type === "MultiLineString") {
+                    const snappedPoint = nearestPointOnLine(snappedFeature, point(clickCoordinates));
+                    if (snappedPoint) {
+                        clickCoordinates = snappedPoint.geometry.coordinates;
+                    }
+                }
+            }
+        }
         if (lineUnderMouse.length > 0) {
             const lineUnderMouseIndex = lineUnderMouse[0].properties.index;
-            const currentLineString = lineString(lineUnderMouse[0].geometry.coordinates);
-            const currentPoint = point(event.lngLat.toArray());
+            const actualLine = this.linesBetweenReferencePoints.find(line => line.properties.index === lineUnderMouseIndex);
+            if (!actualLine)
+                return;
+            const currentLineString = lineString(actualLine.geometry.coordinates);
+            const currentPoint = point(clickCoordinates);
             const nearestPoint = nearestPointOnLine(currentLineString, currentPoint);
             const newLines = lineSplit(currentLineString, nearestPoint);
             const { features: [from, to = from], } = newLines;
-            this.createNewPointAndLine(nearestPoint.geometry.coordinates, lineUnderMouse[0].properties.isFollowingDirections, from.geometry.coordinates, to.geometry.coordinates, lineUnderMouseIndex);
+            this.createNewPointAndLine(nearestPoint.geometry.coordinates, lineUnderMouse[0].properties.isFollowingDirections, from.geometry.coordinates, to.geometry.coordinates, lineUnderMouseIndex, undefined, snappedFeatureId);
             this.syncIndex();
             this.updateSource();
             this.actionsPanel.remove();
         }
     }
     deletePoint() {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             this.map.fire("MapboxPathControl.delete", {
                 deletedPoint: this.referencePoints[this.selectedReferencePointIndex],
@@ -8808,7 +9033,10 @@ class MapboxPathControl {
                             ] }), properties: Object.assign(Object.assign({}, lineBetweenReferencePoint.properties), { isFollowingDirections: false }) });
                 }
                 else {
-                    const directionsResponse = yield this.selectedDirectionsTheme.getPathByCoordinates([previousPoint.geometry.coordinates, nextPoint.geometry.coordinates]);
+                    const directionsResponse = yield this.selectedDirectionsTheme.getPathByCoordinates([previousPoint.geometry.coordinates, nextPoint.geometry.coordinates], {
+                        fromSnappedId: (_a = previousPoint.properties) === null || _a === void 0 ? void 0 : _a.snapFeatureId,
+                        toSnappedId: (_b = nextPoint.properties) === null || _b === void 0 ? void 0 : _b.snapFeatureId,
+                    });
                     this.linesBetweenReferencePoints[previousLine.properties.index].geometry.coordinates =
                         directionsResponse && directionsResponse.coordinates
                             ? directionsResponse.coordinates
@@ -8840,6 +9068,7 @@ class MapboxPathControl {
         });
     }
     setLoopTrail() {
+        var _a;
         return __awaiter(this, void 0, void 0, function* () {
             if (this.referencePoints.length < 3) {
                 return;
@@ -8847,7 +9076,7 @@ class MapboxPathControl {
             const firstPoint = this.referencePoints[this.referencePoints.length - 1];
             const lastPoint = this.referencePoints[0];
             this.isLoopTrail = true;
-            yield this.drawNewLine(firstPoint.geometry.coordinates, lastPoint.geometry.coordinates);
+            yield this.drawNewLine(firstPoint.geometry.coordinates, lastPoint.geometry.coordinates, (_a = lastPoint.properties) === null || _a === void 0 ? void 0 : _a.snapFeatureId);
             this.referencePoints = this.referencePoints.slice(0, -1);
             this.updateSource();
             this.actionsPanel.remove();
@@ -8869,36 +9098,13 @@ class MapboxPathControl {
             });
         });
     }
-
-/* ------------------------------------ START OF PATCH N°2 -------------------------------------- */
-/*    Fix linestrings and feature collections being added to the map before the map is loaded     */
-
-    // updateSource(fireEvent = true) {
-    //     const data = this.getFeatureCollection();
-    //     const isSourceLoaded = () => this.map.getSource(sourcePointAndLineId) &&
-    //         this.map.isSourceLoaded(sourcePointAndLineId);
-    //     const setData = () => {
-    //         if (isSourceLoaded()) {
-    //             this.map.getSource(sourcePointAndLineId).setData(data);
-    //             fireEvent &&
-    //                 this.map.fire("MapboxPathControl.update", {
-    //                     featureCollection: data,
-    //                 });
-    //             this.map.off("sourcedata", setData);
-    //         }
-    //     };
-    //     if (isSourceLoaded()) {
-    //         setData();
-    //     }
-    //     else {
-    //         this.map.on("sourcedata", setData);
-    //     }
-    // }
-
     updateSource(fireEvent = true) {
+        if (!this.map) {
+            return;
+        }
         const data = this.getFeatureCollection();
-        const isSourceLoaded = () => this.map?.getSource(sourcePointAndLineId) &&
-            this.map?.isSourceLoaded(sourcePointAndLineId);
+        const isSourceLoaded = () => this.map.getSource(sourcePointAndLineId) &&
+            this.map.isSourceLoaded(sourcePointAndLineId);
         const setData = () => {
             if (isSourceLoaded()) {
                 this.map.getSource(sourcePointAndLineId).setData(data);
@@ -8913,12 +9119,9 @@ class MapboxPathControl {
             setData();
         }
         else {
-            this.map?.on("sourcedata", setData);
+            this.map.on("sourcedata", setData);
         }
     }
-
-/* ------------------------------------- END OF PATCH N°2 --------------------------------------- */
-
     syncIndex() {
         this.referencePoints.forEach((point, index) => (point.properties.index = index));
         if (this.referencePoints.length < 3) {
@@ -8936,6 +9139,7 @@ class MapboxPathControl {
         });
     }
     changeDirectionsModeOnLine(line, forceDirections = false) {
+        var _a, _b;
         return __awaiter(this, void 0, void 0, function* () {
             let coordinates = [];
             const previousPoint = this.referencePoints[line.properties.index];
@@ -8951,7 +9155,10 @@ class MapboxPathControl {
                 this.phantomJunctionLines = this.phantomJunctionLines.filter((phantomJunctionLine) => phantomJunctionLine.properties.index !== line.properties.index);
             }
             else {
-                const directionsResponse = yield this.selectedDirectionsTheme.getPathByCoordinates([previousPoint.geometry.coordinates, nextPoint.geometry.coordinates]);
+                const directionsResponse = yield this.selectedDirectionsTheme.getPathByCoordinates([previousPoint.geometry.coordinates, nextPoint.geometry.coordinates], {
+                    fromSnappedId: (_a = previousPoint.properties) === null || _a === void 0 ? void 0 : _a.snapFeatureId,
+                    toSnappedId: (_b = nextPoint.properties) === null || _b === void 0 ? void 0 : _b.snapFeatureId,
+                });
                 if (directionsResponse && directionsResponse.coordinates) {
                     coordinates = directionsResponse.coordinates;
                     this.phantomJunctionLines = this.phantomJunctionLines.filter((phantomJunctionLine) => phantomJunctionLine.properties.index !== line.properties.index);
