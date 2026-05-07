@@ -23,9 +23,9 @@ billiard==4.2.4
     # via celery
 brotli==1.2.0
     # via fonttools
-btrees==6.3
+btrees==6.4
     # via zodb
-cachetools==7.0.5
+cachetools==7.1.1
     # via large-image
 cairocffi==1.7.1
     # via
@@ -38,7 +38,7 @@ celery==5.6.3
     # via
     #   geotrek (setup.py)
     #   django-celery-results
-certifi==2026.2.25
+certifi==2026.4.22
     # via
     #   fiona
     #   requests
@@ -55,7 +55,7 @@ charset-normalizer==3.4.7
     # via
     #   reportlab
     #   requests
-click==8.3.2
+click==8.3.3
     # via
     #   celery
     #   click-didyoumean
@@ -162,7 +162,7 @@ django-leaflet==0.19.post11
     # via mapentity
 django-maintenance-mode==0.22.0
     # via geotrek (setup.py)
-django-modelcluster==6.4.1
+django-modelcluster==6.5
     # via geotrek (setup.py)
 django-modeltranslation==0.20.3
     # via mapentity
@@ -224,7 +224,7 @@ greenlet==3.4.0
     # via gevent
 gunicorn==25.3.0
     # via geotrek (setup.py)
-idna==3.11
+idna==3.13
     # via requests
 importlib-metadata==9.0.0
     # via pygal
@@ -267,7 +267,7 @@ numpy==2.2.6
     #   large-image
     #   large-image-source-vips
     #   shapely
-packaging==26.1
+packaging==26.2
     # via
     #   drf-extensions
     #   drf-yasg
@@ -300,7 +300,7 @@ pillow==12.2.0
     #   weasyprint
 prompt-toolkit==3.0.52
     # via click-repl
-psycopg2==2.9.11
+psycopg2==2.9.12
     # via geotrek (setup.py)
 pycparser==3.0
     # via cffi
@@ -310,7 +310,7 @@ pygal==3.1.0
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
-pymupdf==1.27.2.2
+pymupdf==1.27.2.3
     # via pdfimpose
 pyopenair==1.2.1
     # via geotrek (setup.py)
@@ -324,7 +324,7 @@ python-fsutil==0.16.1
     # via django-maintenance-mode
 python-magic==0.4.27
     # via paperclip
-pytz==2026.1.post1
+pytz==2026.2
     # via
     #   datetime
     #   drf-yasg
@@ -398,7 +398,7 @@ typing-extensions==4.15.0
     #   exceptiongroup
     #   large-image
     #   referencing
-tzdata==2026.1
+tzdata==2026.2
     # via
     #   kombu
     #   mapentity
@@ -418,7 +418,7 @@ vine==5.1.0
     #   amqp
     #   celery
     #   kombu
-wcwidth==0.6.0
+wcwidth==0.7.0
     # via prompt-toolkit
 weasyprint==68.1
     # via
@@ -457,7 +457,7 @@ zope-interface==8.3
     #   transaction
     #   zodb
     #   zope-proxy
-zope-proxy==7.1
+zope-proxy==7.2
     # via zope-deferredimport
 zopfli==0.4.1
     # via fonttools
