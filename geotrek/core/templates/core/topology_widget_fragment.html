@@ -43,7 +43,11 @@
         const targetMapId = '{{ target_map|default:"" }}';
         console.log('targetMapId', targetMapId);
 
-        if (targetMapId) { // TODO
+        if (targetMapId) {
+            // FIXME: les controllers des autres geoms ne s'affichent pas :
+            // Utiliser MapWidget pour les autres geoms (ce if ne sera pas exécuté),
+            // Voir pourquoi ça ne fonctionne pas directement (target_map doit être un GeometryField
+            // mais TopologyField est un CharField ?)
             // Se branche sur une carte existante définie par target_map
             window.addEventListener('map:init', function (e) {
                 if (e.detail.fieldId === 'id_' + targetMapId) {
@@ -209,50 +213,97 @@
               ]
             }
 
-            async function getRoute(coordinates) {
-                return fetch(
-                    `https://router.project-osrm.org/route/v1/driving/${coordinates.join(
-                    ";"
-                    )}?geometries=geojson`,
-                    {
-                        method: "GET",
-                        headers: { "Content-Type": "application/json" },
-                    }
-                )
-                    .then((response) => response.json())
-                    .then((data) =>
-                    data.code === "Ok"
-                        ? {
-                            coordinates: data.routes[0].geometry.coordinates,
-                            waypoints: {
-                                departure: data.waypoints[0].location,
-                                arrival: data.waypoints[1].location,
-                            },
+            function getCookie(name) {
+                let cookieValue = null;
+                if (document.cookie && document.cookie !== '') {
+                    let cookies = document.cookie.split(';');
+                    for (let i = 0; i < cookies.length; i++) {
+                        let cookie = cookies[i].trim();
+                        if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                            cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                            break;
                         }
-                        : undefined
-                    );
+                    }
+                }
+                return cookieValue;
             }
 
+            async function getRoute(coordinates, options) {
+
+                const [fromCoord, toCoord] = coordinates;
+                const [fromLng, fromLat] = fromCoord
+                const [toLng, toLat] = toCoord
+                const fromPathId = options?.fromSnappedId;
+                const toPathId = options?.toSnappedId;
+
+                console.log("routing", fromCoord, fromPathId, toCoord, toPathId)
+
+                // Fetch the route between these two waypoints
+                return fetch(
+                    "http://geotrek.local:8000/api/path/drf/paths/route-geometry",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json; charset=UTF-8",
+                            "X-CSRFToken": getCookie('csrftoken'),
+                        },
+                        body: `{"steps":[{"lat":${fromLat},"lng":${fromLng},"path_id":${fromPathId}},{"lat":${toLat},"lng":${toLng},"path_id":${toPathId}}]}`,
+                    }
+                )
+                .then((response) => {
+                    if (response.status === 200) {
+                        return response.json()
+                    } else {
+                        return undefined
+                    }
+                })
+                .then((data) => {
+                    console.log("data", data)
+                    if (data !== undefined) {
+                        let routeCoords = data.geojson.geometries[0].coordinates;
+                        return {
+                            coordinates: routeCoords,
+                            waypoints: {
+                                departure: routeCoords[0],
+                                arrival: routeCoords.at(-1),
+                            }
+                        }
+                    } else {
+                        return undefined;
+                    }
+                })
+            }
+
+            // TODO : dans le css pour modifier l'icône du controller
+            // TODO: utiliser !important
+            // https://github.com/makinacorpus/mapbox-gl-path/tree/feature/snapping-and-routing
+            // .maplibregl-ctrl button.mapbox-gl-path-btn-edit {
+            //   background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='29' height='29' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/%3E%3C/svg%3E");
+            //   background-repeat: no-repeat;
+            //   background-position: center;
+            // }
+            //
+            // .maplibregl-ctrl button.mapbox-gl-path-btn-edit.mapbox-gl-path-active {
+            //   background-color: rgba(0, 0, 0, 0.05);
+            //   background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='29' height='29' viewBox='0 0 24 24' fill='none' stroke='%230D47A1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/%3E%3C/svg%3E");
+            // }
+
             async function initRoutingControl () {
-
-                //map.getMap().addControl(new MaplibrePathRoutingControl(), 'top-left');
-
-                // TODO: controller for resetting the route
-                // TODO: utiliser un controller cliquable pour commencer/mettre en pause le routing.
 
                 // Load the arrow image which displays the route's direction
                 const image = await map.getMap().loadImage("{% static 'vendor/PATCHED-mapbox-gl-path/assets/arrow.png' %}");
                 map.getMap().addImage('arrow', image.data);
 
                 // Add mapbox-gl-path control
+                console.log('window.pathLayerName', window.pathLayerName)
                 const mapboxPathControl = new MapboxPathControl({
                     translate: (text) => {
-                        const locales = { // TODO
-                            "gl-pathControl.createPoint": "Create point",
-                            "gl-pathControl.createIntermediatePoint": "Create intermediate point",
-                            "gl-pathControl.deletePoint": "Delete point",
-                            "gl-pathControl.loopPoint": "Round trip",
-                            "gl-pathControl.oneWayPoint": "One way"
+                        const locales = {
+                            "gl-pathControl.createPoint": "{% translate 'Add point' %}",
+                            "gl-pathControl.createIntermediatePoint": "{% translate 'Add intermediate point' %}",
+                            "gl-pathControl.deletePoint": "{% translate 'Delete point' %}",
+                            "gl-pathControl.loopPoint": "{% translate 'Round trip' %}",
+                            "gl-pathControl.oneWayPoint": "{% translate 'One way' %}"
                         }
                         return locales[text]
                     },
@@ -268,15 +319,7 @@
                     //lineString: initialLineString,
                     layersCustomisation: {
                         pointLayerList: [
-                          // {
-                          //   // First Point layer to display the "glow"
-                          //   paint: {
-                          //     "circle-radius": 14,
-                          //     "circle-color": "#f7d4bc",
-                          //   },
-                          // },
                           {
-                            // Second Point layer to display white circle
                             paint: {
                               "circle-radius": 10,
                               "circle-color": "#ffffff",
@@ -285,7 +328,6 @@
                             },
                           },
                           {
-                            // Third Point layer to Alphabetical indexes
                             paint: {
                               "text-color": "#000",
                             },
@@ -297,16 +339,10 @@
                           },
                         ],
                         lineLayerList: [
-                          // {
-                          //   // First LineString layer to display the "glow"
-                          //   paint: { "line-width": 8, "line-color": "#f7d4bc" },
-                          // },
                           {
-                            // Second LineString layer to display the path
                             paint: { "line-width": 4, "line-color": "#846b8a" },
                           },
                           {
-                            // Third LineString layer to the arrow icon
                             type: "symbol",
                             layout: {
                               "icon-image": "arrow",
@@ -325,7 +361,14 @@
                             },
                           },
                         ],
-                    }
+                    },
+                    interactive: false,
+                    showSnapControl: false,
+                    defaultSnapping: true,
+                    snapLayers: [window.pathLayerName],
+                    snapMinZoom: 0,  // TODO
+                    showDirectionsControl: false,
+                    defaultRouting: true,
                 });
 
                 map.getMap().addControl(mapboxPathControl, "top-left");
@@ -431,6 +474,8 @@
                         } else {
                             additionalObjectsLayer.load(additionalLayerUrl);
                         }
+                        window.pathLayerName = "layer-" + additionalObjectsLayer.primaryKey + "-lines"
+                        console.log("additionalObjectsLayer", additionalObjectsLayer)
                     }
 
                 });
@@ -469,9 +514,25 @@
             map.getMap().on('load', async function () {
                 await addLayers();
                 initAdditionalControls();
-                initRoutingControl();
-                // FIXME: Actuellement, quand on utilise le controller pour mesurer les distances, ça crée des points de passage
+                await initRoutingControl();
             });
+            map.getMap().on("MapboxPathControl.update", (event) => {
+              // event.featureCollection contient l'ensemble du GeoJSON (points et lignes)
+              const geojson = event.featureCollection;
+
+              // Récupérer toutes les features (points de repère et segments de ligne)
+              const features = geojson.features;
+
+              console.log("Features mises à jour :", features);
+              // Exemple : Filtrer pour n'avoir que les points de repère (les marqueurs du tracé)
+              const referencePoints = features.filter(f => f.geometry.type === "Point");
+              console.log("Points du tracé :", referencePoints);
+              // Exemple : Filtrer pour n'avoir que la ligne tracée
+              const lines = features.filter(f => f.geometry.type === "LineString");
+              console.log("Segments de ligne :", lines);
+            });
+
+
         }
     });
 </script>

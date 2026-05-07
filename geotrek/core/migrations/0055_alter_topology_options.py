@@ -4,14 +4,26 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0054_alter_topology_geom'),
+        ("core", "0054_alter_topology_geom"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='topology',
-            options={'permissions': [('geometry_on_path_network', 'Can draw geometries coupled to the path network'), ('geometry_off_path_network', 'Can draw geometries uncoupled from the path network')], 'verbose_name': 'Topology', 'verbose_name_plural': 'Topologies'},
+            name="topology",
+            options={
+                "permissions": [
+                    (
+                        "geometry_on_path_network",
+                        "Can draw geometries coupled to the path network",
+                    ),
+                    (
+                        "geometry_off_path_network",
+                        "Can draw geometries uncoupled from the path network",
+                    ),
+                ],
+                "verbose_name": "Topology",
+                "verbose_name_plural": "Topologies",
+            },
         ),
     ]

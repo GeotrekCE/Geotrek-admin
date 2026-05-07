@@ -5,15 +5,16 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0053_path_is_being_split'),
+        ("core", "0053_path_is_being_split"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='topology',
-            name='geom',
-            field=django.contrib.gis.db.models.fields.GeometryField(default=None, null=True, spatial_index=False, srid=2154),
+            model_name="topology",
+            name="geom",
+            field=django.contrib.gis.db.models.fields.GeometryField(
+                default=None, null=True, spatial_index=False, srid=2154
+            ),
         ),
     ]
