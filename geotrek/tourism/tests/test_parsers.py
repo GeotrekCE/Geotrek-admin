@@ -888,7 +888,7 @@ class ParserTests(TestCase):
         self.assertEqual(content.category, category)
         self.assertEqual(content.type1.get().label, "Hôtels")
         self.assertEqual(content.type2.get().label, "****")
-        self.assertEqual(Attachment.objects.count(), 3)
+        self.assertEqual(Attachment.objects.count(), 1)
         self.assertEqual(Attachment.objects.first().content_object, content)
         call_command(
             "import",

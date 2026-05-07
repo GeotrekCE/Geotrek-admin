@@ -1251,35 +1251,57 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
 
     def get_nb(self):
         if self.version_tourinsoft == 3:
-            return int(self.root["odata.count"])
+            return len(self.root["value"])
         return int(self.root["d"]["__count"])
 
+    def parse_data(self, params):
+        response = self.request_or_retry(self.url, params=params)
+        self.root = response.json()
+        self.nb = self.get_nb()
+        for row in self.items:
+            yield {self.normalize_field_name(src): val for src, val in row.items()}
+
     def next_row(self):
-        skip = 0
-        while True:
+        if self.version_tourinsoft == 3:
+            params = {
+                "format": "json",
+            }
+            yield from self.parse_data(params)
+
+        elif self.version_tourinsoft == 2:
+            skip = 0
             params = {
                 "$format": "json",
                 "$inlinecount": "allpages",
                 "$top": 1000,
-                "$skip": skip,
+                "$skip": 0,
             }
-            response = self.request_or_retry(self.url, params=params)
-            self.root = response.json()
-            self.nb = self.get_nb()
-            for row in self.items:
-                yield {self.normalize_field_name(src): val for src, val in row.items()}
-            skip += 1000
-            if skip >= self.nb:
-                return
+            while True:
+                yield from self.parse_data(params)
+                skip += 1000
+                params["$skip"] = skip
+                if skip >= self.nb:
+                    return
 
     def filter_attachments(self, src, val):
         if not val:
             return []
-        return [
-            subval.split(self.separator2)
-            for subval in val.split(self.separator)
-            if subval.split(self.separator2)[0]
-        ]
+        if self.version_tourinsoft == 3:
+            return [
+                (
+                    entry["Photo"]["Url"],
+                    entry["Photo"]["Titre"],
+                    entry["Photo"]["Credit"],
+                )
+                for entry in val
+                if entry["Photo"] is not None
+            ]
+        elif self.version_tourinsoft == 2:
+            return [
+                subval.split(self.separator2)
+                for subval in val.split(self.separator)
+                if subval.split(self.separator2)[0]
+            ]
 
     def filter_geom(self, src, val):
         lng, lat = val

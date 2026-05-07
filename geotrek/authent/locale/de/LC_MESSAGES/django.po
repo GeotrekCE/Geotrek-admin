@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-09 10:39+0200\n"
+"POT-Creation-Date: 2026-04-02 16:48+0200\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/authent/de/>\n"
@@ -22,12 +22,6 @@ msgid "Authent"
 msgstr ""
 
 msgid "Access to the requested resource is restricted by structure. You have been redirected."
-msgstr ""
-
-msgid "algorithm"
-msgstr ""
-
-msgid "hash"
 msgstr ""
 
 msgid "Nom"

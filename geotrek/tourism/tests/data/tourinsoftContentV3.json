@@ -1,5 +1,5 @@
 {
-    "odata.count": "11",
+    "tisTrackingUA": "UA-65445678-1",
     "value": [
         {
             "__metadata": {
@@ -68,7 +68,6 @@
             "PrestationsServices": "Blanchisserie#Internet#Internet gratuit#Mat\u00e9riel b\u00e9b\u00e9#Service en chambre#Wifi#Wifi gratuit",
             "Chaines": "Brit' hotel",
             "GooglemapLatitude": "48.3295000",
-            "Photos": "http://cdt28.media.tourinsoft.eu/upload/Hotel-du-Perche-2.jpg|H\u00f4tel du Perche|OT Nogent-le-Rotrou#http://cdt28.media.tourinsoft.eu/upload/Hotel-du-Perche.jpg|H\u00f4tel du Perche|\u00a9 CDT 28#http://cdt28.media.tourinsoft.eu/upload/Brit-hotel.JPG|H\u00f4tel du Perche|OT Nogent-le-Rotrou",
             "Handicap": null
         },
         {
@@ -120,6 +119,5 @@
             "Handicap": null,
             "MediaPhotoss": []
         }
-    ],
-    "__count": "11"
+    ]
 }

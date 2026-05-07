@@ -2,17 +2,39 @@
 CHANGELOG
 =========
 
-2.124.2+dev     (XXXX-XX-XX)
+2.124.3+dev     (XXXX-XX-XX)
 ----------------------------
+
+**Bug fixes**
+
+* Adapting TourInsoft parsers to the v3 API
+* Fix trek practice merge
+
+**Tests**
+
+* Fix mocking with OpenStreetMap attachment test parser
+
+
+2.124.3         (2026-04-02)
+----------------------------
+
+**Breaking changes**
+
+* If you use external database backend, please your custom configuration according documentation.
 
 **Improvements**
 
+* Remove ``DatabaseBackend`` from core and add ``django-flask-authent-backend`` as external dependencies (#5382)
 * Add ``--ids`` option to the ``reorder_topologies`` command to process specific topologies by ID
 * Remove blade double link (keep signage ForeignKey and remove topology ForeignKey) (#3009)
 
 **Bug fixes**
 
 * Add forgotten filter on white-listed networks in Apidae Trek Parser
+
+**Documentation**
+
+* Add backup & restore section and update index (refs #5376)
 
 
 2.124.2         (2026-03-03)
@@ -21,6 +43,7 @@ CHANGELOG
 **Documentation**
 
 * Add information about database users and map style configuration, and remove the mention of IGN Rando (refs #5318)
+
 
 2.124.1         (2026-02-17)
 ----------------------------

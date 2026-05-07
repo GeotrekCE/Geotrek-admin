@@ -1,5 +1,4 @@
 import factory
-from django.conf import settings
 from django.contrib.auth.models import Group
 from mapentity.tests.factories import UserFactory
 
@@ -11,8 +10,7 @@ class PathManagerFactory(UserFactory):
 
     @factory.post_generation
     def create_path_manager(obj, create, extracted, **kwargs):
-        GROUP_PATH_MANAGER_ID = settings.AUTHENT_GROUPS_MAPPING["PATH_MANAGER"]
-        pathmanager = Group.objects.get(pk=GROUP_PATH_MANAGER_ID)
+        pathmanager = Group.objects.get(pk=1)  # Path manager group id in fixtures
         obj.groups.add(pathmanager)
 
 
@@ -21,8 +19,7 @@ class TrekkingManagerFactory(UserFactory):
 
     @factory.post_generation
     def create_trekking_manager(obj, create, extracted, **kwargs):
-        GROUP_TREKKING_MANAGER_ID = settings.AUTHENT_GROUPS_MAPPING["TREKKING_MANAGER"]
-        pathmanager = Group.objects.get(pk=GROUP_TREKKING_MANAGER_ID)
+        pathmanager = Group.objects.get(pk=2)  # Path manager group id in fixtures
         obj.groups.add(pathmanager)
 
 

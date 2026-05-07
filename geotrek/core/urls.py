@@ -46,5 +46,7 @@ urlpatterns += registry.register(
     menu=(settings.PATH_MODEL_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED),
 )
 urlpatterns += registry.register(
-    Trail, menu=(settings.TRAIL_MODEL_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED)
+    Trail,
+    AltimetryEntityOptions,
+    menu=(settings.TRAIL_MODEL_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED),
 )
