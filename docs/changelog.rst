@@ -9,7 +9,10 @@ CHANGELOG
 
 * Adapting TourInsoft parsers to the v3 API
 * Fix trek practice merge
-* Fix OpenStreetMap attachment parser tests
+
+**Tests**
+
+* Fix mocking with OpenStreetMap attachment test parser
 
 
 2.124.3         (2026-04-02)
