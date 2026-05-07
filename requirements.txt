@@ -38,7 +38,7 @@ celery==5.6.3
     # via
     #   geotrek (setup.py)
     #   django-celery-results
-certifi==2026.2.25
+certifi==2026.4.22
     # via
     #   fiona
     #   requests
@@ -55,7 +55,7 @@ charset-normalizer==3.4.7
     # via
     #   reportlab
     #   requests
-click==8.3.2
+click==8.3.3
     # via
     #   celery
     #   click-didyoumean
@@ -224,7 +224,7 @@ greenlet==3.4.0
     # via gevent
 gunicorn==25.3.0
     # via geotrek (setup.py)
-idna==3.11
+idna==3.13
     # via requests
 importlib-metadata==9.0.0
     # via pygal
@@ -267,7 +267,7 @@ numpy==2.2.6
     #   large-image
     #   large-image-source-vips
     #   shapely
-packaging==26.1
+packaging==26.2
     # via
     #   drf-extensions
     #   drf-yasg
@@ -300,7 +300,7 @@ pillow==12.2.0
     #   weasyprint
 prompt-toolkit==3.0.52
     # via click-repl
-psycopg2==2.9.11
+psycopg2==2.9.12
     # via geotrek (setup.py)
 pycparser==3.0
     # via cffi
@@ -310,7 +310,7 @@ pygal==3.1.0
     # via geotrek (setup.py)
 pymemcache==4.0.0
     # via geotrek (setup.py)
-pymupdf==1.27.2.2
+pymupdf==1.27.2.3
     # via pdfimpose
 pyopenair==1.2.1
     # via geotrek (setup.py)
@@ -398,7 +398,7 @@ typing-extensions==4.15.0
     #   exceptiongroup
     #   large-image
     #   referencing
-tzdata==2026.1
+tzdata==2026.2
     # via
     #   kombu
     #   mapentity
