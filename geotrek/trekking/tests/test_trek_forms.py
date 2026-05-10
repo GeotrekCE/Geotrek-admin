@@ -216,31 +216,31 @@ class TrekItinerancyTestCase(TestCase):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()
         form = TrekForm(instance=self.trek2, user=self.user)
         form.cleaned_data = {
-            "children_trek": [self.trek3],
+            "children": [self.trek3],
             "hidden_ordered_children": str(self.trek3.pk),
         }
-        form.clean_children_trek()
+        form.clean_children()
 
     def test_parent_as_child(self):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()
         form = TrekForm(instance=self.trek3, user=self.user)
         form.cleaned_data = {
-            "children_trek": [self.trek2],
+            "children": [self.trek2],
             "hidden_ordered_children": str(self.trek2.pk),
         }
         with self.assertRaisesRegex(
             ValidationError, "Cannot use parent trek 2 as a child trek."
         ):
-            form.clean_children_trek()
+            form.clean_children()
 
     def test_child_with_itself_child(self):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()
         form = TrekForm(instance=self.trek1, user=self.user)
         form.cleaned_data = {
-            "children_trek": [self.trek3],
+            "children": [self.trek3],
             "hidden_ordered_children": str(self.trek3.pk),
         }
         with self.assertRaisesRegex(
             ValidationError, "Cannot add children because this trek is itself a child."
         ):
-            form.clean_children_trek()
+            form.clean_children()
