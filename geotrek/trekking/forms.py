@@ -188,7 +188,7 @@ class TrekForm(BaseTrekForm):
         )
         # Make sure (force) that name is required, in default language only
         self.fields[
-            build_localized_fieldname("name", settings.LANGUAGE_CODE)
+            calized_fieldname("name", settings.LANGUAGE_CODE)
         ].required = True
 
         if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
@@ -248,11 +248,10 @@ class TrekForm(BaseTrekForm):
                     default=Value(len(ordered_children_ids) + 1),
                     output_field=IntegerField(),
                 )
-                localized_name = build_localized_fieldname("name")
 
                 self.fields["children"].queryset = all_children.annotate(
                     custom_order=preserved
-                ).order_by("custom_order", localized_name)
+                ).order_by("custom_order", "name")
             else:
                 self.fields["children"].queryset = all_children
 
