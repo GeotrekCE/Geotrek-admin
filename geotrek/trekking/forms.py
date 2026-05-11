@@ -313,21 +313,13 @@ class TrekForm(BaseTrekForm):
                 )
         return children
 
-    def save(self, commit=True):
+    def save(self, *args, **kwargs):
         """
         Custom form save override - ordered children management
         """
-        instance = super().save(commit=commit)
-
-        # Django contract: when commit=False, caller is responsible for saving
-        # instance and then calling form.save_m2m().
-        if not commit:
-            return instance
-
-        # Related updates require a persisted instance.
         with transaction.atomic():
+            instance = super().save(self, *args, **kwargs)
             # Save ratings
-            # TODO : Go through practice and not rating_scales
             if instance.practice:
                 field = getattr(instance, "ratings")
                 to_remove = list(
