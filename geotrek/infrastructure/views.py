@@ -13,12 +13,14 @@ from mapentity.views import (
     MapEntityMultiUpdate,
     MapEntityUpdate,
 )
+from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import (
     BelongStructureMixin,
     CustomColumnsMixin,
     PublishedFieldMixin,
+    ReferencesMixin,
 )
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
@@ -26,11 +28,21 @@ from geotrek.core.views import CreateFromTopologyMixin
 
 from .filters import InfrastructureFilterSet
 from .forms import InfrastructureForm
-from .models import Infrastructure, InfrastructureCondition
+from .models import (
+    Infrastructure,
+    InfrastructureCondition,
+    InfrastructureMaintenanceDifficultyLevel,
+    InfrastructureType,
+    InfrastructureUsageDifficultyLevel,
+)
 from .serializers import (
+    InfrastructureConditionsGTAMSerializer,
     InfrastructureGeojsonSerializer,
     InfrastructureGTAMSerializer,
+    InfrastructureMaintenanceDifficultyGTAMSerializer,
     InfrastructureSerializer,
+    InfrastructureTypeGTAMSerializer,
+    InfrastructureUsageDifficultyGTAMSerializer,
 )
 
 
@@ -147,3 +159,24 @@ class InfrastructureMultiUpdate(
     PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
 ):
     model = Infrastructure
+
+
+class InfrastructureReferences(ReferencesMixin, APIView):
+    model = [
+        (
+            InfrastructureType,
+            InfrastructureTypeGTAMSerializer,
+        ),
+        (
+            InfrastructureMaintenanceDifficultyLevel,
+            InfrastructureMaintenanceDifficultyGTAMSerializer,
+        ),
+        (
+            InfrastructureUsageDifficultyLevel,
+            InfrastructureUsageDifficultyGTAMSerializer,
+        ),
+        (
+            InfrastructureCondition,
+            InfrastructureConditionsGTAMSerializer,
+        ),
+    ]

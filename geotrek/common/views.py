@@ -66,6 +66,7 @@ from geotrek.common.mixins.views import (
     CompletenessMixin,
     DocumentPortalMixin,
     DocumentPublicMixin,
+    ReferencesMixin,
 )
 from geotrek.common.permissions import PublicOrReadPermMixin, RelatedPublishedPermission
 from geotrek.common.tasks import import_datas, import_datas_from_web
@@ -77,10 +78,6 @@ from geotrek.common.utils.import_celery import (
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import Path
 from geotrek.feedback.parsers import SuricateParser
-from geotrek.infrastructure import models as infrastructure_models
-from geotrek.infrastructure import serializers as infrastructure_serializers
-from geotrek.signage import models as signage_models
-from geotrek.signage import serializers as signage_serializers
 
 
 def handler404(request, exception, template_name="404.html"):
@@ -676,70 +673,13 @@ class ConfigView(APIView):
         return response.Response(data)
 
 
-class References(APIView):
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    models = []
-
-    common = [
+class CommonReferences(ReferencesMixin):
+    model = [
         (Structure, common_serializers.StructureGTAMSerializer),
         (common_models.Provider, common_serializers.ProviderGTAMSerializer),
         (common_models.Organism, common_serializers.OrganismGTAMSerializer),
         (common_models.AccessMean, common_serializers.AccessMeanGTAMSerializer),
     ]
-
-    infrastructure = [
-        (
-            infrastructure_models.InfrastructureType,
-            infrastructure_serializers.InfrastructureTypeGTAMSerializer,
-        ),
-        (
-            infrastructure_models.InfrastructureMaintenanceDifficultyLevel,
-            infrastructure_serializers.InfrastructureMaintenanceDifficultyGTAMSerializer,
-        ),
-        (
-            infrastructure_models.InfrastructureUsageDifficultyLevel,
-            infrastructure_serializers.InfrastructureMaintenanceDifficultyGTAMSerializer,
-        ),
-        (
-            infrastructure_models.InfrastructureCondition,
-            infrastructure_serializers.InfrastructureConditionsGTAMSerializer,
-        ),
-    ]
-
-    signage = [
-        (
-            signage_models.SignageCondition,
-            signage_serializers.SignageConditionGTAMSerializer,
-        ),
-        (signage_models.SignageType, signage_serializers.SignageTypeGTAMSerializer),
-        (signage_models.Sealing, signage_serializers.SignageSealingGTAMSerializer),
-        (signage_models.Direction, signage_serializers.DirectionGTAMSerializer),
-        (signage_models.BladeType, signage_serializers.BladeTypeGTAMSerializer),
-        (signage_models.Color, signage_serializers.BladeColorGTAMSerializer),
-        (
-            signage_models.BladeCondition,
-            signage_serializers.BladeConditionGTAMSerializer,
-        ),
-    ]
-
-    def get_reference(self, model, serializer):
-        qs = model.objects.all().order_by("id")
-        data = serializer(qs, many=True).data
-        return data
-
-    def get_all_references(self, module):
-        data = {}
-        for model, serializer in module:
-            model_name = model._meta.model_name
-            data[model_name] = self.get_reference(model, serializer)
-        return data
-
-    def get(self, request, *args, **kwargs):
-        module = getattr(self, kwargs.get("module"))
-        data = self.get_all_references(module)
-        return response.Response(data)
 
 
 home = last_list

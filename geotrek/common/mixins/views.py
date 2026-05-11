@@ -12,6 +12,10 @@ from mapentity import views as mapentity_views
 from mapentity.helpers import suffix_for, user_has_perm
 from pdfimpose.schema.saddle import impose
 from pymupdf import Document
+from rest_framework import permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.utils import logger
@@ -302,3 +306,24 @@ class PublishedFieldMixin:
             ]
 
         return editable_fields
+
+
+class ReferencesMixin(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_reference(self, model, serializer):
+        qs = model.objects.all().order_by("id")
+        data = serializer(qs, many=True).data
+        return data
+
+    def get_all_references(self):
+        data = {}
+        for model, serializer in self.model:
+            model_name = model._meta.model_name
+            data[model_name] = self.get_reference(model, serializer)
+        return data
+
+    def get(self, request, *args, **kwargs):
+        data = self.get_all_references()
+        return Response(data)

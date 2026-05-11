@@ -56,9 +56,9 @@ urlpatterns = [
     path("api/auth/verify-token/", TokenVerifyView.as_view(), name="token_verify"),
     path("api/gtam/config/", views.ConfigView.as_view(), name="gtam_config"),
     path(
-        "api/references/<str:module>/",
-        views.References.as_view(),
-        name="references",
+        "api/common/references/",
+        views.CommonReferences.as_view(),
+        name="common_references",
     ),
 ]
 

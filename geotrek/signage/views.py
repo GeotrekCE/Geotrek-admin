@@ -18,6 +18,7 @@ from mapentity.views import (
     MapEntityMultiUpdate,
     MapEntityUpdate,
 )
+from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
@@ -25,20 +26,38 @@ from geotrek.common.mixins.views import (
     BelongStructureMixin,
     CustomColumnsMixin,
     PublishedFieldMixin,
+    ReferencesMixin,
 )
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 
 from .filters import BladeFilterSet, SignageFilterSet
 from .forms import BladeForm, LineFormset, SignageForm
-from .models import Blade, Signage
+from .models import (
+    Blade,
+    BladeCondition,
+    BladeType,
+    Color,
+    Direction,
+    Sealing,
+    Signage,
+    SignageCondition,
+    SignageType,
+)
 from .serializers import (
+    BladeColorGTAMSerializer,
+    BladeConditionGTAMSerializer,
     BladeGeojsonSerializer,
     BladeSerializer,
+    BladeTypeGTAMSerializer,
     CSVBladeSerializer,
+    DirectionGTAMSerializer,
+    SignageConditionGTAMSerializer,
     SignageGeojsonSerializer,
     SignageGTAMSerializer,
+    SignageSealingGTAMSerializer,
     SignageSerializer,
+    SignageTypeGTAMSerializer,
     ZipBladeShapeSerializer,
 )
 
@@ -154,6 +173,24 @@ class SignageMultiUpdate(
     PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
 ):
     model = Signage
+
+
+class SignageReferences(ReferencesMixin, APIView):
+    model = [
+        (
+            SignageCondition,
+            SignageConditionGTAMSerializer,
+        ),
+        (SignageType, SignageTypeGTAMSerializer),
+        (Sealing, SignageSealingGTAMSerializer),
+        (Direction, DirectionGTAMSerializer),
+        (BladeType, BladeTypeGTAMSerializer),
+        (Color, BladeColorGTAMSerializer),
+        (
+            BladeCondition,
+            BladeConditionGTAMSerializer,
+        ),
+    ]
 
 
 class BladeDetail(MapEntityDetail):
