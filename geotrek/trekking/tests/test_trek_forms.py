@@ -246,10 +246,13 @@ class TrekItinerancyTestCase(TestCase):
             form.clean_children()
 
     def test_save_children_keeps_explicit_hidden_order(self):
+        trek4 = TrekFactory(name="4")
         data = {
             "name_en": "2",
             "children": [str(self.trek1.pk), str(self.trek3.pk)],
-            "hidden_ordered_children": f"{self.trek3.pk},999,{self.trek1.pk},{self.trek3.pk},foo",
+            "hidden_ordered_children": (
+                f"{self.trek3.pk},{trek4.pk},999,{self.trek1.pk},{self.trek3.pk},foo"
+            ),
         }
 
         if settings.TREKKING_TOPOLOGY_ENABLED:
@@ -266,6 +269,8 @@ class TrekItinerancyTestCase(TestCase):
             self.trek2.trek_children.order_by("order").values_list("child_id", flat=True)
         )
         self.assertEqual(len(ordered_children_ids), 2)
+        self.assertEqual(ordered_children_ids.count(self.trek3.pk), 1)
+        self.assertNotIn(trek4.pk, ordered_children_ids)
         self.assertNotIn(999, ordered_children_ids)
         self.assertListEqual(
             ordered_children_ids,
