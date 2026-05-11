@@ -262,12 +262,13 @@ class TrekItinerancyTestCase(TestCase):
         self.assertTrue(form.is_valid())
         form.save()
 
+        ordered_children_ids = list(
+            self.trek2.trek_children.order_by("order").values_list("child_id", flat=True)
+        )
+        self.assertEqual(len(ordered_children_ids), 2)
+        self.assertNotIn(999, ordered_children_ids)
         self.assertListEqual(
-            list(
-                self.trek2.trek_children.order_by("order").values_list(
-                    "child_id", flat=True
-                )
-            ),
+            ordered_children_ids,
             [self.trek3.pk, self.trek1.pk],
         )
 
@@ -275,6 +276,7 @@ class TrekItinerancyTestCase(TestCase):
         OrderedTrekChild.objects.create(parent=self.trek2, child=self.trek1, order=0)
         data = {
             "name_en": "2",
+            "children": [],
             "hidden_ordered_children": str(self.trek1.pk),
         }
 
