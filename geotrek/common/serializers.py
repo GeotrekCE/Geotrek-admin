@@ -76,7 +76,7 @@ class ProviderGTAMSerializer(rest_serializers.ModelSerializer):
 
 
 class OrganismGTAMSerializer(rest_serializers.ModelSerializer):
-    name = rest_serializers.CharField(source='organism')
+    name = rest_serializers.CharField(source="organism")
 
     class Meta:
         model = Organism
@@ -84,7 +84,7 @@ class OrganismGTAMSerializer(rest_serializers.ModelSerializer):
 
 
 class AccessMeanGTAMSerializer(rest_serializers.ModelSerializer):
-    name = rest_serializers.CharField(source='label')
+    name = rest_serializers.CharField(source="label")
 
     class Meta:
         model = AccessMean

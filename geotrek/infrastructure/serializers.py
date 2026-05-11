@@ -30,7 +30,7 @@ class InfrastructureTypeSerializer(PictogramSerializerMixin):
 
 
 class InfrastructureTypeGTAMSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='label')
+    name = serializers.CharField(source="label")
 
     class Meta:
         model = InfrastructureType
@@ -38,7 +38,7 @@ class InfrastructureTypeGTAMSerializer(serializers.ModelSerializer):
 
 
 class InfrastructureMaintenanceDifficultyGTAMSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='label')
+    name = serializers.CharField(source="label")
 
     class Meta:
         model = InfrastructureMaintenanceDifficultyLevel
@@ -46,7 +46,7 @@ class InfrastructureMaintenanceDifficultyGTAMSerializer(serializers.ModelSeriali
 
 
 class InfrastructureUsageDifficultyGTAMSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='label')
+    name = serializers.CharField(source="label")
 
     class Meta:
         model = InfrastructureUsageDifficultyLevel
@@ -54,7 +54,7 @@ class InfrastructureUsageDifficultyGTAMSerializer(serializers.ModelSerializer):
 
 
 class InfrastructureConditionsGTAMSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='label')
+    name = serializers.CharField(source="label")
 
     class Meta:
         model = InfrastructureCondition

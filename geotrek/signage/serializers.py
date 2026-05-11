@@ -29,7 +29,7 @@ class SignageTypeSerializer(PictogramSerializerMixin):
 
 
 class SignageTypeGTAMSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='label')
+    name = serializers.CharField(source="label")
 
     class Meta:
         model = signage_models.SignageType
@@ -37,7 +37,7 @@ class SignageTypeGTAMSerializer(serializers.ModelSerializer):
 
 
 class SignageConditionGTAMSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='label')
+    name = serializers.CharField(source="label")
 
     class Meta:
         model = signage_models.SignageCondition
@@ -45,7 +45,7 @@ class SignageConditionGTAMSerializer(serializers.ModelSerializer):
 
 
 class SignageSealingGTAMSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='label')
+    name = serializers.CharField(source="label")
 
     class Meta:
         model = signage_models.Sealing
@@ -53,7 +53,7 @@ class SignageSealingGTAMSerializer(serializers.ModelSerializer):
 
 
 class DirectionGTAMSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='label')
+    name = serializers.CharField(source="label")
 
     class Meta:
         model = signage_models.Direction
@@ -61,7 +61,7 @@ class DirectionGTAMSerializer(serializers.ModelSerializer):
 
 
 class BladeTypeGTAMSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='label')
+    name = serializers.CharField(source="label")
 
     class Meta:
         model = signage_models.BladeType
@@ -69,7 +69,7 @@ class BladeTypeGTAMSerializer(serializers.ModelSerializer):
 
 
 class BladeConditionGTAMSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='label')
+    name = serializers.CharField(source="label")
 
     class Meta:
         model = signage_models.BladeCondition
@@ -77,7 +77,7 @@ class BladeConditionGTAMSerializer(serializers.ModelSerializer):
 
 
 class BladeColorGTAMSerializer(serializers.ModelSerializer):
-    name = serializers.CharField(source='label')
+    name = serializers.CharField(source="label")
 
     class Meta:
         model = signage_models.Color
