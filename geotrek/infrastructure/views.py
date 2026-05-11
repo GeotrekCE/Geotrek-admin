@@ -27,7 +27,11 @@ from geotrek.core.views import CreateFromTopologyMixin
 from .filters import InfrastructureFilterSet
 from .forms import InfrastructureForm
 from .models import Infrastructure, InfrastructureCondition
-from .serializers import InfrastructureGeojsonSerializer, InfrastructureSerializer
+from .serializers import (
+    InfrastructureGeojsonSerializer,
+    InfrastructureGTAMSerializer,
+    InfrastructureSerializer,
+)
 
 
 class InfrastructureList(CustomColumnsMixin, MapEntityList):
@@ -108,13 +112,17 @@ class InfrastructureViewSet(GeotrekMapentityViewSet):
     model = Infrastructure
     serializer_class = InfrastructureSerializer
     geojson_serializer_class = InfrastructureGeojsonSerializer
+    gtam_serializer_class = InfrastructureGTAMSerializer
     filterset_class = InfrastructureFilterSet
     mapentity_list_class = InfrastructureList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        if self.format_kwarg == "geojson":
+        renderer, media_type = self.perform_content_negotiation(self.request)
+        if getattr(renderer, "format") in ["geojson", "gtam"]:
             qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+
+        if getattr(renderer, "format") == "geojson":
             qs = qs.only("id", "name", "published")
         else:
             qs = qs.select_related(

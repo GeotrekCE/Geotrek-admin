@@ -2,21 +2,61 @@ from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
+from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import (
     BasePublishableSerializerMixin,
     PictogramSerializerMixin,
+    ProviderGTAMSerializer,
+    StructureGTAMSerializer,
 )
 
 from . import models as infrastructure_models
+from .models import (
+    InfrastructureAccessMean,
+    InfrastructureCondition,
+    InfrastructureMaintenanceDifficultyLevel,
+    InfrastructureType,
+    InfrastructureUsageDifficultyLevel,
+)
 
 
 class InfrastructureTypeSerializer(PictogramSerializerMixin):
     class Meta:
         model = infrastructure_models.InfrastructureType
         fields = ("id", "pictogram", "label")
+
+
+class InfrastructureAccessGTAMSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InfrastructureAccessMean
+        fields = ("id", "label")
+
+
+class InfrastructureTypeGTAMSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InfrastructureType
+        fields = ("id", "label")
+
+
+class InfrastructureMaintenanceDifficultyGTAMSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InfrastructureMaintenanceDifficultyLevel
+        fields = ("id", "label")
+
+
+class InfrastructureUsageDifficultyGTAMSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InfrastructureUsageDifficultyLevel
+        fields = ("id", "label")
+
+
+class InfrastructureConditionsGTAMSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InfrastructureCondition
+        fields = ("id", "label")
 
 
 class InfrastructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -37,6 +77,42 @@ class InfrastructureGeojsonSerializer(MapentityGeojsonModelSerializer):
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = infrastructure_models.Infrastructure
         fields = ["id", "name", "published"]
+
+
+class InfrastructureGTAMSerializer(serializers.ModelSerializer):
+    api_geom = GeometryField(read_only=True, precision=7)
+    provider = ProviderGTAMSerializer()
+    structure = StructureGTAMSerializer()
+    access = InfrastructureAccessGTAMSerializer()
+    type = InfrastructureTypeGTAMSerializer()
+    maintenance_difficulty = InfrastructureMaintenanceDifficultyGTAMSerializer()
+    usage_difficulty = InfrastructureUsageDifficultyGTAMSerializer()
+    conditions = InfrastructureConditionsGTAMSerializer(many=True)
+
+    class Meta:
+        model = infrastructure_models.Infrastructure
+        fields = [
+            "id",
+            "date_insert",
+            "date_update",
+            "api_geom",
+            "uuid",
+            "published",
+            "publication_date",
+            "eid",
+            "name",
+            "description",
+            "implantation_year",
+            "accessibility",
+            "provider",
+            "structure",
+            "access",
+            "type",
+            "maintenance_difficulty",
+            "usage_difficulty",
+            "conditions",
+        ]
+        geom = "api_geom"
 
 
 class InfrastructureAPISerializer(BasePublishableSerializerMixin):

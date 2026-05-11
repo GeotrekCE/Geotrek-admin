@@ -3,7 +3,8 @@ from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis.fields import GeometrySerializerMethodField
 
-from .models import HDViewPoint
+from ..authent.models import Structure
+from .models import HDViewPoint, Provider
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
@@ -60,3 +61,15 @@ class HDViewPointAPISerializer(HDViewPointSerializer):
     class Meta(HDViewPointSerializer.Meta):
         id_field = "id"
         fields = HDViewPointSerializer.Meta.fields
+
+
+class StructureGTAMSerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = Structure
+        fields = ("id", "name")
+
+
+class ProviderGTAMSerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = Provider
+        fields = ("id", "name")
