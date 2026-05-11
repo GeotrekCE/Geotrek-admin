@@ -7,7 +7,7 @@ CHANGELOG
 
 **Warnings**
 
-* If you come from a version greater than equal to 2.124.0 and have edit courses with child or itinerancies, please check child order.
+* If you come from a version greater than or equal to 2.124.0 and have edited courses with children or itinerancies, please check child order.
 
 **Bug fixes**
 

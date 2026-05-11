@@ -276,7 +276,7 @@ class CourseForm(CommonForm):
                 )
                 self.fields["children_course"].queryset = all_children.annotate(
                     custom_order=preserved
-                ).order_by("custom_order")
+                ).order_by("custom_order", "name")
             else:
                 self.fields["children_course"].queryset = all_children
 

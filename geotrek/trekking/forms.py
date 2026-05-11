@@ -67,7 +67,11 @@ else:
 
 class TrekForm(BaseTrekForm):
     children = forms.ModelMultipleChoiceField(
-        queryset=Trek.objects.existing(), required=False, widget=ModelSelect2Multiple()
+        label=_("Children"),
+        help_text=_("Select children in order"),
+        queryset=Trek.objects.existing(),
+        required=False,
+        widget=ModelSelect2Multiple(),
     )
     hidden_ordered_children = forms.CharField(
         label=_("Hidden ordered children"),
@@ -244,10 +248,11 @@ class TrekForm(BaseTrekForm):
                     default=Value(len(ordered_children_ids) + 1),
                     output_field=IntegerField(),
                 )
+                localized_name = build_localized_fieldname("name")
 
                 self.fields["children"].queryset = all_children.annotate(
                     custom_order=preserved
-                ).order_by("custom_order")
+                ).order_by("custom_order", localized_name)
             else:
                 self.fields["children"].queryset = all_children
 
