@@ -25,49 +25,63 @@ from . import models as signage_models
 class SignageTypeSerializer(PictogramSerializerMixin):
     class Meta:
         model = signage_models.SignageType
-        fields = ("id", "pictogram", "label")
+        fields = ("id", "pictogram", "name")
 
 
 class SignageTypeGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='label')
+
     class Meta:
         model = signage_models.SignageType
-        fields = ("id", "label")
+        fields = ("id", "name")
 
 
 class SignageConditionGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='label')
+
     class Meta:
         model = signage_models.SignageCondition
-        fields = ("id", "label")
+        fields = ("id", "name")
 
 
 class SignageSealingGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='label')
+
     class Meta:
         model = signage_models.Sealing
-        fields = ("id", "label")
+        fields = ("id", "name")
 
 
 class DirectionGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='label')
+
     class Meta:
         model = signage_models.Direction
-        fields = ("id", "label")
+        fields = ("id", "name")
 
 
 class BladeTypeGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='label')
+
     class Meta:
         model = signage_models.BladeType
-        fields = ("id", "label")
+        fields = ("id", "name")
 
 
 class BladeConditionGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='label')
+
     class Meta:
         model = signage_models.BladeCondition
-        fields = ("id", "label")
+        fields = ("id", "name")
 
 
 class BladeColorGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source='label')
+
     class Meta:
         model = signage_models.Color
-        fields = ("id", "label")
+        fields = ("id", "name")
 
 
 class LineGTAMSerializer(serializers.ModelSerializer):

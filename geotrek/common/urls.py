@@ -51,9 +51,9 @@ urlpatterns = [
         views.delete_attachment_accessibility,
         name="delete_attachment_accessibility",
     ),
-    path("api/connexion/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
-    path("api/connexion/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
-    path("api/connexion/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    path("api/auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/auth/refresh-token/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/auth/verify-token/", TokenVerifyView.as_view(), name="token_verify"),
     path("api/gtam/config/", views.ConfigView.as_view(), name="gtam_config"),
     path(
         "api/references/<str:module>/",
