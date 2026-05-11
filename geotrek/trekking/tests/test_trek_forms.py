@@ -266,7 +266,9 @@ class TrekItinerancyTestCase(TestCase):
         form.save()
 
         ordered_children_ids = list(
-            self.trek2.trek_children.order_by("order").values_list("child_id", flat=True)
+            self.trek2.trek_children.order_by("order").values_list(
+                "child_id", flat=True
+            )
         )
         self.assertEqual(len(ordered_children_ids), 2)
         self.assertEqual(ordered_children_ids.count(self.trek3.pk), 1)
