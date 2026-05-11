@@ -188,7 +188,7 @@ class TrekForm(BaseTrekForm):
         )
         # Make sure (force) that name is required, in default language only
         self.fields[
-            calized_fieldname("name", settings.LANGUAGE_CODE)
+            build_localized_fieldname("name", settings.LANGUAGE_CODE)
         ].required = True
 
         if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
