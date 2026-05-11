@@ -6,17 +6,23 @@ from mapentity.serializers.commasv import CSVSerializer
 from mapentity.serializers.shapefile import ZipShapeSerializer
 from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
-from rest_framework_gis.fields import GeometrySerializerMethodField, GeometryField
+from rest_framework_gis.fields import GeometryField, GeometrySerializerMethodField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import (
     BasePublishableSerializerMixin,
-    PictogramSerializerMixin, ProviderGTAMSerializer, StructureGTAMSerializer, OrganismGTAMSerializer,
+    OrganismGTAMSerializer,
+    PictogramSerializerMixin,
+    ProviderGTAMSerializer,
+    StructureGTAMSerializer,
 )
 
+from ..infrastructure.serializers import (
+    InfrastructureAccessGTAMSerializer,
+    InfrastructureConditionsGTAMSerializer,
+)
 from . import models as signage_models
-from ..infrastructure.serializers import InfrastructureAccessGTAMSerializer, InfrastructureConditionsGTAMSerializer
 
 
 class SignageTypeSerializer(PictogramSerializerMixin):
@@ -72,14 +78,7 @@ class LineGTAMSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = signage_models.Line
-        fields = [
-            "id",
-            "number",
-            "direction",
-            "text",
-            "distance",
-            "time"
-        ]
+        fields = ["id", "number", "direction", "text", "distance", "time"]
 
 
 class BladesGTAMSerializer(serializers.ModelSerializer):
@@ -157,7 +156,7 @@ class SignageGTAMSerializer(serializers.ModelSerializer):
             "sealing",
             "type",
             "conditions",
-            "blades"
+            "blades",
         ]
         geom = "api_geom"
 

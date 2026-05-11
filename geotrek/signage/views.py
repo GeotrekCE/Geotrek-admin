@@ -37,8 +37,9 @@ from .serializers import (
     BladeSerializer,
     CSVBladeSerializer,
     SignageGeojsonSerializer,
+    SignageGTAMSerializer,
     SignageSerializer,
-    ZipBladeShapeSerializer, SignageGTAMSerializer,
+    ZipBladeShapeSerializer,
 )
 
 logger = logging.getLogger(__name__)
