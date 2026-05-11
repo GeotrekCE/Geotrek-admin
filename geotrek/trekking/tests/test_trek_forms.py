@@ -244,3 +244,48 @@ class TrekItinerancyTestCase(TestCase):
             ValidationError, "Cannot add children because this trek is itself a child."
         ):
             form.clean_children()
+
+    def test_save_children_keeps_explicit_hidden_order(self):
+        data = {
+            "name_en": "2",
+            "children": [str(self.trek1.pk), str(self.trek3.pk)],
+            "hidden_ordered_children": f"{self.trek3.pk},999,{self.trek1.pk},{self.trek3.pk},foo",
+        }
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = PathFactory.create()
+            data["topology"] = json.dumps({"paths": [path.pk]})
+        else:
+            data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
+
+        form = TrekForm(instance=self.trek2, user=self.user, data=data)
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        self.assertListEqual(
+            list(
+                self.trek2.trek_children.order_by("order").values_list(
+                    "child_id", flat=True
+                )
+            ),
+            [self.trek3.pk, self.trek1.pk],
+        )
+
+    def test_save_children_clears_existing_links_when_none_selected(self):
+        OrderedTrekChild.objects.create(parent=self.trek2, child=self.trek1, order=0)
+        data = {
+            "name_en": "2",
+            "hidden_ordered_children": str(self.trek1.pk),
+        }
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            path = PathFactory.create()
+            data["topology"] = json.dumps({"paths": [path.pk]})
+        else:
+            data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
+
+        form = TrekForm(instance=self.trek2, user=self.user, data=data)
+        self.assertTrue(form.is_valid())
+        form.save()
+
+        self.assertFalse(self.trek2.trek_children.exists())

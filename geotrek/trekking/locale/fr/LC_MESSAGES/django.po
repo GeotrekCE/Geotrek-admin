@@ -42,10 +42,10 @@ msgid "Trek"
 msgstr "Itinéraire"
 
 msgid "Children"
-msgstr ""
+msgstr "Enfants"
 
 msgid "Select children in order"
-msgstr ""
+msgstr "Sélectionnez les enfants dans l'ordre"
 
 msgid "Hidden ordered children"
 msgstr "Enfants ordonnés cachés"
