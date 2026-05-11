@@ -3,6 +3,11 @@ from django.urls import converters, path, re_path, register_converter
 from mapentity.registry import MapEntityOptions, registry
 from mapentity.urls import _MEDIA_URL
 from rest_framework.routers import DefaultRouter
+from rest_framework_simplejwt.views import (
+    TokenObtainPairView,
+    TokenRefreshView,
+    TokenVerifyView,
+)
 
 from . import views
 from .models import HDViewPoint
@@ -45,6 +50,15 @@ urlpatterns = [
         "delete-accessibility/<int:attachment_pk>/",
         views.delete_attachment_accessibility,
         name="delete_attachment_accessibility",
+    ),
+    path("api/connexion/", TokenObtainPairView.as_view(), name="token_obtain_pair"),
+    path("api/connexion/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
+    path("api/connexion/verify/", TokenVerifyView.as_view(), name="token_verify"),
+    path("api/gtam/config/", views.ConfigView.as_view(), name="gtam_config"),
+    path(
+        "api/references/<str:module>/",
+        views.References.as_view(),
+        name="references",
     ),
 ]
 

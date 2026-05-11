@@ -7,6 +7,7 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import (
+    AccessMeanGTAMSerializer,
     BasePublishableSerializerMixin,
     PictogramSerializerMixin,
     ProviderGTAMSerializer,
@@ -15,7 +16,6 @@ from geotrek.common.serializers import (
 
 from . import models as infrastructure_models
 from .models import (
-    InfrastructureAccessMean,
     InfrastructureCondition,
     InfrastructureMaintenanceDifficultyLevel,
     InfrastructureType,
@@ -27,12 +27,6 @@ class InfrastructureTypeSerializer(PictogramSerializerMixin):
     class Meta:
         model = infrastructure_models.InfrastructureType
         fields = ("id", "pictogram", "label")
-
-
-class InfrastructureAccessGTAMSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = InfrastructureAccessMean
-        fields = ("id", "label")
 
 
 class InfrastructureTypeGTAMSerializer(serializers.ModelSerializer):
@@ -83,7 +77,7 @@ class InfrastructureGTAMSerializer(serializers.ModelSerializer):
     api_geom = GeometryField(read_only=True, precision=7)
     provider = ProviderGTAMSerializer()
     structure = StructureGTAMSerializer()
-    access = InfrastructureAccessGTAMSerializer()
+    access = AccessMeanGTAMSerializer()
     type = InfrastructureTypeGTAMSerializer()
     maintenance_difficulty = InfrastructureMaintenanceDifficultyGTAMSerializer()
     usage_difficulty = InfrastructureUsageDifficultyGTAMSerializer()

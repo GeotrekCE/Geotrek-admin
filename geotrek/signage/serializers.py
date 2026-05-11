@@ -11,6 +11,7 @@ from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import (
+    AccessMeanGTAMSerializer,
     BasePublishableSerializerMixin,
     OrganismGTAMSerializer,
     PictogramSerializerMixin,
@@ -18,10 +19,6 @@ from geotrek.common.serializers import (
     StructureGTAMSerializer,
 )
 
-from ..infrastructure.serializers import (
-    InfrastructureAccessGTAMSerializer,
-    InfrastructureConditionsGTAMSerializer,
-)
 from . import models as signage_models
 
 
@@ -126,8 +123,8 @@ class SignageGTAMSerializer(serializers.ModelSerializer):
     api_geom = GeometryField(read_only=True, precision=7)
     provider = ProviderGTAMSerializer()
     structure = StructureGTAMSerializer()
-    access = InfrastructureAccessGTAMSerializer()
-    conditions = InfrastructureConditionsGTAMSerializer(many=True)
+    access = AccessMeanGTAMSerializer()
+    conditions = SignageConditionGTAMSerializer(many=True)
     type = SignageTypeGTAMSerializer()
     sealing = SignageSealingGTAMSerializer()
     manager = OrganismGTAMSerializer()

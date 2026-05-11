@@ -4,7 +4,7 @@ from rest_framework import serializers as rest_serializers
 from rest_framework_gis.fields import GeometrySerializerMethodField
 
 from ..authent.models import Structure
-from .models import HDViewPoint, Organism, Provider
+from .models import AccessMean, HDViewPoint, Organism, Provider
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
@@ -79,3 +79,9 @@ class OrganismGTAMSerializer(rest_serializers.ModelSerializer):
     class Meta:
         model = Organism
         fields = ("id", "organism")
+
+
+class AccessMeanGTAMSerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = AccessMean
+        fields = ("id", "label")

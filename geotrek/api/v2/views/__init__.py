@@ -1,12 +1,9 @@
 from django.conf import settings
-from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import Polygon
 from rest_framework import permissions, response
 from rest_framework.views import APIView
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from geotrek import __version__
-from geotrek.authent.models import UserProfile
 
 from .authent import StructureViewSet  # noqa
 from .common import (
@@ -114,100 +111,6 @@ class ConfigView(APIView):
         bbox.srid = settings.SRID
         bbox.transform(settings.API_SRID)
         return response.Response({"bbox": bbox.extent})
-
-
-class GTAMConfigView(APIView):
-    """GTAM Configuration endpoint that gives information on: the user, default language, map, ..."""
-
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
-
-    models = [
-        ("signage", "signage"),
-        ("infrastructure", "infrastructure"),
-        ("maintenance", "intervention"),
-        ("feedback", "report"),
-    ]
-
-    map_permissions = {
-        "add": "create",
-        "change": "update",
-        "change_geom": "update_geom",
-        "delete": "delete",
-        "read": "read",
-    }
-
-    def get_model_permissions(self, user, model):
-        app_label, model_name = model
-
-        permissions = Permission.objects.filter(
-            content_type__app_label=app_label,
-            content_type__model=model_name,
-        )
-
-        result = {}
-        for perm in permissions:
-            action = perm.codename.replace(f"_{model_name}", "")
-            if action in self.map_permissions:
-                mapped_action = self.map_permissions[action]
-                result[mapped_action] = user.has_perm(f"{app_label}.{perm.codename}")
-
-        return result
-
-    def get_all_permissions(self, user):
-        permissions = {}
-        for model in self.models:
-            permissions[model[1]] = self.get_model_permissions(user, model)
-        return permissions
-
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        user_profile = UserProfile.objects.get(user=user)
-
-        # convert SPATIAL_EXTENT projection to 4326
-        bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
-        bbox.srid = settings.SRID
-        bbox.transform(settings.API_SRID)
-        west, south, east, north = bbox.extent
-
-        max_bounds = [[west, south], [east, north]]
-        center = [(west + east) / 2, (south + north) / 2]
-        data = {
-            "settings": {
-                "intervalSyncInHours": {
-                    "references": 24 * 7,  # move settings in database
-                },
-                "maps": {
-                    "layers": [
-                        {
-                            "pmtiles_url": "https://fake.urls.com/pmtiles",
-                            "json_style_url": "https://fake.urls.com/json_style",
-                            "name": "Scan IGN VT",
-                            "options": {
-                                "attribution": "© IGN - GeoPortail",
-                                "center": center,
-                                "maxBounds": max_bounds,
-                                "maxZoom": 15,  # use pmtiles metadata: https://github.com/protomaps/PMTiles/blob/0cebcaeade40034b86facb6e7da4ec726b9053fb/python/pmtiles/pmtiles/reader.py#L37-L42
-                                "minZoom": 0,  # use pmtiles metadata: https://github.com/protomaps/PMTiles/blob/0cebcaeade40034b86facb6e7da4ec726b9053fb/python/pmtiles/pmtiles/reader.py#L37-L42
-                                "zoom": 0,
-                            },
-                        }
-                    ]
-                },
-            },
-            "user": {
-                "attachedStructure": {
-                    "id": user_profile.structure.id,
-                    "label": user_profile.structure.name,
-                },
-                "email": user.email,
-                "firstName": user.first_name,
-                "lastName": user.last_name,
-                "permissions": self.get_all_permissions(user),
-                "userName": user.username,
-            },
-        }
-        return response.Response(data)
 
 
 class GeotrekVersionAPIView(APIView):
