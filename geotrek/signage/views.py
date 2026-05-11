@@ -38,7 +38,7 @@ from .serializers import (
     CSVBladeSerializer,
     SignageGeojsonSerializer,
     SignageSerializer,
-    ZipBladeShapeSerializer,
+    ZipBladeShapeSerializer, SignageGTAMSerializer,
 )
 
 logger = logging.getLogger(__name__)
@@ -128,13 +128,15 @@ class SignageViewSet(GeotrekMapentityViewSet):
     model = Signage
     serializer_class = SignageSerializer
     geojson_serializer_class = SignageGeojsonSerializer
+    gtam_serializer_class = SignageGTAMSerializer
     filterset_class = SignageFilterSet
     mapentity_list_class = SignageList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        if self.format_kwarg == "geojson":
+        if self.format_kwarg in ["geojson", "gtam"]:
             qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+        if self.format_kwarg == "geojson":
             qs = qs.only("id", "name", "published")
         else:
             qs = qs.select_related(
