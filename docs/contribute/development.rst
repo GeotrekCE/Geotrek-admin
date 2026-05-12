@@ -40,7 +40,7 @@ Adding or upgrade dependencies
 
 Consider using uv to manage dependencies.
 
-* add your dependencies in ``setup.py`` for general dependencies, ``requirements-dev.in`` for dev dependencies, then run:
+* add your runtime dependencies in ``[project] dependencies`` and your dev dependencies in ``[project.optional-dependencies].dev`` in ``pyproject.toml``. Add documentation-only dependencies in ``docs/requirements.in``, then run:
 
 .. md-tab-set::
     :name: upgrade-dependencies-tabs
@@ -55,8 +55,7 @@ Consider using uv to manage dependencies.
 
          .. code-block:: python
     
-                docker compose run --rm web uv pip compile setup.py -o requirements.txt
-                docker compose run --rm web pip-compile requirements-dev.in -o requirements-dev.txt
+                docker compose run --rm web bash -c "uv pip compile pyproject.toml -o requirements.txt && uv pip compile pyproject.toml -c requirements.txt --extra dev -o requirements-dev.txt && cd docs/ && uv pip compile -c ../requirements.txt -c ../requirements-dev.txt requirements.in -o requirements.txt"
 
 Model modification
 ==================

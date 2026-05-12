@@ -4,6 +4,8 @@ else
   docker_compose=docker-compose
 endif
 
+dep_update = uv pip compile pyproject.toml -o requirements.txt && uv pip compile pyproject.toml -c requirements.txt --extra dev -o requirements-dev.txt && cd docs/ && uv pip compile -c ../requirements.txt -c ../requirements-dev.txt requirements.in -o requirements.txt
+
 -include $(wildcard Makefile.perso.mk)
 -include $(wildcard .env)
 
@@ -73,7 +75,10 @@ back_to_dev:
 	docker rm geotrek_release
 
 deps:
-	$(docker_compose) run --remove-orphans --no-deps --rm web bash -c "uv pip compile setup.py -o requirements.txt && uv pip compile requirements-dev.in -o requirements-dev.txt && cd docs/ && uv pip compile -c ../requirements.txt -c ../requirements-dev.txt requirements.in -o requirements.txt"
+	$(docker_compose) run --remove-orphans --no-deps --rm web bash -c "$(dep_update)"
+
+ci_check_deps:
+	$(dep_update)
 
 format:
 	$(docker_compose) run --remove-orphans --no-deps --rm web ruff format geotrek

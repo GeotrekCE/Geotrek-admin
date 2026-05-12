@@ -3,9 +3,10 @@ name: Check deps
 on:
   pull_request:
     paths:
-      - setup.py
+      - pyproject.toml
       - requirements.txt
       - requirements-dev.txt
+      - docs/requirements.in
       - docs/requirements.txt
       - .github/workflows/dependencies.yml
 
@@ -44,8 +45,8 @@ jobs:
 
       - name: Check dependency graph
         run: |
-          uv pip compile setup.py -o requirements.txt
-          uv pip compile requirements-dev.in -o requirements-dev.txt
+          uv pip compile pyproject.toml -o requirements.txt
+          uv pip compile pyproject.toml -c requirements.txt --extra dev -o requirements-dev.txt
           cd docs/ && uv pip compile -c ../requirements.txt -c ../requirements-dev.txt requirements.in -o requirements.txt
 
       - name: Verify dependency graph is ok
@@ -62,7 +63,7 @@ jobs:
         run: |
           echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
           git diff
-          # core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
+          # core.setFailed('Please add your dependencies in pyproject.toml or docs/requirements.in, then regenerate the lockfiles. (see docs/contribute/development)')
 
       - name: Commit files changed
         uses: stefanzweifel/git-auto-commit-action@v7

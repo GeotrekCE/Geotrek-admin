@@ -26,11 +26,12 @@ RUN env DEBIAN_FRONTEND=noninteractive mk-build-deps --install --tool='apt-get -
 
 COPY geotrek ./geotrek
 COPY conf ./conf
-COPY setup.py ./setup.py
+COPY pyproject.toml ./pyproject.toml
 COPY requirements.txt ./requirements.txt
 COPY VERSION ./VERSION
 COPY manage.py ./manage.py
-COPY MANIFEST.in ./MANIFEST.in
+COPY README.md ./README.md
+COPY LICENSE ./LICENSE
 
 RUN if test "$(lsb_release -cs)" = 'noble' ; then \
       sed -i 's/python3.10/python3.12/g' debian/rules; \

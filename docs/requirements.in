@@ -1,5 +1,9 @@
+-c ../requirements.txt
+-c ../requirements-dev.txt
+
 sphinx_immaterial
 sphinx
 sphinx-autobuild
 sphinx-intl
 sphinx-design
+sphinx-pyproject
