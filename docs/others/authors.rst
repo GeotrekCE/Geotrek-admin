@@ -2,10 +2,6 @@
 Authors
 =======
 
-.. contents::
-   :local:
-   :depth: 2
-
 Makina Corpus
 -------------
 
@@ -32,6 +28,9 @@ Makina Corpus
 * Hugo Hasson
 * Joaquim Nallar
 * Justine Fricou
+* Romain Dessort
+* Romain Boissière
+* Nell Party
 
 .. image:: https://makina-corpus.com/profiles/makina/themes/makina_front/img/logo.png
     :target: http://www.makina-corpus.com
@@ -42,6 +41,7 @@ Parc national des Ecrins
 * Camille Monchicourt
 * Théo Lechémia
 * Élie Bouttier
+* Raphael Doisy
 
 Others
 ------
@@ -53,7 +53,7 @@ Others
 * Amandine Sahl (Parc National des Cévennes)
 * Frédéric Cloitre (LPO AuRA)
 * Idrissa Djepa Creutz (OepnIG / Parc National des Cévennes)
-* Yannick LE DUC
+* Yannick Le Duc
 * Guillaume Boitel (Parc National de Port Cros)
 * Pierre Loicq (Parc National de la Vanoise)
 * Nathanaël (@roipoussiere)

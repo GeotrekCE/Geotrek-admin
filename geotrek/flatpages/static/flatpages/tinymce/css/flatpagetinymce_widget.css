@@ -1,0 +1,35 @@
+/* Style the gallery image window manager */
+#image-preview {
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+#image-preview li {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+#image-preview li span {
+  display: block;
+  width: 180px;
+  height: 180px;
+  background-color: lightgray;
+}
+
+#image-preview li figure {
+  width: 100%;
+  height: 80%;
+  text-align: center;
+}
+
+#image-preview li img {
+  object-fit: contain;
+  width: 100%;
+  height: 100%;
+}

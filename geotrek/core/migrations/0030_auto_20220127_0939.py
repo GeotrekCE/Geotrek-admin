@@ -7,45 +7,64 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0029_auto_20211022_1252'),
+        ("core", "0029_auto_20211022_1252"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='path',
-            name='geom',
-            field=django.contrib.gis.db.models.fields.LineStringField(spatial_index=False, srid=settings.SRID),
+            model_name="path",
+            name="geom",
+            field=django.contrib.gis.db.models.fields.LineStringField(
+                spatial_index=False, srid=settings.SRID
+            ),
         ),
         migrations.AlterField(
-            model_name='path',
-            name='geom_cadastre',
-            field=django.contrib.gis.db.models.fields.LineStringField(editable=False, null=True, spatial_index=False, srid=settings.SRID),
+            model_name="path",
+            name="geom_cadastre",
+            field=django.contrib.gis.db.models.fields.LineStringField(
+                editable=False, null=True, spatial_index=False, srid=settings.SRID
+            ),
         ),
         migrations.AlterField(
-            model_name='topology',
-            name='geom',
-            field=django.contrib.gis.db.models.fields.GeometryField(default=None, editable=(not settings.TREKKING_TOPOLOGY_ENABLED), null=True, spatial_index=False, srid=settings.SRID),
+            model_name="topology",
+            name="geom",
+            field=django.contrib.gis.db.models.fields.GeometryField(
+                default=None,
+                editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
+                null=True,
+                spatial_index=False,
+                srid=settings.SRID,
+            ),
         ),
         migrations.AddIndex(
-            model_name='path',
-            index=django.contrib.postgres.indexes.GistIndex(fields=['geom'], name='path_geom_gist_idx'),
+            model_name="path",
+            index=django.contrib.postgres.indexes.GistIndex(
+                fields=["geom"], name="path_geom_gist_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='path',
-            index=django.contrib.postgres.indexes.GistIndex(fields=['geom_cadastre'], name='path_geom_cadastre_gist_idx'),
+            model_name="path",
+            index=django.contrib.postgres.indexes.GistIndex(
+                fields=["geom_cadastre"], name="path_geom_cadastre_gist_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='path',
-            index=django.contrib.postgres.indexes.GistIndex(fields=['geom_3d'], name='path_geom_3d_gist_idx'),
+            model_name="path",
+            index=django.contrib.postgres.indexes.GistIndex(
+                fields=["geom_3d"], name="path_geom_3d_gist_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='topology',
-            index=django.contrib.postgres.indexes.GistIndex(fields=['geom'], name='topology_geom_gist_idx'),
+            model_name="topology",
+            index=django.contrib.postgres.indexes.GistIndex(
+                fields=["geom"], name="topology_geom_gist_idx"
+            ),
         ),
         migrations.AddIndex(
-            model_name='topology',
-            index=django.contrib.postgres.indexes.GistIndex(fields=['geom_3d'], name='topology_geom_3d_gist_idx'),
+            model_name="topology",
+            index=django.contrib.postgres.indexes.GistIndex(
+                fields=["geom_3d"], name="topology_geom_3d_gist_idx"
+            ),
         ),
     ]

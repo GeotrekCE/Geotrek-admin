@@ -1,3 +1,2 @@
 graft geotrek
-graft mapentity
 global-exclude *.py[cod] __pycache__ *.so

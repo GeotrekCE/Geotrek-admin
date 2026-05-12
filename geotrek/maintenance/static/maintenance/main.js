@@ -6,11 +6,11 @@ $(window).on('entity:map', function (e, data) {
     var modelname = 'intervention';
     var layername = `${modelname}_layer`;
 	var url = window.SETTINGS.urls[layername];
-    var loaded_infrastructure = false;
+    var loaded_intervention = false;
     var map = data.map;
 
     // Show infrastructure layer in application maps
-    var style = L.Util.extend({ clickable: false },
+    var style = L.Util.extend({ clickable: true },
         window.SETTINGS.map.styles[modelname] || {});
 
     var layer = new L.ObjectsLayer(null, {
@@ -24,10 +24,10 @@ $(window).on('entity:map', function (e, data) {
 
     map.on('layeradd', function (e) {
         var options = e.layer.options || { 'modelname': 'None' };
-        if (! loaded_infrastructure) {
+        if (! loaded_intervention) {
             if (options.modelname == modelname && options.modelname != data.modelname) {
                 e.layer.load(url);
-                loaded_infrastructure = true;
+                loaded_intervention = true;
             }
         }
     });
@@ -48,7 +48,7 @@ $(window).on('entity:view:add', function (e, data) {
     };
 });
 
-$(window).on('entity:view:list', function (e, data) {
+$(window).on('entity:view:filter', function (e, data) {
     if (data.modelname === "intervention"){
         setDatePickerConfig('#id_begin_date_0, #id_begin_date_1, #id_end_date_0, #id_end_date_1');
     };

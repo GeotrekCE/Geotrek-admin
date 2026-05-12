@@ -4,13 +4,18 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('cirkwi', '0002_auto_20200211_1011'),
+        ("cirkwi", "0002_auto_20200211_1011"),
     ]
 
     operations = [
-        migrations.RunSQL('ALTER SEQUENCE o_b_cirkwi_locomotion_id_seq RENAME TO cirkwi_cirkwilocomotion_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_b_cirkwi_poi_category_id_seq RENAME TO cirkwi_cirkwipoicategory_id_seq;'),
-        migrations.RunSQL('ALTER SEQUENCE o_b_cirkwi_tag_id_seq RENAME TO cirkwi_cirkwitag_id_seq;'),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_cirkwi_locomotion_id_seq RENAME TO cirkwi_cirkwilocomotion_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_cirkwi_poi_category_id_seq RENAME TO cirkwi_cirkwipoicategory_id_seq;"
+        ),
+        migrations.RunSQL(
+            "ALTER SEQUENCE o_b_cirkwi_tag_id_seq RENAME TO cirkwi_cirkwitag_id_seq;"
+        ),
     ]

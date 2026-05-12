@@ -1,11 +1,11 @@
-from freezegun import freeze_time
-
+from django.conf import settings
 from django.test import TestCase
 from django.test.utils import override_settings
-from django.conf import settings
+from freezegun import freeze_time
 
 from geotrek.trekking.tests.factories import TrekFactory
-from .factories import SensitiveAreaFactory, SpeciesFactory, RuleFactory
+
+from .factories import RuleFactory, SensitiveAreaFactory, SpeciesFactory
 
 
 class RuleTesCase(TestCase):
@@ -98,7 +98,9 @@ class SensitiveAreaModelTest(TestCase):
     @freeze_time("2020-01-01")
     def test_get_openair_point_data(self):
         species = SpeciesFactory.create(radius=300)
-        sensitive_area = SensitiveAreaFactory.create(geom="POINT(700000 6600000)", species=species)
+        sensitive_area = SensitiveAreaFactory.create(
+            geom="POINT(700000 6600000)", species=species
+        )
         self.assertEqual(
             "AC ZSM\n"
             "AN Species\n"

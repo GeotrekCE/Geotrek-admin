@@ -1,0 +1,20 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.5 1bd436f1",
+  "osm3s": {
+    "timestamp_osm_base": "2025-04-23T07:58:47Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+    {
+      "type": "relation",
+      "id": 68921,
+      "tags": {
+        "name": "Paizay-le-Sec",
+        "boundary": "administrative",
+        "admin_level": "8",
+        "ref:INSEE": "86187"
+      }
+    }
+  ]
+}

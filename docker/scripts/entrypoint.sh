@@ -26,7 +26,6 @@ fi
 # Activate venv
 . /opt/venv/bin/activate
 
-# Defaults POSTGRES_HOST to Docker host IP
 export POSTGRES_HOST=${POSTGRES_HOST:-`ip route | grep default | sed 's/.* \([0-9]\+\.[0-9]\+\.[0-9]\+\.[0-9]\+\) .*/\1/'`}
 
 # Defaults SECRET_KEY to a random value
@@ -41,12 +40,14 @@ if [ -z $SECRET_KEY ]; then
 fi
 
 # wait for postgres
-until PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -p "$POSTGRES_PORT" -d "$POSTGRES_DB" -c '\q'; do
-    >&2 echo "Postgres is unavailable - sleeping"
-    sleep 1
-done
+if [ "$ENV" = 'prod' ]; then
+    until PGPASSWORD="$POSTGRES_PASSWORD" psql -h "$POSTGRES_HOST" -U "$POSTGRES_USER" -p "$POSTGRES_PORT" -d "$POSTGRES_DB" -c '\q'; do
+        >&2 echo "Postgres is unavailable - sleeping"
+        sleep 1
+    done
 
->&2 echo "Postgres is up - executing command"
+    >&2 echo "Postgres is up - executing command"
+fi
 
 # exec
 exec "$@"

@@ -4,19 +4,18 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('zoning', '0007_auto_20210126_0956'),
+        ("zoning", "0007_auto_20210126_0956"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='CityEdge',
+            name="CityEdge",
         ),
         migrations.DeleteModel(
-            name='DistrictEdge',
+            name="DistrictEdge",
         ),
         migrations.DeleteModel(
-            name='RestrictedAreaEdge',
+            name="RestrictedAreaEdge",
         ),
     ]

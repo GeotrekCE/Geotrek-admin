@@ -33,7 +33,7 @@
                     <td>
                         {% if att.attachment_accessibility_file %}
                         <a href="{{ att.attachment_accessibility_file.url }}" target="_blank">
-                            <img class="img-polaroid" src="{{ att.attachment_accessibility_file|thumbnail_url:'thumbnail' }}"
+                            <img class="img-thumbnail" src="{{ att.attachment_accessibility_file|thumbnail_url:'thumbnail' }}"
                                  alt="{{ att.title|default:att.filename }}" title="{{ att.title|default:att.filename }}">
                         </a>
                         {% endif %}

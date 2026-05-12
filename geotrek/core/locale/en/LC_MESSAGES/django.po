@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
+"POT-Creation-Date: 2026-01-09 11:30+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,6 +17,9 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+msgid "Geotrek configuration"
+msgstr ""
 
 msgid "Core"
 msgstr ""
@@ -40,19 +43,7 @@ msgstr ""
 msgid "Valid geometry"
 msgstr ""
 
-msgid "Name"
-msgstr ""
-
-msgid "Comments"
-msgstr ""
-
 msgid "Provider"
-msgstr ""
-
-msgid "Departure"
-msgstr ""
-
-msgid "Arrival"
 msgstr ""
 
 msgid "Certification labels"
@@ -82,6 +73,24 @@ msgstr ""
 msgid "Certifications"
 msgstr ""
 
+#, python-format
+msgid "You need to add a network of paths before importing '%(model)s' objects"
+msgstr ""
+
+#, python-format
+msgid "Invalid geometry type: should be 'Point', not '%(geom_type)s'"
+msgstr ""
+
+msgid "Cannot import object: geometry is None"
+msgstr ""
+
+#, python-format
+msgid "Could not parse geometry from value '%(value)s'"
+msgstr ""
+
+msgid "Length 2D"
+msgstr ""
+
 msgid "Validity"
 msgstr ""
 
@@ -94,13 +103,25 @@ msgstr ""
 msgid "Shown in lists and maps"
 msgstr ""
 
+msgid "Name"
+msgstr ""
+
 msgid "Official name"
+msgstr ""
+
+msgid "Comments"
 msgstr ""
 
 msgid "Remarks"
 msgstr ""
 
+msgid "Departure"
+msgstr ""
+
 msgid "Departure place"
+msgstr ""
+
+msgid "Arrival"
 msgstr ""
 
 msgid "Arrival place"
@@ -119,9 +140,6 @@ msgid "Usages"
 msgstr ""
 
 msgid "Networks"
-msgstr ""
-
-msgid "External id"
 msgstr ""
 
 msgid "Draft"
@@ -151,9 +169,6 @@ msgid "Trails"
 msgstr ""
 
 msgid "None"
-msgstr ""
-
-msgid "Add a new path"
 msgstr ""
 
 msgid "Treks"
@@ -270,9 +285,7 @@ msgid "Different topologies are linked with this path"
 msgstr ""
 
 #, python-format
-msgid ""
-"You can't delete <strong>%(object)s</strong>, some topologies are linked "
-"with this path. Modify these topologies before deleting this path."
+msgid "You can't delete <strong>%(object)s</strong>, some topologies are linked with this path. Modify these topologies before deleting this path."
 msgstr ""
 
 msgid "No, back to edit view"
@@ -287,7 +300,7 @@ msgstr ""
 msgid "Not validated"
 msgstr ""
 
-msgid "Attributes"
+msgid "External id"
 msgstr ""
 
 msgid "Draft mode"
@@ -302,13 +315,19 @@ msgstr ""
 msgid "Merge"
 msgstr ""
 
-msgid "Delete"
-msgstr ""
-
 msgid "Merge paths"
 msgstr ""
 
 msgid "Cancel"
+msgstr ""
+
+msgid "Warning"
+msgstr ""
+
+msgid "The marker was not dropped on a path."
+msgstr ""
+
+msgid "No routing found for this marker. Please move or delete it."
 msgstr ""
 
 msgid "No certification"
@@ -323,13 +342,7 @@ msgstr ""
 msgid "This field is required."
 msgstr ""
 
-msgid ""
-"Access to the requested resource is restricted. You have been redirected."
-msgstr ""
-
-msgid ""
-"Access to the requested resource is restricted by structure. You have been "
-"redirected."
+msgid "Access to the requested resource is restricted. You have been redirected."
 msgstr ""
 
 msgid "path"

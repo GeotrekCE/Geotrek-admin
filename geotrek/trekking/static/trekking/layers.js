@@ -19,7 +19,7 @@ $(window).on('entity:map', function (e, data) {
     $.each(trekkingLayers, function (i, trekkingLayer) {
         var layer = new L.ObjectsLayer(null, {
             modelname: trekkingLayer.id,
-            style: L.Util.extend(window.SETTINGS.map.styles[trekkingLayer.id] || {}, {clickable:false}),
+            style: L.Util.extend(window.SETTINGS.map.styles[trekkingLayer.id] || {}, {clickable:true}),
         });
         if (data.modelname != trekkingLayer.id){
             map.layerscontrol.addOverlay(layer, tr(trekkingLayer.name), tr('Trekking'));

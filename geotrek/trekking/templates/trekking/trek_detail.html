@@ -3,28 +3,19 @@
 
 {% block download %}
     {{ block.super }}
-  </div>
-
-  <div class="btn-group pull-right">
-    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_gpx_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
-    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_kml_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
-    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print" %}</a>
-    <a class="btn btn-light btn-sm" href="{% url 'trekking:trek_booklet_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print booklet" %}" target="_blank"><img src="{% static "paperclip/fileicons/pdf.png" %}"/> {% trans "Print booklet" %}</a>
+    <a class="dropdown-item" href="{% url 'trekking:trek_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print" %}" target="_blank">
+        <i class="bi bi-file-pdf text-danger"></i> {% trans "Print" %}
+    </a>
+    <a class="dropdown-item" href="{% url 'trekking:trek_booklet_printable' LANGUAGE_CODE object.pk object.slug %}" title="{% trans "Public print booklet" %}" target="_blank">
+        <i class="bi bi-file-pdf text-danger"></i> {% trans "Print booklet" %}
+    </a>
+    <div class="dropdown-divider"></div>
+    <a class="dropdown-item" href="{% url 'trekking:trek_gpx_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/gpx.png" %}"/> {% trans "GPX" %}</a>
+    <a class="dropdown-item" href="{% url 'trekking:trek_kml_detail' LANGUAGE_CODE object.pk object.slug %}"><img src="{% static "paperclip/fileicons/kml.png" %}"/> {% trans "KML" %}</a>
 {% endblock download %}
 
-{% block after_attachments_extra_tab_nav %}
-   {% is_photos_accessibilities_enabled as enabled %}
-   {% if enabled %}
-        <li class="nav-item">
-          <a class="nav-link" id="tab-attachments-accessibility" href="#attachments-accessibility" data-toggle="tab"><i class="bi bi-eye-slash"></i>
-            <span class="d-none d-sm-inline">{% trans "Photos accessibility" %} ({{ object.attachments_accessibility.count }})</span></a>
-        </li>
-   {% endif %}
-{% endblock %}
-
-
 {% block attachments_extra_tab_nav %}
-    {% with attachments_count=object.attachments.count|add:object.view_points.count %}
+    {% with attachments_count=object.attachments.count|add:object.attachments_accessibility.count|add:object.view_points.count %}
         <li class="nav-item">
         <a id="tab-attachments" class="nav-link" href="#attachments" data-toggle="tab"><i class="bi bi-file-earmark"></i>
             <span class="d-none d-sm-inline">{% trans "Attached files" %} ({{ attachments_count }})</span></a>
@@ -32,19 +23,15 @@
     {% endwith %%}
 {% endblock %}
 
-{% block after_attachments_extra_tab_content %}
-   {% is_photos_accessibilities_enabled as enabled %}
-   {% if enabled %}
-        <div id="attachments-accessibility" class="tab-pane">
-            {{ accessibility_attachments_enabled }}
-            {% include 'common/attachment_accessibility_list.html' %}
-        </div>
-   {% endif %}
-{% endblock %}
-
 {% block attachmentspanel %}
     {% include "trekking/ratio_info_fragment.html" %}
     {{ block.super }}
+    {% is_photos_accessibilities_enabled as is_photos_accessibilities_enabled %}
+    {% if is_photos_accessibilities_enabled %}
+        <br>
+        <br>
+        {% include 'common/attachment_accessibility_list.html' %}
+    {% endif %}
     {% are_hdviews_enabled as are_hdviews_enabled %}
     {% if are_hdviews_enabled %}
         <br>
@@ -81,7 +68,7 @@
                     iconSize: [{{ view.icon_sizes.parking }}, {{ view.icon_sizes.parking }}],
                     iconAnchor: [{{ view.icon_sizes.parking }}/2, {{ view.icon_sizes.parking }}/2],
                 });
-                var point = {{object.parking_location.geojson|safe}};
+                var point = {{ object.parking_location.geojson|safe }};
                 var location = point.coordinates.reverse();
                 L.marker(location, {icon: parkingIcon})
                  .bindPopup("{{ object.advised_parking|default:_("None") }}")
@@ -95,6 +82,7 @@
 
             //
             // Trek POIs layer
+            {% translate "Trek's POIs" as poi_layer_label %}
             $.getJSON('{% url 'trekking:trek_poi_geojson' LANGUAGE_CODE object.pk %}?fields=api_geom,id,name,type', function (data) {
                 var pois = new POILayer(data, {
                     iconSize: {{ view.icon_sizes.POI }}
@@ -103,10 +91,10 @@
                 var poiUrl = "{% url 'trekking:poi_detail' 0 %}";
                 pois.eachLayer(function (layer) {
                     layer.on('dblclick', function (e) {
-                        window.location = poiUrl.replace('0', layer.properties.pk);
+                        window.location = poiUrl.replace('0', layer.feature.id);
                     });
                 });
-                map.layerscontrol.addOverlay(pois, tr('POIs'), tr('Objects'));
+                map.layerscontrol.addOverlay(pois, "{{ poi_layer_label }}", tr('Objects'));
                 map.addLayer(pois);
 
                 pois.showEnumeration();
@@ -115,6 +103,7 @@
 
             //
             // Trek services layer
+            {% translate "Trek's services" as service_layer_label %}
             $.getJSON('{% url 'trekking:trek_service_geojson' LANGUAGE_CODE object.pk %}', function (data) {
                 var services = new ServiceLayer(data, {
                     iconSize: {{ view.icon_sizes.service }}
@@ -123,16 +112,17 @@
                 var serviceUrl = "{% url 'trekking:service_detail' 0 %}";
                 services.eachLayer(function (layer) {
                     layer.on('dblclick', function (e) {
-                        window.location = serviceUrl.replace('0', layer.properties.pk);
+                        window.location = serviceUrl.replace('0', layer.feature.id);
                     });
                 });
-                map.layerscontrol.addOverlay(services, tr('Services'), tr('Objects'));
+                map.layerscontrol.addOverlay(services, "{{ service_layer_label }}", tr('Objects'));
                 map.addLayer(services);
                 $('.map-panel').addClass('services_loaded');
             });
 
             //
             // Trek signage layer
+            {% translate "Trek's signages" as signage_layer_label %}
             $.getJSON('{% url 'signage:trek_signage_geojson' LANGUAGE_CODE object.pk %}', function (data) {
                 var signages = new SignagesLayer(data, {
                     iconSize: {{ view.icon_sizes.signage }}
@@ -141,16 +131,17 @@
                 var signageUrl = "{% url 'signage:signage_detail' 0 %}";
                 signages.eachLayer(function (layer) {
                     layer.on('dblclick', function (e) {
-                        window.location = signageUrl.replace('0', layer.properties.pk);
+                        window.location = signageUrl.replace('0', layer.feature.id);
                     });
                 });
-                map.layerscontrol.addOverlay(signages, tr('Signages'), tr('Objects'));
+                map.layerscontrol.addOverlay(signages, "{{ signage_layer_label }}", tr('Objects'));
                 map.addLayer(signages);
                 $('.map-panel').addClass('signages_loaded');
             });
 
             //
             // Trek infrastructure layer
+            {% translate "Trek's infrastructures" as infrastructure_layer_label %}
             $.getJSON('{% url 'infrastructure:trek_infrastructure_geojson' LANGUAGE_CODE object.pk %}', function (data) {
                 var infrastructures = new InfrastructuresLayer(data, {
                     iconSize: {{ view.icon_sizes.infrastructure }}
@@ -159,10 +150,10 @@
                 var infrastructureUrl = "{% url 'infrastructure:infrastructure_detail' 0 %}";
                 infrastructures.eachLayer(function (layer) {
                     layer.on('dblclick', function (e) {
-                        window.location = infrastructureUrl.replace('0', layer.properties.pk);
+                        window.location = infrastructureUrl.replace('0', layer.feature.id);
                     });
                 });
-                map.layerscontrol.addOverlay(infrastructures, tr('Infrastructures'), tr('Objects'));
+                map.layerscontrol.addOverlay(infrastructures, "{{ infrastructure_layer_label }}", tr('Objects'));
                 map.addLayer(infrastructures);
                 $('.map-panel').addClass('services_loaded');
             });

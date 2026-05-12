@@ -1,42 +1,66 @@
 from django.conf import settings
-from geotrek.outdoor.models import CourseType, Site, Practice, SiteType, RatingScale, Rating, Sector, Course
-from modeltranslation.translator import translator, TranslationOptions
+from modeltranslation.translator import TranslationOptions, translator
+
+from geotrek.outdoor.models import (
+    Course,
+    CourseType,
+    Practice,
+    Rating,
+    RatingScale,
+    Sector,
+    Site,
+    SiteType,
+)
 
 
 class SiteTO(TranslationOptions):
-    fields = ('name', 'description', 'description_teaser', 'ambiance', 'accessibility', 'advice', 'period') + (
-        ('published',) if settings.PUBLISHED_BY_LANG else tuple())
-    fallback_undefined = {'published': None}
+    fields = (
+        "name",
+        "description",
+        "description_teaser",
+        "ambiance",
+        "accessibility",
+        "advice",
+        "period",
+    ) + (("published",) if settings.PUBLISHED_BY_LANG else tuple())
+    fallback_undefined = {"published": None}
 
 
 class SectorTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 class PracticeTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 class SiteTypeTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 class CourseTypeTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 class RatingScaleTO(TranslationOptions):
-    fields = ('name', )
+    fields = ("name",)
 
 
 class RatingTO(TranslationOptions):
-    fields = ('name', 'description')
+    fields = ("name", "description")
 
 
 class CourseTO(TranslationOptions):
-    fields = ('name', 'description', 'equipment', 'accessibility', 'advice', 'gear', 'ratings_description') + (
-        ('published',) if settings.PUBLISHED_BY_LANG else tuple())
-    fallback_undefined = {'published': None}
+    fields = (
+        "name",
+        "description",
+        "equipment",
+        "accessibility",
+        "advice",
+        "gear",
+        "ratings_description",
+    ) + (("published",) if settings.PUBLISHED_BY_LANG else tuple())
+    fallback_undefined = {"published": None}
 
 
 translator.register(Site, SiteTO)

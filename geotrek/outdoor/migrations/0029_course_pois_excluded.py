@@ -4,21 +4,30 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0027_auto_20210121_0943'),
-        ('outdoor', '0028_remove_site_ratings_min'),
+        ("trekking", "0027_auto_20210121_0943"),
+        ("outdoor", "0028_remove_site_ratings_min"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='course',
-            name='pois_excluded',
-            field=models.ManyToManyField(blank=True, related_name='excluded_courses', to='trekking.POI', verbose_name='Excluded POIs'),
+            model_name="course",
+            name="pois_excluded",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="excluded_courses",
+                to="trekking.POI",
+                verbose_name="Excluded POIs",
+            ),
         ),
         migrations.AddField(
-            model_name='site',
-            name='pois_excluded',
-            field=models.ManyToManyField(blank=True, related_name='excluded_sites', to='trekking.POI', verbose_name='Excluded POIs'),
+            model_name="site",
+            name="pois_excluded",
+            field=models.ManyToManyField(
+                blank=True,
+                related_name="excluded_sites",
+                to="trekking.POI",
+                verbose_name="Excluded POIs",
+            ),
         ),
     ]

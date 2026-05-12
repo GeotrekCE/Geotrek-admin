@@ -12,8 +12,6 @@ ALLOWED_HOSTS = ['localhost']
 
 CELERY_ALWAYS_EAGER = True
 
-ALLOWED_HOSTS = ['localhost']
-
 INSTALLED_APPS += (
     'geotrek.diving',
     'geotrek.sensitivity',
@@ -43,7 +41,7 @@ CACHES['api_v2'] = {
 }
 
 
-class DisableMigrations():
+class DisableMigrations:
     def __contains__(self, item):
         return True
 
@@ -59,23 +57,22 @@ ADMINS = (
 
 MANAGERS = ADMINS
 
-# recreate TMP_DIR for tests, and it as base dir forl all files
-TMP_DIR = os.path.join(TMP_DIR, 'tests')
-if os.path.exists(TMP_DIR):
-    shutil.rmtree(TMP_DIR)
+# recreate TMP_DIR for tests, and it as base dir for all files
+TMP_DIR = TemporaryDirectory().name
 os.makedirs(TMP_DIR)
-SESSIONS_DIR = os.path.join(TMP_DIR, 'sessions')
-os.makedirs(SESSIONS_DIR)
+SESSION_FILE_PATH = os.path.join(TMP_DIR, 'sessions')
+os.makedirs(SESSION_FILE_PATH)
 
 LOGGING['loggers']['']['handlers'] = ('log_file', )
 LOGGING['handlers']['log_file']['level'] = 'INFO'
 LOGGING['handlers']['log_file']['filename'] = os.path.join(TMP_DIR, 'geotrek.log')
 MEDIA_ROOT = TemporaryDirectory(dir=TMP_DIR).name  # media files
+MAP_PATH = os.path.join(MEDIA_ROOT, 'maps')  # map files
+os.makedirs(MAP_PATH)
 SYNC_MOBILE_ROOT = TemporaryDirectory(dir=TMP_DIR).name  # sync mobile root path
 MOBILE_TILES_PATH = TemporaryDirectory(dir=TMP_DIR).name  # sync mobile tile path
 DATA_TEMP_DIR = TemporaryDirectory(dir=TMP_DIR).name  # data temp dir use by django-large-image
 REDIS_URL = f"redis://{os.getenv('REDIS_HOST', 'localhost')}:{os.getenv('REDIS_PORT', '6379')}/1"  # celery broker url
-SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 PASSWORD_HASHERS = [
     "django.contrib.auth.hashers.MD5PasswordHasher",
 ]

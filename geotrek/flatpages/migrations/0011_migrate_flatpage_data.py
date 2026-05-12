@@ -9,9 +9,12 @@ otherwise translation fields (from the Python objects side) would be missing.
 from django.conf import settings
 from django.db import migrations
 from django.utils import translation
-from modeltranslation.translator import translator, TranslationOptions, AlreadyRegistered
+from modeltranslation.translator import (
+    AlreadyRegistered,
+    TranslationOptions,
+    translator,
+)
 from modeltranslation.utils import build_localized_fieldname
-
 from treebeard.mp_tree import MP_Node
 from treebeard.numconv import NumConv
 
@@ -20,10 +23,7 @@ def get_treenode_kwargs(position):
     """Support function to initialize DB fields from django-treebeard package's model MP_Node"""
     numconv = NumConv(len(MP_Node.alphabet), MP_Node.alphabet)
     key = numconv.int2str(position)
-    path = '{0}{1}'.format(
-        MP_Node.alphabet[0] * (MP_Node.steplen - len(key)),
-        key
-    )
+    path = f"{MP_Node.alphabet[0] * (MP_Node.steplen - len(key))}{key}"
     return {
         "depth": 1,
         "path": path,
@@ -58,8 +58,8 @@ def create_menu_items_from_flatpages(apps, schema_editor):
     With a lot of comments in the code.
     """
 
-    MenuItem = apps.get_model('flatpages', 'MenuItem')
-    FlatPage = apps.get_model('flatpages', 'FlatPage')
+    MenuItem = apps.get_model("flatpages", "MenuItem")
+    FlatPage = apps.get_model("flatpages", "FlatPage")
 
     if FlatPage.objects.count() == 0:
         # Not needed when there is no flatpage (running tests, fresh install, ...)
@@ -166,11 +166,12 @@ def create_menu_items_from_flatpages(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('flatpages', '0010_create_model_MenuItem'),
+        ("flatpages", "0010_create_model_MenuItem"),
     ]
 
     operations = [
-        migrations.RunPython(create_menu_items_from_flatpages, reverse_code=migrations.RunPython.noop),
+        migrations.RunPython(
+            create_menu_items_from_flatpages, reverse_code=migrations.RunPython.noop
+        ),
     ]
