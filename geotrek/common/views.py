@@ -655,7 +655,10 @@ class ConfigView(APIView):
                                 "zoom": 0,
                             },
                         }
-                    ]
+                    ],
+                    "localOptions": {
+                        "minZoom": 14,
+                    },
                 },
             },
             "user": {
