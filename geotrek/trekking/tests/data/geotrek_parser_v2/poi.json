@@ -53,6 +53,7 @@
         "en": false,
         "it": false
       },
+      "structure": 3,
       "type": 7,
       "type_label": {
         "fr": "Sommet",
@@ -115,6 +116,7 @@
         "en": false,
         "it": false
       },
+      "structure": 3,
       "type": 6,
       "type_label": {
         "fr": "Lac",

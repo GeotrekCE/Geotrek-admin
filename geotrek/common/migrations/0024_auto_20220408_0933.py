@@ -4,30 +4,49 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0023_auto_20220405_1635'),
+        ("common", "0023_auto_20220405_1635"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='attachment',
-            name='author',
-            field=models.CharField(blank=True, default='', help_text='Original creator', max_length=128, verbose_name='Author'),
+            model_name="attachment",
+            name="author",
+            field=models.CharField(
+                blank=True,
+                default="",
+                help_text="Original creator",
+                max_length=128,
+                verbose_name="Author",
+            ),
         ),
         migrations.AlterField(
-            model_name='attachment',
-            name='legend',
-            field=models.CharField(blank=True, default='', help_text='Details displayed', max_length=128, verbose_name='Legend'),
+            model_name="attachment",
+            name="legend",
+            field=models.CharField(
+                blank=True,
+                default="",
+                help_text="Details displayed",
+                max_length=128,
+                verbose_name="Legend",
+            ),
         ),
         migrations.AlterField(
-            model_name='attachment',
-            name='starred',
-            field=models.BooleanField(default=False, help_text='Mark as starred', verbose_name='Starred'),
+            model_name="attachment",
+            name="starred",
+            field=models.BooleanField(
+                default=False, help_text="Mark as starred", verbose_name="Starred"
+            ),
         ),
         migrations.AlterField(
-            model_name='attachment',
-            name='title',
-            field=models.CharField(blank=True, default='', help_text='Renames the file', max_length=128, verbose_name='Filename'),
+            model_name="attachment",
+            name="title",
+            field=models.CharField(
+                blank=True,
+                default="",
+                help_text="Renames the file",
+                max_length=128,
+                verbose_name="Filename",
+            ),
         ),
     ]

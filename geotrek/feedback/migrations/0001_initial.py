@@ -1,74 +1,151 @@
+import django.contrib.gis.db.models.fields
+import mapentity.models
 from django.conf import settings
 from django.db import migrations, models
-import mapentity.models
-import django.contrib.gis.db.models.fields
+
 import geotrek.common.mixins.models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('contenttypes', '0002_remove_content_type_name'),
+        ("contenttypes", "0002_remove_content_type_name"),
     ]
 
     operations = [
         migrations.CreateModel(
-            name='Report',
+            name="Report",
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('date_insert', models.DateTimeField(auto_now_add=True, verbose_name='Insertion date', db_column='date_insert')),
-                ('date_update', models.DateTimeField(auto_now=True, verbose_name='Update date', db_column='date_update')),
-                ('name', models.CharField(max_length=256, verbose_name='Name')),
-                ('email', models.EmailField(max_length=254, verbose_name='Email')),
-                ('comment', models.TextField(default='', verbose_name='Comment', blank=True)),
-                ('geom', django.contrib.gis.db.models.fields.PointField(default=None, srid=settings.SRID, null=True, verbose_name='Location', blank=True)),
-                ('context_object_id', models.PositiveIntegerField(null=True, editable=False, blank=True)),
+                (
+                    "id",
+                    models.AutoField(
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
+                    ),
+                ),
+                (
+                    "date_insert",
+                    models.DateTimeField(
+                        auto_now_add=True,
+                        verbose_name="Insertion date",
+                        db_column="date_insert",
+                    ),
+                ),
+                (
+                    "date_update",
+                    models.DateTimeField(
+                        auto_now=True,
+                        verbose_name="Update date",
+                        db_column="date_update",
+                    ),
+                ),
+                ("name", models.CharField(max_length=256, verbose_name="Name")),
+                ("email", models.EmailField(max_length=254, verbose_name="Email")),
+                (
+                    "comment",
+                    models.TextField(default="", verbose_name="Comment", blank=True),
+                ),
+                (
+                    "geom",
+                    django.contrib.gis.db.models.fields.PointField(
+                        default=None,
+                        srid=settings.SRID,
+                        null=True,
+                        verbose_name="Location",
+                        blank=True,
+                    ),
+                ),
+                (
+                    "context_object_id",
+                    models.PositiveIntegerField(null=True, editable=False, blank=True),
+                ),
             ],
             options={
-                'ordering': ['-date_insert'],
-                'db_table': 'f_t_signalement',
-                'verbose_name': 'Report',
-                'verbose_name_plural': 'Reports',
+                "ordering": ["-date_insert"],
+                "db_table": "f_t_signalement",
+                "verbose_name": "Report",
+                "verbose_name_plural": "Reports",
             },
-            bases=(mapentity.models.MapEntityMixin, geotrek.common.mixins.models.PicturesMixin, models.Model),
+            bases=(
+                mapentity.models.MapEntityMixin,
+                geotrek.common.mixins.models.PicturesMixin,
+                models.Model,
+            ),
         ),
         migrations.CreateModel(
-            name='ReportCategory',
+            name="ReportCategory",
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('category', models.CharField(max_length=128, verbose_name='Category')),
+                (
+                    "id",
+                    models.AutoField(
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
+                    ),
+                ),
+                ("category", models.CharField(max_length=128, verbose_name="Category")),
             ],
             options={
-                'db_table': 'f_b_categorie',
-                'verbose_name': 'Category',
-                'verbose_name_plural': 'Categories',
+                "db_table": "f_b_categorie",
+                "verbose_name": "Category",
+                "verbose_name_plural": "Categories",
             },
         ),
         migrations.CreateModel(
-            name='ReportStatus',
+            name="ReportStatus",
             fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('status', models.CharField(max_length=128, verbose_name='Status')),
+                (
+                    "id",
+                    models.AutoField(
+                        verbose_name="ID",
+                        serialize=False,
+                        auto_created=True,
+                        primary_key=True,
+                    ),
+                ),
+                ("status", models.CharField(max_length=128, verbose_name="Status")),
             ],
             options={
-                'db_table': 'f_b_status',
-                'verbose_name': 'Status',
-                'verbose_name_plural': 'Status',
+                "db_table": "f_b_status",
+                "verbose_name": "Status",
+                "verbose_name_plural": "Status",
             },
         ),
         migrations.AddField(
-            model_name='report',
-            name='category',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, blank=True, to='feedback.ReportCategory', null=True, verbose_name='Category'),
+            model_name="report",
+            name="category",
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                blank=True,
+                to="feedback.ReportCategory",
+                null=True,
+                verbose_name="Category",
+            ),
         ),
         migrations.AddField(
-            model_name='report',
-            name='context_content_type',
-            field=models.ForeignKey(blank=True, on_delete=django.db.models.deletion.CASCADE, editable=False, to='contenttypes.ContentType', null=True),
+            model_name="report",
+            name="context_content_type",
+            field=models.ForeignKey(
+                blank=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                editable=False,
+                to="contenttypes.ContentType",
+                null=True,
+            ),
         ),
         migrations.AddField(
-            model_name='report',
-            name='status',
-            field=models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, blank=True, to='feedback.ReportStatus', null=True, verbose_name='Status'),
+            model_name="report",
+            name="status",
+            field=models.ForeignKey(
+                default=None,
+                on_delete=django.db.models.deletion.CASCADE,
+                blank=True,
+                to="feedback.ReportStatus",
+                null=True,
+                verbose_name="Status",
+            ),
         ),
     ]

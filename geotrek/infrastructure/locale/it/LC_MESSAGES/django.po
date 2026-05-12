@@ -3,28 +3,22 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-03 15:39+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2025-11-17 09:32+0000\n"
+"PO-Revision-Date: 2025-10-22 09:01+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/infrastructure/it/>\n"
+"Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.13.3\n"
 
 msgid "Infrastructure"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-msgid "Description"
 msgstr ""
 
 msgid "Intervention year"
@@ -66,6 +60,9 @@ msgstr ""
 msgid "Access means"
 msgstr ""
 
+msgid "Name"
+msgstr ""
+
 msgid "Infrastructure Condition"
 msgstr ""
 
@@ -84,10 +81,10 @@ msgstr ""
 msgid "Reference, code, ..."
 msgstr ""
 
-msgid "Specificites"
+msgid "Description"
 msgstr ""
 
-msgid "External id"
+msgid "Specificites"
 msgstr ""
 
 msgid "Published"
@@ -108,7 +105,7 @@ msgstr ""
 msgid "Accessibility"
 msgstr ""
 
-msgid "Condition"
+msgid "Conditions"
 msgstr ""
 
 msgid "Infrastructures"
@@ -117,10 +114,13 @@ msgstr ""
 msgid "Published Infrastructures"
 msgstr ""
 
-msgid "Attributes"
+msgid "An infrastructure type must be specified in the parser configuration."
 msgstr ""
 
 msgid "None"
+msgstr ""
+
+msgid "External id"
 msgstr ""
 
 msgid "Add a new infrastructure"

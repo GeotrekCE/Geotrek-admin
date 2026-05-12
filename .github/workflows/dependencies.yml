@@ -3,9 +3,10 @@ name: Check deps
 on:
   pull_request:
     paths:
-      - pyproject.toml.py
+      - pyproject.toml
       - requirements.txt
-      - dev-requirements.txt
+      - requirements-dev.txt
+      - docs/requirements.in
       - docs/requirements.txt
       - .github/workflows/dependencies.yml
 
@@ -18,32 +19,43 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: ['ubuntu-20.04']
-        python-version: ['3.8']
+        os: ['ubuntu-latest']
+        python-version: ['3.10']
+
+    permissions:
+      contents: write
+      actions: write
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: ./.github/actions/python-cache-requirements
+      - uses: actions/checkout@v6
+        if: github.event.pull_request.head.repo.full_name != github.repository
         with:
-          requirements: dev-requirements.txt
+          ref: ${{ github.head_ref }}
 
-      - name: Install dependencies
-        run: |
-          pip install uv
+      - uses: actions/checkout@v6
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        with:
+          token: ${{ secrets.PAT }}
+          ref: ${{ github.head_ref }}
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
+          python-version: ${{ matrix.python-version }}
 
       - name: Check dependency graph
         run: |
-          make ci_check_deps
+          uv pip compile pyproject.toml -o requirements.txt
+          uv pip compile pyproject.toml -c requirements.txt --extra dev -o requirements-dev.txt
+          cd docs/ && uv pip compile -c ../requirements.txt -c ../requirements-dev.txt requirements.in -o requirements.txt
 
       - name: Verify dependency graph is ok
-        uses: tj-actions/verify-changed-files@v17
+        uses: tj-actions/verify-changed-files@v20
         id: verify-changed-files
         with:
           files: |
             requirements.txt
-            dev-requirements.txt
+            requirements-dev.txt
             docs/requirements.txt
 
       - name: Validating graph
@@ -51,4 +63,12 @@ jobs:
         run: |
           echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
           git diff
-          core.setFailed('Please add your new dependencies in setup.py and/or dev-requirements.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
+          # core.setFailed('Please add your dependencies in pyproject.toml or docs/requirements.in, then regenerate the lockfiles. (see docs/contribute/development)')
+
+      - name: Commit files changed
+        uses: stefanzweifel/git-auto-commit-action@v7
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        with:
+            # Optional. Commit message for the created commit.
+            # Defaults to "Apply automatic changes"
+            commit_message: "Fix deps"

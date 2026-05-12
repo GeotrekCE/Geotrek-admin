@@ -1,0 +1,19 @@
+{
+    "count": 8,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "name": "Parc national des Ecrins",
+            "pictogram": "https://geotrek-admin.ecrins-parcnational.fr/media/upload/iwillthrowerror.png",
+            "website": ""
+        },
+        {
+            "id": 2,
+            "name": "Une source numero 2",
+            "pictogram": "https://geotrek-admin.ecrins-parcnational.fr/media/upload/logo-mtcv.png",
+            "website": ""
+        }
+    ]
+}

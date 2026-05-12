@@ -21,6 +21,21 @@ var ServiceLayer = L.GeoJSON.extend({
             marker = L.marker(latlng, {icon: serviceicon});
         marker.properties = featureData.properties;
 
+        marker.on('click', function() {
+            $.get(`/api/service/drf/services/${featureData.id}/popup-content`, function(data) {
+                marker.bindPopup(
+                    data,
+                    {autoPan: false});
+                marker.openPopup();
+            }).fail(function(jqXHR, textStatus, errorThrown) {
+                console.error(
+                    'Failed to load service popup content for service ID ' + featureData.id +
+                    ': ' + textStatus,
+                    errorThrown
+                );
+            });
+        });
+
         return marker;
     }
 });

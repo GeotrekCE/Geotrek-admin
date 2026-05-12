@@ -26,7 +26,7 @@ describe('Create signage', () => {
         cy.wait('@tiles');
         cy.server()
         cy.route('/api/signage/drf/signages.geojson').as('signage')
-        cy.get("a.btn-success[href='/signage/add/']").contains('Add a new signage').click()
+        cy.get("a.btn-success[href='/signage/add/']").contains('Add').click()
         cy.wait('@signage')
         cy.get("a.pointtopology-control").click()
         cy.get('.leaflet-map-pane')
@@ -34,7 +34,7 @@ describe('Create signage', () => {
         cy.get("input[name='name_en']").type('Signage number 1')
         cy.get("a[href='#name_fr']").click()
         cy.get("input[name='name_fr']").type('Signalétique numéro 1')
-        cy.get("select[id='id_type']").select("Service")
+        cy.get("select[id='id_type']").select("Service", { force: true })
         cy.get('#save_changes').click()
         cy.url().should('not.include', '/signage/add/')
     })

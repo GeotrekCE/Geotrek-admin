@@ -4,30 +4,42 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('flatpages', '0007_auto_20200831_1406'),
+        ("flatpages", "0007_auto_20200831_1406"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='flatpage',
-            name='date_insert',
-            field=models.DateTimeField(auto_now_add=True, verbose_name="Date d'insertion"),
+            model_name="flatpage",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name="Date d'insertion"
+            ),
         ),
         migrations.AlterField(
-            model_name='flatpage',
-            name='date_update',
-            field=models.DateTimeField(auto_now=True, db_index=True, verbose_name='Date de modification'),
+            model_name="flatpage",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True, db_index=True, verbose_name="Date de modification"
+            ),
         ),
         migrations.AlterField(
-            model_name='flatpage',
-            name='publication_date',
-            field=models.DateField(blank=True, editable=False, null=True, verbose_name='Date de publication'),
+            model_name="flatpage",
+            name="publication_date",
+            field=models.DateField(
+                blank=True,
+                editable=False,
+                null=True,
+                verbose_name="Date de publication",
+            ),
         ),
         migrations.AlterField(
-            model_name='flatpage',
-            name='published',
-            field=models.BooleanField(default=False, help_text='Visible sur Geotrek-rando', verbose_name='Publié'),
+            model_name="flatpage",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="Visible sur Geotrek-rando",
+                verbose_name="Publié",
+            ),
         ),
     ]

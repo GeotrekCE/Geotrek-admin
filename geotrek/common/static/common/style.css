@@ -1,5 +1,12 @@
 #mainfilter input.minmax-field {
     width: calc(60% - 1.9rem);
+    border-radius: 1px !important;
+
+}
+
+#mainfilter .form-row {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
 }
 
 .caption-detail {
@@ -36,6 +43,14 @@ fieldset {
 
 .form-panel#annotations {
   flex-basis: 55%;
+}
+
+#div_id_annotation_category {
+  display: none;
+}
+
+#id_annotation_category {
+  width: 18rem;
 }
 
 .loader-wrapper {
@@ -169,7 +184,10 @@ fieldset {
 
 .entry {
   margin-right: 10px;
+  margin-bottom: 5px;
+  overflow: auto;
 }
+
 .entry .entry-name {
   margin-left: 10px;
   margin-right: 10px;

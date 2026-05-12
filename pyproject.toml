@@ -6,29 +6,28 @@ build-backend = "hatchling.build"
 dynamic = ["version"]
 name = "geotrek"
 description = "Geotrek"
-requires-python = ">= 3.8"
+requires-python = ">= 3.10"
 authors = [
     { name = "Makina Corpus", email = 'geobi@makina-corpus.com' },
 ]
 
 dependencies = [
-    'Django==3.2.*',
+    'Django==5.2.*',
     'mapentity',
     'chardet',
     'cairosvg',
     'cairocffi',
-    'env_file',
+    'python-dotenv',
     'pymemcache',
     'coreschema',
     'coreapi',
+    'django-autocomplete-light',
     'psycopg2',
     'pdfimpose',
-    'docutils',
     'Pillow',
     'simplekml',
     'pygal',
     'paperclip',
-    'django-extended-choices',
     'django-modelcluster',
     'django-mptt',
     'geojson',
@@ -46,14 +45,17 @@ dependencies = [
     'django-colorfield',
     'Fiona',
     'markdown',
-    "weasyprint==52.5",
-    'django-weasyprint<2.0.0',
+    'weasyprint',
+    'django-weasyprint',
     "django-clearcache",
     'django-treebeard',
     "easy-thumbnails[svg]",
     "pyopenair",
-    'gunicorn',
+    'django-maintenance-mode',
+    "django-flask-authent-backend @ git+https://github.com/PnX-SI/django-flask-authent-backend@1.0.0",
+    'gunicorn[gevent]',
     'sentry-sdk',
+    "django-embed_video @ git+https://github.com/jazzband/django-embed-video.git@master",
 ]
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -62,7 +64,7 @@ classifiers = [
     "Natural Language :: English",
     "Programming Language :: Python :: 3",
 ]
-readme = "README.rst"
+readme = "README.md"
 license = {file = "LICENSE"}
 keywords = ["Python", "Django", "GIS", "Tourism", "Trekking"]
 
@@ -70,8 +72,7 @@ keywords = ["Python", "Django", "GIS", "Tourism", "Trekking"]
 dev = [
     "tblib",
     "lxml",
-    "flake8",
-    "flake8-pyproject",
+    "ruff",
     "freezegun",
     "coverage",
     "factory_boy",
@@ -95,7 +96,8 @@ author = "Makina Corpus"
 project = "Geotrek-admin"
 extensions = [
     'sphinx.ext.todo',
-    'sphinx_rtd_theme'
+    'sphinx_immaterial',
+    'sphinx_design',
 ]
 templates_path = [ "_templates",]
 html_static_path = [ "_static",]
@@ -105,7 +107,7 @@ master_doc = "index"
 exclude_patterns = ['_build']
 suppress_warnings = [ "image.nonlocal_uri",]
 pygments_style = "sphinx"
-html_theme = 'sphinx_rtd_theme'
+html_theme = 'sphinx_immaterial'
 html_logo = "_static/logo.svg"
 
 [tool.coverage.run]
@@ -119,7 +121,8 @@ omit = [
     '*/settings/*',
     '*/test_runner.py',
     '*/test_global.py',
-    'wsgi.py'
+    'wsgi.py',
+    'geotrek/authent/hashers.py',
 ]
 data_file = "var/.coverage"
 
@@ -132,10 +135,6 @@ exclude_lines = [
     'from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin',
     'pragma: no cover'
 ]
-
-[tool.flake8]
-ignore = "E501,W503"
-exclude = "geotrek/settings,conf"
 
 [tool.hatch.version]
 path = "geotrek/VERSION"

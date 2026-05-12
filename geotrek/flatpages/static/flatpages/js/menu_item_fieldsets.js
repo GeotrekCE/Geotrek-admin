@@ -78,6 +78,7 @@ function cleanSubmission() {
     } else {
         eraseLinkUrlFields();
         erasePageField();
+        uncheckOpenInNewTab();
     }
 }
 

@@ -10,64 +10,78 @@ class InfrastructureTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InfrastructureType
 
-    label = factory.Sequence(lambda n: "Type %s" % n)
-    type = models.INFRASTRUCTURE_TYPES.BUILDING
-    pictogram = dummy_filefield_as_sequence('infrastructure-type-%s.png')
+    label = factory.Sequence(lambda n: f"Type {n}")
+    type = models.InfrastructureTypeChoices.BUILDING
+    pictogram = dummy_filefield_as_sequence("infrastructure-type-%s.png")
 
 
 class InfrastructureTypeNoPictogramFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InfrastructureType
 
-    label = factory.Sequence(lambda n: "Type %s" % n)
-    type = models.INFRASTRUCTURE_TYPES.BUILDING
+    label = factory.Sequence(lambda n: f"Type {n}")
+    type = models.InfrastructureTypeChoices.BUILDING
 
 
 class InfrastructureConditionFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.InfrastructureCondition
 
-    label = factory.Sequence(lambda n: "Condition %s" % n)
+    label = factory.Sequence(lambda n: f"Condition {n}")
 
 
 class InfrastructureUsageDifficultyLevelFactory(factory.django.DjangoModelFactory):
-
     class Meta:
         model = models.InfrastructureUsageDifficultyLevel
-    label = factory.Sequence(lambda n: "Usage level %s" % n)
+
+    label = factory.Sequence(lambda n: f"Usage level {n}")
 
 
-class InfrastructureMaintenanceDifficultyLevelFactory(factory.django.DjangoModelFactory):
-
+class InfrastructureMaintenanceDifficultyLevelFactory(
+    factory.django.DjangoModelFactory
+):
     class Meta:
         model = models.InfrastructureMaintenanceDifficultyLevel
-    label = factory.Sequence(lambda n: "Maintenance level %s" % n)
+
+    label = factory.Sequence(lambda n: f"Maintenance level {n}")
 
 
-class InfrastructureFactory(TopologyFactory):
+class InfrastructureFactoryMixin:
+    @factory.post_generation
+    def conditions(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                obj.conditions.set(extracted)
+            else:
+                obj.conditions.add(InfrastructureConditionFactory.create())
+
+
+class InfrastructureFactory(TopologyFactory, InfrastructureFactoryMixin):
     class Meta:
         model = models.Infrastructure
-    name = factory.Sequence(lambda n: "Infrastructure %s" % n)
+
+    name = factory.Sequence(lambda n: f"Infrastructure {n}")
     type = factory.SubFactory(InfrastructureTypeFactory)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
     published = True
     usage_difficulty = factory.SubFactory(InfrastructureUsageDifficultyLevelFactory)
-    maintenance_difficulty = factory.SubFactory(InfrastructureMaintenanceDifficultyLevelFactory)
+    maintenance_difficulty = factory.SubFactory(
+        InfrastructureMaintenanceDifficultyLevelFactory
+    )
 
 
-class PointInfrastructureFactory(PointTopologyFactory):
+class PointInfrastructureFactory(PointTopologyFactory, InfrastructureFactoryMixin):
     class Meta:
         model = models.Infrastructure
-    name = factory.Sequence(lambda n: "Infrastructure %s" % n)
+
+    name = factory.Sequence(lambda n: f"Infrastructure {n}")
     type = factory.SubFactory(InfrastructureTypeFactory)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
     published = True
 
 
-class InfrastructureNoPictogramFactory(TopologyFactory):
+class InfrastructureNoPictogramFactory(TopologyFactory, InfrastructureFactoryMixin):
     class Meta:
         model = models.Infrastructure
-    name = factory.Sequence(lambda n: "Infrastructure %s" % n)
+
+    name = factory.Sequence(lambda n: f"Infrastructure {n}")
     type = factory.SubFactory(InfrastructureTypeNoPictogramFactory)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
     published = True

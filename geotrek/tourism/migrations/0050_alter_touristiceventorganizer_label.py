@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0049_alter_touristiccontentcategory_color'),
+        ("tourism", "0049_alter_touristiccontentcategory_color"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='touristiceventorganizer',
-            name='label',
-            field=models.CharField(max_length=256, verbose_name='Label'),
+            model_name="touristiceventorganizer",
+            name="label",
+            field=models.CharField(max_length=256, verbose_name="Label"),
         ),
     ]

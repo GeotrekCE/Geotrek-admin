@@ -1,0 +1,38 @@
+{
+    "numFound" : 1,
+    "objetsTouristiques" : [
+        {
+            "type" : "COMMERCE_ET_SERVICE",
+            "id" : 1,
+            "localisation" : {
+                "geolocalisation" : {
+                    "geoJson" : {
+                        "type" : "Point",
+                        "coordinates" : [ 0, 0 ]
+                    }
+                }
+            },
+            "nom" : {
+                "libelleFr" : "Un objet avec des données complètes"
+            },
+            "presentation" : {
+                "descriptifCourt" : {
+                    "libelleFr" : "Une courte description"
+                },
+                "descriptifDetaille" : {
+                    "libelleFr" : "Une longue description"
+                }
+            },
+            "prestations" : {
+                "tourismesAdaptes" : [
+                    {
+                        "libelleFr" : "Accessible en fauteuil roulant"
+                    },
+                    {
+                        "libelleFr" : "Accessible en poussette"
+                    }
+                ]
+            }
+        }
+    ]
+}

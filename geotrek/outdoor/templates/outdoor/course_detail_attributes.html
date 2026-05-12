@@ -2,9 +2,8 @@
 {% load i18n geotrek_tags mapentity_tags outdoor_tags %}
 {% block attributes %}
     <h3>{% trans "Tree view" %}</h3>
-            {% include "outdoor/recursive_courses_tree.html" with sites_at_level=course.all_hierarchy_roots original_course=object %}    
+            {% include "outdoor/recursive_courses_tree.html" with sites_at_level=course.all_hierarchy_roots original_course=object %}
     </ul>
-    <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ object|verbose:"structure" }}</th>
@@ -87,13 +86,11 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{% if object.eid %}{{ object.eid|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
+            <td>{{ object.get_eid }}</td>
         </tr>
         <tr>
             <th>{% trans "Provider" %}</th>
-            <td>{% if object.provider %}{{ object.provider|safe }}
+            <td>{% if object.provider %}{{ object.provider.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>

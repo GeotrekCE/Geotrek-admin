@@ -4,15 +4,14 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('feedback', '0028_auto_20220316_0951'),
+        ("feedback", "0028_auto_20220316_0951"),
     ]
 
     operations = [
         migrations.RenameField(
-            model_name='report',
-            old_name='uid',
-            new_name='external_uuid',
+            model_name="report",
+            old_name="uid",
+            new_name="external_uuid",
         ),
     ]

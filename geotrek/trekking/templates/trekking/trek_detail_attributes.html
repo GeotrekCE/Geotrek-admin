@@ -4,7 +4,6 @@
 
 {% block attributes %}
 
-    <h3>{% trans "Attributes" %}</h3>
     <table class="table-striped table-bordered table">
         <tr>
             <th>{{ trek|verbose:"structure" }}</th>
@@ -38,7 +37,7 @@
             <td>
                 {% for label in trek.labels.all %}
                     {% if label.published %}
-                        <span class="badge badge-success" title="{{ _("Published") }}">&#x2606;</span> 
+                        <span class="badge badge-success" title="{{ _("Published") }}">&#x2606;</span>
                     {% endif %}
                     {{ label.name }}<br>
                 {% endfor %}
@@ -127,12 +126,6 @@
             </td>
         </tr>
         <tr>
-            <th>{% trans "Related treks" %}</th>
-            <td>
-                {% valuelist trek.relationships.all field='relation' %}
-            </td>
-        </tr>
-        <tr>
             <th>{% trans "Itinerancy" %}</th>
             <td>
                 {% if trek.parents %}
@@ -177,13 +170,11 @@
         </tr>
         <tr>
             <th>{% trans "External id" %}</th>
-            <td>{% if trek.eid %}{{ trek.eid|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
+            <td>{{ trek.get_eid }}</td>
         </tr>
         <tr>
             <th>{% trans "Provider" %}</th>
-            <td>{% if trek.provider %}{{ trek.provider|safe }}
+            <td>{% if trek.provider %}{{ trek.provider.name|safe }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
@@ -266,5 +257,6 @@
             </td>
         </tr>
     </table>
+
     {{ block.super }}
 {% endblock attributes %}

@@ -1,8 +1,265 @@
-geotrek-admin (2.104.2+dev) UNRELEASED; urgency=medium
+geotrek-admin (2.124.4+dev) UNRELEASED; urgency=medium
 
-  * 
+  * Merging improvements
 
- -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Thu, 04 Apr 2024 18:26:53 +0200
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Mon, 11 May 2026 17:50:02 +0000
+
+geotrek-admin (2.124.4) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Mon, 11 May 2026 17:49:54 +0000
+
+geotrek-admin (2.124.3) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Thu, 02 Apr 2026 15:30:49 +0000
+
+geotrek-admin (2.124.2) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Tue, 03 Mar 2026 15:45:41 +0000
+
+geotrek-admin (2.124.1) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Tue, 17 Feb 2026 10:21:05 +0000
+
+geotrek-admin (2.124.0) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Wed, 11 Feb 2026 15:27:54 +0000
+
+geotrek-admin (2.123.1) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Thu, 29 Jan 2026 14:53:15 +0000
+
+geotrek-admin (2.123.0) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Thu, 15 Jan 2026 10:08:05 +0000
+
+geotrek-admin (2.122.1) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Thu, 08 Jan 2026 16:00:56 +0000
+
+geotrek-admin (2.122.0) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Wed, 24 Dec 2025 14:34:04 +0000
+
+geotrek-admin (2.121.2) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Tue, 16 Dec 2025 10:05:41 +0000
+
+geotrek-admin (2.121.1) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Mon, 17 Nov 2025 15:31:30 +0000
+
+geotrek-admin (2.121.0) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Fri, 14 Nov 2025 14:33:43 +0000
+
+geotrek-admin (2.120.2) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Tue, 28 Oct 2025 09:22:05 +0000
+
+geotrek-admin (2.120.1) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Wed, 22 Oct 2025 14:24:05 +0000
+
+geotrek-admin (2.120.0) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Wed, 22 Oct 2025 12:52:02 +0000
+
+geotrek-admin (2.119.0) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Mon, 06 Oct 2025 14:32:19 +0000
+
+geotrek-admin (2.118.2) RELEASED; urgency=medium
+
+  *   
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Tue, 23 Sep 2025 14:11:46 +0000
+
+geotrek-admin (2.118.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Thu, 18 Sep 2025 09:34:43 +0000
+
+geotrek-admin (2.118.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Tue, 09 Sep 2025 13:48:06 +0000
+
+geotrek-admin (2.117.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Mon, 28 Jul 2025 14:42:26 +0200
+
+geotrek-admin (2.116.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Tue, 15 Jul 2025 10:18:04 +0200
+
+geotrek-admin (2.116.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Thu, 03 Jul 2025 11:17:12 +0200
+
+geotrek-admin (2.115.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Wed, 21 May 2025 16:36:25 +0200
+
+geotrek-admin (2.115.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Tue, 29 Apr 2025 15:32:54 +0200
+
+geotrek-admin (2.114.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Thu, 13 Mar 2025 16:40:58 +0100
+
+geotrek-admin (2.113.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Mon, 17 Feb 2025 15:41:12 +0100
+
+geotrek-admin (2.113.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Thu, 30 Jan 2025 16:08:05 +0100
+
+geotrek-admin (2.112.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Tue, 14 Jan 2025 14:46:23 +0100
+
+geotrek-admin (2.111.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 05 Dec 2024 14:26:01 +0100
+
+geotrek-admin (2.110.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Justine Fricou <justine.fricou@makina-corpus.com>  Wed, 13 Nov 2024 10:46:20 +0100
+
+geotrek-admin (2.109.3) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Tue, 29 Oct 2024 16:11:24 +0100
+
+geotrek-admin (2.109.2) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 19 Sep 2024 12:18:51 +0200
+
+geotrek-admin (2.109.1) RELEASED; urgency=medium
+
+  * new package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 22 Aug 2024 14:49:32 +0200
+
+geotrek-admin (2.109.0) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Thu, 08 Aug 2024 15:52:30 +0200
+
+geotrek-admin (2.108.0) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Fri, 12 Jul 2024 15:30:54 +0200
+
+geotrek-admin (2.107.1) RELEASED; urgency=medium
+
+  * New package release
+
+ -- Jean-Etienne CASTAGNEDE <jean-etienne.castagnede@makina-corpus.com>  Tue, 02 Jul 2024 14:47:59 +0000
+
+geotrek-admin (2.107.0) RELEASED; urgency=medium
+
+  * New package release 
+
+ -- Célia Prat <celia.prat@makina-corpus.com>  Fri, 07 Jun 2024 11:04:44 +0200
+
+geotrek-admin (2.106.0) RELEASED; urgency=medium
+
+  * New Package release
+
+ -- Joaquim Nallar <joaquim.nallar@makina-corpus.com>  Wed, 15 May 2024 16:06:15 +0200
+
+geotrek-admin (2.105.1) RELEASED; urgency=medium
+
+  *  New Package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 07 May 2024 19:42:46 +0200
+
+geotrek-admin (2.105.0) RELEASED; urgency=medium
+
+  * New Package release
+
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 07 May 2024 14:29:19 +0200
 
 geotrek-admin (2.104.2) RELEASED; urgency=medium
 
@@ -188,7 +445,7 @@ geotrek-admin (2.93.0) RELEASED; urgency=medium
 
   * New package release
 
- -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 06 Dec 2022 15:03:20 +0100"
+ -- Marc-Antoine Dupré <marc-antoine.dupre@makina-corpus.com>  Tue, 06 Dec 2022 15:03:20 +0100
 
 geotrek-admin (2.92.3) RELEASED; urgency=medium
 
