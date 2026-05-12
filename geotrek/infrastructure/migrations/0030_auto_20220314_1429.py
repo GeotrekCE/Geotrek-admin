@@ -8,7 +8,7 @@ def forward(apps, schema_editor):
     with schema_editor.connection.cursor() as cursor:
         for lang in settings.MODELTRANSLATION_LANGUAGES:
             cursor.execute(
-                f"ALTER TABLE infrastructure_infrastructure ALTER COLUMN published_{lang} SET DEFAULT FALSE;"
+                f"ALTER TABLE infrastructure_infrastructure ALTER COLUMN published_{lang.replace('-', '_')} SET DEFAULT FALSE;"
             )
 
 
@@ -17,9 +17,8 @@ def backward(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('infrastructure', '0029_auto_20220314_0912'),
+        ("infrastructure", "0029_auto_20220314_0912"),
     ]
 
     operations = [

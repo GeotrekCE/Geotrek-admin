@@ -12,6 +12,14 @@ __pycache__/
 /.vscode/
 geotrek/settings/custom.py
 geotrek/cypress/node_modules
+Makefile.perso.mk
+
+# Benchmarking
+tools/benchmarking/time_measures/
+tools/benchmarking/cypress/videos/
+tools/benchmarking/cypress/screenshots/
+tools/benchmarking/node_modules/
+
 # buildout stuff
 .mr.developer.cfg
 .installed.cfg
@@ -42,7 +50,6 @@ docs/_build/
 /env/
 /pyvenv.cfg
 /.env
-/docker-compose.yml
 /build/
 
 /cypress/videos/
@@ -60,3 +67,10 @@ docs/_build/
 /debian/geotrek-admin.postrm.debhelper
 /cypress/node_modules/
 /dpkg/
+/coverage.lcov
+/htmlcov/
+/.cache/
+/.python_history
+/.bash_history
+/cypress/cypress/videos/
+/docker/install/var/

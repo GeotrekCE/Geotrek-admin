@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
+"POT-Creation-Date: 2026-02-12 10:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -51,6 +51,9 @@ msgstr ""
 msgid "Visible on Geotrek-rando"
 msgstr ""
 
+msgid "Code"
+msgstr ""
+
 msgid "Cities"
 msgstr ""
 
@@ -62,10 +65,5 @@ msgid "Invalid geometry for field '{src}'"
 msgstr ""
 
 #, python-brace-format
-msgid ""
-"Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not "
-"{geom_type}"
-msgstr ""
-
-msgid "Restricted Area"
+msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
 msgstr ""

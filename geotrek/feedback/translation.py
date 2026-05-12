@@ -1,22 +1,22 @@
-from modeltranslation.translator import translator, TranslationOptions
+from modeltranslation.translator import TranslationOptions, translator
 
 from geotrek.feedback import models as feedback_models
 
 
 class ReportCategoryTO(TranslationOptions):
-    fields = ('label',)
+    fields = ("label",)
 
 
 class ReportActivityTO(TranslationOptions):
-    fields = ('label',)
+    fields = ("label",)
 
 
 class ReportProblemMagnitudeTO(TranslationOptions):
-    fields = ('label',)
+    fields = ("label",)
 
 
 class ReportStatusTO(TranslationOptions):
-    fields = ('label',)
+    fields = ("label",)
 
 
 translator.register(feedback_models.ReportCategory, ReportCategoryTO)

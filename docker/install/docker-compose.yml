@@ -1,0 +1,73 @@
+x-images:
+  django: &django
+    image: geotrekce/admin:${GEOTREK_VERSION:-latest}
+    user: ${UID:-0}:${GID:-0}
+    env_file:
+      - .env
+    volumes:
+      - ./var:/opt/geotrek-admin/var
+    depends_on:
+      postgres:
+          condition: service_healthy
+      memcached:
+          condition: service_started
+      redis:
+          condition: service_started
+      screamshotter:
+          condition: service_started
+      convertit:
+          condition: service_started
+
+services:
+  postgres:
+      image: pgrouting/pgrouting:latest
+      env_file:
+        - .env
+      volumes:
+        - postgres:/var/lib/postgresql/data
+      healthcheck:
+          test: ["CMD", "pg_isready", "-U", "${POSTGRES_USER:-geotrek}", "-d", "${POSTGRES_DB:-geotrekdb}"]
+          interval: 10s
+          retries: 5
+          start_period: 30s
+          timeout: 5s
+
+  memcached:
+    image: memcached:alpine
+
+  redis:
+    image: redis:alpine
+    volumes:
+      - redis:/data
+
+  convertit:
+    image: makinacorpus/convertit:latest
+
+  screamshotter:
+    image: makinacorpus/screamshotter:v2
+
+  celery:
+    <<: [ *django ]
+
+    command: celery -A geotrek worker -c 1
+
+  web:
+    <<: [ *django ]
+
+  api:
+    <<: [ *django ]
+
+  nginx:
+    depends_on:
+      - web
+      - api
+    image: nginx:alpine
+    volumes:
+      - ./var/media:/usr/share/nginx/html/media
+      - ./var/static:/usr/share/nginx/html/static
+
+    ports:
+      - "${PROXY_PORT}:80"
+volumes:
+  redis:
+  postgres:

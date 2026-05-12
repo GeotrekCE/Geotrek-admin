@@ -4,25 +4,42 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('infrastructure', '0003_auto_20180810_1753'),
+        ("infrastructure", "0003_auto_20180810_1753"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='baseinfrastructure',
-            name='publication_date',
-            field=models.DateField(blank=True, db_column='date_publication', editable=False, null=True, verbose_name='Publication date'),
+            model_name="baseinfrastructure",
+            name="publication_date",
+            field=models.DateField(
+                blank=True,
+                db_column="date_publication",
+                editable=False,
+                null=True,
+                verbose_name="Publication date",
+            ),
         ),
         migrations.AddField(
-            model_name='baseinfrastructure',
-            name='published',
-            field=models.BooleanField(db_column='public', default=False, help_text='Online', verbose_name='Published'),
+            model_name="baseinfrastructure",
+            name="published",
+            field=models.BooleanField(
+                db_column="public",
+                default=False,
+                help_text="Online",
+                verbose_name="Published",
+            ),
         ),
         migrations.AddField(
-            model_name='infrastructuretype',
-            name='pictogram',
-            field=models.FileField(blank=True, db_column='picto', max_length=512, null=True, upload_to='upload', verbose_name='Pictogram'),
+            model_name="infrastructuretype",
+            name="pictogram",
+            field=models.FileField(
+                blank=True,
+                db_column="picto",
+                max_length=512,
+                null=True,
+                upload_to="upload",
+                verbose_name="Pictogram",
+            ),
         ),
     ]

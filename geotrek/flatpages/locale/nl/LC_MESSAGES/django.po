@@ -3,28 +3,31 @@
 # This file is distributed under the same license as the PACKAGE package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2022-12-16 09:52+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
-"Language: \n"
+"POT-Creation-Date: 2025-04-16 18:12+0200\n"
+"PO-Revision-Date: 2025-10-22 09:01+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/flatpages/nl/>\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 5.13.3\n"
 
 msgid "Portals"
 msgstr ""
 
-msgid "Flatpages"
+msgid "Page"
 msgstr ""
 
-msgid "Content"
+msgid "Link"
+msgstr ""
+
+msgid "Flatpages"
 msgstr ""
 
 msgid "Cover image"
@@ -33,46 +36,19 @@ msgstr ""
 msgid "Cover image author"
 msgstr ""
 
-msgid "Choose between external URL and HTML content"
-msgstr ""
-
-msgid "All"
-msgstr ""
-
-msgid "Mobile"
-msgstr ""
-
-msgid "Hidden"
-msgstr ""
-
-msgid "Web"
+msgid "Thumbnail"
 msgstr ""
 
 msgid "Title"
 msgstr ""
 
-msgid "External URL"
-msgstr ""
-
-msgid "Link to external website instead of HTML content"
+msgid "Content"
 msgstr ""
 
 msgid "HTML content"
 msgstr ""
 
-msgid "Target"
-msgstr ""
-
 msgid "Source"
-msgstr ""
-
-msgid "Portal"
-msgstr ""
-
-msgid "ID order if blank"
-msgstr ""
-
-msgid "Order"
 msgstr ""
 
 msgid "Flat page"
@@ -81,17 +57,80 @@ msgstr ""
 msgid "Flat pages"
 msgstr ""
 
-msgid "creation"
+msgid "Empty"
 msgstr ""
 
-msgid "Template 1"
+msgid "All"
 msgstr ""
 
-msgid "Template 2"
+msgid "Mobile"
 msgstr ""
 
-msgid "Insert Text Here."
+msgid "Web"
 msgstr ""
 
-msgid "Legend, ©, firstname and author name."
+msgid "Target type"
+msgstr ""
+
+msgid "Link URL"
+msgstr ""
+
+msgid "Platform"
+msgstr ""
+
+msgid "Open the link in a new tab"
+msgstr ""
+
+msgid "Menu item"
+msgstr ""
+
+msgid "Menu items"
+msgstr ""
+
+msgid "Button Link"
+msgstr ""
+
+msgid "Label"
+msgstr ""
+
+msgid "Open in a new tab"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Suggestions"
+msgstr ""
+
+msgid "Suggestions title"
+msgstr ""
+
+msgid "ID list (separated by comma)"
+msgstr ""
+
+msgid "Trek"
+msgstr ""
+
+msgid "Touristic content"
+msgstr ""
+
+msgid "Touristic event"
+msgstr ""
+
+msgid "Outdoor Site"
+msgstr ""
+
+msgid "Submit"
+msgstr ""
+
+msgid "Manage the Image Gallery"
+msgstr ""
+
+msgid "Image gallery"
+msgstr ""
+
+msgid "Add an image"
+msgstr ""
+
+msgid "Remove"
 msgstr ""

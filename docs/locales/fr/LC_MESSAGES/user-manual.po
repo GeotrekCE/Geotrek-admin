@@ -3,201 +3,1864 @@
 # This file is distributed under the same license as the Geotrek package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2020.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Geotrek 2.38\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-22 12:11+0200\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
-"Language-Team: LANGUAGE <LL@li.org>\n"
+"POT-Creation-Date: 2025-10-10 08:21+0000\n"
+"PO-Revision-Date: 2025-10-22 09:00+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: French <https://weblate.makina-corpus.net/projects/"
+"geotrek-admin/doc-user-manual/fr/>\n"
+"Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.6.0\n"
+"Plural-Forms: nplurals=2; plural=n > 1;\n"
+"X-Generator: Weblate 5.13.3\n"
+"Generated-By: Babel 2.17.0\n"
 
-#: ../../user-manual.rst:3
-msgid "USER MANUAL"
+#: ../../user-manual/apis.rst:3
+msgid "APIs"
 msgstr ""
 
-#: ../../user-manual.rst:6
-msgid "Screencasts"
+#: ../../user-manual/apis.rst:8
+msgid "API Geotrek"
 msgstr ""
 
-#: ../../user-manual.rst:8
-msgid "( **In French** )"
-msgstr ""
-
-#: ../../user-manual.rst:10
-msgid "`Présentation de l'interface  <http://youtu.be/-iVe9cwBZ50>`_ :"
-msgstr ""
-
-#: ../../user-manual.rst:16
-msgid "`Création d'un itinéraire <http://youtu.be/d37WixqDs6c>`_ :"
-msgstr ""
-
-#: ../../user-manual.rst:22
-msgid "`Création d'un POI <http://youtu.be/PRY8y7y8WxM>`_ :"
-msgstr ""
-
-#: ../../user-manual.rst:28
-msgid "`Ajout de photos <http://youtu.be/n96O09284ao>`_ :"
-msgstr ""
-
-#: ../../user-manual.rst:34
-msgid "`Administration <http://youtu.be/P106bQCRZKk>`_ :"
-msgstr ""
-
-#: ../../user-manual.rst:42
-msgid "Modules"
-msgstr ""
-
-#: ../../user-manual.rst:44
-msgid "Geotrek est composé de différents modules."
-msgstr ""
-
-#: ../../user-manual.rst:46
-msgid "**Gestion des sentiers** :"
-msgstr ""
-
-#: ../../user-manual.rst:48
-msgid "Tronçons (linéaire entre 2 intersections)"
-msgstr ""
-
-#: ../../user-manual.rst:49
-msgid "Sentiers (groupe de tronçons)"
-msgstr ""
-
-#: ../../user-manual.rst:50
+#: ../../user-manual/apis.rst:10
 msgid ""
-"Statuts (physique, foncier, organismes ayant la compétence sentiers, "
-"gestionnaires des travaux et de la signalétique)"
+"Geotrek dispose d’une API (Application Programming Interface) qui sert à "
+"exposer les données stockées dans une instance de Geotrek-admin, dans le "
+"but de pouvoir la faire communiquer avec d'autres outils, systèmes et "
+"plateforme et ainsi échanger des données."
 msgstr ""
 
-#: ../../user-manual.rst:51
-msgid "Aménagements (ouvrages et équipements)"
-msgstr ""
-
-#: ../../user-manual.rst:52
-msgid "Signalétique"
-msgstr ""
-
-#: ../../user-manual.rst:53
-msgid "Interventions (travaux)"
-msgstr ""
-
-#: ../../user-manual.rst:54
-msgid "Chantiers (groupe d'interventions)"
-msgstr ""
-
-#: ../../user-manual.rst:56
-msgid "**Valorisation de l'offre touristique** :"
-msgstr ""
-
-#: ../../user-manual.rst:58
-msgid "Itinéraires (randonnées)"
-msgstr ""
-
-#: ../../user-manual.rst:59
-msgid "POI (points d'intérêt patrimoniaux)"
-msgstr ""
-
-#: ../../user-manual.rst:60
+#: ../../user-manual/apis.rst:12
 msgid ""
-"Services (informations pratiques comme les points d'eau, passages "
-"délicats... selon la typologie que vous souhaitez)"
+"Cette API, désormais dans sa version 2 permet à toute structure tierce de"
+" récupérer des données et de les intégrer dans son système ou ses "
+"applications."
 msgstr ""
 
-#: ../../user-manual.rst:61
+#: ../../user-manual/apis.rst:14
 msgid ""
-"Contenus touristiques (hébergements, restaurants, services, activités de "
-"pleine nature, musées, produits labellisés... Vous pouvez créer les "
-"catégories que vous souhaitez)"
+"À ce jour de nombreux partenaires des structures utilisatrices de "
+"l’application Geotrek ont déjà utilisé cette API pour intégrer les "
+"données dans leurs outils."
 msgstr ""
 
-#: ../../user-manual.rst:62
-msgid "Evènements touristiques (animations, expositions, sorties...)"
-msgstr ""
-
-#: ../../user-manual.rst:63
+#: ../../user-manual/apis.rst:16
 msgid ""
-"Signalements (problèmes signalés par les internautes sur un itinéraire "
-"depuis Geotrek-rando)"
+"L'API Geotrek est le point central pour permettre les interconnexions "
+"avec divers services. Grâce à cette interface de données, Geotrek s'est "
+"positionné comme un point central dans un écosystème de solutions du "
+"monde de la gestion et promotion des activités de pleine nature."
 msgstr ""
 
-#: ../../user-manual.rst:64
+#: ../../user-manual/apis.rst:18 ../../user-manual/apis.rst:70
+#: ../../user-manual/apis.rst:92 ../../user-manual/apis.rst:105
+#: ../../user-manual/editing-objects.rst:23
+#: ../../user-manual/editing-objects.rst:90
+#: ../../user-manual/editing-objects.rst:144
+#: ../../user-manual/interfaces.rst:125
+#: ../../user-manual/management-modules.rst:100
+#: ../../user-manual/management-modules.rst:119
+#: ../../user-manual/static-pages.rst:202
+#: ../../user-manual/touristic-modules.rst:413
+#: ../../user-manual/touristic-modules.rst:438
+#: ../../user-manual/touristic-modules.rst:452
+#: ../../user-manual/touristic-modules.rst:469
+#: ../../user-manual/touristic-modules.rst:480
+#: ../../user-manual/touristic-modules.rst:510
+msgid "See also"
+msgstr ""
+
+#: ../../user-manual/apis.rst:20
 msgid ""
-"Zones de sensibilité (module non activé par défaut permettant de gérer "
-"des zones de sensibilité de la faune sauvage pour les afficher sur "
-"Geotrek-rando ou les diffuser avec l'API de Geotrek-admin)"
+"Pour changer les paramètres d'accès de l'API, référez vous à cette "
+"section :ref:`API <api>`"
 msgstr ""
 
-#: ../../user-manual.rst:66
-msgid "Chaque module est accessible depuis le bandeau vertical."
+#: ../../user-manual/apis.rst:23
+msgid "APIs externes"
 msgstr ""
 
-#: ../../user-manual.rst:68
+#: ../../user-manual/apis.rst:28
+msgid "Geotrek et IGNrando' / Cirkwi"
+msgstr ""
+
+#: ../../user-manual/apis.rst:30
+msgid ""
+"Geotrek-admin est capable de produire un flux des itinéraires et POIs "
+"présents dans sa BDD au format Cirkwi pour pouvoir les importer "
+"directement dans IGNrando' `(voir cet article) <https://makina-corpus.com"
+"/sig-webmapping/geotrek-et-lign-ca-fonctionne>`_."
+msgstr ""
+
+#: ../../user-manual/apis.rst:32
+msgid ""
+"Exemple des randonnées et POIs du Parc national des Ecrins publiées sur "
+"IGNrando' depuis Geotrek-admin : https://ignrando.fr/fr/communautes/parc-"
+"national-des-ecrins"
+msgstr ""
+
+#: ../../user-manual/apis.rst:34
+msgid ""
+"Depuis cette version, 2 flux sont automatiquement générés par Geotrek-"
+"admin au format attendu par l'IGN :"
+msgstr ""
+
+#: ../../user-manual/apis.rst:36
+msgid "[URL_GEOTREK-ADMIN]/api/cirkwi/circuits.xml"
+msgstr ""
+
+#: ../../user-manual/apis.rst:37
+msgid "[URL_GEOTREK-ADMIN]/api/cirkwi/pois.xml"
+msgstr ""
+
+#: ../../user-manual/apis.rst:39
+msgid "Hint"
+msgstr ""
+
+#: ../../user-manual/apis.rst:41
+msgid ""
+"**Exclure les POI du flux pour ne diffuser que les randonnées**. Pour "
+"cela, ajouter le paramètre ``?withoutpois=1`` à la fin de l'URL "
+"(``http://XXXXX/api/cirkwi/circuits.xml?withoutpois=1``)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:43
+msgid ""
+"**Filtrer les POI du flux par structure**. Pour cela, ajouter le "
+"paramètre ``?structures=<identifiant_de_la_structure>`` à la fin de l'URL"
+" (``http://XXXXX/api/cirkwi/pois.xml?structures=2``). Vous pouvez filtrer"
+" avec plusieurs structures : en séparant les identifiants par des "
+"virgules (``http://XXXXX/api/cirkwi/pois.xml?structures=2,5,3``)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:45
+msgid ""
+"**Filtrer les randonnées du flux par structure et par portail**. Pour "
+"cela, ajouter le paramètre ``?structures=<identifiant_de_la_structure>`` "
+"ou ``?portals=<identifian_de_la_structure>`` à la fin de l'URL "
+"(``http://XXXXX/api/cirkwi/circuits.xml?portals=3``)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:47
+msgid ""
+"**Exclure du flux les randonnées provenant de sources externes à Geotrek-"
+"admin**. Ce filtre est notamment nécessaire pour ne pas renvoyer à Cirkwi"
+" les randonnées qui en proviennent déjà. Pour cela, ajouter le paramètre "
+"``?include_externals=false`` à la fin de l'URL "
+"(``http://XXXXX/api/cirkwi/circuits.xml?include_externals=false``)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:49
+msgid ""
+"**Cumuler ces différents filtres**, en séparant les valeurs par un ``&`` "
+"(``http://XXXXX/api/cirkwi/circuits.xml?portals=3&structures=1&include_externals=false``)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:51
+msgid ""
+"Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans le "
+"module de configuration (à ne pas modifier) :"
+msgstr ""
+
+#: ../../user-manual/apis.rst:53 ../../user-manual/apis.rst:57
+msgid "Ensemble des champs paramétrables pour le référentiel CIRKWI"
+msgstr ""
+
+#: ../../user-manual/apis.rst:59
+msgid ""
+"Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez "
+"vos propres typologies, il faut que vous renseigniez les correspondances "
+"entre les catégories de votre Geotrek et celles du référentiel IGN "
+"(Cirkwi) dans le module de configuration, comme indiqué `dans ce ticket "
+"Github <https://github.com/GeotrekCE/Geotrek-admin/issues/806>`_."
+msgstr ""
+
+#: ../../user-manual/apis.rst:61
+msgid "Pratique >> locomotion/loisirs"
+msgstr ""
+
+#: ../../user-manual/apis.rst:62
+msgid "Accessibilite >> thematiques/tags"
+msgstr ""
+
+#: ../../user-manual/apis.rst:63
+msgid "Themes >> thematiques/tags"
+msgstr ""
+
+#: ../../user-manual/apis.rst:64
+msgid "Types de POI >> Categories POI"
+msgstr ""
+
+#: ../../user-manual/apis.rst:66
+msgid ""
+"Les correspondances avec les valeurs de ces 3 tables sont donc à "
+"renseigner dans les tables Geotrek des Pratiques, Accessibilités, Thèmes "
+"et Types de POI."
+msgstr ""
+
+#: ../../user-manual/apis.rst:68
+msgid ""
+"Ce même flux est aussi utilisable pour alimenter directement la "
+"plateforme Cirkwi (`voir cette page <https://pro.cirkwi.com/importez-vos-"
+"donnees-geotrek-dans-cirkwi/>`_)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:72
+msgid ""
+"Geotrek-admin dispose aussi d'une API générique permettant d'accéder aux "
+"contenus d'une instance à l'adresse ``[URL_GEOTREK-ADMIN]/api/v2/``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:73
+msgid ""
+"Pour importer des itinéraires et contenus touristiques depuis CIRKWI, se "
+"référer à la section :ref:`Import from Cirkwi <import-from-cirkwi>`."
+msgstr ""
+
+#: ../../user-manual/apis.rst:76
+msgid "Geotrek et APIDAE"
+msgstr ""
+
+#: ../../user-manual/apis.rst:78
+msgid ""
+"Il existe plusieurs passerelles entre la plateforme d'informations "
+"touristiques APIDAE et Geotrek."
+msgstr ""
+
+#: ../../user-manual/apis.rst:81
+msgid "APIDAE vers Geotrek"
+msgstr ""
+
+#: ../../user-manual/apis.rst:83
+msgid ""
+"Actuellement, certains contenus touristiques peuvent être synchronisés "
+"automatiquement avec une base APIDAE. Il s'agit des contenus situés dans "
+"les catégories suivantes :"
+msgstr ""
+
+#: ../../user-manual/apis.rst:85
+msgid ""
+"Contenus touristiques (hébergements, restaurants, produits du territoire,"
+" lieux de visites...)"
+msgstr ""
+
+#: ../../user-manual/apis.rst:86
+msgid "Evénements touristiques (expositions, conférences, sorties...)"
+msgstr ""
+
+#: ../../user-manual/apis.rst:88
+msgid ""
+"Les contenus touristiques peuvent aussi être synchronisés depuis des flux"
+" Tourinsoft ou Esprit Parc National."
+msgstr ""
+
+#: ../../user-manual/apis.rst:90
+msgid ""
+"Il est également possible de mettre en place des passerelles pour "
+"importer des POIs, des lieux de renseignement, des aménagements ainsi que"
+" des randonnées d'APIDAE vers Geotrek. Il est aussi possible d'enrichir "
+"le lien avec les contenus touristiques pour avoir par exemple d'autres "
+"catégories."
+msgstr ""
+
+#: ../../user-manual/apis.rst:94
+msgid ""
+"Pour configurer APIDAE, se référer à cette section :ref:`Import from "
+"APIDAE <import-from-apidae>`"
+msgstr ""
+
+#: ../../user-manual/apis.rst:97
+msgid "Geotrek vers APIDAE"
+msgstr ""
+
+#: ../../user-manual/apis.rst:99
+msgid ""
+"Il existe aussi un lien dans l'autre sens, permettant d'importer "
+"automatiquement vers APIDAE les itinéraires existants dans une instance "
+"Geotrek."
+msgstr ""
+
+#: ../../user-manual/apis.rst:101
+msgid ""
+"L'API permet de connecter une instance Geotrek pour importer des "
+"itinéraires vers les objets de type \"Équipements\" dans APIDAE."
+msgstr ""
+
+#: ../../user-manual/apis.rst:103
+msgid ""
+"Les randonnées VTT, trail, vélo et les tours itinérants sont également "
+"intégrés dans la passerelle."
+msgstr ""
+
+#: ../../user-manual/apis.rst:107
+msgid ""
+"Pour plus d'information, se référer à la documentation en ligne de "
+"`Sitourisme <https://github.com/GeotrekCE/Sitourisme#sitourisme-paca-"
+"api>`_."
+msgstr ""
+
+#: ../../user-manual/apis.rst:111
+msgid "Sensitivity module (or Biodiv'Sports)"
+msgstr ""
+
+#: ../../user-manual/apis.rst:113 ../../user-manual/apis.rst:247
+#: ../../user-manual/configuration-ttw.rst:38
+#: ../../user-manual/configuration-ttw.rst:176
+#: ../../user-manual/configuration-ttw.rst:249
+#: ../../user-manual/configuration-ttw.rst:253
+#: ../../user-manual/editing-objects.rst:40
+#: ../../user-manual/editing-objects.rst:70
+#: ../../user-manual/editing-objects.rst:140
+#: ../../user-manual/interfaces.rst:37 ../../user-manual/interfaces.rst:66
+#: ../../user-manual/static-pages.rst:155
+#: ../../user-manual/touristic-modules.rst:419
+msgid "Note"
+msgstr "Note"
+
+#: ../../user-manual/apis.rst:115
+msgid ""
+"You can play with API using Biodiv'Sports widget tool: https"
+"://biodivsports-widget.lpo-aura.org/"
+msgstr ""
+
+#: ../../user-manual/apis.rst:117
+msgid ""
+"The Geotrek API provides a set of parameters that can be used to filter "
+"and sort data. There is a Swagger documentation (see :ref:`application-"
+"settings` to enable it on your instance if needed) existing to test and "
+"browse those parameters that can be found at this address: ``/api/v2/``."
+msgstr ""
+
+#: ../../user-manual/apis.rst:119
+msgid ""
+"This section focuses on some common parameters useful to work with "
+"sensitivity information and gives details about some endpoints."
+msgstr ""
+
+#: ../../user-manual/apis.rst:124
+msgid "Commons parameters"
+msgstr ""
+
+#: ../../user-manual/apis.rst:126
+msgid ""
+"If ``language`` parameter is provided, API returns directly translated "
+"fields, else, a dictionnary of traductions is returned"
+msgstr ""
+
+#: ../../user-manual/apis.rst:128
+msgid "e.g. ``/api/v2/sensitivearea_practice/1/?``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:143
+msgid "e.g. ``/api/v2/sensitivearea_practice/1/?language=en``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:156
+msgid "Sport practices"
+msgstr ""
+
+#: ../../user-manual/apis.rst:158
+msgid "List of sport practices"
+msgstr ""
+
+#: ../../user-manual/apis.rst:160
+msgid "``/api/v2/sensitivearea_practice/``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:162
+msgid "e.g. https://biodiv-sports.fr/api/v2/sensitivearea_practice/"
+msgstr ""
+
+#: ../../user-manual/apis.rst:166
+msgid "Sensitive areas"
+msgstr ""
+
+#: ../../user-manual/apis.rst:168
+msgid "List of sensitive areas"
+msgstr ""
+
+#: ../../user-manual/apis.rst:170
+msgid "``/api/v2/sensitivearea/``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:172
+msgid ""
+"The default output format is ``json``. To obtain output in ``geojson`` "
+"format, simply add the ``format=geojson`` parameter."
+msgstr ""
+
+#: ../../user-manual/apis.rst:174
+msgid "``/api/v2/sensitivearea/?format=geojson``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:176
+msgid "e.g. https://biodiv-sports.fr/api/v2/sensitivearea/?format=geojson"
+msgstr ""
+
+#: ../../user-manual/apis.rst:178
+msgid "**Filtering data**"
+msgstr ""
+
+#: ../../user-manual/apis.rst:180
+msgid "Data can be filtered through these parameters:"
+msgstr ""
+
+#: ../../user-manual/apis.rst:182
+msgid ""
+"``language`` : API language (see :ref:`Commons parameters <commons-"
+"parameters>`)"
+msgstr ""
+
+#: ../../user-manual/apis.rst:184
+msgid "Expected values: ``fr``, ``en``, ``es`` or ``it``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:185
+msgid "e.g. ``/api/v2/sensitivearea/?language=fr``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:187
+msgid "``period`` : Sensitivy period (months list)"
+msgstr ""
+
+#: ../../user-manual/apis.rst:189
+msgid "Expected values: List of month numbers (from 1 to 12), comma separated"
+msgstr ""
+
+#: ../../user-manual/apis.rst:190
+msgid "e.g. ``/api/v2/sensitivearea/?period=4,5,6,7``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:192
+msgid "``practices`` : Sport practices"
+msgstr ""
+
+#: ../../user-manual/apis.rst:194
+msgid ""
+"Expected values: List of practices ids (see :ref:`Sport practices <sport-"
+"practices>`)"
+msgstr ""
+
+#: ../../user-manual/apis.rst:195
+msgid "e.g. ``/api/v2/sensitivearea/?practices=1,2``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:197
+msgid "``structure`` : Organization that declared the sensitive area."
+msgstr ""
+
+#: ../../user-manual/apis.rst:199
+msgid "Expected values: List of structures ids"
+msgstr ""
+
+#: ../../user-manual/apis.rst:200
+msgid "e.g. ``/api/v2/sensitivearea/?structures=1,2``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:202
+msgid "``in_bbox``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:204
+msgid ""
+"Expected values: List of bbox coordinates (respectively longitude and "
+"latitude South-West then North-East corner), comma separated."
+msgstr ""
+
+#: ../../user-manual/apis.rst:205
+msgid "e.g. ``/api/v2/sensitivearea/?in_bbox=5.0,45.0,6.0,46.0``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:207
+msgid ""
+"Full example https://biodiv-"
+"sports.fr/api/v2/sensitivearea/?format=geojson&language=fr&practices=1,2&period=4,5,6,7&in_bbox=5.0,45.0,6.0,46.0"
+msgstr ""
+
+#: ../../user-manual/apis.rst:209
+msgid "**Filtering fields**"
+msgstr ""
+
+#: ../../user-manual/apis.rst:211
+msgid ""
+"``fields``: List of expected fields (see :ref:`Field Descriptions "
+"<FielDesc>`)"
+msgstr ""
+
+#: ../../user-manual/apis.rst:213 ../../user-manual/apis.rst:218
+msgid "Expected values: List of field names, comma separated"
+msgstr ""
+
+#: ../../user-manual/apis.rst:214
+msgid "e.g. ``/api/v2/sensitivearea/?fields=name,geometry``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:216
+msgid ""
+"``omit``: List of excluded fields (see :ref:`Field Descriptions "
+"<FielDesc>`)"
+msgstr ""
+
+#: ../../user-manual/apis.rst:219
+msgid "e.g. ``/api/v2/sensitivearea/?omit=name,geometry``"
+msgstr ""
+
+#: ../../user-manual/apis.rst:221 ../../user-manual/interfaces.rst:43
+msgid "Warning"
+msgstr "Attention"
+
+#: ../../user-manual/apis.rst:222
+msgid "**GeoJSON** format expect at least `id` and `geometry` fields."
+msgstr ""
+
+#: ../../user-manual/apis.rst:226
+msgid "**Field descriptions**"
+msgstr ""
+
+#: ../../user-manual/apis.rst:229
+msgid "``id`` : local unique identifier of the sensitive area (integer)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:230
+msgid "``name`` : Area name (string)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:231
+msgid "``description`` : Area description (string in HTML format)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:232
+msgid ""
+"``period`` : Area occupancy for each of the 12 months of the year "
+"(ordered array of 12 Booleans)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:233
+msgid ""
+"``contact`` : Contact for further information about the sensitive area "
+"(string in HTML format)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:234
+msgid ""
+"``practices``: sports practices concerned by the hotspot (array of "
+"identifiers)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:235
+msgid "``info_url`` : URL containing further information about the area (URL)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:236
+msgid ""
+"``structure`` : Structure or acronyme that provided information on the "
+"area (string)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:237
+msgid ""
+"``elevation`` : Elevation used to define area sensitivity volume "
+"(globally elevation, buffer radius for areas declared as Point)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:238
+msgid "``geometry`` : Area GeoJSON geometry. Type is always \"Polygon\"."
+msgstr ""
+
+#: ../../user-manual/apis.rst:239
+msgid "``species_id``: species identifier or null for regulatory areas."
+msgstr ""
+
+#: ../../user-manual/apis.rst:240
+msgid ""
+"``kml_url`` : URL of the downloadable KML file representing this "
+"regulatory zone."
+msgstr ""
+
+#: ../../user-manual/apis.rst:241
+msgid ""
+"``openair_url`` : URL of the downloadable OpenAir file representing the "
+"regulatory zone (available only for aerial activities)."
+msgstr ""
+
+#: ../../user-manual/apis.rst:242
+msgid "``attachment`` : List of area attachment files."
+msgstr ""
+
+#: ../../user-manual/apis.rst:243
+msgid "``rules`` : List of regulatory rules."
+msgstr ""
+
+#: ../../user-manual/apis.rst:244
+msgid "``update_datetime``: last update timestamp."
+msgstr ""
+
+#: ../../user-manual/apis.rst:245
+msgid "``create_datetime``: create timestamp."
+msgstr ""
+
+#: ../../user-manual/apis.rst:248
+msgid ""
+"Species informations are commons for each species areas sharing the same "
+"``species_id`` value, also share the same values for the ``name``, "
+"``period``, ``practices`` and ``info_url`` fields."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:3
+msgid "Paramétrage"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:6
+msgid "Accès interface de configuration"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:8
+msgid "Menu à droite > admin"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:10
+#: ../../user-manual/configuration-ttw.rst:14
+msgid "Lien vers le module de configuration"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:19
+msgid "Paramétrages des modules"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:21
+msgid ""
+"Cette section présente quelques exemples de paramétrages des catégories "
+"au sein des modules."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:24
+#: ../../user-manual/touristic-modules.rst:8
+msgid "Itinéraires"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:26
+#: ../../user-manual/configuration-ttw.rst:30
+msgid "Ensemble des champs paramétrables du module Itinéraires"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:33
+msgid "Exemple : ajouter une pratique"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:35
+msgid ""
+"Dans le module de configuration, à la ligne “Pratiques” cliquer sur “+ "
+"ajouter”"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:36
+msgid "Remplir les champs (en gras les champs obligatoires)"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:39
+msgid "La couleur n’est utilisée que pour le mobile actuellement."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:41
+#: ../../user-manual/configuration-ttw.rst:45
+msgid "Ajout d'une nouvelle pratique"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:48
+msgid "Exemple : ajouter une étiquette"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:50
+msgid ""
+"Les étiquettes sont des encarts \"pré-configurés\" pouvant être "
+"réutilisés sur de multiples itinéraires. Elles présentent plusieurs "
+"avantages :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:52
+msgid "ne pas avoir à saisir à chaque itinéraire les même informations"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:53
+msgid ""
+"permet de filtrer les itinéraires dans la vue liste (catégorie "
+"\"Autres\") sur Geotrek-Rando."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:55
+msgid "Pour les configurer, vous devez :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:57
+msgid "vous rendre dans le module de configuration"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:58
+msgid ""
+"dans la section Étiquettes du groupe **COMMUN** cliquer sur :guilabel:`+ "
+"Ajouter`"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:60
+msgid ""
+"Via cette interface vous pourrez créer des étiquettes puis, une fois "
+"créées, les rattacher à des itinéraires."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:62
+msgid "Créer une étiquette :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:64
+#: ../../user-manual/configuration-ttw.rst:68
+msgid "Création d'une étiquette"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:70
+msgid ""
+"Pour mettre en forme le contenu de l'étiquette, il est possible "
+"d'utiliser du ``HTML``. Pour cela, il est recommandé d'utiliser des "
+"outils permettant de formater du contenu et d'obtenir le résultat en HTML"
+" directement. Par exemple via l'outil libre `Summernote "
+"<https://summernote.org/>`_."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:72
+msgid "Associer une étiquette à un itinéraire :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:74
+msgid ""
+"Une fois l'étiquette créée il faut l'associer à un itinéraire pour "
+"qu'elle soit visible sur le site. Une fois dans votre instance Geotrek "
+"Admin, éditez l'itinéraire concerné. Cliquez ensuite sur l'onglet "
+":guilabel:`Avancé` et dans le champ Étiquettes choisissez dans le menu "
+"déroulant l'étiquette de votre choix (si vous en avez défini plusieurs)."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:77
+#: ../../user-manual/configuration-ttw.rst:81
+msgid "Ajout d'une étiquette à un itinéraire"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:83
+msgid "Tip"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:85
+msgid ""
+"L'ajout d'un pictogramme est facultatif, par défaut le pictogramme de "
+"l'étiquette sera le même que celui des recommandations dans les \"Infos "
+"pratiques\" de la fiche d'une randonnées (Geotrek Rando)."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:86
+msgid ""
+"Si le champ \"Filtre\" est coché, l'étiquette sera proposée comme filtre "
+"dans Geotrek-Rando."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:87
+msgid ""
+"Les images (hors pictogramme) utilisées dans le contenu de l'étiquette "
+"doivent être des liens web."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:89
+msgid ""
+"Rendu dans **Geotrek Rando** (onglet :guilabel:`Infos pratiques` d'une "
+"fiche randonnée) :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:91
+#: ../../user-manual/configuration-ttw.rst:95
+msgid "Rendu d'une étiquette dans Geotrek-rando"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:97
+msgid "Rendu dans **Geotrek Rando** (partie :guilabel:`Filtres`) :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:99
+#: ../../user-manual/configuration-ttw.rst:103
+msgid "Rendu des étiquettes dans les filtres de Geotrek-rando"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:107
+msgid "Tourisme"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:109
+#: ../../user-manual/configuration-ttw.rst:113
+msgid ""
+"Ensemble des champs paramétrables des modules Contenus et Évènements "
+"touristiques"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:116
+msgid "Exemple : catégorie de contenu touristique et ses sous-types"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:119
+#: ../../user-manual/configuration-ttw.rst:123
+msgid "Création de catégorie de contenu touristique et ses sous-types"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:125
+msgid ""
+"Pour chaque catégorie il est possible de définir deux listes de sous-"
+"types et leur nom."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:128
+msgid "Édition des sous-types de la catégorie “Hébergements”"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:130
+#: ../../user-manual/configuration-ttw.rst:134
+msgid "Sous-types de la catégorie “Hébergements”"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:139
+msgid "Gestion des utilisateurs"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:141
+msgid ""
+"Geotrek-admin s'appuie sur le `système d'authentification et de "
+"permissions Django "
+"<https://docs.djangoproject.com/en/4.2/topics/auth/default>`_."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:143
+msgid ""
+"Les utilisateurs appartiennent à des groupes et les permissions peuvent "
+"être attribuées au niveau de l'utilisateur ou du groupe."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:145
+msgid ""
+"Avec les groupes, vous pouvez créer et configurer un profil utilisateur, "
+"chacun possédant des permissions spécifiques."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:147
+msgid ""
+"Toute la configuration des utilisateurs, groupes et permissions est "
+"disponible depuis le module de configuration, si vous n'avez pas activé "
+"*Authentification externe* (voir ci-dessous)."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:149
+#: ../../user-manual/configuration-ttw.rst:153
+msgid "Interface de configuration des utilisateurs/groupes"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:156
+msgid "Utilisateurs et permissions"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:158
+msgid ""
+"L’application permet d’attribuer des droits à autant de groupes que "
+"souhaité. Nous recommandons cependant de privilégier la diffusion la plus"
+" large par défaut et de ne restreindre l’application que pour des raisons"
+" impératives."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:161
+msgid ""
+"L’application permet de définir des rôles disposant chacun de certains "
+"droits."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:162
+msgid "visiteurs anonymes (par exemple : tous les internautes)"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:163
+msgid "partenaires, élus"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:164
+msgid "agents techniques"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:165
+msgid "prestataires externes"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:166
+msgid "administrateurs de l’application"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:167
+msgid "etc."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:169
+msgid ""
+"À chaque rôle est associé un ensemble de permissions (consulter telle "
+"donnée, la modifier…) qui peuvent être attribuées à un document ou à une "
+"catégorie. Les utilisateurs sont ensuite associés à un ou plusieurs "
+"rôles."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:172
+msgid "Un utilisateur donné peut avoir trois niveaux permissions basiques :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:174
+msgid ""
+"**Actif** : si cette case est cochée, l’utilisateur peut se connecter à "
+"Geotrek-admin"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:177
+msgid ""
+"Il est préférable de désactiver un compte lorsqu’un utilisateur "
+"n’intervient plus sur Geotrek, plutôt que de le supprimer. En effet "
+"supprimer le compte supprimera également par exemple toutes les entrées "
+"dans l’historique de Geotrek associées à ce compte."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:179
+msgid ""
+"**Équipe** : si la case est cochée l’utilisateur pourra accéder au module"
+" de configuration de Geotrek-admin"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:181
+msgid ""
+"**Super-utilisateur** : permet d’octroyer toutes les permissions à un "
+"utilisateur sans avoir à les définir explicitement"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:183
+msgid ""
+"Un utilisateur peut avoir des permissions spécifiques, définies par type "
+"d’objet."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:185
+msgid ""
+"Pour cela, sélectionner les permissions dans l’écran de gauche pour les "
+"positionner dans l’écran de droite. Par exemple sur la capture ci-dessous"
+" l’utilisateur possède les permissions pour consulter uniquement et "
+"exporter les informations relatives aux signalétiques sans possibilité "
+"d’accéder aux autres modules ou de modifier les contenus."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:187
+#: ../../user-manual/configuration-ttw.rst:191
+msgid "Choix des permissions de l'utilisateur"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:193
+msgid "Il existe quatre principaux types de permissions :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:195
+msgid "add"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:196
+msgid "change"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:197
+msgid "delete"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:198
+msgid "read / view"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:200
+msgid ""
+"Chaque type de donnée est au moins associée à ces quatres actions de base"
+" (*ajout*, *modification*, *suppression*, *lecture*). Un type de donnée "
+"correspond à un table dans la base de données (*signage_signage*, "
+"*trekking_trek*…) »"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:203
+msgid "Voici la signification des actions autorisées dans les permissions :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:205
+msgid ""
+"*view* : voir les données dans le module de configuration (pour les "
+"données dans « category », comme les types de POI, ou les niveaux de "
+"difficulté)"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:206
+msgid "*read* : voir les données dans Geotrek-admin (détail et liste)"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:207
+msgid "*add* : ajouter une nouvelle donnée (itinéraire, thème…)"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:208
+msgid "*change* : modifier une donnée"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:209
+msgid "*change_geom* : modifier la géométrie d’une donnée"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:210
+msgid "*publish* : publier la donnée"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:211
+msgid ""
+"*export* : exporter les données via l’interface de Geotrek-admin (CSV, "
+"JSON…)"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:214
+msgid "Groupes"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:216
+msgid ""
+"Les groupes facilitent la gestion des utilisateurs et des "
+"permissions.Chaque groupe est configuré avec un certain nombre de "
+"permissions."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:218
+msgid ""
+"Dans la vue de modification d’un utilisateur, il est possible d’associer "
+"un utilisateur à un ou plusieurs groupes pour bénéficier des permissions "
+"correspondantes."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:220
+msgid "Par défaut, six groupes sont disponibles :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:222
+msgid "Readers (\"Lecteurs\")"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:223
+msgid "Path managers (\"Référents sentiers\")"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:224
+msgid "Trek managers (\"Référents communication\")"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:225
+msgid "Editors (\"Rédacteurs\")"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:226
+msgid "Geotrek-rando (\"Geotrek-rando\")"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:227
+msgid "Trek and management editors (\"Rédacteurs rando et gestion\")"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:229
+msgid ""
+"Lorsque l’application est installée, il est possible de modifier les "
+"permissions par défaut de ces groupes, d’en créer de nouveaux, etc."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:231
+msgid ""
+"Pour autoriser les utilisateurs à accéder à l’interface AdminSite, "
+"accordez-leur le statut équipe. L’interface AdminSite permet aux "
+"utilisateurs d’éditer les catégories comme *niveaux de difficulté*, "
+"*types de POI*, etc"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:233
+msgid ""
+"Il est possible de créer ou de supprimer des comptes administrateurs ou "
+"éditeurs. De même qu’il est possible d’ajouter, modifier ou supprimer des"
+" itinéraires, tout comme pour les contenus additionnels."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:236
+msgid ""
+"Les éditeurs et les administrateurs peuvent travailler en simultané sur "
+"des fiches balades, mais pas en même temps sur la même fiche, car il y "
+"aurait sinon un risque de perte d’informations lors de la validation / "
+"enregistrement des informations saisies."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:239
+msgid "Structures"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:241
+msgid ""
+"Chaque utilisateur est obligatoirement rattaché à une structure. Lors de "
+"l’installation, Geotrek crée une structure par défaut à laquelle les "
+"premiers utilisateurs seront rattachés. Il est possible d’ajouter de "
+"nouvelles structures, reflétant des partenaires territoriaux, "
+"entreprises, entités qui seront amenés à travailler à vos côtés sur "
+"Geotrek."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:243
+msgid ""
+"Les utilisateurs d’une structure ne peuvent travailler que sur les objets"
+" dans Geotrek liés à leur structure. Ils pourront consulter les objets "
+"des autres structures mais n’auront pas le droit de les modifier."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:245
+msgid ""
+"*Exemple : si on imagine un Geotrek déployé sur l’ensemble du territoire "
+"français, il pourrait y avoir des structures correspondant à chaque "
+"région. Chaque utilisateur serait rattaché à sa région. Il y aurait alors"
+" la garantie qu’un utilisateur de Bretagne ne puisse pas modifier les "
+"objets saisis par un utilisateur de Normandie.*"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:247
+msgid ""
+"Cette notion de structures permet de segmenter les périmètres d’action "
+"des utilisateurs et de permettre à différentes entités de travailler sur "
+"un même Geotrek-Admin, tout en garantissant une cohérence des données."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:251
+msgid ""
+"Un utilisateur d’une structure pourra tout de même tracer des itinéraires"
+" sur des tronçons tracés par une autre structure"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:255
+msgid ""
+"Pour qu’un utilisateur puisse modifier les objets d’une autre structure "
+"il y a deux possibilités :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:257
+msgid "celui-ci est super-utilisateur"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:259
+msgid ""
+"celui-ci possède la permission « Can bypass structure », qui permet "
+"d’outrepasser la restriction des structures."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:261
+msgid ""
+"Pour définir la structure par défaut, se référer à la section "
+":ref:`Default structure <default-structure>`."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:264
+msgid "Gestion multilingue"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:266
+msgid ""
+"La configuration des langues de la plate-forme est réalisée au travers du"
+" fichier de configuration principal. Lors de sa mise à jour, la commande "
+"de déploiement créé les champs nécessaires qui manquent dans la base de "
+"données (exemple : nom_fr, nom_es, nom_it…). Ceci est à distinguer des "
+"langues dans lesquelles sont traduits les éléments de l'interface de "
+"l'application (Français, Anglais, Italien, Espagnol)."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:270
+msgid ""
+"Il est par exemple possible d'intégrer des textes dans différentes "
+"langues (à minima français, anglais) dans Geotrek-Admin."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:272
+#: ../../user-manual/configuration-ttw.rst:276
+msgid "Gestion multilingue dans la fiche détail"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:279
+#: ../../user-manual/configuration-ttw.rst:289
+#: ../../user-manual/configuration-ttw.rst:293
+msgid "Configuration des portails"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:281
+msgid ""
+"Geotrek permet de configurer un ou plusieurs portails. Ce terme est "
+"utilisé pour référencer un site grand public sur lequel seront visibles "
+"les objets publiés de Geotrek."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:283
+msgid ""
+"Ainsi, il est possible d'avoir plusieurs Geotrek-Rando branchés sur un "
+"seul Geotrek-Admin. Grâce à leur distinction sous forme de portail, il "
+"sera alors aisé de choisir sur quel Geotrek-Rando on souhaite faire "
+"apparaitre une information."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:285
+msgid ""
+"Avec `Geotrek-widget <https://github.com/GeotrekCE/geotrek-rando-"
+"widget>`_ il est également possible d'utiliser cette fonctionnalité pour "
+"distinguer les contenus à afficher dans un widget ou dans un autre `(voir"
+" cet article) <https://makina-corpus.com/logiciel-libre/developpement-"
+"geotrek-widget-finance-parc-naturel-regional-haut-jura>`_."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:287
+msgid ""
+"Pour configurer un ou pluseurs portails, il faut se rendre dans le module"
+" de configuration sur la section \"Portails cibles\"."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:295
+msgid ""
+"Il est possible de choisir de publier sur un ou plusieurs portails les "
+"objets suivants : itinéraires, contenus et évènements touristiques, pages"
+" statiques. Pour cela il suffit de sélectionner la valeur souhaitée dans "
+"le champ \"portail\" à l'édition de l'objet."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:298
+msgid "Intégration des données SIT"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:300
+msgid ""
+"Des développements ont déjà été réalisés dans Geotrek pour intégrer des "
+"données de divers SIT (Système d’Informations Touristiques), notamment "
+"APIDAE, Tourinsoft, LEI, SITLOR... si les flux sont disponibles dans des "
+"formats ouverts."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:302
+msgid ""
+"Il convient ensuite de configurer chaque flux dans Geotrek-Admin afin que"
+" ceux-ci soient synchronisé avec la plateforme touristique."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:304
+msgid ""
+"La fonctionnalité consiste à absorber le flux XML, afin de le remettre à "
+"disposition sous une forme optimisée et épurée. Les données sont alors "
+"exposées sous la forme d’une web API, au format GeoJSON. L’obtention d’un"
+" flux de données GeoJSON (agnostique et standard) présente de nombreux "
+"avantages pour l’intégration dans les applications tierces. Ce format est"
+" compatible nativement avec Rando V3, mais également avec la plupart des "
+"bibliothèques de cartographie (web et natives mobile)."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:307
+msgid ""
+"Pour configurer l'import de SIT, référez vous à cette section "
+":ref:`Import from touristic data systems <import-from-touristic-data-"
+"systems>`."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:310
+msgid "Intégration des fonds de cartes"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:312
+msgid "Il est possible d'intégrer dans Geotrek différents fonds de carte comme :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:314
+msgid "`OpenStreetMap <https://www.openstreetmap.org/#map=6/46.449/2.210>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:315
+msgid "`OpenTopoMap  <https://opentopomap.org/#map=6.49.000/10.000>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:316
+msgid ""
+"`ou les données IGN  <https://geoservices.ign.fr/services-geoplateforme-"
+"diffusion>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:318
+msgid ""
+"Pour configurer l'ajout de fonds de plan, référez vous à cette section "
+":ref:`Map settings <map-settings>`."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:321
+msgid "Intégration de pictogrammes"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:323
+msgid "Les pictogrammes contribués dans Geotrek doivent être au format :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:325
+msgid ""
+"SVG (de préférence, cela permet de conserver la qualité en cas de "
+"redimensionnement) ou PNG,"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:326
+msgid ""
+"SVG pour les thèmes (afin de permettre un changement de couleur pour les "
+"thèmes sélectionnés),"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:328
+msgid "Il doivent :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:330
+msgid "Avoir un viewport carré afin de ne pas être déformés sur le portail,"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:331
+msgid ""
+"Ne pas déborder du cercle inscrit pour les pratiques et les catégories de"
+" contenus touristiques, en prévoyant une marge si nécessaire."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:333
+msgid "Avoir une dimension minimale de 56x56 pixels en ce qui concerne les PNG"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:335
+msgid ""
+"Si vous utilisez Inkscape, vous devez définir une viewBox. Voir `la "
+"documentation d'Inkscape "
+"<http://wiki.inkscape.org/wiki/index.php/Tricks_and_tips#Scaling_images_to_fit_in_webpages.2FHTML>`_."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:337
+msgid ""
+"Afin de s'intégrer au mieux dans le design standard, les couleurs "
+"suivantes sont recommandées :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:339
+msgid ""
+"Blanc sur fond transparent pour les pratiques et les catégories de "
+"contenus touristiques,"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:340
+msgid "Gris sur fond transparent pour les thèmes,"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:341
+msgid "Blanc sur fond orange pour les types de POI."
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:343
+msgid ""
+"Voici quelques ressources en ligne proposant des pictogrammes (sous "
+"licence libre) :"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:345
+msgid "`Pictogrammers <https://pictogrammers.com/library/mdi/>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:346
+msgid "`The Noun Project <https://thenounproject.com/>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:347
+msgid "`Map icons <http://map-icons.com/>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:348
+msgid "`Opensymbols <https://www.opensymbols.org/>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:349
+msgid "`SVG repo <https://www.svgrepo.com/>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:350
+msgid "`Entypo <http://www.entypo.com/>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:351
+msgid "`Icons Getbootstrap <https://icons.getbootstrap.com/>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:352
+msgid "`Icongr <https://icongr.am/>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:353
+msgid "`Cocomaterial <https://cocomaterial.com/>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:354
+msgid "`Icofont <https://icofont.com/>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:355
+msgid "`Fontello <https://fontello.com/>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:356
+msgid "`Iconmonstr <https://iconmonstr.com/>`_"
+msgstr ""
+
+#: ../../user-manual/configuration-ttw.rst:357
+msgid "`Fontawesome <https://fontawesome.com/icons>`_"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:3
+msgid "Edition d'un objet"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:6
+msgid "Les calculs géométriques sur les objets"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:9
+msgid "Informations 3D"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:11
+msgid ""
+"Toutes les géométries des tronçons sont *drapées* sur un modèle numérique"
+" de terrain, lors de leur création ou mise à jour."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:13
+msgid ""
+"Tous les objets linéaires reposant sur les tronçons récupèrent leurs "
+"informations 3D à partir des tronçons associés, au lieu d'utiliser le "
+"modèle numérique de terrain."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:16
+msgid "Calcul du dénivelé"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:18
+msgid ""
+"Nous calculons le `dénivelé positif cumulé "
+"<https://fr.wikipedia.org/wiki/D%C3%A9nivel%C3%A9_positif_cumul%C3%A9>`_."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:20
+msgid ""
+"Nous échantillonnons le DEM tous les 25m par défaut (voir paramètre "
+"``ALTIMETRIC_PROFILE_PRECISION``), et nous ajoutons un peu de lissage "
+"pour éviter le bruit."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:25
+msgid ""
+"`The smoothing explanation <https://github.com/GeotrekCE/Geotrek-"
+"admin/issues/840#issuecomment-30229813>`_"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:27
+msgid ""
+"`The piece of code to compute positive and negative accumulations "
+"<https://github.com/GeotrekCE/Geotrek-"
+"admin/blob/v0.27.2/geotrek/altimetry/sql/00_utilities.sql#L113-L132>`_"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:29
+msgid ""
+"`Draping lines with PostGIS <http://blog.mathieu-leplatre.info/drape-"
+"lines-on-a-dem-with-postgis.html>`_ (or `french version <http://makina-"
+"corpus.com/blog/metier/2013/draper-des-lignes-sur-un-mnt-avec-postgis>`_)"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:32
+msgid "Lien entre les POIs et les itinéraires"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:34
+msgid ""
+"Les POIs sont considérés comme des informations *éditoriales* et sont "
+"créés le long des randonnées."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:36
+msgid "Lorsqu'un POI est créé, il est rattaché à l'itinéraire le plus proche."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:38
+msgid ""
+"Un itinéraire repose sur un ou plusieurs tronçons, et certains POIs leur "
+"sont associés."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:42
+msgid ""
+"Il n'existe actuellement aucun moyen de contrôler manuellement "
+"l'association entre randonnées et les POIs."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:45
+msgid ""
+"Si le paramètre ``TREKKING_TOPOLOGY_ENABLED`` est défini sur ``False``, "
+"aucun tronçon n'est impliqué. Les POIs sont ainsi liés à des treks "
+"utilisant une intersection spatiale de base, avec une distance définie "
+"dans le paramètre ``TREK_POI_INTERSECTION_MARGIN`` (par défaut à 500 "
+"mètres)."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:52
+msgid "Segmentation dynamique"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:54
+msgid ""
+"Certains objets sont saisis et stockés relativement aux tronçons, en "
+"utilisant `la segmentation dynamique <https://makina-corpus.com/sig-"
+"webmapping/la-segmentation-dynamique>`_. Il s'agit des objets suivants : "
+"sentiers, statuts, aménagements, interventions, itinéraires et POI. Tous "
+"les autres objets sont indépendants et ont leur propre géométrie."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:56
+msgid ""
+"La **segmentation dynamique** permet de saisir et stocker des "
+"informations relatives aux tronçons. Elle s'accompagne d'un ensemble de "
+"déclencheurs calculant automatiquement les géométries résultantes à la "
+"création et lors de modifications sur le réseau de tronçons."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:58
+msgid ""
+"Cela permet de garantir une **cohérence géométrique et topologique entre "
+"les tronçons et les objets liés** (travaux, aménagements, statuts, "
+"itinéraires...), mais aussi d'associer tous les objets entre eux en "
+"vérifiant leur superposition sur le réseau."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:60
+msgid ""
+"C'est pourquoi, modifier un tronçon peut entrainer des modifications des "
+"objets qui lui sont rattachés (interventions, itinéraires, POIs...). "
+"Supprimer un tronçon, supprime les objets qui lui sont rattachés par "
+"segmentation dynamique."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:62
+msgid ""
+"Les éléments ponctuels et linéaires des différents modules sont stockés "
+"sous forme d'évènements (PKdebut, PKfin et décalage dans la table "
+"``geotrek.core_topology``) liés à un ou plusieurs tronçons "
+"(``geotrek.core_pathaggregation``)."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:64
+msgid ""
+"Un objet peut ainsi être associé à un ou plusieurs tronçons, "
+"partiellement ou entièrement."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:66
+msgid ""
+"Les objets ponctuels ne sont associés qu'à un seul tronçon, sauf dans le "
+"cas où ils sont positionnés à une intersection de tronçons."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:68
+msgid ""
+"Chaque évènement dispose néanmoins d'une géométrie calculée à partir de "
+"leur segmentation dynamique pour faciliter leur affichage dans Geotrek ou"
+" dans QGIS (voir la section :ref:`Visualiser les données dans Qgis "
+"<visualiser-les-donnees-dans-qgis>`). Il ne faut néanmoins pas modifier "
+"directement ces géométries, elles sont calculées automatiquement quand on"
+" modifie l'évènement d'un objet."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:72
+msgid ""
+"Des vues SQL sont disponibles pour accéder aux objets de manière plus "
+"lisible et simplifiée (``v_interventions`` par exemple)."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:75
+msgid "Snapping - Aimantage - Accrochage"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:77
+msgid ""
+"Quand vous créez un objet, il est possible de le snapper (aimanter) aux "
+"objets existants. C'est notamment utile pour bien raccorder les tronçons "
+"entre eux. Quand vous raccrochez un tronçon à un tronçon existant, ce "
+"dernier est coupé automatiquement à la nouvelle intersection."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:79
+msgid ""
+"Les fonctions d'aimantage ne sont pas disponibles lors de la création "
+"d'un nouvel objet (linéraire ou ponctuel). Il faut commencer par le créer"
+" puis le modifier pour disposer des fonctionnalités d'aimantage, activées"
+" automatiquement lorsque l'on se rapproche d'un objet existant. Par "
+"défaut la distance d'aimantage est de 30 pixels mais elle est modifiable "
+"en configuration avancée."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:82
+msgid "Informations altimétriques"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:84
+msgid ""
+"L'édition des objets s'effectue en 2D, et leur géométrie est “drapée” "
+"automatiquement en 3D sur un Modèle Numérique de Terrain (MNT) stocké "
+"dans la base de données au format raster."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:86
+msgid ""
+"Cette information est visible à travers le profil altimétrique pour les "
+"tronçons, les itinéraires et les autres objets linéaires."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:92
+msgid ""
+"Pour importer automatiquement un MNT, se référer à la section "
+":ref:`Import DEM (altimetry) <import-dem-altimetry>`"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:95
+msgid "Attributs aditionnels sur les objets"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:97
+msgid "`Tutoriel - ajout de photos <http://youtu.be/n96O09284ao>`_ :"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:99
+msgid "Ajout de photos"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:105
+msgid "Ajout de fichiers"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:108
+msgid "Fichiers liés"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:110
+msgid ""
+"L’ajout, la modification ou la suppression des documents, illustrations "
+"et photos s’effectuent depuis l’onglet « Fichiers liés » de la fiche "
+"détail."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:112
+msgid ""
+"Pour chaque fichier lié, l’auteur, le titre, la légende et sa catégorie "
+"sont saisis. Les fichiers liés peuvent être de tout type (photo, vidéo, "
+"dessin, PDF, tableur, fichier audio…). Pour les images, un aperçu est "
+"présenté."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:114
+msgid ""
+"Les vignettes et versions redimensionnées des photos sont créées "
+"automatiquement lors de l’ajout. Les contenus saisis sont publiés "
+"automatiquement."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:117
+msgid ""
+"Il est possible de limiter la gestion des fichiers liés à un groupe "
+"restreint d’utilisateurs."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:122
+msgid "Représentation verticale : les vues HD"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:124
+msgid ""
+"Pour aller au-delà de la localisation sur une carte dans la "
+"représentation des sites d'activité Outdoor, notamment celles verticales "
+"(escalade, via-ferrata, alpinisme...), nous avons la possibilité "
+"d'ajouter des photos très haute définition (gigapixel) sur les "
+"itinéraires, POI et sites outdoor, et d'annoter celles-ci pour les "
+"enrichir."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:126
+msgid ""
+"Le bloc \"Vues HD\" dans l'onglet \"Fichier liés\" permet d'associer une "
+"photo très haute définition (de plusieurs dizaines ou centaines de Mo) "
+"aux itinéraires, POI et sites Outdoor. Ces images sont tuilées "
+"automatiquement pour disposer de fichiers plus légers à charger dans un "
+"navigateur (en fonctionnant comme les fonds de carte tuilés)."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:130
+msgid ""
+"Une fois l'image ajoutée, un formulaire d'annotation permet d'ajouter des"
+" objets (points, lignes, polygones, cercles...) et des textes pour "
+"enrichir les photos."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:134
+msgid ""
+"Les annotations sont stockées en GeoJSON et peuvent donc être affichées "
+"par dessus la photo tuilée dans une librairie javascript de cartographie "
+"(comme Leaflet ou GeoJS) au niveau de Geotrek-rando-v3 ou autre. Pour "
+"cela, l'APIv2 expose pour chaque Vue HD l'adresse de récupération des "
+"tuiles ainsi que les annotations GeoJSON."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:136
+msgid ""
+"La vue HD est également associée à une localisation correspondant à "
+"l'emplacement de ce que l'on voit sur l'image."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:142
+msgid ""
+"Les vues HD ne sont disponibles que pour les modules Itinéraires, POIs et"
+" Outdoor."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:146
+msgid ""
+"Se référer à :ref:`cette section <hd-views>` pour savoir comment activer "
+"les vues HD dans l'interface"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:150
+msgid "Photos accessibilité"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:152
+msgid ""
+"Cet onglet permet d'ajouter des photos afin d'illustrer les informations "
+"liées à l'accessibilité des randonnées."
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:157
+msgid "Historique"
+msgstr ""
+
+#: ../../user-manual/editing-objects.rst:159
+msgid ""
+"Tous les objets créés dans Geotrek-admin possèdent un historique donnant "
+"des renseignement sur la date de l'évènement, l'utilisateur à l'origine "
+"de l'évènement et l'action réalisée (modification, ajout de fichier, "
+"etc.)"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:3
+msgid "Interface, navigation et saisie"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:6
+msgid "Navigation et saisie"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:8
+msgid ""
+"Les résultats sont affichés sous forme de carte et liste, puis on accède "
+"aux détails des objets."
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:10
+msgid "`Présentation de l'interface <http://youtu.be/-iVe9cwBZ50>`_ :"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:12
+msgid "Présentation de l'interface"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:18
+msgid "Vue liste"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:20
 msgid "Tous les modules sont construits de la même façon :"
 msgstr ""
 
-#: ../../user-manual.rst:70
+#: ../../user-manual/interfaces.rst:22
 msgid "une liste paginée des objets du module"
 msgstr ""
 
-#: ../../user-manual.rst:71
-msgid "la possibilité de filtrer la liste ou de faire une recherche libre"
-msgstr ""
-
-#: ../../user-manual.rst:72
+#: ../../user-manual/interfaces.rst:23
 msgid ""
-"la possibilité d'exporter les résultats en CSV (pour EXCEL ou CALC), en "
-"SHAPEFILE (pour QGIS ou ArcGIS) et en GPX (pour l'importer dans un GPS)"
+"la possibilité de filtrer la liste selon des attributs ou de faire une "
+"recherche libre"
 msgstr ""
 
-#: ../../user-manual.rst:73
+#: ../../user-manual/interfaces.rst:24
+msgid "la possibilité de filtrer selon l'étendue de la carte"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:25
+msgid "la sélection coordonnée (liste ⇔ carte)"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:26
+msgid "la possibilité d'exporter les résultats au format CSV, SHAPEFILE et en GPX"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:27
 msgid ""
 "une carte dans laquelle il est possible de naviguer (déplacer, zoomer), "
 "d'afficher en plein écran, de mesurer une longueur, d'exporter une image "
-"de la carte, de réinitialiser l'étendue, de zommer sur une commune ou un "
-"secteur et de choisir les couches à afficher"
+"de la carte, de réinitialiser l'étendue, de zoomer sur une commune ou un "
+"secteur et de superposer des données des autres modules (contours "
+"communes / secteurs / physique / foncier / gestionnaires…)"
 msgstr ""
 
-#: ../../user-manual.rst:77
+#: ../../user-manual/interfaces.rst:28
+msgid "l'accès à la vue détail d'un objet au clic sur celui-ci"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:30 ../../user-manual/interfaces.rst:34
+msgid "Vue liste avec la carte"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:39
 msgid ""
 "Au survol d'un objet dans la liste, celui-ci est mis en surbrillance sur "
 "la carte."
 msgstr ""
 
-#: ../../user-manual.rst:79
-msgid ""
-"Au survol d'un objet sur la carte, celui-ci est mis en évidence dans la "
-"liste."
+#: ../../user-manual/interfaces.rst:40
+msgid "Il est possible d'ajouter de nouveaux objets depuis chaque module."
 msgstr ""
 
-#: ../../user-manual.rst:81
-msgid ""
-"La liste des résultats est filtrée en fonction de l'étendue de la carte "
-"affichée."
-msgstr ""
-
-#: ../../user-manual.rst:83
-msgid ""
-"C'est aussi depuis un module qu'il est possible d'ajouter de nouveaux "
-"objets."
-msgstr ""
-
-#: ../../user-manual.rst:85
+#: ../../user-manual/interfaces.rst:41
 msgid ""
 "Un clic sur un objet dans la liste ou la carte permet d'accéder à la "
 "fiche détaillée de celui-ci."
 msgstr ""
 
-#: ../../user-manual.rst:88
-msgid "Fiches détails"
+#: ../../user-manual/interfaces.rst:45
+msgid ""
+"La liste des résultats est filtrée en fonction de l'étendue de la carte "
+"affichée."
 msgstr ""
 
-#: ../../user-manual.rst:90
+#: ../../user-manual/interfaces.rst:48
+msgid "Vue détail"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:50
 msgid ""
 "A partir de chaque module, il est possible d'afficher la fiche détail "
 "d'un objet en cliquant sur celui-ci dans la liste ou la carte du module. "
@@ -207,154 +1870,159 @@ msgid ""
 "sont attachés et l'historique des modifications de l'objet."
 msgstr ""
 
-#: ../../user-manual.rst:92
+#: ../../user-manual/interfaces.rst:52
+msgid "Voici les possibilités de la fiche détail :"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:54
+msgid "le récapitulatif des attributs (saisis et calculés)"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:55
 msgid ""
-"Depuis la fiche détail d'un objet, il est aussi possible d'exporter "
-"celui-ci au format ODT, DOC ou PDF."
+"récupérer automatiquement des informations liées (communes, secteurs, "
+"POI…)"
 msgstr ""
 
-#: ../../user-manual.rst:94
+#: ../../user-manual/interfaces.rst:56
+msgid "ajouter des fichiers (redimensionnement automatique pour les photos)"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:57
+msgid "l'accès à la vue d’édition selon les droits de l’utilisateur connecté"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:58
+msgid "l'export GPX, KML, OpenDocument, Word, PDF"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:60 ../../user-manual/interfaces.rst:64
+msgid "Fiche détail d'un itinéraire"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:68
 msgid ""
-"Selon les droits dont dispose l'utilisateur connecté, il peut alors "
-"modifier l'objet."
+"Lorsque le statut de publication d'un objet est activé, celui-ci ainsi "
+"que tous ses attributs associés, sont mis en ligne."
 msgstr ""
 
-#: ../../user-manual.rst:97
-msgid "Edition d'un objet"
-msgstr ""
-
-#: ../../user-manual.rst:99
-msgid "**Segmentation dynamique** :"
-msgstr ""
-
-#: ../../user-manual.rst:101
+#: ../../user-manual/interfaces.rst:69
 msgid ""
-"Tous les objets sont saisis et stockés relativement aux tronçons, en "
-"utilisant la segmentation dynamique (https://makina-"
-"corpus.com/blog/metier/2014/la-segmentation-dynamique), sauf les "
-"évènements et contenus touristiques, les services et les signalements qui"
-" sont indépendants et ont leur propre géométrie."
+"À tout moment et ce sur chaque module, les informations peuvent être soit"
+" mises en ligne, soit désactivées, voire supprimées."
 msgstr ""
 
-#: ../../user-manual.rst:103
+#: ../../user-manual/interfaces.rst:70
 msgid ""
-"C'est pourquoi, modifier un tronçon peut entrainer des modifications des "
-"objets qui lui sont rattachés (signalétique, interventions, itinéraires, "
-"POIs...). Supprimer un tronçon, supprime les objets qui lui sont "
-"rattachés."
+"Ne sont mises en ligne que les informations choisies et disponibles. Les "
+"catégories non encore alimentées ne seront pas visibles pour le grand "
+"public. Ainsi si vous créez une nouvelle pratique \"Raquettes\", celle-ci"
+" ne sera pas mise ne ligne tant que vous n'aurez pas publié un premier "
+"itinéraire de raquettes."
 msgstr ""
 
-#: ../../user-manual.rst:105
+#: ../../user-manual/interfaces.rst:74
+msgid "Vue édition"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:76
+msgid "Saisie des champs multilingues"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:77
+msgid "Saisie des tracés"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:78
 msgid ""
-"Les éléments ponctuels et linéaires des différents modules sont stockés "
-"sous forme d'évènements (PKdebut, PKfin et décalage dans la table "
-"``geotrek.core_topology``) liés à un ou plusieurs tronçons "
-"(``geotrek.core_pathaggregation``)."
+"Possibilité de forcer des points de passage (détours, boucles, aller-"
+"retours)"
 msgstr ""
 
-#: ../../user-manual.rst:107
+#: ../../user-manual/interfaces.rst:79
+msgid "Édition WYSIWYG des champs texte"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:80
 msgid ""
-"Un objet peut ainsi être associé à un ou plusieurs tronçons, "
-"partiellement ou entièrement."
+"Ajout de couches locales en superposition à partir de fichiers GPX ou KML"
+" (aide à la saisie)"
 msgstr ""
 
-#: ../../user-manual.rst:109
+#: ../../user-manual/interfaces.rst:81
+msgid "Outils de mesure"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:83 ../../user-manual/interfaces.rst:87
+msgid "Fiche détail d'un itinéraire en édition"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:89
+msgid "`Tutoriel - création d'un itinéraire <http://youtu.be/d37WixqDs6c>`_ :"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:91
+msgid "Création d'un itinéraire"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:95
+msgid "`Tutoriel - création d'un POI <http://youtu.be/PRY8y7y8WxM>`_ :"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:97
+msgid "Création d'un POI"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:102
+msgid "Paramètres de configuration"
+msgstr ""
+
+#: ../../user-manual/interfaces.rst:104
 msgid ""
-"Les objets ponctuels ne sont associés qu'à un seul tronçon, sauf dans le "
-"cas où ils sont positionnés à une intersection de tronçons."
+"Toutes les listes de choix (thématiques, pratiques, parcours…) sont "
+"administrables depuis le module de configuration, selon les droits dont "
+"dispose l’utilisateur connecté."
 msgstr ""
 
-#: ../../user-manual.rst:111
-msgid ""
-"Chaque évènement dispose néanmoins d'une géométrie calculée à partir de "
-"leur segmentation dynamique pour faciliter leur affichage dans Geotrek ou"
-" dans QGIS. Il ne faut néanmoins pas modifier directement ces géométries,"
-" elles sont calculées automatiquement quand on modifie l'évènement d'un "
-"objet."
+#: ../../user-manual/interfaces.rst:106
+msgid "`Présentation de l'administration <http://youtu.be/P106bQCRZKk>`_ :"
 msgstr ""
 
-#: ../../user-manual.rst:113
-msgid ""
-"A noter aussi que des vues dans les différents schémas permettent "
-"d'accéder aux objets de manière plus lisibles et simplifiée "
-"(``gestion.m_v_interventions`` par exemple)."
+#: ../../user-manual/interfaces.rst:108
+msgid "Administration"
 msgstr ""
 
-#: ../../user-manual.rst:115
-msgid "**Snapping - Aimantage - Accrochage** :"
+#: ../../user-manual/interfaces.rst:113 ../../user-manual/interfaces.rst:117
+msgid "Interface complète du module de configuration"
 msgstr ""
 
-#: ../../user-manual.rst:117
-msgid ""
-"Quand vous créez un objet, il est possible de le snapper (aimanter) aux "
-"objets existants. C'est notamment utile pour bien raccorder les tronçons "
-"entre eux. Quand vous raccrochez un tronçon à un tronçon existant, ce "
-"dernier est coupé automatiquement à la nouvelle intersection."
+#: ../../user-manual/interfaces.rst:119 ../../user-manual/interfaces.rst:123
+msgid "Exemple d’édition des pratiques et de leur pictogramme"
 msgstr ""
 
-#: ../../user-manual.rst:119
-msgid ""
-"Les fonctions d'aimantage ne sont pas disponibles lors de la création "
-"d'un nouvel objet (linéraire ou ponctuel). Il faut commencer par le créer"
-" sur puis le modifier pour disposer des fonctionnalités d'aimantage, "
-"activé automatiquement lorsque l'on se rapproche d'un objet existant. Par"
-" défaut la distance d'imantage est de 30 pixels mais elle est modifiable "
-"en configuration avancée."
+#: ../../user-manual/interfaces.rst:126
+msgid "Voir la section :ref:`Paramétrage des modules <parametrages-des-modules>`"
 msgstr ""
 
-#: ../../user-manual.rst:121
-msgid "**Itinérance** :"
+#: ../../user-manual/management-modules.rst:3 ../../user-manual/overview.rst:37
+msgid "Modules de gestion"
 msgstr ""
 
-#: ../../user-manual.rst:123
-msgid ""
-"Il est possible de créer des randonnées itinérantes (sur plusieurs jours)"
-" et d'y associer des étapes comme sur cet exemple : http://www.grand-"
-"tour-ecrins.fr/a-pied/tour-de-la-berarde/."
-msgstr ""
-
-#: ../../user-manual.rst:125
-msgid ""
-"Pour cela il faut créer un itinéraire parent (séjour itinérant complet) "
-"puis y ajouter des itinéraires enfants (étapes) de manière ordonnée, dans"
-" le champs `Enfants` présent dans l'onglet `Avancé` du formulaire "
-"itinéraire du séjour complet."
-msgstr ""
-
-#: ../../user-manual.rst:127
-msgid ""
-"Le séjour complet ainsi que chaque sont donc chacunes des randonnées "
-"comme les autres. La seule différence est que les étapes (itinéraires "
-"enfants) sont rattachées à l'itinéraire parent."
-msgstr ""
-
-#: ../../user-manual.rst:129
-msgid ""
-"Si vous ne souhaitez pas que les étapes soient affichées dans la page de "
-"Recherche de Geotrek-rando, il ne faut pas les publier. Il suffit alors "
-"de publier l'itinéraire parent, pour que toutes les étapes qui y sont "
-"rattachées apparaissent uniquement dans sa fiche détail de Geotrek-rando."
-msgstr ""
-
-#: ../../user-manual.rst:132
-msgid "Gestion des sentiers"
-msgstr ""
-
-#: ../../user-manual.rst:134
+#: ../../user-manual/management-modules.rst:5
 msgid ""
 "Geotrek-admin comporte un certain nombre de modules de gestion des "
 "sentiers (tronçons, sentiers, statuts, aménagements, signalétique, "
 "interventions et chantiers)."
 msgstr ""
 
-#: ../../user-manual.rst:136
+#: ../../user-manual/management-modules.rst:7
 msgid ""
 "Les tronçons sont les éléments de base sur lesquels s'appuient l'ensemble"
-" des objets des autres modules, en utilisant la segmentation dynamique "
-"(https://makina-corpus.com/blog/metier/2014/la-segmentation-dynamique)."
+" des objets des autres modules, en utilisant la `segmentation dynamique "
+"<https://makina-corpus.com/blog/metier/2014/la-segmentation-dynamique>`_."
 msgstr ""
 
-#: ../../user-manual.rst:138
+#: ../../user-manual/management-modules.rst:9
 msgid ""
 "Les modules signalétique et aménagement ont initialement été conçus dans "
 "une logique d’inventaire avec des possibilités de description basiques et"
@@ -362,25 +2030,37 @@ msgid ""
 "plusieurs fichiers joints à chaque objet (photos, PDF, tableurs…)."
 msgstr ""
 
-#: ../../user-manual.rst:140
+#: ../../user-manual/management-modules.rst:11
 msgid ""
 "Les modules interventions et chantiers ont été conçus de façon à "
 "permettre à la fois un inventaire et un suivi des travaux (prévisionnel, "
 "administratif et financier)."
 msgstr ""
 
-#: ../../user-manual.rst:142
+#: ../../user-manual/management-modules.rst:13
 msgid ""
-"En termes de structuration, le choix initial a été de concevoir, sur le "
-"volet gestion, la gestion des valeurs des listes déroulantes structure "
-"par structure pour que chaque structure travaillant sur une même Geotrek-"
-"admin puisse avoir des typologies différentes (types de signalétique, "
-"d’aménagements, d’organismes...). Néanmoins depuis la version 2.20 de "
-"Geotrek-admin, il est possible de partager des typologies entre les "
-"différentes structures en ne renseignant pas ce champs."
+"Pour les territoires qui le souhaitent, sur le volet gestion, les valeurs"
+" des listes déroulantes peuvent être différenciées  par structure, afin "
+"que chaque structure travaillant sur une même instance Geotrek-admin "
+"puisse avoir des typologies différentes si nécéssaire (types de "
+"signalétique, d’aménagements, d’organismes...)."
 msgstr ""
 
-#: ../../user-manual.rst:144
+#: ../../user-manual/management-modules.rst:15
+msgid ""
+"Néanmoins, pour les territoires qui souhaitent mutualiser les mêmes "
+"valeurs dans les listes sans avoir à les renseigner pour chaque "
+"structure, il est possible de partager des typologies entre les "
+"différentes structures en ne renseignant tout simplement pas ce champ. Un"
+" compte utilisateur appartenant à une structure X n'aura accès qu'aux "
+"typologies associées à celle-ci, ainsi qu'aux typologies partagées. De "
+"même, ce compte utilisateur ne pourra pas modifier ou supprimer des "
+"objets appartenant à une autre structure (c'est-à-dire créés par un "
+"compte utilisateur appartenant à une autre structure), sauf à avoir des "
+"permissions particulières."
+msgstr ""
+
+#: ../../user-manual/management-modules.rst:18
 msgid ""
 "Lors de la saisie d'un objet sur la carte, il est possible d'afficher une"
 " couche SIG ou un relevé GPX sur la carte lors de la création d'un objet "
@@ -388,52 +2068,74 @@ msgid ""
 "(``Charger un fichier local (GPX, KML, GeoJSON)``)."
 msgstr ""
 
-#: ../../user-manual.rst:146
-msgid "**Les tronçons** :"
+#: ../../user-manual/management-modules.rst:23
+msgid "Les tronçons"
 msgstr ""
 
-#: ../../user-manual.rst:148
+#: ../../user-manual/management-modules.rst:25
+#: ../../user-manual/management-modules.rst:57
+#: ../../user-manual/management-modules.rst:75
+msgid "✨ Disponible uniquement en segmentation dynamique"
+msgstr ""
+
+#: ../../user-manual/management-modules.rst:29
 msgid ""
 "C'est le socle essentiel et central de Geotrek. Un tronçon est un objet "
-"linéaire, entre 2 intersections. Le mécanisme de ségmentation dynamique "
-"permet de ne pas devoir le recouper pour y rattacher des informations."
+"linéaire, entre deux intersections. Le mécanisme de segmentation "
+"dynamique permet de ne pas devoir le recouper pour y rattacher des "
+"informations."
 msgstr ""
 
-#: ../../user-manual.rst:150
+#: ../../user-manual/management-modules.rst:31
 msgid ""
-"Il peuvent être numérisés dans Geotrek-admin, mais il est conseillé des "
-"les importer, directement en SQL dans la base de données ou depuis QGIS "
-"(https://makina-corpus.com/blog/metier/2014/importer-une-couche-de-"
-"troncons-dans-geotrek)."
+"Les tronçons peuvent être soit numérisés dans Geotrek-admin, soit "
+"importés directement dans l'outil via :"
 msgstr ""
 
-#: ../../user-manual.rst:152
+#: ../../user-manual/management-modules.rst:33
+msgid ""
+"la commande décrite :ref:`ici <import-paths>`, après avoir préalablement "
+"nettoyé la géométrie des lignes à l'aide du plugin GRASS dans QGIS. Cette"
+" procédure est à privilégier car elle a l'avantage de faire des "
+"vérifications topologiques sur les données."
+msgstr ""
+
+#: ../../user-manual/management-modules.rst:34
+msgid ""
+"l'outil QGIS en suivant ce `tutoriel <https://makina-corpus.com/sig-"
+"webmapping/importer-une-couche-de-troncons-dans-geotrek>`_ pour charger "
+"des tronçons dans la base de données PostGIS Geotrek à partir d'un réseau"
+" de sentiers. Il faut s'assurer en amont que les lignes à insérer sont "
+"topologiquement propres."
+msgstr ""
+
+#: ../../user-manual/management-modules.rst:36
 msgid ""
 "Si ils sont numérisés directement dans Geotrek-admin, il est possible "
 "d'afficher sur la carte un fichier GPX ou GeoJSON pour faciliter leur "
 "localisation."
 msgstr ""
 
-#: ../../user-manual.rst:154
+#: ../../user-manual/management-modules.rst:38
 msgid ""
 "Quand un nouveau tronçon intersecte un tronçon existant, ce dernier est "
 "découpé automatiquement à la nouvelle intersection."
 msgstr ""
 
-#: ../../user-manual.rst:156
+#: ../../user-manual/management-modules.rst:40
 msgid ""
 "En plus de leur géométrie, quelques informations peuvent être associées à"
 " chaque tronçon (nom, départ, arrivée, confort, source, enjeu "
 "d'entretien, usage et réseaux)."
 msgstr ""
 
-#: ../../user-manual.rst:158
+#: ../../user-manual/management-modules.rst:42
 msgid ""
 "Comme pour les autres objets, les informations altimétriques sont "
 "calculées automatiquement grace au MNT présent dans la base de données."
 msgstr ""
 
-#: ../../user-manual.rst:160
+#: ../../user-manual/management-modules.rst:44
 msgid ""
 "Idem pour les intersections automatiques avec les zonages (communes, "
 "secteurs, zonages réglementaires) et les objets des autres modules qui "
@@ -441,37 +2143,37 @@ msgid ""
 "objet."
 msgstr ""
 
-#: ../../user-manual.rst:162
+#: ../../user-manual/management-modules.rst:46
 msgid ""
 "Comme pour tous les modules, il est possible d'exporter la liste des "
 "tronçons affichés (CSV, SHP ou GPX) ou bien la fiche complète d'un "
 "tronçon (ODT, DOC ou PDF)."
 msgstr ""
 
-#: ../../user-manual.rst:164
+#: ../../user-manual/management-modules.rst:48
 msgid ""
 "Comme pour tous les modules, il est aussi possible d'attacher des "
 "documents à chaque tronçon depuis sa fiche détail (images, PDF, tableurs,"
 " ZIP...)."
 msgstr ""
 
-#: ../../user-manual.rst:166
+#: ../../user-manual/management-modules.rst:50
 msgid ""
 "Enfin, toujours depuis la fiche détail d'un tronçon, il est possible d'en"
 " afficher l'historique des modifications."
 msgstr ""
 
-#: ../../user-manual.rst:168
-msgid "**Les sentiers** :"
+#: ../../user-manual/management-modules.rst:55
+msgid "Les sentiers"
 msgstr ""
 
-#: ../../user-manual.rst:170
+#: ../../user-manual/management-modules.rst:62
 msgid ""
 "Il s'agit d'un ensemble linéaire composés d'un ou plusieurs tronçons "
 "(entiers ou partiels) grâce à la segmentation dynamique."
 msgstr ""
 
-#: ../../user-manual.rst:172
+#: ../../user-manual/management-modules.rst:64
 msgid ""
 "Les sentiers permettent d'avoir une vision de gestionnaire sur un "
 "linéaire plus complet que les tronçons (qui sont découpés à chaque "
@@ -481,17 +2183,23 @@ msgid ""
 "directement depuis la fiche détail d'un sentier."
 msgstr ""
 
-#: ../../user-manual.rst:174
+#: ../../user-manual/management-modules.rst:66
+msgid ""
+"Ils permettent également de préciser une ou plusieurs certifications "
+"ainsi que leur statut."
+msgstr ""
+
+#: ../../user-manual/management-modules.rst:68
 msgid ""
 "A ne pas confondre avec le module Itinéraires qui permet de créer des "
 "randonnées publiées sur un portail Geotrek-rando."
 msgstr ""
 
-#: ../../user-manual.rst:176
-msgid "**Les statuts** :"
+#: ../../user-manual/management-modules.rst:73
+msgid "Les statuts"
 msgstr ""
 
-#: ../../user-manual.rst:178
+#: ../../user-manual/management-modules.rst:79
 msgid ""
 "Ils permettent de renseigner des informations sur le linéaire (type "
 "physique, statut foncier, organismes ayant la compétence sentiers, "
@@ -500,32 +2208,40 @@ msgid ""
 "localiser le départ et l'arrivée sur un ou plusieurs tronçons."
 msgstr ""
 
-#: ../../user-manual.rst:180
-msgid "**Les aménagements** :"
+#: ../../user-manual/management-modules.rst:84
+msgid "Les aménagements"
 msgstr ""
 
-#: ../../user-manual.rst:182
+#: ../../user-manual/management-modules.rst:86
+#: ../../user-manual/management-modules.rst:109
+#: ../../user-manual/management-modules.rst:128
+#: ../../user-manual/touristic-modules.rst:10
+#: ../../user-manual/touristic-modules.rst:403
+msgid "🗺️ Données stockées via segmentation dynamique lorsqu'elle est activée"
+msgstr ""
+
+#: ../../user-manual/management-modules.rst:90
 msgid ""
 "Ils permettent d'inventorier les aménagements sur les sentiers "
-"(passerelles, mains courantes, cunettes, soutenements, bancs, "
+"(passerelles, mains courantes, cunettes, soutènements, bancs, "
 "parkings...) en les localisant, les typant, les décrivant, renseignant "
 "leur état et leur année d'implantation."
 msgstr ""
 
-#: ../../user-manual.rst:184
+#: ../../user-manual/management-modules.rst:92
 msgid ""
 "Les types d'aménagement sont découpés en 2 catégories (Ouvrages et "
 "Equipements). Ce découpage n'est utilisé que pour filtrer les "
 "aménagements."
 msgstr ""
 
-#: ../../user-manual.rst:186
+#: ../../user-manual/management-modules.rst:94
 msgid ""
 "Il est possible de créer une intervention directement depuis la fiche "
 "détail d'un aménagement."
 msgstr ""
 
-#: ../../user-manual.rst:188
+#: ../../user-manual/management-modules.rst:96
 msgid ""
 "Comme pour les autres modules, il sont intersectés avec les autres "
 "modules pour en connaitre l'altimétrie, les zonages (communes, "
@@ -533,37 +2249,56 @@ msgid ""
 "interventions, les itinéraires..."
 msgstr ""
 
-#: ../../user-manual.rst:190
+#: ../../user-manual/management-modules.rst:98
 msgid ""
 "Il est aussi possible de les exporter, de leur attacher des fichiers "
 "(images, PDF, tableurs, ZIP...) et d'en consulter l'historique des "
 "modifications."
 msgstr ""
 
-#: ../../user-manual.rst:192
-msgid "**La signalétique** :"
-msgstr ""
-
-#: ../../user-manual.rst:194
+#: ../../user-manual/management-modules.rst:102
 msgid ""
-"Ils sont construits de la même manière que les aménagements et sont "
-"actuellement stockés dans la même table (``gestion.a_t_amenagement`` avec"
-" ``gestion.a_b_amenagement.type = S``). Ils ont donc les mêmes "
-"informations et fonctionnalités."
+"Pour importer automatiquement des éléments d'aménagements, se référer à "
+"la section :ref:`Import Infrastructure <import-infrastructure>`"
 msgstr ""
 
-#: ../../user-manual.rst:196
-msgid "**Les interventions** :"
+#: ../../user-manual/management-modules.rst:107
+msgid "La signalétique"
 msgstr ""
 
-#: ../../user-manual.rst:198
+#: ../../user-manual/management-modules.rst:113
+msgid ""
+"Centralise les informations sur la signalétique d'accueil, d'information "
+"et d'orientation des randonneurs. Permet de localiser, décrire "
+"l'implantation, et gérer les fichiers concernant la signalétique (BAT, "
+"maquettes, photos, etc.)."
+msgstr ""
+
+#: ../../user-manual/management-modules.rst:115
+msgid ""
+"Pour une signalétique, il est possible de définir chaque lame et chaque "
+"ligne de lame. L'image ci-dessous montre un exemple de correspondance "
+"entre une signalétique terrain et sa saisie dans Geotrek."
+msgstr ""
+
+#: ../../user-manual/management-modules.rst:121
+msgid ""
+"Pour importer automatiquement des éléments de signalétiques, se référer à"
+" la section :ref:`Import Signage <import-signage>`"
+msgstr ""
+
+#: ../../user-manual/management-modules.rst:126
+msgid "Les interventions"
+msgstr ""
+
+#: ../../user-manual/management-modules.rst:132
 msgid ""
 "Les interventions permettent d'inventorier et suivre les travaux réalisés"
 " sur les sentiers. Chaque intervention correspond à une action sur un "
 "tronçon, sentier, aménagement ou signalétique."
 msgstr ""
 
-#: ../../user-manual.rst:200
+#: ../../user-manual/management-modules.rst:134
 msgid ""
 "Les interventions peuvent être localisées directement sur le linéaire de "
 "tronçon en les positionnant grâce à la segmentation dynamique. Ou bien "
@@ -571,20 +2306,20 @@ msgid ""
 " en les créant depuis leur fiche détail."
 msgstr ""
 
-#: ../../user-manual.rst:202
+#: ../../user-manual/management-modules.rst:136
 msgid ""
 "Une intervention peut être souhaitée (demandée par un agent), planifiée "
 "(validée mais à réaliser) ou réalisée."
 msgstr ""
 
-#: ../../user-manual.rst:204
+#: ../../user-manual/management-modules.rst:138
 msgid ""
 "Un enjeu peut être renseigné pour chaque intervention. Il est calculé "
 "automatiquement si un enjeu a été renseigné au niveau du tronçon auquel "
 "l'intervention se raccroche."
 msgstr ""
 
-#: ../../user-manual.rst:206
+#: ../../user-manual/management-modules.rst:140
 msgid ""
 "Chaque intervention correspond à un type. On peut aussi renseigner si "
 "celle-ci est sous-traitée, les désordres qui en sont la cause, la largeur"
@@ -593,129 +2328,454 @@ msgid ""
 "intervention ponctuelle."
 msgstr ""
 
-#: ../../user-manual.rst:208
+#: ../../user-manual/management-modules.rst:142
 msgid ""
 "Plusieurs interventions peuvent être rattachées à un même chantier pour "
 "avoir une vision globale de plusieurs interventions correspondant à une "
 "opération commune."
 msgstr ""
 
-#: ../../user-manual.rst:210
+#: ../../user-manual/management-modules.rst:144
 msgid ""
-"L'onglet Avancé du formulaire permet de renseigner des informations "
+"L'onglet `Avancé` du formulaire permet de renseigner des informations "
 "financières sur chaque intervention (coût direct et indirect lié au "
 "nombre de jours/agents dissocié par fonction)."
 msgstr ""
 
-#: ../../user-manual.rst:212
-msgid "**Les chantiers** :"
+#: ../../user-manual/management-modules.rst:149
+msgid "Les chantiers"
 msgstr ""
 
-#: ../../user-manual.rst:214
+#: ../../user-manual/management-modules.rst:151
 msgid ""
 "Les chantiers permettent de grouper plusieurs interventions pour en avoir"
 " une vision globale et d'y renseigner globalement des informations "
-"administratives (Contraintes, financeurs, prestatires, cout global, "
+"administratives (contraintes, financeurs, prestataires, cout global, "
 "maitrise d'ouvrage...) et éventuellement d'y attacher des documents "
 "(cahier des charges, recette, plans...)."
 msgstr ""
 
-#: ../../user-manual.rst:216
+#: ../../user-manual/management-modules.rst:153
 msgid ""
 "Leur géométrie est la somme des géométries des interventions qui les "
 "composent."
 msgstr ""
 
-#: ../../user-manual.rst:220
-msgid "Valorisation des sentiers"
+#: ../../user-manual/overview.rst:5
+msgid "Présentation générale"
 msgstr ""
 
-#: ../../user-manual.rst:222
+#: ../../user-manual/overview.rst:8
+msgid "Architecture"
+msgstr ""
+
+#: ../../user-manual/overview.rst:10
+msgid "L’application est composée :"
+msgstr ""
+
+#: ../../user-manual/overview.rst:12
 msgid ""
-"TODO : Détailler le fonctionnement des modules de valorisation "
-"(itinéraires, POI, contenus et évenements touristiques, services, "
-"signalement et zones de sensibilité)."
+"d’une **page d'authentification**, demandant la saisie d’un login et d’un"
+" mot de passe"
 msgstr ""
 
-#: ../../user-manual.rst:224
-msgid "**Points des références**"
+#: ../../user-manual/overview.rst:13
+msgid "d’une **interface de consultation des objets de chaque module**"
 msgstr ""
 
-#: ../../user-manual.rst:226
+#: ../../user-manual/overview.rst:15
 msgid ""
-"Lorsque l'on localise un itinéraire, il est aussi possible de localiser "
-"le parking de la randonnée et de placer des points de référence "
-"numérotées sous forme de puces rouges sur la carte."
+"avec la liste de sélection déroulante des modules avec compteur des "
+"résultats"
 msgstr ""
 
-#: ../../user-manual.rst:228
+#: ../../user-manual/overview.rst:16
+msgid "un onglet latéral de sélection des modules"
+msgstr ""
+
+#: ../../user-manual/overview.rst:17
+msgid "un accès aux paramètres de configuration"
+msgstr ""
+
+#: ../../user-manual/overview.rst:18
+msgid "un bouton déconnexion de l’application"
+msgstr ""
+
+#: ../../user-manual/overview.rst:20
 msgid ""
-"Ces derniers servent à y faire référence dans le champs Description de "
-"l'itinéraire (Pas à pas) :"
+"de **paramètres d’administration** (gestion des droits, des listes "
+"déroulantes…)"
 msgstr ""
 
-#: ../../user-manual.rst:232
+#: ../../user-manual/overview.rst:23
+msgid "Page d'authentification"
+msgstr ""
+
+#: ../../user-manual/overview.rst:25 ../../user-manual/overview.rst:29
+msgid "Accès à Geotrek-admin via un login et un mot de passe"
+msgstr ""
+
+#: ../../user-manual/overview.rst:32
+msgid "Les modules de Geotrek"
+msgstr ""
+
+#: ../../user-manual/overview.rst:34
 msgid ""
-"Pour que des puces numérotées sous forme de pastilles rouges soient "
-"affichées dans la description, il suffit de les saisir en tant que Liste "
-"numérotées dans le champs Description :"
+"Geotrek-admin est composé de deux types de modules pour la gestion et la "
+"valorisation des contenus."
 msgstr ""
 
-#: ../../user-manual.rst:236
-msgid "**Ordre des catégories** :"
+#: ../../user-manual/overview.rst:43 ../../user-manual/overview.rst:100
+msgid "Icône"
 msgstr ""
 
-#: ../../user-manual.rst:238
+#: ../../user-manual/overview.rst:44 ../../user-manual/overview.rst:101
+msgid "Module"
+msgstr ""
+
+#: ../../user-manual/overview.rst:45 ../../user-manual/overview.rst:102
+msgid "Description"
+msgstr ""
+
+#: ../../user-manual/overview.rst:46
+msgid "Tronçon"
+msgstr ""
+
+#: ../../user-manual/overview.rst:48
+msgid ":ref:`Tronçon <les-troncons>` ✨"
+msgstr ""
+
+#: ../../user-manual/overview.rst
 msgid ""
-"Dans le portail Geotrek-rando, les différents types de contenus sont "
-"éclatés en catégories."
+"C'est l’équivalent du réseau routier : ils constituent le support des "
+"tracés"
 msgstr ""
 
-#: ../../user-manual.rst:240
+#: ../../user-manual/overview.rst
 msgid ""
-"Pour définir leur ordre d'affichage, il est possible de le définir dans "
-"la base de données pour certains contenus (ordre des pratiques et des "
-"catégories de contenus touristiques) en renseignant leur champs ``ordre``"
-" depuis l'Adminsite de Geotrek-admin."
+"des objets linéaires (itinéraires, statuts, interventions, "
+"aménagements...)."
 msgstr ""
 
-#: ../../user-manual.rst:242
+#: ../../user-manual/overview.rst
+msgid "Leur modification est relativement rare (fermeture d’un chemin,"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "éboulement...)."
+msgstr ""
+
+#: ../../user-manual/overview.rst:53
+msgid "Sentier"
+msgstr ""
+
+#: ../../user-manual/overview.rst:55
+msgid ":ref:`Sentier <les-sentiers>` ✨"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Les itinéraires, non pas de randonnée, mais de gestion, correspondent au"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "départ et à l'arrivée d'un sentier."
+msgstr ""
+
+#: ../../user-manual/overview.rst:58
+msgid "Statut"
+msgstr ""
+
+#: ../../user-manual/overview.rst:60
+msgid ":ref:`Statut <les-statuts>` ✨"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Gestion des organismes ayant la compétence sentiers,"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "gestionnaires des travaux et de la signalétique."
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Type physique (route, piste, sente, etc.)"
+msgstr ""
+
+#: ../../user-manual/overview.rst:64
+msgid "Aménagement"
+msgstr ""
+
+#: ../../user-manual/overview.rst:66
+msgid ":ref:`Aménagement <les-amenagements>` 🗺️"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Décrit et localise les ouvrages, le mobilier, les équipements."
+msgstr ""
+
+#: ../../user-manual/overview.rst:68
+msgid "Signalétique"
+msgstr ""
+
+#: ../../user-manual/overview.rst:70
+msgid ":ref:`Signalétique <la-signaletique>` 🗺️"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Reprend l'ensemble de la signalétique d'accueil, d'information et"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "d'orientation à destination des randonneurs."
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Gestion des fichiers associés comme les BAT, les maquettes..."
+msgstr ""
+
+#: ../../user-manual/overview.rst:74
+msgid "Intervention"
+msgstr "Intervention"
+
+#: ../../user-manual/overview.rst:76
+msgid ":ref:`Intervention <les-interventions>` 🗺️"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Répertorie les travaux liés à l'entretien courant des ouvrages,"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "l'entretien sur les sentiers, la mise en place et l'entretien"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "de la signalétique, etc..."
+msgstr ""
+
+#: ../../user-manual/overview.rst:80
+msgid "Chantier"
+msgstr ""
+
+#: ../../user-manual/overview.rst:82
+msgid ":ref:`Chantier <les-chantiers>`"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Correspond à des ensembles d'interventions. Cela permet d'avoir une"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "approche globale de chantiers significatifs et des informations"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "administratives associées."
+msgstr ""
+
+#: ../../user-manual/overview.rst:87 ../../user-manual/overview.rst:157
+msgid "Légende"
+msgstr ""
+
+#: ../../user-manual/overview.rst:89 ../../user-manual/overview.rst:159
+msgid "✨ : Disponible uniquement en segmentation dynamique"
+msgstr ""
+
+#: ../../user-manual/overview.rst:91 ../../user-manual/overview.rst:161
+msgid "🗺️ : Calcul reposant sur la segmentation dynamique lorsqu'elle est activée"
+msgstr ""
+
+#: ../../user-manual/overview.rst:94 ../../user-manual/touristic-modules.rst:3
+msgid "Modules de valorisation"
+msgstr ""
+
+#: ../../user-manual/overview.rst:104
+msgid ":ref:`Itinéraire <itineraires>` 🗺️"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Randonnées présentées au grand public : l’itinéraire est"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "défini selon la géométrie des tronçons empruntés. L’ajout,"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "la modification sont fréquents. La dé-publication est fortement"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "déconseillée pour le référencement et les passerelles"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "avec d'autres outils."
+msgstr ""
+
+#: ../../user-manual/overview.rst:111
+msgid ":ref:`Points d'intérêts (POI) <points-d-interets-poi>` 🗺️"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Ponctuels à découvrir associés aux randonnées : en fonction"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "de leur  emplacement, ils sont associés automatiquement aux"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "randonnées. Leur catégorie détermine leur pictogramme (faune,"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "flore, patrimoine, équipements...)."
+msgstr ""
+
+#: ../../user-manual/overview.rst:117
+msgid ":ref:`Services <services>`"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Informations pratiques comme les points d'eau, passages"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "délicats... selon la typologie souhaitée. Ils n'ont pas de"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "description ni de nom, ni de photo et sont uniquement affichés"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "sur la carte de l'itinéraire sous forme de pictogramme."
+msgstr ""
+
+#: ../../user-manual/overview.rst:123
+msgid ":ref:`Contenus touristiques <contenus-touristiques>`"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Correspond aux services touristiques pouvant être importés"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "depuis des Systèmes d'Informations Touristiques (SIT),"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "qui permettent d'alimenter automatiquement la base de"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "données Geotrek. Celles-ci sont regroupées dans des"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "catégories de type : hébergements, musées, restaurants,"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "produits du terroir..."
+msgstr ""
+
+#: ../../user-manual/overview.rst:131
+msgid ":ref:`Évènements touristiques <evenements-touristiques>`"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Correspond aux animations pouvant être importées depuis"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "des Systèmes d'Informations Touristiques (SIT), qui permettent"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "d'alimenter automatiquement la base de données Geotrek."
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Celles-ci sont regroupées dans des catégories de type :"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "conférences, expositions, sorties..."
+msgstr ""
+
+#: ../../user-manual/overview.rst:138
+msgid ":ref:`Signalements <signalements>`"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Contient les problèmes remontés par les internautes, par"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "exemple via le formulaire dédié sur Geotrek-rando"
+msgstr ""
+
+#: ../../user-manual/overview.rst:142
+msgid ":ref:`Zones sensibles <zones-sensibles>`"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Module non activé par défaut permettant de saisir et de gérer"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "des zones de sensibilité de la faune sauvage pour les afficher"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "sur Geotrek-rando ou les diffuser avec l'API de Geotrek-admin)."
+msgstr ""
+
+#: ../../user-manual/overview.rst:147
+msgid ":ref:`Sites outdoor <pleinenature>`"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Permet de définir des sites d'activités de pleine nature"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "(sites d'escalade, rivières, aires de vol libre)"
+msgstr ""
+
+#: ../../user-manual/overview.rst:151
+msgid ":ref:`Parcours outdoor <pleinenature>`"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "Couplé au module « site outdoor», permet de les détailler en"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "renseignant des activités de pleine nature diverses (kayak,"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "rafting, parapente, course d'orientation, voie d'escalade,"
+msgstr ""
+
+#: ../../user-manual/overview.rst
+msgid "parcours d'eau vive…etc.)"
+msgstr ""
+
+#: ../../user-manual/overview.rst:164
 msgid ""
-"Pour l'ordre d'affichage des catégorie Randonnées, Itinérance et "
-"Evènements touristiques, il est possible de modifier les valeurs par "
-"défaut définies dans le fichier ``geotrek/settings/base.py`` en "
-"surcouchant les paramètres correspondant dans le fichier de configuration"
-" avancée ``geotrek/settings/custom.py`` :"
+"Chaque module est accessible depuis le bandeau vertical situé à gauche de"
+" l'écran."
 msgstr ""
 
-#: ../../user-manual.rst:244
-msgid "``TREK_CATEGORY_ORDER = 1``"
+#: ../../user-manual/static-pages.rst:3
+msgid "Pages statiques & menus"
 msgstr ""
 
-#: ../../user-manual.rst:245
-msgid "``ITINERANCY_CATEGORY_ORDER = 2``"
-msgstr ""
-
-#: ../../user-manual.rst:246
-msgid "``TOURISTIC_EVENT_CATEGORY_ORDER = 99``"
-msgstr ""
-
-#: ../../user-manual.rst:248
-msgid ""
-"Il est aussi possible d'éclater les randonnées pour que chaque pratique "
-"soit une catégorie en surcouchant le paramètre "
-"``SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False``, d'éclater les types "
-"d'accessibilité en catégories avec le paramètre "
-"``SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False`` et de séparer les "
-"randonnées itinérantes dans une catégorie avec le paramètre "
-"``SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False``."
-msgstr ""
-
-#: ../../user-manual.rst:251
-msgid "Pages statiques"
-msgstr ""
-
-#: ../../user-manual.rst:253
+#: ../../user-manual/static-pages.rst:5
 msgid ""
 "Les pages statiques sont les pages d'information et de contextualisation "
 "de votre portail web Geotrek-rando. Comme pourraient l'être les premières"
@@ -723,385 +2783,1819 @@ msgid ""
 "votre application Geotrek-mobile."
 msgstr ""
 
-#: ../../user-manual.rst:256
+#: ../../user-manual/static-pages.rst:9
 msgid ""
-"*Exemple de page statique (http://www.grand-tour-ecrins.fr/informations"
-"/le-grand-tour-des-ecrins/)*"
+"`Exemple de page statique <https://www.grand-tour-ecrins.fr/information/1"
+"-Le-Grand-Tour-des-Ecrins>`_"
 msgstr ""
 
-#: ../../user-manual.rst:258
+#: ../../user-manual/static-pages.rst:11
 msgid ""
-"Elles permettent de fournir à l'internaute et futur randonneur des "
-"informations génériques : présentation de votre structure, votre projet "
-"de randonnée, recommandations, informations pratiques, etc."
+"Les pages statiques permettent de fournir à l’internaute et futur "
+"randonneur des informations génériques : présentation de votre "
+"territoire, structures, partenaires, recommandations, informations "
+"pratiques, etc."
 msgstr ""
 
-#: ../../user-manual.rst:260
+#: ../../user-manual/static-pages.rst:13
 msgid ""
-"Elles sont gérées depuis l'administe de Geotrek-admin et sont ensuite "
-"publiées sur Geotrek-rando à chaque synchronisation du contenu."
+"Elles sont gérées depuis le site d'administration de Geotrek-admin et "
+"sont ensuite publiées sur Geotrek-rando via l'API."
 msgstr ""
 
-#: ../../user-manual.rst:264
-msgid "**Créer une page statique**"
-msgstr ""
-
-#: ../../user-manual.rst:266
+#: ../../user-manual/static-pages.rst:17
 msgid ""
-"Depuis l'Adminsite de Geotrek, sélectionnez \"Pages statiques\" dans la "
-"rubrique \"Flatpages\"."
+"Du point de vue d'un portail de valorisation comme Geotrek-rando on parle"
+" des pages statiques par opposition aux pages « dynamiques » qui "
+"correspondent aux objets saisis dans les différents modules de Geotrek-"
+"admin (itinéraires, POIs, contenus et événements touristiques, sites et "
+"parcours Outdoor...). Ces derniers sont accessibles depuis la page de "
+"recherche avec ses filtres et la carte, ainsi qu'avec leurs pages de "
+"détails. Ces pages ne sont pas conçues manuellement mais sont un "
+"assemblage dynamique de multiples sources de données effectué par le "
+"logiciel Geotrek."
 msgstr ""
 
-#: ../../user-manual.rst:270
+#: ../../user-manual/static-pages.rst:19
 msgid ""
-"Vous accédez alors à la liste des pages statiques. Cliquer sur \"Ajouter "
-"Page statique\" en haut à droite de l'écran pour créer une première page."
+"Pour rendre les pages statiques accessibles aux visiteurs, Geotrek-admin "
+"permet de gérer les menus dans le bandeau du portail Geotrek-rando. Les "
+"éléments du premier niveau sont toujours apparents (s'il y a assez "
+"d'espace d'affichage, ou dans un menu « Burger » sinon). Et il est "
+"possible de définir des éléments de menu dans un 2ème niveau, accessibles"
+" en déroulant les menus."
 msgstr ""
 
-#: ../../user-manual.rst:273
-msgid "**Construire une page statique**"
+#: ../../user-manual/static-pages.rst:23
+msgid "Exemple de menus déroulants définis dans Geotrek-admin"
 msgstr ""
 
-#: ../../user-manual.rst:275
+#: ../../user-manual/static-pages.rst:25
 msgid ""
-"Sélectionnez la langue du contenu que vous souhaitez saisir : en / fr / "
-"it..."
+"La section correspondante et le type d'entités s'appelle \"Élément "
+"Menu\", dans cette documentation on pourra parler de menu pour signifier "
+"les éléments de menu."
 msgstr ""
 
-#: ../../user-manual.rst:277
-msgid "Saisissez :"
-msgstr ""
-
-#: ../../user-manual.rst:279
-msgid "un titre (sans guillemets, parenthèses, etc.)"
-msgstr ""
-
-#: ../../user-manual.rst:280
+#: ../../user-manual/static-pages.rst:27
 msgid ""
-"un ordre optionnel (pour définir l'ordre d'apparition dans le menu de "
-"votre Geotrek-rando)"
+"Les exemples de présentation visuelle des menus et des pages statiques "
+"décrivent la manière dont Geotrek-rando peut exploiter ces données et "
+"paramètrages. La présentation pourrait être différente si le portail "
+"n'est pas propulsé par Geotrek-rando."
 msgstr ""
 
-#: ../../user-manual.rst:281
-msgid "cochez « publié » lorsque vous souhaiterez mettre en ligne votre page"
+#: ../../user-manual/static-pages.rst:30
+msgid "Créer une page statique"
 msgstr ""
 
-#: ../../user-manual.rst:282
+#: ../../user-manual/static-pages.rst:34
 msgid ""
-"définissez la « source » (comprendre ici la destination d'affichage et "
-"donc votre Geotrek-rando)"
+"Le formulaire de création/modification d'une page statique contient les "
+"champs suivants :"
 msgstr ""
 
-#: ../../user-manual.rst:283
+#: ../../user-manual/static-pages.rst:36
+msgid "**Titre \\***"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:37
+msgid "Publiée"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:38
+msgid "Portails"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:39
+msgid "Sources"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:40
+msgid "Image de couverture"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:41
+msgid "Auteur image couverture"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:42
+msgid "Contenu"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:43
+msgid "Position"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:44
+msgid "Relative à"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:46
+msgid "Seul le champ \"Titre\" est obligatoire pour créer une page statique."
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:48
 msgid ""
-"sélectionnez une cible (Geotrek-rando et/ou Geotrek-mobile ou cachée pour"
-" créer une page qui ne sera pas listée dans le menu)."
+"Les champs \"Titre\", \"Publiée\" et \"Contenu\" peuvent recevoir une "
+"valeur différente pour chaque langue configurée."
 msgstr ""
 
-#: ../../user-manual.rst:285
+#: ../../user-manual/static-pages.rst:50 ../../user-manual/static-pages.rst:161
+msgid "*Titre*"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:52
 msgid ""
-"Attention, à chaque fois que cela vous est demandé, veillez à "
-"sélectionner la langue de votre contenu."
+"Il s'agit du titre de votre page qui sera visible et mis en avant sur la "
+"page elle-même. Le titre sert également à générer l'adresse web de la "
+"page."
 msgstr ""
 
-#: ../../user-manual.rst:289
+#: ../../user-manual/static-pages.rst:54
+msgid "*Publiée*"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:56
 msgid ""
-"L'interface permet de construire sa page en responsive design, "
-"c'est-à-dire qu'il est possible de disposer les blocs de contenu pour "
-"s'adaptera aux différentes tailles d'écrans des utilisateurs."
+"Une page n'est visible sur le portail de valorisation que si elle a été "
+"publiée dans l'admin. On peut publier une page uniquement pour certaines "
+"langues."
 msgstr ""
 
-#: ../../user-manual.rst:293
-#, python-format
+#: ../../user-manual/static-pages.rst:58 ../../user-manual/static-pages.rst:163
+msgid "*Portails*"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:60
 msgid ""
-"Choisissez le gabarit sur lequel vous souhaitez construire votre page : "
-"12 / 6-6 / 4-4-4 / etc. Ce sont des formats prédéfinis d'assemblage de "
-"blocs basés sur 12 colonnes qui occupent 100% de la largeur de l'écran "
-"(Bootstrap)."
+"Ce champ ne concerne que les pages qui ne sont pas ciblées par un menu et"
+" les Geotrek-rando qui sont filtrés par portail. Permet de rendre la page"
+" visible sur certains portails pour y faire référence en-dehors des menus"
+" de navigation (dans le bas de page, dans le contenu d'une autre page, "
+"etc). Si une page est associée à un élément de menu, alors ce sera le (ou"
+" les) portail(s) associé(s) à cet élément de menu qui définira sur quel "
+"portail elle sera affichée et accessible."
 msgstr ""
 
-#: ../../user-manual.rst:297
+#: ../../user-manual/static-pages.rst:62
+msgid "*Sources*"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:64
 msgid ""
-"Vous pouvez aussi utiliser ou vous inspirer des 2 gabarits d'exemple "
-"(Gabarit 1 et Gabarit 2)."
+"Permet d'attribuer une ou plusieurs sources au contenu de la page. Les "
+"sources peuvent être créées sur le site d'administration dans la section "
+"COMMUN ou directement avec le bouton + à côté de ce champ."
 msgstr ""
 
-#: ../../user-manual.rst:301
+#: ../../user-manual/static-pages.rst:66
+msgid "*Cover image*"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:68
 msgid ""
-"Vous pouvez ajouter autant de gabarits que vous le souhaitez sur une "
-"seule page."
+"Permet de saisir une image grand format qui sera affichée en mode bandeau"
+" en haut de la page."
 msgstr ""
 
-#: ../../user-manual.rst:303
-#, python-format
+#: ../../user-manual/static-pages.rst:70
+msgid "*Contenu*"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:72
 msgid ""
-"Une fois que vous avez ajusté vos blocs de contenu pour un affiche sur "
-"ordinateur (Desktop), vous devez basculer sur l'affichage sur mobile "
-"(Phone) pour l'adapter à des plus petits écrans (en cliquant sur les + et"
-" - bleus de chaque bloc). Privilégiez alors des blocs sur une colonne "
-"faisant 100% de large."
+"Le contenu de la page, sa mise en forme, les médias qui y sont insérés. "
+"Le contenu peut être traduit avec les valeurs spécifiques pour chaque "
+"langue configurée."
 msgstr ""
 
-#: ../../user-manual.rst:307
-msgid "**Ajouter du contenu dans un bloc**"
+#: ../../user-manual/static-pages.rst:74 ../../user-manual/static-pages.rst:167
+msgid "*Position* et *Relative à*"
 msgstr ""
 
-#: ../../user-manual.rst:309
+#: ../../user-manual/static-pages.rst:76
 msgid ""
-"En cliquant dans la zone de texte, une barre d'édition apparaît. Sur un "
-"format classique comme dans les logiciels de traitement texte, plusieurs "
-"menus et outils sont alors disponibles :"
+"Ces champs sont une alternative au glisser-déposer sur la liste des Pages"
+" Statiques et permettent de déplacer les pages dans l'arborescence (voir "
+"`Arborescence des pages statiques`_)."
 msgstr ""
 
-#: ../../user-manual.rst:311
-msgid "File : (fichier)"
+#: ../../user-manual/static-pages.rst:79
+msgid "Mise en forme et médias"
 msgstr ""
 
-#: ../../user-manual.rst:312
-msgid "Edit : retour, copier-coller,"
-msgstr ""
-
-#: ../../user-manual.rst:313
-msgid "Insert : Insérer une image, un lien, des caractères spéciaux"
-msgstr ""
-
-#: ../../user-manual.rst:317
+#: ../../user-manual/static-pages.rst:83
 msgid ""
-"Insérer une image : cela ouvre une nouvelle fenêtre avec différents "
-"champs à remplir :"
+"Le champ \"Contenu\" expose un éditeur de texte riche (TinyMCE) "
+"permettant d'ajouter de la mise en forme et des médias dans le contenu de"
+" la page."
 msgstr ""
 
-#: ../../user-manual.rst:319
+#: ../../user-manual/static-pages.rst:85
+msgid "mise en forme du texte : titres, style du texte, couleur du texte"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:86
+msgid "insertion de listes"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:87
+msgid "encart \"Information\""
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:88
+msgid "lien sous forme de bouton"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:89
+msgid "citation"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:91
+msgid "Médias :"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:93
+msgid "insérer une image"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:94
+msgid "insérer une vidéo YouTube"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:95
+msgid "insérer un lien vers une autre page"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:96
+msgid "encart de suggestion de contenu Geotrek"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:99
+msgid "Insérer une image"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:103
 msgid ""
-"Source : insérer l'URL de l'image (idéalement dans le répertoire "
-"/custom/public/images/ de votre Geotrek-rando)"
+"L'outil *Insérer/modifier* une image permet d'insérer une image dans le "
+"contenu. Il est possible d'insérer une image déjà en ligne en renseignant"
+" son URL, ou de la télécharger sur le serveur. Privilégiez des images de "
+"taille suffisante, mais pas trop grande et volumineuse non plus car cela "
+"alourdira le chargement des pages inutilement."
 msgstr ""
 
-#: ../../user-manual.rst:320
-msgid "Image description : légender l'image pour optimiser son référencement"
+#: ../../user-manual/static-pages.rst:105
+msgid "Les champs suivants sont à renseigner :"
 msgstr ""
 
-#: ../../user-manual.rst:321
-msgid "Dimensions : ajuster le format et cocher « Constrain proportions »"
+#: ../../user-manual/static-pages.rst:107
+msgid "Source"
 msgstr ""
 
-#: ../../user-manual.rst:323
+#: ../../user-manual/static-pages.rst:108
 msgid ""
-"Insérer un lien : cela ouvre une nouvelle fenêtre avec différents champs "
-"à remplir :"
+"Description alternative : non-affichée, pour l'accessibilité et les "
+"formes de consultation alternatives du contenu"
 msgstr ""
 
-#: ../../user-manual.rst:325
-msgid "URL : lien de destination"
+#: ../../user-manual/static-pages.rst:109
+msgid "Largeur et Hauteur de présentation de l'image en pixels"
 msgstr ""
 
-#: ../../user-manual.rst:326
-msgid "Title : texte à afficher pour le lien"
-msgstr ""
-
-#: ../../user-manual.rst:327
+#: ../../user-manual/static-pages.rst:110
 msgid ""
-"Target : « New window » si vous souhaitez que le lien s'ouvre dans un "
-"nouvel onglet"
+"checkbox \"Afficher le sous-titrage\" insère une zone de texte collée à "
+"l'image pour afficher la légende et l'auteur de l'image (le titre est à "
+"saisir dans le contenu à la place du terme \"Caption\", une fois le "
+"formulaire d'ajout de l'image validé)"
 msgstr ""
 
-#: ../../user-manual.rst:329
+#: ../../user-manual/static-pages.rst:112
 msgid ""
-"View : « Show blocks » permet de faire apparaître les différents "
-"paragraphes de votre texte. Elles sont utiles à la structure de votre "
-"texte."
+"Une fois l'image chargée, il est possible de la redimensionner, et de "
+"l'aligner à gauche ou à droite du reste du contenu."
 msgstr ""
 
-#: ../../user-manual.rst:330
+#: ../../user-manual/static-pages.rst:115
+msgid "Insérer des suggestions de contenus Geotrek"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:119
+msgid "Avec l'outil *Suggestions*, les champs suivants sont à renseigner :"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:121
 msgid ""
-"Format : gras, italique, souligner, etc. Le sous-menu « Formats » permet "
-"de choisir un style prédéfini pour les titres (Heading 1, Heading 2, "
-"etc.). Pour que le style s'applique uniquement au titre et non pas à tout"
-" le texte, faire un retour à la ligne et vérifier sa prise en compte en "
-"activant « Shox blocks »."
+"le type de contenu (itinéraires, contenu touristique, événements ou site "
+"outdoor)"
 msgstr ""
 
-#: ../../user-manual.rst:331
-msgid "Table : insertion de tableau"
-msgstr ""
-
-#: ../../user-manual.rst:332
-msgid "Tools : Afficher le code source de la page"
-msgstr ""
-
-#: ../../user-manual.rst:334
-msgid "**Astuces**"
-msgstr ""
-
-#: ../../user-manual.rst:336
+#: ../../user-manual/static-pages.rst:122
 msgid ""
-"Ne jamais utiliser la touche retour du clavier [ ? ] sans avoir le "
-"curseur sélectionné dans une zone de texte. Cela équivaut à revenir à la "
-"page précédente et vous perdrez tout votre contenu sans le sauvegarder."
+"les identifiants des contenus (séparés par des virgules. Par exemple : "
+"12,8,73)"
 msgstr ""
 
-#: ../../user-manual.rst:337
+#: ../../user-manual/static-pages.rst:123
+msgid "un titre pour l'encart de suggestions"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:125
 msgid ""
-"Pour reproduire une page dans une langue différente : copier le Code "
-"Source et coller-le Code Source de votre nouvelle langue. Nous n'aurez "
-"plus qu'à traduire votre texte ! Idem pour traduire un contenu dans une "
-"autre langue."
+"Après la validation du formulaire une zone récapitulant les informations "
+"saisies sous forme textuelle est placée dans le contenu de la page. Le "
+"portail Geotrek-rando enrichira la présentation des suggestions avec les "
+"titres des contenus suggérés à la place des identifiants et les images "
+"associées."
 msgstr ""
 
-#: ../../user-manual.rst:338
+#: ../../user-manual/static-pages.rst:128
+msgid "Vérifier la mise en page du contenu"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:132
+msgid "Les outils suivants sont disponibles :"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:134
 msgid ""
-"Si deux de vos pages ont le même numéro d'ordre d'apparition, une seule "
-"des deux sera affichée sur la plate-forme numérique."
+"*Afficher les blocs* : permet de contrôler finement la séparation du "
+"contenu en blocs (pratique pour les paragraphes de texte)"
 msgstr ""
 
-#: ../../user-manual.rst:341
-msgid "Pictogrammes"
-msgstr ""
-
-#: ../../user-manual.rst:343
-msgid "Les pictogrammes contribués dans Geotrek doivent être au format :"
-msgstr ""
-
-#: ../../user-manual.rst:345
+#: ../../user-manual/static-pages.rst:135
 msgid ""
-"SVG (de préférence, cela permet de conserver la qualité en cas de "
-"redimensionnement) ou PNG,"
+"*Code source* : affiche et permet de modifier directement le contenu au "
+"format HTML (pour les utilisateurs avertis)"
 msgstr ""
 
-#: ../../user-manual.rst:346
+#: ../../user-manual/static-pages.rst:137
 msgid ""
-"SVG pour les thèmes (afin de permettre un changement de couleur pour les "
-"thèmes sélectionnés),"
+"Il est aussi possible de prévisualiser une page statique avant de la "
+"rendre accessible à tous en l'associant à un élément de menu. Pour cela, "
+"créer la page, la publier et y accéder en saisissant son URL directement "
+": ``https://URL-GEOTREK-RANDO/information/ID-PAGE`` (exemple : "
+"``https://gtr3demo.ecrins-parcnational.fr/information/6``). Vous pourrez "
+"aussi alors récupérer son URL complète générée par Geotrek-rando, si vous"
+" souhaitez faire un lien vers cette page statique sans la rendre "
+"accessible depuis le menu."
 msgstr ""
 
-#: ../../user-manual.rst:348
-msgid "Il doivent :"
+#: ../../user-manual/static-pages.rst:140
+msgid "Publier une page"
 msgstr ""
 
-#: ../../user-manual.rst:350
-msgid "Avoir un viewport carré afin de ne pas être déformés sur le portail,"
-msgstr ""
-
-#: ../../user-manual.rst:351
+#: ../../user-manual/static-pages.rst:142
 msgid ""
-"Ne pas déborder du cercle inscrit pour les pratiques et les catégories de"
-" contenus touristiques, en prévoyant une marge si nécessaire."
+"Une page créée n'est pas immédiatement visible sur un portail Geotrek-"
+"rando. Il faut d'abord la marquer comme \"Publiée\" pour chacune des "
+"langues souhaitées. Il faut ensuite lui donner un moyen d'être accessible"
+" sur le site portail. Plusieurs options :"
 msgstr ""
 
-#: ../../user-manual.rst:353
-msgid "Avoir une dimension minimale de 56x56 pixels en ce qui concerne les PNG"
-msgstr ""
-
-#: ../../user-manual.rst:355
+#: ../../user-manual/static-pages.rst:144
 msgid ""
-"Si vous utilisez Inkscape, vous devez définir une viewBox. Voir "
-"http://wiki.inkscape.org/wiki/index.php/Tricks_and_tips#Scaling_images_to_fit_in_webpages.2FHTML"
+"faire figurer un lien vers la page dans les menus déroulants (voir "
+"`Arborescence de menus`_)"
 msgstr ""
 
-#: ../../user-manual.rst:357
+#: ../../user-manual/static-pages.rst:145
 msgid ""
-"Afin de s'intégrer au mieux dans le design standard, les couleurs "
-"suivantes sont recommandées :"
+"placer la page dans l'arborescence des pages (voir `Arborescence des "
+"pages statiques`_)"
 msgstr ""
 
-#: ../../user-manual.rst:359
+#: ../../user-manual/static-pages.rst:146
 msgid ""
-"Blanc sur fond transparent pour les pratiques et les catégories de "
-"contenus touristiques,"
+"placer un lien direct dans une autre section du site : dans une page "
+"d'accueil personnalisée, dans un bas de page, etc."
 msgstr ""
 
-#: ../../user-manual.rst:360
-msgid "Gris sur fond transparent pour les thèmes,"
+#: ../../user-manual/static-pages.rst:149
+msgid "Arborescence de menus"
 msgstr ""
 
-#: ../../user-manual.rst:361
-msgid "Blanc sur fond orange pour les types de POI."
-msgstr ""
-
-#: ../../user-manual.rst:364
-msgid "Geotrek et IGNrando'"
-msgstr ""
-
-#: ../../user-manual.rst:366
+#: ../../user-manual/static-pages.rst:153
 msgid ""
-"Depuis la version 0.32.0, Geotrek-admin est capable de produire un flux "
-"des itinéraires et POIs présents dans sa BDD au format Cirkwi pour "
-"pouvoir les importer directement dans IGNrando'."
+"La page listant les \"Éléments Menus\" indique la structure arborescente "
+"qui sous-tend les menus tels qu'ils apparaîtront sur le portail."
 msgstr ""
 
-#: ../../user-manual.rst:368
+#: ../../user-manual/static-pages.rst:157
+msgid "Un portail de type Geotrek-rando ne peut afficher que 2 niveaux de menus !"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:159
+msgid "Chaque élément de menu a les champs suivants :"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:162
+msgid "*Publié*"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:164
+msgid "*Type de cible*"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:165
+msgid "[Si type de cible est \"page\"] la *page* cible"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:166
 msgid ""
-"Exemple des randonnées et POIs du Parc national des Ecrins publiées sur "
-"IGNrando' depuis Geotrek-admin : https://ignrando.fr/fr/communautes/parc-"
-"national-des-ecrins"
+"[Si type de cible est \"lien\"] l'*URL du lien* (par langue) et checkbox "
+"*Ouvrir dans un nouvel onglet*"
 msgstr ""
 
-#: ../../user-manual.rst:370
+#: ../../user-manual/static-pages.rst:169
 msgid ""
-"Depuis cette version, 2 flux sont automatiquement générés par Geotrek-"
-"admin au format attendu par l'IGN :"
+"Chaque élément de menu peut avoir une cible ou non. S'il a une cible le "
+"clic sur le menu y accédera. Il y a trois possibilités de cibles :"
 msgstr ""
 
-#: ../../user-manual.rst:372
-msgid "[URL_GEOTREK-ADMIN]/api/cirkwi/circuits.xml"
+#: ../../user-manual/static-pages.rst:171
+msgid "une page statique Geotrek, avec le type de cible = \"page\""
 msgstr ""
 
-#: ../../user-manual.rst:373
-msgid "[URL_GEOTREK-ADMIN]/api/cirkwi/pois.xml"
-msgstr ""
-
-#: ../../user-manual.rst:375
+#: ../../user-manual/static-pages.rst:172
 msgid ""
-"Il est possible d'exclure les POI du flux pour ne diffuser que les "
-"randonnées. Pour cela, ajouter le paramètre ``?withoutpois=1`` à la fin "
-"de l'URL (``http://XXXXX/api/cirkwi/circuits.xml?withoutpois=1``)."
+"avec le type de cible = \"lien\" : + une page web externe sur un autre "
+"site web, par exemple ``https://fr.wikipedia.org/wiki/Randonnée``. Auquel"
+" cas une bonne pratique web est de l'ouvrir un nouvel onglet (checkbox "
+"cochée) + une page web interne au portail, typiquement une recherche "
+"pré-enregistrée, par exemple "
+"\"/search?practices=4&difficulty=2&duration=1\". Auquel cas une bonne "
+"pratique est de rester sur le même onglet (checkbox non-cochée)"
 msgstr ""
 
-#: ../../user-manual.rst:377
+#: ../../user-manual/static-pages.rst:176
 msgid ""
-"Le référentiel CIRKWI a été intégré dans 3 tables accessibles dans "
-"l'Adminsite (à ne pas modifier) :"
+"Le champ *Plateforme* permet de différencier des menus destinés "
+"uniquement à un portail web ou uniquement à une application Geotrek-"
+"mobile. Cette possibilité de paramètrage sera bientôt supprimée."
 msgstr ""
 
-#: ../../user-manual.rst:381
+#: ../../user-manual/static-pages.rst:179
+msgid "Arborescence des pages statiques"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:183
 msgid ""
-"Si vous ne souhaitez pas utiliser les valeurs par défaut ou avez créez "
-"vos propres typologies, il faut que vous renseigniez les correspondances "
-"entre les catégories de votre Geotrek et celles du référentiel IGN "
-"(Cirkwi) dans votre Adminsite. Comme indiqué ici : "
-"https://github.com/GeotrekCE/Geotrek-admin/issues/806"
+"Les pages statiques sont organisées dans une structure arborescente. Une "
+"page statique peut avoir des pages enfants et une unique page parente. "
+"L'arborescence des pages statiques permet d'organiser le contenu statique"
+" d'un portail d'une manière intelligible pour les visiteurs du site."
 msgstr ""
 
-#: ../../user-manual.rst:383
-msgid "Pratique >> locomotion/loisirs"
-msgstr ""
-
-#: ../../user-manual.rst:384
-msgid "Accessibilite >> thematiques/tags"
-msgstr ""
-
-#: ../../user-manual.rst:385
-msgid "Themes >> thematiques/tags"
-msgstr ""
-
-#: ../../user-manual.rst:386
-msgid "Types de POI >> Categories POI"
-msgstr ""
-
-#: ../../user-manual.rst:388
+#: ../../user-manual/static-pages.rst:185
 msgid ""
-"Les correspondances avec les valeurs de ces 3 tables sont donc à "
-"renseigner dans les tables Geotrek des Pratiques, Accessibilités, Thèmes "
-"et Types de POI."
+"Les pages enfants sont accessibles depuis le bas d'une page parente dans "
+"Geotrek-rando."
 msgstr ""
 
-#: ../../user-manual.rst
-msgid "Note"
+#: ../../user-manual/static-pages.rst:188
+msgid "Compatibilité de contenu créé avec l'ancien éditeur"
 msgstr ""
 
-#: ../../user-manual.rst:392
+#: ../../user-manual/static-pages.rst:190
 msgid ""
-"Geotrek-admin dispose aussi d'une API générique permettant d'accéder aux "
-"contenus d'une instance à l'adresse : ``[URL_GEOTREK-ADMIN]/api/v2/``"
+"L'ancien éditeur de contenu des pages statiques (éditeur de grille avec "
+"Bootstrap) a été supprimé avec la déprécation de Geotrek-rando-v2."
 msgstr ""
 
+#: ../../user-manual/static-pages.rst:192
+msgid ""
+"Les pages statiques créées avec l'ancienne version de l'éditeur "
+"continueront de fonctionner sans changement sur le portail Geotrek-rando "
+"v3. Cependant il se peut que le balisage du contenu créé par l'ancien "
+"éditeur doive être retiré pour pouvoir utiliser à nouveau les styles et "
+"outils de mise en forme."
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:194
+msgid "Comment procéder ?"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:196
+msgid ""
+"par précaution faire une copie du contenu, en incluant toutes les "
+"informations (URLs des images, etc)"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:197
+msgid ""
+"utiliser l'outil *code* ( ``< >`` ) pour obtenir une copie du contenu "
+"incluant les balises HTML"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:198
+msgid "retirer toutes les balises grâce à un outil en ligne (voir ci-dessous)"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:199
+msgid ""
+"remplacer l'ancien code avec le contenu nettoyé dans la fenêtre de "
+"l'outil *code*, valider"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:200
+msgid "refaire la mise en forme"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:204
+msgid ""
+"Il existe beaucoup de service web pour nettoyer un contenu de ses balises"
+" HTML. Voici les deux premiers résultats provenant d'un moteur de "
+"recherche :"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:206
+msgid "`Striphtml <https://striphtml.com/>`_"
+msgstr ""
+
+#: ../../user-manual/static-pages.rst:207
+msgid "`W3docs <https://www.w3docs.com/tools/string-remove-tags>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:14
+msgid ""
+"Les itinéraires sont des randonnées présentés au grand public : "
+"l’itinéraire est défini selon la géométrie des tronçons empruntés. "
+"L’ajout ou la modification sont fréquents."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:18
+msgid "Fiche détaillée"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:20
+msgid "Basique"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:23
+msgid "**Structure liée** ~ requis"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:25
+msgid "Description : nom de la structure d'appartenance de l'itinéraire"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:26
+#: ../../user-manual/touristic-modules.rst:78
+#: ../../user-manual/touristic-modules.rst:88
+#: ../../user-manual/touristic-modules.rst:98
+#: ../../user-manual/touristic-modules.rst:116
+#: ../../user-manual/touristic-modules.rst:188
+#: ../../user-manual/touristic-modules.rst:198
+#: ../../user-manual/touristic-modules.rst:208
+#: ../../user-manual/touristic-modules.rst:218
+#: ../../user-manual/touristic-modules.rst:228
+#: ../../user-manual/touristic-modules.rst:238
+#: ../../user-manual/touristic-modules.rst:248
+#: ../../user-manual/touristic-modules.rst:258
+#: ../../user-manual/touristic-modules.rst:280
+#: ../../user-manual/touristic-modules.rst:297
+#: ../../user-manual/touristic-modules.rst:308
+#: ../../user-manual/touristic-modules.rst:318
+#: ../../user-manual/touristic-modules.rst:342
+#: ../../user-manual/touristic-modules.rst:363
+#: ../../user-manual/touristic-modules.rst:370
+msgid "Type : liste déroulante"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:27
+#: ../../user-manual/touristic-modules.rst:79
+#: ../../user-manual/touristic-modules.rst:89
+#: ../../user-manual/touristic-modules.rst:99
+#: ../../user-manual/touristic-modules.rst:117
+#: ../../user-manual/touristic-modules.rst:281
+#: ../../user-manual/touristic-modules.rst:319
+msgid "Choix : unique"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:28
+msgid ""
+"URl de configuration : `/admin/authent/structure/ "
+"</admin/authent/structure/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:29
+#: ../../user-manual/touristic-modules.rst:52
+#: ../../user-manual/touristic-modules.rst:267
+#: ../../user-manual/touristic-modules.rst:274
+#: ../../user-manual/touristic-modules.rst:291
+#: ../../user-manual/touristic-modules.rst:299
+msgid "Visibilité : interne"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:30
+#: ../../user-manual/touristic-modules.rst:253
+msgid "Exemple : CD09"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:32
+msgid "**Nom [fr]** ~ requis"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:34
+msgid "Description : nom de l'itinéraire"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:35
+#: ../../user-manual/touristic-modules.rst:57
+#: ../../user-manual/touristic-modules.rst:64
+#: ../../user-manual/touristic-modules.rst:109
+#: ../../user-manual/touristic-modules.rst:126
+#: ../../user-manual/touristic-modules.rst:133
+#: ../../user-manual/touristic-modules.rst:140
+#: ../../user-manual/touristic-modules.rst:147
+#: ../../user-manual/touristic-modules.rst:160
+#: ../../user-manual/touristic-modules.rst:167
+#: ../../user-manual/touristic-modules.rst:174
+#: ../../user-manual/touristic-modules.rst:181
+#: ../../user-manual/touristic-modules.rst:328
+#: ../../user-manual/touristic-modules.rst:335
+#: ../../user-manual/touristic-modules.rst:349
+#: ../../user-manual/touristic-modules.rst:356
+msgid "Type : champ libre"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:36
+msgid "Multilingue : oui"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:37
+#: ../../user-manual/touristic-modules.rst:45
+#: ../../user-manual/touristic-modules.rst:58
+#: ../../user-manual/touristic-modules.rst:65
+#: ../../user-manual/touristic-modules.rst:72
+#: ../../user-manual/touristic-modules.rst:82
+#: ../../user-manual/touristic-modules.rst:92
+#: ../../user-manual/touristic-modules.rst:103
+#: ../../user-manual/touristic-modules.rst:110
+#: ../../user-manual/touristic-modules.rst:120
+#: ../../user-manual/touristic-modules.rst:127
+#: ../../user-manual/touristic-modules.rst:134
+#: ../../user-manual/touristic-modules.rst:141
+#: ../../user-manual/touristic-modules.rst:148
+#: ../../user-manual/touristic-modules.rst:161
+#: ../../user-manual/touristic-modules.rst:168
+#: ../../user-manual/touristic-modules.rst:175
+#: ../../user-manual/touristic-modules.rst:182
+#: ../../user-manual/touristic-modules.rst:192
+#: ../../user-manual/touristic-modules.rst:202
+#: ../../user-manual/touristic-modules.rst:212
+#: ../../user-manual/touristic-modules.rst:222
+#: ../../user-manual/touristic-modules.rst:232
+#: ../../user-manual/touristic-modules.rst:242
+#: ../../user-manual/touristic-modules.rst:252
+#: ../../user-manual/touristic-modules.rst:260
+#: ../../user-manual/touristic-modules.rst:284
+#: ../../user-manual/touristic-modules.rst:312
+#: ../../user-manual/touristic-modules.rst:322
+#: ../../user-manual/touristic-modules.rst:329
+#: ../../user-manual/touristic-modules.rst:336
+#: ../../user-manual/touristic-modules.rst:343
+#: ../../user-manual/touristic-modules.rst:350
+#: ../../user-manual/touristic-modules.rst:357
+#: ../../user-manual/touristic-modules.rst:364
+#: ../../user-manual/touristic-modules.rst:371
+msgid "Visibilité : publique"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:38
+msgid "Exemple : GR09 Boucle du Pic des Trois Gentilhommes"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:40
+msgid "**En attente de publication**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:42
+msgid "Description : itinéraire en attente d'être publié"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:43
+#: ../../user-manual/touristic-modules.rst:50
+msgid "Type : case à cocher"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:44
+msgid "Valeur par défaut (décoché) : itinéraire publiable"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:47
+msgid "**Publié [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:49
+msgid "Description : Itinéraire publié ou en brouillon"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:51
+msgid "Valeur par défaut (décoché) : brouillon"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:54
+msgid "**Départ [fr]** ~ Recommandé"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:56
+msgid "Description : description du lieu de départ"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:59
+#: ../../user-manual/touristic-modules.rst:66
+msgid "Exemple : Refuge de les Caussis"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:61
+msgid "**Arrivée [fr]** ~ Recommandé"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:63
+msgid "Description : description du lieu de l'arrivée"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:68
+msgid "**Durée** ~ Recommandé"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:70
+msgid ""
+"Description : durée de l'itinéraire (en heures (1.5 = 1 h 30, 24 = 1 "
+"jour, 48 = 2 jours))"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:71
+#: ../../user-manual/touristic-modules.rst:266
+#: ../../user-manual/touristic-modules.rst:273
+#: ../../user-manual/touristic-modules.rst:290
+msgid "Type : numérique"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:73
+msgid "Exemple : 1.5"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:75
+msgid "**Difficulté** ~ Recommandé"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:77
+msgid "Description : niveau de difficulté de l'itinéraire"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:80
+#: ../../user-manual/touristic-modules.rst:90
+#: ../../user-manual/touristic-modules.rst:101
+#: ../../user-manual/touristic-modules.rst:118
+#: ../../user-manual/touristic-modules.rst:190
+#: ../../user-manual/touristic-modules.rst:200
+#: ../../user-manual/touristic-modules.rst:210
+#: ../../user-manual/touristic-modules.rst:220
+#: ../../user-manual/touristic-modules.rst:230
+#: ../../user-manual/touristic-modules.rst:240
+#: ../../user-manual/touristic-modules.rst:250
+#: ../../user-manual/touristic-modules.rst:282
+#: ../../user-manual/touristic-modules.rst:310
+#: ../../user-manual/touristic-modules.rst:320
+msgid "Valeurs de champ paramétrables dans l'outil d'administration : oui"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:81
+msgid ""
+"Chemin d'accès dans l'outil d'administration : "
+"`/admin/trekking/difficultylevel/ </admin/trekking/difficultylevel/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:83
+msgid "Exemple : Intermédiaire"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:85
+msgid "**Pratique** ~ Recommandé"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:87
+msgid "Description : type de pratique de l'itinéraire"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:91
+msgid ""
+"Chemin d'accès dans l'outil d'administration : `/admin/trekking/practice/"
+" </admin/trekking/practice/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:93
+msgid "Exemple : Pédestre"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:95
+msgid "**Échelle de cotation**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:97
+msgid ""
+"Description : définition d'une cotation de l'itinéraire spécifique à la "
+"pratique"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:100
+msgid "Conditionnel : selon la pratique choisie"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:102
+msgid ""
+"Chemin d'accès dans l'outil d'administration : "
+"`/admin/trekking/ratingscale/ </admin/trekking/ratingscale/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:104
+msgid "Exemple : Technicité : 3 - Moyen"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:106
+msgid "**Description de cotation [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:108
+msgid ""
+"Description : précision sur la valeur de cotation de l'itinéraire "
+"spécifique à la pratique"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:111
+msgid ""
+"Exemple : La technicité de cet itinéraire est moyenne car elle ne "
+"comprend pas de passages délicats."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:113
+msgid "**Parcours**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:115
+msgid "Description : type de parcours"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:119
+msgid ""
+"Chemin d'accès dans l'outil d'administration : `/admin/trekking/route/ "
+"</admin/trekking/route/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:121
+msgid "Exemple : Boucle"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:123
+msgid "**Accès routier [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:125
+msgid "Description : accès routier jusqu'au point de départ"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:128
+msgid ""
+"Exemple : Depuis Savines-Le-Lac (17km), prendre la D41 jusqu'à Réallon. "
+"Suivre ensuite la D241 jusqu'au hameau des Gourniers au fond de la "
+"vallée."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:130
+msgid "**Chapeau [fr]** ~ Recommandé"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:132
+msgid "Description : bref résumé de l'itinéraire avec accroche"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:135
+msgid ""
+"Exemple : Une agréable randonnée familiale en boucle avec un beau point "
+"de vue sur la vallée de Réallon."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:137
+msgid "**Ambiance [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:139
+msgid "Description : attractions principales et intérêts"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:142
+msgid ""
+"Exemple : La montée commence dans la fraîcheur d'un bois de hêtre puis "
+"d'une belle forêt de mélèzes avant d'arriver à d'anciens près de fauche, "
+"témoignage des activités passées. Les ruines d'anciens chalets d'alpage "
+"rappellent ce qu'était la vie en montagne. Quand le sentier passe en "
+"balcon le paysage s'ouvre en un large point de vue sur la vallée de "
+"Réallon."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:144
+msgid "**Description [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:146
+msgid ""
+"Description : description technique pas à pas de l'itinéraire (liste "
+"numérotée conseillée)"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:149
+msgid ""
+"Exemple : Du parking, traverser le pont, au carrefour du hameau prendre "
+"la direction de Chargès, remonter la rue jusqu'à la dernière maison."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:151
+msgid "Prendre le sentier à droite direction l'Oussella"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:152
+msgid ""
+"Après la marmite de Géant et le pont, continuer à gauche direction "
+"l'Oussella."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:154
+msgid "Avancée"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:157
+msgid "**Parking conseillé [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:159
+msgid "Description : nom du lieu recommandé pour se garer en voiture"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:162
+msgid "Exemple : Parking du refuge de les Caussis."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:164
+msgid "**Transport en commun [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:166
+msgid ""
+"Description : indications du ou des transports en commun pour se rendre "
+"au départ"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:169
+msgid ""
+"Exemple : Ce GR est accessible en train, il démarre de la gare SNCF de "
+"Boussenac (ligne Seix - Boussenac)."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:171
+msgid "**Recommandations [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:173
+msgid ""
+"Description : recommandations sur les risques, danger ou meilleure "
+"période pour pratiquer l'itinéraire"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:176
+msgid ""
+"Exemple : Attention en cas d'orage. Fortement déconseillé par mauvais "
+"temps!"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:178
+msgid "**Matériel [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:180
+msgid "Description : matériel nécessaire ou conseillé"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:183
+msgid "Exemple : Chaussures de randonnées"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:185
+msgid "**Thèmes**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:187
+msgid "Description : thématiques principales de l'itinéraire"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:189
+#: ../../user-manual/touristic-modules.rst:199
+#: ../../user-manual/touristic-modules.rst:209
+#: ../../user-manual/touristic-modules.rst:219
+#: ../../user-manual/touristic-modules.rst:229
+#: ../../user-manual/touristic-modules.rst:239
+#: ../../user-manual/touristic-modules.rst:249
+#: ../../user-manual/touristic-modules.rst:259
+#: ../../user-manual/touristic-modules.rst:298
+#: ../../user-manual/touristic-modules.rst:309
+msgid "Choix : multiple"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:191
+msgid ""
+"Chemin d'accès dans l'outil d'administration : `/admin/common/theme/ "
+"<//admin/common/theme/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:193
+msgid "Exemple : Lacs et glaciers, Géologie, Point de vue"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:195
+msgid "**Étiquettes**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:197
+msgid "Description : éléments de recommandation ou utiles à connaître"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:201
+msgid ""
+"Chemin d'accès dans l'outil d'administration : `/admin/common/label/ "
+"</admin/common/label/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:203
+msgid "Exemple : Chien autorisé"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:205
+msgid "**Réseaux**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:207
+msgid "Description : nom du réseau de balisage de l'itinéraire"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:211
+msgid ""
+"Chemin d'accès dans l'outil d'administration : `/admin/core/network/ "
+"</admin/core/network/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:213
+msgid "Exemple : GR"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:215
+msgid "**Liens web**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:217
+msgid "Description : liens web apportant des compléments d'informations utiles"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:221
+msgid ""
+"Chemin d'accès dans l'outil d'administration : `/admin/trekking/weblink/ "
+"</admin/trekking/weblink/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:223
+msgid ""
+"Exemple : `Consulter la météo locale de Boussenac "
+"<https://meteofrance.com/previsions-meteo-france/boussenac/09320>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:225
+msgid "**Lieux de renseignement**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:227
+msgid "Description : lieux de renseignements utiles"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:231
+msgid ""
+"Chemin d'accès dans l'outil d'administration : "
+"`/admin/tourism/informationdesk/ </admin/tourism/informationdesk/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:233
+msgid "Exemple : Office de tourisme de Seix, Office du tourisme de Boussenac"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:235
+msgid "**Source**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:237
+msgid "Description : nom de l'organisme auteur de l'itinéraire"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:241
+msgid ""
+"Chemin d'accès dans l'outil d'administration : "
+"`/admin/common/recordsource/ </admin/common/recordsource/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:243
+msgid "Exemple : Conseil départemental de l'Ariège"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:245
+msgid "**Portail**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:247
+msgid "Description : site web grand public sur lequel sera publié l'itinéraire"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:251
+msgid ""
+"Chemin d'accès dans l'outil d'administration : "
+"`/admin/common/targetportal/ </admin/common/targetportal/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:255
+msgid "**Enfants**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:257
+msgid "Description : ensemble des itinéraires étapes constituant l'itinérance"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:261
+msgid ""
+"Exemple : Etape GR09 Refuge les Caussis-Étang Rond, Etape GR09 Étang "
+"Rond-Refuge les Caussis."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:263
+msgid "**ID externe**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:265
+msgid ""
+"Description : identifiant de l'itinéraire dans sa base de données source "
+"(dans le cas d'un import)"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:268
+msgid "Exemple : 15715"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:270
+msgid "**Deuxième id externe**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:272
+msgid ""
+"Description : identifiant secondaire de l'itinéraire dans sa base de "
+"données source (dans le cas d'un import)"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:275
+msgid "Exemple : 15716"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:277
+msgid "**Système de réservation**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:279
+msgid "Description : nom du système de réservation"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:283
+msgid ""
+"Chemin d'accès dans l'outil d'administration : "
+"`/admin/common/reservationsystem/ </admin/common/reservationsystem/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:285
+msgid "Exemple : Open system"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:287
+msgid "**ID de réservation**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:289
+msgid "Description : identifiant de l'itinéraire dans son système de réservation"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:292
+msgid "Exemple : 157187456"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:294
+msgid "**POI exclus**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:296
+msgid ""
+"Description : liste des points d'intérêt associés à l'itinéraire à ne pas"
+" faire remonter sur celui-ci"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:300
+msgid "Exemple : les Estagnous"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:302
+msgid "Accessibilité"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:305
+msgid "**Type d'accessibilité**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:307
+msgid "Description : type d'accessibilité"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:311
+msgid ""
+"Chemin d'accès dans l'outil d'administration : "
+"`/admin/trekking/accessibility/ </admin/trekking/accessibility/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:313
+msgid "Exemple : Fauteuil roulant, poussette"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:315
+msgid "**Niveau d'accessibilité**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:317
+msgid "Description : niveau d'accessibilité"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:321
+msgid ""
+"Chemin d'accès dans l'outil d'administration : "
+"`/admin/trekking/accessibilitylevel/ "
+"</admin/trekking/accessibilitylevel/>`_"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:323
+msgid "Exemple : Débutant"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:325
+msgid "**Aménagements d'accessibilité [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:327
+msgid "Description : infrastructure d'accessibilité spécifique à disposition"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:330
+msgid "Exemple : Rampes d'accès amovibles."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:332
+msgid "**Pente accessibilité [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:334
+msgid ""
+"Description : description de la pente : supérieure à 10 % (Nécessite une "
+"assistance quand la pente est supérieure à 8%)"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:337
+msgid "Exemple : Pente supérieure à 12%."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:339
+msgid "**Revêtement accessibilité [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:341
+msgid ""
+"Description : description des revêtements rencontrés sur la totalité d’un"
+" itinéraire"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:344
+msgid "Exemple : Piste ensablée à partir des Estagnous."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:346
+msgid "**Exposition accessibilité [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:348
+msgid "Description : description des expositions et des zones ombragées"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:351
+msgid "Exemple : Piste ombragée."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:353
+msgid "**Largeur accessibilité [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:355
+msgid ""
+"Description : description des rétrécissements des sentiers et la largueur"
+" minimum"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:358
+msgid ""
+"Exemple : Sentier étroit demandant une forte technique de conduite, avec "
+"un passage d'un mètre de large. Passage resserré sur le pont traversant "
+"la rivière."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:360
+msgid "**Conseil d'accessibilité [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:362
+msgid ""
+"Description : éléments particuliers permettant d’apprécier le contexte de"
+" l’itinéraire pour les PMR (conseils, passages délicats, etc.)"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:365
+msgid ""
+"Exemple : La montée du Saut du Laire, particulièrement les 150 derniers "
+"mètres, sont déconseillés aux joëlettes, notamment dans la perspective du"
+" retour en descente sur pavé pouvant être glissant."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:367
+msgid "**Signalétique accessibilité [fr]**"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:369
+msgid ""
+"Description : description de taille, forme et couleurs des signalétiques "
+"d'accessibilité"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:372
+msgid "Exemple : Panneau de signalisation PMR rampe d'accès amovible."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:375
+msgid "Itinérance"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:377
+msgid ""
+"Il est possible de créer des randonnées itinérantes (sur plusieurs jours)"
+" et d'y associer des étapes comme sur `cet exemple <https://www.grand-"
+"tour-ecrins.fr/trek/937571-GR%C2%AE54---Tour-de-l-Oisans-et-des-"
+"Ecrins>`_."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:379
+msgid ""
+"Pour cela il faut créer un itinéraire parent (séjour itinérant complet) "
+"puis y associer des itinéraires enfants (étapes) de manière ordonnée, "
+"dans le champs `Enfants` présent dans l'onglet `Avancé` du formulaire "
+"itinéraire du séjour complet."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:381
+msgid ""
+"Le séjour complet ainsi que chaque étape sont donc chacunes des "
+"randonnées comme les autres. La seule différence est que les étapes "
+"(itinéraires enfants) sont rattachées à l'itinéraire parent."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:383
+msgid ""
+"Si vous ne souhaitez pas que les étapes soient affichées dans la page de "
+"Recherche de Geotrek-rando, il ne faut pas les publier. Il suffit alors "
+"de publier l'itinéraire parent, pour que toutes les étapes qui y sont "
+"rattachées apparaissent uniquement dans sa fiche détail de Geotrek-rando."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:386
+msgid "Points de référence"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:388
+msgid ""
+"Lorsqu'on localise un itinéraire, il est aussi possible de localiser le "
+"parking de la randonnée et de placer des points de référence numérotés "
+"sous forme de puces rouges sur la carte."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:390
+msgid ""
+"Ces derniers servent à y faire référence dans le champs Description de "
+"l'itinéraire (Pas à pas) :"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:394
+msgid ""
+"Pour que des puces numérotées sous forme de pastilles rouges soient "
+"affichées dans la description, il suffit de les saisir en tant que Liste "
+"numérotées dans le champs Description :"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:401
+msgid "Points d'intérêts (POI)"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:407
+msgid ""
+"Les POIs ne sont pas associés aux itinéraires par zone tampon, mais par "
+"segmentation dynamique, en fonction des tronçons communs de l'itinéraire "
+"et des POIs."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:409
+msgid ""
+"Dans le cas d'un Geotrek-admin avec segmentation dynamique, chaque POI "
+"est automatiquement rattaché au tronçon le plus proche, même si ce "
+"dernier se trouve à des kilomètres de distance."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:411
+msgid ""
+"Afin qu'un POI rattaché à un tronçon remonte bien sur la fiche d'un "
+"itinéraire, il faut que ce dernier parcourt le tronçon sur une longueur "
+"suffisante pour pouvoir être associé par segmentation dynamique."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:415
+msgid ""
+"Pour en savoir plus sur la segmentation dynamique/référencement linéaire,"
+" `consulter cet article <https://makina-corpus.com/sig-cartographie/la-"
+"segmentation-dynamique>`_."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:417
+msgid ""
+"Pour importer automatiquement des éléments de POIs, se référer à la "
+"section :ref:`Import POIs <import-pois>`."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:421
+msgid ""
+"Lorsque Geotrek est installé en mode \"sans segmentation dynamique\", les"
+" POI sont rattachés aux itinéraires par zone tampon (buffer). Dans ce cas"
+" le paramètre pris en compte est le paramètre "
+":ref:`TREK_POI_INTERSECTION_MARGIN <trek-poi-intersection>` qui est "
+"paramétrable dans le custom.py."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:426
+msgid "Services"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:431
+msgid "Contenus touristiques"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:434
+msgid "Zone tampon pour contenus à proximité"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:436
+msgid ""
+"La taille de la zone tampon est fixée à 500m autour de l'itinéraire pour "
+"remonter les informations des contenus/évènements touristiques et "
+"services."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:440
+msgid ""
+"Pour modifier la distance de la zone tampon (buffer), se référer à la "
+"section :ref:`Tourism intersection margin (en)<trek-tourism-"
+"intersection>`"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:445
+msgid "Évènements touristiques"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:450
+msgid "Signalements"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:454
+msgid ""
+"Pour configurer Suricate, se référer à cette section :ref:`Suricate "
+"support <suricate-support>`"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:459
+msgid "Zones sensibles"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:461
+msgid ""
+"Ce module permet d’inventorier, de localiser des zonages réglementaires "
+"(de type sites Natura 2000, Arrêtés Préfectoraux de Protection de Biotope"
+" (APPB), sites classés, sites d'intérêt écologique) ou des surfaces liées"
+" à la présence d’une ou plusieurs espèces protégées ou patrimoniales."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:463
+msgid ""
+"La saisie peut se faire sous forme de polygone ou de cercle pour les "
+"zones de sensibilité. Le diamètre du cercle est généré automatiquement "
+"selon la zone ou l’espèce, avec une valeur définie préalablement."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:465
+msgid ""
+"Si une randonnée ou un site outdoor intersecte une ou plusieurs zones "
+"zones de sensibilité, alors celles-ci sont affichées à la suite des "
+"recommandations dans Geotrek-Rando."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:467
+msgid ""
+"Il est également possible d’importer directement les zonages depuis un "
+"format Shapefile (SHP)."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:471
+msgid ""
+"Pour activer le module Zones sensibles, se référer à cette section "
+":ref:`Sensitive areas <sensitivity>`"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:476
+msgid "Activités outdoor"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:478
+msgid "Par défaut, ce module est désactivé dans Geotrek."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:482
+msgid ""
+"Pour activer le module Outdoor, se référer à cette section :ref:`Outdoor "
+"<outdoor>`"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:485
+msgid "Sites et parcours"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:487
+msgid ""
+"Geotrek-admin dédie deux modules aux activités outdoor : les sites et les"
+" parcours. Un site correspond à une zone ou à un réseau hydrographique à "
+"gérer et/ou à valoriser d'un seul tenant : site d'escalade, cours d'eau, "
+"zone de vol libre…"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:489
+msgid ""
+"Les sites peuvent être subdivisés en sous-sites (dits enfants), qui "
+"peuvent eux-mêmes être subdivisés en sous-sites : secteurs d'escalade "
+"(groupe de blocs ou falaise), aires de décollage ou d'atterrissage…"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:492
+msgid ""
+"Chaque site (ou sous-site) peut contenir différents parcours : voie "
+"d'escalade, parcours d'eau vive…"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:494
+msgid ""
+"Il est possible de regrouper un enchaînement de parcours sous forme d'un "
+"parcours particulier appelé itinérance : grande voie d'escalade, "
+"enchainement entre différentes pratiques…"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:497
+msgid "Les deux modules outdoor permettent de :"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:499
+msgid ""
+"**Lister, filtrer, créer, modifier et exporter des sites et des parcours "
+"outdoor** de manière générique pour gérer tout type de pratiques "
+"(escalade, alpinisme, via ferrata, canyoning, kayak, vol libre, "
+"plongée...)"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:500
+msgid ""
+"**Ajouter les pratiques** que l'on souhaite de manière générique, et de "
+"définir leurs propres types et leurs propres niveaux et valeurs de "
+"cotation"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:501
+msgid ""
+"**Lier des sites entre eux** de manière hiérarchisée, pour avoir des "
+"sites, des sous-sites, des sous-sous-sites... Par exemple pour un site "
+"global avec différentes pratiques, pour un site d'escalade avec des "
+"secteurs, des sous-secteurs..."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:502
+msgid ""
+"**Agréger des informations au niveau d'un site**, en fonction des sous-"
+"sites qui lui sont rattachés. Par exemple les pratiques d'un grand site "
+"outdoor sont l'agrégation des pratiques des sous-sites qui le composent"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:503
+msgid ""
+"**Lier des parcours à des sites** et leur appliquer une cotation en "
+"fonction de la pratique du site auquel ils sont rattachés"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:504
+msgid ""
+"**Lier des parcours entre eux pour faire de l'itinérance** avec une fiche"
+" mère et des fiches enfants (étapes), comme c'est déjà la cas pour les "
+"itinéraires"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:505
+msgid ""
+"**Associer des aménagements aux sites** (parking, toilettes, banc...) "
+"automatiquement par intersection géographique"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:506
+msgid ""
+"**Associer des interventions à des sites ou parcours**, automatiquement "
+"par intersection géographique, ou explicitement en passant par le site ou"
+" le parcours sur lequel l'intervention a été réalisée"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:507
+msgid ""
+"**Associer des POI à un site ou parcours**, automatiquement par "
+"intersection géographique"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:508
+msgid ""
+"**Associer des accès au site**, automatiquement par intersection "
+"géographique des itinéraires à proximité"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:512
+msgid ""
+"Pour activer le module Outdoor, se référer à la section :ref:`Outdoor "
+"<outdoor>`"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:515
+msgid "Arborescence"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:517
+msgid ""
+"Les fiches détail des sites et des parcours présentent les liens entre "
+"eux sous forme d'une arborescence. Pour ne pas surcharger, tous les "
+"éléments ne sont pas repris, mais uniquement :"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:520
+msgid "le site/parcours courant,"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:521
+msgid ""
+"le site auquel il appartient (parent), ainsi que le grand-parent, etc. "
+"jusqu'à remonter au plus haut niveau,"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:522
+msgid "Les sites et parcours \"frères\", ayant le même site parent."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:523
+msgid "les différents sous-sites et/ou parcours enfants."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:525
+msgid ""
+"Des liens permettent d'ajouter des sites ou parcours en les positionnant "
+"directement dans l'arborescence."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:528
+msgid "Nomenclatures"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:530
+msgid ""
+"Via l'interface de configuration de Geotrek-Admin, il est possible de "
+"modifier les nomenclatures."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:532
+msgid ""
+"**Filières** : elles servent à regrouper les pratiques pour pouvoir "
+"filtrer rapidement les sites ou parcours. Par exemple la filière « eau "
+"vive » peut regrouper « kayak » et « canyoning »."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:534
+msgid ""
+"**Pratiques** : les pratiques sportives. Vous pouvez préciser à quelle "
+"filière elle appartient."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:535
+msgid ""
+"**Types de sites** : ces catégories permettent d'étiqueter et de filtrer "
+"les sites. Elles sont spécifiques à chaque pratique. Par exemple « Site "
+"école » pour l'escalade."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:537
+msgid ""
+"**Échelle de cotation** : permet de regrouper les cotations faisant "
+"partie de la même échelle. Elles sont spécifiques à chaque pratique."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:540
+msgid "Filières"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:543
+msgid "Escalade"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:545
+msgid ""
+"La notion de site est naturelle. Elle peut être définie géographiquement "
+"par un polygone. Il est possible (mais pas obligatoire) de créer des "
+"sous-sites pour représenter des secteurs. Ou pour des falaises, elles-"
+"mêmes divisées en sous-sous sites pour les différents secteurs."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:549
+msgid ""
+"Chaque voie correspond à un parcours. La voie étant verticale et la carte"
+" horizontale, le plus pertinent est de définir géographiquement la voie "
+"par un simple point. Une grande voie peut être décrite simplement par un "
+"parcours mais, pour plus de détails, il est également possible de créer "
+"autant de parcours que de longueurs dans la grande voie. Lors de la "
+"saisie de la grande voie, il faudra préciser les différentes longueurs "
+"dans le champ « Enfants », dans le bon ordre. Le nom de chaque longueur "
+"pourra reprendre le nom de la voie suffixé par « longueur 1 », « longueur"
+" 2 », etc."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:557
+msgid "Vol libre"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:559
+msgid ""
+"La zone de vol n'est pas définie géographiquement de manière précise mais"
+" fait quand même l'objet d'un site avec un nom (ex: « massif de … ») et "
+"un polygone approximatif ou bien un point (de préférence celui de "
+"départ). Cela n'a pas une importance déterminante. Ce qui compte c'est 1)"
+" de rendre cela lisible sur une carte et 2) d'être cohérent entre les "
+"différents sites."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:563
+msgid ""
+"Pour chaque zone de vol, les différentes aires de décollage et "
+"d'atterrissage sont définies à l'aide de sous-sites. Afin de les "
+"identifier, il faut créer les types de site « Aire de décollage » et « "
+"Aire d'atterrissage » pour la catégorie « Vol libre » dans la "
+"nomenclature et associer ces types aux aires. Comme le vol est libre, il "
+"n'est pas nécessaire de définir des parcours. Cependant, il est possible "
+"d'en définir pour donner des exemples de trajectoires."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:570
+msgid "Eau vive"
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:572
+msgid ""
+"Le site est généralement constitué par une rivière ou une portion de "
+"rivière. Il est possible d'y adjoindre des affluents. La géométrie du "
+"site est donc un linéraire correspondant à un réseau hydrographique."
+msgstr ""
+
+#: ../../user-manual/touristic-modules.rst:575
+msgid ""
+"Les aires d'embarquement/débarquement sont définies par des sous-sites. "
+"Leur géométrie peut être définie sous forme d'un point ou d'un polygone. "
+"Les parcours sont automatiquement attachés à une aire d'embarquement et "
+"une aire de débarquement qui sont les aires les plus proches "
+"respectivement du début et de la fin du parcours."
+msgstr ""

@@ -2,13 +2,20 @@ from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
 
-from geotrek.land.models import LandEdge, PhysicalEdge, CompetenceEdge, SignageManagementEdge, WorkManagementEdge
+from geotrek.land.models import (
+    CirculationEdge,
+    CompetenceEdge,
+    LandEdge,
+    PhysicalEdge,
+    SignageManagementEdge,
+    WorkManagementEdge,
+)
 
 
 class LandEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    land_type = serializers.CharField(source='land_type_display')
-    length = serializers.FloatField(source='length_display')
-    length_2d = serializers.FloatField(source='length_2d_display')
+    land_type = serializers.CharField(source="land_type_display")
+    length = serializers.FloatField(source="length_display")
+    length_2d = serializers.FloatField(source="length_2d_display")
 
     class Meta:
         model = LandEdge
@@ -24,10 +31,30 @@ class LandEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
         fields = ["id", "name", "color_index"]
 
 
+class CirculationEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    circulation_type = serializers.CharField(source="circulation_type_display")
+    authorization_type = serializers.CharField(source="authorization_type_display")
+    length = serializers.FloatField(source="length_display")
+    length_2d = serializers.FloatField(source="length_2d_display")
+
+    class Meta:
+        model = CirculationEdge
+        fields = "__all__"
+
+
+class CirculationEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
+    color_index = serializers.IntegerField()
+    name = serializers.CharField()
+
+    class Meta(MapentityGeojsonModelSerializer.Meta):
+        model = CirculationEdge
+        fields = ["id", "name", "color_index"]
+
+
 class PhysicalEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    physical_type = serializers.CharField(source='physical_type_display')
-    length = serializers.FloatField(source='length_display')
-    length_2d = serializers.FloatField(source='length_2d_display')
+    physical_type = serializers.CharField(source="physical_type_display")
+    length = serializers.FloatField(source="length_display")
+    length_2d = serializers.FloatField(source="length_2d_display")
 
     class Meta:
         model = PhysicalEdge
@@ -44,9 +71,9 @@ class PhysicalEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class CompetenceEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    organization = serializers.CharField(source='organization_display')
-    length = serializers.FloatField(source='length_display')
-    length_2d = serializers.FloatField(source='length_2d_display')
+    organization = serializers.CharField(source="organization_display")
+    length = serializers.FloatField(source="length_display")
+    length_2d = serializers.FloatField(source="length_2d_display")
 
     class Meta:
         model = CompetenceEdge
@@ -63,9 +90,9 @@ class CompetenceEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class SignageManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    organization = serializers.CharField(source='organization_display')
-    length = serializers.FloatField(source='length_display')
-    length_2d = serializers.FloatField(source='length_2d_display')
+    organization = serializers.CharField(source="organization_display")
+    length = serializers.FloatField(source="length_display")
+    length_2d = serializers.FloatField(source="length_2d_display")
 
     class Meta:
         model = SignageManagementEdge
@@ -82,9 +109,9 @@ class SignageManagementEdgeGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class WorkManagementEdgeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-    organization = serializers.CharField(source='organization_display')
-    length = serializers.FloatField(source='length_display')
-    length_2d = serializers.FloatField(source='length_2d_display')
+    organization = serializers.CharField(source="organization_display")
+    length = serializers.FloatField(source="length_display")
+    length_2d = serializers.FloatField(source="length_2d_display")
 
     class Meta:
         model = WorkManagementEdge

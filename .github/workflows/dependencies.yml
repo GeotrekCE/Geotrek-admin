@@ -5,8 +5,8 @@ on:
     paths:
       - setup.py
       - requirements.txt
-      - dev-requirements.in
-      - dev-requirements.txt
+      - requirements-dev.txt
+      - docs/requirements.txt
       - .github/workflows/dependencies.yml
 
 env:
@@ -18,50 +18,56 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: ['ubuntu-20.04']
-        python-version: ['3.8']
+        os: ['ubuntu-latest']
+        python-version: ['3.10']
+
+    permissions:
+      contents: write
+      actions: write
 
     steps:
-      - uses: actions/checkout@v3
-
-      - name: Set up Python
-        uses: actions/setup-python@v4
+      - uses: actions/checkout@v6
+        if: github.event.pull_request.head.repo.full_name != github.repository
         with:
+          ref: ${{ github.head_ref }}
+
+      - uses: actions/checkout@v6
+        if: github.event.pull_request.head.repo.full_name == github.repository
+        with:
+          token: ${{ secrets.PAT }}
+          ref: ${{ github.head_ref }}
+
+      - uses: astral-sh/setup-uv@v7
+        with:
+          version: "latest"
           python-version: ${{ matrix.python-version }}
-
-      - uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/pip
-            ~/.wheel_dir
-
-          key: pip-${{ matrix.python-version }}
-          restore-keys: |
-            pip-${{ matrix.python-version }}
-
-      - name: Install dependencies
-        run: |
-          pip3 wheel --wheel-dir=~/.wheel_dir pip wheel setuptools
-          pip3 install --find-links=~/.wheel_dir --upgrade pip wheel setuptools
-          pip3 wheel --wheel-dir=~/.wheel_dir pip-tools -c dev-requirements.txt
-          pip3 install --find-links=~/.wheel_dir --upgrade pip-tools -c dev-requirements.txt
 
       - name: Check dependency graph
         run: |
-          pip-compile -q
-          pip-compile -q dev-requirements.in
+          uv pip compile setup.py -o requirements.txt
+          uv pip compile requirements-dev.in -o requirements-dev.txt
+          cd docs/ && uv pip compile -c ../requirements.txt -c ../requirements-dev.txt requirements.in -o requirements.txt
 
       - name: Verify dependency graph is ok
-        uses: tj-actions/verify-changed-files@v16
+        uses: tj-actions/verify-changed-files@v20
         id: verify-changed-files
         with:
           files: |
-             requirements.txt
-             dev-requirements.txt
+            requirements.txt
+            requirements-dev.txt
+            docs/requirements.txt
 
       - name: Validating graph
         if: steps.verify-changed-files.outputs.files_changed == 'true'
         run: |
           echo "Dependency file(s) changed: ${{ steps.verify-changed-files.outputs.changed_files }}"
           git diff
-          core.setFailed('Please add your new dependencies in setup.py and/or dev-requirements.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
+          # core.setFailed('Please add your new dependencies in setup.py and/or requirements-dev.in then run pip-compile to add them in requirements. (see docs/contribute/development)')
+
+      - name: Commit files changed
+        uses: stefanzweifel/git-auto-commit-action@v7
+        if: steps.verify-changed-files.outputs.files_changed == 'true'
+        with:
+            # Optional. Commit message for the created commit.
+            # Defaults to "Apply automatic changes"
+            commit_message: "Fix deps"

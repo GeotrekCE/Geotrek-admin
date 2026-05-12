@@ -1,0 +1,20 @@
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 4,
+            "advice": {
+                "en": "Reco en",
+                "fr": "Reco fr"
+            },
+            "filter": true,
+            "name": {
+                "en": "Label en",
+                "fr": "Label fr"
+            },
+            "pictogram": null
+        }
+    ]
+}

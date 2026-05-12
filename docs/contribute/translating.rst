@@ -1,3 +1,5 @@
+.. _translating-geotrek:
+
 ============
 Translating
 ============
@@ -5,12 +7,12 @@ Translating
 Geotrek-admin can be translated online on
 `Makina Corpus Weblate instance <https://weblate.makina-corpus.net/projects/geotrek-admin/>`_
 
+.. important::
+
+  Translating work needs to be synchronized with Geotrek-admin. If you intend to use `Weblate <https://weblate.makina-corpus.net/projects/geotrek-admin/>`_, please inform us by creating a ticket or sending us an email (page contact geotrek.fr).
+
 Getting started
 ---------------
-
--  Create an account
--  Browse by project
--  Browse by language
 
 Create an account
 ~~~~~~~~~~~~~~~~~
@@ -19,7 +21,7 @@ Create an account
 
 -  Fill the register form
 
-   .. figure:: /images/translating/weblate-create-account.png
+   .. figure:: ../images/translating/weblate-create-account.png
       :alt: image
 
 -  Validate your email
@@ -36,7 +38,7 @@ Browse by project
 
 -  Go to “Project > Browse all projects”
 
-   .. figure:: /images/translating/weblate-project-menu.png
+   .. figure:: ../images/translating/weblate-project-menu.png
       :alt: image
 
 -  Select Geotrek-admin project
@@ -45,7 +47,7 @@ Browse by project
 
 -  Choose the language to translate
 
-   .. figure:: /images/translating/weblate-list-of-languages.png
+   .. figure:: ../images/translating/weblate-list-of-languages.png
       :alt: image
 
 
@@ -59,7 +61,7 @@ You could also choose language first
 -  Select the project to translate
 
 
-Select a coponent to translate
+Select a component to translate
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 -  Select a component (a module or a piece of documentation)
@@ -78,17 +80,17 @@ Errors and left to translate can be displayed easily.
 
 Weblate can identify problematic translations as chains between projects, punctuation inconsistancy.
 
-.. figure:: /images/translating/weblate-check.png
+.. figure:: ../images/translating/weblate-check.png
    :alt: image
 
 Other occurrences in all components allows to check consistency.
 
-.. figure:: /images/translating/weblate-check-list-occurrences.png
+.. figure:: ../images/translating/weblate-check-list-occurrences.png
    :alt: image
 
 Each translation generate a permalink (picto |image|).
 
-.. |image| image:: /images/translating/link.png
+.. |image| image:: ../images/translating/link.png
 
 Weblate has a "Zen mode" showing only chains to translate.
 
@@ -96,7 +98,7 @@ Release translations (only for github repository managers)
 ----------------------------------------------------------
 
 Weblate send new translations to `translations` branch in Github, dedicated to translations.
-When new translations chains are validated, manager has to send the manually to Github.
+When new translations chains are validated, manager has to send them manually to Github.
 
 For each release, `translations` branch must be merged into master before building the release.
 
@@ -112,7 +114,7 @@ Add translations to next release
 
 1. In **Github**, merge `translations` branch into `master`, and update changelog.
 
-2. After releasing, in **Weblate**, rebase the branche :
+2. After releasing, in **Weblate**, rebase the branch:
 
-    - In the component, click "Manage > Repository maintenance"
-    - Click "Rebase" to rebase `translations` branch onto `master`
+  - In the component, click "Manage > Repository maintenance"
+  - Click "Rebase" to rebase `translations` branch onto `master`

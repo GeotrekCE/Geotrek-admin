@@ -1,70 +1,34 @@
 import factory
-import os
-import tempfile
-from zipfile import ZipFile
 
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.common.models import Attachment
-from geotrek.common.utils.testdata import (dummy_filefield_as_sequence,
-                                           get_dummy_uploaded_image,
-                                           get_dummy_uploaded_file)
+from geotrek.common.utils.testdata import (
+    get_dummy_uploaded_file,
+    get_dummy_uploaded_image_svg,
+)
 
 from .. import models
-
-from geotrek.common.management.commands.sync_rando import Command
-
-from django.conf import settings
-from django.test.client import RequestFactory
-
-
-class FakeSyncCommand(Command):
-    categories = '1'
-    verbosity = 2
-    host = 'localhost:8000'
-    secure = True
-    with_infrastructures = True
-    with_signages = True
-    with_events = True
-    rando_url = 'localhost:3000'
-
-    def __init__(self, portal='', source='', skip_dem=False, skip_pdf=False, skip_profile_png=False):
-        super().__init__(stdout=None, stderr=None, no_color=False, force_color=False)
-        self.dst_root = settings.TMP_DIR
-        self.temporary_directory = tempfile.TemporaryDirectory(dir=settings.VAR_DIR)
-        self.tmp_root = self.temporary_directory.name
-        zipname = os.path.join('zip', 'tiles', 'global.zip')
-        global_file = os.path.join(self.tmp_root, zipname)
-        dirname = os.path.dirname(global_file)
-        if not os.path.exists(dirname):
-            os.makedirs(dirname)
-        self.zipfile = ZipFile(os.path.join(self.tmp_root, 'zip', 'tiles', 'global.zip'), 'w')
-        self.factory = RequestFactory()
-        self.source = source
-        self.portal = portal
-        self.skip_dem = skip_dem
-        self.skip_pdf = skip_pdf
-        self.skip_profile_png = skip_profile_png
 
 
 class OrganismFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Organism
 
-    organism = factory.Sequence(lambda n: "Organism %s" % n)
+    organism = factory.Sequence(lambda n: f"Organism {n}")
 
 
 class FileTypeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.FileType
 
-    type = factory.Sequence(lambda n: "FileType %s" % n)
+    type = factory.Sequence(lambda n: f"FileType {n}")
 
 
 class LicenseFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.License
 
-    label = factory.Sequence(lambda n: "License %s" % n)
+    label = factory.Sequence(lambda n: f"License {n}")
 
 
 class AttachmentFactory(factory.django.DjangoModelFactory):
@@ -85,36 +49,51 @@ class AttachmentFactory(factory.django.DjangoModelFactory):
     legend = factory.Sequence("Legend {0}".format)
 
 
+class AttachmentImageFactory(AttachmentFactory):
+    attachment_file = factory.django.ImageField()
+    is_image = True
+
+    class Meta:
+        model = Attachment
+
+
+class AttachmentPictoSVGFactory(AttachmentFactory):
+    attachment_file = get_dummy_uploaded_image_svg()
+
+    class Meta:
+        model = Attachment
+
+
 class ThemeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Theme
 
-    label = factory.Sequence(lambda n: "Theme %s" % n)
-    pictogram = dummy_filefield_as_sequence('theme-%s.png')
+    label = factory.Sequence(lambda n: f"Theme {n}")
+    pictogram = factory.django.ImageField()
 
 
 class RecordSourceFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.RecordSource
 
-    name = factory.Sequence(lambda n: "Record source %s" % n)
-    website = 'http://geotrek.fr'
-    pictogram = dummy_filefield_as_sequence('recordsource-%s.png')
+    name = factory.Sequence(lambda n: f"Record source {n}")
+    website = "http://geotrek.fr"
+    pictogram = factory.django.ImageField()
 
 
 class TargetPortalFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.TargetPortal
 
-    name = factory.Sequence(lambda n: "Target Portal %s" % n)
-    website = factory.Sequence(lambda n: "http://geotrek-rando-{}.fr".format(n))
+    name = factory.Sequence(lambda n: f"Target Portal {n}")
+    website = factory.Sequence(lambda n: f"http://geotrek-rando-{n}.fr")
 
 
 class ReservationSystemFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.ReservationSystem
 
-    name = factory.Sequence(lambda n: "Reservation system %s" % n)
+    name = factory.Sequence(lambda n: f"Reservation system {n}")
 
 
 class LabelFactory(factory.django.DjangoModelFactory):
@@ -122,7 +101,7 @@ class LabelFactory(factory.django.DjangoModelFactory):
         model = models.Label
 
     name = "Label"
-    pictogram = get_dummy_uploaded_image('label.png')
+    pictogram = factory.django.ImageField()
     advice = "Advice label"
     filter = True
     published = True
@@ -137,7 +116,7 @@ class AttachmentAccessibilityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.AccessibilityAttachment
 
-    attachment_accessibility_file = get_dummy_uploaded_image()
+    attachment_accessibility_file = factory.django.ImageField()
 
     creator = factory.SubFactory(UserFactory)
     title = factory.Sequence("Title {0}".format)
@@ -147,7 +126,8 @@ class AttachmentAccessibilityFactory(factory.django.DjangoModelFactory):
 class HDViewPointFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.HDViewPoint
-    picture = get_dummy_uploaded_image()
+
+    picture = factory.django.ImageField()
     title = "A title"
     author = "An author"
     legend = "Something"
@@ -161,34 +141,34 @@ class HDViewPointFactory(factory.django.DjangoModelFactory):
                     "type": "Polygon",
                     "coordinates": [
                         [
-                            [
-                                7997.087502861313,
-                                6997.090981210413
-                            ],
-                            [
-                                7997.087502861313,
-                                6456.7472299480705
-                            ],
-                            [
-                                8631.090837675794,
-                                6456.7472299480705
-                            ],
-                            [
-                                8631.090837675794,
-                                6997.090981210413
-                            ],
-                            [
-                                7997.087502861313,
-                                6997.090981210413
-                            ]
+                            [7997.087502861313, 6997.090981210413],
+                            [7997.087502861313, 6456.7472299480705],
+                            [8631.090837675794, 6456.7472299480705],
+                            [8631.090837675794, 6997.090981210413],
+                            [7997.087502861313, 6997.090981210413],
                         ]
-                    ]
+                    ],
                 },
                 "properties": {
                     "annotationType": "ellipse",
                     "name": "Ellipse 1",
-                    "annotationId": 1
-                }
+                    "annotationId": 1,
+                },
             }
-        ]
+        ],
     }
+
+
+class AccessMeanFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.AccessMean
+
+    label = factory.Sequence(lambda n: f"Acces mean {n}")
+
+
+class AnnotationCategoryFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.AnnotationCategory
+
+    label = factory.Sequence(lambda n: f"Annotation Type {n}")
+    pictogram = factory.django.ImageField()

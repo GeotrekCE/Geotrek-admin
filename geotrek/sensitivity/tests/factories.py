@@ -1,21 +1,22 @@
 import factory
-
 from django.contrib.auth.models import Permission
+from mapentity.tests.factories import UserFactory
 
 from geotrek.authent.tests.factories import StructureRelatedDefaultFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 
 from .. import models
 
-from mapentity.tests.factories import UserFactory
-
 
 class RuleFactory(factory.django.DjangoModelFactory):
+    name = factory.Sequence(lambda n: f"Rule {n}")
+    code = factory.Sequence(lambda n: f"CODE{n}")
+    url = factory.faker.Faker("url")
+    pictogram = factory.django.ImageField()
+
     class Meta:
         model = models.Rule
-        django_get_or_create = ('code', 'name', 'url', 'pictogram')
-
-    name = "Rule"
+        django_get_or_create = ("code",)
 
 
 class SportPracticeFactory(factory.django.DjangoModelFactory):
@@ -34,7 +35,7 @@ class SpeciesFactory(factory.django.DjangoModelFactory):
     url = "http://url.com"
     period06 = True
     period07 = True
-    category = models.Species.SPECIES
+    category = models.Species.CategoryChoices.SPECIES
 
     @factory.post_generation
     def practices(obj, create, extracted=None, **kwargs):
@@ -49,7 +50,7 @@ class SpeciesFactory(factory.django.DjangoModelFactory):
 
 
 class RegulatorySpeciesFactory(SpeciesFactory):
-    category = models.Species.REGULATORY
+    category = models.Species.CategoryChoices.REGULATORY
 
 
 class SensitiveAreaFactory(StructureRelatedDefaultFactory):
@@ -57,10 +58,10 @@ class SensitiveAreaFactory(StructureRelatedDefaultFactory):
         model = models.SensitiveArea
 
     species = factory.SubFactory(SpeciesFactory)
-    geom = 'POLYGON((700000 6600000, 700000 6600003, 700003 6600003, 700003 6600000, 700000 6600000))'
+    geom = "POLYGON((700000 6600000, 700000 6600003, 700003 6600003, 700003 6600000, 700000 6600000))"
     published = True
     description = "Blabla"
-    contact = "<a href=\"mailto:toto@tata.com\">toto@tata.com</a>"
+    contact = '<a href="mailto:toto@tata.com">toto@tata.com</a>'
 
     @factory.post_generation
     def rules(obj, create, extracted=None, **kwargs):
@@ -68,17 +69,17 @@ class SensitiveAreaFactory(StructureRelatedDefaultFactory):
             if not extracted:
                 rules = [
                     RuleFactory.create(
-                        code='R1',
-                        name='Rule1',
-                        url='http://url.com',
-                        pictogram='picto_rule1.png'
+                        code="R1",
+                        name="Rule1",
+                        url="http://url.com",
+                        pictogram="picto_rule1.png",
                     ),
                     RuleFactory.create(
-                        code='R2',
-                        name='Rule2',
-                        url='http://url.com',
-                        pictogram='picto_rule2.png',
-                        description="abcdefgh"
+                        code="R2",
+                        name="Rule2",
+                        url="http://url.com",
+                        pictogram="picto_rule2.png",
+                        description="abcdefgh",
                     ),
                 ]
             for rule in rules:
@@ -86,8 +87,10 @@ class SensitiveAreaFactory(StructureRelatedDefaultFactory):
 
 
 class MultiPolygonSensitiveAreaFactory(SensitiveAreaFactory):
-    geom = 'MULTIPOLYGON(((700000 6600000, 700000 6600003, 700003 6600003, 700003 6600000, 700000 6600000)),' \
-        '((700010 6600010, 700010 6600013, 700013 6600013, 700013 6600010, 700010 6600010)))'
+    geom = (
+        "MULTIPOLYGON(((700000 6600000, 700000 6600003, 700003 6600003, 700003 6600000, 700000 6600000)),"
+        "((700010 6600010, 700010 6600013, 700013 6600013, 700013 6600010, 700010 6600010)))"
+    )
 
 
 class RegulatorySensitiveAreaFactory(SensitiveAreaFactory):
@@ -99,5 +102,5 @@ class BiodivManagerFactory(UserFactory):
 
     @factory.post_generation
     def create_biodiv_manager(obj, create, extracted, **kwargs):
-        for perm in Permission.objects.exclude(codename='can_bypass_structure'):
+        for perm in Permission.objects.exclude(codename="can_bypass_structure"):
             obj.user_permissions.add(perm)

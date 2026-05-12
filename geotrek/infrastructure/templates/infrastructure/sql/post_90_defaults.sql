@@ -7,12 +7,6 @@ ALTER TABLE infrastructure_infrastructuretype ALTER COLUMN date_update SET DEFAU
 -- structure
 -- pictogram
 
--- InfrastructureAccessMean
-----------
--- label
-ALTER TABLE infrastructure_infrastructureaccessmean ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE infrastructure_infrastructureaccessmean ALTER COLUMN date_update SET DEFAULT now();
-
 -- InfrastructureCondition
 --------------------------
 -- label
@@ -51,4 +45,3 @@ ALTER TABLE infrastructure_infrastructure ALTER COLUMN description SET DEFAULT '
 ALTER TABLE infrastructure_infrastructure ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 -- structure
-ALTER TABLE infrastructure_infrastructure ALTER COLUMN provider SET DEFAULT '';

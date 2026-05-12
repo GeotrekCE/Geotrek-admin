@@ -2,6 +2,7 @@ DROP VIEW IF EXISTS f_v_nature;
 DROP VIEW IF EXISTS v_physicals;
 DROP VIEW IF EXISTS f_v_foncier;
 DROP VIEW IF EXISTS v_lands;
+DROP VIEW IF EXISTS v_circulations;
 DROP VIEW IF EXISTS f_v_competence;
 DROP VIEW IF EXISTS v_competences;
 DROP VIEW IF EXISTS f_v_gestion_signaletique;

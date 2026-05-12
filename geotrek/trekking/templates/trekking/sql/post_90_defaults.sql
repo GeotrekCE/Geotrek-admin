@@ -63,11 +63,9 @@ ALTER TABLE trekking_trek ALTER COLUMN accessibility_infrastructure SET DEFAULT 
 ALTER TABLE trekking_trek ALTER COLUMN accessibility_signage SET DEFAULT '';
 ALTER TABLE trekking_trek ALTER COLUMN accessibility_slope SET DEFAULT '';
 ALTER TABLE trekking_trek ALTER COLUMN accessibility_width SET DEFAULT '';
-ALTER TABLE trekking_trek ALTER COLUMN provider SET DEFAULT '';
 -- route
 -- difficulty
 -- web_links
--- related_treks
 -- information_desks
 -- points_reference
 -- source
@@ -84,14 +82,6 @@ ALTER TABLE trekking_trek ALTER COLUMN review SET DEFAULT FALSE;
 ALTER TABLE trekking_trek ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 
-
--- TrekRelationship
--------------------
-ALTER TABLE trekking_trekrelationship ALTER COLUMN has_common_departure SET DEFAULT FALSE;
-ALTER TABLE trekking_trekrelationship ALTER COLUMN has_common_edge SET DEFAULT FALSE;
-ALTER TABLE trekking_trekrelationship ALTER COLUMN is_circuit_step SET DEFAULT FALSE;
--- trek_a
--- trek_b
 
 -- TrekNetwork
 --------------
@@ -157,7 +147,6 @@ ALTER TABLE trekking_poi ALTER COLUMN description SET DEFAULT '';
 -- name
 ALTER TABLE trekking_poi ALTER COLUMN review SET DEFAULT FALSE;
 ALTER TABLE trekking_poi ALTER COLUMN published SET DEFAULT FALSE;
-ALTER TABLE trekking_poi ALTER COLUMN provider SET DEFAULT '';
 
 -- publication_date
 
@@ -188,4 +177,3 @@ ALTER TABLE trekking_servicetype ALTER COLUMN date_update SET DEFAULT now();
 -- type
 --eid
 --structure
-ALTER TABLE trekking_service ALTER COLUMN provider SET DEFAULT '';

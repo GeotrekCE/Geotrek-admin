@@ -60,13 +60,9 @@ ALTER TABLE common_attachment ALTER COLUMN date_update SET DEFAULT now();
 -- TargetPortal
 ---------------
 -- name
--- website
+ALTER TABLE common_targetportal ALTER COLUMN website SET DEFAULT '';
 ALTER TABLE common_targetportal ALTER COLUMN title SET DEFAULT '';
 ALTER TABLE common_targetportal ALTER COLUMN description SET DEFAULT '';
-ALTER TABLE common_targetportal ALTER COLUMN facebook_image_url SET DEFAULT '{{ FACEBOOK_IMAGE }}';
-ALTER TABLE common_targetportal ALTER COLUMN facebook_image_width SET DEFAULT {{ FACEBOOK_IMAGE_WIDTH }};
-ALTER TABLE common_targetportal ALTER COLUMN facebook_image_height SET DEFAULT {{ FACEBOOK_IMAGE_HEIGHT }};
-
 
 -- ReservationSystem
 --------------------
@@ -100,5 +96,12 @@ ALTER TABLE common_hdviewpoint ALTER COLUMN legend SET DEFAULT '';
 ALTER TABLE common_hdviewpoint ALTER COLUMN author SET DEFAULT '';
 ALTER TABLE common_hdviewpoint ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
 ALTER TABLE common_hdviewpoint ALTER COLUMN annotations SET DEFAULT '{}'::jsonb;
+ALTER TABLE common_hdviewpoint ALTER COLUMN annotations_categories SET DEFAULT '{}'::jsonb;
 ALTER TABLE common_hdviewpoint ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE common_hdviewpoint ALTER COLUMN date_update SET DEFAULT now();
+
+-- AccessMean
+----------
+-- label
+ALTER TABLE common_accessmean ALTER COLUMN date_insert SET DEFAULT now();
+ALTER TABLE common_accessmean ALTER COLUMN date_update SET DEFAULT now();

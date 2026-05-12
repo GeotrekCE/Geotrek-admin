@@ -1,0 +1,20 @@
+{
+    "count": 1,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "description": {
+                "en": "",
+                "fr": "Test descr"
+            },
+            "name": "Portal",
+            "title": {
+                "en": null,
+                "fr": "Example"
+            },
+            "website": "http://www.example.fr"
+        }
+    ]
+}

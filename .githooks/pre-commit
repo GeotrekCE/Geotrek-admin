@@ -1,29 +1,17 @@
 #!/bin/bash
 
-function docker_compose {
-    # detect docker-compose or docker compose command
-    if which docker-compose -eq 0
-    then
-      docker-compose  "$@"
-    else
-      docker compose  "$@"
-    fi
-}
-
 echo "Check dependency graph and fix requirements"
 
-docker_compose run -T --rm web bash -c "pip-compile -q && pip-compile dev-requirements.in"
+make deps
 
+echo "run Ruff..."
 
-
-echo "run Flake8..."
-
-docker_compose run -T --rm web flake8 geotrek
+make quality
 status=$?
 
 if test $status -eq 1
 then
   exit $status
 else
-  echo "Flake8 check is ok..."
+  echo "Ruff check is ok..."
 fi

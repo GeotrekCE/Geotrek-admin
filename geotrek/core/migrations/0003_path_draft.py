@@ -4,15 +4,16 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0002_auto_20180608_1236'),
+        ("core", "0002_auto_20180608_1236"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='path',
-            name='draft',
-            field=models.BooleanField(db_column='brouillon', default=False, verbose_name='Draft'),
+            model_name="path",
+            name="draft",
+            field=models.BooleanField(
+                db_column="brouillon", default=False, verbose_name="Draft"
+            ),
         ),
     ]

@@ -1,53 +1,43 @@
 import os
-
 from unittest import mock
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Permission, User
+from django.core.files.storage import default_storage
 from django.shortcuts import get_object_or_404
 from django.test.utils import override_settings
-from django.utils import translation
-from django.utils.module_loading import import_string
-from django.utils.translation import gettext as _
-from django.conf import settings
 from django.urls import reverse
 from django.urls.exceptions import NoReverseMatch
-
-# Workaround https://code.djangoproject.com/ticket/22865
-from freezegun import freeze_time
-
-from geotrek.common.models import Attachment, AccessibilityAttachment, FileType  # NOQA
-from geotrek.common.tests.factories import AttachmentFactory, AttachmentAccessibilityFactory
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
-
-from mapentity.tests.factories import SuperUserFactory, UserFactory
+from django.utils.module_loading import import_string
+from django.utils.translation import gettext as _
 from mapentity.registry import app_settings
-from mapentity.tests import MapEntityTest, MapEntityLiveTest
+from mapentity.tests import MapEntityLiveTest, MapEntityTest
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
+from geotrek.authent.tests.base import AuthentFixturesMixin, AuthentFixturesTest
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.common.models import AccessibilityAttachment, Attachment, FileType  # NOQA
+
+from .factories import AttachmentAccessibilityFactory, AttachmentImageFactory
 
 
-class TranslationResetMixin:
-    def setUp(self):
-        translation.deactivate()
-        super().setUp()
-
-
-class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
-
+class CommonTest(AuthentFixturesTest, MapEntityTest):
     def get_bad_data(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            return {'topology': 'doh!'}, _('Topology is not valid.')
+            return {"topology": "doh!"}, _("Topology is not valid.")
         else:
-            return {'geom': 'doh!'}, _('Invalid geometry value.')
+            return {"geom": "doh!"}, _("Invalid geometry value.")
 
-    @mock.patch('mapentity.helpers.requests')
+    @mock.patch("mapentity.helpers.requests")
     def test_document_public_booklet_export(self, mock_requests):
         if self.model is None:
             return  # Abstract test should not run
         try:
-            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable')
+            reverse(
+                f"{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable",
+                kwargs={"lang": "en", "pk": 0, "slug": "test"},
+            )
         except NoReverseMatch:
             return  # No public booklet export
         mock_requests.get.return_value.status_code = 200
@@ -55,35 +45,80 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
 
         obj = self.modelfactory.create()
         response = self.client.get(
-            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable',
-                    kwargs={'lang': 'en', 'pk': obj.pk, 'slug': obj.slug}))
+            reverse(
+                f"{self.model._meta.app_label}:{self.model._meta.model_name}_booklet_printable",
+                kwargs={"lang": "en", "pk": obj.pk, "slug": obj.slug},
+            )
+        )
         self.assertEqual(response.status_code, 200)
 
-    @mock.patch('mapentity.helpers.requests')
+    @mock.patch("mapentity.helpers.requests")
+    def test_document_markup(self, mock_requests):
+        if self.model is None:
+            return  # Abstract test should not run
+        try:
+            reverse(
+                f"{self.model._meta.app_label}:{self.model._meta.model_name}_markup_html",
+                kwargs={"lang": "en", "pk": 0, "slug": "test"},
+            )
+        except NoReverseMatch:
+            return  # No document markup
+
+        mock_requests.get.return_value.status_code = 200
+        mock_requests.get.return_value.content = b'<p id="properties">Mock</p>'
+
+        obj = self.modelfactory.create()
+        response = self.client.get(
+            reverse(
+                f"{self.model._meta.app_label}:{self.model._meta.model_name}_markup_html",
+                kwargs={"pk": obj.pk, "slug": obj.slug, "lang": "en"},
+            )
+        )
+        self.assertEqual(response.status_code, 200)
+
+    @mock.patch("mapentity.helpers.requests")
     def test_duplicate_object_without_structure(self, mock_requests):
-        if self.model is None or not getattr(self.model, 'can_duplicate') or hasattr(self.model, 'structure'):
+        if (
+            self.model is None
+            or not getattr(self.model, "can_duplicate")
+            or hasattr(self.model, "structure")
+        ):
             return
 
         obj_1 = self.modelfactory.create()
         obj_1.refresh_from_db()
         response_duplicate = self.client.post(
-            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_duplicate',
-                    kwargs={"pk": obj_1.pk})
+            reverse(
+                f"{self.model._meta.app_label}:{self.model._meta.model_name}_duplicate",
+                kwargs={"pk": obj_1.pk},
+            )
         )
 
         self.assertEqual(response_duplicate.status_code, 302)
-        self.client.get(response_duplicate['location'])
+        self.client.get(response_duplicate["location"])
         self.assertEqual(self.model.objects.count(), 2)
-        if 'name' in [field.name for field in self.model._meta.get_fields()]:
-            self.assertEqual(self.model.objects.filter(name__endswith='(copy)').count(), 2)
+        if "name" in [field.name for field in self.model._meta.get_fields()]:
+            self.assertEqual(
+                self.model.objects.filter(name__endswith="(copy)").count(), 2
+            )
         for field in self.model._meta.get_fields():
-            fields_name_different = ['id', 'uuid', 'date_insert', 'date_update', 'name', 'name_en']
+            fields_name_different = [
+                "id",
+                "uuid",
+                "date_insert",
+                "date_update",
+                "name",
+                "name_en",
+            ]
             if not field.related_model and field.name not in fields_name_different:
-                self.assertEqual(str(getattr(obj_1, field.name)), str(getattr(self.model.objects.last(), field.name)))
+                self.assertEqual(
+                    str(getattr(obj_1, field.name)),
+                    str(getattr(self.model.objects.last(), field.name)),
+                )
 
-    @mock.patch('mapentity.helpers.requests')
+    @mock.patch("mapentity.helpers.requests")
     def test_duplicate_object_with_structure(self, mock_requests):
-        if self.model is None or not getattr(self.model, 'can_duplicate'):
+        if self.model is None or not getattr(self.model, "can_duplicate"):
             return
         fields_name = [field.name for field in self.model._meta.get_fields()]
         if "structure" not in fields_name:
@@ -92,45 +127,70 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         obj_1 = self.modelfactory.create(structure=structure)
         obj_1.refresh_from_db()
 
-        AttachmentFactory.create(content_object=obj_1,
-                                 attachment_file=get_dummy_uploaded_image())
+        AttachmentImageFactory.create(content_object=obj_1)
 
-        attachments_accessibility = 'attachments_accessibility' in fields_name
+        attachments_accessibility = "attachments_accessibility" in fields_name
 
         if attachments_accessibility:
-            AttachmentAccessibilityFactory.create(content_object=obj_1,
-                                                  attachment_accessibility_file=get_dummy_uploaded_image())
+            AttachmentAccessibilityFactory.create(content_object=obj_1)
         response = self.client.post(
-            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_duplicate',
-                    kwargs={"pk": obj_1.pk})
+            reverse(
+                f"{self.model._meta.app_label}:{self.model._meta.model_name}_duplicate",
+                kwargs={"pk": obj_1.pk},
+            )
         )
         self.assertEqual(response.status_code, 302)
 
         msg = [str(message) for message in messages.get_messages(response.wsgi_request)]
-        self.assertEqual(msg[0],
-                         f"{self.model._meta.verbose_name} has been duplicated successfully")
+        self.assertEqual(
+            msg[0], f"{self.model._meta.verbose_name} has been duplicated successfully"
+        )
 
         self.assertEqual(self.model.objects.count(), 2)
         self.assertEqual(Attachment.objects.filter(object_id=obj_1.pk).count(), 1)
-        self.assertEqual(Attachment.objects.filter(object_id=self.model.objects.last().pk).count(), 1)
+        self.assertEqual(
+            Attachment.objects.filter(object_id=self.model.objects.last().pk).count(), 1
+        )
         if attachments_accessibility:
-            self.assertEqual(AccessibilityAttachment.objects.filter(object_id=obj_1.pk).count(), 1)
-            self.assertEqual(AccessibilityAttachment.objects.filter(object_id=self.model.objects.last().pk).count(), 1)
+            self.assertEqual(
+                AccessibilityAttachment.objects.filter(object_id=obj_1.pk).count(), 1
+            )
+            self.assertEqual(
+                AccessibilityAttachment.objects.filter(
+                    object_id=self.model.objects.last().pk
+                ).count(),
+                1,
+            )
 
-        if 'name' in fields_name:
-            self.assertEqual(self.model.objects.filter(name__endswith='(copy)').count(), 1)
+        if "name" in fields_name:
+            self.assertEqual(
+                self.model.objects.filter(name__endswith="(copy)").count(), 1
+            )
         self.assertEqual(self.model.objects.filter(structure=structure).count(), 1)
         for field in self.model._meta.get_fields():
-            fields_name_different = ['id', 'uuid', 'date_insert', 'date_update', 'name', 'name_en']
+            fields_name_different = [
+                "id",
+                "uuid",
+                "date_insert",
+                "date_update",
+                "name",
+                "name_en",
+            ]
             if not field.related_model and field.name not in fields_name_different:
-                self.assertEqual(str(getattr(obj_1, field.name)), str(getattr(self.model.objects.last(), field.name)))
+                self.assertEqual(
+                    str(getattr(obj_1, field.name)),
+                    str(getattr(self.model.objects.last(), field.name)),
+                )
 
-    @mock.patch('mapentity.helpers.requests')
+    @mock.patch("mapentity.helpers.requests")
     def test_document_public_export(self, mock_requests):
         if self.model is None:
             return  # Abstract test should not run
         try:
-            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable')
+            reverse(
+                f"{self.model._meta.app_label}:{self.model._meta.model_name}_printable",
+                kwargs={"lang": "en", "pk": 0, "slug": "test"},
+            )
         except NoReverseMatch:
             return  # No public booklet export
         mock_requests.get.return_value.status_code = 200
@@ -138,20 +198,34 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
 
         obj = self.modelfactory.create()
         response = self.client.get(
-            reverse(f'{self.model._meta.app_label}:{self.model._meta.model_name}_printable',
-                    kwargs={'lang': 'en', 'pk': obj.pk, 'slug': obj.slug}))
+            reverse(
+                f"{self.model._meta.app_label}:{self.model._meta.model_name}_printable",
+                kwargs={"lang": "en", "pk": obj.pk, "slug": obj.slug},
+            )
+        )
         self.assertEqual(response.status_code, 200)
 
     def test_structure_is_set(self):
-        if not hasattr(self.model, 'structure'):
+        if not hasattr(self.model, "structure"):
             return
         response = self.client.post(self._get_add_url(), self.get_good_data())
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
         self.assertEqual(obj.structure, self.user.profile.structure)
 
-    @override_settings(FORCED_LAYERS=[('OSM', [(42, 100000), (43.87017822557581, 7.506408691406249),
-                                               (43.90185050527358, 7.555847167968749), (42, 100000)])])
+    @override_settings(
+        FORCED_LAYERS=[
+            (
+                "OpenStreetMap",
+                [
+                    (42, 100000),
+                    (43.87017822557581, 7.506408691406249),
+                    (43.90185050527358, 7.555847167968749),
+                    (42, 100000),
+                ],
+            )
+        ]
+    )
     def test_forced_layers(self):
         if self.model is None:
             return  # Abstract test should not run
@@ -164,11 +238,11 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.assertContains(response, "[42, 100000]")
 
     def test_structure_is_not_changed_without_permission(self):
-        if not hasattr(self.model, 'structure'):
+        if not hasattr(self.model, "structure"):
             return
         structure = StructureFactory()
         self.assertNotEqual(structure, self.user.profile.structure)
-        self.assertFalse(self.user.has_perm('authent.can_bypass_structure'))
+        self.assertFalse(self.user.has_perm("authent.can_bypass_structure"))
         obj = self.modelfactory.create(structure=structure)
         result = self.client.post(obj.get_update_url(), self.get_good_data())
         self.assertEqual(result.status_code, 302)
@@ -176,29 +250,31 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.logout()
 
     def test_structure_is_changed_with_permission(self):
-        if not self.model or 'structure' not in self.model._meta.get_fields():
+        if not self.model or "structure" not in self.model._meta.get_fields():
             return
-        perm = Permission.objects.get(codename='can_bypass_structure')
+        perm = Permission.objects.get(codename="can_bypass_structure")
         self.user.user_permissions.add(perm)
         structure = StructureFactory()
         self.assertNotEqual(structure, self.user.profile.structure)
         obj = self.modelfactory.create(structure=structure)
         data = self.get_good_data()
-        data['structure'] = self.user.profile.structure.pk
+        data["structure"] = self.user.profile.structure.pk
         result = self.client.post(obj.get_update_url(), data)
         self.assertEqual(result.status_code, 302)
-        self.assertEqual(self.model.objects.first().structure, self.user.profile.structure)
+        self.assertEqual(
+            self.model.objects.first().structure, self.user.profile.structure
+        )
         self.logout()
 
     def test_set_structure_with_permission(self):
-        if not hasattr(self.model, 'structure'):
+        if not hasattr(self.model, "structure"):
             return
-        perm = Permission.objects.get(codename='can_bypass_structure')
+        perm = Permission.objects.get(codename="can_bypass_structure")
         self.user.user_permissions.add(perm)
         structure = StructureFactory()
         self.assertNotEqual(structure, self.user.profile.structure)
         data = self.get_good_data()
-        data['structure'] = self.user.profile.structure.pk
+        data["structure"] = self.user.profile.structure.pk
         response = self.client.post(self._get_add_url(), data)
         self.assertEqual(response.status_code, 302)
         obj = self.model.objects.last()
@@ -211,7 +287,7 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
 
         obj = self.modelfactory()
 
-        response = self.client.get('%s?lang=fr' % obj.get_detail_url())
+        response = self.client.get(f"{obj.get_detail_url()}?lang=fr")
         self.assertEqual(response.status_code, 200)
 
     def test_detail_with_context(self):
@@ -220,16 +296,18 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
 
         obj = self.modelfactory()
 
-        response = self.client.get('%s?context={"mapsize":{"width":5,"height":6}}' % obj.get_detail_url())
+        response = self.client.get(
+            f'{obj.get_detail_url()}?context={{"mapsize":{{"width":5,"height":6}}}}'
+        )
         self.assertEqual(response.status_code, 200)
 
     def test_permission_published(self):
         if not self.model:
             return
-        if 'published' not in [field.name for field in self.model._meta.get_fields()]:
+        if "published" not in [field.name for field in self.model._meta.get_fields()]:
             return
-        self.user = self.userfactory(password='booh')
-        codename = 'publish_%s' % self.model._meta.model_name
+        self.user = self.userfactory(password="booh")
+        codename = f"publish_{self.model._meta.model_name}"
         if not Permission.objects.filter(codename=codename).count():
             return
         perm = Permission.objects.get(codename=codename)
@@ -239,7 +317,7 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         self.user.user_permissions.remove(perm)
         self.user.save()
         self.user = get_object_or_404(User, pk=self.user.pk)
-        success = self.client.login(username=self.user.username, password='booh')
+        success = self.client.login(username=self.user.username, password="booh")
         self.assertTrue(success)
         response = self.client.post(self._get_add_url(), self.get_good_data())
         self.assertEqual(response.status_code, 302)
@@ -247,10 +325,10 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
     def test_stay_publish_no_permission(self):
         if not self.model:
             return
-        if 'published' not in [field.name for field in self.model._meta.get_fields()]:
+        if "published" not in [field.name for field in self.model._meta.get_fields()]:
             return
-        self.user = self.userfactory(password='booh')
-        codename = 'publish_%s' % self.model._meta.model_name
+        self.user = self.userfactory(password="booh")
+        codename = f"publish_{self.model._meta.model_name}"
         if not Permission.objects.filter(codename=codename).count():
             return
         perm = Permission.objects.get(codename=codename)
@@ -271,179 +349,105 @@ class CommonTest(AuthentFixturesTest, TranslationResetMixin, MapEntityTest):
         # Assert columns equal mandatory columns plus custom extra columns
         if self.model is None:
             return
-        with override_settings(COLUMNS_LISTS={f'{self.model._meta.model_name}_view': self.extra_column_list}):
-            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List')().columns,
-                             self.expected_column_list_extra)
+        with override_settings(
+            COLUMNS_LISTS={
+                f"{self.model._meta.model_name}_view": self.extra_column_list
+            }
+        ):
+            self.assertEqual(
+                import_string(
+                    f"geotrek.{self.model._meta.app_label}.views.{self.model.__name__}List"
+                )().columns,
+                self.expected_column_list_extra,
+            )
 
     def test_custom_columns_mixin_on_export(self):
         # Assert columns equal mandatory columns plus custom extra columns
         if self.model is None:
             return
-        with override_settings(COLUMNS_LISTS={f'{self.model._meta.model_name}_export': self.extra_column_list}):
-            self.assertEqual(import_string(f'geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList')().columns,
-                             self.expected_column_formatlist_extra)
-
-
-class GeotrekAPITestCase:
-    api_prefix = '/api/en/'
-
-    def get_expected_json_attrs(self):
-        return {}
-
-    @freeze_time("2020-03-17")
-    def test_api_list_for_model(self):
-        if self.get_expected_json_attrs is None:
-            return
-        if self.model is None:
-            return  # Abstract test should not run
-
-        self.obj = self.modelfactory.create()
-        list_url = '{api_prefix}{modelname}s.json'.format(api_prefix=self.api_prefix,
-                                                          modelname=self.model._meta.model_name)
-        response = self.client.get(list_url)
-        self.assertEqual(response.status_code, 200, f"{list_url} not found")
-        content_json = response.json()
-        if hasattr(self, 'length'):
-            length = content_json[0].pop('length')
-            self.assertAlmostEqual(length, self.length)
-        self.assertEqual(content_json, [{'id': self.obj.pk, **self.get_expected_json_attrs()}])
-
-    @freeze_time("2020-03-17")
-    def test_api_geojson_list_for_model(self):
-        if self.get_expected_json_attrs is None:
-            return
-        if self.model is None:
-            return  # Abstract test should not run
-
-        self.obj = self.modelfactory.create()
-        list_url = '{api_prefix}{modelname}s.geojson'.format(api_prefix=self.api_prefix,
-                                                             modelname=self.model._meta.model_name)
-        response = self.client.get(list_url)
-        self.assertEqual(response.status_code, 200, f"{list_url} not found")
-        content_json = response.json()
-        if hasattr(self, 'length'):
-            length = content_json['features'][0]['properties'].pop('length')
-            self.assertAlmostEqual(length, self.length)
-        self.assertEqual(content_json, {
-            'type': 'FeatureCollection',
-            'features': [{
-                'id': self.obj.pk,
-                'type': 'Feature',
-                'geometry': self.expected_json_geom,
-                'properties': self.get_expected_json_attrs(),
-            }],
-        })
-
-    @freeze_time("2020-03-17")
-    def test_api_detail_for_model(self):
-        if self.get_expected_json_attrs is None:
-            return
-        if self.model is None:
-            return  # Abstract test should not run
-
-        self.obj = self.modelfactory.create()
-        detail_url = '{api_prefix}{modelname}s/{id}'.format(api_prefix=self.api_prefix,
-                                                            modelname=self.model._meta.model_name,
-                                                            id=self.obj.pk)
-        response = self.client.get(detail_url)
-        self.assertEqual(response.status_code, 200, f"{detail_url} not found")
-
-        content_json = response.json()
-        if hasattr(self, 'length'):
-            length = content_json.pop('length')
-            self.assertAlmostEqual(length, self.length)
-        self.assertEqual(content_json, {'id': self.obj.pk, **self.get_expected_json_attrs()})
-
-    @freeze_time("2020-03-17")
-    def test_api_geojson_detail_for_model(self):
-        if self.get_expected_json_attrs is None:
-            return
-        if self.model is None:
-            return  # Abstract test should not run
-
-        self.obj = self.modelfactory.create()
-        detail_url = '{api_prefix}{modelname}s/{id}.geojson'.format(api_prefix=self.api_prefix,
-                                                                    modelname=self.model._meta.model_name,
-                                                                    id=self.obj.pk)
-        response = self.client.get(detail_url)
-        self.assertEqual(response.status_code, 200, f"{detail_url} not found")
-        content_json = response.json()
-        if hasattr(self, 'length'):
-            length = content_json['properties'].pop('length')
-            self.assertAlmostEqual(length, self.length)
-        self.assertEqual(content_json, {
-            'id': self.obj.pk,
-            'type': 'Feature',
-            'geometry': self.expected_json_geom,
-            'properties': self.get_expected_json_attrs(),
-        })
+        with override_settings(
+            COLUMNS_LISTS={
+                f"{self.model._meta.model_name}_export": self.extra_column_list
+            }
+        ):
+            self.assertEqual(
+                import_string(
+                    f"geotrek.{self.model._meta.app_label}.views.{self.model.__name__}FormatList"
+                )().columns,
+                self.expected_column_formatlist_extra,
+            )
 
 
 class CommonLiveTest(MapEntityLiveTest):
-    @mock.patch('mapentity.helpers.requests')
+    @mock.patch("mapentity.helpers.requests")
     def test_map_image_other_language(self, mock_requests):
         if self.model is None:
             return  # Abstract test should not run
 
-        user = SuperUserFactory.create(username='Superuser', password='booh')
+        user = SuperUserFactory.create()
         self.client.force_login(user=user)
 
-        obj = self.modelfactory.create(geom='POINT(0 0)')
+        obj = self.modelfactory.create(geom="POINT(0 0)")
 
         # Initially, map image does not exists
         image_path = obj.get_map_image_path()
-        if os.path.exists(image_path):
-            os.remove(image_path)
-        self.assertFalse(os.path.exists(image_path))
+        if default_storage.exists(image_path):
+            default_storage.delete(image_path)
+        self.assertFalse(default_storage.exists(image_path))
 
         # Mock Screenshot response
         mock_requests.get.return_value.status_code = 200
-        mock_requests.get.return_value.content = b'*' * 100
+        mock_requests.get.return_value.content = b"*" * 100
 
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(os.path.exists(image_path))
+        self.assertTrue(default_storage.exists(image_path))
 
-        mapimage_url = '%s%s?context&lang=fr' % (self.live_server_url, obj.get_detail_url())
-        screenshot_url = 'http://0.0.0.0:8001/?url=%s' % mapimage_url
+        mapimage_url = f"{self.live_server_url}{obj.get_detail_url()}?context&lang=fr"
+        screenshot_url = f"http://0.0.0.0:8001/?url={mapimage_url}"
         url_called = mock_requests.get.call_args_list[0]
         self.assertTrue(url_called.startswith(screenshot_url))
 
-    @mock.patch('mapentity.helpers.requests')
+        mapimage_url = f"{self.live_server_url}{obj.get_detail_url()}?context&lang=en"
+        screenshot_url = f"http://0.0.0.0:8001/?url={mapimage_url}"
+        url_called = mock_requests.get.call_args_list[0]
+        self.assertTrue(url_called.startswith(screenshot_url))
+
+    @mock.patch("mapentity.helpers.requests")
     def test_map_image_not_published_superuser(self, mock_requests):
         if self.model is None:
             return  # Abstract test should not run
 
-        user = SuperUserFactory.create(username='Superuser', password='booh')
+        user = SuperUserFactory.create(username="Superuser", password="booh")
         self.client.force_login(user=user)
 
-        obj = self.modelfactory.create(geom='POINT(0 0)', published=False)
+        obj = self.modelfactory.create(geom="POINT(0 0)", published=False)
 
         # Initially, map image does not exists
         image_path = obj.get_map_image_path()
-        if os.path.exists(image_path):
-            os.remove(image_path)
-        self.assertFalse(os.path.exists(image_path))
+        if default_storage.exists(image_path):
+            default_storage.delete(image_path)
+        self.assertFalse(default_storage.exists(image_path))
 
         # Mock Screenshot response
         mock_requests.get.return_value.status_code = 200
-        mock_requests.get.return_value.content = b'*' * 100
+        mock_requests.get.return_value.content = b"*" * 100
 
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(os.path.exists(image_path))
+        self.assertTrue(default_storage.exists(image_path))
 
-        mapimage_url = '%s%s?context' % (self.live_server_url, obj.get_detail_url())
-        screenshot_url = 'http://0.0.0.0:8001/?url=%s' % mapimage_url
+        mapimage_url = f"{self.live_server_url}{obj.get_detail_url()}?context"
+        screenshot_url = f"http://0.0.0.0:8001/?url={mapimage_url}"
         url_called = mock_requests.get.call_args_list[0]
         self.assertTrue(url_called.startswith(screenshot_url))
 
-    @mock.patch('mapentity.helpers.requests')
+    @mock.patch("mapentity.helpers.requests")
     def test_map_image_not_published_not_authenticated(self, mock_requests):
         if self.model is None:
             return  # Abstract test should not run
 
-        obj = self.modelfactory.create(geom='POINT(0 0)', published=False)
+        obj = self.modelfactory.create(geom="POINT(0 0)", published=False)
 
         # Initially, map image does not exists
         image_path = obj.get_map_image_path()
@@ -455,15 +459,15 @@ class CommonLiveTest(MapEntityLiveTest):
         self.assertEqual(response.status_code, 403)
         self.assertFalse(os.path.exists(image_path))
 
-    @mock.patch('mapentity.helpers.requests')
+    @mock.patch("mapentity.helpers.requests")
     def test_map_image_not_published_no_permission(self, mock_requests):
         if self.model is None:
             return  # Abstract test should not run
 
-        user = UserFactory.create(username='user', password='booh')
+        user = UserFactory.create(username="user", password="booh")
         self.client.force_login(user=user)
 
-        obj = self.modelfactory.create(geom='POINT(0 0)', published=False)
+        obj = self.modelfactory.create(geom="POINT(0 0)", published=False)
 
         # Initially, map image does not exists
         image_path = obj.get_map_image_path()
@@ -473,33 +477,137 @@ class CommonLiveTest(MapEntityLiveTest):
 
         # Mock Screenshot response
         mock_requests.get.return_value.status_code = 200
-        mock_requests.get.return_value.content = b'*' * 100
+        mock_requests.get.return_value.content = b"*" * 100
 
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 403)
         self.assertFalse(os.path.exists(image_path))
 
-    @mock.patch('mapentity.helpers.requests')
+    @mock.patch("mapentity.helpers.requests")
     @override_settings(DEBUG=False)
     def test_map_image_not_serve(self, mock_requests):
         if self.model is None:
             return  # Abstract test should not run
-        app_settings['SENDFILE_HTTP_HEADER'] = 'X-Accel-Redirect'
-        user = SuperUserFactory.create(username='Superuser', password='booh')
+        app_settings["SENDFILE_HTTP_HEADER"] = "X-Accel-Redirect"
+        user = SuperUserFactory.create(username="Superuser", password="booh")
         self.client.force_login(user=user)
 
-        obj = self.modelfactory.create(geom='POINT(0 0)')
+        obj = self.modelfactory.create(geom="POINT(0 0)")
 
         # Initially, map image does not exists
         image_path = obj.get_map_image_path()
-        if os.path.exists(image_path):
-            os.remove(image_path)
-        self.assertFalse(os.path.exists(image_path))
+        if default_storage.exists(image_path):
+            default_storage.delete(image_path)
+        self.assertFalse(default_storage.exists(image_path))
 
         # Mock Screenshot response
         mock_requests.get.return_value.status_code = 200
-        mock_requests.get.return_value.content = b'*' * 100
+        mock_requests.get.return_value.content = b"*" * 100
 
         response = self.client.get(obj.map_image_url)
         self.assertEqual(response.status_code, 200)
-        self.assertTrue(os.path.exists(image_path))
+        self.assertTrue(default_storage.exists(image_path))
+
+
+class CommonMultiActionViewsMixin(AuthentFixturesMixin):
+    model = None
+    modelFactory = None
+    expected_fields = []
+
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.superuser = SuperUserFactory.create()
+        cls.user = UserFactory.create()
+
+        cls.perm_delete = Permission.objects.get(
+            codename=f"delete_{cls.model._meta.model_name}"
+        )
+        cls.perm_update = Permission.objects.get(
+            codename=f"change_{cls.model._meta.model_name}"
+        )
+        cls.user.user_permissions.add(cls.perm_delete)
+        cls.user.user_permissions.add(cls.perm_update)
+
+        structure = cls.user.profile.structure
+        cls.create_items(structure)
+
+    @classmethod
+    def create_items(cls, struct=None):
+        if hasattr(cls.model, "structure"):
+            cls.item1 = cls.modelFactory.create(structure=struct)
+            cls.item2 = cls.modelFactory.create(structure=StructureFactory.create())
+        else:
+            cls.item1 = cls.modelFactory.create()
+            cls.item2 = cls.modelFactory.create()
+
+    def test_editable_fields(self):
+        self.client.force_login(self.superuser)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
+        )
+
+        for field in self.expected_fields:
+            self.assertContains(response, field)
+
+
+class CommonMultiActionViewsStructureMixin:
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        cls.user_bypass_structure = UserFactory.create()
+        cls.user_bypass_structure.user_permissions.add(
+            Permission.objects.get(codename="can_bypass_structure")
+        )
+        cls.user_bypass_structure.user_permissions.add(cls.perm_delete)
+        cls.user_bypass_structure.user_permissions.add(cls.perm_update)
+
+    def test_delete_selected_items_with_different_structure_than_user(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.item2.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, self.model.get_list_url())
+
+    def test_delete_selected_items_with_bypass_structure(self):
+        self.client.force_login(self.user_bypass_structure)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.item2.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_update_selected_items_with_different_structure_than_user(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_update_url()
+            + f"?pks={self.item1.pk}%2C{self.item2.pk}"
+        )
+        self.assertEqual(response.status_code, 302)
+        self.assertEqual(response.url, self.model.get_list_url())
+
+    def test_update_selected_items_with_bypass_structure(self):
+        self.client.force_login(self.user_bypass_structure)
+        response = self.client.get(
+            self.model.get_multi_delete_url()
+            + f"?pks={self.item1.pk}%2C{self.item2.pk}"
+        )
+        self.assertEqual(response.status_code, 200)
+
+    def test_editable_fields_with_not_superuser(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
+        )
+        self.assertNotContains(response, "Related structure")
+
+
+class CommonMultiActionsViewsPublishedMixin:
+    def test_editable_fields_without_publish_perms(self):
+        self.client.force_login(self.user)
+        response = self.client.get(
+            self.model.get_multi_update_url() + f"?pks={self.item1.pk}"
+        )
+        self.assertNotContains(response, "Published")

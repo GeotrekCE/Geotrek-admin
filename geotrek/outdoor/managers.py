@@ -4,10 +4,7 @@ from mptt.managers import TreeManager
 
 
 class SiteManager(TreeManager):
-    def provider_choices(self):
-        providers = self.get_queryset().exclude(provider__exact='').order_by('provider') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
+    pass
 
 
 class CourseOrderedChildManager(models.Manager):
@@ -15,11 +12,8 @@ class CourseOrderedChildManager(models.Manager):
 
     def get_queryset(self):
         # Select treks foreign keys by default
-        return super(CourseOrderedChildManager, self).get_queryset().select_related('parent', 'child')
+        return super().get_queryset().select_related("parent", "child")
 
 
 class CourseManager(Manager):
-    def provider_choices(self):
-        providers = self.get_queryset().exclude(provider__exact='').order_by('provider') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
+    pass

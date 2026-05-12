@@ -4,14 +4,18 @@
 name: Test CI
 
 on:
+  workflow_dispatch:
   pull_request:
     paths-ignore:
       - 'docs/**'
+      - '.github/workflows/doc.yml'
   push:
     branches:
       - master
+
     paths-ignore:
       - 'docs/**'
+      - '.github/workflows/doc.yml'
   release:
     types:
       - created
@@ -33,6 +37,10 @@ env:
   REDIS_HOST: 127.0.0.1
   VAR_DIR: /home/runner/work/Geotrek-admin/Geotrek-admin/var
   LANG: C.UTF-8
+  LANGUAGES: en fr
+  LANGUAGE_CODE: en
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+  PYTHONWARNINGS: ignore
 
 jobs:
   test:
@@ -40,10 +48,12 @@ jobs:
     runs-on: ubuntu-latest
     container: makinacorpus/geodjango:${{ matrix.os }}
 
+    permissions:
+      packages: write  # required to publish docker image
+
     strategy:
       matrix:
-        os: ['bionic-3.8', 'focal-3.8']
-        python-version: ['3.8']
+        os: ['jammy-3.10', 'noble-3.12']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -54,7 +64,7 @@ jobs:
 
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: pgrouting/pgrouting:14-3.5-3.7
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -70,15 +80,10 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v3
-    - uses: actions/cache@v3
+    - uses: actions/checkout@v6
+    - uses: astral-sh/setup-uv@v7
       with:
-        path: |
-          ./venv
-
-        key: pip-${{ matrix.python-version }}
-        restore-keys: |
-          pip-${{ matrix.python-version }}
+        version: "latest"
 
     - name: Prepare test env
       run: |
@@ -101,39 +106,37 @@ jobs:
            libfreetype6-dev \
            libxml2-dev \
            libxslt-dev \
-           libcairo2 \
-           libpango1.0-0 \
            libpangocairo-1.0-0 \
            libgdk-pixbuf2.0-dev \
            libffi-dev \
            libvips
         apt-get install -y --no-install-recommends postgis
 
+    - name: Install python venv
+      run: |
+          uv venv venv
+
     - name: Install python dependencies
       run: |
-        python3.8 -m venv ./venv
-        ./venv/bin/pip3 install --upgrade pip wheel setuptools
-        ./venv/bin/pip3 install -r requirements.txt -U
-        ./venv/bin/pip3 install -r dev-requirements.txt -U
+        UV_PYTHON=/__w/Geotrek-admin/Geotrek-admin/venv/bin/python uv pip sync requirements.txt requirements-dev.txt
 
     - name: Create test required directories
       run: |
         mkdir -p ./var/log ./var/cache/sessions
 
+    - name: Prepare environment
+      run: |
+        mkdir -p $VAR_DIR/conf/extra_static $VAR_DIR/tmp
+        ./venv/bin/python ./manage.py collectstatic --clear --noinput --verbosity=0
+        ./venv/bin/python ./manage.py compilemessages
+
     - name: Check missing migrations
       run: |
-        ENV=dev ./venv/bin/python3 ./manage.py makemigrations --check
+        ENV=dev ./venv/bin/python ./manage.py makemigrations --check
 
     - name: Check running migrations
       run: |
-        ENV=dev ./venv/bin/python3 ./manage.py migrate
-
-    - name: Prepare environment
-      run: |
-        mkdir -p $VAR_DIR
-        mkdir -p $VAR_DIR/conf/extra_static
-        ./venv/bin/python3 ./manage.py collectstatic --clear --noinput --verbosity=0
-        ./venv/bin/python3 ./manage.py compilemessages
+        ENV=dev ./venv/bin/python ./manage.py migrate
 
     - name: Launch Celery
       run: |
@@ -141,83 +144,115 @@ jobs:
 
     - name: Unit test
       run: |
-        ./venv/bin/coverage run ./manage.py test -v 3
+        ./venv/bin/coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
+        ./venv/bin/coverage combine
         ./venv/bin/coverage xml -o coverage.xml
 
-    - uses: codecov/codecov-action@v3
+    - name: Save coverage
+      uses: actions/upload-artifact@v7
       with:
-        files: ./coverage.xml
-        env_vars: OS,ENV
-        token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
-        fail_ci_if_error: true # optional (default = false)
+        name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
+        path: coverage.xml
+
+  upload_coverage:
+    name: Upload coverage to codecov
+    runs-on: ubuntu-latest
+    needs: [ test ]
+    strategy:
+      matrix:
+        os: ['jammy-3.10', 'noble-3.12']
+        tests-env: ['tests', 'tests_nds']
+
+    env:
+      ENV: ${{ matrix.tests-env }}
+      OS: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v8
+        with:
+            name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
+            path: .
+
+      - uses: codecov/codecov-action@v5
+        with:
+            files: ./coverage.xml
+            env_vars: OS,ENV
+            token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
+            fail_ci_if_error: true # optional (default = false)
 
   build_docker_image:
     name: Build docker image
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
+
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v3
-      - name: Build Docker image
-        run: |
-          docker build -t geotrek:latest .
+        uses: docker/setup-buildx-action@v4
+
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v7
+        with:
+            push: false
+            builder: ${{ steps.buildx.outputs.name }}
+            tags: "geotrek:latest"
+            load: true
+            file: ./docker/Dockerfile
+
       - name: Upload image
-        uses: ishworkh/docker-image-artifact-upload@v1
+        uses: ishworkh/container-image-artifact-upload@v2.0.0
         with:
           image: "geotrek:latest"
 
-  build_deb_18_04:
-      name: Build 18.04 package
+  build_deb:
+      name: Build debian package
       runs-on: ubuntu-latest
+      strategy:
+          matrix:
+              os: ['jammy', 'noble']
+              include:
+                  - os: 'jammy'
+                    code: '22.04'
+                  - os: 'noble'
+                    code: '24.04'
+
+      env:
+          OS: ${{ matrix.os }}
+          CODE: ${{ matrix.code }}
+          DISTRO: ubuntu:${{ matrix.os }}
+
       steps:
-        - uses: actions/checkout@v3
-        - name: Prepare debian 18.04 versioning
-          run: |
-            grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu18.04~dev'$GITHUB_RUN_ID'/' debian/changelog
-            sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu18.04\2) bionic;/' debian/changelog
+          - uses: actions/checkout@v6
+          - name: Prepare versioning
+            run: |
+                grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu'$CODE'~dev'$GITHUB_RUN_ID'/' debian/changelog
+                sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu'$CODE'\2) '$OS';/' debian/changelog
 
-        - name: Building package debian 18.04
-          run: |
-            DISTRO=ubuntu:bionic make build_deb
-            cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
+          - name: Building package
+            run: |
+              make build_deb
+              cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
 
-        - name: Archive package artifact
-          uses: actions/upload-artifact@v3
-          with:
-            name: debian-18-04
-            path: |
-              /home/runner/work/Geotrek-admin/*.deb
-
-  build_deb_20_04:
-    name: Build 20.04 package
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Prepare debian 20.04 versioning
-        run: |
-          sed -i 's/+dev/.ubuntu20.04~dev'$GITHUB_RUN_ID'/' debian/changelog
-          sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.ubuntu20.04\2) focal;/' debian/changelog
-
-      - name: Building package debian 18.04
-        run: |
-          DISTRO=ubuntu:focal make build_deb
-          cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
-
-      - name: Archive package artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: debian-20-04
-          path: |
-            /home/runner/work/Geotrek-admin/*.deb
+          - name: Archive package artifact
+            uses: actions/upload-artifact@v7
+            with:
+              name: ${{ matrix.os }}
+              path: |
+                /home/runner/work/Geotrek-admin/*.deb
 
   e2e_docker_image:
     name: Tests E2E docker
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-latest
     needs: [build_docker_image]
+    env:
+      CYPRESS_BASE_URL: http://geotrek.local
+      CYPRESS_CACHE_FOLDER: ~/cypress/cache
+
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: pgrouting/pgrouting:14-3.5-3.7
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -227,40 +262,40 @@ jobs:
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
+        volumes:
+          - postgres:/var/lib/postgresql/data
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v6
+
       - name: Download image
-        uses: ishworkh/docker-image-artifact-download@v1
+        uses: ishworkh/container-image-artifact-download@v2.1.0
         with:
           image: "geotrek:latest"
+
       - name: Launch service
         run: |
+          sudo systemctl stop apache2
+          sudo systemctl stop nginx
           docker tag geotrek:latest geotrekce/admin:latest
-          cp .env-prod.dist .env; cp docker-compose-prod.yml docker-compose.yml
+          cp docker/install/.env.dist .env
+          cp docker/install/docker-compose.yml docker-compose.yml
+          cp cypress/docker-compose-cypress.yml docker-compose-cypress.yml
+          sudo sed -i 's/UID=/UID="$UID"/' .env
+          sudo sed -i 's/GID=/GID="$GID"/' .env
+          sudo sed -i 's/localhost/geotrek.local/' .env
           echo 'LANGUAGES=en fr' >> .env
           echo 'LANGUAGE_CODE=en' >> .env
-          sudo sed -i 's/localhost/geotrek.local/' .env
           sudo sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost geotrek.local/' /etc/hosts
           mkdir -p var/conf/extra_static
           cp cypress/custom.py var/conf/custom.py
           echo 'POSTGRES_USER=ci_test' >> .env
           echo 'POSTGRES_PASSWORD=ci_test' >> .env
           echo 'POSTGRES_DB=ci_test' >> .env
-          docker-compose run web update.sh
+          docker compose run web update.sh
           make load_data
           make load_test_integration
-          docker-compose up -d
-
-      - name: Prepare nginx
-        run: |
-          sudo apt-get install -q -y nginx
-          sudo mkdir /var/www/geotrek -p
-          ls -als
-          pwd
-          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/media /var/www/geotrek/media
-          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/var/static /var/www/geotrek/static
-          sudo ln -s /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/nginx.conf /etc/nginx/sites-enabled/geotrek.conf
-          sudo systemctl restart nginx
+          COMPOSE_FILE=docker-compose.yml:docker-compose-cypress.yml docker compose up -d
 
       - name: install Cypress
         run: |
@@ -268,9 +303,13 @@ jobs:
           npm ci
           npm list
           echo "Waiting for container..."
-          while ! nc -z "127.0.0.1" "8000"; do
+          while ! nc -z "127.0.0.1" "80"; do
             sleep 0.1
           done
+
+      - name: Check DEM scripts are available in docker image
+        run: |
+          docker compose run --rm web sh -c 'command -v raster2pgsql >/dev/null 2>&1 || { echo >&2 "raster2pgsql command not found."; exit 1; }'
 
       - name: E2E test
         run: |
@@ -278,25 +317,32 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
           name: cypress-docker
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
 
-  e2e_deb_20_04:
-    name: Tests E2E 20.04
-    runs-on: ubuntu-20.04
-    needs: [ build_deb_20_04 ]
-
+  e2e_deb:
+    name: Tests E2E debian package
+    runs-on: ubuntu-${{ matrix.code }}
+    needs: [ build_deb ]
+    strategy:
+      matrix:
+          os: ['jammy', 'noble']
+          include:
+              - os: 'jammy'
+                code: '22.04'
+              - os: 'noble'
+                code: '24.04'
     env:
       CYPRESS_BASE_URL: http://geotrek.local
       CYPRESS_CACHE_FOLDER: ~/cypress/cache
 
     services:
       postgres:
-        image: postgis/postgis:10-2.5
+        image: pgrouting/pgrouting:14-3.5-3.7
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -308,15 +354,15 @@ jobs:
           --health-cmd pg_isready
 
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/download-artifact@v3
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v8
         with:
-          name: debian-20-04
+          name: ${{ matrix.os }}
 
       - name: Simulate install.sh procedure
         run: |
           sudo service apache2 stop
-          sudo apt-get purge apache2 apache2-utils apache2.2-bin
+          sudo apt-get purge apache2*
           sudo apt-get autoremove
           echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
           wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
@@ -334,7 +380,7 @@ jobs:
       - name: Install package
         run: |
           sudo unlink /etc/nginx/sites-enabled/default
-          sudo apt-get install /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
+          sudo apt-get install --no-install-recommends /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
           sudo systemctl restart nginx
 
       - name: Load Data
@@ -360,59 +406,82 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v7
         with:
-          name: cypress-20.04
+          name: cypress-${{ matrix.code }}
           path: |
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/videos/*.mp4
             /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/screenshots/*.png
+
   deploy:
     name: Publish (on release only)
     runs-on: ubuntu-latest
-    needs: [ test, e2e_docker_image, build_deb_18_04, e2e_deb_20_04 ]
-    if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+    needs: [ test, e2e_docker_image, build_deb, e2e_deb ]
+    if: ${{ github.event_name != 'pull_request' }}
     steps:
-      - uses: actions/checkout@v3
-      - name: Download 18.04 debian artifact
-        uses: actions/download-artifact@v3
+      - uses: actions/checkout@v6
+
+      - name: Download 22.04 debian artifact
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: actions/download-artifact@v8
         with:
-          name: debian-18-04
-      - name: Download 20.04 debian artifact
-        uses: actions/download-artifact@v3
+          name: jammy
+
+      - name: Download 24.04 debian artifact
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: actions/download-artifact@v8
         with:
-          name: debian-20-04
+          name: noble
+
       - name: Download docker image
-        uses: ishworkh/docker-image-artifact-download@v1
+        uses: ishworkh/container-image-artifact-download@v2.1.0
         with:
-          image: "geotrek:latest"
-      - name: Attach debian packages as release binaries
-        uses: skx/github-action-publish-binaries@master
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: '*.deb'
+          image: 'geotrek:latest'
+
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_LOGIN }}
           password: ${{ secrets.DOCKER_PASSWORD }}
-      - name: Publish Docker image (v2 and latest)
-        run: |
-          if [[ "${{ github.ref }}" == *"dev"* ]]; then
-            export DOCKER_TAG=dev
-          else
-            docker tag geotrek:latest geotrekce/admin:$(cat VERSION)
-            docker push geotrekce/admin:$(cat VERSION)
-            export DOCKER_TAG=latest
-          fi
-          docker tag geotrek:latest geotrekce/admin:$DOCKER_TAG
-          docker push geotrekce/admin:$DOCKER_TAG
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@v4
+
+      - name: Extract metadata
+        id: meta
+        uses: docker/metadata-action@v6
+        with:
+          images:  |
+            geotrekce/admin
+            ghcr.io/geotrekce/geotrek-admin
+
+      - name: Build and push image
+        uses: docker/build-push-action@v7
+        with:
+          push: true
+          provenance: mode=max
+          sbom: true
+          builder: ${{ steps.buildx.outputs.name }}
+          tags: ${{ steps.meta.outputs.tags }}
+          file: ./docker/Dockerfile
+
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+
       - name: Publish debian packages
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
         run: |
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
             export DEB_COMPONENT=dev
@@ -422,9 +491,33 @@ jobs:
           echo "${{ github.ref }} : Publishing as $DEB_COMPONENT package"
           scp -P ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no /home/runner/work/Geotrek-admin/Geotrek-admin/geotrek-admin_*_amd64.deb ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/srv/packages/incoming/$DEB_COMPONENT/
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make bionic_dev -C /srv/packages
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_dev -C /srv/packages
+            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_dev -C /srv/packages
+            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make noble_dev -C /srv/packages
           else
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make bionic_main -C /srv/packages
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_main -C /srv/packages
+            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_main -C /srv/packages
+            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make noble_main -C /srv/packages
           fi
+
+      - name: Attach debian packages as release binaries
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: '*.deb'
+
+      - name: Prepare install-docker.zip
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        run: |
+          cd docker/install
+          mkdir -p geotrek/var
+          cp * ./geotrek 2>/dev/null || :
+          zip -r ../../install-docker.zip geotrek/
+
+      - name: Attach zip archive as release binary
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: 'install-docker.zip'

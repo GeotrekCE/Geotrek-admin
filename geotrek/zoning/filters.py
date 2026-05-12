@@ -1,7 +1,7 @@
-from django_filters import FilterSet
-from django.db.models import Q, Exists, OuterRef
+from dal import autocomplete
+from django.db.models import Exists, OuterRef, Q
 from django.utils.translation import gettext_lazy as _
-
+from django_filters import FilterSet
 
 from geotrek.common.filters import RightFilter
 from geotrek.zoning.models import City, District, RestrictedArea, RestrictedAreaType
@@ -33,7 +33,13 @@ class IntersectionFilterRestrictedAreaType(RightFilter):
     def filter(self, qs, value):
         if not value:
             return qs
-        return qs.filter(Exists(RestrictedArea.objects.filter(area_type__in=value, geom__intersects=OuterRef('geom'))))
+        return qs.filter(
+            Exists(
+                RestrictedArea.objects.filter(
+                    area_type__in=value, geom__intersects=OuterRef("geom")
+                )
+            )
+        )
 
     def get_queryset(self, request=None):
         return super().get_queryset().order_by("name")
@@ -44,7 +50,38 @@ class IntersectionFilterRestrictedArea(IntersectionFilter):
 
 
 class ZoningFilterSet(FilterSet):
-    city = IntersectionFilterCity(label=_('City'), required=False)
-    district = IntersectionFilterDistrict(label=_('District'), required=False)
-    area_type = IntersectionFilterRestrictedAreaType(label=_('Restricted area type'), required=False)
-    area = IntersectionFilterRestrictedArea(label=_('Restricted area'), required=False)
+    city = IntersectionFilterCity(
+        label=_("City"),
+        required=False,
+        widget=autocomplete.ModelSelect2Multiple(
+            url="zoning:city-autocomplete",
+            attrs={
+                "data-placeholder": _("City"),
+            },
+        ),
+    )
+    district = IntersectionFilterDistrict(
+        label=_("District"),
+        required=False,
+        widget=autocomplete.ModelSelect2Multiple(
+            url="zoning:district-autocomplete",
+            attrs={
+                "data-placeholder": _("District"),
+            },
+        ),
+    )
+    area_type = IntersectionFilterRestrictedAreaType(
+        label=_("Restricted area type"),
+        required=False,
+        widget=autocomplete.Select2Multiple(),
+    )
+    area = IntersectionFilterRestrictedArea(
+        label=_("Restricted area"),
+        required=False,
+        widget=autocomplete.ModelSelect2Multiple(
+            url="zoning:restrictedarea-autocomplete",
+            attrs={
+                "data-placeholder": _("Restricted area"),
+            },
+        ),
+    )

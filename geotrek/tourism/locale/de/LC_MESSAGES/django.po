@@ -7,17 +7,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-24 11:13+0000\n"
-"PO-Revision-Date: 2015-10-22 14:33+0200\n"
-"Last-Translator: \n"
-"Language-Team: \n"
+"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"PO-Revision-Date: 2025-10-22 09:00+0000\n"
+"Last-Translator: Anonymous <noreply@weblate.org>\n"
+"Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/tourism/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Project-Id-Verésion: PACKAGE VERSION\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Poedit 1.8.4\n"
+"X-Generator: Weblate 5.13.3\n"
+"Project-Id-Verésion: PACKAGE VERSION\n"
 
 msgid "Tourism"
 msgstr "Tourismus"
@@ -49,9 +49,7 @@ msgstr "tt/mm/jjjj"
 msgid "HH:MM"
 msgstr "ZZ:MM"
 
-msgid ""
-"Please add a participant category in admin interface in order to complete "
-"the number of participants."
+msgid "Please add a participant category in admin interface in order to complete the number of participants."
 msgstr ""
 
 msgid "Start time is unset"
@@ -78,9 +76,6 @@ msgstr ""
 msgid "Labels accessibility"
 msgstr ""
 
-msgid "External id"
-msgstr "Externer Identifikator"
-
 msgid "Title"
 msgstr "Titel"
 
@@ -97,7 +92,7 @@ msgid "Phone"
 msgstr "Telefon-Nummer"
 
 msgid "Email"
-msgstr "Email"
+msgstr "Courriel"
 
 msgid "Website"
 msgstr "Site Web"
@@ -125,10 +120,6 @@ msgstr "Informationspunkte"
 
 msgid "Information desks"
 msgstr "Informationspunkte"
-
-#, python-format
-msgid "Image %s invalid or missing from disk."
-msgstr "Das %s Image ist ungültig oder fehlt auf der Festplatte."
 
 msgid "Point"
 msgstr "Punkt"
@@ -250,11 +241,14 @@ msgstr "Touristische Inhalte"
 msgid "Touristic contents"
 msgstr "Touristische Inhalte"
 
-msgid "touristic-content"
-msgstr "touristische Inhalte"
-
 msgid "Published touristic contents"
 msgstr "Veröffentlichte touristische Inhalte"
+
+msgid "Signages"
+msgstr ""
+
+msgid "Infrastructures"
+msgstr ""
 
 msgid "Touristic event type"
 msgstr "Art der touristischen Veranstaltung"
@@ -340,6 +334,12 @@ msgstr ""
 msgid "Intervention duration"
 msgstr ""
 
+msgid "Price"
+msgstr ""
+
+msgid "0 means free"
+msgstr ""
+
 msgid "Select a place in the list or locate the event directly on the map"
 msgstr ""
 
@@ -360,9 +360,6 @@ msgstr "von der {begin}"
 msgid "from {begin} to {end}"
 msgstr "von {begin} bis {end}"
 
-msgid "touristic-event"
-msgstr "touristische Veranstaltung"
-
 msgid "Display order"
 msgstr ""
 
@@ -377,15 +374,29 @@ msgstr "Veröffentlichte touristische Veranstaltungen"
 
 #, python-brace-format
 msgid "Type 1 '{subval}' does not exist for category '{cat}'. Please add it"
-msgstr ""
-"Typ 1 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie "
-"es hinzu"
+msgstr "Typ 1 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie es hinzu"
 
 #, python-brace-format
 msgid "Type 2 '{subval}' does not exist for category '{cat}'. Please add it"
+msgstr "Typ 2 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie es hinzu"
+
+#, python-format
+msgid "Cannot link information desk to trek: could not find trek with UUID %(uuid)s"
 msgstr ""
-"Typ 2 '{subval}' existiert nicht für die Kategorie '{cat}'. Bitte fügen Sie "
-"es hinzu"
+
+#, python-format
+msgid "%(housenumber)s %(street)s"
+msgstr ""
+
+#, python-format
+msgid "%(postcode)s, %(city)s"
+msgstr ""
+
+#, python-format
+msgid ""
+"%(street)s\n"
+"%(city)s"
+msgstr ""
 
 msgid "Add a new touristic content"
 msgstr "Touristische Inhalte hinzufügen"
@@ -414,14 +425,14 @@ msgstr ""
 msgid "Print booklet"
 msgstr ""
 
-msgid "Attributes"
-msgstr "Informationen"
-
 msgid "yes,no"
 msgstr "Ja, nein,"
 
 msgid "None"
 msgstr "Keine"
+
+msgid "External id"
+msgstr "Externer Identifikator"
 
 msgid "Thumbnail"
 msgstr "Thumbnail"
@@ -453,8 +464,8 @@ msgstr ""
 msgid "Date"
 msgstr "Datum"
 
+msgid "Add Organizer"
+msgstr ""
+
 msgid "Invalid geometry value."
 msgstr "Ungültiger Geometriewert"
-
-#~ msgid "up to {end}"
-#~ msgstr "bis {end}"

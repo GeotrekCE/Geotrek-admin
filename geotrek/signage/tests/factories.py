@@ -1,9 +1,8 @@
 import factory
-from geotrek.common.tests.factories import OrganismFactory
 
+from geotrek.common.tests.factories import OrganismFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PointTopologyFactory
-from geotrek.infrastructure.tests.factories import InfrastructureConditionFactory
 
 from .. import models
 
@@ -13,7 +12,7 @@ class SignageTypeFactory(factory.django.DjangoModelFactory):
         model = models.SignageType
 
     label = "Signage type"
-    pictogram = get_dummy_uploaded_image('signage_type.png')
+    pictogram = get_dummy_uploaded_image("signage_type.png")
 
 
 class SignageTypeNoPictogramFactory(factory.django.DjangoModelFactory):
@@ -58,17 +57,31 @@ class SealingFactory(factory.django.DjangoModelFactory):
     label = "Sealing"
 
 
+class SignageConditionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.SignageCondition
+
+    label = factory.Sequence(lambda n: f"Condition {n}")
+
+
 class SignageFactory(PointTopologyFactory):
     class Meta:
         model = models.Signage
 
     name = "Signage"
     type = factory.SubFactory(SignageTypeFactory)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
     manager = factory.SubFactory(OrganismFactory)
     sealing = factory.SubFactory(SealingFactory)
     printed_elevation = 4807
     published = True
+
+    @factory.post_generation
+    def conditions(obj, create, extracted=None, **kwargs):
+        if create:
+            if extracted:
+                obj.conditions.set(extracted)
+            else:
+                obj.conditions.add(SignageConditionFactory.create())
 
 
 class SignageNoPictogramFactory(SignageFactory):
@@ -78,16 +91,21 @@ class SignageNoPictogramFactory(SignageFactory):
     type = factory.SubFactory(SignageTypeNoPictogramFactory)
 
 
+class BladeConditionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.BladeCondition
+
+    label = factory.Sequence(lambda n: f"Condition {n}")
+
+
 class BladeFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.Blade
 
-    number = 1
+    number = factory.Sequence(lambda n: f"{n}")
     type = factory.SubFactory(BladeTypeFactory)
-    condition = factory.SubFactory(InfrastructureConditionFactory)
     direction = factory.SubFactory(BladeDirectionFactory)
     color = factory.SubFactory(BladeColorFactory)
-    topology = factory.SubFactory(PointTopologyFactory)
     signage = factory.SubFactory(SignageFactory)
 
     @factory.post_generation
@@ -95,14 +113,19 @@ class BladeFactory(factory.django.DjangoModelFactory):
         if create:
             LineFactory.create(blade=obj)
 
+    @factory.post_generation
+    def conditions(obj, create, extracted=None, **kwargs):
+        if create:
+            obj.conditions.add(BladeConditionFactory.create())
+
 
 class LinePictogramFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.LinePictogram
 
-    label = factory.Sequence(lambda n: "Label %s" % n)
-    code = factory.Sequence(lambda n: "Code %s" % n)
-    description = factory.Sequence(lambda n: "Description %s" % n)
+    label = factory.Sequence(lambda n: f"Label {n}")
+    code = factory.Sequence(lambda n: f"Code {n}")
+    description = factory.Sequence(lambda n: f"Description {n}")
 
 
 class LineFactory(factory.django.DjangoModelFactory):

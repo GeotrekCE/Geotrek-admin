@@ -4,6 +4,7 @@ DROP TYPE IF EXISTS line_infos CASCADE;
 DROP FUNCTION IF EXISTS ST_InterpolateAlong(geometry, geometry) CASCADE;
 DROP FUNCTION IF EXISTS ST_Smart_Line_Substring(geometry, float, float) CASCADE;
 DROP FUNCTION IF EXISTS ST_SmartLineSubstring(geometry, float, float) CASCADE;
+DROP FUNCTION IF EXISTS st_line_extend(geometry, double precision, double precision) CASCADE;
 DROP FUNCTION IF EXISTS ft_IsBefore(geometry, geometry) CASCADE;
 DROP FUNCTION IF EXISTS ft_IsAfter(geometry, geometry) CASCADE;
 DROP FUNCTION IF EXISTS ft_Smart_MakeLine(geometry[]) CASCADE;
@@ -48,6 +49,7 @@ DROP FUNCTION IF EXISTS paths_related_objects_d() CASCADE;
 
 DROP FUNCTION IF EXISTS troncon_latest_updated_d() CASCADE;
 DROP FUNCTION IF EXISTS path_latest_updated_d() CASCADE;
+DROP FUNCTION IF EXISTS set_pgrouting_values_to_null() CASCADE;
 
 -- 50
 

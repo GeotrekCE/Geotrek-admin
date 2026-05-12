@@ -1,14 +1,16 @@
 from django.conf import settings
 from django.db.models import Q
 from modeltranslation.manager import MultilingualManager
+from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.mixins.managers import NoDeleteManager
 
 
 class TouristicContentTypeFilteringManager(MultilingualManager):
-    def has_content_published_not_deleted_in_list(self, list_index, category=None, portals=None, language=None):
-        """ Retrieves content types for which there exists an event that is published and not deleted in list (type1 or type2)
-        """
+    def has_content_published_not_deleted_in_list(
+        self, list_index, category=None, portals=None, language=None
+    ):
+        """Retrieves content types for which there exists an event that is published and not deleted in list (type1 or type2)"""
         i = list_index
         q_total = Q()
         qs = super().get_queryset().filter(in_list=i)
@@ -35,12 +37,16 @@ class TouristicContentTypeFilteringManager(MultilingualManager):
             q_category = Q(**{category_field_name: category})
 
         if language:
-            published_field_name = f"contents{i}__published_{language}"
+            published_field_name = (
+                f"contents{i}__{build_localized_fieldname('published', language)}"
+            )
             q_lang = Q(**{published_field_name: True})
         else:
             q_lang = Q()
             for lang in settings.MODELTRANSLATION_LANGUAGES:
-                published_field_name = f"contents{i}__published_{lang}"
+                published_field_name = (
+                    f"contents{i}__{build_localized_fieldname('published', lang)}"
+                )
                 q_lang |= Q(**{published_field_name: True})
 
         deleted_field_name = f"contents{i}__deleted"
@@ -62,14 +68,8 @@ class TouristicContentType2Manager(MultilingualManager):
 
 
 class TouristicContentManager(NoDeleteManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
+    pass
 
 
 class TouristicEventManager(NoDeleteManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().order_by('provider').exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
+    pass

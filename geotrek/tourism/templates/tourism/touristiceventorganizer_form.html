@@ -1,0 +1,11 @@
+{% extends "mapentity/base_site.html" %}
+{% load static i18n crispy_forms_tags %}
+
+{% block title %}{% trans "Add Organizer" %}{% endblock title %}
+
+{% block navbar %}{% endblock navbar %}
+
+{% block content %}
+<h3>{% trans "Add Organizer"%}</h3>
+{% crispy form %}
+{% endblock content %}

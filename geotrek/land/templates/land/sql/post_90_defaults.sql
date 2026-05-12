@@ -24,6 +24,24 @@ ALTER TABLE land_landedge ALTER COLUMN owner SET DEFAULT '';
 ALTER TABLE land_landedge ALTER COLUMN agreement SET DEFAULT False;
 -- eid
 
+-- CirculationType
+-----------
+-- name
+-- structure
+
+-- AuthorizationType
+-----------
+-- name
+-- structure
+
+
+-- CirculationEdge
+-----------
+-- topo_object
+-- circulation_type
+-- authorization_type
+-- eid
+
 
 -- CompetenceEdge
 -----------------
@@ -49,21 +67,4 @@ ALTER TABLE land_landedge ALTER COLUMN agreement SET DEFAULT False;
 -- InfrastructureUsageDifficultyLevel
 -------------------------------------
 -- label
--- structure
-
-
--- Infrastructure
------------------
--- type
--- maintenance_difficulty
--- usage_difficulty
-ALTER TABLE infrastructure_infrastructure ALTER COLUMN accessibility SET DEFAULT '';
--- topo_object
--- name
-ALTER TABLE infrastructure_infrastructure ALTER COLUMN description SET DEFAULT '';
--- condition
--- implantation_year
--- eid
-ALTER TABLE infrastructure_infrastructure ALTER COLUMN published SET DEFAULT FALSE;
--- publication_date
 -- structure

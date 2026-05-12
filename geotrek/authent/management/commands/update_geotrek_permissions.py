@@ -1,19 +1,15 @@
 import logging
-
-from django.conf import settings
 from importlib import import_module
+
 from django.apps import apps
+from django.conf import settings
 from django.contrib.auth.management import create_permissions
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.core.management.base import BaseCommand
-
-from mapentity.registry import registry
-from mapentity.middleware import clear_internal_user_cache
-from mapentity.registry import create_mapentity_model_permissions
+from mapentity.registry import create_mapentity_model_permissions, registry
 
 from geotrek.common.mixins.models import BasePublishableMixin
-
 
 logger = logging.getLogger(__name__)
 
@@ -25,7 +21,7 @@ class Command(BaseCommand):
         logger.info("Synchronize django permissions")
 
         for app_config in apps.get_app_configs():
-            create_permissions(app_config, verbosity=options['verbosity'])
+            create_permissions(app_config, verbosity=options["verbosity"])
 
         logger.info("Done.")
 
@@ -33,9 +29,6 @@ class Command(BaseCommand):
 
         # Make sure apps are registered at this point
         import_module(settings.ROOT_URLCONF)
-
-        # Tests reset DB so we have to reset this cache too
-        clear_internal_user_cache()
 
         # For all models registered, add missing bits
         for model in registry.registry.keys():
@@ -48,11 +41,15 @@ class Command(BaseCommand):
 
         for content_type in ContentType.objects.all():
             model = content_type.model_class()
-            if model and issubclass(model, BasePublishableMixin) and not model._meta.abstract:
+            if (
+                model
+                and issubclass(model, BasePublishableMixin)
+                and not model._meta.abstract
+            ):
                 Permission.objects.get_or_create(
-                    codename='publish_%s' % content_type.model,
+                    codename=f"publish_{content_type.model}",
                     content_type=content_type,
-                    defaults={'name': 'Can publish %s' % content_type.name}
+                    defaults={"name": f"Can publish {content_type.name}"},
                 )
 
         logger.info("Done.")

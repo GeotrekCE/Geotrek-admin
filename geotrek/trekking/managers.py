@@ -1,5 +1,7 @@
 from django.contrib.gis.db import models
+from django.db.models import Case, Q, When
 
+from geotrek.common.functions import GeometryN, GeometryType, StartPoint
 from geotrek.common.mixins.managers import NoDeleteManager
 from geotrek.core.managers import TopologyManager
 
@@ -9,42 +11,41 @@ class TrekOrderedChildManager(models.Manager):
 
     def get_queryset(self):
         # Select treks foreign keys by default
-        qs = super().get_queryset().select_related('parent', 'child')
+        qs = super().get_queryset().select_related("parent", "child")
         # Exclude deleted treks
         return qs.exclude(parent__deleted=True).exclude(child__deleted=True)
 
 
 class TrekManager(TopologyManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().order_by('provider').distinct('provider') \
-            .exclude(provider__exact='').values_list('provider', 'provider')
-        return providers
-
-
-class TrekRelationshipManager(models.Manager):
-    use_for_related_fields = True
-
     def get_queryset(self):
-        # Select treks foreign keys by default
-        qs = super().get_queryset().select_related('trek_a', 'trek_b')
-        # Exclude deleted treks
-        return qs.exclude(trek_a__deleted=True).exclude(trek_b__deleted=True)
+        # Select related fields to optimize queries
+        return (
+            super()
+            .get_queryset()
+            .alias(geom_type=GeometryType("geom"))
+            .annotate(
+                start_point=Case(
+                    When(Q(geom_type="POINT"), then="geom"),
+                    When(Q(geom_type="LINESTRING"), then=StartPoint("geom")),
+                    When(
+                        Q(geom_type="MULTILINESTRING"),
+                        then=StartPoint(GeometryN("geom", 0)),
+                    ),
+                    default=None,
+                    output_field=models.PointField(),
+                )
+            )
+        )
 
 
 class WebLinkManager(models.Manager):
     def get_queryset(self):
-        return super().get_queryset().select_related('category')
+        return super().get_queryset().select_related("category")
 
 
 class POIManager(NoDeleteManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
+    pass
 
 
 class ServiceManager(NoDeleteManager):
-    def provider_choices(self):
-        providers = self.get_queryset().existing().exclude(provider__exact='') \
-            .distinct('provider').values_list('provider', 'provider')
-        return providers
+    pass

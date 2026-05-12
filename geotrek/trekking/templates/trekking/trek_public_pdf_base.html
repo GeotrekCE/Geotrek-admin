@@ -50,14 +50,14 @@
         <div>
           {% if object.practice and object.practice.pictogram %}
             <div class="main-icon category-T{{ object.practice.pk }}" {% block picto_attr %}{% endblock picto_attr %}>
-              <img src="file://{{ object.practice.pictogram.path }}" alt="">
+              <img src="file://{{ object.practice.pictogram.path }}" alt="">
             </div>
           {% endif %}
           <div class="main-title">
             <h1>{{ object.name }}</h1>
             <h2>
               {% block main_title_h2 %}
-                {{ object.districts.0.name }}{% if object.districts and object.city_departure %} - {% endif %}{{ object.city_departure }}
+                {{ object.districts.0.name }}{% if object.districts and object.city_departure %} - {% endif %}{{ object.city_departure }}
               {% endblock %}
             </h2>
           </div>
@@ -228,7 +228,7 @@
             {% for poi in pois %}
               <div class="poi">
                   {% if poi.type.pictogram %}<span class="icon"><img src="file://{{ poi.type.pictogram.path }}"></span>{% endif %}
-                  {{ poi.name }} ({{ poi.letter }})
+                  {{ poi.name }} ({{ poi.letter }})
               </div>
             {% endfor %}
           {% endif %}
@@ -408,7 +408,7 @@
                         <div class="desk-name">{{ desk.name }}</div>
                         <div class="content">
                           {% if desk.street %}<div class="desk-address">{{ desk.street }}, {{ desk.postal_code }} {{ desk.municipality }}</div>{% endif %}
-                          {% if desk.email %}<div class="desk-email"information-desks><a href="mailto:{{ desk.email }}">{{ desk.email }}</a></div>{% endif %}
+                          {% if desk.email %}<div class="desk-email"><a href="mailto:{{ desk.email }}">{{ desk.email }}</a></div>{% endif %}
                           {% if desk.phone %}<div class="desk-tel">Tel : {{ desk.phone }}</div>{% endif %}
                           {% if desk.website %}<div class="desk-website"><a href="{{ desk.website }}">{{ desk.website }}</a></div>{% endif %}
                           {% if desk.accessibility %}<div class="desk-accessibility">{% trans "Accessibility" %} : {{ desk.accessibility|safe }}</div>{% endif %}

@@ -1,86 +1,75 @@
 #!/usr/bin/python3
+
 import os
-import distutils.command.build
-from pathlib import Path
-from setuptools import setup, find_packages
-from shutil import copy
+
+from setuptools import find_packages, setup
 
 here = os.path.abspath(os.path.dirname(__file__))
 
 
-class BuildCommand(distutils.command.build.build):
-    def run(self):
-        distutils.command.build.build.run(self)
-        from django.core.management import call_command
-        curdir = os.getcwd()
-        for subdir in ('geotrek', ):
-            os.chdir(subdir)
-            call_command('compilemessages')
-            for path in Path('.').rglob('*.mo'):
-                copy(path, os.path.join(curdir, self.build_lib, subdir, path))
-            os.chdir(curdir)
-
-
 setup(
-    name='geotrek',
-    version=open(os.path.join(here, 'VERSION')).read().strip(),
-    author='Makina Corpus',
-    author_email='geobi@makina-corpus.com',
-    url='https://makina-corpus.com',
+    name="geotrek",
+    version=open(os.path.join(here, "VERSION")).read().strip(),
+    author="Makina Corpus",
+    author_email="geobi@makina-corpus.com",
+    url="https://makina-corpus.com",
     description="Geotrek",
-    long_description=(open(os.path.join(here, 'README.rst')).read() + '\n\n'
-                      + open(os.path.join(here, 'docs', 'changelog.rst')).read()),
-    scripts=['manage.py'],
+    scripts=["manage.py"],
     install_requires=[
-        'Django==3.2.*',
-        'mapentity',
-        'cairosvg',
-        'cairocffi',
-        'env_file',
-        # pinned by requirements.txt
-        'pymemcache',
-        'coreschema',
-        'coreapi',
-        'psycopg2',
-        'pdfimpose',
-        'docutils',
-        'Pillow',
-        'simplekml',
-        'pygal',
-        'paperclip',
-        'django-extended-choices',
-        'django-modelcluster',
-        'django-mptt',
-        'geojson',
-        'tif2geojson',
-        'drf-dynamic-fields',
-        'drf-yasg',
-        'xlrd',
-        'landez',
-        'large-image-source-vips',
-        'django-large-image',
-        'celery',
-        'redis',
-        'django-celery-results',
-        'drf-extensions',
-        'django-colorfield',
-        'Fiona',
-        'markdown',
-        "weasyprint==52.5",  # newer version required libpango (not available in bionic)
-        'django-weasyprint<2.0.0',  # 2.10 require weasyprint > 53
+        "Django==5.2.*",
+        "mapentity",
+        "chardet",
+        "cairosvg",
+        "cairocffi",
+        "python-dotenv",
+        "pymemcache",
+        "coreschema",
+        "coreapi",
+        "django-autocomplete-light",
+        "psycopg2",
+        "pdfimpose",
+        "Pillow",
+        "simplekml",
+        "pygal",
+        "paperclip",
+        "django-modelcluster",
+        "django-mptt",
+        "geojson",
+        "tif2geojson",
+        "drf-dynamic-fields",
+        "drf-yasg",
+        "xlrd",
+        "landez",
+        "large-image-source-vips",
+        "django-large-image",
+        "celery",
+        "redis",
+        "django-celery-results",
+        "drf-extensions",
+        "django-colorfield",
+        "Fiona",
+        "markdown",
+        "weasyprint",
+        "django-weasyprint",
         "django-clearcache",
         "pyopenair",
+        "django-treebeard",
+        "easy-thumbnails[svg]",
+        "django-maintenance-mode",
+        "django-flask-authent-backend@git+https://github.com/PnX-SI/django-flask-authent-backend@1.0.0#egg=django-flask-authent-backend",
         # prod,
-        'gunicorn',
-        'sentry-sdk',
+        "gunicorn[gevent]",
+        "sentry-sdk",
+        "django-embed_video@git+https://github.com/jazzband/django-embed-video.git@master#egg=django-embed-video",  # wait for 1.4.11 release ...
     ],
-    cmdclass={"build": BuildCommand},
     include_package_data=True,
-    license='BSD, see LICENSE file.',
+    license="BSD, see LICENSE file.",
     packages=find_packages(),
-    classifiers=['Natural Language :: English',
-                 'Environment :: Web Environment',
-                 'Framework :: Django',
-                 'Development Status :: 5 - Production/Stable',
-                 'Programming Language :: Python :: 3'],
+    classifiers=[
+        "Natural Language :: English",
+        "Environment :: Web Environment",
+        "Framework :: Django",
+        "Development Status :: 5 - Production/Stable",
+        "Programming Language :: Python :: 3",
+    ],
 )

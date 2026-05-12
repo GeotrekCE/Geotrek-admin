@@ -1,14 +1,14 @@
 -- Intervention
 ---------------
 -- name
-ALTER TABLE maintenance_intervention ALTER COLUMN "date" SET DEFAULT now();
+ALTER TABLE maintenance_intervention ALTER COLUMN "begin_date" SET DEFAULT now();
 ALTER TABLE maintenance_intervention ALTER COLUMN subcontracting SET DEFAULT FALSE;
 ALTER TABLE maintenance_intervention ALTER COLUMN width SET DEFAULT 0.0;
 ALTER TABLE maintenance_intervention ALTER COLUMN height SET DEFAULT 0.0;
 ALTER TABLE maintenance_intervention ALTER COLUMN area SET DEFAULT 0;
 ALTER TABLE maintenance_intervention ALTER COLUMN material_cost SET DEFAULT 0.0;
 ALTER TABLE maintenance_intervention ALTER COLUMN heliport_cost SET DEFAULT 0.0;
-ALTER TABLE maintenance_intervention ALTER COLUMN subcontract_cost SET DEFAULT 0.0;
+ALTER TABLE maintenance_intervention ALTER COLUMN contractor_cost SET DEFAULT 0.0;
 -- stake
 -- status
 --type

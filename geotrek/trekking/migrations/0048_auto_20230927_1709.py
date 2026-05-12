@@ -5,20 +5,33 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0047_remove_servicetype_review'),
+        ("trekking", "0047_remove_servicetype_review"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='practice',
-            name='color',
-            field=colorfield.fields.ColorField(default='#444444', help_text='Color of the practice, only used in mobile.', image_field=None, max_length=25, samples=None, verbose_name='Color'),
+            model_name="practice",
+            name="color",
+            field=colorfield.fields.ColorField(
+                default="#444444",
+                help_text="Color of the practice, only used in mobile.",
+                image_field=None,
+                max_length=25,
+                samples=None,
+                verbose_name="Color",
+            ),
         ),
         migrations.AlterField(
-            model_name='rating',
-            name='color',
-            field=colorfield.fields.ColorField(blank=True, default='', image_field=None, max_length=25, samples=None, verbose_name='Color'),
+            model_name="rating",
+            name="color",
+            field=colorfield.fields.ColorField(
+                blank=True,
+                default="",
+                image_field=None,
+                max_length=25,
+                samples=None,
+                verbose_name="Color",
+            ),
         ),
     ]

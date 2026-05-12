@@ -56,11 +56,14 @@ $(window).on('entity:map', function (e, data) {
     var map = data.map;
     var loaded_event = false;
     var loaded_touristic = false;
+
     // Show tourism layer in application maps
     $.each(['touristiccontent', 'touristicevent'], function (i, modelname) {
+        var style = L.Util.extend({ clickable: true },
+            window.SETTINGS.map.styles[modelname] || {});
         var layer = new L.ObjectsLayer(null, {
             modelname: modelname,
-            style: L.Util.extend(window.SETTINGS.map.styles[modelname] || {}, {clickable:false}),
+            style: style,
         });
         if (data.modelname != modelname){
             map.layerscontrol.addOverlay(layer, tr(modelname), tr('Tourism'));
@@ -84,7 +87,7 @@ $(window).on('entity:map', function (e, data) {
 });
 
 
-$(window).on('entity:view:list', function (e, data) {
+$(window).on('entity:view:filter', function (e, data) {
 
     // Date picker
     $('#id_before, #id_after').datepicker({
@@ -108,12 +111,6 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         autoclose: true,
         language: window.SETTINGS.languages.default,
         format: window.SETTINGS.date_format
-    });
-
-    // Chosen on themes etc...
-    $('select[multiple]').chosen({
-        no_results_text: tr("No result"),
-        placeholder_text_multiple: tr("Choose value(s)")
     });
 
     if(data.modelname == 'touristicevent') {

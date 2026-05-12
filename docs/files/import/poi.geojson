@@ -1,0 +1,10 @@
+{
+"type": "FeatureCollection",
+"name": "poi",
+"crs": { "type": "name", "properties": { "name": "urn:ogc:def:crs:OGC:1.3:CRS84" } },
+"features": [
+{ "type": "Feature", "properties": { "id": "1", "name": "Conservatoire de la Figue", "type": "Savoir-faire", "description": "En 2000, la municipalité de Vézénobres accueille sur un terrain de 2 hectares, le dédoublement d’une partie de la collection de figuiers du Conservatoire Botanique National de Porquerolles. Une collection de près d’un millier d’arbres présent" }, "geometry": { "type": "Point", "coordinates": [ 4.136484906011901, 44.051878782926984 ] } },
+{ "type": "Feature", "properties": { "id": "2", "name": "Sous bois de châtaignier", "type": "Faune", "description": "Résistant aux insectes, aux intempéries, à l'air marin, le Châtaignier est l'une des essences qui vieillit le mieux en extérieur, sans aucun traitement de préservation. Sa richesse en tanin en fait un bois particulièrement résistant." }, "geometry": { "type": "Point", "coordinates": [ 3.950572013854981, 44.339227618677505 ] } },
+{ "type": "Feature", "properties": { "id": "3", "name": "Chemin du héron", "type": "Point de vue", "description": "Chemin escarpé menant à une table d'orientation." }, "geometry": { "type": "Point", "coordinates": [ 3.958884779930243, 43.913097281625866 ] } }
+]
+}
