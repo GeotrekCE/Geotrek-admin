@@ -657,7 +657,7 @@ class ConfigView(APIView):
                         }
                     ],
                     "localOptions": {
-                        "minZoom": 14,
+                        "minZoom": 10,
                     },
                 },
             },
