@@ -4,15 +4,18 @@
 name: Test CI
 
 on:
+  workflow_dispatch:
   pull_request:
     paths-ignore:
       - 'docs/**'
+      - '.github/workflows/doc.yml'
   push:
     branches:
       - master
 
     paths-ignore:
       - 'docs/**'
+      - '.github/workflows/doc.yml'
   release:
     types:
       - created
@@ -37,6 +40,7 @@ env:
   LANGUAGES: en fr
   LANGUAGE_CODE: en
   ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+  PYTHONWARNINGS: ignore
 
 jobs:
   test:
@@ -49,7 +53,7 @@ jobs:
 
     strategy:
       matrix:
-        os: ['focal-3.10', 'jammy-3.10', 'noble-3.12']
+        os: ['jammy-3.10', 'noble-3.12']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -60,7 +64,7 @@ jobs:
 
     services:
       postgres:
-        image: pgrouting/pgrouting:12-3.0-3.0.0
+        image: pgrouting/pgrouting:14-3.5-3.7
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -76,18 +80,10 @@ jobs:
           - 6379:6379
 
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/cache@v4
+    - uses: actions/checkout@v6
+    - uses: astral-sh/setup-uv@v7
       with:
-        path: |
-          ./venv
-
-        key: pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
-        restore-keys: |
-          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}-${{ hashFiles('./docs/requirements.txt') }}
-          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}-${{ hashFiles('./dev-requirements.txt') }}
-          pip-${{ matrix.os }}-${{ hashFiles('./requirements.txt') }}
-          pip-${{ matrix.os }}
+        version: "latest"
 
     - name: Prepare test env
       run: |
@@ -116,20 +112,13 @@ jobs:
            libvips
         apt-get install -y --no-install-recommends postgis
 
-    - name: Install python venv for focal
-      if: ${{ matrix.os == 'focal-3.10'}}
-      run: |
-          python3.10 -m venv ./venv
-
     - name: Install python venv
-      if: ${{ matrix.os != 'focal-3.10'}}
       run: |
-          python3 -m venv ./venv
+          uv venv venv
 
     - name: Install python dependencies
       run: |
-        ./venv/bin/pip3 install --upgrade pip wheel setuptools pip-tools -c requirements.txt -c dev-requirements.txt
-        ./venv/bin/pip-sync requirements.txt dev-requirements.txt
+        UV_PYTHON=/__w/Geotrek-admin/Geotrek-admin/venv/bin/python uv pip sync requirements.txt requirements-dev.txt
 
     - name: Create test required directories
       run: |
@@ -138,16 +127,16 @@ jobs:
     - name: Prepare environment
       run: |
         mkdir -p $VAR_DIR/conf/extra_static $VAR_DIR/tmp
-        ./venv/bin/python3 ./manage.py collectstatic --clear --noinput --verbosity=0
-        ./venv/bin/python3 ./manage.py compilemessages
+        ./venv/bin/python ./manage.py collectstatic --clear --noinput --verbosity=0
+        ./venv/bin/python ./manage.py compilemessages
 
     - name: Check missing migrations
       run: |
-        ENV=dev ./venv/bin/python3 ./manage.py makemigrations --check
+        ENV=dev ./venv/bin/python ./manage.py makemigrations --check
 
     - name: Check running migrations
       run: |
-        ENV=dev ./venv/bin/python3 ./manage.py migrate
+        ENV=dev ./venv/bin/python ./manage.py migrate
 
     - name: Launch Celery
       run: |
@@ -160,7 +149,7 @@ jobs:
         ./venv/bin/coverage xml -o coverage.xml
 
     - name: Save coverage
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
         path: coverage.xml
@@ -171,7 +160,7 @@ jobs:
     needs: [ test ]
     strategy:
       matrix:
-        os: ['focal-3.10', 'jammy-3.10', 'noble-3.12']
+        os: ['jammy-3.10', 'noble-3.12']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -179,8 +168,8 @@ jobs:
       OS: ${{ matrix.os }}
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v8
         with:
             name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
             path: .
@@ -196,15 +185,15 @@ jobs:
     name: Build docker image
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Build and push
         id: docker_build
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
             push: false
             builder: ${{ steps.buildx.outputs.name }}
@@ -222,10 +211,8 @@ jobs:
       runs-on: ubuntu-latest
       strategy:
           matrix:
-              os: ['focal', 'jammy', 'noble']
+              os: ['jammy', 'noble']
               include:
-                  - os: 'focal'
-                    code: '20.04'
                   - os: 'jammy'
                     code: '22.04'
                   - os: 'noble'
@@ -237,7 +224,7 @@ jobs:
           DISTRO: ubuntu:${{ matrix.os }}
 
       steps:
-          - uses: actions/checkout@v4
+          - uses: actions/checkout@v6
           - name: Prepare versioning
             run: |
                 grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.ubuntu'$CODE'~dev'$GITHUB_RUN_ID'/' debian/changelog
@@ -249,7 +236,7 @@ jobs:
               cp ./dpkg/*.deb /home/runner/work/Geotrek-admin/
 
           - name: Archive package artifact
-            uses: actions/upload-artifact@v4
+            uses: actions/upload-artifact@v7
             with:
               name: ${{ matrix.os }}
               path: |
@@ -265,7 +252,7 @@ jobs:
 
     services:
       postgres:
-        image: pgrouting/pgrouting:12-3.0-3.0.0
+        image: pgrouting/pgrouting:14-3.5-3.7
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -279,22 +266,26 @@ jobs:
           - postgres:/var/lib/postgresql/data
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Download image
-        uses: ishworkh/container-image-artifact-download@v2.0.0
+        uses: ishworkh/container-image-artifact-download@v2.1.0
         with:
           image: "geotrek:latest"
 
       - name: Launch service
         run: |
+          sudo systemctl stop apache2
+          sudo systemctl stop nginx
           docker tag geotrek:latest geotrekce/admin:latest
           cp docker/install/.env.dist .env
           cp docker/install/docker-compose.yml docker-compose.yml
           cp cypress/docker-compose-cypress.yml docker-compose-cypress.yml
+          sudo sed -i 's/UID=/UID="$UID"/' .env
+          sudo sed -i 's/GID=/GID="$GID"/' .env
+          sudo sed -i 's/localhost/geotrek.local/' .env
           echo 'LANGUAGES=en fr' >> .env
           echo 'LANGUAGE_CODE=en' >> .env
-          sudo sed -i 's/localhost/geotrek.local/' .env
           sudo sed -i 's/127.0.0.1 localhost/127.0.0.1 localhost geotrek.local/' /etc/hosts
           mkdir -p var/conf/extra_static
           cp cypress/custom.py var/conf/custom.py
@@ -312,9 +303,13 @@ jobs:
           npm ci
           npm list
           echo "Waiting for container..."
-          while ! nc -z "127.0.0.1" "8001"; do
+          while ! nc -z "127.0.0.1" "80"; do
             sleep 0.1
           done
+
+      - name: Check DEM scripts are available in docker image
+        run: |
+          docker compose run --rm web sh -c 'command -v raster2pgsql >/dev/null 2>&1 || { echo >&2 "raster2pgsql command not found."; exit 1; }'
 
       - name: E2E test
         run: |
@@ -322,7 +317,7 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cypress-docker
           path: |
@@ -347,7 +342,7 @@ jobs:
 
     services:
       postgres:
-        image: pgrouting/pgrouting:12-3.0-3.0.0
+        image: pgrouting/pgrouting:14-3.5-3.7
         env:
           POSTGRES_DB: ci_test
           POSTGRES_PASSWORD: ci_test
@@ -359,8 +354,8 @@ jobs:
           --health-cmd pg_isready
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
+      - uses: actions/checkout@v6
+      - uses: actions/download-artifact@v8
         with:
           name: ${{ matrix.os }}
 
@@ -411,7 +406,7 @@ jobs:
         continue-on-error: false
 
       - name: Archive results as artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: cypress-${{ matrix.code }}
           path: |
@@ -424,39 +419,33 @@ jobs:
     needs: [ test, e2e_docker_image, build_deb, e2e_deb ]
     if: ${{ github.event_name != 'pull_request' }}
     steps:
-      - uses: actions/checkout@v4
-
-      - name: Download 20.04 debian artifact
-        uses: actions/download-artifact@v4
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        with:
-          name: focal
+      - uses: actions/checkout@v6
 
       - name: Download 22.04 debian artifact
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: jammy
 
       - name: Download 24.04 debian artifact
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           name: noble
 
       - name: Download docker image
-        uses: ishworkh/container-image-artifact-download@v2.0.0
+        uses: ishworkh/container-image-artifact-download@v2.1.0
         with:
           image: 'geotrek:latest'
 
       - name: Login to Docker Hub
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           username: ${{ secrets.DOCKER_LOGIN }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
@@ -464,18 +453,18 @@ jobs:
 
       - name: Set up Docker Buildx
         id: buildx
-        uses: docker/setup-buildx-action@v3
+        uses: docker/setup-buildx-action@v4
 
       - name: Extract metadata
         id: meta
-        uses: docker/metadata-action@v5
+        uses: docker/metadata-action@v6
         with:
           images:  |
             geotrekce/admin
             ghcr.io/geotrekce/geotrek-admin
 
       - name: Build and push image
-        uses: docker/build-push-action@v6
+        uses: docker/build-push-action@v7
         with:
           push: true
           provenance: mode=max
@@ -502,11 +491,9 @@ jobs:
           echo "${{ github.ref }} : Publishing as $DEB_COMPONENT package"
           scp -P ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no /home/runner/work/Geotrek-admin/Geotrek-admin/geotrek-admin_*_amd64.deb ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:/srv/packages/incoming/$DEB_COMPONENT/
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_dev -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_dev -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make noble_dev -C /srv/packages
           else
-            ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make focal_main -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make jammy_main -C /srv/packages
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make noble_main -C /srv/packages
           fi
@@ -518,3 +505,19 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           args: '*.deb'
+
+      - name: Prepare install-docker.zip
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        run: |
+          cd docker/install
+          mkdir -p geotrek/var
+          cp * ./geotrek 2>/dev/null || :
+          zip -r ../../install-docker.zip geotrek/
+
+      - name: Attach zip archive as release binary
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        uses: skx/github-action-publish-binaries@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: 'install-docker.zip'

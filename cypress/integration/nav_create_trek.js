@@ -25,7 +25,7 @@ describe('Create trek', () => {
         cy.visit('/trek/list');
         cy.wait('@tiles');
         cy.server();
-        cy.get("a.btn-success[href='/trek/add/']").contains('Add a new trek').click();
+        cy.get("a.btn-success[href='/trek/add/']").contains('Add').click();
         cy.get("input[id='id_duration']").type('100');
         cy.get("input[name='name_en']").type('Trek number 1');
         cy.get("a[href='#name_fr']").click();
@@ -38,9 +38,9 @@ describe('Create trek', () => {
         cy.get("a[href='#arrival_fr']").click();
         cy.get("input[id='id_arrival_fr']").type('Arrivée');
         cy.get("input[id='id_duration']").type('100');
-        cy.get("select[id='id_practice']").select("Cycling");
-        cy.get("select[id='id_difficulty']").select("Very hard");
-        cy.get("select[id='id_route']").select("Loop");
+        cy.get("select[id='id_practice']").select("Cycling", { force: true });
+        cy.get("select[id='id_difficulty']").select("Very hard", { force: true });
+        cy.get("select[id='id_route']").select("Loop", { force: true });
         cy.setTinyMceContent('id_access_en', 'Access number 1');;
         cy.setTinyMceContent('id_description_teaser_en', 'Description teaser number 1');
         cy.setTinyMceContent('id_ambiance_en', 'Ambiance number 1');
@@ -65,7 +65,8 @@ describe('Create trek', () => {
                 cy.visit(href)
             })
         cy.get("div.alert-warning").contains("Waiting for publication").should('have.length', 1);
-        cy.get("a.btn-primary").contains("Update").click();
+        cy.get("a.dropdown-toggle[title='Actions']").click();
+        cy.get("a").contains("Edit").click();
         cy.get("input[id='id_review']").check();
         cy.get("input[name='published_en']").click({force: true});
         cy.get("input[id='id_published_en']").check();

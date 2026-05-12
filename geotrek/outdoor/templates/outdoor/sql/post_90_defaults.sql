@@ -78,7 +78,6 @@ ALTER TABLE outdoor_site ALTER COLUMN accessibility SET DEFAULT '';
 -- eid
 -- managers
 ALTER TABLE outdoor_site ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
-ALTER TABLE outdoor_site ALTER COLUMN provider SET DEFAULT '';
 
 -- OrderedCourseChild
 ---------------------
@@ -119,4 +118,3 @@ ALTER TABLE outdoor_course ALTER COLUMN max_elevation SET DEFAULT 0;
 ALTER TABLE outdoor_course ALTER COLUMN slope SET DEFAULT 0.0;
 ALTER TABLE outdoor_course ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE outdoor_course ALTER COLUMN date_update SET DEFAULT now();
-ALTER TABLE outdoor_course ALTER COLUMN provider SET DEFAULT '';

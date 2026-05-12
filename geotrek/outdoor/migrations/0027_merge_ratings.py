@@ -4,29 +4,28 @@ from django.db import migrations
 
 
 def merge_ratings(apps, schema):
-    site_model = apps.get_model('outdoor', 'Site')
+    site_model = apps.get_model("outdoor", "Site")
     sites = site_model.objects.all()
     for site in sites:
-        if hasattr(site, 'ratings') and hasattr(site, 'ratings_min'):
+        if hasattr(site, "ratings") and hasattr(site, "ratings_min"):
             for rating in site.ratings_min.all():
                 site.ratings.add(rating)
             site.ratings_min.clear()
 
 
 def reverse_merge_ratings(apps, schema):
-    site_model = apps.get_model('outdoor', 'Site')
+    site_model = apps.get_model("outdoor", "Site")
     sites = site_model.objects.all()
     for site in sites:
-        if hasattr(site, 'ratings') and hasattr(site, 'ratings_min'):
+        if hasattr(site, "ratings") and hasattr(site, "ratings_min"):
             for rating in site.ratings.all():
                 site.ratings_min.add(rating)
             site.ratings.clear()
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('outdoor', '0026_auto_20210915_1346'),
+        ("outdoor", "0026_auto_20210915_1346"),
     ]
 
     operations = [

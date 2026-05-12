@@ -4,13 +4,12 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('trekking', '0033_accessibilityattachment'),
+        ("trekking", "0033_accessibilityattachment"),
     ]
 
     operations = [
         migrations.DeleteModel(
-            name='AccessibilityAttachment',
+            name="AccessibilityAttachment",
         ),
     ]

@@ -1,69 +1,41 @@
+.. _maintenance:
+
 ===========
 Maintenance
 ===========
 
-.. _application-backup:
+This section covers the periodic tasks required to ensure the system remains healthy and performs optimally.
 
-Application backup
-==================
+These tasks include :
 
-Database
+* Enabling maintenance mode when necessary
+* Cleaning up attachments
+* Clearing caches
 
-.. code-block:: bash
+Regular execution of these actions helps maintain system stability, performance, and data integrity.
 
-    sudo -u postgres pg_dump --no-acl --no-owner -Fc geotrekdb > `date +%Y%m%d%H%M`-database.backup
+Maintenance mode
+================
 
-Media files
+If you want to block access to your application while you are performing maintenance tasks, you can activate the maintenance mode.
+This will display a message to users indicating that the application is temporarily unavailable.
 
-.. code-block:: bash
+.. md-tab-set::
+    :name: maintenance-mode
 
-    tar -zcvf `date +%Y%m%d%H%M`-media.tar.gz /opt/geotrek-admin/var/media/
+    .. md-tab-item:: With Debian
 
-Configuration
+            .. code-block:: bash
 
-.. code-block:: bash
+                sudo geotrek maintenance_mode on # activate maintenance mode
+                sudo geotrek maintenance_mode off # deactivate maintenance mode
 
-    tar -zcvf `date +%Y%m%d%H%M`-conf.tar.gz /opt/geotrek-admin/var/conf/
+    .. md-tab-item:: With Docker
 
-.. _application-restore:
+         .. code-block:: bash
 
-Application restore
-====================
-
-If you restore Geotrek-admin on a new server, you will have to install PostgreSQL and PostGIS and create a database user first.
-Otherwise go directly to the database creation step.
-
-.. code-block:: bash
-
-    sudo apt install postgresql-14 postgresql-14-postgis-3
-    sudo -u postgres psql -c "CREATE USER geotrek PASSWORD 'geotrek';"
-
-
-Create an empty database (``geotrekdb`` in this example):
-
-.. code-block:: bash
-
-    sudo -u postgres psql -c "CREATE DATABASE geotrekdb OWNER geotrek;"
-    sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis;"
-    sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION postgis_raster;"
-    sudo -u postgres psql -d geotrekdb -c "CREATE EXTENSION pgcrypto;"
-
-Restore backup:
-
-.. code-block:: bash
-
-    pg_restore -U geotrek -h localhost --clean --no-acl --no-owner -d geotrekdb 20200510-geotrekdb.backup
-
-If errors persist, rename your database and recreate a fresh one, then restore.
-
-Extract media and configuration files:
-
-.. code-block:: bash
-
-    tar -zxvf 20200510-media.tar.gz
-    tar -zxvf 20200510-conf.tar.gz
-
-Follow *Fresh installation* method. Choose to manage database by yourself.
+                docker compose run --rm web ./manage.py maintenance_mode on # activate maintenance mode
+                docker compose run --rm web ./manage.py maintenance_mode off # deactivate maintenance mode
 
 .. _postgresql-optimization:
 

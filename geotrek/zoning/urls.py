@@ -1,12 +1,23 @@
-from django.urls import path
+from rest_framework.routers import DefaultRouter
 
 from . import views
 
-app_name = 'zoning'
+app_name = "zoning"
 
-urlpatterns = [
-    path('api/city/city.geojson', views.CityGeoJSONAPIView.as_view(), name="city_layer"),
-    path('api/restrictedarea/restrictedarea.geojson', views.RestrictedAreaGeoJSONAPIView.as_view(), name="restrictedarea_layer"),
-    path('api/restrictedarea/type/<int:type_pk>/restrictedarea.geojson', views.RestrictedAreaTypeGeoJSONLayer.as_view(), name="restrictedarea_type_layer"),
-    path('api/district/district.geojson', views.DistrictGeoJSONAPIView.as_view(), name="district_layer"),
-]
+router = DefaultRouter()
+router.register(r"api/city/city", views.CityViewSet, basename="city")
+router.register(r"api/district/district", views.DistrictViewSet, basename="district")
+router.register(
+    r"api/restrictedarea/restrictedarea",
+    views.RestrictedAreaViewSet,
+    basename="restrictedarea",
+)
+router.register(
+    r"api/restrictedarea/type/(?P<type_pk>[0-9]+)/restrictedarea",
+    views.RestrictedAreaViewSet,
+    basename="restrictedarea-by-type",
+)
+
+urlpatterns = []
+
+urlpatterns += router.urls

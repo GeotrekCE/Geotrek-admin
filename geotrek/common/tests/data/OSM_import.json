@@ -1,0 +1,91 @@
+{
+  "version": 0.6,
+  "generator": "Overpass API 0.7.62.5 1bd436f1",
+  "osm3s": {
+    "timestamp_osm_base": "2025-05-13T11:44:45Z",
+    "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL."
+  },
+  "elements": [
+
+{
+  "type": "node",
+  "id": 279480543,
+  "lat": 44.8878498,
+  "lon": 6.4461957,
+  "tags": {
+    "information": "office",
+    "image": "https://www.paysdesecrins.com/sites/ot-paysdesecrins/files/styles/gallery_lightbox/public/content/images/1683900470-1906609453.jpg?itok=_X94tIf_"
+  }
+},
+{
+  "type": "way",
+  "id": 787047534,
+  "bounds": {
+    "minlat": 44.9323509,
+    "minlon": 6.2927500,
+    "maxlat": 44.9324626,
+    "maxlon": 6.2929334
+  },
+  "nodes": [
+    7357923003,
+    7357923004,
+    7357923005,
+    7357904830,
+    7357923003
+  ],
+  "geometry": [
+    { "lat": 44.9324198, "lon": 6.2929334 },
+    { "lat": 44.9324626, "lon": 6.2927713 },
+    { "lat": 44.9324043, "lon": 6.2929117 },
+    { "lat": 44.9324029, "lon": 6.2929170 },
+    { "lat": 44.9324198, "lon": 6.2929334 }
+  ],
+  "tags": {
+    "information": "office",
+    "wikimedia_commons": "File:Maison de la Montagne.jpg"
+  }
+},
+{
+  "type": "relation",
+  "id": 3538072,
+  "bounds": {
+    "minlat": 46.7799780,
+    "minlon": 4.7443340,
+    "maxlat": 46.7830077,
+    "maxlon": 4.8551636
+  },
+  "members": [
+    {
+      "type": "node",
+      "ref": 2249094390,
+      "role": "",
+      "lat": 46.7799780,
+      "lon": 4.8551636
+    },
+    {
+      "type": "way",
+      "ref": 127345574,
+      "role": "",
+      "geometry": [
+         { "lat": 46.7828537, "lon": 4.7444589 },
+         { "lat": 46.7828790, "lon": 4.7443980 },
+         { "lat": 46.7827700, "lon": 4.7444110 },
+         { "lat": 46.7828310, "lon": 4.7444450 },
+         { "lat": 46.7828537, "lon": 4.7444589 }
+      ]
+    },
+    {
+      "type": "node",
+      "ref": 6226480992,
+      "role": "",
+      "lat": 46.7830077,
+      "lon": 4.7454125
+    }
+  ],
+  "tags": {
+    "information": "office"
+  }
+}
+
+  ]
+}

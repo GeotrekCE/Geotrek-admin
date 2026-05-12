@@ -279,15 +279,51 @@ With *pgAdmin*, you can create database users like this:
     ALTER USER lecteur PASSWORD 'passfacile';
     GRANT CONNECT ON DATABASE geotrekdb TO lecteur;
 
-And give them permissions by schema :
+Then grant permissions by schema:
 
 ::
 
     GRANT USAGE ON SCHEMA public TO lecteur;
     GRANT USAGE ON SCHEMA geotrek TO lecteur;
+
     GRANT SELECT ON ALL TABLES IN SCHEMA public TO lecteur;
     GRANT SELECT ON ALL TABLES IN SCHEMA geotrek TO lecteur;
 
-You can also create groups, etc. See `PostgreSQL documentation <https://www.postgresql.org/docs/>`_.
+    GRANT SELECT ON ALL SEQUENCES IN SCHEMA public TO lecteur;
+    GRANT SELECT ON ALL SEQUENCES IN SCHEMA geotrek TO lecteur;
 
+This ensures read-only access to all existing tables and sequences.
 
+Ensure permissions for future objects
+--------------------------------------
+
+The previous commands only apply to *existing* tables and sequences.
+If new tables or sequences are created later (for example after migrations), the read-only user will not automatically have access to them.
+
+To grant permissions on future objects, run:
+
+::
+
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public
+        GRANT SELECT ON TABLES TO lecteur;
+
+    ALTER DEFAULT PRIVILEGES IN SCHEMA geotrek
+        GRANT SELECT ON TABLES TO lecteur;
+
+    ALTER DEFAULT PRIVILEGES IN SCHEMA public
+        GRANT SELECT ON SEQUENCES TO lecteur;
+
+    ALTER DEFAULT PRIVILEGES IN SCHEMA geotrek
+        GRANT SELECT ON SEQUENCES TO lecteur;
+
+.. important::
+
+   ``ALTER DEFAULT PRIVILEGES`` only affects objects created *after*
+   the command is executed, and only for objects created by the role
+   that runs the command.
+
+   Therefore, it must be executed by the same PostgreSQL role that
+   performs Geotrek migrations (usually the database owner).
+
+You can also create groups and manage permissions more finely.
+See `PostgreSQL documentation <https://www.postgresql.org/docs/>`_ for more details.

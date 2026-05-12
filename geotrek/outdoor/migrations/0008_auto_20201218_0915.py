@@ -4,20 +4,47 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('outdoor', '0007_site_parent'),
+        ("outdoor", "0007_site_parent"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='site',
-            name='orientation',
-            field=models.CharField(blank=True, choices=[('N', 'N'), ('S', 'S'), ('E', 'E'), ('W', 'W'), ('NE', 'NE'), ('NW', 'NW'), ('SE', 'SE'), ('SW', 'SW')], max_length=2, verbose_name='Orientation'),
+            model_name="site",
+            name="orientation",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("N", "N"),
+                    ("S", "S"),
+                    ("E", "E"),
+                    ("W", "W"),
+                    ("NE", "NE"),
+                    ("NW", "NW"),
+                    ("SE", "SE"),
+                    ("SW", "SW"),
+                ],
+                max_length=2,
+                verbose_name="Orientation",
+            ),
         ),
         migrations.AddField(
-            model_name='site',
-            name='wind',
-            field=models.CharField(blank=True, choices=[('N', 'N'), ('S', 'S'), ('E', 'E'), ('W', 'W'), ('NE', 'NE'), ('NW', 'NW'), ('SE', 'SE'), ('SW', 'SW')], max_length=2, verbose_name='Wind'),
+            model_name="site",
+            name="wind",
+            field=models.CharField(
+                blank=True,
+                choices=[
+                    ("N", "N"),
+                    ("S", "S"),
+                    ("E", "E"),
+                    ("W", "W"),
+                    ("NE", "NE"),
+                    ("NW", "NW"),
+                    ("SE", "SE"),
+                    ("SW", "SW"),
+                ],
+                max_length=2,
+                verbose_name="Wind",
+            ),
         ),
     ]

@@ -4,15 +4,18 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('feedback', '0035_reportstatus_display_in_legend'),
+        ("feedback", "0035_reportstatus_display_in_legend"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='reportstatus',
-            name='timer_days',
-            field=models.IntegerField(default=0, help_text='How many days to wait before sending an email alert to the assigned user for a report that has this status and enabled timers. 0 days disables the alerts', verbose_name='Timer days'),
+            model_name="reportstatus",
+            name="timer_days",
+            field=models.IntegerField(
+                default=0,
+                help_text="How many days to wait before sending an email alert to the assigned user for a report that has this status and enabled timers. 0 days disables the alerts",
+                verbose_name="Timer days",
+            ),
         ),
     ]

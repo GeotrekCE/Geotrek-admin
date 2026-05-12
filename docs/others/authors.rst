@@ -30,6 +30,7 @@ Makina Corpus
 * Justine Fricou
 * Romain Dessort
 * Romain Boissière
+* Nell Party
 
 .. image:: https://makina-corpus.com/profiles/makina/themes/makina_front/img/logo.png
     :target: http://www.makina-corpus.com
@@ -40,6 +41,7 @@ Parc national des Ecrins
 * Camille Monchicourt
 * Théo Lechémia
 * Élie Bouttier
+* Raphael Doisy
 
 Others
 ------

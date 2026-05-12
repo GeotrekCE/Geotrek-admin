@@ -3,28 +3,55 @@ Documentation
 
 We use sphinx doc and `sphinx-immaterial theme <https://jbms.github.io/sphinx-immaterial/>`_. Requirements are included.
 
-A container based on sphinx image is created using ``docker compose.yml``,
-documentation is built in watch mode thanks to sphinx-autobuild.
+A container with documentation instance is created thanks to sphinx-autobuild.
 
-To compile and test documentation on local environment, run:
+To watch and test documentation on local environment, run:
 
 .. code-block:: bash
 
-    docker compose up sphinx postgres
+    make serve_docs
 
 Access to documentation built in html : http://0.0.0.0:8800
+
+To test documentation build, run:
+
+.. code-block:: bash
+
+    make build_docs
+
+Add extension
+--------------
+
+Follow these steps to add the ``sphinx-design`` extension to the documentation:
+
+1. **Enable the extension** in ``docs/conf.py``:
+
+   Example::
+
+       extensions = [
+           "new-extension",
+       ]
+
+2. **Add the extension to** ``requirements.in``:
+
+   Example::
+
+       new-extension
+
+3. **Generate the new requirements version** ``requirements.txt``::
+
+       pip-compile requirements.in -o requirements.txt
+
+4. **Build the documentation** to download the new package (using Docker)::
+
+       docker compose build
+
 
 Translate documentation
 -----------------------
 
-- Generate ``.pot`` files if needed
+- Update documentation translation files
 
-.. code-block:: python
+.. code-block:: bash
 
-    docker compose run --rm sphinx make gettext
-
-- Generate ``.po`` files
-
-.. code-block:: python
-
-    docker compose run --rm sphinx sphinx-intl update -p _build/locale -l fr
+    make build_doc_translations

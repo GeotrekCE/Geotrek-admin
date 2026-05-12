@@ -4,100 +4,163 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0013_auto_20200831_1406'),
+        ("tourism", "0013_auto_20200831_1406"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='informationdesktype',
-            name='pictogram',
-            field=models.FileField(max_length=512, null=True, upload_to='upload', verbose_name='Pictogramme'),
+            model_name="informationdesktype",
+            name="pictogram",
+            field=models.FileField(
+                max_length=512,
+                null=True,
+                upload_to="upload",
+                verbose_name="Pictogramme",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristiccontent',
-            name='date_insert',
-            field=models.DateTimeField(auto_now_add=True, verbose_name="Date d'insertion"),
+            model_name="touristiccontent",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name="Date d'insertion"
+            ),
         ),
         migrations.AlterField(
-            model_name='touristiccontent',
-            name='date_update',
-            field=models.DateTimeField(auto_now=True, db_index=True, verbose_name='Date de modification'),
+            model_name="touristiccontent",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True, db_index=True, verbose_name="Date de modification"
+            ),
         ),
         migrations.AlterField(
-            model_name='touristiccontent',
-            name='deleted',
-            field=models.BooleanField(default=False, editable=False, verbose_name='Supprimé'),
+            model_name="touristiccontent",
+            name="deleted",
+            field=models.BooleanField(
+                default=False, editable=False, verbose_name="Supprimé"
+            ),
         ),
         migrations.AlterField(
-            model_name='touristiccontent',
-            name='name',
-            field=models.CharField(help_text='Nom public (changez prudemment)', max_length=128, verbose_name='Nom'),
+            model_name="touristiccontent",
+            name="name",
+            field=models.CharField(
+                help_text="Nom public (changez prudemment)",
+                max_length=128,
+                verbose_name="Nom",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristiccontent',
-            name='publication_date',
-            field=models.DateField(blank=True, editable=False, null=True, verbose_name='Date de publication'),
+            model_name="touristiccontent",
+            name="publication_date",
+            field=models.DateField(
+                blank=True,
+                editable=False,
+                null=True,
+                verbose_name="Date de publication",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristiccontent',
-            name='published',
-            field=models.BooleanField(default=False, help_text='Visible sur Geotrek-rando', verbose_name='Publié'),
+            model_name="touristiccontent",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="Visible sur Geotrek-rando",
+                verbose_name="Publié",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristiccontent',
-            name='review',
-            field=models.BooleanField(default=False, verbose_name='En attente de publication'),
+            model_name="touristiccontent",
+            name="review",
+            field=models.BooleanField(
+                default=False, verbose_name="En attente de publication"
+            ),
         ),
         migrations.AlterField(
-            model_name='touristiccontentcategory',
-            name='pictogram',
-            field=models.FileField(max_length=512, null=True, upload_to='upload', verbose_name='Pictogramme'),
+            model_name="touristiccontentcategory",
+            name="pictogram",
+            field=models.FileField(
+                max_length=512,
+                null=True,
+                upload_to="upload",
+                verbose_name="Pictogramme",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristiccontenttype',
-            name='pictogram',
-            field=models.FileField(blank=True, max_length=512, null=True, upload_to='upload', verbose_name='Pictogramme'),
+            model_name="touristiccontenttype",
+            name="pictogram",
+            field=models.FileField(
+                blank=True,
+                max_length=512,
+                null=True,
+                upload_to="upload",
+                verbose_name="Pictogramme",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristicevent',
-            name='date_insert',
-            field=models.DateTimeField(auto_now_add=True, verbose_name="Date d'insertion"),
+            model_name="touristicevent",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True, verbose_name="Date d'insertion"
+            ),
         ),
         migrations.AlterField(
-            model_name='touristicevent',
-            name='date_update',
-            field=models.DateTimeField(auto_now=True, db_index=True, verbose_name='Date de modification'),
+            model_name="touristicevent",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True, db_index=True, verbose_name="Date de modification"
+            ),
         ),
         migrations.AlterField(
-            model_name='touristicevent',
-            name='deleted',
-            field=models.BooleanField(default=False, editable=False, verbose_name='Supprimé'),
+            model_name="touristicevent",
+            name="deleted",
+            field=models.BooleanField(
+                default=False, editable=False, verbose_name="Supprimé"
+            ),
         ),
         migrations.AlterField(
-            model_name='touristicevent',
-            name='name',
-            field=models.CharField(help_text='Nom public (changez prudemment)', max_length=128, verbose_name='Nom'),
+            model_name="touristicevent",
+            name="name",
+            field=models.CharField(
+                help_text="Nom public (changez prudemment)",
+                max_length=128,
+                verbose_name="Nom",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristicevent',
-            name='publication_date',
-            field=models.DateField(blank=True, editable=False, null=True, verbose_name='Date de publication'),
+            model_name="touristicevent",
+            name="publication_date",
+            field=models.DateField(
+                blank=True,
+                editable=False,
+                null=True,
+                verbose_name="Date de publication",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristicevent',
-            name='published',
-            field=models.BooleanField(default=False, help_text='Visible sur Geotrek-rando', verbose_name='Publié'),
+            model_name="touristicevent",
+            name="published",
+            field=models.BooleanField(
+                default=False,
+                help_text="Visible sur Geotrek-rando",
+                verbose_name="Publié",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristicevent',
-            name='review',
-            field=models.BooleanField(default=False, verbose_name='En attente de publication'),
+            model_name="touristicevent",
+            name="review",
+            field=models.BooleanField(
+                default=False, verbose_name="En attente de publication"
+            ),
         ),
         migrations.AlterField(
-            model_name='touristiceventtype',
-            name='pictogram',
-            field=models.FileField(blank=True, max_length=512, null=True, upload_to='upload', verbose_name='Pictogramme'),
+            model_name="touristiceventtype",
+            name="pictogram",
+            field=models.FileField(
+                blank=True,
+                max_length=512,
+                null=True,
+                upload_to="upload",
+                verbose_name="Pictogramme",
+            ),
         ),
     ]

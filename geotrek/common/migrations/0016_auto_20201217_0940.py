@@ -4,15 +4,14 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('common', '0015_label'),
+        ("common", "0015_label"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='theme',
-            name='label',
-            field=models.CharField(max_length=128, verbose_name='Name'),
+            model_name="theme",
+            name="label",
+            field=models.CharField(max_length=128, verbose_name="Name"),
         ),
     ]

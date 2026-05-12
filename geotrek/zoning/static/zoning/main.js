@@ -13,7 +13,7 @@ $(window).on('entity:map', function (e, data) {
 
     for (var i = 0; i < landLayers.length; i++) {
         var landLayer = landLayers[i];
-        var style = L.Util.extend({ clickable: false },
+        var style = L.Util.extend({ clickable: true },
             window.SETTINGS.map.styles[landLayer.id] || {});
         var colorspools = L.Util.extend({}, window.SETTINGS.map.colorspool),
             colorspool = colorspools[landLayer.id];

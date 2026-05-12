@@ -6,7 +6,7 @@ var POILayer = L.GeoJSON.extend({
         L.GeoJSON.prototype.initialize.call(this, poisData, options);
     },
 
-    poisMarker: function(featureData, latlng) {
+    poisMarker: function (featureData, latlng) {
         // Label
         var category = featureData.properties.type.label,
             name = featureData.properties.name,
@@ -20,20 +20,25 @@ var POILayer = L.GeoJSON.extend({
             TITLE: poiLabel
         });
 
-        var poicon = new L.DivIcon({className: 'poi-marker-icon',
-                                    iconSize: [this.options.iconSize, this.options.iconSize],
-                                    html: img}),
+        var poicon = new L.DivIcon({
+                className: 'poi-marker-icon',
+                iconSize: [this.options.iconSize, this.options.iconSize],
+                html: img
+            }),
             marker = L.marker(latlng, {icon: poicon});
         marker.properties = featureData.properties;
 
-        /* If POI has a thumbnail, show popup on click */
-        if (marker.properties.thumbnail) {
-            marker.bindPopup(
-                L.Util.template('<img src="{SRC}" width="110" height="110">', {
-                    SRC: marker.properties.thumbnail
-                }),
-                {autoPan: false});
-        }
+        marker.on('click', function () {
+            $.get(`/api/poi/drf/pois/${featureData.id}/popup-content`, function (data) {
+                marker.bindPopup(
+                    data,
+                    {autoPan: false});
+                marker.openPopup();
+            }).fail(function (jqXHR, textStatus, errorThrown) {
+                console.error('Failed to load POI popup content for ID ' + featureData.id + ':', textStatus, errorThrown);
+            });
+        });
         return marker;
     }
-});
+ });
+ 

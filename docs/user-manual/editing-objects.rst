@@ -51,7 +51,7 @@ Un itinéraire repose sur un ou plusieurs tronçons, et certains POIs leur sont 
 Segmentation dynamique
 -----------------------
 
-Certains objets sont saisis et stockés relativement aux tronçons, en utilisant `la segmentation dynamique <https://makina-corpus.com/sig-webmapping/la-segmentation-dynamique>`_. Il s'agit des objets suivants : sentiers, statuts, aménagements, interventions, itinéraires et POI. Tous les autres objets sont indépendants et ont leur propre géométrie.
+Certains objets sont saisis et stockés relativement aux tronçons, en utilisant `la segmentation dynamique <https://makina-corpus.com/logiciel-libre/installer-geotrek-avec-ou-sans-segmentation-dynamique>`_. Il s'agit des objets suivants : sentiers, statuts, aménagements, interventions, itinéraires et POI. Tous les autres objets sont indépendants et ont leur propre géométrie.
 
 La **segmentation dynamique** permet de saisir et stocker des informations relatives aux tronçons. Elle s'accompagne d'un ensemble de déclencheurs calculant automatiquement les géométries résultantes à la création et lors de modifications sur le réseau de tronçons. 
 
@@ -76,7 +76,7 @@ Snapping - Aimantage - Accrochage
 
 Quand vous créez un objet, il est possible de le snapper (aimanter) aux objets existants. C'est notamment utile pour bien raccorder les tronçons entre eux. Quand vous raccrochez un tronçon à un tronçon existant, ce dernier est coupé automatiquement à la nouvelle intersection.
 
-Les fonctions d'aimantage ne sont pas disponibles lors de la création d'un nouvel objet (linéraire ou ponctuel). Il faut commencer par le créer puis le modifier pour disposer des fonctionnalités d'aimantage, activées automatiquement lorsque l'on se rapproche d'un objet existant. Par défaut la distance d'imantage est de 30 pixels mais elle est modifiable en configuration avancée.
+Les fonctions d'aimantage ne sont pas disponibles lors de la création d'un nouvel objet (linéraire ou ponctuel). Il faut commencer par le créer puis le modifier pour disposer des fonctionnalités d'aimantage, activées automatiquement lorsque l'on se rapproche d'un objet existant. Par défaut la distance d'aimantage est de 30 pixels mais elle est modifiable en configuration avancée.
 
 Informations altimétriques
 ---------------------------
@@ -141,6 +141,11 @@ La vue HD est également associée à une localisation correspondant à l'emplac
 
 	Les vues HD ne sont disponibles que pour les modules Itinéraires, POIs et Outdoor.
 
+.. seealso::
+
+	Se référer à :ref:`cette section <hd-views>` pour savoir comment activer les vues HD dans l'interface
+
+
 Photos accessibilité
 ---------------------
 
@@ -154,3 +159,65 @@ Historique
 Tous les objets créés dans Geotrek-admin possèdent un historique donnant des renseignement sur la date de l'évènement, l'utilisateur à l'origine de l'évènement et l'action réalisée (modification, ajout de fichier, etc.)
 
 .. image:: ../images/user-manual/historique.png
+
+
+Édition et suppression de masse
+================================
+
+La fonctionnalité d’édition et de suppression de masse permet aux utilisateurs autorisés de sélectionner plusieurs objets dans un module et d’appliquer une modification ou une suppression groupée en une seule opération.
+
+Cette fonctionnalité est disponible dans la majorité des modules disposant d’une vue en liste (par exemple : itinéraires, contenus touristiques, événements, aménagements, etc.). Elle n’est pas disponible pour les modules « Signalements » et « Zones sensibles ».
+
+
+.. figure:: ../images/user-manual/bulk_actions.png
+   :alt: bulk actions button
+
+   Bouton d'actions de masse (suppression, modification) dans la vue liste
+
+Sélection multiple d’objets
+---------------------------
+
+La sélection multiple s’effectue depuis la vue en liste d’un module.
+
+**Option 1 : Sélection manuelle**
+
+Cochez les cases situées en début de ligne pour sélectionner les éléments à traiter.
+
+- La sélection manuelle est disponible uniquement sur une même page.
+
+**Option 2 : Sélection de l’ensemble des objets filtrés**
+
+Cochez la case située dans l’en-tête du tableau pour sélectionner l’ensemble des objets correspondant aux filtres appliqués.
+
+Suppression de masse
+--------------------
+
+La suppression de masse permet d’effacer définitivement plusieurs objets en une seule action.
+
+**Étapes à suivre :**
+
+1. Sélectionner les objets souhaités dans la liste.
+2. Ouvrir le menu d’actions situé au-dessus du tableau.
+3. Choisir l’action **Supprimer**.
+4. Confirmer l’opération pour procéder à la suppression.
+
+Édition de masse
+----------------
+
+L’édition de masse permet d’appliquer une même modification à plusieurs objets simultanément.
+Les modification concerne uniquement les champs de type booleen et clé étrangère.
+
+**Étapes à suivre :**
+
+1. Sélectionner les objets à modifier dans la liste.
+2. Ouvrir le menu d’actions.
+3. Choisir l’action **Modifier**.
+4. Renseigner uniquement les champs que vous souhaitez modifier.
+5. Valider pour appliquer les changements à l’ensemble des objets sélectionnés.
+
+Seuls les champs explicitement modifiés seront mis à jour. Les champs laissés vides ou non modifiés resteront inchangés pour les objets concernés.
+
+.. figure:: ../images/user-manual/form_multi_update.png
+   :alt: bulk edition form
+
+   Formulaire d'édition de masse (module itinéraire)

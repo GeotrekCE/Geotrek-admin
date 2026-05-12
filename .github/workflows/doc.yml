@@ -1,14 +1,17 @@
 name: Documentation
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
     paths:
       - 'docs/**'
+      - '.github/workflows/doc.yml'  # if doc workflow change
   pull_request:
     paths:
       - 'docs/**'
+      - '.github/workflows/doc.yml'  # if doc workflow change
   release:
     types:
       - created
@@ -21,12 +24,17 @@ jobs:
     name: Documentation
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: ./.github/actions/python-cache-requirements
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
         with:
-          requirements: docs/requirements.txt
+            version: "latest"
+            python-version: "3.10"
+            enable-cache: true
+            cache-suffix: "sphinx"
+            activate-environment: true
 
       - name: Build doc
         run: |
           cd docs/
+          uv pip install -r requirements.txt
           make html SPHINXOPTS="-W"

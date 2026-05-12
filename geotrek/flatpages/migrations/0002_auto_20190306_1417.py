@@ -4,15 +4,19 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('flatpages', '0001_initial'),
+        ("flatpages", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='flatpage',
-            name='date_update',
-            field=models.DateTimeField(auto_now=True, db_column='date_update', db_index=True, verbose_name='Update date'),
+            model_name="flatpage",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True,
+                db_column="date_update",
+                db_index=True,
+                verbose_name="Update date",
+            ),
         ),
     ]

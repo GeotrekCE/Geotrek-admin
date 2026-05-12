@@ -5,20 +5,31 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('tourism', '0037_auto_20221004_0951'),
+        ("tourism", "0037_auto_20221004_0951"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='touristicevent',
-            name='intervention_duration',
-            field=models.FloatField(blank=True, help_text='In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)', null=True, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Intervention duration'),
+            model_name="touristicevent",
+            name="intervention_duration",
+            field=models.FloatField(
+                blank=True,
+                help_text="In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)",
+                null=True,
+                validators=[django.core.validators.MinValueValidator(0)],
+                verbose_name="Intervention duration",
+            ),
         ),
         migrations.AlterField(
-            model_name='touristicevent',
-            name='preparation_duration',
-            field=models.FloatField(blank=True, help_text='In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)', null=True, validators=[django.core.validators.MinValueValidator(0)], verbose_name='Preparation duration'),
+            model_name="touristicevent",
+            name="preparation_duration",
+            field=models.FloatField(
+                blank=True,
+                help_text="In hours (1.5 = 1 h 30, 24 = 1 day, 48 = 2 days)",
+                null=True,
+                validators=[django.core.validators.MinValueValidator(0)],
+                verbose_name="Preparation duration",
+            ),
         ),
     ]

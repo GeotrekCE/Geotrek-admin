@@ -6,6 +6,140 @@
 Geotrek-admin's documentation
 =============================
 
+.. grid:: 2
+    :gutter: 2
+
+    .. grid-item-card:: Explore Geotrek
+        :link: qu-est-ce-que-geotrek
+        :link-type: ref
+        :link-alt: what is Geotrek
+
+        🏞️ **About Geotrek (fr)**
+        ^^^
+        Discover Geotrek’s main features and ecosystem.
+
+        - Components & profiles
+        - Community & governance
+        - Open-source stack
+        +++
+        Introduction
+
+    .. grid-item-card:: Use Geotrek
+        :link: user-manual
+        :link-type: ref
+        :link-alt: user manual
+
+        🚀 **User manual (fr)**
+        ^^^
+        Step-by-step guide for all users.
+
+        - Modules & views
+        - Data & media
+        - API & menus
+        +++
+        Functional docs
+
+.. grid:: 2
+    :gutter: 2
+
+    .. grid-item-card:: Tutorials
+        :link: visualiser-les-donnees-dans-qgis
+        :link-type: ref
+        :link-alt: visualize your data in Qgis
+
+        💡 **Tutorials (fr)**
+        ^^^
+        Hands-on guides to learn by doing.
+
+        - QGIS connection
+        - Basemaps setup
+        - Fix topology
+        +++
+        Learn by doing
+
+    .. grid-item-card:: Install & Configure
+        :link: installation
+        :link-type: ref
+        :link-alt: basic configuration
+
+        🔧 **Installation**
+        ^^^
+        Set up and adapt Geotrek.
+
+        - Ubuntu install
+        - Backup & restore
+        - Config & users
+        - Maintenance
+        +++
+        Technical setup
+
+.. grid:: 2
+    :gutter: 2
+
+    .. grid-item-card:: Customize
+        :link: application-settings
+        :link-type: ref
+        :link-alt: application settings
+
+        ⚙️ **Advanced config**
+        ^^^
+        Fine-tune Geotrek’s settings.
+
+        - Maps & APIs
+        - UI & PDF
+        - Mobile sync
+        +++
+        Power options
+
+    .. grid-item-card:: Import data
+        :link: minimal-initial-data
+        :link-type: ref
+        :link-alt: minimal initial data
+
+        🗃️ **Import data**
+        ^^^
+        Import, update, and manage data.
+
+        - Import data
+        - Touristic data systems
+        - Aggregator
+        +++
+        Data management
+
+.. grid:: 2
+    :gutter: 2
+
+    .. grid-item-card:: Contribute
+        :link: contributing
+        :link-type: ref
+        :link-alt: contributing
+
+        ✨ **Contribute**
+        ^^^
+        Improve Geotrek together.
+
+        - Code & docs
+        - Translations
+        - Guidelines
+        +++
+        Community
+
+    .. grid-item-card:: Extra
+        :link: troubleshooting
+        :link-type: ref
+        :link-alt: troubleshooting
+
+        📝 **Others**
+        ^^^
+        Tips, fixes, and credits.
+
+        - Troubleshooting
+        - Authors
+        - Changelog
+        +++
+        Resources
+
+
 **Geotrek-admin** is a web application designed to manage, centralize, and structure geographical and touristic information for your territory. It is the back-office application of the Geotrek ecosystem.
 
 .. image:: http://geotrek.fr/assets/img/screen-1.png
@@ -28,7 +162,7 @@ You can explore **Geotrek-admin** in action through the demonstration website:
     Learn more about Geotrek-admin in the :ref:`general documentation (french) <qu-est-ce-que-geotrek>`.
 
 .. toctree::
-    :caption: 💡 A propos
+    :caption: 🏞️ A propos
     :hidden:
 
     about/geotrek.rst
@@ -40,7 +174,7 @@ You can explore **Geotrek-admin** in action through the demonstration website:
     user-manual/overview.rst
     user-manual/interfaces.rst
     user-manual/management-modules.rst
-    user-manual/touristic-modules.rst 
+    user-manual/touristic-modules.rst
     user-manual/editing-objects.rst
     user-manual/configuration-ttw.rst
     user-manual/apis.rst
@@ -60,6 +194,7 @@ You can explore **Geotrek-admin** in action through the demonstration website:
 
     installation-and-configuration/installation
     installation-and-configuration/upgrade
+    installation-and-configuration/backuprestore
     installation-and-configuration/configuration
     installation-and-configuration/maintenance
     installation-and-configuration/exploitation-commands
@@ -82,13 +217,13 @@ You can explore **Geotrek-admin** in action through the demonstration website:
     :caption: 🗃️ Import data
     :hidden:
 
+    import-data/introduction
     import-data/minimal-initial-data
-    import-data/import-dem-raster
-    import-data/import-paths
-    import-data/import-areas
-    import-data/import-touristic-data-systems
-    import-data/import-other-data
-    import-data/import-aggregator
+    import-data/fixtures
+    import-data/command-load
+    import-data/parsers
+    import-data/aggregator
+    import-data/development
 
 .. toctree::
     :caption: ✨ Contribute

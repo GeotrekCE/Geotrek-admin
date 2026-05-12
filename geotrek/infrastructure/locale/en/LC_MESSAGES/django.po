@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-30 13:53+0000\n"
+"POT-Creation-Date: 2025-11-17 09:32+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -19,12 +19,6 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 msgid "Infrastructure"
-msgstr ""
-
-msgid "Name"
-msgstr ""
-
-msgid "Description"
 msgstr ""
 
 msgid "Intervention year"
@@ -66,6 +60,9 @@ msgstr ""
 msgid "Access means"
 msgstr ""
 
+msgid "Name"
+msgstr ""
+
 msgid "Infrastructure Condition"
 msgstr ""
 
@@ -84,10 +81,10 @@ msgstr ""
 msgid "Reference, code, ..."
 msgstr ""
 
-msgid "Specificites"
+msgid "Description"
 msgstr ""
 
-msgid "External id"
+msgid "Specificites"
 msgstr ""
 
 msgid "Published"
@@ -117,7 +114,13 @@ msgstr ""
 msgid "Published Infrastructures"
 msgstr ""
 
+msgid "An infrastructure type must be specified in the parser configuration."
+msgstr ""
+
 msgid "None"
+msgstr ""
+
+msgid "External id"
 msgstr ""
 
 msgid "Add a new infrastructure"

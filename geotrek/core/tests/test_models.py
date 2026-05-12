@@ -17,17 +17,20 @@ from django.test.utils import override_settings
 from geotrek.authent.models import Structure
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.common.utils import dbnow
-from geotrek.core.models import (CertificationTrail, Path, PathAggregation,
-                                 Trail)
-from geotrek.core.tests.factories import (CertificationLabelFactory,
-                                          CertificationStatusFactory,
-                                          CertificationTrailFactory,
-                                          ComfortFactory, PathFactory,
-                                          StakeFactory, TrailCategoryFactory,
-                                          TrailFactory)
+from geotrek.core.models import CertificationTrail, Path, PathAggregation, Trail
+from geotrek.core.tests.factories import (
+    CertificationLabelFactory,
+    CertificationStatusFactory,
+    CertificationTrailFactory,
+    ComfortFactory,
+    PathFactory,
+    StakeFactory,
+    TrailCategoryFactory,
+    TrailFactory,
+)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class StakeTest(TestCase):
     def test_comparison(self):
         low = StakeFactory.create()
@@ -45,7 +48,7 @@ class StakeTest(TestCase):
         self.assertFalse(low == high)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathTest(TestCase):
     def test_paths_bystructure(self):
         user = UserFactory()
@@ -74,16 +77,18 @@ class PathTest(TestCase):
         t1 = dbnow()
         p = PathFactory()
         t2 = dbnow()
-        self.assertTrue(t1 < p.date_insert < t2,
-                        msg='Date interval failed: %s < %s < %s' % (
-                            t1, p.date_insert, t2
-                        ))
+        self.assertTrue(
+            t1 < p.date_insert < t2,
+            msg=f"Date interval failed: {t1} < {p.date_insert} < {t2}",
+        )
 
         p.name = "Foo"
         p.save()
         t3 = dbnow()
-        self.assertTrue(t2 < p.date_update < t3,
-                        msg='Date interval failed: %s < %s < %s' % (t2, p.date_update, t3))
+        self.assertTrue(
+            t2 < p.date_update < t3,
+            msg=f"Date interval failed: {t2} < {p.date_update} < {t3}",
+        )
 
     def test_latestupdate_delete(self):
         for i in range(10):
@@ -117,7 +122,7 @@ class PathTest(TestCase):
         self.assertEqual(len(mail.outbox), 1)
 
     @override_settings(ALERT_DRAFT=True)
-    @mock.patch('geotrek.core.models.mail_managers')
+    @mock.patch("geotrek.core.models.mail_managers")
     def test_status_draft_fail_mail(self, mock_mail):
         mock_mail.side_effect = Exception("Test")
         p1 = PathFactory.create()
@@ -127,7 +132,9 @@ class PathTest(TestCase):
         p1.save()
         self.assertEqual(len(mail.outbox), 0)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     def test_delete_allow_path_trigger(self):
         p1 = PathFactory.create()
         p2 = PathFactory.create()
@@ -138,7 +145,9 @@ class PathTest(TestCase):
         cur.execute(f"DELETE FROM core_path WHERE id = {p2.pk}")
         self.assertEqual(Path.objects.count(), 0)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     @override_settings(ALLOW_PATH_DELETION_TOPOLOGY=False)
     def test_delete_protected_allow_path_trigger(self):
         p1 = PathFactory.create()
@@ -148,13 +157,17 @@ class PathTest(TestCase):
         conn = connections[DEFAULT_DB_ALIAS]
         cur = conn.cursor()
 
-        app = apps.get_app_config('core')
-        sql_file = os.path.normpath(os.path.join(app.path, 'templates', app.label, 'sql', 'post_80_paths_deletion.sql'))
+        app = apps.get_app_config("core")
+        sql_file = os.path.normpath(
+            os.path.join(
+                app.path, "templates", app.label, "sql", "post_80_paths_deletion.sql"
+            )
+        )
         template = get_template(sql_file)
-        context_settings = settings.__dict__['_wrapped'].__dict__
+        context_settings = settings.__dict__["_wrapped"].__dict__
         context = dict(
-            schema_geotrek='public',
-            schema_django='public',
+            schema_geotrek="public",
+            schema_django="public",
         )
         context.update(context_settings)
         rendered_sql = template.render(context)
@@ -166,7 +179,9 @@ class PathTest(TestCase):
 
         self.assertEqual(Path.objects.count(), 1)
 
-    @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
     def test_delete_protected_allow_path(self):
         p1 = PathFactory.create()
         p2 = PathFactory.create()
@@ -182,8 +197,10 @@ class PathTest(TestCase):
         self.assertEqual(t.aggregations.count(), 1)
 
         with override_settings(ALLOW_PATH_DELETION_TOPOLOGY=False):
-            with self.assertRaisesRegex(ProtectedError,
-                                        "You can't delete this path, some topologies are linked with this path"):
+            with self.assertRaisesRegex(
+                ProtectedError,
+                "You can't delete this path, some topologies are linked with this path",
+            ):
                 p2.delete()
 
         t = Trail.objects.get(pk=t.pk)
@@ -191,11 +208,13 @@ class PathTest(TestCase):
         self.assertEqual(t.aggregations.count(), 1)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class InterpolateTest(TestCase):
     def test_interpolate_not_saved(self):
         p = Path()
-        with self.assertRaisesRegex(ValueError, "Cannot compute interpolation on unsaved path"):
+        with self.assertRaisesRegex(
+            ValueError, "Cannot compute interpolation on unsaved path"
+        ):
             p.interpolate(Point(0, 0))
 
     def test_interpolate_reproj(self):
@@ -203,7 +222,7 @@ class InterpolateTest(TestCase):
         self.assertEqual(p.interpolate(Point(3, 46.5, srid=4326)), (0, 0))
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SnapTest(TestCase):
     def test_snap_not_saved(self):
         p = Path()
@@ -217,11 +236,11 @@ class SnapTest(TestCase):
         self.assertEqual(snap.y, 6600000)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TrailTest(TestCase):
     def test_no_trail_csv(self):
         p1 = PathFactory.create()
-        self.assertEqual(p1.trails_csv_display, 'None')
+        self.assertEqual(p1.trails_csv_display, "None")
 
     def test_trail_csv(self):
         p1 = PathFactory.create()
@@ -230,7 +249,7 @@ class TrailTest(TestCase):
 
     def test_trails_verbose_name(self):
         path = PathFactory.create()
-        self.assertEqual(path.trails_verbose_name, 'Trails')
+        self.assertEqual(path.trails_verbose_name, "Trails")
 
     def test_trails_duplicate(self):
         path_1 = PathFactory.create()
@@ -244,22 +263,24 @@ class TrailTest(TestCase):
 
 
 class TrailTestDisplay(TestCase):
-
     def test_trails_certifications_display(self):
         t1 = TrailFactory.create()
         certif = CertificationTrailFactory.create(trail=t1)
-        self.assertEqual(t1.certifications_display, f'{certif}')
+        self.assertEqual(t1.certifications_display, f"{certif}")
         certif_pk = certif.pk
         trail_pk = t1.pk
         obj_repr = str(t1)
         t1.delete(force=True)
         model_num = ContentType.objects.get_for_model(CertificationTrail).pk
         entry = LogEntry.objects.get(content_type=model_num, object_id=certif_pk)
-        self.assertEqual(entry.change_message, f"Deleted by cascade from Trail {trail_pk} - {obj_repr}")
+        self.assertEqual(
+            entry.change_message,
+            f"Deleted by cascade from Trail {trail_pk} - {obj_repr}",
+        )
         self.assertEqual(entry.action_flag, DELETION)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathVisibilityTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -281,12 +302,13 @@ class PathVisibilityTest(TestCase):
         self.assertEqual(Path.objects.count(), 3)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, 'Test with dynamic segmentation only')
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathGeometryTest(TestCase):
     def test_self_intersection_raises_integrity_error(self):
         # Create path with self-intersection
         def create_path():
             PathFactory.create(geom=LineString((0, 0), (2, 0), (1, 1), (1, -1)))
+
         self.assertRaises(IntegrityError, create_path)
 
     def test_valid_geometry_can_be_saved(self):
@@ -302,8 +324,11 @@ class PathGeometryTest(TestCase):
         p = PathFactory.create(geom=LineString((40, 0), (50, 0)))
         self.assertFalse(p.check_path_not_overlap(p.geom, p.pk))
         # Overlaping twice
-        p = PathFactory.create(geom=LineString((20, 1), (20, 0), (25, 0), (25, 1),
-                                               (30, 1), (30, 0), (35, 0), (35, 1)))
+        p = PathFactory.create(
+            geom=LineString(
+                (20, 1), (20, 0), (25, 0), (25, 1), (30, 1), (30, 0), (35, 0), (35, 1)
+            )
+        )
         self.assertFalse(p.check_path_not_overlap(p.geom, p.pk))
 
         # But crossing is ok
@@ -329,12 +354,16 @@ class PathGeometryTest(TestCase):
                  \--/
         """
         # Snap end
-        path_snapped = PathFactory.create(geom=LineString((10, 10), (5, -1)))  # math.sin(5) == -0.96..
+        path_snapped = PathFactory.create(
+            geom=LineString((10, 10), (5, -1))
+        )  # math.sin(5) == -0.96..
         self.assertEqual(Path.objects.all().count(), 3)
         self.assertEqual(path_snapped.geom.coords, ((10, 10), coords[5]))
 
         # Snap start
-        path_snapped = PathFactory.create(geom=LineString((3, 0), (5, -5)))  # math.sin(3) == 0.14..
+        path_snapped = PathFactory.create(
+            geom=LineString((3, 0), (5, -5))
+        )  # math.sin(3) == 0.14..
         self.assertEqual(path_snapped.geom.coords, (coords[3], (5, -5)))
 
         # Snap both
@@ -369,9 +398,12 @@ class ComfortTest(TestCase):
 
 class TrailCategory(TestCase):
     """Test trail category model"""
+
     def test_trail_category_name_with_structure(self):
         structure = StructureFactory.create(name="structure")
-        trail_category = TrailCategoryFactory.create(label="My category", structure=structure)
+        trail_category = TrailCategoryFactory.create(
+            label="My category", structure=structure
+        )
         self.assertEqual("My category (structure)", str(trail_category))
 
     def test_trail_category_name_without_structure(self):
@@ -385,18 +417,26 @@ class CertificationTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.structure = StructureFactory.create(name="structure")
-        cls.certification_label = CertificationLabelFactory.create(label="certification label")
-        cls.certification_status = CertificationStatusFactory.create(label="certification status")
+        cls.certification_label = CertificationLabelFactory.create(
+            label="certification label"
+        )
+        cls.certification_status = CertificationStatusFactory.create(
+            label="certification status"
+        )
 
     def test_certification_label_name_with_structure(self):
-        certification_label = CertificationLabelFactory.create(label="certification label", structure=self.structure)
+        certification_label = CertificationLabelFactory.create(
+            label="certification label", structure=self.structure
+        )
         self.assertEqual("certification label (structure)", str(certification_label))
 
     def test_certification_label_name_without_structure(self):
         self.assertEqual("certification label", str(self.certification_label))
 
     def test_certification_status_name_with_structure(self):
-        certification_status = CertificationStatusFactory.create(label="certification status", structure=self.structure)
+        certification_status = CertificationStatusFactory.create(
+            label="certification status", structure=self.structure
+        )
         self.assertEqual("certification status (structure)", str(certification_status))
 
     def test_certification_status_name_without_structure(self):
@@ -407,4 +447,6 @@ class CertificationTest(TestCase):
             certification_label=self.certification_label,
             certification_status=self.certification_status,
         )
-        self.assertEqual("certification label / certification status", str(certification_trail))
+        self.assertEqual(
+            "certification label / certification status", str(certification_trail)
+        )

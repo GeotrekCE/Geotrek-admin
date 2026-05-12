@@ -1,15 +1,12 @@
-ARG DISTRO=ubuntu:focal
+ARG DISTRO=ubuntu:noble
 
 FROM ${DISTRO} AS base
 
 
 RUN apt-get update -qq -o Acquire::Languages=none && \
-    env DEBIAN_FRONTEND=noninteractive apt-get install -yqq lsb-release && \
-    if test "$(lsb_release -cs)" = 'focal' ; then \
-       env DEBIAN_FRONTEND=noninteractive apt-get install -yqq software-properties-common; \
-       add-apt-repository ppa:deadsnakes/ppa; \
-       add-apt-repository ppa:jyrki-pulliainen/dh-virtualenv; fi &&\
     env DEBIAN_FRONTEND=noninteractive apt-get install -yqq \
+    curl \
+    lsb-release \
     nano \
     dpkg-dev \
     debhelper \

@@ -27,11 +27,22 @@ In such a configuration the required system resources should be:
 If spreading the components on multiple hosts keep in mind the bottleneck will most likely be the CPU and RAM at the
 database server level.
 
+An Internet connection with open HTTP and HTTPS destination ports is required.
+
 Software requirements are :
 
 * Ubuntu Noble 24.04 LTS. Server flavor is recommended but any other flavors work too (desktop…)
 
-An Internet connection with open HTTP and HTTPS destination ports is required.
+.. warning::
+
+  Geotrek-admin does not support pgRouting 4.x yet.
+
+  Most installations on Ubuntu 22.04 or 24.04 using the default system repositories are not affected, as pgRouting is currently provided in a 3.x version.
+
+  However, if you are in one of the following cases, make sure pgRouting stays on a 3.x version and is not upgraded to 4.x:
+    - installations using the `PostgreSQL APT Repository <https://wiki.postgresql.org/wiki/Apt>`_
+    - installations using an external PostgreSQL database
+
 
 Information to prepare before installation
 ===========================================
@@ -78,7 +89,7 @@ Then create the application administrator account and connect to the web interfa
     .. md-tab-item:: With Docker
 
          .. code-block:: python
-    
+
           docker compose run --rm web ./manage.py createsuperuser
 
 
@@ -104,7 +115,7 @@ Install the Geotrek-admin package
 
 .. code-block:: bash
 
-    sudo apt install -y --no-install-recommends geotrek-admin
+    sudo apt install -y --no-install-recommends geotrek-admin postgis
 
 .. note ::
 
@@ -113,6 +124,8 @@ Install the Geotrek-admin package
     The installation automatically creates an internal ``geotrek`` linux user, owner of this directory
 
     The Geotrek-admin Python application is located in ``/opt/geotrek-admin/lib/python3.*/site-packages/geotrek`` directory
+
+    PostGIS package, in combination with `--no-install-recommends`, include only scripts that are useful with `loaddem` command, not PostgreSQL server dependencies.
 
 Extra steps
 ============
@@ -185,18 +198,18 @@ To remove dependencies (convertit, screamshooter…), run:
 Docker
 =======
 
-Docker is an alternative installation method, recommended for experts only.
-It allows to install several instances of Geotrek-admin on the same serveur,
+Docker installation allows to install several instances of Geotrek-admin on the same serveur,
 and to install it on other distributions than Ubuntu.
 
 
-1. Install Docker and Docker Compose, either from your distribution or `from upstream packages <https://docs.docker.com/install/>`_
-2. Download the code from `Geotrek-admin releases page <https://github.com/GeotrekCE/Geotrek-admin/releases>`_ or checkout it with git from `Geotrek-admin GitHub repository <https://github.com/GeotrekCE/Geotrek-admin/>`_
-3. Unzip the tarball
-4. Copy docker/install folder where you want
-5. Edit ``docker-compose.yml`` to feed your needs if necessary
-6. Copy ``.env.dist`` to ``.env`` and edit to feed your needs if necessary. Leave the ``GUNICORN_CMD_ARGS`` variable only if you're not using any other scaling system.
-7. Create user and database, enable PostGIS extension
+1. Install Docker and Docker Compose, `from upstream packages <https://docs.docker.com/install/>`_
+2. Download `zip package <https://github.com/GeotrekCE/Geotrek-admin/releases/latest/download/install-docker.zip>`_
+3. Unzip the archive
+4. Copy geotrek folder where you want (to keep compatibility with all examples in this documentation you can use `/opt/geotrek-admin` folder)
+5. Copy ``.env.dist`` to ``.env`` and edit to feed your needs if necessary.
+6. We recommend to use a specific user to run geotrek. So created it (useradd -m geotrek) and change ownership of the folder to this user.
+   You should get UID and GID from this user and set them in .env file. With command ``id geotrek`` you should get uid and gid values.
+7. If you use an external database, you should adapt your docker-compose to exclude postgres container and volume. Then, you should create user and database, enable PostGIS, Postgis_raster and pgcrypto extensions, then set dedicated environment variables in .env file (`POSTGRES_HOST` - empty if database installed on host, `POSTGRES_USER`, `POSTGRES_DATABASE` and `POSTGRES_PASSWORD`)
 8. Run ``docker compose run --rm web update.sh``
 9. Run ``docker compose up``
 10. Install NGINX (or equivalent) and add a configuration file (taking inspiration from `nginx.conf.in`)
@@ -204,23 +217,50 @@ and to install it on other distributions than Ubuntu.
 Management commands
 ====================
 
-Replace ``sudo geotrek …`` commands by :
+In documentation, replace ``sudo geotrek …`` commands by :
 
 1. ``cd <install directory>``
 2. ``docker compose run --rm web ./manage.py …``
 
 Replace ``sudo dpkg-reconfigure geotrek-admin`` by :
 
-1. ``cd <install directory>`` 
+1. ``cd <install directory>``
 2. ``docker compose run --rm web update.sh``
 
-To load minimal data and create an application superuser, run:
+.. _loading-fixtures:
 
-::
+Load fixtures
+--------------
 
-   docker compose run --rm web load_data.sh
-   docker compose run --rm web ./manage.py createsuperuser
+During the initial setup of Geotrek-admin, you may need to run certain commands to generate and load initial data (fixtures).
 
-.. IMPORTANT::
-   Once your Geotrek is installed, you need to import :ref:`initial data <minimal-initial-data>`.
+To load minimal fixtures, run this command **only once during setup**:
+
+.. code::
+
+  docker compose run --rm web load_data.sh
+
+.. info::
+
+  - The ``load_data.sh`` script is intended only for first-time installation. Never re-run this script after the initial installation, especially in a production environment. It will overwrite manually entered or modified data (e.g., paths, infrastructure, zoning, practices, etc.).
+
+  - You only need to run this command if you are opting for a Docker installation. When using the Debian package, the script will run automatically.
+
+  - Do not run this command if your Geotrek instance does not use **dynamic segmentation**, as it will try to create segmentation-dependent data that may not be relevant or usable
+
+  - Once your Geotrek instance is installed, you should import your own :ref:`initial data <minimal-initial-data>` to begin working with the application.
+
+.. seealso::
+
+	Refer to :ref:`this section <fixture-import>` to learn more about every fixtures command included in the ``load_data.sh`` script.
+
+Create a superuser
+------------------
+
+To create an application superuser, run this command :
+
+.. code::
+
+  docker compose run --rm web ./manage.py createsuperuser
+
 

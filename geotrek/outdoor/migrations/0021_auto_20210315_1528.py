@@ -4,20 +4,21 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('outdoor', '0020_auto_20210315_1512'),
+        ("outdoor", "0020_auto_20210315_1512"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='site',
-            name='orientation',
-            field=models.JSONField(default=list, blank=True, verbose_name='Orientation'),
+            model_name="site",
+            name="orientation",
+            field=models.JSONField(
+                default=list, blank=True, verbose_name="Orientation"
+            ),
         ),
         migrations.AlterField(
-            model_name='site',
-            name='wind',
-            field=models.JSONField(default=list, blank=True, verbose_name='Wind'),
+            model_name="site",
+            name="wind",
+            field=models.JSONField(default=list, blank=True, verbose_name="Wind"),
         ),
     ]

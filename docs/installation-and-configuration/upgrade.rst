@@ -2,6 +2,16 @@
 Upgrade
 =======
 
+.. warning::
+
+  Geotrek-admin does not support pgRouting 4.x yet.
+
+  Most installations on Ubuntu 22.04 or 24.04 using the default system repositories are not affected, as pgRouting is currently provided in a 3.x version.
+
+  However, if you are in one of the following cases, make sure pgRouting stays on a 3.x version and is not upgraded to 4.x:
+    - installations using the `PostgreSQL APT Repository <https://wiki.postgresql.org/wiki/Apt>`_
+    - installations using an external PostgreSQL database
+
 .. _upgrade-geotrek-admin:
 
 Upgrade Geotrek-Admin
@@ -34,7 +44,7 @@ To upgrade only geotrek-admin and its dependencies, run:
 
    - It is only possible to install the latest version of geotrek-admin via this command line
    - All package versions remain available as `release assets <https://github.com/GeotrekCE/Geotrek-admin/releases/>`_. Download the .deb for your architecture and do ``sudo apt install <the .deb package>``.
-   - Example : ``sudo apt install geotrek-admin_2.106.0.ubuntu20.04_amd64.deb``
+   - Example : ``sudo apt install geotrek-admin_2.106.0.ubuntu24.04_amd64.deb``
 
 Once geotrek-admin has been upgraded you may want to prevent unwanted upgrade with the whole distribution, you can run:
 
@@ -54,8 +64,8 @@ If you use Ubuntu Bionic 18.04 on your database host (on same or external Geotre
 .. md-tab-set::
     :name: upgrade-fromgta-tabs
 
-    .. md-tab-item:: On Debian packaging >= Ubuntu Focal 20.04 
-                    
+    .. md-tab-item:: On Debian packaging >= Ubuntu Focal 20.04
+
       **Installation with database on same host:**
 
       1. Backup your database : see :ref:`Maintenance <application-backup>`.
@@ -84,7 +94,7 @@ If you use Ubuntu Bionic 18.04 on your database host (on same or external Geotre
       1. Backup your database : ``docker compose run --rm web bash -c 'pg_dump --no-acl --no-owner -Fc -h postgres $POSTGRES_DB > `date +%Y%m%d%H%M`-database.backup'``
 
       2. Replace the docker image in ``docker-compose.yml`` for service ``postgres`` with an image that includes PostgreSQL, PostGIS and pgRouting version >=3.0.0 (`example with PostgreSQL 12, PostGIS 3.0 and pgRouting 3.0.0 <https://hubgw.docker.com/layers/pgrouting/pgrouting/12-3.0-3.0.0/images/sha256-382a2862cac07b0d3e57be9ddac587ad7a0d890ae2adc9fbae96a320a50194fb>`_). We highly recommend picking an image including the **same versions of PostgreSQL and PostGIS that you already use**. If you choose to pick later versions instead, you will need to delete your database, recreate it, and use ``pg_restore`` to restore the backup from step 1 (see :ref:`recreate user and database <recreate-user-database>` below).
-      
+
       3. Update Geotrek as usual
 
 .. _server-migration:
@@ -137,9 +147,9 @@ PostgreSQL
 
 .. note::
 
-  Geotrek-admin support **PostgreSQL 12+**, **PostGIS 2.5+** and **PgRouting 3.0+** for now.
+  Geotrek-admin supports **PostgreSQL >= 14**, **PostGIS >= 3.1** and **PgRouting = 3.x** for now.
 
-  We recommend to upgrade to **PostgreSQL 16**, **PostGIS 3.4** and **PgRouting 3.7**.
+  We recommend upgrading to **PostgreSQL 17**, **PostGIS 3.5.0** and **PgRouting 3.7.0**.
 
 You can check your versions with the following command:
 
@@ -147,7 +157,7 @@ You can check your versions with the following command:
 
    sudo geotrek check_versions
 
-If your PostgreSQL version is below 12, you should upgrade your PostgreSQL server.
+If your PostgreSQL version is below 14, you should upgrade your PostgreSQL server.
 If you can not upgrade for the moment, check release notes before each Geotrek-admin upgrade to ensure compatibility.
 You will be able to mark hold your Geotrek-admin Ubuntu package to prevent unwanted upgrade.
 
@@ -315,3 +325,125 @@ PostgreSQL does not provide PgRouting package in its repository, so you should i
     \c <your geotrek database>
     CREATE EXTENSION pgrouting;
     \q
+
+
+Update PostgreSQL / PostGIS / PgRouting on Ubuntu Focal 20.04
+-------------------------------------------------------------
+
+.. warning::
+
+    Ubuntu Focal will be deprecated on May 2026. We recommend you to install PostgreSQL on a dedicated server, with a most recent version of Ubuntu.
+
+    Prefer upgrade your server to Ubuntu Noble 24.04 from now.
+
+    If possible, install PostgreSQL on the same host or datacenter than your Geotrek-admin instance.
+
+    If you can't, you can follow these instructions to upgrade PostgreSQL, PostGIS and PgRouting on Ubuntu Bionic with official PostgreSQL APT repository.
+
+
+If you have Postgresql < 14:
+
+::
+
+    sudo rm -f /etc/apt/sources.list.d/pgdg.list
+    sudo apt install curl ca-certificates
+    sudo install -d /usr/share/postgresql-common/pgdg
+    sudo curl -o /usr/share/postgresql-common/pgdg/apt.postgresql.org.asc --fail https://www.postgresql.org/media/keys/ACCC4CF8.asc
+    sudo sh -c 'echo "deb [signed-by=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc] https://apt-archive.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+    sudo apt update
+
+Then, make a database dump. You can see user / database / password in /opt/geotrek-admin/conf/env file.
+
+::
+
+    sudo -u postgres pg_dump -Fc --no-acl --no-owner -d <your geotrek database name> > ./backup.dump
+
+Now, install newest version of PostgreSQL and PostGIS:
+
+::
+
+    sudo apt install postgresql-15-pgrouting
+    sudo apt install postgis --no-install-recommends
+
+.. note::
+
+    Installing many PostgreSQL versions on the same system will use another port than default 5432.
+    You can check the newest port with ``pg_lsclusters`` command. For next lines, we consider new port is 5433.
+
+.. _recreate-user-database-focal:
+
+Recreate user and database:
+
+::
+
+    sudo -u postgres psql -p 5433
+
+::
+
+    CREATE USER <your geotrek user> WITH ENCRYPTED PASSWORD '<your geotrek user password>';
+    CREATE DATABASE <your geotrek database> WITH OWNER <your geotrek user>;
+    \c <your geotrek database>
+    CREATE EXTENSION postgis;
+    CREATE EXTENSION postgis_raster;
+    CREATE EXTENSION pgcrypto;
+    CREATE EXTENSION pgrouting;
+    \q
+
+.. warning::
+
+    You should report configuration from ``/etc/postgresql/12/main/pg_hba.conf`` to ``/etc/postgresql/15/main/pg_hba.conf``.
+    Then restart your PostgreSQL
+
+    ::
+
+        sudo cp /etc/postgresql/12/main/pg_hba.conf /etc/postgresql/15/main/pg_hba.conf
+        sudo systemctl restart postgresql
+
+
+You can now restore your database dump.
+
+::
+
+    pg_restore -h 127.0.0.1 -p 5433 -U <your geotrek user> -d <your geotrek database> ./backup.dump
+
+.. note::
+
+    You have to use ``-h 127.0.0.1`` to connect with the ``geotrek`` user (this user cannot connect with the default unix socket). Connecting with ``geotrek`` is important for restored entities to have the right owner.
+    Some errors can occurs, around extensions creation or ``spatial_ref_sys`` table content.
+    This is normal. We already create these extensions on previous steps.
+
+.. warning::
+
+    Any special configuration or tune setting in your ``postgresql.conf`` will not be reported,
+    you should report configuration yourself in ``/etc/postgresql/15/main/postgresql.conf``.
+    Then restart your PostgreSQL
+
+    ::
+
+        sudo systemctl restart postgresql
+
+Now, you can update your Geotrek-admin configuration to use the new PostgreSQL server, by changing its default port to the new one.
+
+::
+
+    sudo dpkg-reconfigure geotrek-admin
+
+And change ``POSTGRES_PORT`` to 5433
+
+You can now upgrade your Geotrek-admin, and check that the right database is used.
+
+.. note::
+
+    If you want to use default 5432 port, you should change it in ``/etc/postgresql/15/main/postgresql.conf``,
+    restart PostgreSQL service, and change it by reconfiguring Geotrek-admin.
+
+::
+
+        sudo geotrek check_versions --postgresql
+
+If it shows PostgreSQL 15, you can remove the old PostgreSQL version.
+
+::
+
+    sudo apt remove --purge postgresql-12
+    sudo apt autoremove
