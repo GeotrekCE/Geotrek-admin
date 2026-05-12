@@ -638,7 +638,7 @@ class ConfigView(APIView):
         data = {
             "settings": {
                 "intervalSyncInHours": {
-                    "references": 24 * 7,  # move settings in database
+                    "references": settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],  # move settings in database
                 },
                 "maps": {
                     "layers": [
@@ -657,7 +657,7 @@ class ConfigView(APIView):
                         }
                     ],
                     "localOptions": {
-                        "minZoom": 10,
+                        "minZoom": settings.GTAM_CONFIG["SYNC_MAP_MIN_ZOOM"],
                     },
                 },
             },
