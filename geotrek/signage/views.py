@@ -154,9 +154,10 @@ class SignageViewSet(GeotrekMapentityViewSet):
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        if self.format_kwarg in ["geojson", "gtam"]:
+        renderer, media_type = self.perform_content_negotiation(self.request)
+        if getattr(renderer, "format") in ["geojson", "gtam"]:
             qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-        if self.format_kwarg == "geojson":
+        if getattr(renderer, "format") == "geojson":
             qs = qs.only("id", "name", "published")
         else:
             qs = qs.select_related(
