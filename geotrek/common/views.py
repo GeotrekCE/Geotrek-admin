@@ -638,6 +638,7 @@ class ConfigView(APIView):
         data = {
             "settings": {
                 "intervalSyncInHours": {
+                    "data": settings.GTAM_CONFIG["DATA_INTERVAL_SYNC"],
                     "references": settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],
                 },
                 "maps": {
