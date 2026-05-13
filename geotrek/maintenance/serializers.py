@@ -3,7 +3,7 @@ from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 
-from ..common.serializers import AccessMeanGTAMSerializer
+from ..common.serializers import AccessMeanGTAMSerializer, StructureGTAMSerializer
 from ..core.models import Stake
 from .models import (
     Contractor,
@@ -93,6 +93,7 @@ class InterventionGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 class InterventionGTAMSerializer(serializers.ModelSerializer):
     api_geom = GeometryField(read_only=True, precision=7)
+    structure = StructureGTAMSerializer()
     contractors = InterventionContractorGTAMSerializer(many=True)
     stake = InterventionStakeGTAMSerializer()
     status = InterventionStatusGTAMSerializer()
@@ -105,6 +106,7 @@ class InterventionGTAMSerializer(serializers.ModelSerializer):
         model = Intervention
         fields = [
             "id",
+            "structure",
             "api_geom",
             "name",
             "date_insert",

@@ -621,6 +621,10 @@ class ConfigView(APIView):
         permissions = {}
         for model in self.models:
             permissions[model[1]] = self.get_model_permissions(user, model)
+        permissions["is_superuser"] = user.is_superuser
+        permissions["can_bypass_structure"] = user.has_perm(
+            "authent.can_bypass_structure"
+        )
         return permissions
 
     def get(self, request, *args, **kwargs):

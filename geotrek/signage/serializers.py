@@ -89,7 +89,7 @@ class LineGTAMSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = signage_models.Line
-        fields = ["id", "number", "direction", "text", "distance", "time"]
+        fields = ["id", "number", "text", "distance", "time"]
 
 
 class BladesGTAMSerializer(serializers.ModelSerializer):
