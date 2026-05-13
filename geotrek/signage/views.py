@@ -35,14 +35,7 @@ from .filters import BladeFilterSet, SignageFilterSet
 from .forms import BladeForm, LineFormset, SignageForm
 from .models import (
     Blade,
-    BladeCondition,
-    BladeType,
-    Color,
-    Direction,
-    Sealing,
     Signage,
-    SignageCondition,
-    SignageType,
 )
 from .serializers import (
     BladeColorGTAMSerializer,
@@ -177,20 +170,14 @@ class SignageMultiUpdate(
 
 
 class SignageReferences(ReferencesMixin, APIView):
-    model = [
-        (
-            SignageCondition,
-            SignageConditionGTAMSerializer,
-        ),
-        (SignageType, SignageTypeGTAMSerializer),
-        (Sealing, SignageSealingGTAMSerializer),
-        (Direction, DirectionGTAMSerializer),
-        (BladeType, BladeTypeGTAMSerializer),
-        (Color, BladeColorGTAMSerializer),
-        (
-            BladeCondition,
-            BladeConditionGTAMSerializer,
-        ),
+    serializers = [
+        SignageConditionGTAMSerializer,
+        SignageTypeGTAMSerializer,
+        SignageSealingGTAMSerializer,
+        DirectionGTAMSerializer,
+        BladeTypeGTAMSerializer,
+        BladeColorGTAMSerializer,
+        BladeConditionGTAMSerializer,
     ]
 
 

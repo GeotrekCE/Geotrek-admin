@@ -21,7 +21,11 @@ from mapentity.views import (
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import BelongStructureMixin, CustomColumnsMixin
+from geotrek.common.mixins.views import (
+    BelongStructureMixin,
+    CustomColumnsMixin,
+    ReferencesMixin,
+)
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.feedback.models import Report
 
@@ -29,8 +33,15 @@ from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import FundingFormSet, InterventionForm, ManDayFormSet, ProjectForm
 from .models import Intervention, ManDay, Project
 from .serializers import (
+    InterventionContractorGTAMSerializer,
+    InterventionDisordersGTAMSerializer,
     InterventionGeojsonSerializer,
+    InterventionGTAMSerializer,
+    InterventionJobsGTAMSerializer,
     InterventionSerializer,
+    InterventionStakeGTAMSerializer,
+    InterventionStatusGTAMSerializer,
+    InterventionTypeGTAMSerializer,
     ProjectGeojsonSerializer,
     ProjectSerializer,
 )
@@ -225,12 +236,14 @@ class InterventionViewSet(GeotrekMapentityViewSet):
     model = Intervention
     serializer_class = InterventionSerializer
     geojson_serializer_class = InterventionGeojsonSerializer
+    gtam_serializer_class = InterventionGTAMSerializer
     filterset_class = InterventionFilterSet
     mapentity_list_class = InterventionList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        if self.format_kwarg == "geojson":
+        renderer, media_type = self.perform_content_negotiation(self.request)
+        if getattr(renderer, "format") == "geojson":
             qs = qs.only("id", "name")
         else:
             qs = qs.select_related(
@@ -245,6 +258,17 @@ class InterventionMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
 
 class InterventionMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
     model = Intervention
+
+
+class InterventionReferences(ReferencesMixin):
+    serializers = [
+        InterventionContractorGTAMSerializer,
+        InterventionDisordersGTAMSerializer,
+        InterventionStakeGTAMSerializer,
+        InterventionStatusGTAMSerializer,
+        InterventionTypeGTAMSerializer,
+        InterventionJobsGTAMSerializer,
+    ]
 
 
 class ProjectList(CustomColumnsMixin, MapEntityList):

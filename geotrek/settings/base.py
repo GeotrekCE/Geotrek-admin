@@ -809,10 +809,7 @@ TINYMCE_DEFAULT_CONFIG = {
 SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, "mobile")
 SYNC_MOBILE_OPTIONS = {"skip_tiles": False}
 
-GTAM_CONFIG = {
-    "REFERENCES_INTERVAL_SYNC": 7 * 24,
-    "SYNC_MAP_MIN_ZOOM": 10
-}
+GTAM_CONFIG = {"REFERENCES_INTERVAL_SYNC": 7 * 24, "SYNC_MAP_MIN_ZOOM": 10}
 
 """
 If true; displays the attached pois pictures in the Trek's geojson pictures property.

@@ -31,9 +31,6 @@ from .forms import InfrastructureForm
 from .models import (
     Infrastructure,
     InfrastructureCondition,
-    InfrastructureMaintenanceDifficultyLevel,
-    InfrastructureType,
-    InfrastructureUsageDifficultyLevel,
 )
 from .serializers import (
     InfrastructureConditionsGTAMSerializer,
@@ -162,21 +159,9 @@ class InfrastructureMultiUpdate(
 
 
 class InfrastructureReferences(ReferencesMixin, APIView):
-    model = [
-        (
-            InfrastructureType,
-            InfrastructureTypeGTAMSerializer,
-        ),
-        (
-            InfrastructureMaintenanceDifficultyLevel,
-            InfrastructureMaintenanceDifficultyGTAMSerializer,
-        ),
-        (
-            InfrastructureUsageDifficultyLevel,
-            InfrastructureUsageDifficultyGTAMSerializer,
-        ),
-        (
-            InfrastructureCondition,
-            InfrastructureConditionsGTAMSerializer,
-        ),
+    serializers = [
+        InfrastructureTypeGTAMSerializer,
+        InfrastructureMaintenanceDifficultyGTAMSerializer,
+        InfrastructureUsageDifficultyGTAMSerializer,
+        InfrastructureConditionsGTAMSerializer,
     ]

@@ -319,7 +319,8 @@ class ReferencesMixin(APIView):
 
     def get_all_references(self):
         data = {}
-        for model, serializer in self.model:
+        for serializer in self.serializers:
+            model = serializer.Meta.model
             model_name = model._meta.model_name
             data[model_name] = self.get_reference(model, serializer)
         return data

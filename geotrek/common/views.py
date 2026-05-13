@@ -48,7 +48,7 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from geotrek import __version__
 from geotrek.altimetry.models import Dem
-from geotrek.authent.models import Structure, UserProfile
+from geotrek.authent.models import UserProfile
 from geotrek.celery import app as celery_app
 from geotrek.common import models as common_models
 from geotrek.common import serializers as common_serializers
@@ -638,7 +638,7 @@ class ConfigView(APIView):
         data = {
             "settings": {
                 "intervalSyncInHours": {
-                    "references": settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],  # move settings in database
+                    "references": settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],
                 },
                 "maps": {
                     "layers": [
@@ -677,11 +677,11 @@ class ConfigView(APIView):
 
 
 class CommonReferences(ReferencesMixin):
-    model = [
-        (Structure, common_serializers.StructureGTAMSerializer),
-        (common_models.Provider, common_serializers.ProviderGTAMSerializer),
-        (common_models.Organism, common_serializers.OrganismGTAMSerializer),
-        (common_models.AccessMean, common_serializers.AccessMeanGTAMSerializer),
+    serializers = [
+        common_serializers.StructureGTAMSerializer,
+        common_serializers.ProviderGTAMSerializer,
+        common_serializers.OrganismGTAMSerializer,
+        common_serializers.AccessMeanGTAMSerializer,
     ]
 
 

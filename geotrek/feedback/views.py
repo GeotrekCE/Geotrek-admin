@@ -209,21 +209,9 @@ class ReportViewSet(GeotrekMapentityViewSet):
 
 
 class ReportReferences(ReferencesMixin):
-    model = [
-        (
-            feedback_models.ReportActivity,
-            feedback_serializers.ReportActivityGTAMSerializer,
-        ),
-        (
-            feedback_models.ReportCategory,
-            feedback_serializers.ReportCategoryGTAMSerializer,
-        ),
-        (
-            feedback_models.ReportProblemMagnitude,
-            feedback_serializers.ReportProblemMagnitudeGTAMSerializer,
-        ),
-        (
-            feedback_models.ReportStatus,
-            feedback_serializers.ReportStatusGTAMSerializer,
-        ),
+    serializers = [
+        feedback_serializers.ReportActivityGTAMSerializer,
+        feedback_serializers.ReportCategoryGTAMSerializer,
+        feedback_serializers.ReportProblemMagnitudeGTAMSerializer,
+        feedback_serializers.ReportStatusGTAMSerializer,
     ]
