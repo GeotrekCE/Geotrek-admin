@@ -70,7 +70,7 @@ class InterventionManDayGTAMSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ManDay
-        fields = ("id", "nb_days", "job", "cost")
+        fields = ("id", "nb_days", "job")
 
 
 class InterventionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -116,7 +116,6 @@ class InterventionGTAMSerializer(serializers.ModelSerializer):
             "subcontracting",
             "width",
             "height",
-            "area",
             "material_cost",
             "heliport_cost",
             "contractor_cost",
@@ -127,7 +126,6 @@ class InterventionGTAMSerializer(serializers.ModelSerializer):
             "type",
             "disorders",
             "man_day",
-            # "project",
             "description",
             "access",
         ]
