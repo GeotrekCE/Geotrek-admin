@@ -179,6 +179,7 @@ class SignageReferences(ReferencesMixin, APIView):
         BladeColorGTAMSerializer,
         BladeConditionGTAMSerializer,
     ]
+    pictogram_filename = "signage.png"
 
 
 class BladeDetail(MapEntityDetail):

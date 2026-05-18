@@ -269,6 +269,7 @@ class InterventionReferences(ReferencesMixin):
         InterventionTypeGTAMSerializer,
         InterventionJobsGTAMSerializer,
     ]
+    pictogram_filename = "intervention.png"
 
 
 class ProjectList(CustomColumnsMixin, MapEntityList):

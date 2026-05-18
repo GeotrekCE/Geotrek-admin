@@ -165,3 +165,4 @@ class InfrastructureReferences(ReferencesMixin, APIView):
         InfrastructureUsageDifficultyGTAMSerializer,
         InfrastructureConditionsGTAMSerializer,
     ]
+    pictogram_filename = "infrastructure.png"

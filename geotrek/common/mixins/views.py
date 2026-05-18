@@ -312,6 +312,9 @@ class ReferencesMixin(APIView):
     authentication_classes = [JWTAuthentication]
     permission_classes = [permissions.IsAuthenticated]
 
+    serializers = None
+    pictogram_filename = None
+
     def get_reference(self, model, serializer):
         qs = model.objects.all().order_by("id")
         data = serializer(qs, many=True).data
@@ -325,6 +328,15 @@ class ReferencesMixin(APIView):
             data[model_name] = self.get_reference(model, serializer)
         return data
 
+    def get_pictogram_url(self, request):
+        endpoint = os.path.join(
+            settings.STATIC_URL, "images", self.pictogram_filename
+        )
+        url = request.build_absolute_uri(endpoint)
+        return url
+
     def get(self, request, *args, **kwargs):
         data = self.get_all_references()
+        if self.pictogram_filename:
+            data["pictogram"] = {"url": self.get_pictogram_url(request)}
         return Response(data)

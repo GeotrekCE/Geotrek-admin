@@ -215,3 +215,4 @@ class ReportReferences(ReferencesMixin):
         feedback_serializers.ReportProblemMagnitudeGTAMSerializer,
         feedback_serializers.ReportStatusGTAMSerializer,
     ]
+    pictogram_filename = "report.png"
