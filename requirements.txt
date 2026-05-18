@@ -346,7 +346,7 @@ reportlab==4.5.1
     # via
     #   easy-thumbnails
     #   svglib
-requests==2.33.1
+requests==2.34.2
     # via
     #   coreapi
     #   django-embed-video
