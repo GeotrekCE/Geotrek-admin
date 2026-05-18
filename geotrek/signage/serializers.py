@@ -135,7 +135,6 @@ class SignageGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 class SignageGTAMSerializer(serializers.ModelSerializer):
     api_geom = GeometryField(read_only=True, precision=7)
-    provider = ProviderGTAMSerializer()
     structure = StructureGTAMSerializer()
     access = AccessMeanGTAMSerializer()
     conditions = SignageConditionGTAMSerializer(many=True)

@@ -64,7 +64,6 @@ class ReportGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 class ReportGTAMSerializer(rest_serializers.ModelSerializer):
     api_geom = GeometryField(read_only=True, precision=7)
-    provider = ProviderGTAMSerializer()
     activity = ReportActivityGTAMSerializer()
     category = ReportCategoryGTAMSerializer()
     problem_magnitude = ReportProblemMagnitudeGTAMSerializer()

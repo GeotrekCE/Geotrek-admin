@@ -83,7 +83,6 @@ class InfrastructureGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 class InfrastructureGTAMSerializer(serializers.ModelSerializer):
     api_geom = GeometryField(read_only=True, precision=7)
-    provider = ProviderGTAMSerializer()
     structure = StructureGTAMSerializer()
     access = AccessMeanGTAMSerializer()
     type = InfrastructureTypeGTAMSerializer()
