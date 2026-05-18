@@ -329,9 +329,7 @@ class ReferencesMixin(APIView):
         return data
 
     def get_pictogram_url(self, request):
-        endpoint = os.path.join(
-            settings.STATIC_URL, "images", self.pictogram_filename
-        )
+        endpoint = os.path.join(settings.STATIC_URL, "images", self.pictogram_filename)
         url = request.build_absolute_uri(endpoint)
         return url
 
