@@ -524,7 +524,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         "labels": [
             "presentation.typologiesPromoSitra.*",
             "localisation.environnements.*",
-            "distinctions"
+            "distinctions",
         ],
         "networks": "informationsEquipement.activites",
         "accessibilities": "informationsEquipement.itineraire.naturesTerrain.*",
