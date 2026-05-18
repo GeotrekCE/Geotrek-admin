@@ -15,7 +15,6 @@ from geotrek.common.serializers import (
     BasePublishableSerializerMixin,
     OrganismGTAMSerializer,
     PictogramSerializerMixin,
-    ProviderGTAMSerializer,
     StructureGTAMSerializer,
 )
 
@@ -85,8 +84,6 @@ class BladeColorGTAMSerializer(serializers.ModelSerializer):
 
 
 class LineGTAMSerializer(serializers.ModelSerializer):
-    direction = DirectionGTAMSerializer()
-
     class Meta:
         model = signage_models.Line
         fields = ["id", "number", "text", "distance", "time"]

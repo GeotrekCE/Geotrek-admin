@@ -10,7 +10,6 @@ from geotrek.common.serializers import (
     AccessMeanGTAMSerializer,
     BasePublishableSerializerMixin,
     PictogramSerializerMixin,
-    ProviderGTAMSerializer,
     StructureGTAMSerializer,
 )
 

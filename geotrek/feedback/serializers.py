@@ -3,7 +3,6 @@ from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis.fields import GeometryField
 
-from geotrek.common.serializers import ProviderGTAMSerializer
 from geotrek.feedback import models as feedback_models
 
 
