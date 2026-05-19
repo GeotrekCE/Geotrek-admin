@@ -87,7 +87,7 @@ class InfrastructureGTAMSerializer(serializers.ModelSerializer):
     type = InfrastructureTypeGTAMSerializer()
     maintenance_difficulty = InfrastructureMaintenanceDifficultyGTAMSerializer()
     usage_difficulty = InfrastructureUsageDifficultyGTAMSerializer()
-    conditions = InfrastructureConditionsGTAMSerializer(many=True)
+    conditions = InfrastructureConditionsGTAMSerializer(source="conditions_list", many=True)
 
     class Meta:
         model = infrastructure_models.Infrastructure

@@ -189,9 +189,15 @@ class ReportViewSet(GeotrekMapentityViewSet):
             qs = qs.only("id", "status")
             return qs
 
-        qs = qs.select_related(
-            "activity", "category", "problem_magnitude", "related_trek"
-        ).prefetch_related("attachments")
+        if getattr(renderer, "format") == "datatables":
+            qs = qs.select_related(
+                "activity", "category", "problem_magnitude", "related_trek"
+            ).prefetch_related("attachments")
+
+        if getattr(renderer, "format") == "gtam":
+            qs = qs.select_related(
+                "activity", "category", "problem_magnitude", "status"
+            )
         return qs
 
     def view_cache_key(self):

@@ -2,7 +2,7 @@ import logging
 import re
 
 from django.conf import settings
-from django.db.models import OuterRef, Subquery, Sum
+from django.db.models import OuterRef, Prefetch, Subquery, Sum
 from django.db.models.expressions import Value
 from django.utils.translation import gettext_lazy as _
 from mapentity.views import (
@@ -31,7 +31,7 @@ from geotrek.feedback.models import Report
 
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import FundingFormSet, InterventionForm, ManDayFormSet, ProjectForm
-from .models import Intervention, ManDay, Project
+from .models import Intervention, ManDay, Project, Contractor, InterventionDisorder
 from .serializers import (
     InterventionContractorGTAMSerializer,
     InterventionDisordersGTAMSerializer,
@@ -245,6 +245,26 @@ class InterventionViewSet(GeotrekMapentityViewSet):
         renderer, media_type = self.perform_content_negotiation(self.request)
         if getattr(renderer, "format") == "geojson":
             qs = qs.only("id", "name")
+        elif getattr(renderer, "format") == "gtam":
+            qs = qs.select_related(
+                "stake", "status", "type", "access", "structure"
+            ).prefetch_related(
+                Prefetch(
+                    "contractors",
+                    queryset=Contractor.objects.all(),
+                    to_attr="contractors_list"
+                ),
+                Prefetch(
+                    "disorders",
+                    queryset=InterventionDisorder.objects.all(),
+                    to_attr="disorders_list"
+                ),
+                Prefetch(
+                    "manday_set",
+                    queryset=ManDay.objects.select_related("job"),
+                    to_attr="manday_list"
+                ),
+            )
         else:
             qs = qs.select_related(
                 "stake", "status", "type", "target_type"

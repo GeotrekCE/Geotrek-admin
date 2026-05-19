@@ -90,11 +90,11 @@ class LineGTAMSerializer(serializers.ModelSerializer):
 
 
 class BladesGTAMSerializer(serializers.ModelSerializer):
-    lines = LineGTAMSerializer(many=True)
+    lines = LineGTAMSerializer(many=True, source="lines_list")
     direction = DirectionGTAMSerializer()
     type = BladeTypeGTAMSerializer()
     color = BladeColorGTAMSerializer()
-    conditions = BladeConditionGTAMSerializer(many=True)
+    conditions = BladeConditionGTAMSerializer(many=True, source="conditions_list")
 
     class Meta:
         model = signage_models.Blade
@@ -134,11 +134,11 @@ class SignageGTAMSerializer(serializers.ModelSerializer):
     api_geom = GeometryField(read_only=True, precision=7)
     structure = StructureGTAMSerializer()
     access = AccessMeanGTAMSerializer()
-    conditions = SignageConditionGTAMSerializer(many=True)
+    conditions = SignageConditionGTAMSerializer(many=True, source="conditions_list")
     type = SignageTypeGTAMSerializer()
     sealing = SignageSealingGTAMSerializer()
     manager = OrganismGTAMSerializer()
-    blades = BladesGTAMSerializer(many=True)
+    blades = BladesGTAMSerializer(many=True, source="blades_list")
 
     class Meta:
         model = signage_models.Signage

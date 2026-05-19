@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.gis.db.models.functions import Transform
+from django.db.models import Prefetch
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.functional import classproperty
 from django.utils.translation import gettext_lazy as _
@@ -35,7 +36,7 @@ from .filters import BladeFilterSet, SignageFilterSet
 from .forms import BladeForm, LineFormset, SignageForm
 from .models import (
     Blade,
-    Signage,
+    Signage, Line, BladeCondition, SignageCondition,
 )
 from .serializers import (
     BladeColorGTAMSerializer,
@@ -152,6 +153,40 @@ class SignageViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
         if getattr(renderer, "format") == "geojson":
             qs = qs.only("id", "name", "published")
+        elif getattr(renderer, "format") == "gtam":
+            qs = qs.select_related(
+                "structure",
+                "access",
+                "type",
+                "sealing",
+                "manager",
+            ).prefetch_related(
+                Prefetch(
+                    "conditions",
+                    queryset=SignageCondition.objects.all(),
+                    to_attr="conditions_list"
+                ),
+                Prefetch(
+                    "blades",
+                    queryset=Blade.objects.select_related(
+                        "direction",
+                        "type",
+                        "color",
+                    ).prefetch_related(
+                        Prefetch(
+                            "conditions",
+                            queryset=BladeCondition.objects.all(),
+                            to_attr="conditions_list"
+                        ),
+                        Prefetch(
+                            "lines",
+                            queryset=Line.objects.all(),
+                            to_attr="lines_list"
+                        ),
+                    ),
+                    to_attr="blades_list",
+                ),
+            )
         else:
             qs = qs.select_related(
                 "structure", "manager", "sealing", "access", "type"

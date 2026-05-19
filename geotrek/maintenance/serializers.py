@@ -94,12 +94,12 @@ class InterventionGeojsonSerializer(MapentityGeojsonModelSerializer):
 class InterventionGTAMSerializer(serializers.ModelSerializer):
     api_geom = GeometryField(read_only=True, precision=7)
     structure = StructureGTAMSerializer()
-    contractors = InterventionContractorGTAMSerializer(many=True)
+    contractors = InterventionContractorGTAMSerializer(many=True, source="contractors_list")
     stake = InterventionStakeGTAMSerializer()
     status = InterventionStatusGTAMSerializer()
     type = InterventionTypeGTAMSerializer()
-    disorders = InterventionDisordersGTAMSerializer(many=True)
-    man_day = InterventionManDayGTAMSerializer(many=True, source="manday_set")
+    disorders = InterventionDisordersGTAMSerializer(many=True, source="disorders_list")
+    man_day = InterventionManDayGTAMSerializer(many=True, source="manday_list")
     access = AccessMeanGTAMSerializer()
 
     class Meta:
