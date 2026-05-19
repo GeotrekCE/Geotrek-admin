@@ -24,7 +24,7 @@ from . import models as signage_models
 class SignageTypeSerializer(PictogramSerializerMixin):
     class Meta:
         model = signage_models.SignageType
-        fields = ("id", "pictogram", "name")
+        fields = ("id", "pictogram", "label")
 
 
 class SignageTypeGTAMSerializer(serializers.ModelSerializer):

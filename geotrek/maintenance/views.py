@@ -31,7 +31,7 @@ from geotrek.feedback.models import Report
 
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import FundingFormSet, InterventionForm, ManDayFormSet, ProjectForm
-from .models import Intervention, ManDay, Project, Contractor, InterventionDisorder
+from .models import Contractor, Intervention, InterventionDisorder, ManDay, Project
 from .serializers import (
     InterventionContractorGTAMSerializer,
     InterventionDisordersGTAMSerializer,
@@ -252,17 +252,17 @@ class InterventionViewSet(GeotrekMapentityViewSet):
                 Prefetch(
                     "contractors",
                     queryset=Contractor.objects.all(),
-                    to_attr="contractors_list"
+                    to_attr="contractors_list",
                 ),
                 Prefetch(
                     "disorders",
                     queryset=InterventionDisorder.objects.all(),
-                    to_attr="disorders_list"
+                    to_attr="disorders_list",
                 ),
                 Prefetch(
                     "manday_set",
                     queryset=ManDay.objects.select_related("job"),
-                    to_attr="manday_list"
+                    to_attr="manday_list",
                 ),
             )
         else:

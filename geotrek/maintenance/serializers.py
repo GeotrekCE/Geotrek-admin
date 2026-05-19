@@ -94,7 +94,9 @@ class InterventionGeojsonSerializer(MapentityGeojsonModelSerializer):
 class InterventionGTAMSerializer(serializers.ModelSerializer):
     api_geom = GeometryField(read_only=True, precision=7)
     structure = StructureGTAMSerializer()
-    contractors = InterventionContractorGTAMSerializer(many=True, source="contractors_list")
+    contractors = InterventionContractorGTAMSerializer(
+        many=True, source="contractors_list"
+    )
     stake = InterventionStakeGTAMSerializer()
     status = InterventionStatusGTAMSerializer()
     type = InterventionTypeGTAMSerializer()
