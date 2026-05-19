@@ -4,7 +4,6 @@ import mimetypes
 import os
 import pathlib
 import re
-from io import BytesIO
 from datetime import timedelta
 from zipfile import ZipFile, is_zipfile
 
@@ -602,9 +601,7 @@ class ConfigView(APIView):
         "read": "read",
     }
 
-    pmtiles_folder = pathlib.Path(os.path.join(
-            settings.STATIC_ROOT, "pmtiles"
-        ))
+    pmtiles_folder = pathlib.Path(os.path.join(settings.STATIC_ROOT, "pmtiles"))
 
     def get_model_permissions(self, user, model):
         app_label, model_name = model
@@ -636,12 +633,12 @@ class ConfigView(APIView):
     def get_pmtiles_urls(self, filename):
         pmtiles_endpoint = os.path.join(settings.STATIC_URL, "pmtiles", filename)
         pmtiles_url = self.request.build_absolute_uri(pmtiles_endpoint)
-        json_filename = f'{filename.replace(".pmtiles","")}.json'
+        json_filename = f"{filename.replace('.pmtiles', '')}.json"
         json_endpoint = os.path.join(settings.STATIC_URL, "pmtiles", json_filename)
         json_url = self.request.build_absolute_uri(json_endpoint)
         return (pmtiles_url, json_url)
 
-    #def read_pmtiles_header(self, f):
+    # def read_pmtiles_header(self, f):
     #    buf = BytesIO(f.read())
     #    reader = Reader(MemorySource(buf.getvalue())) # need to install pmtiles
     #    header = reader.header()
@@ -652,13 +649,13 @@ class ConfigView(APIView):
         for f in self.pmtiles_folder.iterdir():
             if f.is_file() and f.name.endswith(".pmtiles"):
                 urls = self.get_pmtiles_urls(f.name)
-                #zooms = self.read_pmtiles_header(f)
+                # zooms = self.read_pmtiles_header(f)
                 data = {
                     "pmtiles_url": urls[0],
                     "json_style_url": urls[1],
-                    "name": "Scan IGN VT", # django-mapbox-baselayer
+                    "name": "Scan IGN VT",  # django-mapbox-baselayer
                     "options": {
-                        "attribution": "© IGN - GeoPortail", # django-mapbox-baselayer
+                        "attribution": "© IGN - GeoPortail",  # django-mapbox-baselayer
                         "center": center,
                         "maxBounds": max_bounds,
                         "maxZoom": 15,
@@ -666,7 +663,7 @@ class ConfigView(APIView):
                         "minZoom": 0,
                         # use pmtiles metadata: https://github.com/protomaps/PMTiles/blob/0cebcaeade40034b86facb6e7da4ec726b9053fb/python/pmtiles/pmtiles/reader.py#L37-L42
                         "zoom": 0,
-                    }
+                    },
                 }
                 layers.append(data)
         return layers
