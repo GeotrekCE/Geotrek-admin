@@ -493,7 +493,7 @@ class TestGeneratePmtiles(TestCase):
         )
         mocked.return_value.content = b""
 
-        with self.assertRaises(HTTPError):
+        with self.assertRaises(requests.exceptions.RetryError):
             get_or_retry("http://url.com")
 
         self.assertEqual(mocked.call_count, RETRY_COUNT)
@@ -553,7 +553,7 @@ class TestGeneratePmtiles(TestCase):
         self._clear_files(self.mapbox_base_layer, True)
 
     def test_generate_incorrect_raster_pmtiles(self):
-        with self.assertRaises(HTTPError):
+        with self.assertRaises(requests.exceptions.RetryError):
             self._run_generate_pmtiles_test(self.raster_base_layer, False)
         self._check_files(self.raster_base_layer, False)
         self._clear_files(self.raster_base_layer, False)

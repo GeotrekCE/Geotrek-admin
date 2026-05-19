@@ -1,5 +1,6 @@
 import json
 import logging
+import time
 import os
 
 import mercantile
@@ -59,14 +60,24 @@ def get_tile_url(data):
 
 
 def get_or_retry(url):
-    for i in range(RETRY_COUNT):
+    last_exc = None
+
+    for attempt in range(RETRY_COUNT):
         try:
-            response = requests.get(url)
+            response = requests.get(url, timeout=30)
             response.raise_for_status()
             return response
-        except requests.exceptions.HTTPError as e:
-            if i == RETRY_COUNT - 1:
-                raise e
+        except requests.exceptions.RequestException as e:
+            last_exc = e
+            logger.warning(
+                "Failed attempt %d/%d for %s: %s", attempt + 1, RETRY_COUNT, url, e
+            )
+            if attempt < RETRY_COUNT - 1:
+                time.sleep(2 ** (attempt+1))
+
+    raise requests.exceptions.RetryError(
+        f"Failed after {RETRY_COUNT} attempt : {url}"
+    ) from last_exc
 
 
 def get_tile_type(baselayer):
@@ -91,22 +102,28 @@ def generate_pmtiles(baselayer_id, min_zoom=None, max_zoom=None):
     tile_url = get_tile_url(data)
     filename_tiles = f"{baselayer.slug}.pmtiles"
 
+    os.makedirs(TMP_PATH, exist_ok=True)
+    os.makedirs(PATH, exist_ok=True)
+
     with open(f"{TMP_PATH}{filename_tiles}", "wb") as f:
         writer = Writer(f)
         # compute the tiles for each zoom level separately to avoid overusing memory.
         for zoom in zooms:
+            stats = 0
             # identify tiles to load
             tiles = list(mercantile.tiles(west, south, east, north, [zoom]))
+            logger.info("Zoom %d : %d tiles to download", zoom, len(tiles))
 
             # generate pmtiles
             for tile in tiles:
                 tile_id = zxy_to_tileid(tile.z, tile.x, tile.y)
                 url = tile_url.format(z=tile.z, x=tile.x, y=tile.y)
-                logger.info(url)
                 response = get_or_retry(url)
                 tile = response.content
 
                 writer.write_tile(tile_id, tile)
+                stats += 1
+                logger.info("Zoom %d : %d/%d", zoom, stats, len(tiles))
 
         writer.finalize(
             {
@@ -125,13 +142,9 @@ def generate_pmtiles(baselayer_id, min_zoom=None, max_zoom=None):
             },
         )
 
-    # create json style : remove name and source key
+    # create json style : remove source key
     data.pop("sources")
     filename_style = f"{baselayer.slug}.json"
-
-    # if PATH doesn't exists create it
-    if not os.path.exists(PATH):
-        os.makedirs(PATH)
 
     with open(f"{PATH}{filename_style}", "w") as f:
         json.dump(data, f)
