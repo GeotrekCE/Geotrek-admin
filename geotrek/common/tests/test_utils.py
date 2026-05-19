@@ -10,7 +10,6 @@ from django.test import SimpleTestCase, TestCase
 from django.test.utils import override_settings
 from mapbox_baselayer.models import BaseLayerTile, MapBaseLayer
 from pmtiles.tile import TileType
-from requests import HTTPError
 
 from ..parsers import Parser
 from ..utils import format_coordinates, simplify_coords, spatial_reference, uniquify

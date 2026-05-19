@@ -1,7 +1,7 @@
 import json
 import logging
-import time
 import os
+import time
 
 import mercantile
 import requests
@@ -73,11 +73,9 @@ def get_or_retry(url):
                 "Failed attempt %d/%d for %s: %s", attempt + 1, RETRY_COUNT, url, e
             )
             if attempt < RETRY_COUNT - 1:
-                time.sleep(2 ** (attempt+1))
-
-    raise requests.exceptions.RetryError(
-        f"Failed after {RETRY_COUNT} attempt : {url}"
-    ) from last_exc
+                time.sleep(2 ** (attempt + 1))
+    msg = f"Failed after {RETRY_COUNT} attempt : {url}"
+    raise requests.exceptions.RetryError(msg) from last_exc
 
 
 def get_tile_type(baselayer):
