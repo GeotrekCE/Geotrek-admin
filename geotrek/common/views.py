@@ -654,6 +654,7 @@ class ConfigView(APIView):
                     "pmtiles_url": urls[0],
                     "json_style_url": urls[1],
                     "name": "Scan IGN VT",  # django-mapbox-baselayer
+                    "content-length": f.stat().st_size,
                     "options": {
                         "attribution": "© IGN - GeoPortail",  # django-mapbox-baselayer
                         "center": center,
