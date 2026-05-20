@@ -186,7 +186,7 @@ class Intervention(
         if self.stake is None:
             self.stake = self.default_stake()
 
-        if not self.pk:
+        if not self.pk and self.target and self.target.geom:
             self.geom = self.target.geom
 
         super().save(*args, **kwargs)
