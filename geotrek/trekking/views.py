@@ -54,7 +54,7 @@ from geotrek.signage.serializers import SignageAPIGeojsonSerializer
 from geotrek.zoning.models import City, District, RestrictedArea
 
 from .filters import POIFilterSet, ServiceFilterSet, TrekFilterSet
-from .forms import POIForm, ServiceForm, TrekForm, WebLinkCreateFormPopup, OnNetworkTrekForm, OffNetworkTrekForm
+from .forms import POIForm, ServiceForm, OnNetworkTrekForm, WebLinkCreateFormPopup, OnNetworkTrekForm, OffNetworkTrekForm
 from .models import POI, Service, Trek, WebLink
 from .serializers import (
     POIGeojsonSerializer,
@@ -292,7 +292,7 @@ class TrekMarkupPublic(TrekDocumentPublicMixin, MarkupPublic):
 
 class TrekCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Trek
-    form_class = TrekForm
+    form_class = OnNetworkTrekForm
 
 
 class TrekUpdate(MapEntityUpdate):
