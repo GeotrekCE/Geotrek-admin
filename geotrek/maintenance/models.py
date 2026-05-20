@@ -1,4 +1,3 @@
-import os
 from datetime import datetime
 
 from django.conf import settings
@@ -165,10 +164,6 @@ class Intervention(
             GistIndex(name="intervention_geom_3d_gist_idx", fields=["geom_3d"]),
         ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._geom = None
-
     def default_stake(self):
         stake = None
         if self.target and isinstance(self.target, Topology):
@@ -192,15 +187,10 @@ class Intervention(
         if self.stake is None:
             self.stake = self.default_stake()
 
+        if not self.pk:
+            self.geom = self.target.geom
+
         super().save(*args, **kwargs)
-
-        # Invalidate project map
-        if self.project:
-            try:
-                os.remove(self.project.get_map_image_path())
-            except OSError:
-                pass
-
         self.reload()
 
     @classproperty
