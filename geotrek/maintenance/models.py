@@ -130,7 +130,6 @@ class Intervention(
         verbose_name=_("Project"),
     )
     geom = models.GeometryField(
-        verbose_name=_("Location"),
         srid=settings.SRID,
         editable=False,
         null=True,
@@ -580,7 +579,6 @@ class Project(
         verbose_name=_("External id"), max_length=1024, blank=True, null=True
     )
     geom = models.GeometryField(
-        verbose_name=_("Location"),
         srid=settings.SRID,
         editable=False,
         null=True,
