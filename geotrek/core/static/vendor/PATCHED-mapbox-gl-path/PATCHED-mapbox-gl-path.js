@@ -8,7 +8,6 @@ const Popup = maplibregl.Popup;
 /* ------------------------------------- END OF PATCH N°1 --------------------------------------- */
 
 
-
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -8968,39 +8967,49 @@ class MapboxPathControl {
     }
     createIntermediatePointOnLine(event) {
         var _a, _b;
-        const lineUnderMouse = this.map.queryRenderedFeatures(this.isSnapping ? this.getBBox(event.point, this.getSnapTolerance()) : event.point, { layers: [betweenPointsLineLayerId] });
-        let snappedFeatureId;
-        let clickCoordinates = event.lngLat.toArray();
-        if (this.isSnapping && this.snapLayers && this.snapLayers.length > 0) {
-            const snapFeatures = this.map.queryRenderedFeatures(this.getBBox(event.point, this.getSnapTolerance()), { layers: this.snapLayers });
-            if (snapFeatures.length > 0) {
-                const snappedFeature = snapFeatures[0];
-                snappedFeatureId = (_b = (_a = snappedFeature.properties) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : snappedFeature.id;
-                if (snappedFeature.geometry.type === "LineString" ||
-                    snappedFeature.geometry.type === "MultiLineString") {
-                    const snappedPoint = nearestPointOnLine(snappedFeature, point(clickCoordinates));
-                    if (snappedPoint) {
-                        clickCoordinates = snappedPoint.geometry.coordinates;
+        return __awaiter(this, void 0, void 0, function* () {
+            const lineUnderMouse = this.map.queryRenderedFeatures(this.isSnapping ? this.getBBox(event.point, this.getSnapTolerance()) : event.point, { layers: [betweenPointsLineLayerId] });
+            let snappedFeatureId;
+            let clickCoordinates = event.lngLat.toArray();
+            if (this.isSnapping && this.snapLayers && this.snapLayers.length > 0) {
+                const snapFeatures = this.map.queryRenderedFeatures(this.getBBox(event.point, this.getSnapTolerance()), { layers: this.snapLayers });
+                if (snapFeatures.length > 0) {
+                    const snappedFeature = snapFeatures[0];
+                    snappedFeatureId = (_b = (_a = snappedFeature.properties) === null || _a === void 0 ? void 0 : _a.id) !== null && _b !== void 0 ? _b : snappedFeature.id;
+                    if (snappedFeature.geometry.type === "LineString" ||
+                        snappedFeature.geometry.type === "MultiLineString") {
+                        const snappedPoint = nearestPointOnLine(snappedFeature, point(clickCoordinates));
+                        if (snappedPoint) {
+                            clickCoordinates = snappedPoint.geometry.coordinates;
+                        }
                     }
                 }
             }
-        }
-        if (lineUnderMouse.length > 0) {
-            const lineUnderMouseIndex = lineUnderMouse[0].properties.index;
-            const actualLine = this.linesBetweenReferencePoints.find(line => line.properties.index === lineUnderMouseIndex);
-            if (!actualLine)
-                return;
-            const currentLineString = lineString(actualLine.geometry.coordinates);
-            const currentPoint = point(clickCoordinates);
-            const nearestPoint = nearestPointOnLine(currentLineString, currentPoint);
-            const newLines = lineSplit(currentLineString, nearestPoint);
-            const { features: [from, to = from], } = newLines;
-            const _c = lineUnderMouse[0].properties, customProperties = __rest(_c, ["index", "isFollowingDirections", "directionID", "isPhantomJunction", "isDeparture"]);
-            this.createNewPointAndLine(nearestPoint.geometry.coordinates, lineUnderMouse[0].properties.isFollowingDirections, from.geometry.coordinates, to.geometry.coordinates, lineUnderMouseIndex, undefined, snappedFeatureId, customProperties);
-            this.syncIndex();
-            this.updateSource();
-            this.actionsPanel.remove();
-        }
+            if (lineUnderMouse.length > 0) {
+                const lineUnderMouseIndex = lineUnderMouse[0].properties.index;
+                const actualLine = this.linesBetweenReferencePoints.find(line => line.properties.index === lineUnderMouseIndex);
+                if (!actualLine)
+                    return;
+                const currentLineString = lineString(actualLine.geometry.coordinates);
+                const currentPoint = point(clickCoordinates);
+                const nearestPoint = nearestPointOnLine(currentLineString, currentPoint);
+                const newLines = lineSplit(currentLineString, nearestPoint);
+                const { features: [from, to = from], } = newLines;
+                const _c = lineUnderMouse[0].properties, { index, isFollowingDirections, directionID, isPhantomJunction, isDeparture } = _c, customProperties = __rest(_c, ["index", "isFollowingDirections", "directionID", "isPhantomJunction", "isDeparture"]);
+                this.createNewPointAndLine(nearestPoint.geometry.coordinates, lineUnderMouse[0].properties.isFollowingDirections, from.geometry.coordinates, to.geometry.coordinates, lineUnderMouseIndex, undefined, snappedFeatureId, customProperties);
+                this.syncIndex();
+                if (isFollowingDirections) {
+                    const prevLine = this.linesBetweenReferencePoints[lineUnderMouseIndex];
+                    const nextLine = this.linesBetweenReferencePoints[lineUnderMouseIndex + 1];
+                    yield Promise.all([
+                        this.changeDirectionsModeOnLine(prevLine, true),
+                        this.changeDirectionsModeOnLine(nextLine, true)
+                    ]);
+                }
+                this.updateSource();
+                this.actionsPanel.remove();
+            }
+        });
     }
     deletePoint() {
         var _a, _b;
