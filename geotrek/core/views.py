@@ -344,8 +344,6 @@ class PathViewSet(GeotrekMapentityViewSet):
                 msg = "There must be at least 2 steps"
                 raise Exception(msg)
             for step in steps:
-                # position_on_path = step.get("positionOnPath")
-
                 lat = step.get("lat")
                 lng = step.get("lng")
 
@@ -356,9 +354,6 @@ class PathViewSet(GeotrekMapentityViewSet):
                     or 90 < lat
                     or lng < -180
                     or 180 < lng
-                    # not isinstance(position_on_path, int | float)
-                    # or position_on_path < 0
-                    # or position_on_path > 1
                 ):
                     msg = "Each step should contain a valid lat and lng"
                     raise Exception(msg)
