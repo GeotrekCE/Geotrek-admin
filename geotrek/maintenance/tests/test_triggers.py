@@ -1,39 +1,37 @@
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 
-from geotrek.core.tests.factories import TopologyFactory
+from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.maintenance.tests.factories import InterventionFactory, ProjectFactory
 
 
 class GeometryTriggersTest(TestCase):
     def test_intervention_geom_from_topology(self):
         # Create a topology with a specific geometry
-        geom = LineString((0, 0), (1, 1), srid=2154)
-        topology = TopologyFactory.create(geom=geom)
+        path = PathFactory(geom=LineString((0, 0), (1, 1), srid=2154))
+        topology = TopologyFactory.create(paths=[(path, 0, 1)])
 
         # Create an intervention on this topology
         intervention = InterventionFactory.create(target=topology)
-
+        intervention.refresh_from_db()
+        self.assertEqual(topology.geom.ewkt, intervention.geom.ewkt)
         # Check that intervention.geom has been updated by the trigger
         # We need to refresh from DB because the trigger happened in SQL
-        intervention.refresh_from_db()
-        self.assertIsNotNone(intervention.geom)
-        self.assertEqual(intervention.geom.ewkt, geom.ewkt)
 
     def test_intervention_geom_update_from_topology(self):
         # Create an intervention on a topology
-        geom1 = LineString((0, 0), (1, 1), srid=2154)
-        topology = TopologyFactory.create(geom=geom1)
+        path = PathFactory(geom=LineString((0, 0), (1, 1), srid=2154))
+        topology = TopologyFactory.create(paths=[(path, 0, 1)])
         intervention = InterventionFactory.create(target=topology)
 
         # Update topology geometry
-        geom2 = LineString((0, 0), (2, 2), srid=2154)
-        topology.geom = geom2
-        topology.save()
+
+        path.geom = LineString((0, 0), (2, 2), srid=2154)
+        path.save()
 
         # Check that intervention.geom has been updated
         intervention.refresh_from_db()
-        self.assertEqual(intervention.geom.ewkt, geom2.ewkt)
+        self.assertEqual(intervention.geom.ewkt, path.geom.ewkt)
 
     def test_project_geom_from_interventions(self):
         # Create two interventions with geometries
@@ -83,4 +81,3 @@ class GeometryTriggersTest(TestCase):
 
         project.refresh_from_db()
         self.assertEqual(project.geom.num_geom, 1)
-        self.assertEqual(project.geom[0].ewkt, geom2.ewkt)

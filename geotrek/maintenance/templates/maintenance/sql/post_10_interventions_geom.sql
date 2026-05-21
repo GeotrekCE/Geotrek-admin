@@ -168,7 +168,7 @@ BEGIN
 
     IF _project_id IS NOT NULL THEN
         UPDATE maintenance_project SET geom = (
-            SELECT ST_Collect(geom) 
+            SELECT ST_ForceCollection(ST_Collect(geom))
             FROM maintenance_intervention 
             WHERE project_id = maintenance_project.id 
               AND deleted = false 
@@ -178,7 +178,7 @@ BEGIN
 
     IF TG_OP = 'UPDATE' AND OLD.project_id IS NOT NULL AND OLD.project_id != COALESCE(NEW.project_id, -1) THEN
         UPDATE maintenance_project SET geom = (
-            SELECT ST_Collect(geom) 
+            SELECT ST_ForceCollection(ST_Collect(geom))
             FROM maintenance_intervention 
             WHERE project_id = maintenance_project.id 
               AND deleted = false 
@@ -197,5 +197,5 @@ FOR EACH ROW EXECUTE PROCEDURE update_project_geom();
 
 DROP TRIGGER IF EXISTS maintenance_intervention_project_geom_d_tgr ON maintenance_intervention;
 CREATE TRIGGER maintenance_intervention_project_geom_d_tgr
-AFTER DELETE ON maintenance_intervention
+AFTER DELETE OR UPDATE OF geom ON maintenance_intervention
 FOR EACH ROW EXECUTE PROCEDURE update_project_geom();

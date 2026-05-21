@@ -1,5 +1,3 @@
-from unittest import skipIf
-
 from django.conf import settings
 from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.contenttypes.models import ContentType
@@ -31,7 +29,6 @@ from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
 from geotrek.signage.tests.factories import BladeFactory, SignageFactory
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class InterventionTest(TestCase):
     def test_topology_has_intervention_kind(self):
         topo = TopologyFactory.create()
@@ -209,29 +206,12 @@ class InterventionTest(TestCase):
 
         self.assertEqual(interv.length, infra.length)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_length_auto(self):
         # Line intervention has auto length from topology
         interv = InfrastructureInterventionFactory.create()
         interv.length = 3.14
         interv.save()
         self.assertNotEqual(interv.length, 3.14)
-        # Point intervention has manual length
-        interv = InfrastructurePointInterventionFactory.create()
-        interv.length = 3.14
-        interv.save()
-        self.assertEqual(interv.length, 3.14)
-
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_length_not_auto_nds(self):
-        interv = InfrastructureInterventionFactory.create()
-        interv.length = 3.14
-        interv.save()
-        self.assertEqual(interv.length, 3.14)
         # Point intervention has manual length
         interv = InfrastructurePointInterventionFactory.create()
         interv.length = 3.14
@@ -336,7 +316,6 @@ class InterventionTest(TestCase):
         self.assertIn("-", interv.target_csv_display)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class ProjectModelTest(TestCase):
     def test_paths_property(self):
         p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))
