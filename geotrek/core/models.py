@@ -520,7 +520,10 @@ class Topology(
             GistIndex(name="topology_geom_3d_gist_idx", fields=["geom_3d"]),
         ]
         permissions = [
-            ("can_draw_off_path_network", _("Can draw geometries uncoupled from the path network")),
+            (
+                "can_draw_off_path_network",
+                _("Can draw geometries uncoupled from the path network"),
+            ),
         ]
 
     def __init__(self, *args, **kwargs):
@@ -697,7 +700,6 @@ class Topology(
         if self.pk:
             existing = self.__class__.objects.get(pk=self.pk)
             # If the geometry is modified, decouple the topology from the path network
-            transformed_geom = self.geom
             if existing.geom != self.geom:
                 self.coupled = False
                 # FIXME: compare the geoms correctly (currently not the same srid). This must
