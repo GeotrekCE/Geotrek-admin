@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-18 09:18+0000\n"
+"POT-Creation-Date: 2026-05-21 13:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -199,9 +199,6 @@ msgid "Topology"
 msgstr ""
 
 msgid "Topologies"
-msgstr ""
-
-msgid "Can draw geometries coupled to the path network"
 msgstr ""
 
 msgid "Can draw geometries uncoupled from the path network"
