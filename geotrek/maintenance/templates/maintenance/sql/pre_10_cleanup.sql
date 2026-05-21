@@ -6,6 +6,11 @@ DROP FUNCTION IF EXISTS update_altimetry_topology_intervention() CASCADE;
 DROP FUNCTION IF EXISTS update_altimetry_intervention() CASCADE;
 DROP FUNCTION IF EXISTS update_area_intervention() CASCADE;
 DROP FUNCTION IF EXISTS delete_related_intervention_blade() CASCADE;
+
+DROP FUNCTION IF EXISTS update_intervention_geom() CASCADE;
+DROP FUNCTION IF EXISTS update_intervention_geom_on_target_update() CASCADE;
+DROP FUNCTION IF EXISTS TG_TABLE_NAME_TO_MODEL(table_name varchar) CASCADE;
+DROP FUNCTION IF EXISTS update_project_geom() CASCADE;
 DROP FUNCTION IF EXISTS delete_related_intervention_report() CASCADE;
 
 -- 20
