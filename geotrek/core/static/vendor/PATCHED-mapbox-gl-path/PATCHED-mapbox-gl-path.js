@@ -8,6 +8,7 @@ const Popup = maplibregl.Popup;
 /* ------------------------------------- END OF PATCH N°1 --------------------------------------- */
 
 
+
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -22,6 +23,18 @@ LOSS OF USE, DATA OR PROFITS, WHETHER IN AN ACTION OF CONTRACT, NEGLIGENCE OR
 OTHER TORTIOUS ACTION, ARISING OUT OF OR IN CONNECTION WITH THE USE OR
 PERFORMANCE OF THIS SOFTWARE.
 ***************************************************************************** */
+
+function __rest(s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) {
+            if (e.indexOf(p[i]) < 0 && Object.prototype.propertyIsEnumerable.call(s, p[i]))
+                t[p[i]] = s[p[i]];
+        }
+    return t;
+}
 
 function __awaiter(thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
@@ -8540,7 +8553,9 @@ class MapboxPathControl {
                     ? line.coordinates
                     : line, undefined, undefined, this.isFollowingDirections
                     ? line.waypoints
-                    : undefined, snapFeatureId);
+                    : undefined, snapFeatureId, this.isFollowingDirections
+                    ? line.properties
+                    : undefined);
             }
         });
     }
@@ -8639,9 +8654,10 @@ class MapboxPathControl {
                 const nearestPointInLineString = nearestPointOnLine(nearestLineString, newPoint);
                 const newLines = lineSplit(nearestLineString, nearestPointInLineString);
                 const { features: [from, to = from], } = newLines;
+                const _c = nearestLineString.properties, customProperties = __rest(_c, ["index", "isFollowingDirections", "directionID", "isPhantomJunction", "isDeparture"]);
                 this.selectedReferencePointIndex =
                     nearestLineString.properties.index + 1;
-                this.createNewPointAndLine(nearestPointInLineString.geometry.coordinates, nearestLineString.properties.isFollowingDirections, from.geometry.coordinates, to.geometry.coordinates, nearestLineString.properties.index, undefined, snappedFeatureId);
+                this.createNewPointAndLine(nearestPointInLineString.geometry.coordinates, nearestLineString.properties.isFollowingDirections, from.geometry.coordinates, to.geometry.coordinates, nearestLineString.properties.index, undefined, snappedFeatureId, customProperties);
                 this.movePointHandler(newPointCoordinates, snappedFeatureId);
                 this.syncIndex();
                 this.updateSource();
@@ -8847,7 +8863,7 @@ class MapboxPathControl {
             this.handleMapCursor("grab");
         }
     }
-    createNewPointAndLine(newPointCoordinates, isFollowingDirections, previousLineCoordinates, nextLineCoordinates, currentLineIndex = this.linesBetweenReferencePoints.length, waypoints, snapFeatureId) {
+    createNewPointAndLine(newPointCoordinates, isFollowingDirections, previousLineCoordinates, nextLineCoordinates, currentLineIndex = this.linesBetweenReferencePoints.length, waypoints, snapFeatureId, lineProperties) {
         var _a, _b, _c, _d;
         const referencePoint = {
             type: "Feature",
@@ -8866,7 +8882,7 @@ class MapboxPathControl {
                     type: "LineString",
                     coordinates: previousLineCoordinates,
                 },
-                properties: Object.assign({ index: currentLineIndex, isFollowingDirections }, (isFollowingDirections && {
+                properties: Object.assign(Object.assign(Object.assign({}, lineProperties), { index: currentLineIndex, isFollowingDirections }), (isFollowingDirections && {
                     directionID: (_b = (_a = this.linesBetweenReferencePoints[currentLineIndex]) === null || _a === void 0 ? void 0 : _a.properties.directionID) !== null && _b !== void 0 ? _b : directionID,
                 })),
             };
@@ -8886,7 +8902,7 @@ class MapboxPathControl {
                     type: "LineString",
                     coordinates: nextLineCoordinates,
                 },
-                properties: Object.assign({ index: currentLineIndex + 1, isFollowingDirections }, (isFollowingDirections && {
+                properties: Object.assign(Object.assign(Object.assign({}, lineProperties), { index: currentLineIndex + 1, isFollowingDirections }), (isFollowingDirections && {
                     directionID: (_d = (_c = this.linesBetweenReferencePoints[currentLineIndex]) === null || _c === void 0 ? void 0 : _c.properties.directionID) !== null && _d !== void 0 ? _d : directionID,
                 })),
             };
@@ -8979,7 +8995,8 @@ class MapboxPathControl {
             const nearestPoint = nearestPointOnLine(currentLineString, currentPoint);
             const newLines = lineSplit(currentLineString, nearestPoint);
             const { features: [from, to = from], } = newLines;
-            this.createNewPointAndLine(nearestPoint.geometry.coordinates, lineUnderMouse[0].properties.isFollowingDirections, from.geometry.coordinates, to.geometry.coordinates, lineUnderMouseIndex, undefined, snappedFeatureId);
+            const _c = lineUnderMouse[0].properties, customProperties = __rest(_c, ["index", "isFollowingDirections", "directionID", "isPhantomJunction", "isDeparture"]);
+            this.createNewPointAndLine(nearestPoint.geometry.coordinates, lineUnderMouse[0].properties.isFollowingDirections, from.geometry.coordinates, to.geometry.coordinates, lineUnderMouseIndex, undefined, snappedFeatureId, customProperties);
             this.syncIndex();
             this.updateSource();
             this.actionsPanel.remove();
@@ -9030,20 +9047,28 @@ class MapboxPathControl {
                     this.linesBetweenReferencePoints[previousLine.properties.index] = Object.assign(Object.assign({}, lineBetweenReferencePoint), { geometry: Object.assign(Object.assign({}, lineBetweenReferencePoint.geometry), { coordinates: [
                                 previousPoint.geometry.coordinates,
                                 nextPoint.geometry.coordinates,
-                            ] }), properties: Object.assign(Object.assign({}, lineBetweenReferencePoint.properties), { isFollowingDirections: false }) });
+                            ] }), properties: {
+                            index: lineBetweenReferencePoint.properties.index,
+                            isFollowingDirections: false,
+                        } });
                 }
                 else {
                     const directionsResponse = yield this.selectedDirectionsTheme.getPathByCoordinates([previousPoint.geometry.coordinates, nextPoint.geometry.coordinates], {
                         fromSnappedId: (_a = previousPoint.properties) === null || _a === void 0 ? void 0 : _a.snapFeatureId,
                         toSnappedId: (_b = nextPoint.properties) === null || _b === void 0 ? void 0 : _b.snapFeatureId,
                     });
-                    this.linesBetweenReferencePoints[previousLine.properties.index].geometry.coordinates =
+                    const lineToUpdate = this.linesBetweenReferencePoints[previousLine.properties.index];
+                    lineToUpdate.geometry.coordinates =
                         directionsResponse && directionsResponse.coordinates
                             ? directionsResponse.coordinates
                             : [
                                 previousPoint.geometry.coordinates,
                                 nextPoint.geometry.coordinates,
                             ];
+                    const { index, isFollowingDirections, directionID, isPhantomJunction, isDeparture, } = lineToUpdate.properties;
+                    lineToUpdate.properties = Object.assign(Object.assign({}, (directionsResponse === null || directionsResponse === void 0 ? void 0 : directionsResponse.properties)), { index,
+                        isFollowingDirections,
+                        directionID });
                     if (directionsResponse === null || directionsResponse === void 0 ? void 0 : directionsResponse.waypoints) {
                         this.addPhantomJunctionLines(previousLine.properties.index, [
                             previousPoint.geometry.coordinates,
@@ -9139,9 +9164,10 @@ class MapboxPathControl {
         });
     }
     changeDirectionsModeOnLine(line, forceDirections = false) {
-        var _a, _b;
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
             let coordinates = [];
+            let directionsResponse;
             const previousPoint = this.referencePoints[line.properties.index];
             let nextPoint = this.referencePoints[line.properties.index + 1];
             if (!nextPoint && this.isLoopTrail) {
@@ -9155,7 +9181,7 @@ class MapboxPathControl {
                 this.phantomJunctionLines = this.phantomJunctionLines.filter((phantomJunctionLine) => phantomJunctionLine.properties.index !== line.properties.index);
             }
             else {
-                const directionsResponse = yield this.selectedDirectionsTheme.getPathByCoordinates([previousPoint.geometry.coordinates, nextPoint.geometry.coordinates], {
+                directionsResponse = yield this.selectedDirectionsTheme.getPathByCoordinates([previousPoint.geometry.coordinates, nextPoint.geometry.coordinates], {
                     fromSnappedId: (_a = previousPoint.properties) === null || _a === void 0 ? void 0 : _a.snapFeatureId,
                     toSnappedId: (_b = nextPoint.properties) === null || _b === void 0 ? void 0 : _b.snapFeatureId,
                 });
@@ -9174,10 +9200,13 @@ class MapboxPathControl {
                 }
             }
             if (coordinates) {
+                const isNewFollowingDirections = !Boolean(line.properties.isFollowingDirections) || forceDirections;
                 this.linesBetweenReferencePoints.splice(line.properties.index, 1, Object.assign(Object.assign({}, line), { geometry: {
                         type: "LineString",
                         coordinates,
-                    }, properties: Object.assign(Object.assign({}, line.properties), { isFollowingDirections: !Boolean(line.properties.isFollowingDirections) || forceDirections }) }));
+                    }, properties: Object.assign(Object.assign(Object.assign({}, (directionsResponse === null || directionsResponse === void 0 ? void 0 : directionsResponse.properties)), { index: line.properties.index, isFollowingDirections: isNewFollowingDirections }), (isNewFollowingDirections && {
+                        directionID: (_c = line.properties.directionID) !== null && _c !== void 0 ? _c : this.selectedDirectionsTheme.id,
+                    })) }));
                 this.updateSource();
                 this.actionsPanel.remove();
             }

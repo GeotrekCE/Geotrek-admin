@@ -369,6 +369,15 @@ class TrekForm(BaseTrekForm):
 class OnNetworkTrekForm(OnNetworkTopologyFormMixin, BaseTrekForm):
     class Meta(OnNetworkTopologyFormMixin.Meta, BaseTrekForm.Meta):
         fields = [*OnNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
+        geomfields = [*OnNetworkTopologyFormMixin.geomfields, "parking_location", "points_reference"]
+        widgets = {
+            "parking_location": MapWidget(
+                attrs={"target_map": "topology", "custom_icon": "markers/parking.svg"}
+            ),
+            "points_reference": MapWidget(
+                attrs={"target_map": "topology", "custom_icon": "markers/points.svg"}
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
