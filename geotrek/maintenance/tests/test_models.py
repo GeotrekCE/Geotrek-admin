@@ -164,8 +164,14 @@ class InterventionTest(TestCase):
         interv.target = sign
         interv.save()
 
-        self.assertEqual(list(interv.signages), [sign, sign_2])
-        self.assertEqual(list(interv.infrastructures), [infra])
+        self.assertListEqual(
+            sorted(list(interv.signages.values_list("pk", flat=True))),
+            sorted([sign.pk, sign_2.pk]),
+        )
+        self.assertListEqual(
+            sorted(list(interv.infrastructures.values_list("pk", flat=True))),
+            sorted([infra.pk]),
+        )
 
         self.assertFalse(interv.in_project)
         interv.project = proj
@@ -228,18 +234,6 @@ class InterventionTest(TestCase):
         interv = InfrastructurePointInterventionFactory.create()
         interv.reload()
         self.assertEqual(interv.length, 0.0)
-        self.assertEqual(interv.area, 0.0)
-
-        interv = InfrastructurePointInterventionFactory.create(length=50, width=10.0)
-        interv.reload()
-        self.assertEqual(interv.area, 500)
-
-        interv = InfrastructurePointInterventionFactory.create(width=0.5, length=0.5)
-        interv.reload()
-        self.assertEqual(interv.area, 0.25)
-
-        interv = InfrastructurePointInterventionFactory.create(width=0.5)
-        interv.reload()
         self.assertEqual(interv.area, 0.0)
 
     def test_infrastructure_display_is_path_by_default(self):

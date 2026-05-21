@@ -56,7 +56,7 @@ BEGIN
         IF ST_GeometryType(NEW.geom_3d) <> 'ST_Point' THEN
             NEW.length := ROUND(CAST(ST_LENGTHSPHEROID(ST_TRANSFORM(NEW.geom_3d, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]') as numeric), 2);
         ELSE
-            NEW.length := 0;
+            NEW.length := COALESCE(NEW.length, 0);
         END IF;
     ELSE
         NEW.geom_3d := NULL;

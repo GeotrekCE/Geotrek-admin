@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.indexes import GistIndex
-from django.db.models import Q
+from django.db.models import F, Q
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
@@ -57,14 +57,13 @@ class Intervention(
     )
 
     # Technical information
-    width = models.FloatField(
-        default=0.0, blank=True, null=True, verbose_name=_("Width")
-    )
-    height = models.FloatField(
-        default=0.0, blank=True, null=True, verbose_name=_("Height")
-    )
-    area = models.FloatField(
-        editable=False, default=0, blank=True, null=True, verbose_name=_("Area")
+    width = models.FloatField(default=0.0, blank=True, verbose_name=_("Width"))
+    height = models.FloatField(default=0.0, blank=True, verbose_name=_("Height"))
+    area = models.GeneratedField(
+        verbose_name=_("Area"),
+        expression=F("width") * F("length"),
+        db_persist=True,
+        output_field=models.FloatField(),
     )
 
     # Costs
@@ -174,7 +173,11 @@ class Intervention(
     def reload(self):
         if self.pk:
             fromdb = self.__class__.objects.get(pk=self.pk)
+            # Area is computed by DB trigger and might not be reloaded by super reload()
             self.area = fromdb.area
+            self.geom = fromdb.geom
+            # Length is also computed by DB trigger for lines
+            self.length = fromdb.length
             AltimetryMixin.reload(self, fromdb)
             TimeStampedModelMixin.reload(self, fromdb)
             NoDeleteMixin.reload(self, fromdb)
