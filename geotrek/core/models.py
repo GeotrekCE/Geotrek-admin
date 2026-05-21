@@ -531,11 +531,6 @@ class Topology(
         if not self.pk and not self.kind:
             self.kind = self.__class__.KIND
 
-    def get_update_off_network_url(self, on_network=True):
-        url = super().get_update_url()
-        url = url.replace("edit", "edit-off-network")
-        return url
-
     @property
     def paths(self):  # noqa
         return Path.objects.filter(aggregations__topo_object=self)
@@ -709,7 +704,7 @@ class Topology(
                 # length is readonly from the Django point of view, but it can be changed at DB level.
                 # Since Django writes all fields to DB anyway, it is important to update it before writing
                 self.length = existing.length
-                # TODO: ensure that geom_3d and altimetry data is updated too
+                # TODO: ensure that geom_3d and altimetry data are updated too
 
         if not self.deleted and self.geom is None:
             # We cannot have NULL geometry. So we use an empty one.
