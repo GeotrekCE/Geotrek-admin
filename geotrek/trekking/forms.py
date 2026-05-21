@@ -5,7 +5,6 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Div, Layout, Submit
 from django import forms
 from django.conf import settings
-from django.contrib.gis.forms import LineStringField
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.translation import gettext as _
@@ -14,7 +13,11 @@ from mapentity.widgets import MapWidget, SelectMultipleWithPop
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.mixins.forms import TopologyForm, OnNetworkTopologyFormMixin, OffNetworkTopologyFormMixin
+from geotrek.core.mixins.forms import (
+    OffNetworkTopologyFormMixin,
+    OnNetworkTopologyFormMixin,
+    TopologyForm,
+)
 from geotrek.core.widgets import PointTopologyWidget
 
 from .models import (
@@ -366,10 +369,15 @@ class BaseTrekForm(CommonForm):
 class TrekForm(BaseTrekForm):
     pass
 
+
 class OnNetworkTrekForm(OnNetworkTopologyFormMixin, BaseTrekForm):
     class Meta(OnNetworkTopologyFormMixin.Meta, BaseTrekForm.Meta):
         fields = [*OnNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
-        geomfields = [*OnNetworkTopologyFormMixin.geomfields, "parking_location", "points_reference"]
+        geomfields = [
+            *OnNetworkTopologyFormMixin.geomfields,
+            "parking_location",
+            "points_reference",
+        ]
         widgets = {
             "parking_location": MapWidget(
                 attrs={"target_map": "topology", "custom_icon": "markers/parking.svg"}
@@ -388,7 +396,11 @@ class OnNetworkTrekForm(OnNetworkTopologyFormMixin, BaseTrekForm):
 
 
 class OffNetworkTrekForm(BaseTrekForm, OffNetworkTopologyFormMixin):
-    geomfields = [*OffNetworkTopologyFormMixin.geomfields, "parking_location", "points_reference"]
+    geomfields = [
+        *OffNetworkTopologyFormMixin.geomfields,
+        "parking_location",
+        "points_reference",
+    ]
 
     class Meta(BaseTrekForm.Meta, OffNetworkTopologyFormMixin.Meta):
         fields = [*OffNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
