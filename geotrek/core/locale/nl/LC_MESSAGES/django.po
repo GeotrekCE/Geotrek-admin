@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-18 09:18+0000\n"
+"POT-Creation-Date: 2026-05-21 13:14+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/core/nl/>\n"
@@ -199,9 +199,6 @@ msgid "Topology"
 msgstr ""
 
 msgid "Topologies"
-msgstr ""
-
-msgid "Can draw geometries coupled to the path network"
 msgstr ""
 
 msgid "Can draw geometries uncoupled from the path network"

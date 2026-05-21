@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-18 09:18+0000\n"
+"POT-Creation-Date: 2026-05-21 13:14+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
@@ -200,9 +200,6 @@ msgstr "Topologie"
 
 msgid "Topologies"
 msgstr "Topologies"
-
-msgid "Can draw geometries coupled to the path network"
-msgstr "Peut dessiner des géométries couplées au réseau de tronçons"
 
 msgid "Can draw geometries uncoupled from the path network"
 msgstr "Peut dessiner des géométries découplées du réseau de tronçons"
