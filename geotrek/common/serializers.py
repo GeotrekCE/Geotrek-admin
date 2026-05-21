@@ -69,12 +69,6 @@ class StructureGTAMSerializer(rest_serializers.ModelSerializer):
         fields = ("id", "name")
 
 
-class ProviderGTAMSerializer(rest_serializers.ModelSerializer):
-    class Meta:
-        model = Provider
-        fields = ("id", "name")
-
-
 class OrganismGTAMSerializer(rest_serializers.ModelSerializer):
     name = rest_serializers.CharField(source="organism")
 

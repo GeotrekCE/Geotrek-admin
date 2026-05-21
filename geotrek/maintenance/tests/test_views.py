@@ -12,18 +12,19 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis import gdal
 from django.contrib.gis.geos import GeometryCollection, LineString, Point
 from django.test import TestCase
+from django.urls import reverse
 from django.test.utils import override_settings
 from mapentity.serializers.shapefile import ZipShapeSerializer
 from mapentity.tests.factories import SuperUserFactory
 
-from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
+from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.common.tests import (
     CommonMultiActionViewsMixin,
     CommonMultiActionViewsStructureMixin,
     CommonTest,
 )
 from geotrek.common.tests.factories import AccessMeanFactory, OrganismFactory
-from geotrek.core.models import PathAggregation
+from geotrek.core.models import PathAggregation, Stake
 from geotrek.core.tests.factories import PathFactory, StakeFactory, TopologyFactory
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
@@ -39,7 +40,7 @@ from geotrek.maintenance.models import (
     Intervention,
     InterventionStatus,
     ManDay,
-    Project,
+    Project, Contractor, InterventionDisorder, InterventionType, InterventionJob,
 )
 from geotrek.maintenance.tests.factories import (
     ContractorFactory,
@@ -51,8 +52,9 @@ from geotrek.maintenance.tests.factories import (
     ManDayFactory,
     ProjectFactory,
     ProjectWithInterventionFactory,
-    SignageInterventionFactory,
+    SignageInterventionFactory, InterventionTypeFactory,
 )
+from geotrek.maintenance.tests.test_filters import InterventionContractorsFilterTest
 from geotrek.maintenance.views import ProjectFormatList
 from geotrek.outdoor.tests.factories import CourseFactory
 from geotrek.signage.forms import SignageForm
@@ -565,6 +567,129 @@ class InterventionViewsTest(CommonTest):
     def test_duplicate(self):
         super().test_duplicate()
         self.assertEqual(ManDay.objects.count(), 2)
+
+
+class InterventionReferencesTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.contrator = ContractorFactory.create()
+        cls.disorder = InterventionDisorderFactory.create()
+        cls.stake = StakeFactory.create()
+        cls.status = InterventionStatusFactory.create()
+        cls.type = InterventionTypeFactory.create()
+        cls.job = InterventionJobFactory.create()
+        cls.user = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.user)
+
+    def authenticate(self, user):
+        r = self.client.post(
+            reverse("common:token_obtain_pair"),
+            data={"username": user.username, "password": "password"},
+        )
+        data = r.json()
+        return f"Bearer {data['access']}"
+
+    def test_data(self):
+        token = self.authenticate(self.user)
+        r = self.client.get(
+            reverse("maintenance:intervention_references"), headers={"Authorization": token}
+        )
+        data = r.json()
+
+        self.assertEqual(len(data["contractor"]), Contractor.objects.all().count())
+        self.assertEqual(len(data["interventiondisorder"]), InterventionDisorder.objects.all().count())
+        self.assertEqual(len(data["stake"]), Stake.objects.all().count())
+        self.assertEqual(len(data["interventionstatus"]), InterventionStatus.objects.all().count())
+        self.assertEqual(len(data["interventiontype"]),InterventionType.objects.all().count())
+        self.assertEqual(len(data["interventionjob"]), InterventionJob.objects.all().count())
+        self.assertEqual(data["contractor"][0], {"id": self.contrator.id, "name": self.contrator.contractor})
+        self.assertEqual(data["interventiondisorder"][0], {"id": self.disorder.id, "name": self.disorder.disorder})
+        self.assertEqual(data["stake"][0], {"id": self.stake.id, "name": self.stake.stake})
+        self.assertEqual(data["interventionstatus"][0], {"id": self.status.id, "name": self.status.status})
+        self.assertEqual(data["interventiontype"][0],{"id": self.type.id, "name": self.type.type})
+        self.assertEqual(data["interventionjob"][0], {"id": self.job.id, "name": self.job.job})
+        self.assertEqual(data["pictogram"], {'url': 'http://testserver/static/images/intervention.png'})
+
+
+class InfrastructureGTAMTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.intervention = InterventionFactory.create()
+
+        cls.user = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.user)
+
+    def authenticate(self, user):
+        r = self.client.post(
+            reverse("common:token_obtain_pair"),
+            data={"username": user.username, "password": "password"},
+        )
+        data = r.json()
+        return f"Bearer {data['access']}"
+
+    def test_data(self):
+        token = self.authenticate(self.user)
+        list_url = f"/api/intervention/drf/interventions?format=gtam"
+        response = self.client.get(list_url, headers={"Authorization": token})
+        data = response.json()
+
+        interventions = [
+            {
+                'id': self.intervention.id,
+                'structure': {
+                    'id': self.intervention.structure.id,
+                    'name': self.intervention.structure.name
+                },
+                'api_geom': {
+                    'type': 'LineString',
+                    'coordinates': [[3.0, 46.5], [3.001304, 46.5009004]]
+                },
+                'name': self.intervention.name,
+                'date_insert': self.intervention.date_insert.isoformat().replace('+00:00', 'Z'),
+                'date_update': self.intervention.date_update.isoformat().replace('+00:00', 'Z'),
+                'begin_date': str(self.intervention.begin_date) if self.intervention.begin_date else None,
+                'end_date': str(self.intervention.end_date) if self.intervention.end_date else None,
+                'subcontracting': self.intervention.subcontracting,
+                'width': self.intervention.width,
+                'height': self.intervention.height,
+                'material_cost': self.intervention.material_cost,
+                'heliport_cost': self.intervention.heliport_cost,
+                'contractor_cost': self.intervention.contractor_cost,
+                'contractors': [],
+                'length': self.intervention.length,
+                'stake': {
+                    'id': self.intervention.stake.id,
+                    'name': self.intervention.stake.stake
+                },
+                'status': {
+                    'id': self.intervention.status.id,
+                    'name': self.intervention.status.status
+                },
+                'type': {
+                    'id': self.intervention.type.id,
+                    'name': self.intervention.type.type
+                },
+                'disorders': [
+                    {
+                        'id': self.intervention.disorders.first().id,
+                        'name': self.intervention.disorders.first().disorder
+                    }
+                ],
+                'man_day': [
+                    {
+                        'id': self.intervention.manday_set.first().id,
+                        'nb_days': str(self.intervention.manday_set.first().nb_days),
+                        'job': {
+                            'id': self.intervention.manday_set.first().job.id,
+                            'name': self.intervention.manday_set.first().job.job
+                        }
+                    }
+                ],
+                'description': self.intervention.description,
+                'access': self.intervention.access
+            }
+        ]
+        self.assertEqual(data, interventions)
 
 
 class ProjectViewsTest(CommonTest):

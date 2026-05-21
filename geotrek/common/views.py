@@ -598,7 +598,7 @@ class ConfigView(APIView):
         "change": "update",
         "change_geom": "update_geom",
         "delete": "delete",
-        "read": "read",
+        "view": "read",
     }
 
     pmtiles_folder = pathlib.Path(os.path.join(settings.STATIC_ROOT, "pmtiles"))
@@ -644,7 +644,16 @@ class ConfigView(APIView):
     #    header = reader.header()
     #    return (header["min_zoom"], header["max_zoom"])
 
-    def get_pmtiles(self, max_bounds, center):
+    def get_layers(self):
+        # convert SPATIAL_EXTENT projection to 4326
+        bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
+        bbox.srid = settings.SRID
+        bbox.transform(settings.API_SRID)
+        west, south, east, north = bbox.extent
+
+        max_bounds = [[west, south], [east, north]]
+        center = [(west + east) / 2, (south + north) / 2]
+
         layers = []
         for f in self.pmtiles_folder.iterdir():
             if f.is_file() and f.name.endswith(".pmtiles"):
@@ -673,14 +682,6 @@ class ConfigView(APIView):
         user = request.user
         user_profile = UserProfile.objects.get(user=user)
 
-        # convert SPATIAL_EXTENT projection to 4326
-        bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
-        bbox.srid = settings.SRID
-        bbox.transform(settings.API_SRID)
-        west, south, east, north = bbox.extent
-
-        max_bounds = [[west, south], [east, north]]
-        center = [(west + east) / 2, (south + north) / 2]
         data = {
             "settings": {
                 "intervalSyncInHours": {
@@ -688,7 +689,7 @@ class ConfigView(APIView):
                     "references": settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],
                 },
                 "maps": {
-                    "layers": self.get_pmtiles(max_bounds, center),
+                    "layers": self.get_layers(),
                     "localOptions": {
                         "minZoom": settings.GTAM_CONFIG["SYNC_MAP_MIN_ZOOM"],
                     },
@@ -712,7 +713,6 @@ class ConfigView(APIView):
 class CommonReferences(ReferencesMixin):
     serializers = [
         common_serializers.StructureGTAMSerializer,
-        common_serializers.ProviderGTAMSerializer,
         common_serializers.OrganismGTAMSerializer,
         common_serializers.AccessMeanGTAMSerializer,
     ]

@@ -7,9 +7,11 @@ from django.conf import settings
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
 from django.utils.translation import gettext
+from mapentity.tests import SuperUserFactory
 
-from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
+from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory, UserProfileFactory
 from geotrek.common.tests import (
     CommonMultiActionsViewsPublishedMixin,
     CommonMultiActionViewsMixin,
@@ -17,7 +19,8 @@ from geotrek.common.tests import (
     CommonTest,
 )
 from geotrek.core.tests.factories import PathFactory
-from geotrek.signage.models import Blade, Signage
+from geotrek.signage.models import Blade, Signage, SignageCondition, SignageType, Sealing, Direction, BladeType, Color, \
+    BladeCondition
 from geotrek.signage.tests.factories import (
     BladeColorFactory,
     BladeConditionFactory,
@@ -28,7 +31,7 @@ from geotrek.signage.tests.factories import (
     LineFactory,
     SignageConditionFactory,
     SignageFactory,
-    SignageTypeFactory,
+    SignageTypeFactory, SealingFactory,
 )
 
 
@@ -81,6 +84,151 @@ class SignageTemplatesTest(TestCase):
         self.assertContains(response, gettext("Direction"))
         self.assertContains(response, "A direction on the line 1")
         self.assertContains(response, "A direction on the line 2")
+
+
+class SignageReferencesTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+
+        cls.signage_conditions = SignageConditionFactory.create()
+        cls.signage_type = SignageTypeFactory.create()
+        cls.signage_sealing = SealingFactory.create()
+        cls.blade_direction = BladeDirectionFactory.create()
+        cls.blade_type = BladeTypeFactory.create()
+        cls.blade_color = BladeColorFactory.create()
+        cls.blade_conditions = BladeConditionFactory.create()
+        cls.user = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.user)
+
+    def authenticate(self, user):
+        r = self.client.post(
+            reverse("common:token_obtain_pair"),
+            data={"username": user.username, "password": "password"},
+        )
+        data = r.json()
+        return f"Bearer {data['access']}"
+
+    def test_data(self):
+        token = self.authenticate(self.user)
+        r = self.client.get(
+            reverse("signage:signage_references"), headers={"Authorization": token}
+        )
+        data = r.json()
+
+        self.assertEqual(len(data["signagecondition"]), SignageCondition.objects.all().count())
+        self.assertEqual(len(data["signagetype"]), SignageType.objects.all().count())
+        self.assertEqual(len(data["sealing"]), Sealing.objects.all().count())
+        self.assertEqual(len(data["direction"]), Direction.objects.all().count())
+        self.assertEqual(len(data["bladetype"]),BladeType.objects.all().count())
+        self.assertEqual(len(data["color"]), Color.objects.all().count())
+        self.assertEqual(len(data["bladecondition"]), BladeCondition.objects.all().count())
+        self.assertEqual(data["signagecondition"][0], {"id": self.signage_conditions.id, "name": self.signage_conditions.label})
+        self.assertEqual(data["signagetype"][0], {"id": self.signage_type.id, "name": self.signage_type.label})
+        self.assertEqual(data["sealing"][0], {"id": self.signage_sealing.id, "name": self.signage_sealing.label})
+        self.assertEqual(data["direction"][0], {"id": self.blade_direction.id, "name": self.blade_direction.label})
+        self.assertEqual(data["bladetype"][0],{"id": self.blade_type.id, "name": self.blade_type.label})
+        self.assertEqual(data["color"][0], {"id": self.blade_color.id, "name": self.blade_color.label})
+        self.assertEqual(data["bladecondition"][0], {"id": self.blade_conditions.id, "name": self.blade_conditions.label})
+        self.assertEqual(data["pictogram"], {'url': 'http://testserver/static/images/signage.png'})
+
+
+class SignageGTAMTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.blade = BladeFactory.create()
+        cls.signage = cls.blade.signage
+
+        cls.user = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.user)
+
+    def authenticate(self, user):
+        r = self.client.post(
+            reverse("common:token_obtain_pair"),
+            data={"username": user.username, "password": "password"},
+        )
+        data = r.json()
+        return f"Bearer {data['access']}"
+
+    def test_data(self):
+        token = self.authenticate(self.user)
+        list_url = f"/api/signage/drf/signages?format=gtam"
+        response = self.client.get(list_url, headers={"Authorization": token})
+        data = response.json()
+
+        signages = [
+            {
+                'id': self.signage.id,
+                'api_geom': {
+                    'type': 'Point',
+                    'coordinates': [3.0, 46.5]
+                },
+                'structure': {
+                    'id': self.signage.structure.id,
+                    'name': self.signage.structure.name
+                },
+                'date_insert': self.signage.date_insert.isoformat().replace('+00:00', 'Z'),
+                'date_update': self.signage.date_update.isoformat().replace('+00:00', 'Z'),
+                'published': self.signage.published,
+                'name': self.signage.name,
+                'description': self.signage.description,
+                'implantation_year': self.signage.implantation_year,
+                'code': self.signage.code,
+                'printed_elevation': self.signage.printed_elevation,
+                'access': self.signage.access,
+                'manager': {
+                    'id': self.signage.manager.id,
+                    'name': self.signage.manager.organism
+                },
+                'sealing': {
+                    'id': self.signage.sealing.id,
+                    'name': self.signage.sealing.label
+                },
+                'type': {
+                    'id': self.signage.type.id,
+                    'name': self.signage.type.label
+                },
+                'conditions': [
+                    {
+                        'id': self.signage.conditions.first().id,
+                        'name': self.signage.conditions.first().label
+                    }
+                ],
+                'blades': [
+                    {
+                        'id': self.blade.id,
+                        'number': self.blade.number,
+                        'direction': {
+                            'id': self.blade.direction.id,
+                            'name': self.blade.direction.label
+                        },
+                        'type': {
+                            'id': self.blade.type.id,
+                            'name': self.blade.type.label
+                        },
+                        'color': {
+                            'id': self.blade.color.id,
+                            'name': self.blade.color.label
+                        },
+                        'conditions': [
+                            {
+                                'id': self.blade.conditions.first().id,
+                                'name': self.blade.conditions.first().label
+                            }
+                        ],
+                        'lines': [
+                            {
+                                'id': self.blade.lines.first().id,
+                                'number': self.blade.lines.first().number,
+                                'text': self.blade.lines.first().text,
+                                'distance': str(self.blade.lines.first().distance),
+                                'time': '00:42:30',
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+        self.assertEqual(data, signages)
 
 
 class BladeViewsTest(CommonTest):
