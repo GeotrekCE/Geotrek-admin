@@ -23,13 +23,23 @@ from geotrek.maintenance.tests.factories import (
     ReportInterventionFactory,
 )
 from geotrek.zoning.models import City
-from .factories import ReportActivityFactory, ReportCategoryFactory, ReportProblemMagnitudeFactory, ReportStatusFactory, \
-    ReportFactory
-from ..models import ReportActivity, ReportCategory, ReportProblemMagnitude, ReportStatus
-from ...authent.tests.factories import UserProfileFactory
 
+from ...authent.tests.factories import UserProfileFactory
 from ...common.tests import CommonTest
+from ..models import (
+    ReportActivity,
+    ReportCategory,
+    ReportProblemMagnitude,
+    ReportStatus,
+)
 from . import factories as feedback_factories
+from .factories import (
+    ReportActivityFactory,
+    ReportCategoryFactory,
+    ReportFactory,
+    ReportProblemMagnitudeFactory,
+    ReportStatusFactory,
+)
 from .test_suricate_sync import (
     SURICATE_REPORT_SETTINGS,
     test_for_all_suricate_modes,
@@ -628,15 +638,35 @@ class ReportReferencesTest(TestCase):
         )
         data = r.json()
 
-        self.assertEqual(len(data["reportactivity"]), ReportActivity.objects.all().count())
-        self.assertEqual(len(data["reportcategory"]), ReportCategory.objects.all().count())
-        self.assertEqual(len(data["reportproblemmagnitude"]), ReportProblemMagnitude.objects.all().count())
+        self.assertEqual(
+            len(data["reportactivity"]), ReportActivity.objects.all().count()
+        )
+        self.assertEqual(
+            len(data["reportcategory"]), ReportCategory.objects.all().count()
+        )
+        self.assertEqual(
+            len(data["reportproblemmagnitude"]),
+            ReportProblemMagnitude.objects.all().count(),
+        )
         self.assertEqual(len(data["reportstatus"]), ReportStatus.objects.all().count())
-        self.assertEqual(data["reportactivity"][0], {"id": self.activity.id, "name": self.activity.label})
-        self.assertEqual(data["reportcategory"][0], {"id": self.category.id, "name": self.category.label})
-        self.assertEqual(data["reportproblemmagnitude"][0], {"id": self.problem_magnitude.id, "name": self.problem_magnitude.label})
-        self.assertEqual(data["reportstatus"][0], {"id": self.status.id, "name": self.status.label})
-        self.assertEqual(data["pictogram"], {'url': 'http://testserver/static/images/report.png'})
+        self.assertEqual(
+            data["reportactivity"][0],
+            {"id": self.activity.id, "name": self.activity.label},
+        )
+        self.assertEqual(
+            data["reportcategory"][0],
+            {"id": self.category.id, "name": self.category.label},
+        )
+        self.assertEqual(
+            data["reportproblemmagnitude"][0],
+            {"id": self.problem_magnitude.id, "name": self.problem_magnitude.label},
+        )
+        self.assertEqual(
+            data["reportstatus"][0], {"id": self.status.id, "name": self.status.label}
+        )
+        self.assertEqual(
+            data["pictogram"], {"url": "http://testserver/static/images/report.png"}
+        )
 
 
 class ReportGTAMTest(TestCase):
@@ -657,37 +687,38 @@ class ReportGTAMTest(TestCase):
 
     def test_data(self):
         token = self.authenticate(self.user)
-        list_url = f"/api/report/drf/reports?format=gtam"
+        list_url = "/api/report/drf/reports?format=gtam"
         response = self.client.get(list_url, headers={"Authorization": token})
         data = response.json()
 
         reports = [
             {
-                'id': self.report.id,
-                'date_insert': self.report.date_insert.isoformat().replace('+00:00', 'Z'),
-                'date_update': self.report.date_update.isoformat().replace('+00:00', 'Z'),
-                'email': self.report.email,
-                'comment': self.report.comment,
-                'api_geom': {
-                    'type': 'Point',
-                    'coordinates': [3.0, 46.5]
+                "id": self.report.id,
+                "date_insert": self.report.date_insert.isoformat().replace(
+                    "+00:00", "Z"
+                ),
+                "date_update": self.report.date_update.isoformat().replace(
+                    "+00:00", "Z"
+                ),
+                "email": self.report.email,
+                "comment": self.report.comment,
+                "api_geom": {"type": "Point", "coordinates": [3.0, 46.5]},
+                "activity": {
+                    "id": self.report.activity.id,
+                    "name": self.report.activity.label,
                 },
-                'activity': {
-                    'id': self.report.activity.id,
-                    'name': self.report.activity.label
+                "category": {
+                    "id": self.report.category.id,
+                    "name": self.report.category.label,
                 },
-                'category': {
-                    'id': self.report.category.id,
-                    'name': self.report.category.label
+                "problem_magnitude": {
+                    "id": self.report.problem_magnitude.id,
+                    "name": self.report.problem_magnitude.label,
                 },
-                'problem_magnitude': {
-                    'id': self.report.problem_magnitude.id,
-                    'name': self.report.problem_magnitude.label
+                "status": {
+                    "id": self.report.status.id,
+                    "name": self.report.status.label,
                 },
-                'status': {
-                    'id': self.report.status.id,
-                    'name': self.report.status.label
-                }
             }
         ]
         self.assertEqual(data, reports)

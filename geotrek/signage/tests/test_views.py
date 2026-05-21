@@ -11,7 +11,11 @@ from django.urls import reverse
 from django.utils.translation import gettext
 from mapentity.tests import SuperUserFactory
 
-from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory, UserProfileFactory
+from geotrek.authent.tests.factories import (
+    PathManagerFactory,
+    StructureFactory,
+    UserProfileFactory,
+)
 from geotrek.common.tests import (
     CommonMultiActionsViewsPublishedMixin,
     CommonMultiActionViewsMixin,
@@ -19,8 +23,17 @@ from geotrek.common.tests import (
     CommonTest,
 )
 from geotrek.core.tests.factories import PathFactory
-from geotrek.signage.models import Blade, Signage, SignageCondition, SignageType, Sealing, Direction, BladeType, Color, \
-    BladeCondition
+from geotrek.signage.models import (
+    Blade,
+    BladeCondition,
+    BladeType,
+    Color,
+    Direction,
+    Sealing,
+    Signage,
+    SignageCondition,
+    SignageType,
+)
 from geotrek.signage.tests.factories import (
     BladeColorFactory,
     BladeConditionFactory,
@@ -29,9 +42,10 @@ from geotrek.signage.tests.factories import (
     BladeTypeFactory,
     LineDirectionFactory,
     LineFactory,
+    SealingFactory,
     SignageConditionFactory,
     SignageFactory,
-    SignageTypeFactory, SealingFactory,
+    SignageTypeFactory,
 )
 
 
@@ -89,7 +103,6 @@ class SignageTemplatesTest(TestCase):
 class SignageReferencesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-
         cls.signage_conditions = SignageConditionFactory.create()
         cls.signage_type = SignageTypeFactory.create()
         cls.signage_sealing = SealingFactory.create()
@@ -115,21 +128,48 @@ class SignageReferencesTest(TestCase):
         )
         data = r.json()
 
-        self.assertEqual(len(data["signagecondition"]), SignageCondition.objects.all().count())
+        self.assertEqual(
+            len(data["signagecondition"]), SignageCondition.objects.all().count()
+        )
         self.assertEqual(len(data["signagetype"]), SignageType.objects.all().count())
         self.assertEqual(len(data["sealing"]), Sealing.objects.all().count())
         self.assertEqual(len(data["direction"]), Direction.objects.all().count())
-        self.assertEqual(len(data["bladetype"]),BladeType.objects.all().count())
+        self.assertEqual(len(data["bladetype"]), BladeType.objects.all().count())
         self.assertEqual(len(data["color"]), Color.objects.all().count())
-        self.assertEqual(len(data["bladecondition"]), BladeCondition.objects.all().count())
-        self.assertEqual(data["signagecondition"][0], {"id": self.signage_conditions.id, "name": self.signage_conditions.label})
-        self.assertEqual(data["signagetype"][0], {"id": self.signage_type.id, "name": self.signage_type.label})
-        self.assertEqual(data["sealing"][0], {"id": self.signage_sealing.id, "name": self.signage_sealing.label})
-        self.assertEqual(data["direction"][0], {"id": self.blade_direction.id, "name": self.blade_direction.label})
-        self.assertEqual(data["bladetype"][0],{"id": self.blade_type.id, "name": self.blade_type.label})
-        self.assertEqual(data["color"][0], {"id": self.blade_color.id, "name": self.blade_color.label})
-        self.assertEqual(data["bladecondition"][0], {"id": self.blade_conditions.id, "name": self.blade_conditions.label})
-        self.assertEqual(data["pictogram"], {'url': 'http://testserver/static/images/signage.png'})
+        self.assertEqual(
+            len(data["bladecondition"]), BladeCondition.objects.all().count()
+        )
+        self.assertEqual(
+            data["signagecondition"][0],
+            {"id": self.signage_conditions.id, "name": self.signage_conditions.label},
+        )
+        self.assertEqual(
+            data["signagetype"][0],
+            {"id": self.signage_type.id, "name": self.signage_type.label},
+        )
+        self.assertEqual(
+            data["sealing"][0],
+            {"id": self.signage_sealing.id, "name": self.signage_sealing.label},
+        )
+        self.assertEqual(
+            data["direction"][0],
+            {"id": self.blade_direction.id, "name": self.blade_direction.label},
+        )
+        self.assertEqual(
+            data["bladetype"][0],
+            {"id": self.blade_type.id, "name": self.blade_type.label},
+        )
+        self.assertEqual(
+            data["color"][0],
+            {"id": self.blade_color.id, "name": self.blade_color.label},
+        )
+        self.assertEqual(
+            data["bladecondition"][0],
+            {"id": self.blade_conditions.id, "name": self.blade_conditions.label},
+        )
+        self.assertEqual(
+            data["pictogram"], {"url": "http://testserver/static/images/signage.png"}
+        )
 
 
 class SignageGTAMTest(TestCase):
@@ -151,81 +191,79 @@ class SignageGTAMTest(TestCase):
 
     def test_data(self):
         token = self.authenticate(self.user)
-        list_url = f"/api/signage/drf/signages?format=gtam"
+        list_url = "/api/signage/drf/signages?format=gtam"
         response = self.client.get(list_url, headers={"Authorization": token})
         data = response.json()
 
         signages = [
             {
-                'id': self.signage.id,
-                'api_geom': {
-                    'type': 'Point',
-                    'coordinates': [3.0, 46.5]
+                "id": self.signage.id,
+                "api_geom": {"type": "Point", "coordinates": [3.0, 46.5]},
+                "structure": {
+                    "id": self.signage.structure.id,
+                    "name": self.signage.structure.name,
                 },
-                'structure': {
-                    'id': self.signage.structure.id,
-                    'name': self.signage.structure.name
+                "date_insert": self.signage.date_insert.isoformat().replace(
+                    "+00:00", "Z"
+                ),
+                "date_update": self.signage.date_update.isoformat().replace(
+                    "+00:00", "Z"
+                ),
+                "published": self.signage.published,
+                "name": self.signage.name,
+                "description": self.signage.description,
+                "implantation_year": self.signage.implantation_year,
+                "code": self.signage.code,
+                "printed_elevation": self.signage.printed_elevation,
+                "access": self.signage.access,
+                "manager": {
+                    "id": self.signage.manager.id,
+                    "name": self.signage.manager.organism,
                 },
-                'date_insert': self.signage.date_insert.isoformat().replace('+00:00', 'Z'),
-                'date_update': self.signage.date_update.isoformat().replace('+00:00', 'Z'),
-                'published': self.signage.published,
-                'name': self.signage.name,
-                'description': self.signage.description,
-                'implantation_year': self.signage.implantation_year,
-                'code': self.signage.code,
-                'printed_elevation': self.signage.printed_elevation,
-                'access': self.signage.access,
-                'manager': {
-                    'id': self.signage.manager.id,
-                    'name': self.signage.manager.organism
+                "sealing": {
+                    "id": self.signage.sealing.id,
+                    "name": self.signage.sealing.label,
                 },
-                'sealing': {
-                    'id': self.signage.sealing.id,
-                    'name': self.signage.sealing.label
-                },
-                'type': {
-                    'id': self.signage.type.id,
-                    'name': self.signage.type.label
-                },
-                'conditions': [
+                "type": {"id": self.signage.type.id, "name": self.signage.type.label},
+                "conditions": [
                     {
-                        'id': self.signage.conditions.first().id,
-                        'name': self.signage.conditions.first().label
+                        "id": self.signage.conditions.first().id,
+                        "name": self.signage.conditions.first().label,
                     }
                 ],
-                'blades': [
+                "blades": [
                     {
-                        'id': self.blade.id,
-                        'number': self.blade.number,
-                        'direction': {
-                            'id': self.blade.direction.id,
-                            'name': self.blade.direction.label
+                        "id": self.blade.id,
+                        "number": self.blade.number,
+                        "direction": {
+                            "id": self.blade.direction.id,
+                            "name": self.blade.direction.label,
                         },
-                        'type': {
-                            'id': self.blade.type.id,
-                            'name': self.blade.type.label
+                        "type": {
+                            "id": self.blade.type.id,
+                            "name": self.blade.type.label,
                         },
-                        'color': {
-                            'id': self.blade.color.id,
-                            'name': self.blade.color.label
+                        "color": {
+                            "id": self.blade.color.id,
+                            "name": self.blade.color.label,
                         },
-                        'conditions': [
+                        "conditions": [
                             {
-                                'id': self.blade.conditions.first().id,
-                                'name': self.blade.conditions.first().label
+                                "id": self.blade.conditions.first().id,
+                                "name": self.blade.conditions.first().label,
                             }
                         ],
-                        'lines': [
+                        "lines": [
                             {
-                                'id': self.blade.lines.first().id,
-                                'number': self.blade.lines.first().number,
-                                'text': self.blade.lines.first().text,
-                                'distance': str(self.blade.lines.first().distance),
-                                'time': '00:42:30',
+                                "id": self.blade.lines.first().id,
+                                "number": self.blade.lines.first().number,
+                                "text": self.blade.lines.first().text,
+                                "distance": str(self.blade.lines.first().distance),
+                                "time": "00:42:30",
                             }
-                        ]
+                        ],
                     }
-                ]
+                ],
             }
         ]
         self.assertEqual(data, signages)

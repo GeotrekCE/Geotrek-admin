@@ -18,20 +18,21 @@ from django.urls import reverse
 from mapentity.tests import SuperUserFactory
 from mapentity.tests.factories import UserFactory
 from mapentity.views.generic import MapEntityList
-from pyvips import Access
 
 import geotrek.trekking.parsers  # noqa  # noqa
 from geotrek.authent.models import Structure
-from geotrek.authent.tests.factories import UserProfileFactory, StructureFactory
+from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory
 from geotrek.common.forms import HDViewPointAnnotationForm
 from geotrek.common.mixins.views import CustomColumnsMixin
-from geotrek.common.models import FileType, HDViewPoint, Organism, AccessMean
+from geotrek.common.models import AccessMean, FileType, HDViewPoint, Organism
 from geotrek.common.parsers import Parser
 from geotrek.common.tasks import import_datas
 from geotrek.common.tests.factories import (
+    AccessMeanFactory,
     HDViewPointFactory,
     LicenseFactory,
-    TargetPortalFactory, ProviderFactory, OrganismFactory, AccessMeanFactory,
+    OrganismFactory,
+    TargetPortalFactory,
 )
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.common.views import ConfigView
@@ -728,6 +729,14 @@ class CommonReferencesTest(TestCase):
         self.assertEqual(len(data["structure"]), Structure.objects.all().count())
         self.assertEqual(len(data["organism"]), Organism.objects.all().count())
         self.assertEqual(len(data["accessmean"]), AccessMean.objects.all().count())
-        self.assertEqual(data["structure"][0], {"id": self.structure.id, "name": self.structure.name})
-        self.assertEqual(data["organism"][0], {"id": self.organism.id, "name": self.organism.organism})
-        self.assertEqual(data["accessmean"][0], {"id": self.access_mean.id, "name": self.access_mean.label})
+        self.assertEqual(
+            data["structure"][0], {"id": self.structure.id, "name": self.structure.name}
+        )
+        self.assertEqual(
+            data["organism"][0],
+            {"id": self.organism.id, "name": self.organism.organism},
+        )
+        self.assertEqual(
+            data["accessmean"][0],
+            {"id": self.access_mean.id, "name": self.access_mean.label},
+        )

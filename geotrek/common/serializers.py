@@ -4,7 +4,7 @@ from rest_framework import serializers as rest_serializers
 from rest_framework_gis.fields import GeometrySerializerMethodField
 
 from ..authent.models import Structure
-from .models import AccessMean, HDViewPoint, Organism, Provider
+from .models import AccessMean, HDViewPoint, Organism
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
