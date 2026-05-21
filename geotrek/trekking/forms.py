@@ -314,6 +314,7 @@ class BaseTrekForm(CommonForm):
     class Meta(CommonForm.Meta):
         model = Trek
         fields = [
+            *CommonForm.Meta.fields,
             "structure",
             "name",
             "review",

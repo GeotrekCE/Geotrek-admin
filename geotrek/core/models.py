@@ -529,11 +529,9 @@ class Topology(
             self.kind = self.__class__.KIND
 
     def get_update_off_network_url(self, on_network=True):
-        """TODO: docstring"""
         url = super().get_update_url()
         url = url.replace("edit", "edit-off-network")
         return url
-        # return reverse(self._entity.url_name(ENTITY_UPDATE), args=[str(self.pk)])
 
     @property
     def paths(self):  # noqa
@@ -702,32 +700,20 @@ class Topology(
             transformed_geom = self.geom
             if existing.geom != self.geom:
                 self.coupled = False
-                # FIXME: compare the geoms correctly (currntly not the same srid)
+                # FIXME: compare the geoms correctly (currently not the same srid). This must
+                # work when using a form, but also when calling save() e.g. in a parser
                 ...
-            # length is readonly from the Django point of view, but it can be changed at DB level.
-            # Since Django writes all fields to DB anyway, it is important to update it before writing
-            self.length = existing.length  # TODO: not if geom has changed
-            # TODO: ensure that geom_3d and altimetry data is updated too
+            else:
+                # length is readonly from the Django point of view, but it can be changed at DB level.
+                # Since Django writes all fields to DB anyway, it is important to update it before writing
+                self.length = existing.length
+                # TODO: ensure that geom_3d and altimetry data is updated too
 
         if not self.deleted and self.geom is None:
             # We cannot have NULL geometry. So we use an empty one.
             # The geom will be computed or overwritten by triggers.
             self.geom = fromstr("POINT (0 0)")
-            # TODO: check that it's overwritten by triggers
-
-        # if self.pk and settings.TREKKING_TOPOLOGY_ENABLED:
-        #     existing = self.__class__.objects.get(pk=self.pk)
-        #     self.length = existing.length  # TODO
-        #     # In the case of points, the geom can be set by Django. Don't override.
-        #     point_geom_not_set = self.ispoint() and self.geom is None
-        #     geom_already_in_db = not self.ispoint() and existing.geom is not None
-        #     if point_geom_not_set or geom_already_in_db:
-        #         self.geom = existing.geom
-        # else:
-        #     if not self.deleted and self.geom is None:
-        #         # We cannot have NULL geometry. So we use an empty one,
-        #         # it will be computed or overwritten by triggers.
-        #         self.geom = fromstr("POINT (0 0)")
+            # TODO: check that it's still overwritten by triggers
 
         if not self.kind:
             if self.KIND == "TOPOLOGYMIXIN":
