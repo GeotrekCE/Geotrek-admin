@@ -696,7 +696,6 @@ class Topology(
         return self
 
     def save(self, *args, **kwargs):
-        print(f"{self.geom_changed}")
         if self.pk:
             existing = self.__class__.objects.get(pk=self.pk)
             # If the geometry is modified, decouple the topology from the path network
