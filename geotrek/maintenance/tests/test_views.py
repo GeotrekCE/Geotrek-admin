@@ -724,7 +724,6 @@ class ProjectViewsTest(CommonTest):
         self.assertEqual(Funding.objects.count(), 2)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class ExportTest(TestCase):
     def test_shape_mixed(self):
         """
@@ -765,6 +764,7 @@ class ExportTest(TestCase):
         proj.interventions.add(it_point)
         proj.interventions.add(it_line)
         proj.interventions.add(it_geometrycollection)
+        proj.refresh_from_db()
 
         # instanciate the class based view 'abnormally' to use create_shape directly
         # to avoid making http request, authent and reading from a zip

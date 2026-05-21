@@ -4,6 +4,7 @@ from dal import autocomplete
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.contrib.gis.forms import PointField
 from django.db.models import Max
 from django.forms import BaseInlineFormSet
 from django.forms.models import inlineformset_factory
@@ -190,6 +191,7 @@ else:
 
     class BaseSignageForm(BaseInfrastructureForm):
         geomfields = ["geom"]
+        geom = PointField()
 
 
 class SignageForm(BaseSignageForm):
