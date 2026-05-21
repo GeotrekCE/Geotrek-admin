@@ -54,7 +54,13 @@ from geotrek.signage.serializers import SignageAPIGeojsonSerializer
 from geotrek.zoning.models import City, District, RestrictedArea
 
 from .filters import POIFilterSet, ServiceFilterSet, TrekFilterSet
-from .forms import POIForm, ServiceForm, OnNetworkTrekForm, WebLinkCreateFormPopup, OnNetworkTrekForm, OffNetworkTrekForm
+from .forms import (
+    OffNetworkTrekForm,
+    OnNetworkTrekForm,
+    POIForm,
+    ServiceForm,
+    WebLinkCreateFormPopup,
+)
 from .models import POI, Service, Trek, WebLink
 from .serializers import (
     POIGeojsonSerializer,
@@ -212,7 +218,10 @@ class TrekDetail(CompletenessMixin, MapEntityDetail):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["can_edit"] = self.get_object().same_structure(self.request.user)
-        context['can_draw_off_path_network'] = not settings.PATH_MODEL_ENABLED or self.request.user.has_perm("core.can_draw_off_path_network")
+        context["can_draw_off_path_network"] = (
+            not settings.PATH_MODEL_ENABLED
+            or self.request.user.has_perm("core.can_draw_off_path_network")
+        )
         context["labels"] = Label.objects.all()
         context["accessibility_form"] = AttachmentAccessibilityForm(
             request=self.request, object=self.get_object()
@@ -306,8 +315,10 @@ class TrekUpdate(MapEntityUpdate):
         """
         if not settings.PATH_MODEL_ENABLED:
             return OffNetworkTrekForm
-        topological = self.request.GET.get('topological', 'true') == 'true'
-        can_draw_off_path_network = self.request.user.has_perm("core.can_draw_off_path_network")
+        topological = self.request.GET.get("topological", "true") == "true"
+        can_draw_off_path_network = self.request.user.has_perm(
+            "core.can_draw_off_path_network"
+        )
         if not topological and can_draw_off_path_network:
             return OffNetworkTrekForm
         return OnNetworkTrekForm
