@@ -1306,7 +1306,6 @@ class ApidaeTrekParserTests(TestCase):
 
     @mock.patch("requests.get")
     def test_trek_is_imported(self, mocked_get):
-        print("test_trek_is_imported")
         RouteFactory(route="Boucle")
         mocked_get.side_effect = self.make_dummy_get("a_trek.json")
 
