@@ -15,7 +15,11 @@ def update_geom(apps, schema_editor):
         if not type_id:
             continue
 
-        ct = ContentType.objects.get(pk=type_id)
+        try:
+            ct = ContentType.objects.get(pk=type_id)
+        except ContentType.DoesNotExist:
+            continue
+
         try:
             TargetModel = apps.get_model(ct.app_label, ct.model)
         except LookupError:
@@ -28,8 +32,9 @@ def update_geom(apps, schema_editor):
 
         for intervention in type_interventions:
             target = target_dict.get(intervention.target_id)
-            if target and hasattr(target_dict, "geom"):
-                intervention.geom = target_dict.geom
+            geom = getattr(target, "geom", None) if target else None
+            if geom is not None:
+                intervention.geom = geom
                 intervention.save(update_fields=["geom"])
 
 
