@@ -767,7 +767,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
             ]
         if distinctions:
             filtered_val += [
-                d[translation_src]
+                d["nom"][translation_src]
                 for d in distinctions
                 if d["nom"]["id"] in self.distinctions_ids_as_labels
             ]

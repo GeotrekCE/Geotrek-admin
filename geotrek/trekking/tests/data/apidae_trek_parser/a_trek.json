@@ -159,6 +159,19 @@
           "libelleEn": "Ski lift ticket office: 2 shops - Frastaz and Bois Noir ski lifts."
         }
       },
+      "distinctions": [
+        {
+          "id": 6,
+          "nom": {
+            "elementReferenceType": "DistinctionNom",
+            "id": 8607,
+            "libelleFr": "Inscrit au PDIPR",
+            "libelleEn": "Listed PDIPR",
+            "libelleEs": "Listado en el PDIPR",
+            "libelleIt": "Elencato nel PDIPR"
+          }
+        }
+      ],
       "presentation": {
         "descriptifCourt": {
           "libelleFr": "La description courte en français.",
@@ -203,14 +216,6 @@
             "libelleEn": "Not recommended in bad weather",
             "libelleEs": "Desaconsejado en época de mal tiempo",
             "libelleIt": "Sconsigliato con cattivo tempo"
-          },
-          {
-            "elementReferenceType": "TypologiePromoSitra",
-            "id": 4971,
-            "libelleFr": "Inscrit au PDIPR",
-            "libelleEn": "Listed PDIPR",
-            "libelleEs": "Listado en el PDIPR",
-            "libelleIt": "Elencato nel PDIPR"
           }
         ]
       },
