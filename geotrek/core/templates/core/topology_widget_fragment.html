@@ -216,7 +216,7 @@
             // TODO: error handling -> si le back renvoie une erreur
             // Fetch the route between these two waypoints
             return fetch(
-                "http://geotrek.local:8000/api/path/drf/paths/route-geometry",
+                window.SETTINGS.urls['route_geometry'],
                 {
                     method: "POST",
                     headers: {
