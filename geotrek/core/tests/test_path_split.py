@@ -1,5 +1,3 @@
-from unittest import skipIf
-
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
@@ -14,7 +12,6 @@ from geotrek.core.tests.factories import (
 )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SplitPathTest(TestCase):
     def test_split_attributes(self):
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
@@ -555,7 +552,6 @@ class SplitPathTest(TestCase):
         self.assertAlmostEqual(ab_2.length, 2, places=2)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SplitPathLineTopologyTest(TestCase):
     def create_line_topology(self, serialized):
         """We cannot use TopologyFactory here because we need a workflow similar to when creating a topology via the interface."""
@@ -1258,7 +1254,6 @@ class SplitPathLineTopologyTest(TestCase):
         self.assertTrue(topology.geom.equals(topogeom))
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SplitPathPointTopologyTest(TestCase):
     def test_split_tee_1(self):
         """
@@ -1621,7 +1616,6 @@ class SplitPathPointTopologyTest(TestCase):
         self.assertEqual((0.0, 0.0), (aggr_cd.start_position, aggr_cd.end_position))
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SplitPathGenericTopologyTest(TestCase):
     def create_line_topology(self, serialized):
         """We cannot use TopologyFactory here because we need a workflow similar to when creating a topology via the interface."""

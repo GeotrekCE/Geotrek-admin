@@ -1,7 +1,7 @@
 import json
 import os
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 from urllib.parse import urlparse
 
 import requests
@@ -1817,9 +1817,6 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
                 verbosity=0,
             )
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     @mock.patch(
         "geotrek.common.parsers.importlib.import_module", return_value=mock.MagicMock()
     )
@@ -1859,9 +1856,6 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
         # Trek, POI, Service, InformationDesk, TouristicContent, TouristicEvent, Signage, Infrastructure
         self.assertEqual(10, mocked_import_module.call_count)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_geotrek_aggregator_parser_model_dynamic_segmentation(self):
         output = StringIO()
         filename = os.path.join(
@@ -1886,9 +1880,6 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             "Treks can't be imported with dynamic segmentation", string_parser
         )
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     @mock.patch(
         "geotrek.common.parsers.importlib.import_module", return_value=mock.MagicMock()
     )
@@ -1931,9 +1922,6 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
         # "POI", "InformationDesk", "TouristicContent"
         self.assertEqual(8, mocked_import_module.call_count)
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     def test_geotrek_aggregator_parser_no_url(self):
         output = StringIO()
         filename = os.path.join(
@@ -1953,9 +1941,6 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
 
         self.assertIn("URL_1 has no url", string_parser)
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     @mock.patch("requests.get")
     @mock.patch("requests.head")
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")

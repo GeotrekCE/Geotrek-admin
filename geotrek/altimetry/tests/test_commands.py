@@ -1,8 +1,7 @@
 import os
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 
-from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.core.management import CommandError, call_command
 from django.test import TransactionTestCase
@@ -56,9 +55,6 @@ class CommandLoadDemTest(TransactionTestCase):
         value = dems.first()
         self.assertAlmostEqual(value.int, 343.600006103516)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_success_without_replace_update_altimetry_ds(self):
         output_stdout = StringIO()
         filename = os.path.join(os.path.dirname(__file__), "data", "elevation.tif")
@@ -91,9 +87,6 @@ class CommandLoadDemTest(TransactionTestCase):
         trek = Trek.objects.get(pk=trek.pk)
         self.assertAlmostEqual(trek.geom_3d.coords[-1][-1], 188)
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     def test_success_without_replace_update_altimetry_nds(self):
         output_stdout = StringIO()
         filename = os.path.join(os.path.dirname(__file__), "data", "elevation.tif")

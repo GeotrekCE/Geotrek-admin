@@ -1,6 +1,6 @@
 import os
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 
 from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry, LineString, Point
@@ -16,7 +16,6 @@ from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import POIFactory
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class RemoveDuplicatePathTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -115,7 +114,6 @@ class RemoveDuplicatePathTest(TestCase):
         self.assertIn("0 duplicate paths have been deleted", output.getvalue())
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class LoadPathsCommandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -269,7 +267,6 @@ class LoadPathsCommandTest(TestCase):
         self.assertEqual(value.structure, self.structure)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class ReorderTopologiesPathAggregationTest(TestCase):
     def setUp(self):
         """
@@ -1505,7 +1502,6 @@ class MergePathsTest(TestCase):
         self.assertIn(output_str, output.getvalue())
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class GeneratePgrNetworkTopologyTest(TestCase):
     def test_generate_network_topology(self):
         """Checks that the graph data is generated when running the command."""

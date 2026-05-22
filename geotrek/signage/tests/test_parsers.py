@@ -1,6 +1,6 @@
 import json
 import os
-from unittest import mock, skipIf
+from unittest import mock
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString
@@ -41,9 +41,6 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
             cls.path = PathFactory.create()
         cls.filetype = FileType.objects.create(type="Photographie")
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     @mock.patch("requests.get")
     @mock.patch("requests.head")
     def test_import_cmd_raises_error_when_no_path(self, mocked_head, mocked_get):
@@ -152,9 +149,6 @@ class OpenStreetMapSignageParserTests(TestCase):
         cls.import_signage()
         cls.objects = Signage.objects.all()
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_import_cmd_raises_error_when_no_path(self):
         self.path.delete()
         with self.assertRaisesRegex(
@@ -175,9 +169,6 @@ class OpenStreetMapSignageParserTests(TestCase):
         self.assertListEqual(list(signage_eids), ["N7872800265"])
         self.assertNotEqual(signage_eids, ["7872800265"])
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_topology_is_correct(self):
         signage = self.objects.get(eid="N7872800265")
         self.assertAlmostEqual(signage.topo_object.offset, 0.0)

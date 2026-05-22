@@ -1,6 +1,5 @@
 import os
 from io import StringIO
-from unittest import skipIf
 
 from django.contrib.gis.geos import GEOSGeometry, LineString
 from django.core.management import call_command
@@ -42,9 +41,6 @@ class PointTopologyParserMixinTest(TestCase):
         with self.assertRaises(TypeError):
             PointTopologyTestModelParserMissingMethod()
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_parsing_fails_without_path_in_dynamic_segmentation_mode(self):
         self.path.delete()
         filename = self.get_test_data_file_path(

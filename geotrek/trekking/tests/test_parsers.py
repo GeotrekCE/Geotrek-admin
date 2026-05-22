@@ -199,9 +199,6 @@ class POIParserTests(TestCase):
         cls.poi_type_s = POIType.objects.create(label="signaletique")
         cls.filetype = FileType.objects.create(type="Photographie")
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_import_cmd_raises_error_when_no_path(self):
         filename = os.path.join(os.path.dirname(__file__), "data", "poi.shp")
         with self.assertRaisesRegex(
@@ -336,7 +333,6 @@ class TestGeotrekServiceParser(GeotrekServiceParser):
 
 
 @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
 class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @classmethod
     def setUpTestData(cls):

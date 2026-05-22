@@ -1,6 +1,3 @@
-from unittest import skipIf
-
-from django.conf import settings
 from django.contrib.gis.geos import WKBReader
 from django.db import connection
 from django.test import TestCase
@@ -27,9 +24,6 @@ class SQLDefaultValuesTest(TestCase):
         path = Path.objects.first()
         self.assertTrue(path.valid)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_topology(self):
         path = PathFactory.create()
         with connection.cursor() as cur:
@@ -40,9 +34,6 @@ class SQLDefaultValuesTest(TestCase):
         self.assertEqual(topology.geom, path.geom)
         self.assertEqual(topology.kind, "")
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_pathaggregation(self):
         path = PathFactory.create()
         topology = TopologyFactory.create(paths=[])

@@ -1,6 +1,6 @@
 import re
 from collections import ChainMap
-from unittest import mock, skipIf
+from unittest import mock
 
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -39,7 +39,6 @@ from geotrek.zoning.tests.factories import (
 )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class MultiplePathViewsTest(AuthentFixturesTest, TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -60,7 +59,6 @@ def get_route_exception_mock(arg1, arg2):
     raise Exception(msg)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathViewsTest(CommonTest):
     model = Path
     modelfactory = PathFactory
@@ -698,7 +696,6 @@ class PathViewsTest(CommonTest):
             self.client.get(obj.get_layer_url())
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathRouteViewTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -2051,7 +2048,6 @@ class PathRouteViewTestCase(TestCase):
         )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathKmlGPXTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -2085,7 +2081,6 @@ class PathKmlGPXTest(TestCase):
         )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class DenormalizedTrailTest(AuthentFixturesTest):
     @classmethod
     def setUpTestData(cls):
@@ -2112,7 +2107,6 @@ class DenormalizedTrailTest(AuthentFixturesTest):
             )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TrailViewsTest(CommonTest):
     model = Trail
     modelfactory = TrailFactory
@@ -2219,7 +2213,6 @@ class TrailViewsTest(CommonTest):
             self.client.get(self.model.get_format_list_url() + "?format=csv")
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TrailKmlGPXTest(TestCase):
     @classmethod
     def setUpTestData(cls):

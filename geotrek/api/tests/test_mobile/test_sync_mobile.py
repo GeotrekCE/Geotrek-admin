@@ -4,7 +4,7 @@ import os
 import zipfile
 from io import StringIO
 from tempfile import mkdtemp
-from unittest import mock, skipIf
+from unittest import mock
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiLineString, Point
@@ -1167,9 +1167,6 @@ class SyncMobileTreksTest(VarTmpTestCase):
             verbosity=0,
         )
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     def test_multilinestring(self):
         TrekFactory.create(
             geom=MultiLineString(
