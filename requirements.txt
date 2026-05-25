@@ -438,7 +438,7 @@ zc-lockfile==4.0
     # via zodb
 zconfig==4.3
     # via zodb
-zipp==3.23.1
+zipp==4.1.0
     # via importlib-metadata
 zodb==6.3
     # via appy
