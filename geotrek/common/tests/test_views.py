@@ -696,7 +696,6 @@ class ConfigViewTest(TestCase):
         self.assertEqual(data["user"]["firstName"], self.user.first_name)
         self.assertEqual(data["user"]["lastName"], self.user.last_name)
         self.assertEqual(data["user"]["userName"], self.user.username)
-        print(data["user"]["permissions"], self.get_permissions())
         self.assertEqual(data["user"]["permissions"], self.get_permissions())
 
 
