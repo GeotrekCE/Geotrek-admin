@@ -16,6 +16,7 @@
             <th>{{ poi|verbose:"name" }}</th>
             <td>{{ poi.name }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=poi %}
         <tr>
             <th>{{ poi|verbose:"description" }}</th>
             <td>{% if poi.description %}{{ poi.description|safe|linebreaks }}
