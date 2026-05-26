@@ -55,7 +55,7 @@ charset-normalizer==3.4.7
     # via
     #   reportlab
     #   requests
-click==8.4.0
+click==8.4.1
     # via
     #   celery
     #   click-didyoumean
