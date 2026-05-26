@@ -545,30 +545,27 @@ class ConfigViewTest(TestCase):
         cls.user = UserFactory.create(password="password")
         UserProfileFactory.create(user=cls.user)
 
-        Permission.objects.create(
+        Permission.objects.get_or_create(
             codename="change_geom_signage",
             name="Can change geom signage",
             content_type=ContentType.objects.get_for_model(Signage),
         )
-        Permission.objects.create(
+        perm_change_geom_infrastructure, _ = Permission.objects.get_or_create(
             codename="change_geom_infrastructure",
             name="Can change geom infrastructure",
             content_type=ContentType.objects.get_for_model(Infrastructure),
         )
-        Permission.objects.create(
+        Permission.objects.get_or_create(
             codename="change_geom_intervention",
             name="Can change geom intervention",
             content_type=ContentType.objects.get_for_model(Intervention),
         )
-        Permission.objects.create(
+        Permission.objects.get_or_create(
             codename="change_geom_report",
             name="Can change geom report",
             content_type=ContentType.objects.get_for_model(Report),
         )
         perm_add_signage = Permission.objects.get(codename="add_signage")
-        perm_change_geom_infrastructure = Permission.objects.get(
-            codename="change_infrastructure"
-        )
         perm_delete_intervention = Permission.objects.get(
             codename="delete_intervention"
         )
@@ -622,8 +619,8 @@ class ConfigViewTest(TestCase):
             },
             "infrastructure": {
                 "create": False,
-                "update_geom": False,
-                "update": True,
+                "update_geom": True,
+                "update": False,
                 "delete": False,
                 "read": False,
             },
@@ -699,6 +696,7 @@ class ConfigViewTest(TestCase):
         self.assertEqual(data["user"]["firstName"], self.user.first_name)
         self.assertEqual(data["user"]["lastName"], self.user.last_name)
         self.assertEqual(data["user"]["userName"], self.user.username)
+        print(data["user"]["permissions"], self.get_permissions())
         self.assertEqual(data["user"]["permissions"], self.get_permissions())
 
 
