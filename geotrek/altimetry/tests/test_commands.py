@@ -2,12 +2,13 @@ import os
 from io import StringIO
 from unittest import mock
 
+from django.apps import apps
 from django.contrib.gis.geos import LineString, Point
 from django.core.management import CommandError, call_command
 from django.test import TransactionTestCase
 
 from geotrek.altimetry.functions import RasterValue
-from geotrek.altimetry.models import Dem
+from geotrek.altimetry.models import AltimetryMixin, Dem
 from geotrek.core.models import Path
 from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.models import Trek
@@ -62,9 +63,15 @@ class CommandLoadDemTest(TransactionTestCase):
             geom=LineString((605600, 6650000), (605900, 6650010), srid=2154)
         )
         trek = TrekFactory.create(paths=[self.path], published=False)
-        with self.assertNumQueries(
-            9
-        ):  # 5 for loaddem initial + path + outdoor + intervention (2)
+        num_models = len(
+            [
+                model
+                for model in apps.get_models()
+                if "geom" in [field.name for field in model._meta.get_fields()]
+                and issubclass(model, AltimetryMixin)
+            ]
+        )
+        with self.assertNumQueries(5 + num_models):
             call_command(
                 "loaddem",
                 filename,
@@ -91,11 +98,17 @@ class CommandLoadDemTest(TransactionTestCase):
         output_stdout = StringIO()
         filename = os.path.join(os.path.dirname(__file__), "data", "elevation.tif")
         self.trek = TrekFactory.create(
-            geom=LineString((605600, 6650000), (605900, 6650010), srid=2154)
+            paths=[], geom=LineString((605600, 6650000), (605900, 6650010), srid=2154)
         )
-        with self.assertNumQueries(
-            23
-        ):  # 5 for loaddem initial + 17 with selects and update geom + 1 for PointTopologyTestModel
+        num_models = len(
+            [
+                model
+                for model in apps.get_models()
+                if "geom" in [field.name for field in model._meta.get_fields()]
+                and issubclass(model, AltimetryMixin)
+            ]
+        )
+        with self.assertNumQueries(5 + num_models + 1):
             call_command(
                 "loaddem",
                 filename,

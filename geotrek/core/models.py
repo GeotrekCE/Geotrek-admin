@@ -481,7 +481,7 @@ class Topology(
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
     geom_need_update = models.BooleanField(default=False, editable=False)
     geom = models.GeometryField(
-        editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
+        editable=True,
         srid=settings.SRID,
         null=True,
         default=None,
@@ -676,6 +676,7 @@ class Topology(
             # Update computed values
             fromdb = self.__class__.objects.get(pk=self.pk)
             self.geom = fromdb.geom
+            self.coupled = fromdb.coupled
             # /!\ offset may be set by a trigger OR in
             # the django code, reload() will override
             # any unsaved value
@@ -690,11 +691,34 @@ class Topology(
         # HACK: these fields are readonly from the Django point of view,
         # but they can be changed at DB level. Since Django writes all fields
         # to DB anyway, it is important to update it before writing
-        if self.pk and settings.TREKKING_TOPOLOGY_ENABLED:
+        is_coupled = False
+        if self.pk:
+            try:
+                is_coupled = self.__class__.objects.values_list(
+                    "coupled", flat=True
+                ).get(pk=self.pk)
+            except self.DoesNotExist:
+                pass
+
+        if is_coupled:
+            self.coupled = True
             existing = self.__class__.objects.get(pk=self.pk)
             self.length = existing.length
+            self.geom_3d = existing.geom_3d
+            self.ascent = existing.ascent
+            self.descent = existing.descent
+            self.min_elevation = existing.min_elevation
+            self.max_elevation = existing.max_elevation
+            self.slope = existing.slope
             # In the case of points, the geom can be set by Django. Don't override.
-            point_geom_not_set = self.ispoint() and self.geom is None
+            point_geom_not_set = self.ispoint() and (
+                self.geom is None
+                or (
+                    self.geom.geom_type == "Point"
+                    and self.geom.x == 0
+                    and self.geom.y == 0
+                )
+            )
             geom_already_in_db = not self.ispoint() and existing.geom is not None
             if point_geom_not_set or geom_already_in_db:
                 self.geom = existing.geom
@@ -826,10 +850,41 @@ class Topology(
             raise
         except (TypeError, ValueError):
             pass  # value is not integer, thus should be deserialized
-        if not settings.TREKKING_TOPOLOGY_ENABLED:
-            return Topology(
-                kind="TMP", geom=GEOSGeometry(serialized, srid=settings.API_SRID)
-            )
+
+        # Support uncoupled geometry directly
+        if isinstance(serialized, GEOSGeometry):
+            if serialized.srid != settings.SRID:
+                serialized.transform(settings.SRID)
+            return Topology(kind="TMP", geom=serialized, coupled=False)
+
+        if isinstance(serialized, str):
+            trimmed = serialized.strip()
+            # If it looks like WKT or GeoJSON but not standard coupled JSON
+            if (
+                trimmed.startswith("{")
+                and "paths" not in trimmed
+                and "lat" not in trimmed
+            ):
+                try:
+                    geom = GEOSGeometry(trimmed, srid=settings.API_SRID)
+                    if geom.srid != settings.SRID:
+                        geom.transform(settings.SRID)
+                    return Topology(kind="TMP", geom=geom, coupled=False)
+                except Exception:
+                    pass
+            elif any(
+                trimmed.upper().startswith(prefix)
+                for prefix in ["POINT", "LINESTRING", "MULTILINESTRING", "SRID="]
+            ):
+                try:
+                    srid = None if "SRID=" in trimmed.upper() else settings.API_SRID
+                    geom = GEOSGeometry(trimmed, srid=srid)
+                    if geom.srid != settings.SRID:
+                        geom.transform(settings.SRID)
+                    return Topology(kind="TMP", geom=geom, coupled=False)
+                except Exception:
+                    pass
+
         objdict = serialized
         if isinstance(serialized, str):
             try:

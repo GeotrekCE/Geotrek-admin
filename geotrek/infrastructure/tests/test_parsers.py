@@ -1,13 +1,12 @@
 import json
 import os
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management import call_command
-from django.core.management.base import CommandError
 from django.test import TestCase
 from django.test.utils import override_settings
 
@@ -113,24 +112,6 @@ class ApidaeInfrastructureParserTests(TestCase):
             "An infrastructure type must be specified in the parser configuration.",
         ):
             TestApidaeInfrastructureParserMissingType()
-
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    @mock.patch("requests.get")
-    def test_import_cmd_raises_error_when_no_path(self, mocked_get):
-        mocked_get.side_effect = self.make_dummy_get("infrastructure_minimal.json")
-
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'Infrastructure' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.infrastructure.tests.test_parsers.TestApidaeInfrastructureParser",
-                verbosity=0,
-            )
 
     @mock.patch("requests.get")
     def test_skip_row_and_continue_when_wrong_geometry(self, mocked_get):
@@ -285,21 +266,6 @@ class OpenStreetMapInfrastructureParserTests(TestCase):
         )
         cls.import_Infrastructure()
         cls.objects = Infrastructure.objects.all()
-
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_import_cmd_raises_error_when_no_path(self):
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'Infrastructure' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.infrastructure.tests.test_parsers.TestInfrastructureOpenStreetMapParser",
-                verbosity=0,
-            )
 
     def test_create_Infrastructure_OSM(self):
         self.assertEqual(self.objects.count(), 4)

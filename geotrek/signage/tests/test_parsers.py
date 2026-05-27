@@ -5,7 +5,6 @@ from unittest import mock
 from django.conf import settings
 from django.contrib.gis.geos import LineString
 from django.core.management import call_command
-from django.core.management.base import CommandError
 from django.test import TestCase
 from django.test.utils import override_settings
 
@@ -40,33 +39,6 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             cls.path = PathFactory.create()
         cls.filetype = FileType.objects.create(type="Photographie")
-
-    @mock.patch("requests.get")
-    @mock.patch("requests.head")
-    def test_import_cmd_raises_error_when_no_path(self, mocked_head, mocked_get):
-        self.mock_time = 0
-        self.mock_json_order = [
-            ("signage", "structure.json"),
-            ("signage", "signage_sealing.json"),
-            ("signage", "signage_conditions.json"),
-            ("signage", "signage_type.json"),
-        ]
-        # Mock GET
-        mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = self.mock_json
-        mocked_get.return_value.content = b""
-        mocked_head.return_value.status_code = 200
-
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'Signage' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.signage.tests.test_parsers.TestGeotrekSignageParser",
-                verbosity=0,
-            )
 
     @mock.patch("requests.get")
     @mock.patch("requests.head")
@@ -148,18 +120,6 @@ class OpenStreetMapSignageParserTests(TestCase):
         )
         cls.import_signage()
         cls.objects = Signage.objects.all()
-
-    def test_import_cmd_raises_error_when_no_path(self):
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'Signage' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.signage.tests.test_parsers.TestSignageOpenStreetMapParser",
-                verbosity=0,
-            )
 
     def test_create_signage_osm(self):
         self.assertEqual(self.objects.count(), 1)

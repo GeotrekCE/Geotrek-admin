@@ -58,11 +58,6 @@ DECLARE
     smart_makeline line_infos;
     smart_makeline_3d line_infos;
 BEGIN
-    -- If Geotrek-light, don't do anything
-    IF NOT {{ TREKKING_TOPOLOGY_ENABLED }} THEN
-        RETURN;
-    END IF;
-
     -- If any path linked to this topology is currently being split, don't do anything.
     -- This function will be called again once the split is complete.
     IF EXISTS (
@@ -208,7 +203,7 @@ CREATE FUNCTION {{ schema_geotrek }}.topology_elevation_iu() RETURNS trigger SEC
 DECLARE
     elevation elevation_infos;
 BEGIN
-    IF {{ TREKKING_TOPOLOGY_ENABLED }} THEN
+    IF NEW.coupled IS TRUE THEN
         RETURN NEW;
     END IF;
     SELECT * FROM ft_elevation_infos(NEW.geom, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;

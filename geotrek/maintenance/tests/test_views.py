@@ -4,7 +4,6 @@ from collections import OrderedDict
 from decimal import Decimal
 from io import BytesIO, StringIO
 from tempfile import TemporaryDirectory
-from unittest import skipIf
 from zipfile import ZipFile
 
 from django.conf import settings
@@ -460,9 +459,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(intervention.target.name, "modified")
         self.assertEqual(intervention.target.implantation_year, target_year)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_form_default_stake(self):
         """
         Without segmentation dynamic we do not have paths so we can't put any stake by default coming from paths
@@ -492,9 +488,6 @@ class InterventionViewsTest(CommonTest):
         projects = form.fields["project"].queryset.all()
         self.assertCountEqual(projects, [p1])
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_csv_on_topology_multiple_paths(self):
         # We create an intervention on multiple paths and we check in csv target's field we have all the paths
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
@@ -542,9 +535,6 @@ class InterventionViewsTest(CommonTest):
         response = self.client.get(i.get_update_url())
         self.assertEqual(response.status_code, 302)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_creation_form_line(self):
         path = PathFactory.create(
             geom=LineString(

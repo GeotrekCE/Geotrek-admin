@@ -3,7 +3,7 @@ import os
 from copy import copy
 from datetime import date
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 from unittest.mock import Mock
 from urllib.parse import urlparse
 
@@ -11,7 +11,6 @@ from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiLineString, Point, WKTWriter
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management import call_command
-from django.core.management.base import CommandError
 from django.test import SimpleTestCase, TestCase
 from django.test.utils import override_settings
 
@@ -198,16 +197,6 @@ class POIParserTests(TestCase):
         cls.poi_type_e = POIType.objects.create(label="équipement")
         cls.poi_type_s = POIType.objects.create(label="signaletique")
         cls.filetype = FileType.objects.create(type="Photographie")
-
-    def test_import_cmd_raises_error_when_no_path(self):
-        filename = os.path.join(os.path.dirname(__file__), "data", "poi.shp")
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'POI' objects",
-        ):
-            call_command(
-                "import", "geotrek.trekking.parsers.POIParser", filename, verbosity=0
-            )
 
     def test_import_cmd_raises_wrong_geom_type(self):
         PathFactory.create(geom=LineString((0, 0), (0, 10), srid=4326))
@@ -1071,36 +1060,6 @@ class POIGeotrekParserTests(GeotrekParserTestMixin, TestCase):
             cls.path = PathFactory.create()
         cls.filetype = FileType.objects.create(type="Photographie")
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    @mock.patch("requests.get")
-    @mock.patch("requests.head")
-    def test_import_cmd_raises_error_when_no_path(self, mocked_head, mocked_get):
-        self.mock_time = 0
-        self.mock_json_order = [
-            ("trekking", "structure.json"),
-            ("trekking", "poi_type.json"),
-            ("trekking", "poi_ids.json"),
-            ("trekking", "poi.json"),
-        ]
-        # Mock GET
-        mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = self.mock_json
-        mocked_get.return_value.content = b""
-        mocked_head.return_value.status_code = 200
-
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'POI' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.trekking.tests.test_parsers.TestGeotrekPOIParser",
-                verbosity=0,
-            )
-
     @mock.patch("requests.get")
     @mock.patch("requests.head")
     @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="en")
@@ -1159,36 +1118,6 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         cls.filetype = FileType.objects.create(type="Photographie")
         if settings.TREKKING_TOPOLOGY_ENABLED:
             cls.path = PathFactory.create()
-
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    @mock.patch("requests.get")
-    @mock.patch("requests.head")
-    def test_import_cmd_raises_error_when_no_path(self, mocked_head, mocked_get):
-        self.mock_time = 0
-        self.mock_json_order = [
-            ("trekking", "structure.json"),
-            ("trekking", "service_type.json"),
-            ("trekking", "service_ids.json"),
-            ("trekking", "service.json"),
-        ]
-        # Mock GET
-        mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = self.mock_json
-        mocked_get.return_value.content = b""
-        mocked_head.return_value.status_code = 200
-
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'Service' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.trekking.tests.test_parsers.TestGeotrekServiceParser",
-                verbosity=0,
-            )
 
     @mock.patch("requests.get")
     @mock.patch("requests.head")
@@ -1286,7 +1215,6 @@ class TestApidaeTrekSameValueDefaultLanguageDifferentTranslationParser(
         return description
 
 
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
 class ApidaeTrekParserTests(TestCase):
     @staticmethod
     def make_dummy_get(apidae_data_file):
@@ -2169,24 +2097,6 @@ class ApidaePOIParserTests(TestCase):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             cls.path = PathFactory.create()
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    @mock.patch("requests.get")
-    def test_import_cmd_raises_error_when_no_path(self, mocked_get):
-        mocked_get.side_effect = self.make_dummy_get("a_poi.json")
-
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'POI' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.trekking.tests.test_parsers.TestApidaePOIParser",
-                verbosity=0,
-            )
-
     @mock.patch("requests.get")
     def test_POI_is_imported(self, mocked_get):
         mocked_get.side_effect = self.make_dummy_get("a_poi.json")
@@ -2275,24 +2185,6 @@ class ApidaeServiceParserTests(TestCase):
             "A service type must be specified in the parser configuration.",
         ):
             TestApidaeServiceParserMissingType()
-
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    @mock.patch("requests.get")
-    def test_import_cmd_raises_error_when_no_path(self, mocked_get):
-        mocked_get.side_effect = self.make_dummy_get("service.json")
-
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'Service' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.trekking.tests.test_parsers.TestApidaeServiceParser",
-                verbosity=0,
-            )
 
     @mock.patch("requests.get")
     def test_skip_row_and_continue_when_wrong_geometry(self, mocked_get):
@@ -2422,7 +2314,6 @@ class SchemaRandonneeParserWithLicenseCreation(SchemaRandonneeParser):
     field_options = {"attachments": {"create_license": True}}
 
 
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
 class SchemaRandonneeParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -2804,21 +2695,6 @@ class OpenStreetMapPOIParserTest(TestCase):
         )
         cls.import_POI()
         cls.objects = POI.objects.all()
-
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_import_cmd_raises_error_when_no_path(self):
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'POI' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.trekking.tests.test_parsers.TestPOIOpenStreetMapParser",
-                verbosity=0,
-            )
 
     def test_create_POI_OSM(self):
         self.assertEqual(self.objects.count(), 4)

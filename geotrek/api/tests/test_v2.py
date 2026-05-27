@@ -2,7 +2,6 @@ import datetime
 import json
 import re
 from functools import partial
-from unittest import skipIf
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -6483,9 +6482,6 @@ class AltimetryCacheTests(BaseApiTest):
         )
         cls.trek = trek_factory.TrekFactory.create(paths=[cls.path])
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_cache_is_used_when_getting_trek_DEM(self):
         with self.assertNumQueries(10):
             response = self.client.get(reverse("apiv2:trek-dem", args=(self.trek.pk,)))
@@ -6497,9 +6493,6 @@ class AltimetryCacheTests(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/json")
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     def test_cache_is_used_when_getting_trek_DEM_nds(self):
         trek = trek_factory.TrekFactory.create(
             geom=LineString((1, 101), (81, 101), (81, 99))

@@ -1,5 +1,3 @@
-from unittest import skipIf
-
 from django.conf import settings
 from django.contrib.gis.geos import (
     GeometryCollection,
@@ -303,7 +301,6 @@ class InterventionContractorsFilterTest(TestCase):
         self.assertEqual(project_filter.qs.count(), 0)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class InterventionFilteringByLandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -377,9 +374,6 @@ class InterventionFilteringByLandTest(TestCase):
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], self.seek_inter)
 
-    @skipIf(
-        "geotrek.outdoor" not in settings.INSTALLED_APPS, "Outdoor module not installed"
-    )
     def test_filter_by_target_site(self):
         # filter by target
         data = {"on": "site"}
@@ -387,9 +381,6 @@ class InterventionFilteringByLandTest(TestCase):
         self.assertEqual(len(qs), 1)
         self.assertEqual(qs[0], self.seek_site)
 
-    @skipIf(
-        "geotrek.outdoor" not in settings.INSTALLED_APPS, "Outdoor module not installed"
-    )
     def test_filter_by_target_course(self):
         # filter by target
         data = {"on": "course"}
@@ -408,7 +399,6 @@ class ProjectFilteringByYearTest(TestCase):
         self.assertEqual(filterset.qs[0], project)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class ProjectFilteringByLandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
