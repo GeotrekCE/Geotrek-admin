@@ -1,0 +1,49 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "menu": {
+    "browse": "Browse",
+    "create": "Create",
+    "sync": "Synchronization",
+    "settings": "Settings"
+  },
+  "login": {
+    "title": "Welcome to Geotrek Admin Mobile",
+    "description": "Log in to synchronize your data and access your field features.",
+    "form": {
+      "title": "Identification",
+      "user-name": {
+        "label": "Username",
+        "placeholder": "Enter the username",
+        "required-message": "The username is required."
+      },
+      "password": {
+        "label": "Password",
+        "placeholder": "Enter your password",
+        "required-message": "The password is required"
+      },
+      "submit": "Login"
+    },
+    "loading": "Identification...",
+    "success": "Connection successful"
+  },
+  "settings": {
+    "title": "Settings",
+    "preferences": {
+      "lang": {
+        "title": "Application language"
+      },
+      "theme": {
+        "title": "Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System"
+      },
+      "title": "Display preferences"
+    },
+    "user": {
+      "logout": "Log out",
+      "logout-success": "You are disconnected",
+      "logout-fail": "Your session has expired, please login again."
+    }
+  }
+}
