@@ -1,3 +1,4 @@
+import copy
 import importlib
 import json
 import logging
@@ -15,7 +16,7 @@ from os.path import dirname
 from pathlib import PurePath
 from time import sleep
 from urllib.parse import urlparse
-import copy
+
 import magic
 import requests
 import xlrd
@@ -1736,7 +1737,6 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
-
 
         self.field_options = copy.deepcopy(self.field_options)
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
