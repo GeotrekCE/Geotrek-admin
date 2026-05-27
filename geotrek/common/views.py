@@ -682,6 +682,8 @@ class ConfigView(APIView):
         user = request.user
         user_profile = UserProfile.objects.get(user=user)
 
+        layers = self.get_layers() if os.path.exists(self.pmtiles_folder) else []
+
         data = {
             "settings": {
                 "intervalSyncInHours": {
@@ -689,7 +691,7 @@ class ConfigView(APIView):
                     "references": settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],
                 },
                 "maps": {
-                    "layers": self.get_layers(),
+                    "layers": layers,
                     "localOptions": {
                         "minZoom": settings.GTAM_CONFIG["SYNC_MAP_MIN_ZOOM"],
                     },
