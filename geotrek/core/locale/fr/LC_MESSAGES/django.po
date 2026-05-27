@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-11 16:35+0000\n"
+"POT-Creation-Date: 2026-05-27 20:07+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
@@ -69,10 +69,6 @@ msgstr "Labellisations"
 
 msgid "path"
 msgstr "tronçon"
-
-#, python-format
-msgid "You need to add a network of paths before importing '%(model)s' objects"
-msgstr "Vous devez ajouter un réseau de tronçons avant d'importer des objets de type '%(model)s'"
 
 #, python-format
 msgid "Invalid geometry type: should be 'Point', not '%(geom_type)s'"
