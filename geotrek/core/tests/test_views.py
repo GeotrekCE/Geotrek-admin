@@ -741,9 +741,9 @@ class PathRouteViewTestCase(TestCase):
         for geom in cls.path_geometries.values():
             geom.transform(settings.SRID)
 
-        cls.steps_positions = {
-            "1": {"positionOnPath": 0},  # Start of path1
-            "2": {"positionOnPath": 0},  # Start of path2
+        cls.steps_coordinates = {
+            "1": {"lat": 43.5689304, "lng": 1.3974995},  # Start of path1
+            "2": {"lat": 43.538244, "lng": 1.3964173},  # Start of path2
         }
 
     def setUp(self):
@@ -902,12 +902,12 @@ class PathRouteViewTestCase(TestCase):
         path_geom.transform(settings.SRID)
         path = PathFactory(geom=path_geom)
         response = self.get_route_geometry(
-            {"steps": [{"path_id": path.pk, "positionOnPath": 0.5}]}
+            {"steps": [{"path_id": path.pk, "lat": 48.866667, "lng": 2.333333}]}
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(response.data.get("error"), "There must be at least 2 steps")
 
-    def test_route_geometry_fail_no_position_on_path(self):
+    def test_route_geometry_fail_no_lat(self):
         path_geom = LineString(
             [
                 [1.3664246, 43.4569065],
@@ -920,15 +920,39 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path.pk, "positionOnPath": 0.5},
-                    {"path_id": path.pk},
+                    {"path_id": path.pk, "lng": 2.333333},
+                    {"path_id": path.pk, "lat": 47.866667, "lng": 1.333333},
                 ]
             }
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data.get("error"),
-            "Each step should contain a valid position on its associated path (between 0 and 1)",
+            "Each step should contain a valid lat and lng",
+        )
+
+    def test_route_geometry_fail_no_lng(self):
+        path_geom = LineString(
+            [
+                [1.3664246, 43.4569065],
+                [1.6108704, 43.4539158],
+            ],
+            srid=settings.API_SRID,
+        )
+        path_geom.transform(settings.SRID)
+        path = PathFactory(geom=path_geom)
+        response = self.get_route_geometry(
+            {
+                "steps": [
+                    {"path_id": path.pk, "lat": 48.866667},
+                    {"path_id": path.pk, "lat": 47.866667, "lng": 1.333333},
+                ]
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data.get("error"),
+            "Each step should contain a valid lat and lng",
         )
 
     def test_route_geometry_fail_no_path_id(self):
@@ -944,8 +968,8 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path.pk, "positionOnPath": 0.5},
-                    {"positionOnPath": 0.6},
+                    {"path_id": path.pk, "lat": 40.5267991, "lng": 0.5305685},
+                    {"lat": 40.5266465, "lng": 0.5765381},
                 ]
             }
         )
@@ -954,7 +978,7 @@ class PathRouteViewTestCase(TestCase):
             response.data.get("error"), "Each step should contain a valid path id"
         )
 
-    def test_route_geometry_fail_incorrect_position_on_path(self):
+    def test_route_geometry_fail_incorrect_lat(self):
         path_geom = LineString(
             [
                 [1.3664246, 43.4569065],
@@ -967,41 +991,65 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path.pk, "positionOnPath": 0.5},
-                    {"path_id": path.pk, "positionOnPath": 1.1},
+                    {"path_id": path.pk, "lat": 1000, "lng": 2.333333},
+                    {"path_id": path.pk, "lat": 47.866667, "lng": 1.333333},
                 ]
             }
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data.get("error"),
-            "Each step should contain a valid position on its associated path (between 0 and 1)",
+            "Each step should contain a valid lat and lng",
         )
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path.pk, "positionOnPath": 0.5},
-                    {"path_id": path.pk, "positionOnPath": -0.5},
+                    {"path_id": path.pk, "lat": "abc", "lng": 2.333333},
+                    {"path_id": path.pk, "lat": 47.866667, "lng": 1.333333},
                 ]
             }
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data.get("error"),
-            "Each step should contain a valid position on its associated path (between 0 and 1)",
+            "Each step should contain a valid lat and lng",
+        )
+
+    def test_route_geometry_fail_incorrect_lng(self):
+        path_geom = LineString(
+            [
+                [1.3664246, 43.4569065],
+                [1.6108704, 43.4539158],
+            ],
+            srid=settings.API_SRID,
+        )
+        path_geom.transform(settings.SRID)
+        path = PathFactory(geom=path_geom)
+        response = self.get_route_geometry(
+            {
+                "steps": [
+                    {"path_id": path.pk, "lat": 48.866667, "lng": 1000},
+                    {"path_id": path.pk, "lat": 47.866667, "lng": 1.333333},
+                ]
+            }
+        )
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.data.get("error"),
+            "Each step should contain a valid lat and lng",
         )
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path.pk, "positionOnPath": 0.5},
-                    {"path_id": path.pk, "positionOnPath": "abc"},
+                    {"path_id": path.pk, "lat": 48.866667, "lng": "abc"},
+                    {"path_id": path.pk, "lat": 47.866667, "lng": 1.333333},
                 ]
             }
         )
         self.assertEqual(response.status_code, 400)
         self.assertEqual(
             response.data.get("error"),
-            "Each step should contain a valid position on its associated path (between 0 and 1)",
+            "Each step should contain a valid lat and lng",
         )
 
     def test_route_geometry_fail_incorrect_path_id(self):
@@ -1017,8 +1065,8 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": 0, "positionOnPath": 0.5},
-                    {"path_id": "abc", "positionOnPath": 0.6},
+                    {"path_id": 0, "lat": 48.866667, "lng": 1.333333},
+                    {"path_id": "abc", "lat": 47.866667, "lng": 1.333333},
                 ]
             }
         )
@@ -1029,8 +1077,8 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": 0, "positionOnPath": 0.5},
-                    {"path_id": -999, "positionOnPath": 0.6},
+                    {"path_id": -999, "lat": 48.866667, "lng": 1.333333},
+                    {"path_id": 0, "lat": 47.866667, "lng": 1.333333},
                 ]
             }
         )
@@ -1055,8 +1103,8 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path.pk, "positionOnPath": 0.5},
-                    {"path_id": path.pk, "positionOnPath": 0.6},
+                    {"path_id": path.pk, "lat": 40.5267991, "lng": 0.5305685},
+                    {"path_id": path.pk, "lat": 40.5266465, "lng": 0.5765381},
                 ]
             }
         )
@@ -1090,11 +1138,13 @@ class PathRouteViewTestCase(TestCase):
                 "steps": [
                     {
                         "path_id": path.pk,
-                        "positionOnPath": 0.15786509111560937,
+                        "lat": 43.456434372150945,
+                        "lng": 1.4050149210509666,
                     },
                     {
                         "path_id": path.pk,
-                        "positionOnPath": 0.8263090975648387,
+                        "lat": 43.45443525706161,
+                        "lng": 1.568413282119847,
                     },
                 ]
             }
@@ -1107,8 +1157,8 @@ class PathRouteViewTestCase(TestCase):
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.405015712586833, 43.456471017237945],
-                            [1.568414248971203, 43.454474816201596],
+                            [1.405015712586838, 43.45647101723782],
+                            [1.568414248971206, 43.45447481620145],
                         ],
                     }
                 ],
@@ -1165,8 +1215,8 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path1.pk, "positionOnPath": 0},
-                    {"path_id": path2.pk, "positionOnPath": 1},
+                    {"path_id": path1.pk, "lat": 43.5271443, "lng": 1.3904572},
+                    {"path_id": path2.pk, "lat": 43.5803909, "lng": 1.4447021},
                 ]
             }
         )
@@ -1178,9 +1228,9 @@ class PathRouteViewTestCase(TestCase):
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.390457746732034, 43.52714429900574],
-                            [1.4451303, 43.5270311],
-                            [1.444702104285982, 43.580390366392024],
+                            [1.390457746732034, 43.52714429900562],
+                            [1.4451303, 43.5270310999999],
+                            [1.444702104285981, 43.58039036639194],
                         ],
                     }
                 ],
@@ -1236,8 +1286,16 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path1.pk, "positionOnPath": 0},
-                    {"path_id": path2.pk, "positionOnPath": 1},
+                    {
+                        "path_id": path1.pk,
+                        "lat": 43.527135311804756,
+                        "lng": 1.3904500476832382,
+                    },
+                    {
+                        "path_id": path2.pk,
+                        "lat": 43.58036766894093,
+                        "lng": 1.4436857661188676,
+                    },
                 ]
             }
         )
@@ -1288,8 +1346,16 @@ class PathRouteViewTestCase(TestCase):
         response = self.get_route_geometry(
             {
                 "steps": [
-                    {"path_id": path1.pk, "positionOnPath": 0},
-                    {"path_id": path2.pk, "positionOnPath": 1},
+                    {
+                        "path_id": path1.pk,
+                        "lat": 43.527135311804756,
+                        "lng": 1.3904500476832382,
+                    },
+                    {
+                        "path_id": path2.pk,
+                        "lat": 43.58036766894093,
+                        "lng": 1.4436857661188676,
+                    },
                 ]
             }
         )
@@ -1324,15 +1390,18 @@ class PathRouteViewTestCase(TestCase):
                 "steps": [
                     {
                         "path_id": path.pk,
-                        "positionOnPath": 0.06234123320580364,
+                        "lat": 43.45672005573014,
+                        "lng": 1.3816640340701447,
                     },
                     {
                         "path_id": path.pk,
-                        "positionOnPath": 0.47200610033599394,
+                        "lat": 43.45549487037786,
+                        "lng": 1.4818060951734013,
                     },
                     {
                         "path_id": path.pk,
-                        "positionOnPath": 0.8600553166716347,
+                        "lat": 43.4543343323152,
+                        "lng": 1.5766622578279499,
                     },
                 ]
             }
@@ -1346,15 +1415,15 @@ class PathRouteViewTestCase(TestCase):
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.381664375566537, 43.45673616853231],
-                            [1.481807670658968, 43.45556356375525],
+                            [1.381664375566539, 43.4567361685322],
+                            [1.481807670658969, 43.45556356375513],
                         ],
                     },
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.481807670658968, 43.45556356375525],
-                            [1.576663073400379, 43.45436750716393],
+                            [1.481807670658969, 43.45556356375513],
+                            [1.576663073400372, 43.45436750716386],
                         ],
                     },
                 ],
@@ -1418,19 +1487,23 @@ class PathRouteViewTestCase(TestCase):
                 "steps": [
                     {
                         "path_id": path1.pk,
-                        "positionOnPath": 0.1585837876873254,
+                        "lat": 43.57192876776824,
+                        "lng": 1.4447700319492318,
                     },
                     {
                         "path_id": path3.pk,
-                        "positionOnPath": 0.19588517457745494,
+                        "lat": 43.546062327348785,
+                        "lng": 1.5300238809766273,
                     },
                     {
                         "path_id": path3.pk,
-                        "positionOnPath": 0.47415881891337064,
+                        "lat": 43.57342803491799,
+                        "lng": 1.5292498854902847,
                     },
                     {
                         "path_id": path3.pk,
-                        "positionOnPath": 0.7474538771223748,
+                        "lat": 43.60030465103801,
+                        "lng": 1.5284893807630917,
                     },
                 ]
             }
@@ -1443,24 +1516,24 @@ class PathRouteViewTestCase(TestCase):
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.444770058683146, 43.57192876788173],
-                            [1.4451303, 43.5270311],
-                            [1.5305685, 43.5267991],
-                            [1.530024258596995, 43.54606233299541],
+                            [1.444770058683145, 43.57192876788164],
+                            [1.4451303, 43.5270310999999],
+                            [1.5305685, 43.526799099999884],
+                            [1.530024258596995, 43.546062332995334],
                         ],
                     },
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.530024258596995, 43.54606233299541],
-                            [1.529250483611507, 43.57342804386202],
+                            [1.530024258596995, 43.54606233299537],
+                            [1.52925048361151, 43.5734280438619],
                         ],
                     },
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.529250483611507, 43.57342804386202],
-                            [1.528489833875647, 43.60030465781379],
+                            [1.52925048361151, 43.5734280438619],
+                            [1.528489833875641, 43.60030465781372],
                         ],
                     },
                 ],
@@ -1516,8 +1589,8 @@ class PathRouteViewTestCase(TestCase):
 
         steps = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
         response1 = self.get_route_geometry(steps)
@@ -1534,8 +1607,8 @@ class PathRouteViewTestCase(TestCase):
 
         steps = {
             "steps": [
-                dict(ChainMap({"path_id": path3.pk}, {"positionOnPath": 1})),
-                dict(ChainMap({"path_id": path3.pk}, {"positionOnPath": 0})),
+                dict(ChainMap({"path_id": path3.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path3.pk}, self.steps_coordinates["2"])),
             ]
         }
         response2 = self.get_route_geometry(steps)
@@ -1547,8 +1620,8 @@ class PathRouteViewTestCase(TestCase):
                     {
                         "type": "LineString",
                         "coordinates": [
-                            [1.3974995, 43.5689304],
-                            [1.3964173, 43.538244],
+                            [1.3974995, 43.56893039999986],
+                            [1.3964173, 43.538243999999885],
                         ],
                     }
                 ],
@@ -1581,8 +1654,8 @@ class PathRouteViewTestCase(TestCase):
         path4 = PathFactory(geom=self.path_geometries["4"], draft=True)
         steps = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
 
@@ -1633,8 +1706,8 @@ class PathRouteViewTestCase(TestCase):
         path4 = PathFactory(geom=self.path_geometries["4"])
         steps = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
 
@@ -1682,8 +1755,8 @@ class PathRouteViewTestCase(TestCase):
         path4 = PathFactory(geom=self.path_geometries["4"], visible=False)
         steps = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
 
@@ -1734,8 +1807,8 @@ class PathRouteViewTestCase(TestCase):
         path4 = PathFactory(geom=self.path_geometries["4"])
         steps = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
 
@@ -1782,8 +1855,8 @@ class PathRouteViewTestCase(TestCase):
         path2 = PathFactory(geom=self.path_geometries["2"])
         steps = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
 
@@ -1830,8 +1903,8 @@ class PathRouteViewTestCase(TestCase):
         path4 = PathFactory(geom=self.path_geometries["4"])
         steps = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
 
@@ -1884,8 +1957,8 @@ class PathRouteViewTestCase(TestCase):
         path3 = PathFactory(geom=self.path_geometries["3"])
         steps = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
 
@@ -1924,8 +1997,8 @@ class PathRouteViewTestCase(TestCase):
         path4 = PathFactory(geom=self.path_geometries["4"])
         steps = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
 
@@ -1977,8 +2050,8 @@ class PathRouteViewTestCase(TestCase):
 
         steps = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
 
@@ -2028,8 +2101,8 @@ class PathRouteViewTestCase(TestCase):
 
         steps = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
         response1 = self.get_route_geometry(steps)
