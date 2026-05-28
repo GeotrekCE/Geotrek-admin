@@ -323,18 +323,6 @@ Only externally imported PDFs with the "Topoguide" file type are used, rather th
     
                ONLY_EXTERNAL_PUBLIC_PDF = True
 
-**Order of all the objects without practices on Geotrek-rando website** :
-
-.. code-block:: python
-
-    TREK_CATEGORY_ORDER = 1
-    ITINERANCY_CATEGORY_ORDER = 2
-    TOURISTIC_EVENT_CATEGORY_ORDER = 99
-
-.. note::
-  - Order settings determine the display order within the Geotrek-rando website.
-  - Practices for treks, and touristic content categories are taken into account.
-
 Trek export 
 ~~~~~~~~~~~~
 
