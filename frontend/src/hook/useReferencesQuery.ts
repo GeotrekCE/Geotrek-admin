@@ -13,7 +13,7 @@ import {
   type ReportReferencesSchemaProps,
   type SignageReferencesSchemaProps,
 } from "@/schemas/references"
-import { useSettingsQueryOfflineFirst } from "@/hook/useSettingsQuery"
+import { useSettingsQuery } from "@/hook/useSettingsQuery"
 
 export type StoredReferences = {
   references: {
@@ -35,7 +35,7 @@ export const INTERVENTION_REFERENCES_QUERY_KEY = ["references", "intervention"]
 export const REPORT_REFERENCES_QUERY_KEY = ["references", "report"]
 
 export function useReferencesQuery() {
-  const settings = useSettingsQueryOfflineFirst()
+  const settings = useSettingsQuery()
   const {
     signage = {},
     infrastructure = {},

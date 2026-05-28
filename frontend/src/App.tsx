@@ -12,7 +12,7 @@ import { API_URL } from "@/lib/api"
 import { AuthProvider, useAuth } from "@/lib/auth"
 import useTokens from "@/hook/useTokens"
 import { deLocalizeUrl, localizeUrl } from "@/paraglide/runtime"
-import { getSerwist } from "virtual:serwist"
+import { useAppInit } from "@/hook/useAppInit"
 
 // import { get, set, del, createStore, type UseStore } from "idb-keyval"
 
@@ -153,21 +153,7 @@ function InnerApp() {
 }
 
 export function App() {
-  React.useEffect(() => {
-    const loadSerwist = async () => {
-      if ("serviceWorker" in navigator) {
-        const serwist = await getSerwist()
-
-        serwist?.addEventListener("installed", () => {
-          console.log("Serwist installed!")
-        })
-
-        void serwist?.register()
-      }
-    }
-
-    loadSerwist()
-  }, [])
+  useAppInit()
 
   return (
     <AuthProvider>
