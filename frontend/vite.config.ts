@@ -9,10 +9,12 @@ import { defineConfig, loadEnv } from "vite"
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), "")
   const __HOST_URL__ = JSON.stringify(env.HOST_URL)
+  const basePath = !env.APP_ENV.startsWith("dev") ? "/offline/" : "/"
   return {
     define: {
       __HOST_URL__,
     },
+    base: basePath,
     plugins: [
       paraglideVitePlugin({
         project: "./project.inlang",
@@ -21,17 +23,17 @@ export default defineConfig(({ mode }) => {
         strategy: ["cookie", "url", "preferredLanguage", "baseLocale"],
         urlPatterns: [
           {
-            pattern: "/",
+            pattern: basePath,
             localized: [
-              ["fr", "/fr"],
-              ["en", "/en"],
+              ["fr", `${basePath}fr`],
+              ["en", `${basePath}en`],
             ],
           },
           {
-            pattern: "/:path(.*)?",
+            pattern: `${basePath}:path(.*)?`,
             localized: [
-              ["fr", "/fr/:path(.*)?"],
-              ["en", "/en/:path(.*)?"],
+              ["fr", `${basePath}fr/:path(.*)?`],
+              ["en", `${basePath}en/:path(.*)?`],
             ],
           },
         ],
@@ -39,7 +41,6 @@ export default defineConfig(({ mode }) => {
       tanstackRouter({
         target: "react",
         autoCodeSplitting: true,
-        basePath: !env.DEV && !!__HOST_URL__ ? `${__HOST_URL__}/offline/` : "/",
       }),
       tailwindcss(),
       react(),
