@@ -1,11 +1,11 @@
 {
   "name": "Geotrek Admin Mobile",
-  "short_name": "GTAM",
+  "short_name": "Geotrek Admin Mobile",
   "description": "Geotrek Admin Mobile",
   "dir": "auto",
   "display": "standalone",
   "orientation": "any",
-  "start_url": "/",
+  "start_url": "/offline/",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "icons": [
