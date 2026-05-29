@@ -5,7 +5,9 @@ export const Route = createFileRoute("/{-$locale}/_authenticated")({
     if (!context.auth.isAuthenticated) {
       throw redirect({
         to: "/{-$locale}/login",
-        search: { redirect: location.href },
+        search: {
+          redirect: location.pathname.replace(import.meta.env.BASE_URL, "/"),
+        },
       })
     }
   },

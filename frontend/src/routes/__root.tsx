@@ -23,7 +23,9 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   beforeLoad: async () => {
     document.documentElement.setAttribute("lang", getLocale())
 
-    const decision = await shouldRedirect({ url: window.location.href })
+    const decision = await shouldRedirect({
+      url: window.location.pathname.replace(import.meta.env.BASE_URL, "/"),
+    })
 
     if (decision.redirectUrl) {
       throw redirect({ href: decision.redirectUrl.href })

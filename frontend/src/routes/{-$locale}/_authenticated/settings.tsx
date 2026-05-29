@@ -36,7 +36,12 @@ function RouteComponent() {
             logout()
             navigate({
               to: "/{-$locale}/login",
-              search: { redirect: window.location.pathname },
+              search: {
+                redirect: window.location.pathname.replace(
+                  import.meta.env.BASE_URL,
+                  "/"
+                ),
+              },
             })
           }}
         >
