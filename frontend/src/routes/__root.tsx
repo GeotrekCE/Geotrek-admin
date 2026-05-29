@@ -30,7 +30,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
     }
   },
   component: () => (
-    <div className="flex min-h-screen flex-col">
+    <div className="flex min-h-dvh flex-col">
       <main className="flex grow flex-col">
         <Outlet />
       </main>
