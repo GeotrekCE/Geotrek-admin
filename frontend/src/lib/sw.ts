@@ -73,6 +73,16 @@ const serwist = new Serwist({
   clientsClaim: true,
   navigationPreload: true,
   runtimeCaching,
+  fallbacks: {
+    entries: [
+      {
+        url: "/offline/index.html",
+        matcher({ request }) {
+          return request.mode === "navigate"
+        },
+      },
+    ],
+  },
 })
 
 serwist.addEventListeners()
