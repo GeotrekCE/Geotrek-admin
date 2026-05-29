@@ -5,7 +5,7 @@ CHANGELOG
 2.124.4+dev     (XXXX-XX-XX)
 ----------------------------
 
-**Clean**
+**Cleanup**
 
 * Delete outdated settings related to categories and pictures (refs #4482) 
 
