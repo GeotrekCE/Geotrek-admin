@@ -5,7 +5,7 @@
   "dir": "auto",
   "display": "standalone",
   "orientation": "any",
-  "start_url": "/",
+  "start_url": "/offline/",
   "scope": "/offline/",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
