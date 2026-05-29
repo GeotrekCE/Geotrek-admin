@@ -76,7 +76,7 @@ const serwist = new Serwist({
   fallbacks: {
     entries: [
       {
-        url: "/offline/index.html",
+        url: `${import.meta.env.BASE_URL}index.html`,
         matcher({ request }) {
           return request.mode === "navigate"
         },

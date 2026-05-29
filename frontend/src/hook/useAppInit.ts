@@ -24,7 +24,7 @@ export function useAppInit() {
   onlineManager.setEventListener((setOnline) => {
     const check = async () => {
       try {
-        await fetch(`${import.meta.env.DEV ? "/" : "/offline/"}ping`, {
+        await fetch(`${import.meta.env.BASE_URL}ping`, {
           cache: "no-store",
           method: "HEAD",
         })
