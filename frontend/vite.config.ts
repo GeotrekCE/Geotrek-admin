@@ -46,6 +46,7 @@ export default defineConfig(({ mode }) => {
       tailwindcss(),
       react(),
       serwist({
+        base: basePath,
         swSrc: "src/lib/sw.ts",
         swDest: "sw.js",
         globDirectory: "dist",
