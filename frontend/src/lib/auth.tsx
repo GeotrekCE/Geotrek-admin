@@ -3,6 +3,7 @@ import { API_URL } from "@/lib/api"
 import useTokens from "@/hook/useTokens"
 import { toast } from "sonner"
 import { m } from "@/paraglide/messages"
+import type { Query } from "@tanstack/react-query"
 
 interface Tokens {
   accessToken: string
@@ -14,6 +15,7 @@ interface AuthState {
   tokens: Tokens | null
   login: (username: string, password: string) => Promise<void>
   logout: (isExpired?: boolean) => void
+  refreshAuthToken: (query: Query) => void
 }
 
 const AuthContext = React.createContext<AuthState | undefined>(undefined)
@@ -23,6 +25,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = React.useState(
     tokens.accessToken !== null
   )
+  const [refreshingToken, setRefreshingToken] = React.useState(false)
+
   const login = async (username: string, password: string) => {
     const response = await fetch(`${API_URL}/auth/token/`, {
       method: "POST",
@@ -42,6 +46,39 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           errorData.detail || "Echec de l'authentification, veuillez réessayer"
         )
       })
+    }
+  }
+
+  const refreshAuthToken = async (query: Query) => {
+    if (!refreshingToken && tokens.refreshToken) {
+      try {
+        setRefreshingToken(true)
+
+        const response = await fetch(`${API_URL}/auth/refresh-token/`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${tokens.accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ refresh: tokens.refreshToken }),
+        })
+
+        if (!response.ok) {
+          throw new Error("Failed to refresh token")
+        }
+
+        const token = await response.json()
+
+        setAuthToken(token)
+        query.fetch()
+      } catch {
+        logout()
+      } finally {
+        setRefreshingToken(false)
+      }
+    }
+    if (!refreshingToken && !tokens.refreshToken) {
+      logout(true)
     }
   }
 
@@ -68,6 +105,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         tokens,
         login,
         logout,
+        refreshAuthToken,
       }}
     >
       {children}

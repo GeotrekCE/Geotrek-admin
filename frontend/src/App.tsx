@@ -1,6 +1,11 @@
 import * as React from "react"
 import { ZodError } from "zod"
-import { MutationCache, QueryCache, QueryClient } from "@tanstack/react-query"
+import {
+  MutationCache,
+  Query,
+  QueryCache,
+  QueryClient,
+} from "@tanstack/react-query"
 import { routeTree } from "./routeTree.gen"
 import { createRouter, RouterProvider } from "@tanstack/react-router"
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
@@ -8,9 +13,7 @@ import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persi
 import { compress, decompress } from "lz-string"
 import { toast } from "sonner"
 import { Toaster } from "@/components/ui/sonner"
-import { API_URL } from "@/lib/api"
 import { AuthProvider, useAuth } from "@/lib/auth"
-import useTokens from "@/hook/useTokens"
 import { deLocalizeUrl, localizeUrl } from "@/paraglide/runtime"
 import { useAppInit } from "@/hook/useAppInit"
 
@@ -64,40 +67,6 @@ declare module "@tanstack/react-router" {
 
 function InnerApp() {
   const auth = useAuth()
-  const { accessToken, refreshToken, setAuthToken } = useTokens()
-  const [refreshingToken, setRefreshingToken] = React.useState(false)
-
-  const refreshAuthToken = async () => {
-    if (!refreshingToken && refreshToken) {
-      try {
-        setRefreshingToken(true)
-
-        const response = await fetch(`${API_URL}/auth/refresh-token/`, {
-          method: "POST",
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ refresh: refreshToken }),
-        })
-
-        if (!response.ok) {
-          throw new Error("Failed to refresh token")
-        }
-
-        const token = await response.json()
-
-        setAuthToken(token)
-      } catch {
-        auth.logout()
-      } finally {
-        setRefreshingToken(false)
-      }
-    }
-    if (!refreshingToken && !refreshToken) {
-      auth.logout(true)
-    }
-  }
 
   const [queryClient] = React.useState(
     () =>
@@ -106,8 +75,7 @@ function InnerApp() {
           queries: {
             gcTime: Infinity,
             staleTime: Infinity,
-            retry: 1,
-            // retry = (failureCount, error) =>
+            retry: 0,
             retryOnMount: false,
           },
         },
@@ -120,7 +88,7 @@ function InnerApp() {
           },
         }),
         queryCache: new QueryCache({
-          onSettled: (data, error) => {
+          onSettled: (data, error, query) => {
             if (error instanceof ZodError) {
               toast.error("Mismatching SCHEMAS between API and app", {
                 position: "top-center",
@@ -128,7 +96,7 @@ function InnerApp() {
             }
             // @ts-expect-error - deal with API error shape
             if (error?.res?.status === 401) {
-              refreshAuthToken()
+              auth.refreshAuthToken(query as Query)
               console.log("erreur de requête:", data, error)
             }
           },

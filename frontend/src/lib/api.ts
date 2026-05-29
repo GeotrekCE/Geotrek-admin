@@ -40,13 +40,14 @@ export async function queryFn<T extends z.ZodObject | z.ZodArray>(
     },
   })
   const json = await response.json()
-  const schemaData = schema
-    ? schema.safeParse(json)
-    : { data: json, success: true, error: null }
 
   if (!response.ok) {
     throw new FetchError(response)
   }
+
+  const schemaData = schema
+    ? schema.safeParse(json)
+    : { data: json, success: true, error: null }
 
   if (schema && !schemaData.success) {
     console.error("Schema validation error", schemaData.error)
