@@ -22,28 +22,14 @@ export function useAppInit() {
 
   // Online/Offline status
   onlineManager.setEventListener((setOnline) => {
-    const check = async () => {
-      try {
-        await fetch(`${import.meta.env.BASE_URL}ping`, {
-          cache: "no-store",
-          method: "HEAD",
-        })
-        setOnline(true)
-      } catch {
-        setOnline(false)
-      }
-    }
+    const handleOnline = () => setOnline(navigator.onLine)
 
-    window.addEventListener("online", check)
-    window.addEventListener("offline", () => setOnline(false))
-
-    const interval = setInterval(check, 30000)
-    check()
+    window.addEventListener("online", handleOnline)
+    window.addEventListener("offline", handleOnline)
 
     return () => {
-      window.removeEventListener("online", check)
-      window.removeEventListener("offline", () => setOnline(false))
-      clearInterval(interval)
+      window.removeEventListener("online", handleOnline)
+      window.removeEventListener("offline", handleOnline)
     }
   })
 }
