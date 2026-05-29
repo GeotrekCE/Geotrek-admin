@@ -1,4 +1,5 @@
 import * as z from "zod"
+import { toast } from "sonner"
 import { APP_SETTINGS_QUERY_KEY } from "@/hook/useAppSettings"
 import { useStoredData } from "@/hook/useStoredData"
 import { createFileRoute, redirect } from "@tanstack/react-router"
@@ -28,6 +29,18 @@ export type ListSearchParams = z.infer<typeof schemaSearchParams>
 export const Route = createFileRoute("/{-$locale}/_authenticated/")({
   beforeLoad: ({ context }) => {
     if (!context.queryClient.getQueryData(APP_SETTINGS_QUERY_KEY)) {
+      toast.info(
+        <div>
+          <p className="font-bold">Une mise à jour est nécessaire</p>
+          <p>
+            Veuillez mettre à jour les données de référentiel de saisie avant
+            votre sortie de terrain.
+          </p>
+        </div>,
+        {
+          position: "top-center",
+        }
+      )
       throw redirect({ to: "/{-$locale}/sync" })
     }
   },
