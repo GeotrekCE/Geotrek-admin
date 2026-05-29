@@ -41,6 +41,7 @@ const persister = createAsyncStoragePersister(
 )
 
 const router = createRouter({
+  basepath: import.meta.env.BASE_URL,
   routeTree,
   scrollRestoration: true,
   context: {
