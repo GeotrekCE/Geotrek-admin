@@ -72,7 +72,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         setAuthToken(token)
         query.fetch()
       } catch {
-        logout()
+        logout(true)
       } finally {
         setRefreshingToken(false)
       }
@@ -83,8 +83,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const logout = (isExpired?: boolean) => {
-    clearAuthToken()
-    setIsAuthenticated(false)
     if (isExpired) {
       toast.info(m["settings.user.logout-fail"](), {
         position: "top-center",
