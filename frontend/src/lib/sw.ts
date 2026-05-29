@@ -83,6 +83,10 @@ const serwist = new Serwist({
       },
     ],
   },
+  precacheOptions: {
+    navigateFallback: "/offline/index.html",
+    navigateFallbackDenylist: [/^\/offline\/assets\//, /\.[a-zA-Z0-9]+$/],
+  },
 })
 
 serwist.addEventListeners()
