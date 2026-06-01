@@ -1,0 +1,58 @@
+name: frontend.yml
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - 'frontend/**'  # if geotrek code change
+      - '.github/workflows/frontend.yml'  # if lint workflow change
+
+jobs:
+  - name: Get admin and front git cache key
+    run: |
+      echo "FRONTEND_CACHE_KEY=$(git --no-pager log -1 --format="%H" -- frontend/)" >> $GITHUB_ENV
+
+  - name: Reconfigure git to use HTTP authentication
+    run: >
+      git config --global url."https://github.com/".insteadOf
+      ssh://git@github.com/
+
+  - name: Cache frontend
+    id: cache-frontend
+    uses: actions/cache@v5
+    with:
+      path: ./frontend/dist
+      key: frontend-${{ env.FRONTEND_CACHE_KEY }}
+
+  - name: Setup node for frontend
+    if: steps.cache-frontend.outputs.cache-hit != 'true'
+    uses: actions/setup-node@v6
+    with:
+      node-version-file: './frontend/.nvmrc'
+      cache: 'npm'
+      cache-dependency-path: './frontend/package-lock.json'
+
+  - name: Install frontend dependencies
+    if: steps.cache-frontend.outputs.cache-hit != 'true'
+    working-directory: ./frontend
+    run: |
+      npm ci --no-audit
+
+  - name: Build frontend
+    if: steps.cache-frontend.outputs.cache-hit != 'true'
+    working-directory: ./frontend
+    run: |
+      cp .env.dist .env
+      sed -i 's|HOST_URL=.*|HOST_URL=/|' .env
+      npm run build
+
+  - name: Lint frontend
+    if: steps.cache-frontend.outputs.cache-hit != 'true'
+    working-directory: ./frontend
+    run: |
+      npm run lint
+
+  - name: Type check
+    if: steps.cache-frontend.outputs.cache-hit != 'true'
+    working-directory: ./frontend
+    run: |
+      npm run format:check
