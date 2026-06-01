@@ -212,7 +212,7 @@ fiona==1.10.1
     #   mapentity
 fonttools==4.63.0
     # via weasyprint
-geojson==3.2.0
+geojson==3.3.0
     # via
     #   geotrek (setup.py)
     #   tif2geojson
