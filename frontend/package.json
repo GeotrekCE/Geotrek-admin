@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "prebuild": "npx @inlang/paraglide-js compile --project project.inlang",
     "build": "tsc -b && vite build",
     "tsc": "tsc -b",
     "lint": "eslint --ext .ts,.tsx",
