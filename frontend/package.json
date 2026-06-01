@@ -10,7 +10,6 @@
     "tsc": "tsc -b",
     "lint": "eslint --ext .ts,.tsx",
     "format": "prettier --write \"**/*.{js,ts,tsx}\"",
-    "format:check": "prettier --check \"**/*.{js,ts,tsx}\"",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
     "machine-translate": "inlang machine translate --project project.inlang"

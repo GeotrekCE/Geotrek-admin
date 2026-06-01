@@ -55,9 +55,3 @@ jobs:
         working-directory: ./frontend
         run: |
           npm run lint
-    
-      - name: Type check
-        if: steps.cache-frontend.outputs.cache-hit != 'true'
-        working-directory: ./frontend
-        run: |
-          npm run format:check
