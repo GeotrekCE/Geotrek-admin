@@ -799,11 +799,6 @@ TINYMCE_DEFAULT_CONFIG = {
 SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, "mobile")
 SYNC_MOBILE_OPTIONS = {"skip_tiles": False}
 
-"""
-If true; displays the attached pois pictures in the Trek's geojson pictures property.
-In Geotrek-rando it enables correlated pictures to be displayed in the slideshow.
-"""
-
 SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,
     "APIS_SORTER": "alpha",
