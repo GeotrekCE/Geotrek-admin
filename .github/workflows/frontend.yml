@@ -3,7 +3,7 @@ on:
   workflow_dispatch:
   pull_request:
     paths:
-      - 'frontend/**'  # if geotrek code change
+      - 'frontend/**'  # only if frontend code change
       - '.github/workflows/frontend.yml'  # if lint workflow change
 
 jobs:
