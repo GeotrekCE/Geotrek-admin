@@ -73,20 +73,22 @@ const serwist = new Serwist({
   clientsClaim: true,
   navigationPreload: true,
   runtimeCaching,
-  fallbacks: {
-    entries: [
-      {
-        url: `${import.meta.env.BASE_URL}index.html`,
-        matcher({ request }) {
-          return request.mode === "navigate"
+  ...(!import.meta.env.DEV && {
+    fallbacks: {
+      entries: [
+        {
+          url: `${import.meta.env.BASE_URL}index.html`,
+          matcher({ request }) {
+            return request.mode === "navigate"
+          },
         },
-      },
-    ],
-  },
-  precacheOptions: {
-    navigateFallback: "/offline/index.html",
-    navigateFallbackDenylist: [/^\/offline\/assets\//, /\.[a-zA-Z0-9]+$/],
-  },
+      ],
+    },
+    precacheOptions: {
+      navigateFallback: "/offline/index.html",
+      navigateFallbackDenylist: [/^\/offline\/assets\//, /\.[a-zA-Z0-9]+$/],
+    },
+  }),
 })
 
 serwist.addEventListeners()
