@@ -547,22 +547,18 @@ class ConfigViewTest(TestCase):
 
         Permission.objects.get_or_create(
             codename="change_geom_signage",
-            name="Can change geom signage",
             content_type=ContentType.objects.get_for_model(Signage),
         )
         perm_change_geom_infrastructure, _ = Permission.objects.get_or_create(
             codename="change_geom_infrastructure",
-            name="Can change geom infrastructure",
             content_type=ContentType.objects.get_for_model(Infrastructure),
         )
         Permission.objects.get_or_create(
             codename="change_geom_intervention",
-            name="Can change geom intervention",
             content_type=ContentType.objects.get_for_model(Intervention),
         )
         Permission.objects.get_or_create(
             codename="change_geom_report",
-            name="Can change geom report",
             content_type=ContentType.objects.get_for_model(Report),
         )
         perm_add_signage = Permission.objects.get(codename="add_signage")
