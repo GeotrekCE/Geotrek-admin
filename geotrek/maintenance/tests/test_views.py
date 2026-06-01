@@ -644,9 +644,6 @@ class ProjectViewsTest(CommonTest):
             f"</div>"
         )
 
-    def _check_update_geom_permission(self, response):
-        pass
-
     def test_project_layer(self):
         p1 = ProjectFactory.create()
         ProjectFactory.create()
