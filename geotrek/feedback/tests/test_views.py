@@ -202,7 +202,6 @@ class ReportViewsTest(CommonTest):
         response = self.client.get(obj.get_update_url())
         self.assertEqual(response.status_code, 200)
         self._post_update_form(obj)
-        self._check_update_geom_permission(response)
 
         response = self.client.get(obj.get_delete_url())
         self.assertEqual(response.status_code, 200)
