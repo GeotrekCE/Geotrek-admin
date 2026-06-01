@@ -10,6 +10,7 @@ on:
       - 'docs/**'
       - 'frontend/**'
       - '.github/workflows/doc.yml'
+      - '.github/workflows/frontend.yml'
   push:
     branches:
       - master
@@ -18,6 +19,7 @@ on:
       - 'docs/**'
       - 'frontend/**'
       - '.github/workflows/doc.yml'
+      - '.github/workflows/frontend.yml'
   release:
     types:
       - created
