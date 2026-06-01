@@ -419,10 +419,7 @@ class TrekUpdateGeomTest(TestCase):
         self.trek.geom = geom
         self.trek.save()
         retrieve_trek = Trek.objects.get(pk=self.trek.pk)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertFalse(retrieve_trek.geom.equals_exact(geom, tolerance=0.00001))
-        else:
-            self.assertTrue(retrieve_trek.geom.equals_exact(geom, tolerance=0.00001))
+        self.assertTrue(retrieve_trek.geom.equals_exact(geom, tolerance=0.00001))
 
     def test_save_with_provided_one_field_exclusion(self):
         self.trek.save(update_fields=["geom"])
