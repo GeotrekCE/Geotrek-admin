@@ -22,7 +22,7 @@ export function useAppInit() {
 
   // Online/Offline status
   onlineManager.setEventListener((setOnline) => {
-    const handleOnline = () => setOnline(navigator.onLine)
+    const handleOnline = (event: Event) => setOnline(event.type === "online")
 
     window.addEventListener("online", handleOnline)
     window.addEventListener("offline", handleOnline)
