@@ -11,8 +11,7 @@ CHANGELOG
 
 **Documentation**
 
-* Add a ``--append`` option to the ``loaddem`` command to allow adding DEM data to an existing DEM
-
+* Add a ``--append`` option to the ``loaddem`` command to allow adding DEM data to an existing DEM and commands examples to recalculate altimetry (refs #5490)
 
 2.124.4         (2026-05-11)
 ----------------------------
