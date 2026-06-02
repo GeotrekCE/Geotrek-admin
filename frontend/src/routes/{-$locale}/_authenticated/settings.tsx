@@ -29,6 +29,12 @@ function RouteComponent() {
         <h2>
           <span className="block font-bold text-accent-foreground">{name}</span>
         </h2>
+        <p className="mt-2 text-sm">
+          {m["settings.structure"]()}{" "}
+          <span className="text-accent-foreground">
+            {data?.user?.attachedStructure?.label || m["settings.undefined"]()}
+          </span>
+        </p>
         <Button
           className="mx-auto mt-4 block"
           variant="outline"

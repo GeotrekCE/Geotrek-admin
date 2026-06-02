@@ -28,6 +28,8 @@
   },
   "settings": {
     "title": "Settings",
+    "structure": "Linked structure:",
+    "undefined": "Not defined",
     "preferences": {
       "lang": {
         "title": "Application language"

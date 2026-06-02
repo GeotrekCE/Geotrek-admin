@@ -28,6 +28,8 @@
   },
   "settings": {
     "title": "Paramètres",
+    "structure": "Structure liée :",
+    "undefined": "Non définie",
     "preferences": {
       "lang": {
         "title": "Langue de l'application"
