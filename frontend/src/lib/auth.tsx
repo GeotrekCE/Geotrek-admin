@@ -88,6 +88,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       toast.info(m["settings.user.logout-fail"](), {
         position: "top-center",
         dismissible: false,
+        duration: Infinity,
         action: (
           <a
             className="whitespace-nowrap text-primary"
