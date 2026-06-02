@@ -1,9 +1,11 @@
 from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
+from django.contrib.gis.geos import LineString, Point
 from django.templatetags.static import static
 from django.test import TestCase
-
+from geotrek.core.tests.factories import PathFactory
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.signage.models import Blade
 from geotrek.signage.tests.factories import (
@@ -92,6 +94,16 @@ class SignageModelTest(TestCase):
         signagecondition = SignageConditionFactory(label="condition", structure=None)
         self.assertEqual(str(signagecondition), "condition")
 
+    def test_lat_and_lng_value(self):
+        lat = 48.0
+        lng = 2.0
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            p_signage = PathFactory.create(geom = LineString(Point(lng, lat), Point( lng, lat), srid=settings.API_SRID))
+            signage = SignageFactory.create(paths=[p_signage])
+        else:
+            signage = SignageFactory.create(geom=Point(lng, lat, srid=settings.API_SRID))
+        self.assertAlmostEqual(signage.lat_value, lat , places=4)
+        self.assertAlmostEqual(signage.lng_value, lng, places=4)
 
 class LinePictogramModelTest(TestCase):
     def test_str_linepictogram(self):
