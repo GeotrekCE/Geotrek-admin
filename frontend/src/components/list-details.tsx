@@ -31,7 +31,6 @@ function ListDetailContent({
       </SheetContent>
     )
   }
-  console.log(details)
   return (
     <SheetContent side="bottom" className="pb-22">
       <SheetHeader className="pb-0">

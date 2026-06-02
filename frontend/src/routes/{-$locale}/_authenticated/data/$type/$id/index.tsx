@@ -129,17 +129,19 @@ function RouteComponent() {
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
             Localisation
           </h3>
-          <Map
-            className="pointer-none aspect-square max-h-80 touch-none"
-            longitude={element.api_geom.coordinates[0]}
-            latitude={element.api_geom.coordinates[1]}
-          >
-            <Marker
+          {element.api_geom && (
+            <Map
+              className="pointer-none aspect-square max-h-80 touch-none"
               longitude={element.api_geom.coordinates[0]}
               latitude={element.api_geom.coordinates[1]}
-              anchor="bottom"
-            />
-          </Map>
+            >
+              <Marker
+                longitude={element.api_geom.coordinates[0]}
+                latitude={element.api_geom.coordinates[1]}
+                anchor="bottom"
+              />
+            </Map>
+          )}
         </section>
 
         {"blades" in element && (

@@ -59,12 +59,18 @@ export const signageDataSchema = z.array(
     id: z.number().int().positive(),
     api_geom: z.object({
       type: z.string().min(1),
-      coordinates: z.array(z.number()),
+      coordinates: z
+        .array(z.number())
+        .length(2, "Les coordonnées sont obligatoires"),
     }),
-    structure: z.object({
-      id: z.number().int().positive(),
-      name: z.string(),
-    }),
+
+    structure: z
+      .object({
+        id: z.number().int(),
+        name: z.string(),
+      })
+      .refine((data) => !!data.name, "La structure est obligatoire"),
+
     date_insert: z.string(),
     date_update: z.string(),
     published: z.boolean(),
@@ -94,10 +100,12 @@ export const signageDataSchema = z.array(
         name: z.string(),
       }),
     ]),
-    type: z.object({
-      id: z.number().positive(),
-      name: z.string().min(1),
-    }),
+    type: z
+      .object({
+        id: z.number().int(),
+        name: z.string().min(1),
+      })
+      .refine((data) => !!data.name, "Le type est obligatoire"),
     conditions: z.array(
       z.object({
         id: z.number().int().positive(),
@@ -173,10 +181,12 @@ export const interventionDataSchema = z.array(
       id: z.number().int().positive(),
       name: z.string().min(1),
     }),
-    type: z.object({
-      id: z.number().int().positive({ message: "Le type est obligatoire" }),
-      name: z.string().min(1),
-    }),
+    type: z
+      .object({
+        id: z.number().int().positive(),
+        name: z.string().min(1),
+      })
+      .refine((data) => data, "Le type est obligatoire"),
     disorders: z.array(
       z.object({
         id: z.number().int().positive(),

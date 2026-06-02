@@ -89,9 +89,7 @@ export function useStoredDataElement(type: string, id: number) {
 
   const result = React.useMemo(() => {
     const elements = getElements(allData, allReferences)
-    return elements.find(
-      (item) => item.reference === type && item.id === id
-    ) as DataSchemaPropsMixed | undefined
+    return elements.find((item) => item.reference === type && item.id === id)
   }, [allData, allReferences, type, id])
 
   return result

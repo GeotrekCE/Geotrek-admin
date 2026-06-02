@@ -13,9 +13,11 @@ import { Route as Char123LocaleChar125LoginRouteImport } from './routes/{-$local
 import { Route as Char123LocaleChar125AuthenticatedRouteImport } from './routes/{-$locale}/_authenticated'
 import { Route as Char123LocaleChar125AuthenticatedIndexRouteImport } from './routes/{-$locale}/_authenticated/index'
 import { Route as Char123LocaleChar125AuthenticatedSettingsRouteImport } from './routes/{-$locale}/_authenticated/settings'
+import { Route as Char123LocaleChar125AuthenticatedCreateRouteImport } from './routes/{-$locale}/_authenticated/create'
 import { Route as Char123LocaleChar125AuthenticatedSyncIndexRouteImport } from './routes/{-$locale}/_authenticated/sync/index'
 import { Route as Char123LocaleChar125AuthenticatedSyncMapRouteImport } from './routes/{-$locale}/_authenticated/sync/map'
 import { Route as Char123LocaleChar125AuthenticatedSyncDataRouteImport } from './routes/{-$locale}/_authenticated/sync/data'
+import { Route as Char123LocaleChar125AuthenticatedDataTypeCreateRouteImport } from './routes/{-$locale}/_authenticated/data/$type/create'
 import { Route as Char123LocaleChar125AuthenticatedDataTypeIdIndexRouteImport } from './routes/{-$locale}/_authenticated/data/$type/$id/index'
 import { Route as Char123LocaleChar125AuthenticatedDataTypeIdEditRouteImport } from './routes/{-$locale}/_authenticated/data/$type/$id/edit'
 
@@ -43,6 +45,12 @@ const Char123LocaleChar125AuthenticatedSettingsRoute =
     path: '/settings',
     getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
   } as any)
+const Char123LocaleChar125AuthenticatedCreateRoute =
+  Char123LocaleChar125AuthenticatedCreateRouteImport.update({
+    id: '/create',
+    path: '/create',
+    getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
+  } as any)
 const Char123LocaleChar125AuthenticatedSyncIndexRoute =
   Char123LocaleChar125AuthenticatedSyncIndexRouteImport.update({
     id: '/sync/',
@@ -61,6 +69,12 @@ const Char123LocaleChar125AuthenticatedSyncDataRoute =
     path: '/sync/data',
     getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
   } as any)
+const Char123LocaleChar125AuthenticatedDataTypeCreateRoute =
+  Char123LocaleChar125AuthenticatedDataTypeCreateRouteImport.update({
+    id: '/data/$type/create',
+    path: '/data/$type/create',
+    getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
+  } as any)
 const Char123LocaleChar125AuthenticatedDataTypeIdIndexRoute =
   Char123LocaleChar125AuthenticatedDataTypeIdIndexRouteImport.update({
     id: '/data/$type/$id/',
@@ -77,21 +91,25 @@ const Char123LocaleChar125AuthenticatedDataTypeIdEditRoute =
 export interface FileRoutesByFullPath {
   '/{-$locale}': typeof Char123LocaleChar125AuthenticatedRouteWithChildren
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
+  '/{-$locale}/create': typeof Char123LocaleChar125AuthenticatedCreateRoute
   '/{-$locale}/settings': typeof Char123LocaleChar125AuthenticatedSettingsRoute
   '/{-$locale}/': typeof Char123LocaleChar125AuthenticatedIndexRoute
   '/{-$locale}/sync/data': typeof Char123LocaleChar125AuthenticatedSyncDataRoute
   '/{-$locale}/sync/map': typeof Char123LocaleChar125AuthenticatedSyncMapRoute
   '/{-$locale}/sync/': typeof Char123LocaleChar125AuthenticatedSyncIndexRoute
+  '/{-$locale}/data/$type/create': typeof Char123LocaleChar125AuthenticatedDataTypeCreateRoute
   '/{-$locale}/data/$type/$id/edit': typeof Char123LocaleChar125AuthenticatedDataTypeIdEditRoute
   '/{-$locale}/data/$type/$id/': typeof Char123LocaleChar125AuthenticatedDataTypeIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
+  '/{-$locale}/create': typeof Char123LocaleChar125AuthenticatedCreateRoute
   '/{-$locale}/settings': typeof Char123LocaleChar125AuthenticatedSettingsRoute
   '/{-$locale}': typeof Char123LocaleChar125AuthenticatedIndexRoute
   '/{-$locale}/sync/data': typeof Char123LocaleChar125AuthenticatedSyncDataRoute
   '/{-$locale}/sync/map': typeof Char123LocaleChar125AuthenticatedSyncMapRoute
   '/{-$locale}/sync': typeof Char123LocaleChar125AuthenticatedSyncIndexRoute
+  '/{-$locale}/data/$type/create': typeof Char123LocaleChar125AuthenticatedDataTypeCreateRoute
   '/{-$locale}/data/$type/$id/edit': typeof Char123LocaleChar125AuthenticatedDataTypeIdEditRoute
   '/{-$locale}/data/$type/$id': typeof Char123LocaleChar125AuthenticatedDataTypeIdIndexRoute
 }
@@ -99,11 +117,13 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/{-$locale}/_authenticated': typeof Char123LocaleChar125AuthenticatedRouteWithChildren
   '/{-$locale}/login': typeof Char123LocaleChar125LoginRoute
+  '/{-$locale}/_authenticated/create': typeof Char123LocaleChar125AuthenticatedCreateRoute
   '/{-$locale}/_authenticated/settings': typeof Char123LocaleChar125AuthenticatedSettingsRoute
   '/{-$locale}/_authenticated/': typeof Char123LocaleChar125AuthenticatedIndexRoute
   '/{-$locale}/_authenticated/sync/data': typeof Char123LocaleChar125AuthenticatedSyncDataRoute
   '/{-$locale}/_authenticated/sync/map': typeof Char123LocaleChar125AuthenticatedSyncMapRoute
   '/{-$locale}/_authenticated/sync/': typeof Char123LocaleChar125AuthenticatedSyncIndexRoute
+  '/{-$locale}/_authenticated/data/$type/create': typeof Char123LocaleChar125AuthenticatedDataTypeCreateRoute
   '/{-$locale}/_authenticated/data/$type/$id/edit': typeof Char123LocaleChar125AuthenticatedDataTypeIdEditRoute
   '/{-$locale}/_authenticated/data/$type/$id/': typeof Char123LocaleChar125AuthenticatedDataTypeIdIndexRoute
 }
@@ -112,32 +132,38 @@ export interface FileRouteTypes {
   fullPaths:
     | '/{-$locale}'
     | '/{-$locale}/login'
+    | '/{-$locale}/create'
     | '/{-$locale}/settings'
     | '/{-$locale}/'
     | '/{-$locale}/sync/data'
     | '/{-$locale}/sync/map'
     | '/{-$locale}/sync/'
+    | '/{-$locale}/data/$type/create'
     | '/{-$locale}/data/$type/$id/edit'
     | '/{-$locale}/data/$type/$id/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/{-$locale}/login'
+    | '/{-$locale}/create'
     | '/{-$locale}/settings'
     | '/{-$locale}'
     | '/{-$locale}/sync/data'
     | '/{-$locale}/sync/map'
     | '/{-$locale}/sync'
+    | '/{-$locale}/data/$type/create'
     | '/{-$locale}/data/$type/$id/edit'
     | '/{-$locale}/data/$type/$id'
   id:
     | '__root__'
     | '/{-$locale}/_authenticated'
     | '/{-$locale}/login'
+    | '/{-$locale}/_authenticated/create'
     | '/{-$locale}/_authenticated/settings'
     | '/{-$locale}/_authenticated/'
     | '/{-$locale}/_authenticated/sync/data'
     | '/{-$locale}/_authenticated/sync/map'
     | '/{-$locale}/_authenticated/sync/'
+    | '/{-$locale}/_authenticated/data/$type/create'
     | '/{-$locale}/_authenticated/data/$type/$id/edit'
     | '/{-$locale}/_authenticated/data/$type/$id/'
   fileRoutesById: FileRoutesById
@@ -177,6 +203,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125AuthenticatedSettingsRouteImport
       parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
     }
+    '/{-$locale}/_authenticated/create': {
+      id: '/{-$locale}/_authenticated/create'
+      path: '/create'
+      fullPath: '/{-$locale}/create'
+      preLoaderRoute: typeof Char123LocaleChar125AuthenticatedCreateRouteImport
+      parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
+    }
     '/{-$locale}/_authenticated/sync/': {
       id: '/{-$locale}/_authenticated/sync/'
       path: '/sync'
@@ -198,6 +231,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125AuthenticatedSyncDataRouteImport
       parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
     }
+    '/{-$locale}/_authenticated/data/$type/create': {
+      id: '/{-$locale}/_authenticated/data/$type/create'
+      path: '/data/$type/create'
+      fullPath: '/{-$locale}/data/$type/create'
+      preLoaderRoute: typeof Char123LocaleChar125AuthenticatedDataTypeCreateRouteImport
+      parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
+    }
     '/{-$locale}/_authenticated/data/$type/$id/': {
       id: '/{-$locale}/_authenticated/data/$type/$id/'
       path: '/data/$type/$id'
@@ -216,17 +256,21 @@ declare module '@tanstack/react-router' {
 }
 
 interface Char123LocaleChar125AuthenticatedRouteChildren {
+  Char123LocaleChar125AuthenticatedCreateRoute: typeof Char123LocaleChar125AuthenticatedCreateRoute
   Char123LocaleChar125AuthenticatedSettingsRoute: typeof Char123LocaleChar125AuthenticatedSettingsRoute
   Char123LocaleChar125AuthenticatedIndexRoute: typeof Char123LocaleChar125AuthenticatedIndexRoute
   Char123LocaleChar125AuthenticatedSyncDataRoute: typeof Char123LocaleChar125AuthenticatedSyncDataRoute
   Char123LocaleChar125AuthenticatedSyncMapRoute: typeof Char123LocaleChar125AuthenticatedSyncMapRoute
   Char123LocaleChar125AuthenticatedSyncIndexRoute: typeof Char123LocaleChar125AuthenticatedSyncIndexRoute
+  Char123LocaleChar125AuthenticatedDataTypeCreateRoute: typeof Char123LocaleChar125AuthenticatedDataTypeCreateRoute
   Char123LocaleChar125AuthenticatedDataTypeIdEditRoute: typeof Char123LocaleChar125AuthenticatedDataTypeIdEditRoute
   Char123LocaleChar125AuthenticatedDataTypeIdIndexRoute: typeof Char123LocaleChar125AuthenticatedDataTypeIdIndexRoute
 }
 
 const Char123LocaleChar125AuthenticatedRouteChildren: Char123LocaleChar125AuthenticatedRouteChildren =
   {
+    Char123LocaleChar125AuthenticatedCreateRoute:
+      Char123LocaleChar125AuthenticatedCreateRoute,
     Char123LocaleChar125AuthenticatedSettingsRoute:
       Char123LocaleChar125AuthenticatedSettingsRoute,
     Char123LocaleChar125AuthenticatedIndexRoute:
@@ -237,6 +281,8 @@ const Char123LocaleChar125AuthenticatedRouteChildren: Char123LocaleChar125Authen
       Char123LocaleChar125AuthenticatedSyncMapRoute,
     Char123LocaleChar125AuthenticatedSyncIndexRoute:
       Char123LocaleChar125AuthenticatedSyncIndexRoute,
+    Char123LocaleChar125AuthenticatedDataTypeCreateRoute:
+      Char123LocaleChar125AuthenticatedDataTypeCreateRoute,
     Char123LocaleChar125AuthenticatedDataTypeIdEditRoute:
       Char123LocaleChar125AuthenticatedDataTypeIdEditRoute,
     Char123LocaleChar125AuthenticatedDataTypeIdIndexRoute:

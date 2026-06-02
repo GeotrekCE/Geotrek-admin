@@ -38,7 +38,6 @@ export function GeomField({
   const { bounds } = data?.syncData || {}
 
   const [isEditing, setEditing] = React.useState(false)
-  console.log(icon)
 
   return (
     <FormFieldSet>
@@ -49,38 +48,45 @@ export function GeomField({
         </FieldLabel>
 
         <Map
-          className="aspect-square max-h-80"
+          className="aspect-square"
           initialViewState={{ bounds: bounds as LngLatBoundsLike }}
           maxBounds={bounds as LngLatBoundsLike}
-          onClick={({ lngLat }) =>
-            isEditing && field.handleChange([lngLat.lng, lngLat.lat])
-          }
+          onClick={({ lngLat }) => {
+            if (isEditing) {
+              field.handleChange([lngLat.lng, lngLat.lat])
+              field.handleBlur()
+            }
+          }}
         >
-          <Marker longitude={lng} latitude={lat} anchor="bottom">
-            <div className="grid items-center justify-center">
-              <MapPin
-                className={cn(
-                  "col-start-1 row-start-1 fill-white stroke-1 [&>circle]:hidden",
-                  isEditing ? "size-12 fill-white/60" : "size-10"
-                )}
-              />
-              {icon && (
-                <img
-                  loading="lazy"
-                  src={icon.url}
-                  alt=""
+          {!!lng && !!lat && (
+            <Marker longitude={lng} latitude={lat} anchor="bottom">
+              <div className="grid items-center justify-center">
+                <MapPin
                   className={cn(
-                    "col-start-1 row-start-1 m-auto",
-                    isEditing ? "size-8" : "size-6"
+                    "col-start-1 row-start-1 fill-white stroke-1 [&>circle]:hidden",
+                    isEditing ? "size-12 fill-white/60" : "size-10"
                   )}
                 />
-              )}
-            </div>
-          </Marker>
+                {icon?.url && (
+                  <img
+                    loading="lazy"
+                    src={icon.url}
+                    alt=""
+                    className={cn(
+                      "col-start-1 row-start-1 m-auto",
+                      isEditing ? "size-8" : "size-6"
+                    )}
+                  />
+                )}
+              </div>
+            </Marker>
+          )}
         </Map>
-        <FieldDescription className="text-end text-xs">
-          Longitude : {lng.toFixed(5)}, Latitude: {lat.toFixed(5)}
-        </FieldDescription>
+        {!!lng && !!lat && (
+          <FieldDescription className="text-end text-xs">
+            Longitude : {lng.toFixed(5)}, Lattitude : {lat.toFixed(5)}
+          </FieldDescription>
+        )}
         <Button
           variant="outline"
           type="button"

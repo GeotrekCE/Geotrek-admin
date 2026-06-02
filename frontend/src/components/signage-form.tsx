@@ -10,18 +10,28 @@ import {
 import { useAppForm, useFormFields } from "./ui/tanstack-form"
 
 export default function SignageForm({
-  element,
+  defaultValues,
+  pictogram,
+  isEdit,
 }: {
-  element: SignageDataSchemaProps[0] & {
-    pictogram: { url?: string }
-    reference: string
-  }
+  defaultValues: Omit<
+    SignageDataSchemaProps[0],
+    "id" | "date_insert" | "date_update" | "published"
+  >
+  pictogram?: { url?: string }
+  isEdit?: boolean
 }) {
-  const { reference: _ref, pictogram: icon, ...defaultValues } = element
+  const validators = signageDataSchema.unwrap().omit({
+    id: true,
+    date_insert: true,
+    date_update: true,
+    published: true,
+  })
   const form = useAppForm({
     defaultValues,
     validators: {
-      onSubmit: signageDataSchema.unwrap(),
+      onBlur: validators,
+      onSubmit: validators,
     },
     onSubmit: ({ value }) => {
       toast(
@@ -35,7 +45,6 @@ export default function SignageForm({
       )
     },
   })
-
   const { FormTextField, FormSelectField, FormTextareaField, FormGeomField } =
     useFormFields<SignageDataSchemaProps[0]>()
 
@@ -59,11 +68,11 @@ export default function SignageForm({
         <FieldGroup className="mb-4">
           <FormTextField name="name" label="Nom" required />
 
-          <FormSelectField name="type" label="Type" list={typeList} />
+          <FormSelectField name="type" label="Type" list={typeList} required />
 
           <FormSelectField
             name="structure"
-            label="Structure"
+            label="Structure liée"
             list={structureList}
             required
           />
@@ -73,7 +82,8 @@ export default function SignageForm({
           <FormGeomField
             name="api_geom.coordinates"
             label="Localisation"
-            icon={icon}
+            icon={pictogram}
+            required
           />
 
           <FormSelectField
@@ -117,7 +127,9 @@ export default function SignageForm({
             list={accessList}
           />
 
-          <Button type="submit">Modifier</Button>
+          <Button type="submit">
+            {isEdit ? "Modifier" : "Créer"} la signalétique
+          </Button>
         </FieldGroup>
       </form.Form>
     </form.AppForm>

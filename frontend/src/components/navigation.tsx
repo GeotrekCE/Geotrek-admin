@@ -26,7 +26,7 @@ export function Navigation() {
           </Link>
         </li>
         <li>
-          <Link className="group block" to="/{-$locale}">
+          <Link className="group block" to="/{-$locale}/create">
             <Plus
               className="m-auto mb-1 size-6 group-hover:text-primary group-data-[status=active]:text-primary"
               aria-hidden

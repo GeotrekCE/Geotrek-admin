@@ -40,24 +40,23 @@ function RouteComponent() {
       </div>
     )
   }
+  const { reference: _ref, pictogram, ...defaultValues } = element
   return (
     <div>
       <Header title={getTitle(params.type)} withBackbutton />
       <div className="m-auto max-w-120 p-4">
-        {element.reference === "signage" ? (
+        {params.type === "signage" ? (
           <SignageForm
-            element={
-              element as SignageDataSchemaProps[0] & {
-                pictogram: { url?: string }
-                reference: string
-              }
-            }
+            defaultValues={defaultValues as SignageDataSchemaProps[0]}
+            pictogram={pictogram}
+            isEdit
           />
         ) : (
           <section>
             <h2 className="text-2xl font-medium text-accent-foreground">
-              {element.name} TODO: formulaire pour "{element.reference}"
+              {defaultValues.name}
             </h2>
+            <p> TODO: formulaire pour "{params.type}"</p>
           </section>
         )}
       </div>
