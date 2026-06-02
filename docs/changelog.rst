@@ -9,6 +9,10 @@ CHANGELOG
 
 * Delete outdated settings related to categories and pictures (refs #4482) 
 
+**Documentation**
+
+* Add a ``--append`` option to the ``loaddem`` command to allow adding DEM data to an existing DEM
+
 
 2.124.4         (2026-05-11)
 ----------------------------

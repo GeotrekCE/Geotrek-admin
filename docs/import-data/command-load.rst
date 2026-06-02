@@ -58,6 +58,7 @@ Load DEM
 
 	  optional arguments:
 	  -h, --help            show this help message and exit
+    --append              Append DEM to existing.
 	  --replace             Replace existing DEM if any.
 	  --update-altimetry    Update altimetry of all 3D geometries, /!\ This option
 		                        takes lot of time to perform
