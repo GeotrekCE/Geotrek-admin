@@ -1,12 +1,14 @@
-import { onlineManager } from "@tanstack/react-query"
+import * as React from "react"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
+import useOnline from "@/hook/useOnline"
 
 export function ConnectionStatus({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const isOnline = onlineManager.isOnline()
+  const online = useOnline()
+
   return (
     <div
       className={cn("flex items-center justify-between", className)}
@@ -17,13 +19,13 @@ export function ConnectionStatus({
         <span
           className={cn(
             "text-xl font-bold",
-            isOnline ? "text-green-600" : "text-red-600"
+            online ? "text-green-600" : "text-red-600"
           )}
           aria-hidden
         >
           •
         </span>
-        <span>{isOnline ? "En ligne" : "Hors ligne"}</span>
+        <span>{online ? "En ligne" : "Hors ligne"}</span>
       </Badge>
     </div>
   )

@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card"
 import { cn } from "@/lib/utils"
 import LastSync from "@/components/last-sync"
+import useOnline from "@/hook/useOnline"
 
 type CardSyncProps = React.ComponentProps<"div"> & {
   title: string
@@ -30,6 +31,7 @@ export default function CardSync({
   noData,
 }: CardSyncProps) {
   const warning = updatedStatus !== "UPDATED" || lastSync === undefined
+  const online = useOnline()
 
   function getAlertTitle() {
     if (!lastSync) {
@@ -71,7 +73,13 @@ export default function CardSync({
         )}
         {!!lastSync && <LastSync date={lastSync} />}
       </CardContent>
-      <CardFooter className="flex-col gap-4">{actions}</CardFooter>
+      <CardFooter className="flex-col gap-4">
+        {online ? (
+          actions
+        ) : (
+          <p>Vous êtes hors ligne et ne pouvez pas télécharger les données</p>
+        )}
+      </CardFooter>
     </Card>
   )
 }
