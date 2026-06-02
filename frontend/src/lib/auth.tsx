@@ -4,6 +4,7 @@ import useTokens from "@/hook/useTokens"
 import { toast } from "sonner"
 import { m } from "@/paraglide/messages"
 import type { Query } from "@tanstack/react-query"
+import { getLocale } from "@/paraglide/runtime"
 
 interface Tokens {
   accessToken: string
@@ -86,6 +87,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (isExpired) {
       toast.info(m["settings.user.logout-fail"](), {
         position: "top-center",
+        dismissible: false,
+        action: (
+          <a
+            className="whitespace-nowrap text-primary"
+            href={`${import.meta.env.BASE_URL}${getLocale()}/login?redirect=${encodeURIComponent(window.location.pathname.replace(import.meta.env.BASE_URL, "/"))}`}
+          >
+            Se reconnecter
+          </a>
+        ),
       })
     } else {
       toast.success(m["settings.user.logout-success"](), {
