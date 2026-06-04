@@ -5,6 +5,10 @@ CHANGELOG
 2.124.5+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+- Update popup to allow opening detail page in new tab (issue #4626)
+
 
 2.124.5         (2026-06-09)
 ----------------------------
