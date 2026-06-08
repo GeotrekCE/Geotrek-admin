@@ -634,6 +634,11 @@ class ConfigViewTest(TestCase):
                 "delete": False,
                 "read": True,
             },
+            "attachment": {
+                "create": False,
+                "update": False,
+                "delete": False,
+            },
             "is_superuser": False,
             "can_bypass_structure": False,
         }
