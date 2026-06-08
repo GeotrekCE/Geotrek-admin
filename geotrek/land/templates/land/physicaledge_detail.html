@@ -1,6 +1,10 @@
 {% extends "common/common_detail.html" %}
 {% load i18n mapentity_tags %}
 
+{% block buttons_before_action %}
+    {% include "core/btn_edit_off_path_network_fragment.html" %}
+{% endblock %}
+
 {% block detailspanel %}
     <table class="table-striped table-bordered table">
         <tr>

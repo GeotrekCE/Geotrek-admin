@@ -1,8 +1,3 @@
-from django.conf import settings
-from django.contrib.gis.forms import LineStringField
-
-from geotrek.core.widgets import LineTopologyWidget
-
 from .models import (
     CirculationEdge,
     CompetenceEdge,
@@ -11,65 +6,78 @@ from .models import (
     SignageManagementEdge,
     WorkManagementEdge,
 )
+from ..common.forms import CommonForm
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
-    from ..core.mixins.forms import TopologyForm as BaseForm
-else:
-    from geotrek.common.forms import CommonForm as BaseForm
+from ..core.mixins.forms import OnNetworkLinearTopologyFormMixin, OffNetworkLinearTopologyFormMixin
 
 
-class EdgeForm(BaseForm):
-    if settings.TREKKING_TOPOLOGY_ENABLED:
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["topology"].widget.modifiable
-            self.fields["topology"].widget = LineTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-    else:
-        geom = LineStringField()
-
-        geom_fields = [
-            "geom",
-        ]
-
-        class Meta(BaseForm.Meta):
-            fields = [*BaseForm.Meta.fields, "geom"]
-
-
-class PhysicalEdgeForm(EdgeForm):
-    class Meta(EdgeForm.Meta):
+class OnNetworkPhysicalEdgeForm(OnNetworkLinearTopologyFormMixin, CommonForm):
+    class Meta(OnNetworkLinearTopologyFormMixin.Meta):
         model = PhysicalEdge
-        fields = [*EdgeForm.Meta.fields, "physical_type"]
+        fields = [*OnNetworkLinearTopologyFormMixin.Meta.fields, "physical_type"]
 
 
-class LandEdgeForm(EdgeForm):
-    class Meta(EdgeForm.Meta):
+class OffNetworkPhysicalEdgeForm(OffNetworkLinearTopologyFormMixin, CommonForm):
+    class Meta(OffNetworkLinearTopologyFormMixin.Meta):
+        model = PhysicalEdge
+        fields = [*OffNetworkLinearTopologyFormMixin.Meta.fields, "physical_type"]
+
+
+class OnNetworkLandEdgeForm(OnNetworkLinearTopologyFormMixin, CommonForm):
+    class Meta(OnNetworkLinearTopologyFormMixin.Meta):
         model = LandEdge
-        fields = [*EdgeForm.Meta.fields, "land_type", "owner", "agreement"]
+        fields = [*OnNetworkLinearTopologyFormMixin.Meta.fields, "land_type", "owner", "agreement"]
 
 
-class CirculationEdgeForm(EdgeForm):
-    class Meta(EdgeForm.Meta):
+class OffNetworkLandEdgeForm(OffNetworkLinearTopologyFormMixin, CommonForm):
+    class Meta(OffNetworkLinearTopologyFormMixin.Meta):
+        model = LandEdge
+        fields = [*OffNetworkLinearTopologyFormMixin.Meta.fields, "land_type", "owner", "agreement"]
+
+
+class OnNetworkCirculationEdgeForm(OnNetworkLinearTopologyFormMixin, CommonForm):
+    class Meta(OnNetworkLinearTopologyFormMixin.Meta):
         model = CirculationEdge
-        fields = [*EdgeForm.Meta.fields, "circulation_type", "authorization_type"]
+        fields = [*OnNetworkLinearTopologyFormMixin.Meta.fields, "circulation_type", "authorization_type"]
 
 
-class OrganismForm(EdgeForm):
-    class Meta(EdgeForm.Meta):
-        fields = [*EdgeForm.Meta.fields, "organization"]
+class OffNetworkCirculationEdgeForm(OffNetworkLinearTopologyFormMixin, CommonForm):
+    class Meta(OffNetworkLinearTopologyFormMixin.Meta):
+        model = CirculationEdge
+        fields = [*OffNetworkLinearTopologyFormMixin.Meta.fields, "circulation_type", "authorization_type"]
 
 
-class CompetenceEdgeForm(OrganismForm):
-    class Meta(OrganismForm.Meta):
+class OnNetworkCompetenceEdgeForm(OnNetworkLinearTopologyFormMixin, CommonForm):
+    class Meta(OnNetworkLinearTopologyFormMixin.Meta):
         model = CompetenceEdge
+        fields = [*OnNetworkLinearTopologyFormMixin.Meta.fields, "organization"]
 
 
-class WorkManagementEdgeForm(OrganismForm):
-    class Meta(OrganismForm.Meta):
+class OffNetworkCompetenceEdgeForm(OffNetworkLinearTopologyFormMixin, CommonForm):
+    class Meta(OffNetworkLinearTopologyFormMixin.Meta):
+        model = CompetenceEdge
+        fields = [*OffNetworkLinearTopologyFormMixin.Meta.fields, "organization"]
+
+
+class OnNetworkWorkManagementEdgeForm(OnNetworkLinearTopologyFormMixin, CommonForm):
+    class Meta(OnNetworkLinearTopologyFormMixin.Meta):
         model = WorkManagementEdge
+        fields = [*OnNetworkLinearTopologyFormMixin.Meta.fields, "organization"]
 
 
-class SignageManagementEdgeForm(OrganismForm):
-    class Meta(OrganismForm.Meta):
+class OffNetworkWorkManagementEdgeForm(OffNetworkLinearTopologyFormMixin, CommonForm):
+    class Meta(OffNetworkLinearTopologyFormMixin.Meta):
+        model = WorkManagementEdge
+        fields = [*OffNetworkLinearTopologyFormMixin.Meta.fields, "organization"]
+
+
+class OnNetworkSignageManagementEdgeForm(OnNetworkLinearTopologyFormMixin, CommonForm):
+    class Meta(OnNetworkLinearTopologyFormMixin.Meta):
         model = SignageManagementEdge
+        fields = [*OnNetworkLinearTopologyFormMixin.Meta.fields, "organization"]
+
+
+class OffNetworkSignageManagementEdgeForm(OffNetworkLinearTopologyFormMixin, CommonForm):
+    class Meta(OffNetworkLinearTopologyFormMixin.Meta):
+        model = SignageManagementEdge
+        fields = [*OffNetworkLinearTopologyFormMixin.Meta.fields, "organization"]

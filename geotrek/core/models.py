@@ -236,7 +236,7 @@ class Path(
     def closest(cls, point, exclude=None):
         """
         Returns the closest path of the point.
-        Will fail if no path in database.
+        Returns None if no path in database.
         """
         # TODO: move to custom manager
         if point.srid != settings.SRID:
@@ -247,7 +247,7 @@ class Path(
         return (
             qs.exclude(visible=False)
             .annotate(distance=Distance("geom", point))
-            .order_by("distance")[0]
+            .order_by("distance").first()
         )
 
     @classmethod
@@ -722,8 +722,7 @@ class Topology(
             # Otherwise we keep coupled status from DB and reload computed values.
             if geom_modified_in_python:
                 self.coupled = False
-                # FIXME: compare the geoms correctly (currently not the same srid). This must
-                # work when using a form, but also when calling save() e.g. in a parser
+                # TODO: delete path aggregations
             else:
                 self.coupled = existing.coupled
                 self.length = existing.length
@@ -741,6 +740,7 @@ class Topology(
                 # We cannot have NULL geometry. So we use an empty one,
                 # it will be computed or overwritten by triggers.
                 self.geom = fromstr("POINT (0 0)")
+                # TODO: check that it's still overwritten by triggers
         if not self.kind:
             if self.KIND == "TOPOLOGYMIXIN":
                 msg = "Cannot save abstract topologies"
@@ -800,19 +800,28 @@ class Topology(
     @classmethod
     def _topologypoint(cls, lng, lat, kind=None, snap=None):
         """
-        Receives a point (lng, lat) with API_SRID, and returns
-        a topology objects with a computed path aggregation.
+        Receives a point (lng, lat) with API_SRID, and returns a point topology object with:
+        - if a path exists: a computed path aggregation
+        - else: a geometry
         """
         # Find closest path
         point = Point(lng, lat, srid=settings.API_SRID)
         point.transform(settings.SRID)
+
         if snap is None:
             closest = Path.closest(point)
-            position, offset = closest.interpolate(point)
         else:
-            closest = Path.objects.get(pk=snap)
-            position, offset = closest.interpolate(point)
+            try:
+                closest = Path.objects.get(pk=snap)
+            except Path.DoesNotExist:
+                msg = "Invalid serialized point topology: snap path not found"
+                raise ValueError(msg)
+        if closest is None:
+            return Topology(kind="TMP", geom=point)
+        position, offset = closest.interpolate(point)
+        if snap is not None:
             offset = 0
+
         # We can now instantiante a Topology object
         topology = Topology(kind=kind, offset=offset)
         aggr = PathAggregation(

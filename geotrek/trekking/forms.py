@@ -15,9 +15,9 @@ from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.mixins.forms import (
-    OffNetworkTopologyFormMixin,
-    OnNetworkTopologyFormMixin,
-    TopologyForm,
+    OffNetworkLinearTopologyFormMixin,
+    OnNetworkLinearTopologyFormMixin,
+    TopologyForm, PointTopologyFormMixin,
 )
 from geotrek.core.widgets import PointTopologyWidget
 
@@ -353,13 +353,14 @@ class BaseTrekForm(CommonForm):
         ]
 
 
-class OnNetworkTrekForm(OnNetworkTopologyFormMixin, BaseTrekForm):
-    class Meta(OnNetworkTopologyFormMixin.Meta, BaseTrekForm.Meta):
-        fields = [*OnNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
-        geomfields = [
-            *BaseTrekForm.geomfields,
-            *OnNetworkTopologyFormMixin.geomfields,
-        ]
+class OnNetworkTrekForm(OnNetworkLinearTopologyFormMixin, BaseTrekForm):
+    geomfields = [
+        *BaseTrekForm.geomfields,
+        *OnNetworkLinearTopologyFormMixin.geomfields,
+    ]
+
+    class Meta(OnNetworkLinearTopologyFormMixin.Meta, BaseTrekForm.Meta):
+        fields = [*OnNetworkLinearTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
         widgets = {
             "parking_location": MapWidget(
                 attrs={"target_map": "topology", "custom_icon": "markers/parking.svg"}
@@ -376,27 +377,60 @@ class OnNetworkTrekForm(OnNetworkTopologyFormMixin, BaseTrekForm):
             self.fields.pop("points_reference")
         else:
             self.fields["points_reference"].label = ""
-            self.fields["points_reference"].widget.target_map = "topology"
             # Edit points of reference with custom edition JavaScript class
             self.fields[
                 "points_reference"
             ].widget.geometry_field_class = "PointsReferenceField"
 
         self.fields["parking_location"].label = ""
-        self.fields["parking_location"].widget.target_map = "topology"
         self.fields[
             "parking_location"
         ].widget.geometry_field_class = "ParkingLocationField"
 
+# class OnNetworkTrekForm(PointTopologyFormMixin, BaseTrekForm):
+#     geomfields = [
+#         *BaseTrekForm.geomfields,
+#         *PointTopologyFormMixin.geomfields,
+#     ]
+#
+#     class Meta(PointTopologyFormMixin.Meta, BaseTrekForm.Meta):
+#         fields = [*PointTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
+#         widgets = {
+#             "parking_location": MapWidget(
+#                 attrs={"target_map": "topology", "custom_icon": "markers/parking.svg"}
+#             ),
+#             "points_reference": MapWidget(
+#                 attrs={"target_map": "topology", "custom_icon": "markers/points.svg"}
+#             ),
+#         }
+#
+#     def __init__(self, *args, **kwargs):
+#         super().__init__(*args, **kwargs)
+#
+#         if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
+#             self.fields.pop("points_reference")
+#         else:
+#             self.fields["points_reference"].label = ""
+#             # Edit points of reference with custom edition JavaScript class
+#             self.fields[
+#                 "points_reference"
+#             ].widget.geometry_field_class = "PointsReferenceField"
+#
+#         self.fields["parking_location"].label = ""
+#         self.fields[
+#             "parking_location"
+#         ].widget.geometry_field_class = "ParkingLocationField"
 
-class OffNetworkTrekForm(BaseTrekForm, OffNetworkTopologyFormMixin):
+
+
+class OffNetworkTrekForm(BaseTrekForm, OffNetworkLinearTopologyFormMixin):
     geomfields = [
         *BaseTrekForm.geomfields,
-        *OffNetworkTopologyFormMixin.geomfields,
+        *OffNetworkLinearTopologyFormMixin.geomfields,
     ]
 
-    class Meta(BaseTrekForm.Meta, OffNetworkTopologyFormMixin.Meta):
-        fields = [*OffNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
+    class Meta(BaseTrekForm.Meta, OffNetworkLinearTopologyFormMixin.Meta):
+        fields = [*OffNetworkLinearTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
         widgets = {
             "parking_location": MapWidget(
                 attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"}
@@ -421,35 +455,7 @@ class OffNetworkTrekForm(BaseTrekForm, OffNetworkTopologyFormMixin):
         ].widget.geometry_field_class = "ParkingLocationField"
 
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
-
-    class BasePOIForm(TopologyForm):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["topology"].widget.modifiable
-            self.fields["topology"].widget = PointTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-
-        class Meta(TopologyForm.Meta):
-            model = POI
-
-else:
-
-    class BasePOIForm(CommonForm):
-        geomfields = ["geom"]
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["geom"].widget.modifiable
-            self.fields["geom"].widget = MapWidget(attrs={"geom_type": "POINT"})
-            self.fields["geom"].widget.modifiable = modifiable
-
-        class Meta(CommonForm.Meta):
-            model = POI
-            fields = [*CommonForm.Meta.fields, "geom"]
-
-
-class POIForm(BasePOIForm):
+class POIForm(PointTopologyFormMixin):
     fieldslayout = [
         Div(
             "structure",
@@ -462,9 +468,10 @@ class POIForm(BasePOIForm):
         )
     ]
 
-    class Meta(BasePOIForm.Meta):
+    class Meta(PointTopologyFormMixin.Meta):
+        model = POI
         fields = [
-            *BasePOIForm.Meta.fields,
+            *PointTopologyFormMixin.Meta.fields,
             "structure",
             "name",
             "description",
@@ -474,36 +481,11 @@ class POIForm(BasePOIForm):
             "review",
         ]
 
+class ServiceForm(PointTopologyFormMixin):
+    class Meta(PointTopologyFormMixin.Meta):
+        model = Service
+        fields = [*PointTopologyFormMixin.Meta.fields, "structure", "type", "eid"]
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
-
-    class BaseServiceForm(TopologyForm):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["topology"].widget.modifiable
-            self.fields["topology"].widget = PointTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-
-        class Meta(TopologyForm.Meta):
-            model = Service
-
-else:
-
-    class BaseServiceForm(CommonForm):
-        geomfields = ["geom"]
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["geom"].widget.modifiable
-            self.fields["geom"].widget = MapWidget(attrs={"geom_type": "POINT"})
-            self.fields["geom"].widget.modifiable = modifiable
-
-        class Meta(CommonForm.Meta):
-            model = Service
-            fields = [*CommonForm.Meta.fields, "geom"]
-
-
-class ServiceForm(BaseServiceForm):
     fieldslayout = [
         Div(
             "structure",
@@ -511,9 +493,6 @@ class ServiceForm(BaseServiceForm):
             "eid",
         )
     ]
-
-    class Meta(BaseServiceForm.Meta):
-        fields = [*BaseServiceForm.Meta.fields, "structure", "type", "eid"]
 
 
 class WebLinkCreateFormPopup(TranslatedModelForm):

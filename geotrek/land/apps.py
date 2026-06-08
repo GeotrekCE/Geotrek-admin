@@ -8,11 +8,12 @@ class LandConfig(AppConfig):
     verbose_name = _("Land")
 
     def ready(self):
-        from .forms import LandEdgeForm
+        from .forms import OnNetworkLandEdgeForm, OffNetworkLandEdgeForm
 
         def check_hidden_fields_settings(app_configs, **kwargs):
             # Check all Forms hidden fields settings
-            errors = LandEdgeForm.check_fields_to_hide()
+            errors = OnNetworkLandEdgeForm.check_fields_to_hide()
+            errors.extend(OffNetworkLandEdgeForm.check_fields_to_hide())
             return errors
 
         register(check_hidden_fields_settings, Tags.security)

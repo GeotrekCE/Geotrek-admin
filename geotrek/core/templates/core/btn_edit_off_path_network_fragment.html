@@ -1,0 +1,6 @@
+{% load i18n mapentity_tags geotrek_tags %}
+
+{% if path_model_enabled and can_draw_off_path_network %}
+    <a class="dropdown-item" href="{{ object.get_update_url }}?topological=false">
+    <i class="bi bi-pencil-square text-primary"></i> {% trans "Edit off the path network" %}</a>
+{% endif %}
