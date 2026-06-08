@@ -44,6 +44,10 @@ class BaseTrekForm(CommonForm):
         widget=forms.widgets.HiddenInput(),
         required=False,
     )
+    geomfields = [
+        "parking_location",
+        "points_reference",
+    ]
 
     leftpanel_scrollable = False
 
@@ -155,18 +159,6 @@ class BaseTrekForm(CommonForm):
         self.fields[
             build_localized_fieldname("name", settings.LANGUAGE_CODE)
         ].required = True
-
-        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
-            self.fields.pop("points_reference")
-        else:
-            # Edit points of reference with custom edition JavaScript class
-            self.fields[
-                "points_reference"
-            ].widget.geometry_field_class = "PointsReferenceField"
-
-        self.fields[
-            "parking_location"
-        ].widget.geometry_field_class = "ParkingLocationField"
         self.fields["duration"].widget.attrs["min"] = "0"
 
         # Since we use chosen() in trek_form.html, we don't need the default help text
@@ -366,18 +358,12 @@ class BaseTrekForm(CommonForm):
         ]
 
 
-# TODO: delete
-class TrekForm(BaseTrekForm):
-    pass
-
-
 class OnNetworkTrekForm(OnNetworkTopologyFormMixin, BaseTrekForm):
     class Meta(OnNetworkTopologyFormMixin.Meta, BaseTrekForm.Meta):
         fields = [*OnNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
         geomfields = [
+            *BaseTrekForm.geomfields,
             *OnNetworkTopologyFormMixin.geomfields,
-            "parking_location",
-            "points_reference",
         ]
         widgets = {
             "parking_location": MapWidget(
@@ -390,17 +376,28 @@ class OnNetworkTrekForm(OnNetworkTopologyFormMixin, BaseTrekForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields["points_reference"].label = ""
-        self.fields["points_reference"].widget.target_map = "topology"
+
+        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
+            self.fields.pop("points_reference")
+        else:
+            self.fields["points_reference"].label = ""
+            self.fields["points_reference"].widget.target_map = "topology"
+            # Edit points of reference with custom edition JavaScript class
+            self.fields[
+                "points_reference"
+            ].widget.geometry_field_class = "PointsReferenceField"
+
         self.fields["parking_location"].label = ""
         self.fields["parking_location"].widget.target_map = "topology"
+        self.fields[
+            "parking_location"
+        ].widget.geometry_field_class = "ParkingLocationField"
 
 
 class OffNetworkTrekForm(BaseTrekForm, OffNetworkTopologyFormMixin):
     geomfields = [
+        *BaseTrekForm.geomfields,
         *OffNetworkTopologyFormMixin.geomfields,
-        "parking_location",
-        "points_reference",
     ]
 
     class Meta(BaseTrekForm.Meta, OffNetworkTopologyFormMixin.Meta):
@@ -413,6 +410,20 @@ class OffNetworkTrekForm(BaseTrekForm, OffNetworkTopologyFormMixin):
                 attrs={"target_map": "geom", "custom_icon": "markers/points.svg"}
             ),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
+            self.fields.pop("points_reference")
+        else:
+            # Edit points of reference with custom edition JavaScript class
+            self.fields[
+                "points_reference"
+            ].widget.geometry_field_class = "PointsReferenceField"
+        self.fields[
+            "parking_location"
+        ].widget.geometry_field_class = "ParkingLocationField"
 
 #
 # class BaseTrekForm(CommonForm):
