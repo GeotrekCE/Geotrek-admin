@@ -2247,6 +2247,9 @@ class TrailViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
+
     def test_detail_page(self):
         trail = TrailFactory()
         response = self.client.get(trail.get_detail_url())

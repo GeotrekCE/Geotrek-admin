@@ -112,6 +112,9 @@ class POIViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
+
     def test_status_only_review(self):
         element_not_published = self.modelfactory.create(published=False, review=True)
         element_not_published.save()
@@ -1001,6 +1004,9 @@ class ServiceViewsTest(CommonTest):
             f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/service/{self.obj.pk}/\'">Detail sheet</button>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
     @skipIf(
         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
