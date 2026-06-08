@@ -8,7 +8,7 @@ class TrekkingConfig(AppConfig):
     verbose_name = _("Trekking")
 
     def ready(self):
-        from .forms import POIForm, ServiceForm, OnNetworkTrekForm, OffNetworkTrekForm
+        from .forms import OffNetworkTrekForm, OnNetworkTrekForm, POIForm, ServiceForm
 
         def check_hidden_fields_settings(app_configs, **kwargs):
             # Check all Forms hidden fields settings
