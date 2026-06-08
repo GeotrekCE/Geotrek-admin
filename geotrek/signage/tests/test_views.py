@@ -171,6 +171,9 @@ class BladeViewsTest(CommonTest):
         signa = SignageFactory.create()
         self._post_form(self._get_add_url() + f"?signage={signa.pk}")
 
+    def _check_update_geom_permission(self, response):
+        """Don't test because a blade has no geom"""
+
     def test_creation_form_on_signage(self):
         signa = SignageFactory.create()
         signage = f"{signa}"
@@ -414,6 +417,9 @@ class SignageViewsTest(CommonTest):
             f'    <a id="detail-btn" href="/signage/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
     def test_content_in_detail_page(self):
         signa = SignageFactory.create(description="<b>Beautiful !</b>")

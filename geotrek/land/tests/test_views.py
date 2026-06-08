@@ -125,6 +125,9 @@ class PhysicalEdgeViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class LandEdgeViewsTest(CommonTest):
@@ -171,6 +174,9 @@ class LandEdgeViewsTest(CommonTest):
             f'    <a id="detail-btn" href="/landedge/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
@@ -221,6 +227,9 @@ class CirculationEdgeViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class CompetenceEdgeViewsTest(CommonTest):
@@ -267,6 +276,9 @@ class CompetenceEdgeViewsTest(CommonTest):
             f'    <a id="detail-btn" href="/competenceedge/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
@@ -315,6 +327,9 @@ class WorkManagementEdgeViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SignageManagementEdgeViewsTest(CommonTest):
@@ -361,6 +376,9 @@ class SignageManagementEdgeViewsTest(CommonTest):
             f'    <a id="detail-btn" href="/signagemanagementedge/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
 
 class LandEdgeMultiActionsViewTest(

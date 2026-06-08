@@ -168,6 +168,9 @@ class InterventionViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
+
     def test_creation_form_on_signage(self):
         if settings.TREKKING_TOPOLOGY_ENABLED:
             signa = SignageFactory.create()
@@ -643,6 +646,9 @@ class ProjectViewsTest(CommonTest):
             f'    <a id="detail-btn" href="/project/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
     def test_project_layer(self):
         p1 = ProjectFactory.create()

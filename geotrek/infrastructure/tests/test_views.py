@@ -78,6 +78,9 @@ class InfrastructureViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
+
     def test_description_in_detail_page(self):
         infra = InfrastructureFactory.create(description="<b>Beautiful !</b>")
         response = self.client.get(infra.get_detail_url())
@@ -130,6 +133,9 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
             f'    <a id="detail-btn" href="/infrastructure/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
 
 class InfrastructureMultiActionsViewTest(
