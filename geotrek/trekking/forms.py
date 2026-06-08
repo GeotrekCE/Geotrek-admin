@@ -211,7 +211,6 @@ class BaseTrekForm(CommonForm):
             self.fieldslayout[0][1][1].remove("pois_excluded")
 
     def clean(self):
-        # TODO: check if super execution order is still ok for on-network
         cleaned_data = super().clean()
         practice = self.cleaned_data["practice"]
         for scale in RatingScale.objects.all():
@@ -250,7 +249,6 @@ class BaseTrekForm(CommonForm):
         sid = transaction.savepoint()
 
         try:
-            # TODO: check if super execution order is still ok for on-network
             return_value = super().save(self, *args, **kwargs)
             # Save ratings
             # TODO : Go through practice and not rating_scales
