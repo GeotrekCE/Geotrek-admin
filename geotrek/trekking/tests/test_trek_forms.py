@@ -1,6 +1,3 @@
-import json
-
-from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
@@ -8,9 +5,8 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from geotrek.authent.tests.factories import UserFactory
-from geotrek.core.tests.factories import PathFactory
 
-from ..forms import OnNetworkTrekForm, OffNetworkTrekForm, BaseTrekForm
+from ..forms import BaseTrekForm
 from ..models import OrderedTrekChild
 from .factories import RatingFactory, TrekFactory
 
@@ -19,7 +15,6 @@ class BaseTrekFormRatingTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory.create()
-        cls.path = PathFactory.create()
         cls.rating = RatingFactory()
         cls.trek = TrekFactory(practice=cls.rating.scale.practice)
 
@@ -34,7 +29,8 @@ class BaseTrekFormRatingTests(TestCase):
         self.assertTrue(form.is_valid())
         form.save()
         self.assertListEqual(
-            list(self.trek.ratings.all().values_list("pk", flat=True)), [self.rating.pk])
+            list(self.trek.ratings.all().values_list("pk", flat=True)), [self.rating.pk]
+        )
 
     def test_no_rating_save(self):
         data = {
@@ -75,7 +71,6 @@ class BaseTrekFormCompletenessTest(TestCase):
         call_command("update_geotrek_permissions", verbosity=0)
         cls.user = UserFactory.create()
         cls.user.user_permissions.add(Permission.objects.get(codename="publish_trek"))
-        path = PathFactory.create()
         cls.data = {
             "name_en": "My trek",
             "name_fr": "Ma rando",
