@@ -132,28 +132,15 @@ class BladeForm(CommonForm):
         fields = ["id", "number", "direction", "type", "conditions", "color"]
 
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
+class SignageForm(BaseInfrastructureForm):
+    # TODO: if not settings.SIGNAGE_LINE_ENABLED, make it a point topology form
+    # make a BaseInfrastructureFormMixin which does not define a widget
+    # then define widgets in SignageForm and InfrastructureForm
 
-    class BaseSignageForm(BaseInfrastructureForm):
-        geomfields = ["topology"]
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.form_tag = False
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-
-            if not settings.SIGNAGE_LINE_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED:
-                modifiable = self.fields["topology"].widget.modifiable
-                self.fields["topology"].widget = PointTopologyWidget()
-                self.fields["topology"].widget.modifiable = modifiable
-            self.helper.form_tag = False
-
-else:
-
-    class BaseSignageForm(BaseInfrastructureForm):
-        geomfields = ["geom"]
-        geom = PointField()
-
-
-class SignageForm(BaseSignageForm):
     fieldslayout = [
         Div(
             "structure",

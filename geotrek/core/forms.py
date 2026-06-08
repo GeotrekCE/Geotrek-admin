@@ -1,20 +1,13 @@
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Div, Fieldset, Layout
 from django import forms
-from django.conf import settings
-from django.contrib.gis.forms import LineStringField
 from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 from mapentity.widgets import MapWidget
 
 from geotrek.common.forms import CommonForm
-
-if settings.TREKKING_TOPOLOGY_ENABLED:
-    from geotrek.core.mixins.forms import TopologyForm as BaseForm
-else:
-    from geotrek.common.forms import CommonForm as BaseForm
+from geotrek.core.mixins.forms import OnNetworkLinearTopologyFormMixin, OffNetworkLinearTopologyFormMixin
 from geotrek.core.models import CertificationTrail, Path, Trail
-from geotrek.core.widgets import LineTopologyWidget
 
 
 class PathForm(CommonForm):
@@ -108,7 +101,7 @@ class PathForm(CommonForm):
         return path
 
 
-class TrailForm(BaseForm):
+class BaseTrailForm(CommonForm):
     fieldslayout = [
         Div(
             "structure",
@@ -121,20 +114,10 @@ class TrailForm(BaseForm):
         )
     ]
 
-    if settings.TREKKING_TOPOLOGY_ENABLED:
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["topology"].widget.modifiable
-            self.fields["topology"].widget = LineTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-    else:
-        geom = LineStringField()
-
-    class Meta(BaseForm.Meta):
+    class Meta(CommonForm.Meta):
         model = Trail
         fields = [
-            *BaseForm.Meta.fields,
+            *CommonForm.Meta.fields,
             "structure",
             "name",
             "category",
@@ -142,8 +125,16 @@ class TrailForm(BaseForm):
             "arrival",
             "comments",
         ]
-        if not settings.TREKKING_TOPOLOGY_ENABLED:
-            fields.append("geom")
+
+
+class OnNetworkTrailForm(OnNetworkLinearTopologyFormMixin, BaseTrailForm):
+    class Meta(OnNetworkLinearTopologyFormMixin.Meta, BaseTrailForm.Meta):
+        fields = [*OnNetworkLinearTopologyFormMixin.Meta.fields, *BaseTrailForm.Meta.fields]
+
+
+class OffNetworkTrailForm(OffNetworkLinearTopologyFormMixin, BaseTrailForm):
+    class Meta(OffNetworkLinearTopologyFormMixin.Meta, BaseTrailForm.Meta):
+        fields = [*OffNetworkLinearTopologyFormMixin.Meta.fields, *BaseTrailForm.Meta.fields]
 
 
 class CertificationTrailForm(forms.ModelForm):

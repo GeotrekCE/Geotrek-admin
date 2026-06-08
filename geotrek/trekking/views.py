@@ -46,7 +46,8 @@ from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
-from geotrek.core.views import CreateFromTopologyMixin
+from geotrek.core.views import CreateFromTopologyMixin, LinearTopologyViewFormMixin, \
+    LinearTopologyDetailMixin
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.serializers import InfrastructureAPIGeojsonSerializer
 from geotrek.signage.models import Signage
@@ -192,7 +193,7 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
         return response
 
 
-class TrekDetail(CompletenessMixin, MapEntityDetail):
+class TrekDetail(LinearTopologyDetailMixin, CompletenessMixin, MapEntityDetail):
     queryset = (
         Trek.objects.existing()
         .select_related("topo_object", "structure")
@@ -218,10 +219,6 @@ class TrekDetail(CompletenessMixin, MapEntityDetail):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["can_edit"] = self.get_object().same_structure(self.request.user)
-        context["can_draw_off_path_network"] = (
-            not settings.PATH_MODEL_ENABLED
-            or self.request.user.has_perm("core.can_draw_off_path_network")
-        )
         context["labels"] = Label.objects.all()
         context["accessibility_form"] = AttachmentAccessibilityForm(
             request=self.request, object=self.get_object()
@@ -299,29 +296,16 @@ class TrekMarkupPublic(TrekDocumentPublicMixin, MarkupPublic):
     pass
 
 
-class TrekCreate(CreateFromTopologyMixin, MapEntityCreate):
+class TrekCreate(LinearTopologyViewFormMixin, CreateFromTopologyMixin, MapEntityCreate):
     model = Trek
-    form_class = OnNetworkTrekForm
+    on_network_form = OnNetworkTrekForm
+    off_network_form = OffNetworkTrekForm
 
 
-class TrekUpdate(MapEntityUpdate):
+class TrekUpdate(LinearTopologyViewFormMixin, MapEntityUpdate):
     queryset = Trek.objects.existing()
-
-    def get_form_class(self):
-        """
-        - Returns OffNetworkTrekForm (free drawing) if the Path model is disabled or if the user
-        requested to draw off the path network and has permission to do so.
-        - Otherwise, returns OnNetworkTrekForm (routing on paths).
-        """
-        if not settings.PATH_MODEL_ENABLED:
-            return OffNetworkTrekForm
-        topological = self.request.GET.get("topological", "true") == "true"
-        can_draw_off_path_network = self.request.user.has_perm(
-            "core.can_draw_off_path_network"
-        )
-        if not topological and can_draw_off_path_network:
-            return OffNetworkTrekForm
-        return OnNetworkTrekForm
+    on_network_form = OnNetworkTrekForm
+    off_network_form = OffNetworkTrekForm
 
     @same_structure_required("trekking:trek_detail")
     def dispatch(self, *args, **kwargs):
