@@ -46,7 +46,8 @@ class CommonForm(MapEntityForm):
 
     MAP_SETTINGS = {
         "PathForm": "path",
-        "TrekForm": "trek",
+        "OnNetworkTrekForm": "trek",
+        "OffNetworkTrekForm": "trek",
         "TrailForm": "trail",
         "LandEdgeForm": "landedge",
         "PhysicalEdgeForm": "physicaledge",
