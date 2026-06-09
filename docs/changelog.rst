@@ -5,7 +5,7 @@ CHANGELOG
 2.124.4+dev     (XXXX-XX-XX)
 ----------------------------
 
-**Bug fixes**
+**Improvements**
 
 * Adapting ApidaeTrekParser to distinctions (#5180)
 
