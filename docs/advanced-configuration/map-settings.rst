@@ -630,6 +630,26 @@ Altimetric profile
     cd /opt/geotrek-admin/var/media/profiles
     rm *
 
+.. note::
+    To take the parameters changes into account, the instance must be restarted and the elevation data must be recalculated.
+
+  .. md-tab-set::
+      :name: update-altimetry-tabs
+
+      .. md-tab-item:: With Debian
+
+              .. code-block:: bash
+
+                  docker compose run --rm web update.sh
+                  docker compose run --rm web ./manage.py dbshell
+                  UPDATE core_path SET geom=geom;
+
+      .. md-tab-item:: With Docker
+
+          .. code-block:: bash
+
+                  sudo dpkg-reconfigure geotrek-admin
+
 Routing
 -------
 

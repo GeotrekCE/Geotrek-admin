@@ -25,7 +25,7 @@ brotli==1.2.0
     # via fonttools
 btrees==6.4
     # via zodb
-cachetools==7.1.1
+cachetools==7.1.4
     # via large-image
 cairocffi==1.7.1
     # via
@@ -38,7 +38,7 @@ celery==5.6.3
     # via
     #   geotrek (setup.py)
     #   django-celery-results
-certifi==2026.4.22
+certifi==2026.5.20
     # via
     #   fiona
     #   requests
@@ -55,7 +55,7 @@ charset-normalizer==3.4.7
     # via
     #   reportlab
     #   requests
-click==8.3.3
+click==8.4.1
     # via
     #   celery
     #   click-didyoumean
@@ -93,7 +93,7 @@ datetime==6.0
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==5.2.14
+django==5.2.15
     # via
     #   geotrek (setup.py)
     #   crispy-bootstrap4
@@ -204,27 +204,27 @@ easy-thumbnails==2.10.1
     #   paperclip
 exceptiongroup==1.3.1
     # via celery
-filelock==3.29.0
+filelock==3.29.1
     # via django-large-image
 fiona==1.10.1
     # via
     #   geotrek (setup.py)
     #   mapentity
-fonttools==4.62.1
+fonttools==4.63.0
     # via weasyprint
-geojson==3.2.0
+geojson==3.3.0
     # via
     #   geotrek (setup.py)
     #   tif2geojson
-gevent==26.4.0
+gevent==26.5.0
     # via gunicorn
 gpxpy==1.6.2
     # via mapentity
-greenlet==3.5.0
+greenlet==3.5.1
     # via gevent
 gunicorn==26.0.0
     # via geotrek (setup.py)
-idna==3.14
+idna==3.18
     # via requests
 importlib-metadata==9.0.0
     # via pygal
@@ -244,13 +244,13 @@ kombu==5.6.2
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
-large-image==1.34.1
+large-image==1.34.2
     # via
     #   django-large-image
     #   large-image-source-vips
-large-image-source-vips==1.34.1
+large-image-source-vips==1.34.2
     # via geotrek (setup.py)
-lxml==4.9.3
+lxml==6.1.1
     # via
     #   mapentity
     #   svglib
@@ -284,7 +284,7 @@ papersize==1.6.1
     # via pdfimpose
 pdfimpose==2.9.0
     # via geotrek (setup.py)
-persistent==6.6
+persistent==6.7
     # via
     #   btrees
     #   zodb
@@ -342,11 +342,11 @@ referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
-reportlab==4.5.0
+reportlab==4.5.1
     # via
     #   easy-thumbnails
     #   svglib
-requests==2.33.1
+requests==2.34.2
     # via
     #   coreapi
     #   django-embed-video
@@ -360,7 +360,7 @@ rpds-py==0.30.0
     #   referencing
 ruamel-yaml==0.19.1
     # via drf-yasg
-sentry-sdk==2.59.0
+sentry-sdk==2.61.1
     # via geotrek (setup.py)
 setuptools==80.10.2
     # via
@@ -372,7 +372,7 @@ simplekml==1.3.6
     # via geotrek (setup.py)
 six==1.17.0
     # via python-dateutil
-soupsieve==2.8.3
+soupsieve==2.8.4
     # via beautifulsoup4
 sqlparse==0.5.5
     # via django
@@ -418,9 +418,9 @@ vine==5.1.0
     #   amqp
     #   celery
     #   kombu
-wcwidth==0.7.0
+wcwidth==0.8.0
     # via prompt-toolkit
-weasyprint==68.1
+weasyprint==69.0
     # via
     #   geotrek (setup.py)
     #   django-weasyprint
@@ -438,7 +438,7 @@ zc-lockfile==4.0
     # via zodb
 zconfig==4.3
     # via zodb
-zipp==3.23.1
+zipp==4.1.0
     # via importlib-metadata
 zodb==6.3
     # via appy
@@ -448,7 +448,7 @@ zope-deferredimport==6.1.1
     # via persistent
 zope-event==6.2
     # via gevent
-zope-interface==8.4
+zope-interface==8.5
     # via
     #   btrees
     #   datetime
@@ -459,5 +459,5 @@ zope-interface==8.4
     #   zope-proxy
 zope-proxy==7.2
     # via zope-deferredimport
-zopfli==0.4.1
+zopfli==0.4.2
     # via fonttools

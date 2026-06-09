@@ -743,15 +743,7 @@ MESSAGE_TAGS = {
 
 CACHE_TIMEOUT_LAND_LAYERS = 60 * 60 * 24
 
-TREK_CATEGORY_ORDER = 1
-ITINERANCY_CATEGORY_ORDER = 2
-DIVE_CATEGORY_ORDER = 10
-TOURISTIC_EVENT_CATEGORY_ORDER = 99
-SPLIT_TREKS_CATEGORIES_BY_PRACTICE = False
-SPLIT_TREKS_CATEGORIES_BY_ACCESSIBILITY = False
-SPLIT_TREKS_CATEGORIES_BY_ITINERANCY = False
 HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES = False
-SPLIT_DIVES_CATEGORIES_BY_PRACTICE = True
 TOURISTIC_CONTENTS_API_ORDER = ("name",)
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = ("bootstrap", "bootstrap3", "bootstrap4")
@@ -806,12 +798,6 @@ TINYMCE_DEFAULT_CONFIG = {
 
 SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, "mobile")
 SYNC_MOBILE_OPTIONS = {"skip_tiles": False}
-
-"""
-If true; displays the attached pois pictures in the Trek's geojson pictures property.
-In Geotrek-rando it enables correlated pictures to be displayed in the slideshow.
-"""
-TREK_WITH_POIS_PICTURES = False
 
 SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,

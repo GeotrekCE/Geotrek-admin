@@ -107,9 +107,11 @@ Topology.add_property(
 )
 Intervention.add_property(
     "physical_edges",
-    lambda self: self.target.physical_edges
-    if self.target and hasattr(self.target, "physical_edges")
-    else [],
+    lambda self: (
+        self.target.physical_edges
+        if self.target and hasattr(self.target, "physical_edges")
+        else []
+    ),
     _("Physical edges"),
 )
 Project.add_property(
@@ -204,9 +206,11 @@ Path.add_property("land_edges", LandEdge.path_lands, _("Land edges"))
 Topology.add_property("land_edges", LandEdge.topology_lands, _("Land edges"))
 Intervention.add_property(
     "land_edges",
-    lambda self: self.target.land_edges
-    if self.target and hasattr(self.target, "land_edges")
-    else [],
+    lambda self: (
+        self.target.land_edges
+        if self.target and hasattr(self.target, "land_edges")
+        else []
+    ),
     _("Land edges"),
 )
 Project.add_property(
@@ -290,9 +294,11 @@ Topology.add_property(
 )
 Intervention.add_property(
     "competence_edges",
-    lambda self: self.target.competence_edges
-    if self.target and hasattr(self.target, "competence_edges")
-    else [],
+    lambda self: (
+        self.target.competence_edges
+        if self.target and hasattr(self.target, "competence_edges")
+        else []
+    ),
     _("Competence edges"),
 )
 Project.add_property(
@@ -378,9 +384,11 @@ Topology.add_property(
 )
 Intervention.add_property(
     "work_edges",
-    lambda self: self.target.work_edges
-    if self.target and hasattr(self.target, "work_edges")
-    else [],
+    lambda self: (
+        self.target.work_edges
+        if self.target and hasattr(self.target, "work_edges")
+        else []
+    ),
     _("Work management edges"),
 )
 Project.add_property(
@@ -466,9 +474,11 @@ Topology.add_property(
 )
 Intervention.add_property(
     "signage_edges",
-    lambda self: self.target.signage_edges
-    if self.target and hasattr(self.target, "signage_edges")
-    else [],
+    lambda self: (
+        self.target.signage_edges
+        if self.target and hasattr(self.target, "signage_edges")
+        else []
+    ),
     _("Signage management edges"),
 )
 Project.add_property(
@@ -589,9 +599,11 @@ Topology.add_property(
 )
 Intervention.add_property(
     "circulation_edges",
-    lambda self: self.target.circulation_edges
-    if self.target and hasattr(self.target, "circulation_edges")
-    else [],
+    lambda self: (
+        self.target.circulation_edges
+        if self.target and hasattr(self.target, "circulation_edges")
+        else []
+    ),
     _("Circulation edges"),
 )
 Project.add_property(
