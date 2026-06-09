@@ -591,7 +591,7 @@ class ConfigView(APIView):
         ("infrastructure", "infrastructure"),
         ("maintenance", "intervention"),
         ("feedback", "report"),
-        ("common", "attachment")
+        ("common", "attachment"),
     ]
 
     map_permissions = {
