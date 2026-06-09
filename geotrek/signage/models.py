@@ -194,11 +194,11 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 
     @property
     def lat_value(self):
-        return self.geomtransform.x
+        return self.geomtransform.y
 
     @property
     def lng_value(self):
-        return self.geomtransform.y
+        return self.geomtransform.x
 
     @property
     def conditions_display(self):

@@ -59,6 +59,8 @@ And use the Geotrek-admin command to load it into PostGIS :
     - The elevation data of DEM must be integer values. If the elevation data are floating numbers, you can convert them in integer values with the Raster calculator processing of `SAGA in QGis <https://docs.qgis.org/3.34/en/docs/user_manual/processing/3rdParty.html#saga>`_ (Processing > Toolbox > SAGA > Raster calculus > Raster calculator) with formula parameter set to ``int(a)``.
     - If you only have a ``.tif`` file, you can generate the ``.tfw`` file with the command ``gdal_translate -co "TFW=YES" in.tif out.tif``. It will generate a new ``.tif`` file with its ``.tfw`` metadata file.
     - If you want to  update the altimetry of the topologies you need to use the option ``--update-altimery``
+    - If you want to append new elevation data to existing one, you need to use the option ``--append``
+    - If you want to completetly replace existing DEM data you need to use the option ``--replace``
 
 Load DEM
 ----------

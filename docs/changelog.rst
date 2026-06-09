@@ -2,13 +2,43 @@
 CHANGELOG
 =========
 
-2.124.3+dev     (XXXX-XX-XX)
+2.124.5+dev     (XXXX-XX-XX)
 ----------------------------
+
+
+2.124.5         (2026-06-09)
+----------------------------
+
+**Improvements**
+
+* Adapting ApidaeTrekParser to distinctions (#5180)
+* Delete outdated settings related to categories and pictures (refs #4482) 
+
+**Bug fixes**
+
+* Fix the inversion of latitude/longitude columns in signage during CSV export. (refs #4116)
+
+**Documentation**
+
+* Add a ``--append`` option to the ``loaddem`` command to allow adding DEM data to an existing DEM and commands examples to recalculate altimetry (refs #5490)
+
+
+2.124.4         (2026-05-11)
+----------------------------
+
+**Warnings**
+
+* If you come from a version greater than or equal to 2.124.0 and have edited courses with children or itinerancies, please check child order.
 
 **Bug fixes**
 
 * Adapting TourInsoft parsers to the v3 API
 * Fix trek practice merge
+* Fix ordered children for trek and courses. (#5412)
+
+**Tests**
+
+* Fix mocking with OpenStreetMap attachment test parser
 
 
 2.124.3         (2026-04-02)

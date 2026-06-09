@@ -415,7 +415,6 @@ class Trek(
     capture_map_image_waitfor = (
         ".poi_enum_loaded.services_loaded.info_desks_loaded.ref_points_loaded"
     )
-
     geometry_types_allowed = ["LINESTRING"]
     objects = TrekManager()
 
