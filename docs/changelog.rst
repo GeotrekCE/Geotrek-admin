@@ -5,17 +5,19 @@ CHANGELOG
 2.124.4+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+* Adapting ApidaeTrekParser to distinctions (#5180)
+* Delete outdated settings related to categories and pictures (refs #4482) 
+
 **Bug fixes**
 
 * Fix the inversion of latitude/longitude columns in signage during CSV export. (refs #4116)
 
-**Cleanup**
-
-* Delete outdated settings related to categories and pictures (refs #4482) 
-
 **Documentation**
 
 * Add a ``--append`` option to the ``loaddem`` command to allow adding DEM data to an existing DEM and commands examples to recalculate altimetry (refs #5490)
+
 
 2.124.4         (2026-05-11)
 ----------------------------
