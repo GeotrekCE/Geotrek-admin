@@ -5,6 +5,10 @@ CHANGELOG
 2.124.4+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Fix the inversion of latitude/longitude columns in signage during CSV export. (refs #4116)
+
 **Cleanup**
 
 * Delete outdated settings related to categories and pictures (refs #4482) 
