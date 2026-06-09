@@ -5,6 +5,10 @@ CHANGELOG
 2.124.5+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+* Allow the order of the blade lines to be modified
+
 
 2.124.5         (2026-06-09)
 ----------------------------
@@ -12,7 +16,7 @@ CHANGELOG
 **Improvements**
 
 * Adapting ApidaeTrekParser to distinctions (#5180)
-* Delete outdated settings related to categories and pictures (refs #4482) 
+* Delete outdated settings related to categories and pictures (refs #4482)
 
 **Bug fixes**
 
