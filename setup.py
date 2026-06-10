@@ -31,6 +31,7 @@ setup(
         "Pillow",
         "pmtiles",
         "mercantile",
+        "tqdm",
         "simplekml",
         "pygal",
         "paperclip",

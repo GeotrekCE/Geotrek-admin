@@ -258,7 +258,7 @@ lxml==4.9.3
     # via
     #   mapentity
     #   svglib
-mapentity @ git+https://github.com/makinacorpus/django-mapentity@172d08ab235cbc4ff24ec1e51930bc9def513ab8#egg=mapentity
+mapentity @ git+https://github.com/makinacorpus/django-mapentity@8d8e3ee4a1d891f43fd006df66ee9b9064051624#egg=mapentity
     # via geotrek (setup.py)
 markdown==3.10.2
     # via geotrek (setup.py)
@@ -399,6 +399,8 @@ tinycss2==1.5.1
     #   weasyprint
 tinyhtml5==2.1.0
     # via weasyprint
+tqdm==4.67.3
+    # via geotrek (setup.py)
 transaction==5.1
     # via zodb
 typing-extensions==4.15.0
