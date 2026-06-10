@@ -5,9 +5,15 @@ CHANGELOG
 2.124.5+dev     (XXXX-XX-XX)
 ----------------------------
 
+<<<<<<< fix_signage_lines_order
 **Improvements**
 
 * Allow the order of the blade lines to be modified
+=======
+**Bug fixes**
+
+- Update popup to allow opening detail page in new tab (issue #4626)
+>>>>>>> master
 
 
 2.124.5         (2026-06-09)

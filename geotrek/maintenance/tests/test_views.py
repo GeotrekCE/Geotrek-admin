@@ -164,7 +164,7 @@ class InterventionViewsTest(CommonTest):
             f'        <p class="m-0 p-1">\n'
             f"            {str(self.obj.type)}<br>\n"
             f"        </p>\n    \n"
-            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/intervention/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f'    <a id="detail-btn" href="/intervention/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
 
@@ -640,7 +640,7 @@ class ProjectViewsTest(CommonTest):
         return (
             f'<div class="d-flex flex-column justify-content-center">\n'
             f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
-            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/project/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f'    <a id="detail-btn" href="/project/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
 
