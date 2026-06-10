@@ -58,9 +58,10 @@ class BaseLineFormSet(BaseInlineFormSet):
     def clean(self):
         """Checks that no two lines have the same number."""
         if any(self.errors):
+            # Don't bother validating the formset unless each form is valid on its own
             return
 
-        msg = _("Lines of a blade must have distinct numbers")
+        msg = _("This order number is already used by another line.")
         numbers = {}
 
         for form in self.forms:
