@@ -233,7 +233,7 @@ Use the domain defined in ``SERVER_NAME`` in your ``.env`` to reach your local G
 Instance reset
 ==============
 
-This command will delete all your data in your database. Also it will reconfigure and load data with default values, as if it was a new instance:
+This command will delete all your data in your database and media files. Also it will reconfigure and load data with default values, as if it was a new instance:
 
 ::
 
