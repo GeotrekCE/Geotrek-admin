@@ -33,13 +33,14 @@ class ValidTopologyFilterSet(FilterSet):
         ),
     )
 
-        def filter_valid_topology(self, qs, name, value):
-            if value is not None:
-                id_column = "id" if qs.model == Topology else "topo_object_id"
-            qs = qs.alias(topology_is_valid=TopologyIsValid(id_column)).filter(
-                topology_is_valid=value
-                )
-            return qs
+    def filter_valid_topology(self, qs, name, value):
+        if value is not None:
+            id_column = "id" if qs.model == Topology else "topo_object_id"
+        qs = qs.alias(topology_is_valid=TopologyIsValid(id_column)).filter(
+            topology_is_valid=value
+        )
+        return qs
+
 
 class TopologyFilter(RightFilter):
     def filter(self, qs, values):
