@@ -1,8 +1,6 @@
 from datetime import date, datetime
 from distutils.util import strtobool
 
-import coreschema
-from coreapi.document import Field
 from django.conf import settings
 from django.contrib.gis.db.models import Collect
 from django.db.models import Exists, Model, OuterRef
@@ -66,76 +64,66 @@ class GeotrekQueryParamsFilter(BaseFilterBackend):
             queryset = queryset.filter(pk__in=ids.split(","))
         return queryset
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="language",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Language"),
-                    description=_(
-                        "Set language for translation. Can be all or a two-letters language code."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "language",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Set language for translation. Can be all or a two-letters language code."
                 ),
-            ),
-            Field(
-                name="fields",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Fields"),
-                    description=_(
-                        "Limit required fields to increase performances. Example: id,url,geometry."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "fields",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Limit required fields to increase performances. Example: id,url,geometry."
                 ),
-            ),
-            Field(
-                name="omit",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Omit"),
-                    description=_(
-                        "Omit specified fields to increase performance. Example: url,category."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "omit",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Omit specified fields to increase performance. Example: url,category."
                 ),
-            ),
-            Field(
-                name="ids",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Identifiers"),
-                    description=_("Filter by one or more object id, comma-separated."),
-                ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "ids",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more object id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekQueryParamsDimensionFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         return queryset
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="format",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Format"),
-                    description=_(
-                        "Set output format (json / geojson). Default: json. Example: geojson."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "format",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Set output format (json / geojson). Default: json. Example: geojson."
                 ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekInBBoxFilter(InBBOXFilter):
     """
-    Override DRF gis InBBOXFilter with coreapi field descriptors
+    Override DRF gis InBBOXFilter with spectacular field descriptors
     """
 
     def get_filter_bbox(self, request):
@@ -146,26 +134,24 @@ class GeotrekInBBoxFilter(InBBOXFilter):
             bbox.transform(settings.SRID)
         return bbox
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name=self.bbox_param,
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("In bbox"),
-                    description=_(
-                        "Filter by a bounding box formatted like W-lng,S-lat,E-lng,N-lat (WGS84)."
-                        "Example: 1.15,46.1,1.56,47.6."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": self.bbox_param,
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by a bounding box formatted like W-lng,S-lat,E-lng,N-lat (WGS84)."
+                    "Example: 1.15,46.1,1.56,47.6."
                 ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekDistanceToPointFilter(DistanceToPointFilter):
     """
-    Override DRF gis DistanceToPointFilter with coreapi field descriptors
+    Override DRF gis DistanceToPointFilter with spectacular field descriptors
     """
 
     def get_filter_point(self, request, **kwargs):
@@ -175,31 +161,27 @@ class GeotrekDistanceToPointFilter(DistanceToPointFilter):
             point.transform(settings.SRID)
         return point
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name=self.dist_param,
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Distance"),
-                    description=_(
-                        "Filter by maximum distance in meters between a point and elements."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": self.dist_param,
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by maximum distance in meters between a point and elements."
                 ),
-            ),
-            Field(
-                name=self.point_param,
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Point"),
-                    description=_(
-                        "Reference point to compute distance (WGS84). Example: lng,lat."
-                    ),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": self.point_param,
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Reference point to compute distance (WGS84). Example: lng,lat."
                 ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekPublishedFilter(BaseFilterBackend):
@@ -245,54 +227,44 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             )
         return qs.distinct()
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="period",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Period"),
-                    description=_(
-                        "Filter by period of occupancy. Month numbers (1-12), comma-separated."
-                        " any = occupied at any time in the year. ignore = occupied or not."
-                        " Example: 7,8 for july and august."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "period",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by period of occupancy. Month numbers (1-12), comma-separated."
+                    " any = occupied at any time in the year. ignore = occupied or not."
+                    " Example: 7,8 for july and august."
                 ),
-            ),
-            Field(
-                name="practices",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Practices"),
-                    description=_(
-                        "Filter by one or more practice id, comma-separated."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "practices",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more practice id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "structures",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more structure id, comma-separated."
                 ),
-            ),
-            Field(
-                name="structures",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Structures"),
-                    description=_(
-                        "Filter by one or more structure id, comma-separated."
-                    ),
-                ),
-            ),
-            Field(
-                name="trek",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Trek"),
-                    description=_("(deprecated) replaced by '%(field)s'.")
-                    % {"field": "near_trek"},
-                ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "trek",
+                "required": False,
+                "in": "query",
+                "description": _("(deprecated) replaced by '%(field)s'.")
+                % {"field": "near_trek"},
+                "schema": {"type": "integer"},
+            },
+        ]
 
 
 class GeotrekPOIFilter(BaseFilterBackend):
@@ -336,50 +308,42 @@ class GeotrekPOIFilter(BaseFilterBackend):
             )
         return list_pois.distinct()
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="types",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Types"),
-                    description=_("Filter by one or more type id, comma-separated."),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "types",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more type id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "trek",
+                "required": False,
+                "in": "query",
+                "description": _("(deprecated) replaced by '%(field)s'.")
+                % {"field": "near_trek"},
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "sites",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or multiple site id. It will show only the POIs related to this outdoor site. If multiple sites, they should be separated by commas."
                 ),
-            ),
-            Field(
-                name="trek",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Trek"),
-                    description=_("(deprecated) replaced by '%(field)s'.")
-                    % {"field": "near_trek"},
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "courses",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or multiple course id. It will show only the POIs related to this outdoor course. If multiple courses, they should be separated by commas."
                 ),
-            ),
-            Field(
-                name="sites",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Sites"),
-                    description=_(
-                        "Filter by one or multiple site id. It will show only the POIs related to this outdoor site. If multiple sites, they should be separated by commas."
-                    ),
-                ),
-            ),
-            Field(
-                name="courses",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Courses"),
-                    description=_(
-                        "Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas."
-                    ),
-                ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 def _filter_near(base_model, target_model, target_pk, queryset):
@@ -451,69 +415,58 @@ class NearbyContentFilter(BaseFilterBackend):
                 )
         return qs
 
-    def get_schema_fields(self, view):
-        fields = (
-            Field(
-                name="near_trek",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Near trek"),
-                    description=_(
-                        "Filter by a trek id. It will only show the contents related to this trek."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        parameters = [
+            {
+                "name": "near_trek",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by a trek id. It will only show the contents related to this trek."
                 ),
-            ),
-            Field(
-                name="near_touristiccontent",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Near touristic content"),
-                    description=_(
-                        "Filter by a touristic content id. It will only show the contents related to this touristic content."
-                    ),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "near_touristiccontent",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by a touristic content id. It will only show the contents related to this touristic content."
                 ),
-            ),
-            Field(
-                name="near_touristicevent",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Near touristic event"),
-                    description=_(
-                        "Filter by a touristic event id. It will only show the contents related to this touristic event."
-                    ),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "near_touristicevent",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by a touristic event id. It will only show the contents related to this touristic event."
                 ),
-            ),
-        )
+                "schema": {"type": "integer"},
+            },
+        ]
         if "geotrek.outdoor" in settings.INSTALLED_APPS:
-            fields = (
-                *fields,
-                Field(
-                    name="near_outdoorsite",
-                    required=False,
-                    location="query",
-                    schema=coreschema.Integer(
-                        title=_("Near outdoor site"),
-                        description=_(
-                            "Filter by an outdoor site id. It will only show the contents related to this outdoor site."
-                        ),
+            parameters += [
+                {
+                    "name": "near_outdoorsite",
+                    "required": False,
+                    "in": "query",
+                    "description": _(
+                        "Filter by an outdoor site id. It will only show the contents related to this outdoor site."
                     ),
-                ),
-                Field(
-                    name="near_outdoorcourse",
-                    required=False,
-                    location="query",
-                    schema=coreschema.Integer(
-                        title=_("Near outdoor course"),
-                        description=_(
-                            "Filter by an outdoor course id. It will only show the contents related to this outdoor course."
-                        ),
+                    "schema": {"type": "integer"},
+                },
+                {
+                    "name": "near_outdoorcourse",
+                    "required": False,
+                    "in": "query",
+                    "description": _(
+                        "Filter by an outdoor course id. It will only show the contents related to this outdoor course."
                     ),
-                ),
-            )
-        return fields
+                    "schema": {"type": "integer"},
+                },
+            ]
+        return parameters
 
 
 class GeotrekZoningAndThemeFilter(BaseFilterBackend):
@@ -563,69 +516,55 @@ class GeotrekZoningAndThemeFilter(BaseFilterBackend):
                 )
         return qs
 
-    def _get_schema_fields(self, view):
-        return (
-            Field(
-                name="cities",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Cities"),
-                    description=_("Filter by one or more city id, comma-separated."),
+    def _get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "cities",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more city id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "districts",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more district id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "structures",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more structure id, comma-separated."
                 ),
-            ),
-            Field(
-                name="districts",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Districts"),
-                    description=_(
-                        "Filter by one or more district id, comma-separated."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "themes",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more themes id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "portals",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more portal id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "q",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by some case-insensitive text contained in name, description teaser or description."
                 ),
-            ),
-            Field(
-                name="structures",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Structures"),
-                    description=_(
-                        "Filter by one or more structure id, comma-separated."
-                    ),
-                ),
-            ),
-            Field(
-                name="themes",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Themes"),
-                    description=_("Filter by one or more themes id, comma-separated."),
-                ),
-            ),
-            Field(
-                name="portals",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Portals"),
-                    description=_("Filter by one or more portal id, comma-separated."),
-                ),
-            ),
-            Field(
-                name="q",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Query string"),
-                    description=_(
-                        "Filter by some case-insensitive text contained in name, description teaser or description."
-                    ),
-                ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekInformationDeskFilter(BaseFilterBackend):
@@ -642,31 +581,27 @@ class GeotrekInformationDeskFilter(BaseFilterBackend):
             qs = qs.filter(label_accessibility__in=labels_accessibility.split(","))
         return qs
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="types",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Types"),
-                    description=_(
-                        "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "types",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
                 ),
-            ),
-            Field(
-                name="labels_accessibility",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Labels accessibility"),
-                    description=_(
-                        "Filter by one or more labels accessibility id, comma-separated."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "labels_accessibility",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more labels accessibility id, comma-separated."
                 ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
@@ -687,43 +622,34 @@ class GeotrekTouristicContentFilter(GeotrekZoningAndThemeFilter):
             qs = qs.filter(label_accessibility__in=labels_accessibility.split(","))
         return self._filter_queryset(request, qs, view)
 
-    def get_schema_fields(self, view):
-        return (
-            *self._get_schema_fields(view),
-            Field(
-                name="categories",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Categories"),
-                    description=_(
-                        "Filter by one or more category id, comma-separated."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return self._get_schema_operation_parameters(view) + [
+            {
+                "name": "categories",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more category id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "types",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
                 ),
-            ),
-            Field(
-                name="types",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Types"),
-                    description=_(
-                        "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "labels_accessibility",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more labels accessibility id, comma-separated."
                 ),
-            ),
-            Field(
-                name="labels_accessibility",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Labels accessibility"),
-                    description=_(
-                        "Filter by one or more labels accessibility id, comma-separated."
-                    ),
-                ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class TouristicEventFilterSet(filters.FilterSet):
@@ -785,43 +711,36 @@ class GeotrekTouristicEventFilter(GeotrekZoningAndThemeFilter):
                 )
         return self._filter_queryset(request, qs, view)
 
-    def get_schema_fields(self, view):
-        return (
-            *self._get_schema_fields(view),
-            Field(
-                name="types",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Types"),
-                    description=_(
-                        "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return self._get_schema_operation_parameters(view) + [
+            {
+                "name": "types",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
                 ),
-            ),
-            Field(
-                name="dates_before",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Dates before"),
-                    description=_(
-                        "Filter events happening before or during date, format YYYY-MM-DD"
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "dates_before",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter events happening before or during date, format YYYY-MM-DD"
                 ),
-            ),
-            Field(
-                name="dates_after",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Dates after"),
-                    description=_(
-                        "Filter events happening after or during date, format YYYY-MM-DD"
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "dates_after",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter events happening after or during date, format YYYY-MM-DD"
                 ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekServiceFilter(BaseFilterBackend):
@@ -835,20 +754,18 @@ class GeotrekServiceFilter(BaseFilterBackend):
         qs = qs.filter(type__published=True)
         return qs
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="types",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Types"),
-                    description=_(
-                        "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "types",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
                 ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class UpdateOrCreateDateFilter(BaseFilterBackend):
@@ -868,53 +785,45 @@ class UpdateOrCreateDateFilter(BaseFilterBackend):
             qs = qs.filter(date_insert__date__gte=created_after)
         return qs
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="updated_after",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Update date after"),
-                    description=_(
-                        "Filter objects updated after or during date, format YYYY-MM-DD"
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "updated_after",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter objects updated after or during date, format YYYY-MM-DD"
                 ),
-            ),
-            Field(
-                name="updated_before",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Update date before"),
-                    description=_(
-                        "Filter objects updated before or during date, format YYYY-MM-DD"
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "updated_before",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter objects updated before or during date, format YYYY-MM-DD"
                 ),
-            ),
-            Field(
-                name="created_after",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Create date after"),
-                    description=_(
-                        "Filter objects created after or during date, format YYYY-MM-DD"
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "created_after",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter objects created after or during date, format YYYY-MM-DD"
                 ),
-            ),
-            Field(
-                name="created_before",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Create date before"),
-                    description=_(
-                        "Filter objects created before or during date, format YYYY-MM-DD"
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "created_before",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter objects created before or during date, format YYYY-MM-DD"
                 ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
@@ -999,201 +908,157 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             )
         return qs.distinct()
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="duration_min",
-                required=False,
-                location="query",
-                schema=coreschema.Number(
-                    title=_("Duration min"),
-                    description=_("Filter by minimum duration (hours)."),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "duration_min",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by minimum duration (hours)."),
+                "schema": {"type": "number"},
+            },
+            {
+                "name": "duration_max",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by maximum duration (hours)."),
+                "schema": {"type": "number"},
+            },
+            {
+                "name": "length_min",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by minimum length (meters)."),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "length_max",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by maximum length (meters)."),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "difficulty_min",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by minimum difficulty level (id)."),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "difficulty_max",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by maximum difficulty level (id)."),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "ascent_min",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by minimum ascent (meters)."),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "ascent_max",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by maximum ascent (meters)."),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "cities",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more city id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "districts",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more district id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "structures",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more structure id, comma-separated."
                 ),
-            ),
-            Field(
-                name="duration_max",
-                required=False,
-                location="query",
-                schema=coreschema.Number(
-                    title=_("Duration max"),
-                    description=_("Filter by maximum duration (hours)."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "accessibilities",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more type of accessibility id, comma-separated."
                 ),
-            ),
-            Field(
-                name="length_min",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Length min"),
-                    description=_("Filter by minimum length (meters)."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "accessibility_level",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more accessibility level id, comma-separated."
                 ),
-            ),
-            Field(
-                name="length_max",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Length max"),
-                    description=_("Filter by maximum length (meters)."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "themes",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more theme id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "portals",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more portal id, comma-separateds."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "routes",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more route id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "labels",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more label id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "labels_exclude",
+                "required": False,
+                "in": "query",
+                "description": _("Exclude one or more label id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "practices",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more practice id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "q",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by some case-insensitive text contained in name, description, description teaser or ambiance."
                 ),
-            ),
-            Field(
-                name="difficulty_min",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Difficulty min"),
-                    description=_("Filter by minimum difficulty level (id)."),
-                ),
-            ),
-            Field(
-                name="difficulty_max",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Difficulty max"),
-                    description=_("Filter by maximum difficulty level (id)."),
-                ),
-            ),
-            Field(
-                name="ascent_min",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Ascent min"),
-                    description=_("Filter by minimum ascent (meters)."),
-                ),
-            ),
-            Field(
-                name="ascent_max",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Ascent max"),
-                    description=_("Filter by maximum ascent (meters)."),
-                ),
-            ),
-            Field(
-                name="cities",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Cities"),
-                    description=_("Filter by one or more city id, comma-separated."),
-                ),
-            ),
-            Field(
-                name="districts",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Districts"),
-                    description=_(
-                        "Filter by one or more district id, comma-separated."
-                    ),
-                ),
-            ),
-            Field(
-                name="structures",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Structures"),
-                    description=_(
-                        "Filter by one or more structure id, comma-separated."
-                    ),
-                ),
-            ),
-            Field(
-                name="accessibilities",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Types of accessibility"),
-                    description=_(
-                        "Filter by one or more type of accessibility id, comma-separated."
-                    ),
-                ),
-            ),
-            Field(
-                name="accessibility_level",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Accessibility level"),
-                    description=_(
-                        "Filter by one or more accessibility level id, comma-separated."
-                    ),
-                ),
-            ),
-            Field(
-                name="themes",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Themes"),
-                    description=_("Filter by one or more theme id, comma-separated."),
-                ),
-            ),
-            Field(
-                name="portals",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Portals"),
-                    description=_("Filter by one or more portal id, comma-separateds."),
-                ),
-            ),
-            Field(
-                name="routes",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Routes"),
-                    description=_("Filter by one or more route id, comma-separated."),
-                ),
-            ),
-            Field(
-                name="labels",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Labels"),
-                    description=_("Filter by one or more label id, comma-separated."),
-                ),
-            ),
-            Field(
-                name="labels_exclude",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Labels exclusion"),
-                    description=_("Exclude one or more label id, comma-separated."),
-                ),
-            ),
-            Field(
-                name="practices",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Practices"),
-                    description=_(
-                        "Filter by one or more practice id, comma-separated."
-                    ),
-                ),
-            ),
-            Field(
-                name="q",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Query string"),
-                    description=_(
-                        "Filter by some case-insensitive text contained in name, description, description teaser or ambiance."
-                    ),
-                ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekRatingsFilter(BaseFilterBackend):
@@ -1203,18 +1068,16 @@ class GeotrekRatingsFilter(BaseFilterBackend):
             queryset = queryset.filter(ratings__in=ratings.split(","))
         return queryset
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="ratings",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Ratings"),
-                    description=_("Filter by one or more ratings id, comma-separated."),
-                ),
-            ),
-        )
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "ratings",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more ratings id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekNetworksFilter(BaseFilterBackend):
@@ -1224,20 +1087,16 @@ class GeotrekNetworksFilter(BaseFilterBackend):
             queryset = queryset.filter(networks__in=networks.split(","))
         return queryset
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="networks",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Networks"),
-                    description=_(
-                        "Filter by one or more networks id, comma-separated."
-                    ),
-                ),
-            ),
-        )
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "networks",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more networks id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
@@ -1275,72 +1134,59 @@ class GeotrekSiteFilter(GeotrekZoningAndThemeFilter):
             queryset = queryset.exclude(labels__in=labels_exclude.split(","))
         return self._filter_queryset(request, queryset, view)
 
-    def get_schema_fields(self, view):
-        return (
-            *self._get_schema_fields(view),
-            Field(
-                name="root_sites_only",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Root sites only"),
-                    description=_(
-                        "Only return sites that are at the top of the hierarchy and have no parent. Use any string to activate."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return self._get_schema_operation_parameters(view) + [
+            {
+                "name": "root_sites_only",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Only return sites that are at the top of the hierarchy and have no parent. Use any string to activate."
                 ),
-            ),
-            Field(
-                name="practices_in_hierarchy",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Practices in hierarchy"),
-                    description=_(
-                        "Filter by one or more practices id, comma-separated. Return sites that have theses practices OR have at least one child site that does."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "practices_in_hierarchy",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more practices id, comma-separated. Return sites that have theses practices OR have at least one child site that does."
                 ),
-            ),
-            Field(
-                name="types",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Types"),
-                    description=_(
-                        "Filter by one or more site type id, comma-separated."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "types",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more site type id, comma-separated."
                 ),
-            ),
-            Field(
-                name="labels",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Labels"),
-                    description=_("Filter by one or more label id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "labels",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more label id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "labels_exclude",
+                "required": False,
+                "in": "query",
+                "description": _("Exclude one or more label id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "ratings_in_hierarchy",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more ratings id, comma-separated. Return sites that have theses ratings OR have at least one child site that does."
                 ),
-            ),
-            Field(
-                name="labels_exclude",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Labels exclusion"),
-                    description=_("Exclude one or more label id, comma-separated."),
-                ),
-            ),
-            Field(
-                name="ratings_in_hierarchy",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Ratings in hierarchy"),
-                    description=_(
-                        "Filter by one or more ratings id, comma-separated. Return sites that have theses ratings OR have at least one child site that does."
-                    ),
-                ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekCourseFilter(GeotrekZoningAndThemeFilter):
@@ -1357,32 +1203,25 @@ class GeotrekCourseFilter(GeotrekZoningAndThemeFilter):
             queryset = queryset.filter(type__in=types.split(","))
         return self._filter_queryset(request, queryset, view)
 
-    def get_schema_fields(self, view):
-        return (
-            *self._get_schema_fields(view),
-            Field(
-                name="practices",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Practices"),
-                    description=_(
-                        "Filter by one or more practice id, comma-separated."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return self._get_schema_operation_parameters(view) + [
+            {
+                "name": "practices",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more practice id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "types",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more course type id, comma-separated."
                 ),
-            ),
-            Field(
-                name="types",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Types"),
-                    description=_(
-                        "Filter by one or more course type id, comma-separated."
-                    ),
-                ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
@@ -1472,18 +1311,16 @@ class RelatedObjectsPublishedNotDeletedByPortalFilter(
             qs, request, related_name, portal_query
         )
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="portals",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Portals"),
-                    description=_("Filter by one or more portal id, comma-separateds."),
-                ),
-            ),
-        )
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "portals",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more portal id, comma-separateds."),
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class TrekRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
@@ -1722,31 +1559,25 @@ class GeotrekRatingScaleFilter(BaseFilterBackend):
             queryset = queryset.filter(name__icontains=q)
         return queryset
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="practices",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Practices"),
-                    description=_(
-                        "Filter by one or more practice id, comma-separated."
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "practices",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more practice id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "q",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by some case-insensitive text contained in name."
                 ),
-            ),
-            Field(
-                name="q",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Query string"),
-                    description=_(
-                        "Filter by some case-insensitive text contained in name."
-                    ),
-                ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekLabelFilter(BaseFilterBackend):
@@ -1761,21 +1592,19 @@ class GeotrekLabelFilter(BaseFilterBackend):
                 return queryset.none()
         return queryset
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="only_filters",
-                required=False,
-                location="query",
-                schema=coreschema.Boolean(
-                    title=_("Filter"),
-                    description=_(
-                        "Filter by the fact that this label can be used as filter. "
-                        "'y', 'yes', 't', 'true', 'on', '1' are possible values"
-                    ),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "only_filters",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by the fact that this label can be used as filter. "
+                    "'y', 'yes', 't', 'true', 'on', '1' are possible values"
                 ),
-            ),
-        )
+                "schema": {"type": "boolean"},
+            },
+        ]
 
 
 class GeotrekRatingFilter(BaseFilterBackend):
@@ -1792,29 +1621,25 @@ class GeotrekRatingFilter(BaseFilterBackend):
             )
         return queryset
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="scale",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Rating scale"),
-                    description=_("Filter by a rating scale id."),
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "scale",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by a rating scale id."),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "q",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by some case-insensitive text contained in name, scale name or description."
                 ),
-            ),
-            Field(
-                name="q",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Query string"),
-                    description=_(
-                        "Filter by some case-insensitive text contained in name, scale name or description."
-                    ),
-                ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class MenuItemFilter(BaseFilterBackend):
@@ -1824,18 +1649,16 @@ class MenuItemFilter(BaseFilterBackend):
             queryset = queryset.filter(portals__in=portals.split(","))
         return queryset
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="portals",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Portals"),
-                    description=_("Filter by one or more portal id, comma-separated."),
-                ),
-            ),
-        )
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "portals",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more portal id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class FlatPageFilter(BaseFilterBackend):
@@ -1871,43 +1694,36 @@ class FlatPageFilter(BaseFilterBackend):
             queryset = queryset.filter(Q(title__icontains=q) | Q(content__icontains=q))
         return queryset
 
-    def get_schema_fields(self, view):
-        return (
-            Field(
-                name="parent",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Parent"), description=_("Filter by the parent page ID")
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "parent",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by the parent page ID"),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "sources",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more source id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "portals",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more portal id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "q",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by some case-insensitive text contained in name or content."
                 ),
-            ),
-            Field(
-                name="sources",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Sources"),
-                    description=_("Filter by one or more source id, comma-separated."),
-                ),
-            ),
-            Field(
-                name="portals",
-                required=False,
-                location="query",
-                schema=coreschema.Integer(
-                    title=_("Portals"),
-                    description=_("Filter by one or more portal id, comma-separated."),
-                ),
-            ),
-            Field(
-                name="q",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Query string"),
-                    description=_(
-                        "Filter by some case-insensitive text contained in name or content."
-                    ),
-                ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]

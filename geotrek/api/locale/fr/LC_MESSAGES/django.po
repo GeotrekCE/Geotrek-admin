@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-26 13:34+0000\n"
+"POT-Creation-Date: 2026-04-09 15:26+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Camille Monchicourt <camille.monchicourt@ecrins-parcnational.fr>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/api/fr/>\n"
@@ -171,117 +171,62 @@ msgstr "Synchro"
 msgid "Set language for translation. Can be all or a two-letters language code."
 msgstr "Définit la langue pour la traduction. Peut être all ou bien un code de langue à deux lettres."
 
-msgid "Fields"
-msgstr "Champs"
-
 msgid "Limit required fields to increase performances. Example: id,url,geometry."
 msgstr "Limiter les champs de sortie pour améliorer les performances. Exemple : id,url,geometry."
-
-msgid "Omit"
-msgstr "Omettre"
 
 msgid "Omit specified fields to increase performance. Example: url,category."
 msgstr "Supprimer des champs de sortie pour améliorer les performances. Exemple : url,category."
 
-msgid "Identifiers"
-msgstr "Identifiants"
-
 msgid "Filter by one or more object id, comma-separated."
 msgstr "Filtrer par un ou plusieurs identifiant(s), séparés par des virgules."
-
-msgid "Format"
-msgstr "Format"
 
 msgid "Set output format (json / geojson). Default: json. Example: geojson."
 msgstr "Format de sortie (json / geojson). Défaut: json. Exemple : geojson."
 
-msgid "In bbox"
-msgstr "Dans la bbox"
-
 msgid "Filter by a bounding box formatted like W-lng,S-lat,E-lng,N-lat (WGS84).Example: 1.15,46.1,1.56,47.6."
 msgstr "Filtrer par une enveloppe formatée telle que W-lng,S-lat,E-lng,N-lat (WGS84). Exemple : 1.15,46.1,1.56,47.6."
-
-msgid "Distance"
-msgstr "Distance"
 
 msgid "Filter by maximum distance in meters between a point and elements."
 msgstr "Filtrer par la distance maximale en mètres entre le point et les éléments."
 
-msgid "Point"
-msgstr "Point"
-
 msgid "Reference point to compute distance (WGS84). Example: lng,lat."
 msgstr "Point de référence pour calculer la distance (WGS84). Ex : lng,lat."
-
-msgid "Period"
-msgstr "Période"
 
 msgid "Filter by period of occupancy. Month numbers (1-12), comma-separated. any = occupied at any time in the year. ignore = occupied or not. Example: 7,8 for july and august."
 msgstr "Filtrer par période d'occupation. Numéros de mois (1-12) séparés par des virgules. any = occupé à n'importe quel moment de l'année. ignore = occupé ou non. Exemple : 7,8 pour juillet et août."
 
-msgid "Practices"
-msgstr "Pratiques"
-
 msgid "Filter by one or more practice id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de pratique, séparés par des virgules."
 
-msgid "Structures"
-msgstr "Structures"
-
 msgid "Filter by one or more structure id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de structure, séparés par des virgules."
-
-msgid "Trek"
-msgstr "Itinéraire"
 
 #, python-format
 msgid "(deprecated) replaced by '%(field)s'."
 msgstr "(déprécié) remplacé par '%(field)s'."
 
-msgid "Types"
-msgstr "Types"
-
 msgid "Filter by one or more type id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de type, séparés par des virgules."
-
-msgid "Sites"
-msgstr ""
 
 msgid "Filter by one or multiple site id. It will show only the POIs related to this outdoor site. If multiple sites, they should be separated by commas."
 msgstr "Filtrer par un ou plusieurs identifiants de site. Il affichera uniquementles POI liés à ce site outdoor. S'il s'agit de plusieurs sites, ils doivent être séparés par des virgules."
 
-msgid "Courses"
-msgstr ""
-
-msgid "Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas."
+#, fuzzy
+#| msgid "Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas."
+msgid "Filter by one or multiple course id. It will show only the POIs related to this outdoor course. If multiple courses, they should be separated by commas."
 msgstr "Filtrer par un ou plusieurs identifiants de cours. Il n'affichera que les POIliés à ce parcours outdoor. S'il s'agit de plusieurs cours, ils doivent être séparés par des virgules. "
 
-msgid "Near trek"
-msgstr "Proche de l'itinéraire"
-
 msgid "Filter by a trek id. It will only show the contents related to this trek."
-msgstr ""
-
-msgid "Near touristic content"
 msgstr ""
 
 msgid "Filter by a touristic content id. It will only show the contents related to this touristic content."
 msgstr ""
 
-msgid "Near touristic event"
-msgstr "Proche du evenement touristique"
-
 msgid "Filter by a touristic event id. It will only show the contents related to this touristic event."
 msgstr "Filtrer par l'id d'un évènement touristique. Le filtre n'affichera que les contenus liés à cet évènement touristique."
 
-msgid "Near outdoor site"
-msgstr "Proche du site outdoor"
-
 msgid "Filter by an outdoor site id. It will only show the contents related to this outdoor site."
 msgstr "Filtrer par l'id d'un site outdoor. Le filtre n'affichera que les contenus liés à ce site outdoor."
-
-msgid "Near outdoor course"
-msgstr ""
 
 msgid "Filter by an outdoor course id. It will only show the contents related to this outdoor course."
 msgstr "Filtrer par l'id d'un parcours outdoor. Le filtre n'affichera que les contenus liés à ce parcours outdoor."
@@ -295,14 +240,8 @@ msgstr "Filtrer par un ou plusieurs id de secteur, séparés par des virgules."
 msgid "Filter by one or more themes id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de thème, séparés par des virgules."
 
-msgid "Portals"
-msgstr "Portails"
-
 msgid "Filter by one or more portal id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de portails, séparés par des virgules."
-
-msgid "Query string"
-msgstr "Recherche"
 
 msgid "Filter by some case-insensitive text contained in name, description teaser or description."
 msgstr "Filtrer par du texte insensible à la casse contenu dans le nom, le chapeau, ou la description"
@@ -310,14 +249,8 @@ msgstr "Filtrer par du texte insensible à la casse contenu dans le nom, le chap
 msgid "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
 msgstr "Filtrez par un ou plusieurs identifiants de types, séparés par des virgules. OU logiquepour les types dans la même liste, ET pour les types dans des listes différentes. "
 
-msgid "Labels accessibility"
-msgstr "Labels accessibilité"
-
 msgid "Filter by one or more labels accessibility id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de label d'accessibilité, séparés par des virgules."
-
-msgid "Categories"
-msgstr "Catégories"
 
 msgid "Filter by one or more category id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de catégorie, séparés par des virgules."
@@ -334,98 +267,50 @@ msgstr "Filtre les évènements réservables : true/false attendu"
 msgid "Filter events on cancelled boolean : true/false expected"
 msgstr "Filtre sur les évènements annulés : true/false attendu"
 
-msgid "Dates before"
-msgstr ""
-
 msgid "Filter events happening before or during date, format YYYY-MM-DD"
-msgstr ""
-
-msgid "Dates after"
 msgstr ""
 
 msgid "Filter events happening after or during date, format YYYY-MM-DD"
 msgstr ""
 
-msgid "Update date after"
-msgstr ""
-
 msgid "Filter objects updated after or during date, format YYYY-MM-DD"
-msgstr ""
-
-msgid "Update date before"
 msgstr ""
 
 msgid "Filter objects updated before or during date, format YYYY-MM-DD"
 msgstr ""
 
-msgid "Create date after"
-msgstr ""
-
 msgid "Filter objects created after or during date, format YYYY-MM-DD"
-msgstr ""
-
-msgid "Create date before"
 msgstr ""
 
 msgid "Filter objects created before or during date, format YYYY-MM-DD"
 msgstr ""
 
-msgid "Duration min"
-msgstr "Durée min"
-
 msgid "Filter by minimum duration (hours)."
 msgstr "Filtrer par la durée minimale d'un itinéraire (heures)."
-
-msgid "Duration max"
-msgstr "Durée max"
 
 msgid "Filter by maximum duration (hours)."
 msgstr "Filtrer par la durée maximale d'un itinéraire (heures)."
 
-msgid "Length min"
-msgstr "Longueur min"
-
 msgid "Filter by minimum length (meters)."
 msgstr "Filtrer par la longueur minimale d'un itinéraire (mètres)."
-
-msgid "Length max"
-msgstr "Longueur max"
 
 msgid "Filter by maximum length (meters)."
 msgstr "Filtrer par la longueur maximale d'un itinéraire (mètres)."
 
-msgid "Difficulty min"
-msgstr "Difficulté min"
-
 msgid "Filter by minimum difficulty level (id)."
 msgstr "Filtrer par le niveau de difficulté minimum (id)."
-
-msgid "Difficulty max"
-msgstr "Difficulté max"
 
 msgid "Filter by maximum difficulty level (id)."
 msgstr "Filtrer par le niveau de difficulté maximum (id)."
 
-msgid "Ascent min"
-msgstr "Dénivelé positif min"
-
 msgid "Filter by minimum ascent (meters)."
 msgstr "Filtrer par le dénivelé positif minimal (mètres)."
-
-msgid "Ascent max"
-msgstr "Dénivelé positif max"
 
 msgid "Filter by maximum ascent (meters)."
 msgstr "Filtrer par le dénivelé positif maximal (mètres)."
 
-msgid "Types of accessibility"
-msgstr "Types d'accessibilité"
-
 msgid "Filter by one or more type of accessibility id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de type d'accessibilité, séparés par des virgules."
-
-msgid "Accessibility level"
-msgstr "Niveau d'accessibilité"
 
 msgid "Filter by one or more accessibility level id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de niveau d'accessibilité, séparés par des virgules."
@@ -436,20 +321,11 @@ msgstr "Filtrer par un ou plusieurs id de thème, séparés par des virgules."
 msgid "Filter by one or more portal id, comma-separateds."
 msgstr "Filtrer par un ou plusieurs id de portail, séparés par des virgules."
 
-msgid "Routes"
-msgstr "Parcours"
-
 msgid "Filter by one or more route id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de parcours, séparés par des virgules."
 
-msgid "Labels"
-msgstr "Étiquettes"
-
 msgid "Filter by one or more label id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id d'étiquette, séparés par des virgules."
-
-msgid "Labels exclusion"
-msgstr "Exclusion d'étiquette"
 
 msgid "Exclude one or more label id, comma-separated."
 msgstr "Exclure un ou plusieurs id d'étiquette, séparés par des virgules."
@@ -457,32 +333,20 @@ msgstr "Exclure un ou plusieurs id d'étiquette, séparés par des virgules."
 msgid "Filter by some case-insensitive text contained in name, description, description teaser or ambiance."
 msgstr "Filtrer par du texte insensible à la casse contenu dans le nom, la description, le chapeau ou l'ambiance."
 
-msgid "Ratings"
-msgstr "Cotations"
-
 msgid "Filter by one or more ratings id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de cotation, séparés par des virgules."
 
 msgid "Filter by one or more networks id, comma-separated."
 msgstr "Filtrer par un ou plusieurs réseaux d'itinéraire, séparés par des virgules."
 
-msgid "Root sites only"
-msgstr "Sites racine seulement"
-
 msgid "Only return sites that are at the top of the hierarchy and have no parent. Use any string to activate."
 msgstr "Ne retourner que les sites qui sont au sommet de la hiérarchie des sites et n'ont pas de parent. Activable par n'importe quelle chaîne de charactères."
-
-msgid "Practices in hierarchy"
-msgstr ""
 
 msgid "Filter by one or more practices id, comma-separated. Return sites that have theses practices OR have at least one child site that does."
 msgstr "Filtrer par un ou plusieurs id de pratique, séparés par des virgules. Retourne les sites qui ont ces pratiques OU des sites enfants avec ces pratiques."
 
 msgid "Filter by one or more site type id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de type, séparés par des virgules."
-
-msgid "Ratings in hierarchy"
-msgstr ""
 
 msgid "Filter by one or more ratings id, comma-separated. Return sites that have theses ratings OR have at least one child site that does."
 msgstr "Filtrer par un ou plusieurs id de cotation, séparés par des virgules. Retourne les sites qui ont ces cotations OU des sites enfants avec ces cotations."
@@ -493,14 +357,8 @@ msgstr "Filtrer par un ou plusieurs id de type de parcours, séparés par des vi
 msgid "Filter by some case-insensitive text contained in name."
 msgstr "Filtrer par du texte insensible à la casse contenu dans le nom."
 
-msgid "Filter"
-msgstr "Filtre"
-
 msgid "Filter by the fact that this label can be used as filter. 'y', 'yes', 't', 'true', 'on', '1' are possible values"
 msgstr "Filtrer par le fait que cette étiquette peut être utilisée comme filtre. 'y', 'yes', 't', 'true', 'on', '1' sont des valeurs possibles"
-
-msgid "Rating scale"
-msgstr "Échelle de cotation"
 
 msgid "Filter by a rating scale id."
 msgstr "Filtrer par l'id d'une échelle de cotation."
@@ -508,14 +366,8 @@ msgstr "Filtrer par l'id d'une échelle de cotation."
 msgid "Filter by some case-insensitive text contained in name, scale name or description."
 msgstr "Filtrer par du texte insensible à la casse contenu dans le nom, le nom de l'échelle ou la description."
 
-msgid "Parent"
-msgstr ""
-
 msgid "Filter by the parent page ID"
 msgstr "Filtrez par l'ID de la page parente"
-
-msgid "Sources"
-msgstr ""
 
 msgid "Filter by one or more source id, comma-separated."
 msgstr "Filtrez par un ou plusieurs identifiants de source, séparés par des virgules."

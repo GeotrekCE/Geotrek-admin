@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.urls import include, path
+from drf_spectacular.views import SpectacularSwaggerView
 from rest_framework import routers
 
 from geotrek.api.mobile import views as api_mobile
@@ -16,14 +17,20 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
     router.register("treks", api_mobile.TrekViewSet, basename="treks")
 app_name = "apimobile"
 _urlpatterns = []
-if "drf_yasg" in settings.INSTALLED_APPS:
-    _urlpatterns.append(
+
+if "drf_spectacular" in settings.INSTALLED_APPS:
+    _urlpatterns += [
+        path(
+            "schema/",
+            api_mobile.APIMobileSchemaView.as_view(),
+            name="schema",
+        ),
         path(
             "",
-            api_mobile.schema_view.with_ui("swagger", cache_timeout=0),
-            name="schema",
-        )
-    )
+            SpectacularSwaggerView.as_view(url_name="apimobile:schema"),
+            name="schema-swagger-ui",
+        ),
+    ]
 _urlpatterns += [
     path("", include(router.urls)),
     path("settings/", api_mobile.SettingsView.as_view(), name="settings"),

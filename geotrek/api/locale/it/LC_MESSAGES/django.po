@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-06-26 13:34+0000\n"
+"POT-Creation-Date: 2026-04-09 15:26+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/api/it/>\n"
@@ -171,116 +171,59 @@ msgstr ""
 msgid "Set language for translation. Can be all or a two-letters language code."
 msgstr ""
 
-msgid "Fields"
-msgstr ""
-
 msgid "Limit required fields to increase performances. Example: id,url,geometry."
-msgstr ""
-
-msgid "Omit"
 msgstr ""
 
 msgid "Omit specified fields to increase performance. Example: url,category."
 msgstr ""
 
-msgid "Identifiers"
-msgstr ""
-
 msgid "Filter by one or more object id, comma-separated."
-msgstr ""
-
-msgid "Format"
 msgstr ""
 
 msgid "Set output format (json / geojson). Default: json. Example: geojson."
 msgstr ""
 
-msgid "In bbox"
-msgstr ""
-
 msgid "Filter by a bounding box formatted like W-lng,S-lat,E-lng,N-lat (WGS84).Example: 1.15,46.1,1.56,47.6."
-msgstr ""
-
-msgid "Distance"
 msgstr ""
 
 msgid "Filter by maximum distance in meters between a point and elements."
 msgstr ""
 
-msgid "Point"
-msgstr ""
-
 msgid "Reference point to compute distance (WGS84). Example: lng,lat."
-msgstr ""
-
-msgid "Period"
 msgstr ""
 
 msgid "Filter by period of occupancy. Month numbers (1-12), comma-separated. any = occupied at any time in the year. ignore = occupied or not. Example: 7,8 for july and august."
 msgstr ""
 
-msgid "Practices"
-msgstr ""
-
 msgid "Filter by one or more practice id, comma-separated."
 msgstr ""
 
-msgid "Structures"
-msgstr ""
-
 msgid "Filter by one or more structure id, comma-separated."
-msgstr ""
-
-msgid "Trek"
 msgstr ""
 
 #, python-format
 msgid "(deprecated) replaced by '%(field)s'."
 msgstr ""
 
-msgid "Types"
-msgstr ""
-
 msgid "Filter by one or more type id, comma-separated."
-msgstr ""
-
-msgid "Sites"
 msgstr ""
 
 msgid "Filter by one or multiple site id. It will show only the POIs related to this outdoor site. If multiple sites, they should be separated by commas."
 msgstr ""
 
-msgid "Courses"
-msgstr ""
-
-msgid "Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas."
-msgstr ""
-
-msgid "Near trek"
+msgid "Filter by one or multiple course id. It will show only the POIs related to this outdoor course. If multiple courses, they should be separated by commas."
 msgstr ""
 
 msgid "Filter by a trek id. It will only show the contents related to this trek."
 msgstr ""
 
-msgid "Near touristic content"
-msgstr ""
-
 msgid "Filter by a touristic content id. It will only show the contents related to this touristic content."
-msgstr ""
-
-msgid "Near touristic event"
 msgstr ""
 
 msgid "Filter by a touristic event id. It will only show the contents related to this touristic event."
 msgstr ""
 
-msgid "Near outdoor site"
-msgstr ""
-
 msgid "Filter by an outdoor site id. It will only show the contents related to this outdoor site."
-msgstr ""
-
-msgid "Near outdoor course"
 msgstr ""
 
 msgid "Filter by an outdoor course id. It will only show the contents related to this outdoor course."
@@ -295,13 +238,7 @@ msgstr ""
 msgid "Filter by one or more themes id, comma-separated."
 msgstr ""
 
-msgid "Portals"
-msgstr ""
-
 msgid "Filter by one or more portal id, comma-separated."
-msgstr ""
-
-msgid "Query string"
 msgstr ""
 
 msgid "Filter by some case-insensitive text contained in name, description teaser or description."
@@ -310,13 +247,7 @@ msgstr ""
 msgid "Filter by one or more types id, comma-separated. Logical OR for types in the same list, AND for types in different lists."
 msgstr ""
 
-msgid "Labels accessibility"
-msgstr ""
-
 msgid "Filter by one or more labels accessibility id, comma-separated."
-msgstr ""
-
-msgid "Categories"
 msgstr ""
 
 msgid "Filter by one or more category id, comma-separated."
@@ -334,97 +265,49 @@ msgstr ""
 msgid "Filter events on cancelled boolean : true/false expected"
 msgstr ""
 
-msgid "Dates before"
-msgstr ""
-
 msgid "Filter events happening before or during date, format YYYY-MM-DD"
-msgstr ""
-
-msgid "Dates after"
 msgstr ""
 
 msgid "Filter events happening after or during date, format YYYY-MM-DD"
 msgstr ""
 
-msgid "Update date after"
-msgstr ""
-
 msgid "Filter objects updated after or during date, format YYYY-MM-DD"
-msgstr ""
-
-msgid "Update date before"
 msgstr ""
 
 msgid "Filter objects updated before or during date, format YYYY-MM-DD"
 msgstr ""
 
-msgid "Create date after"
-msgstr ""
-
 msgid "Filter objects created after or during date, format YYYY-MM-DD"
-msgstr ""
-
-msgid "Create date before"
 msgstr ""
 
 msgid "Filter objects created before or during date, format YYYY-MM-DD"
 msgstr ""
 
-msgid "Duration min"
-msgstr ""
-
 msgid "Filter by minimum duration (hours)."
-msgstr ""
-
-msgid "Duration max"
 msgstr ""
 
 msgid "Filter by maximum duration (hours)."
 msgstr ""
 
-msgid "Length min"
-msgstr ""
-
 msgid "Filter by minimum length (meters)."
-msgstr ""
-
-msgid "Length max"
 msgstr ""
 
 msgid "Filter by maximum length (meters)."
 msgstr ""
 
-msgid "Difficulty min"
-msgstr ""
-
 msgid "Filter by minimum difficulty level (id)."
-msgstr ""
-
-msgid "Difficulty max"
 msgstr ""
 
 msgid "Filter by maximum difficulty level (id)."
 msgstr ""
 
-msgid "Ascent min"
-msgstr ""
-
 msgid "Filter by minimum ascent (meters)."
-msgstr ""
-
-msgid "Ascent max"
 msgstr ""
 
 msgid "Filter by maximum ascent (meters)."
 msgstr ""
 
-msgid "Types of accessibility"
-msgstr ""
-
 msgid "Filter by one or more type of accessibility id, comma-separated."
-msgstr ""
-
-msgid "Accessibility level"
 msgstr ""
 
 msgid "Filter by one or more accessibility level id, comma-separated."
@@ -436,19 +319,10 @@ msgstr ""
 msgid "Filter by one or more portal id, comma-separateds."
 msgstr ""
 
-msgid "Routes"
-msgstr ""
-
 msgid "Filter by one or more route id, comma-separated."
 msgstr ""
 
-msgid "Labels"
-msgstr ""
-
 msgid "Filter by one or more label id, comma-separated."
-msgstr ""
-
-msgid "Labels exclusion"
 msgstr ""
 
 msgid "Exclude one or more label id, comma-separated."
@@ -457,31 +331,19 @@ msgstr ""
 msgid "Filter by some case-insensitive text contained in name, description, description teaser or ambiance."
 msgstr ""
 
-msgid "Ratings"
-msgstr ""
-
 msgid "Filter by one or more ratings id, comma-separated."
 msgstr ""
 
 msgid "Filter by one or more networks id, comma-separated."
 msgstr ""
 
-msgid "Root sites only"
-msgstr ""
-
 msgid "Only return sites that are at the top of the hierarchy and have no parent. Use any string to activate."
-msgstr ""
-
-msgid "Practices in hierarchy"
 msgstr ""
 
 msgid "Filter by one or more practices id, comma-separated. Return sites that have theses practices OR have at least one child site that does."
 msgstr ""
 
 msgid "Filter by one or more site type id, comma-separated."
-msgstr ""
-
-msgid "Ratings in hierarchy"
 msgstr ""
 
 msgid "Filter by one or more ratings id, comma-separated. Return sites that have theses ratings OR have at least one child site that does."
@@ -493,13 +355,7 @@ msgstr ""
 msgid "Filter by some case-insensitive text contained in name."
 msgstr ""
 
-msgid "Filter"
-msgstr ""
-
 msgid "Filter by the fact that this label can be used as filter. 'y', 'yes', 't', 'true', 'on', '1' are possible values"
-msgstr ""
-
-msgid "Rating scale"
 msgstr ""
 
 msgid "Filter by a rating scale id."
@@ -508,13 +364,7 @@ msgstr ""
 msgid "Filter by some case-insensitive text contained in name, scale name or description."
 msgstr ""
 
-msgid "Parent"
-msgstr ""
-
 msgid "Filter by the parent page ID"
-msgstr ""
-
-msgid "Sources"
 msgstr ""
 
 msgid "Filter by one or more source id, comma-separated."
