@@ -4,7 +4,7 @@ from django.test import TestCase, override_settings
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.signage.forms import BladeForm, LineFormset
 from geotrek.signage.models import Line
-from geotrek.signage.tests.factories import BladeFactory, LineFactory, SignageFactory
+from geotrek.signage.tests.factories import BladeFactory, LineFactory, SignageFactory, BladeTypeFactory
 
 
 class BladeFormTest(TestCase):
@@ -38,6 +38,48 @@ class BladeFormTest(TestCase):
         BladeFactory(signage=self.signage, number="Z")
         form = BladeForm(user=self.user, initial={"signage": self.signage})
         self.assertEqual(form.fields["number"].initial, None)
+
+    def test_number_shift_int(self):
+        blade1 = BladeFactory(signage=self.signage, number="1")
+        blade2 = BladeFactory(signage=self.signage, number="2")
+        blade4 = BladeFactory(signage=self.signage, number="4")
+        data = {
+            "number": "1",
+            "direction": None,
+            "type": BladeTypeFactory().pk,
+            "conditions": None,
+            "color": None,
+        }
+        form = BladeForm(user=self.user, initial={"signage": self.signage}, data=data)
+        self.assertTrue(form.is_valid())
+        form.save()
+        blade1.refresh_from_db()
+        blade2.refresh_from_db()
+        blade4.refresh_from_db()
+        self.assertEqual(blade1.number, "2")
+        self.assertEqual(blade2.number, "3")
+        self.assertEqual(blade4.number, "4")
+
+    def test_number_shift_str(self):
+        blade1 = BladeFactory(signage=self.signage, number="A")
+        blade2 = BladeFactory(signage=self.signage, number="B")
+        blade4 = BladeFactory(signage=self.signage, number="D")
+        data = {
+            "number": "A",
+            "direction": None,
+            "type": BladeTypeFactory().pk,
+            "conditions": None,
+            "color": None,
+        }
+        form = BladeForm(user=self.user, initial={"signage": self.signage}, data=data)
+        self.assertTrue(form.is_valid())
+        form.save()
+        blade1.refresh_from_db()
+        blade2.refresh_from_db()
+        blade4.refresh_from_db()
+        self.assertEqual(blade1.number, "B")
+        self.assertEqual(blade2.number, "C")
+        self.assertEqual(blade4.number, "D")
 
     def test_lines_formset(self):
         blade = BladeFactory.create()

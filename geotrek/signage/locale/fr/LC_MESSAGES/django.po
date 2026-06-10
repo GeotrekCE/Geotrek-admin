@@ -128,7 +128,7 @@ msgid "Blade Conditions"
 msgstr "États de lame"
 
 msgid "Number"
-msgstr "Nombre"
+msgstr "Numéro"
 
 msgid "Color"
 msgstr "Couleur"
