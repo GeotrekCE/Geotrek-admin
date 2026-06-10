@@ -101,8 +101,8 @@ class BladeFormTest(TestCase):
         self.assertEqual(
             formset.errors,
             [
-                {"number": ["Lines of a blade must have distinct numbers"]},
-                {"number": ["Lines of a blade must have distinct numbers"]},
+                {"number": ["This order number is already used by another line."]},
+                {"number": ["This order number is already used by another line."]},
             ],
         )
 
