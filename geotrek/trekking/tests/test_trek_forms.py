@@ -1,6 +1,5 @@
 import json
 
-from core.tests.factories import PathFactory
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.exceptions import ValidationError
@@ -9,6 +8,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from geotrek.authent.tests.factories import UserFactory
+from geotrek.core.tests.factories import PathFactory
 
 from ..forms import BaseTrekForm
 from ..models import OrderedTrekChild
