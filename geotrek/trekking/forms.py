@@ -3,7 +3,6 @@ from copy import deepcopy
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Div, Layout, Submit
-from dal_select2.widgets import ModelSelect2Multiple
 from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
@@ -422,6 +421,7 @@ class OffNetworkTrekForm(BaseTrekForm, OffNetworkTopologyFormMixin):
         self.fields[
             "parking_location"
         ].widget.geometry_field_class = "ParkingLocationField"
+
 
 #
 # class BaseTrekForm(CommonForm):
@@ -1192,7 +1192,6 @@ class OffNetworkTrekForm(BaseTrekForm, OffNetworkTopologyFormMixin):
 #             "pois_excluded",
 #             "hidden_ordered_children",
 #         ]
-
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:
