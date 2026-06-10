@@ -1,6 +1,12 @@
 {% extends "mapentity/mapentity_form.html" %}
 
-{% load i18n static %}
+{% load i18n static crispy_forms_tags %}
+
+{% block mainform %}
+    <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}{% if not form.topological %}?topological=false{% endif %}" class="form-horizontal" method="POST">
+        {% crispy form %}
+    </form>
+{% endblock mainform %}
 
 {% block extrabody %}
     {{ block.super }}

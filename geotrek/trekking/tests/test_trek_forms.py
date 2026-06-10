@@ -1,3 +1,6 @@
+import json
+
+from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
@@ -5,6 +8,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from geotrek.authent.tests.factories import UserFactory
+from geotrek.core.tests.factories import PathFactory
 
 from ..forms import BaseTrekForm
 from ..models import OrderedTrekChild
@@ -231,7 +235,7 @@ class BaseTrekFormItinerancyTest(TestCase):
         else:
             data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
 
-        form = TrekForm(instance=self.trek2, user=self.user, data=data)
+        form = BaseTrekForm(instance=self.trek2, user=self.user, data=data)
         self.assertTrue(form.is_valid())
         form.save()
 
@@ -263,7 +267,7 @@ class BaseTrekFormItinerancyTest(TestCase):
         else:
             data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
 
-        form = TrekForm(instance=self.trek2, user=self.user, data=data)
+        form = BaseTrekForm(instance=self.trek2, user=self.user, data=data)
         self.assertTrue(form.is_valid())
         form.save()
 
