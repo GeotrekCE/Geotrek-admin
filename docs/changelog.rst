@@ -687,6 +687,7 @@ https://geotrek.readthedocs.io/en/latest/installation-and-configuration/upgrade.
 
 **Improvements**
 
+- Add debug log to `reorder_topologies` command
 - Add trek filter by network in API v2 (#4216)
 
 
