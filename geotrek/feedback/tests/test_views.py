@@ -167,7 +167,7 @@ class ReportViewsTest(CommonTest):
             f'        <p class="m-0 p-1">\n'
             f"            {str(self.obj.category)}<br>\n"
             f"        </p>\n    \n"
-            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/report/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f'    <a id="detail-btn" href="/report/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
 
