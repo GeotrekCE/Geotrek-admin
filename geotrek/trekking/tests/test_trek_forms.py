@@ -10,16 +10,15 @@ from django.test.utils import override_settings
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.core.tests.factories import PathFactory
 
-from ..forms import TrekForm
+from ..forms import BaseTrekForm
 from ..models import OrderedTrekChild
 from .factories import RatingFactory, TrekFactory
 
 
-class TrekRatingFormTest(TestCase):
+class BaseTrekFormRatingTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory.create()
-        cls.path = PathFactory.create()
         cls.rating = RatingFactory()
         cls.trek = TrekFactory(practice=cls.rating.scale.practice)
 
@@ -30,12 +29,7 @@ class TrekRatingFormTest(TestCase):
             f"rating_scale_{self.rating.scale.pk}": str(self.rating.pk),
         }
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = json.dumps({"paths": [self.path.pk]})
-        else:
-            data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
-
-        form = TrekForm(user=self.user, instance=self.trek, data=data)
+        form = BaseTrekForm(user=self.user, instance=self.trek, data=data)
         self.assertTrue(form.is_valid())
         form.save()
         self.assertListEqual(
@@ -47,13 +41,7 @@ class TrekRatingFormTest(TestCase):
             "name_en": "Trek",
             "practice": str(self.rating.scale.practice.pk),
         }
-
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = json.dumps({"paths": [self.path.pk]})
-        else:
-            data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
-
-        form = TrekForm(user=self.user, instance=self.trek, data=data)
+        form = BaseTrekForm(user=self.user, instance=self.trek, data=data)
         self.assertTrue(form.is_valid())
         form.save()
         self.assertQuerySetEqual(self.trek.ratings.all(), [])
@@ -65,15 +53,7 @@ class TrekRatingFormTest(TestCase):
             "practice": str(self.rating.scale.practice.pk),
             f"rating_scale_{other_rating.scale.pk}": str(other_rating.pk),
         }
-
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = json.dumps({"paths": [self.path.pk]})
-
-        else:
-            data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
-
-        form = TrekForm(user=self.user, instance=self.trek, data=data)
-
+        form = BaseTrekForm(user=self.user, instance=self.trek, data=data)
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
             ValidationError,
@@ -87,7 +67,7 @@ class TrekRatingFormTest(TestCase):
         "trek": ["practice", "departure", "duration", "description_teaser"]
     }
 )
-class TrekCompletenessTest(TestCase):
+class BaseTrekFormCompletenessTest(TestCase):
     """Test completeness fields on error if empty, according to COMPLETENESS_LEVEL setting"""
 
     @classmethod
@@ -95,23 +75,17 @@ class TrekCompletenessTest(TestCase):
         call_command("update_geotrek_permissions", verbosity=0)
         cls.user = UserFactory.create()
         cls.user.user_permissions.add(Permission.objects.get(codename="publish_trek"))
-        path = PathFactory.create()
         cls.data = {
             "name_en": "My trek",
             "name_fr": "Ma rando",
         }
-
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.data["topology"] = json.dumps({"paths": [path.pk]})
-        else:
-            cls.data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
 
     def test_completeness_warning(self):
         """Test form is valid if completeness level is only warning"""
         data = self.data
         data["published_en"] = True
 
-        form = TrekForm(user=self.user, data=data)
+        form = BaseTrekForm(user=self.user, data=data)
         self.assertTrue(form.is_valid())
 
     @override_settings(COMPLETENESS_LEVEL="error_on_publication")
@@ -120,7 +94,7 @@ class TrekCompletenessTest(TestCase):
         data = self.data
         data["published_en"] = False
 
-        form = TrekForm(user=self.user, data=data)
+        form = BaseTrekForm(user=self.user, data=data)
         self.assertTrue(form.is_valid())
 
     @override_settings(COMPLETENESS_LEVEL="error_on_publication")
@@ -129,7 +103,7 @@ class TrekCompletenessTest(TestCase):
         data = self.data
         data["published_en"] = True
 
-        form = TrekForm(user=self.user, data=data)
+        form = BaseTrekForm(user=self.user, data=data)
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
             ValidationError,
@@ -145,7 +119,7 @@ class TrekCompletenessTest(TestCase):
         data["published_en"] = False
         data["published_fr"] = True
 
-        form = TrekForm(user=self.user, data=data)
+        form = BaseTrekForm(user=self.user, data=data)
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
             ValidationError,
@@ -162,7 +136,7 @@ class TrekCompletenessTest(TestCase):
         data["published_en"] = True
         data["published_fr"] = False
 
-        form = TrekForm(user=self.user, data=data)
+        form = BaseTrekForm(user=self.user, data=data)
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
             ValidationError,
@@ -179,7 +153,7 @@ class TrekCompletenessTest(TestCase):
         data = self.data
         data["published_en"] = False
         data["review"] = True
-        form = TrekForm(user=self.user, data=data)
+        form = BaseTrekForm(user=self.user, data=data)
 
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
@@ -193,7 +167,7 @@ class TrekCompletenessTest(TestCase):
         data["published_en"] = False
         data["published_fr"] = True
         data["review"] = False
-        form = TrekForm(user=self.user, data=data)
+        form = BaseTrekForm(user=self.user, data=data)
 
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
@@ -204,7 +178,7 @@ class TrekCompletenessTest(TestCase):
             form.clean()
 
 
-class TrekItinerancyTestCase(TestCase):
+class BaseTrekFormItinerancyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -214,7 +188,7 @@ class TrekItinerancyTestCase(TestCase):
 
     def test_two_children(self):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()
-        form = TrekForm(instance=self.trek2, user=self.user)
+        form = BaseTrekForm(instance=self.trek2, user=self.user)
         form.cleaned_data = {
             "children": [self.trek3],
             "hidden_ordered_children": str(self.trek3.pk),
@@ -223,7 +197,7 @@ class TrekItinerancyTestCase(TestCase):
 
     def test_parent_as_child(self):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()
-        form = TrekForm(instance=self.trek3, user=self.user)
+        form = BaseTrekForm(instance=self.trek3, user=self.user)
         form.cleaned_data = {
             "children": [self.trek2],
             "hidden_ordered_children": str(self.trek2.pk),
@@ -235,7 +209,7 @@ class TrekItinerancyTestCase(TestCase):
 
     def test_child_with_itself_child(self):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()
-        form = TrekForm(instance=self.trek1, user=self.user)
+        form = BaseTrekForm(instance=self.trek1, user=self.user)
         form.cleaned_data = {
             "children": [self.trek3],
             "hidden_ordered_children": str(self.trek3.pk),
@@ -261,7 +235,7 @@ class TrekItinerancyTestCase(TestCase):
         else:
             data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
 
-        form = TrekForm(instance=self.trek2, user=self.user, data=data)
+        form = BaseTrekForm(instance=self.trek2, user=self.user, data=data)
         self.assertTrue(form.is_valid())
         form.save()
 
@@ -293,7 +267,7 @@ class TrekItinerancyTestCase(TestCase):
         else:
             data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
 
-        form = TrekForm(instance=self.trek2, user=self.user, data=data)
+        form = BaseTrekForm(instance=self.trek2, user=self.user, data=data)
         self.assertTrue(form.is_valid())
         form.save()
 

@@ -9,7 +9,8 @@ class PathManager(models.Manager):
 
     def get_queryset(self):
         """Hide all ``Path`` records that are not marked as visible."""
-        return super().get_queryset().filter(visible=True)
+        qs = super().get_queryset().filter(visible=True)
+        return qs
 
 
 class PathInvisibleManager(models.Manager):

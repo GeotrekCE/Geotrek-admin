@@ -66,7 +66,9 @@ class CommandLoadDemTest(TransactionTestCase):
             geom=LineString((605600, 6650000), (605900, 6650010), srid=2154)
         )
         trek = TrekFactory.create(paths=[self.path], published=False)
-        with self.assertNumQueries(8):  # 5 for loaddem initial + path + outdoor (2)
+        with self.assertNumQueries(
+            9
+        ):  # 5 for loaddem initial + path + outdoor + intervention (2)
             call_command(
                 "loaddem",
                 filename,

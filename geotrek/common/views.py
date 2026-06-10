@@ -21,7 +21,7 @@ from django.contrib.gis.db.models import Extent, GeometryField
 from django.core.exceptions import PermissionDenied
 from django.db.models.functions import Cast
 from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
-from django.shortcuts import get_object_or_404, redirect, render
+from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.decorators import method_decorator
@@ -30,7 +30,7 @@ from django.utils.translation import gettext as _
 from django.views import static
 from django.views.decorators.http import require_http_methods, require_POST
 from django.views.defaults import page_not_found
-from django.views.generic import TemplateView, UpdateView, View
+from django.views.generic import FormView, TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
 from django_large_image.rest import LargeImageFileDetailMixin
 from large_image import config
@@ -71,7 +71,7 @@ from .serializers import (
     HDViewPointSerializer,
 )
 from .tasks import import_datas, import_datas_from_web
-from .utils import leaflet_bounds
+from .utils import maplibre_bounds
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 from .viewsets import GeotrekMapentityViewSet
 
@@ -161,18 +161,21 @@ class CheckExtentsView(LoginRequiredMixin, TemplateView):
         dem_extent = api_bbox(dem_extent_native or (0, 0, 0, 0))
         tiles_extent_native = settings.SPATIAL_EXTENT
         tiles_extent = api_bbox(tiles_extent_native)
-        viewport_native = settings.LEAFLET_CONFIG["SPATIAL_EXTENT"]
+        viewport_native = tuple(
+            [coord for coords in settings.BOUNDS for coord in coords]
+        )
         viewport = api_bbox(viewport_native, srid=settings.API_SRID)
 
         return dict(
-            path_extent=leaflet_bounds(path_extent),
+            path_extent=maplibre_bounds(path_extent),
             path_extent_native=path_extent_native,
-            dem_extent=leaflet_bounds(dem_extent) if dem_extent else None,
+            dem_extent=maplibre_bounds(dem_extent) if dem_extent else None,
             dem_extent_native=dem_extent_native,
-            tiles_extent=leaflet_bounds(tiles_extent),
+            tiles_extent=maplibre_bounds(tiles_extent),
             tiles_extent_native=tiles_extent_native,
-            viewport=leaflet_bounds(viewport),
+            viewport=maplibre_bounds(viewport),
             viewport_native=viewport_native,
+            CENTER=settings.CENTER,
             SRID=settings.SRID,
             API_SRID=settings.API_SRID,
         )
@@ -212,64 +215,99 @@ def import_file(uploaded, parser, encoding, user_pk):
     )
 
 
-@login_required
-def import_view(request):
+class ImportDatasetView(LoginRequiredMixin, FormView):
     """
     Gets the existing declared parsers for the current project.
-    This view handles only the file based import parsers.
+    This view handles only the file-based import parsers.
     """
-    render_dict = {}
 
-    choices, choices_url, classes = discover_available_parsers(request)
-    choices_suricate = [("everything", _("Reports"))]
+    template_name = "common/import_dataset.html"
+    form_class = ImportDatasetFormWithFile
 
-    form = ImportDatasetFormWithFile(choices, prefix="with-file")
-    form_without_file = ImportDatasetForm(choices_url, prefix="without-file")
-    form_suricate = ImportSuricateForm(choices_suricate)
+    def get_parsers(self):
+        choices, choices_url, classes = discover_available_parsers(self.request)
+        return choices, choices_url, classes
 
-    if request.method == "POST":
-        if "upload-file" in request.POST:
-            form = ImportDatasetFormWithFile(
-                choices, request.POST, request.FILES, prefix="with-file"
+    def get_form(self, form_class=None):
+        choices, choices_url, classes = self.get_parsers()
+        if self.request.method == "POST" and "upload-file" in self.request.POST:
+            return ImportDatasetFormWithFile(
+                choices, self.request.POST, self.request.FILES, prefix="with-file"
             )
+        return ImportDatasetFormWithFile(choices, prefix="with-file")
 
+    def get_extra_forms(self):
+        choices, choices_url, classes = self.get_parsers()
+        choices_suricate = [("everything", _("Reports"))]
+        if self.request.method == "POST" and "import-web" in self.request.POST:
+            form_without_file = ImportDatasetForm(
+                choices_url, self.request.POST, prefix="without-file"
+            )
+        else:
+            form_without_file = ImportDatasetForm(choices_url, prefix="without-file")
+        if self.request.method == "POST" and "import-suricate" in self.request.POST:
+            form_suricate = ImportSuricateForm(choices_suricate, self.request.POST)
+        else:
+            form_suricate = ImportSuricateForm(choices_suricate)
+        return form_without_file, form_suricate
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        choices, choices_url, classes = self.get_parsers()
+        form_without_file, form_suricate = self.get_extra_forms()
+        if choices:
+            context["form"] = context.get("form", self.get_form())
+        if choices_url:
+            context["form_without_file"] = form_without_file
+        if settings.SURICATE_WORKFLOW_ENABLED:
+            context["form_suricate"] = form_suricate
+        return context
+
+    def form_valid(self, form):
+        choices, choices_url, classes = self.get_parsers()
+        context = {}
+        uploaded = self.request.FILES["with-file-file"]
+        parser = classes[int(form["parser"].value())]
+        encoding = form.cleaned_data["encoding"]
+        try:
+            import_file(uploaded, parser, encoding, self.request.user.pk)
+        except UnicodeDecodeError:
+            context["encoding_error"] = True
+        context.update(self.get_context_data(form=form))
+        return self.render_to_response(context)
+
+    def form_invalid(self, form):
+        return self.render_to_response(self.get_context_data(form=form))
+
+    def post(self, request, *args, **kwargs):
+        choices, choices_url, classes = self.get_parsers()
+
+        if "upload-file" in request.POST:
+            form = self.get_form()
             if form.is_valid():
-                uploaded = request.FILES["with-file-file"]
-                parser = classes[int(form["parser"].value())]
-                encoding = form.cleaned_data["encoding"]
-                try:
-                    import_file(uploaded, parser, encoding, request.user.pk)
-                except UnicodeDecodeError:
-                    render_dict["encoding_error"] = True
+                return self.form_valid(form)
+            else:
+                return self.form_invalid(form)
+
+        form_without_file, form_suricate = self.get_extra_forms()
 
         if "import-web" in request.POST:
-            form_without_file = ImportDatasetForm(
-                choices_url, request.POST, prefix="without-file"
-            )
-
             if form_without_file.is_valid():
                 parser = classes[int(form_without_file["parser"].value())]
                 import_datas_from_web.delay(
-                    name=parser.__name__, module=parser.__module__, user=request.user.pk
+                    name=parser.__name__,
+                    module=parser.__module__,
+                    user=request.user.pk,
                 )
 
         if "import-suricate" in request.POST:
-            form_suricate = ImportSuricateForm(choices_suricate, request.POST)
             if form_suricate.is_valid() and settings.SURICATE_WORKFLOW_ENABLED:
                 parser = SuricateParser()
                 parser.get_statuses()
                 parser.get_activities()
                 parser.get_alerts(verbosity=1)
 
-    # Hide second form if parser has no web based imports.
-    if choices:
-        render_dict["form"] = form
-    if choices_url:
-        render_dict["form_without_file"] = form_without_file
-    if settings.SURICATE_WORKFLOW_ENABLED:
-        render_dict["form_suricate"] = form_suricate
-
-    return render(request, "common/import_dataset.html", render_dict)
+        return self.render_to_response(self.get_context_data())
 
 
 @login_required

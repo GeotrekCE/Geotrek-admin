@@ -3,6 +3,7 @@ from crispy_forms.layout import Div, Fieldset, Layout
 from dal import autocomplete
 from django import forms
 from django.conf import settings
+from django.contrib.gis.forms import PointField
 from django.db.models import Max
 from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
@@ -149,6 +150,7 @@ else:
 
     class BaseSignageForm(BaseInfrastructureForm):
         geomfields = ["geom"]
+        geom = PointField()
 
 
 class SignageForm(BaseSignageForm):
@@ -156,8 +158,8 @@ class SignageForm(BaseSignageForm):
         Div(
             "structure",
             "name",
-            "description",
             "type",
+            "description",
             "conditions",
             "implantation_year",
             "published",

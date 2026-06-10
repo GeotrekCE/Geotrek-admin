@@ -54,7 +54,13 @@ from geotrek.signage.serializers import SignageAPIGeojsonSerializer
 from geotrek.zoning.models import City, District, RestrictedArea
 
 from .filters import POIFilterSet, ServiceFilterSet, TrekFilterSet
-from .forms import POIForm, ServiceForm, TrekForm, WebLinkCreateFormPopup
+from .forms import (
+    OffNetworkTrekForm,
+    OnNetworkTrekForm,
+    POIForm,
+    ServiceForm,
+    WebLinkCreateFormPopup,
+)
 from .models import POI, Service, Trek, WebLink
 from .serializers import (
     POIGeojsonSerializer,
@@ -155,6 +161,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
         "portal",
         "length_2d",
         "uuid",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
@@ -211,6 +218,10 @@ class TrekDetail(CompletenessMixin, MapEntityDetail):
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
         context["can_edit"] = self.get_object().same_structure(self.request.user)
+        context["can_draw_off_path_network"] = (
+            not settings.PATH_MODEL_ENABLED
+            or self.request.user.has_perm("core.can_draw_off_path_network")
+        )
         context["labels"] = Label.objects.all()
         context["accessibility_form"] = AttachmentAccessibilityForm(
             request=self.request, object=self.get_object()
@@ -290,12 +301,27 @@ class TrekMarkupPublic(TrekDocumentPublicMixin, MarkupPublic):
 
 class TrekCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Trek
-    form_class = TrekForm
+    form_class = OnNetworkTrekForm
 
 
 class TrekUpdate(MapEntityUpdate):
     queryset = Trek.objects.existing()
-    form_class = TrekForm
+
+    def get_form_class(self):
+        """
+        - Returns OffNetworkTrekForm (free drawing) if the Path model is disabled or if the user
+        requested to draw off the path network and has permission to do so.
+        - Otherwise, returns OnNetworkTrekForm (routing on paths).
+        """
+        if not settings.PATH_MODEL_ENABLED:
+            return OffNetworkTrekForm
+        topological = self.request.GET.get("topological", "true") == "true"
+        can_draw_off_path_network = self.request.user.has_perm(
+            "core.can_draw_off_path_network"
+        )
+        if not topological and can_draw_off_path_network:
+            return OffNetworkTrekForm
+        return OnNetworkTrekForm
 
     @same_structure_required("trekking:trek_detail")
     def dispatch(self, *args, **kwargs):
@@ -371,6 +397,7 @@ class POIFormatList(MapEntityFormat, POIList):
         "districts",
         "areas",
         "uuid",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
@@ -562,7 +589,14 @@ class ServiceFilter(MapEntityFilter):
 class ServiceFormatList(MapEntityFormat, ServiceList):
     filterset_class = ServiceFilterSet
     mandatory_columns = ["id"]
-    default_extra_columns = ["id", "eid", "type", "uuid", *AltimetryMixin.COLUMNS]
+    default_extra_columns = [
+        "id",
+        "eid",
+        "type",
+        "uuid",
+        "coupled",
+        *AltimetryMixin.COLUMNS,
+    ]
 
 
 class ServiceDetail(MapEntityDetail):
@@ -602,6 +636,7 @@ class ServiceViewSet(GeotrekMapentityViewSet):
     geojson_serializer_class = ServiceGeojsonSerializer
     filterset_class = ServiceFilterSet
     mapentity_list_class = ServiceList
+    vector_tiles_fields = ("id",)
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("type")

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-11 09:16+0000\n"
+"POT-Creation-Date: 2026-05-21 13:17+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/trekking/it/>\n"
@@ -42,10 +42,10 @@ msgid "Trek"
 msgstr "Itinerario"
 
 msgid "Children"
-msgstr ""
+msgstr "Bambini"
 
 msgid "Select children in order"
-msgstr ""
+msgstr "Seleziona i bambini in ordine"
 
 msgid "Hidden ordered children"
 msgstr "Nascosto bambini in ordine"
@@ -495,16 +495,7 @@ msgstr "GPX"
 msgid "KML"
 msgstr "KML"
 
-msgid "Trek's POIs"
-msgstr ""
-
-msgid "Trek's services"
-msgstr ""
-
-msgid "Trek's signages"
-msgstr ""
-
-msgid "Trek's infrastructures"
+msgid "Edit off the path network"
 msgstr ""
 
 msgid "Itinerancy"

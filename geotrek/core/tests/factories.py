@@ -123,8 +123,8 @@ class TopologyFactory(factory.django.DjangoModelFactory):
 
     # Factory
     # paths (M2M)
-    if not settings.TREKKING_TOPOLOGY_ENABLED:
-        geom = "SRID=2154;LINESTRING (700000 6600000, 700100 6600100)"
+    # if not settings.TREKKING_TOPOLOGY_ENABLED:
+    # geom = "SRID=2154;LINESTRING (700000 6600000, 700100 6600100)"
     offset = 0
     deleted = False
 

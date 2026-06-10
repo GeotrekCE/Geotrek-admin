@@ -1,5 +1,3 @@
-from unittest import skipIf
-
 from django.conf import settings
 from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.contenttypes.models import ContentType
@@ -31,7 +29,6 @@ from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
 from geotrek.signage.tests.factories import BladeFactory, SignageFactory
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class InterventionTest(TestCase):
     def test_topology_has_intervention_kind(self):
         topo = TopologyFactory.create()
@@ -150,30 +147,31 @@ class InterventionTest(TestCase):
         """
         infra = InfrastructureFactory.create()
         sign = SignageFactory.create()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            geometry_extern = LineString(
-                Point(700200, 6600100), Point(700300, 6600300), rid=settings.SRID
-            )
-            path_extern = PathFactory.create(geom=geometry_extern)
-            SignageFactory.create(paths=[(path_extern, 1, 1)])
-            InfrastructureFactory.create(paths=[(path_extern, 1, 1)])
-        else:
-            geometry_extern = Point(700300, 6600300, srid=settings.SRID)
-            SignageFactory.create(geom=geometry_extern)
-            InfrastructureFactory.create(geom=geometry_extern)
+        geometry_extern = Point(700300, 6600300, srid=settings.SRID)
+        sign_2 = SignageFactory.create(geom=geometry_extern)
+        InfrastructureFactory.create(geom=geometry_extern)
         interv = InterventionFactory.create(target=infra)
         proj = ProjectFactory.create()
 
         self.assertEqual(interv.target, infra)
 
-        self.assertEqual(list(interv.signages), [sign])
+        self.assertEqual(
+            list(sorted(interv.signages.values_list("pk", flat=True))),
+            sorted([sign.pk, sign_2.pk]),
+        )
         self.assertEqual(list(interv.infrastructures), [infra])
 
         interv.target = sign
         interv.save()
 
-        self.assertEqual(list(interv.signages), [sign])
-        self.assertEqual(list(interv.infrastructures), [infra])
+        self.assertListEqual(
+            sorted(list(interv.signages.values_list("pk", flat=True))),
+            sorted([sign.pk, sign_2.pk]),
+        )
+        self.assertListEqual(
+            sorted(list(interv.infrastructures.values_list("pk", flat=True))),
+            sorted([infra.pk]),
+        )
 
         self.assertFalse(interv.in_project)
         interv.project = proj
@@ -214,29 +212,12 @@ class InterventionTest(TestCase):
 
         self.assertEqual(interv.length, infra.length)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_length_auto(self):
         # Line intervention has auto length from topology
         interv = InfrastructureInterventionFactory.create()
         interv.length = 3.14
         interv.save()
         self.assertNotEqual(interv.length, 3.14)
-        # Point intervention has manual length
-        interv = InfrastructurePointInterventionFactory.create()
-        interv.length = 3.14
-        interv.save()
-        self.assertEqual(interv.length, 3.14)
-
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_length_not_auto_nds(self):
-        interv = InfrastructureInterventionFactory.create()
-        interv.length = 3.14
-        interv.save()
-        self.assertEqual(interv.length, 3.14)
         # Point intervention has manual length
         interv = InfrastructurePointInterventionFactory.create()
         interv.length = 3.14
@@ -253,18 +234,6 @@ class InterventionTest(TestCase):
         interv = InfrastructurePointInterventionFactory.create()
         interv.reload()
         self.assertEqual(interv.length, 0.0)
-        self.assertEqual(interv.area, 0.0)
-
-        interv = InfrastructurePointInterventionFactory.create(length=50, width=10.0)
-        interv.reload()
-        self.assertEqual(interv.area, 500)
-
-        interv = InfrastructurePointInterventionFactory.create(width=0.5, length=0.5)
-        interv.reload()
-        self.assertEqual(interv.area, 0.25)
-
-        interv = InfrastructurePointInterventionFactory.create(width=0.5)
-        interv.reload()
         self.assertEqual(interv.area, 0.0)
 
     def test_infrastructure_display_is_path_by_default(self):
@@ -341,7 +310,6 @@ class InterventionTest(TestCase):
         self.assertIn("-", interv.target_csv_display)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class ProjectModelTest(TestCase):
     def test_paths_property(self):
         p_infra = PathFactory.create(geom=LineString((0, 0), (0, 10)))

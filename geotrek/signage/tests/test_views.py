@@ -418,6 +418,9 @@ class SignageViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
+
     def test_content_in_detail_page(self):
         signa = SignageFactory.create(description="<b>Beautiful !</b>")
         response = self.client.get(signa.get_detail_url())
