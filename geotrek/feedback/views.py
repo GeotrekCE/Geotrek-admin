@@ -11,9 +11,10 @@ from django.utils.translation import gettext as _
 from mapentity import views as mapentity_views
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from geotrek.common.functions import ST_X, ST_Y
-from geotrek.common.mixins.views import CustomColumnsMixin
+from geotrek.common.mixins.views import CustomColumnsMixin, ReferencesMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 
 from . import models as feedback_models
@@ -149,13 +150,23 @@ class ReportViewSet(GeotrekMapentityViewSet):
     model = feedback_models.Report
     serializer_class = feedback_serializers.ReportSerializer
     geojson_serializer_class = feedback_serializers.ReportGeojsonSerializer
-    authentication_classes = [BasicAuthentication, SessionAuthentication]
+    gtam_serializer_class = feedback_serializers.ReportGTAMSerializer
+    authentication_classes = [
+        BasicAuthentication,
+        SessionAuthentication,
+        JWTAuthentication,
+    ]
     permission_classes = [IsAuthenticated]
     filterset_class = ReportEmailFilterSet
     mapentity_list_class = ReportList
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("status")
+        renderer, media_type = self.perform_content_negotiation(self.request)
+        if getattr(renderer, "format") in ["geojson", "gtam"]:
+            qs = qs.annotate(
+                api_geom=Transform("geom", settings.API_SRID),
+            )
         if not self.request.user.is_superuser:
             if (
                 settings.SURICATE_WORKFLOW_ENABLED
@@ -168,20 +179,25 @@ class ReportViewSet(GeotrekMapentityViewSet):
             ):
                 qs = qs.filter(assigned_handler=self.request.user)
 
-        if self.format_kwarg == "geojson":
+        if getattr(renderer, "format") == "geojson":
             number = "eid" if settings.SURICATE_WORKFLOW_ENABLED else "id"
             qs = qs.annotate(
                 name=Concat(
                     Value(_("Report")), Value(" "), F(number), output_field=CharField()
-                ),
-                api_geom=Transform("geom", settings.API_SRID),
+                )
             )
             qs = qs.only("id", "status")
             return qs
 
-        qs = qs.select_related(
-            "activity", "category", "problem_magnitude", "related_trek"
-        ).prefetch_related("attachments")
+        if getattr(renderer, "format") == "datatables":
+            qs = qs.select_related(
+                "activity", "category", "problem_magnitude", "related_trek"
+            ).prefetch_related("attachments")
+
+        if getattr(renderer, "format") == "gtam":
+            qs = qs.select_related(
+                "activity", "category", "problem_magnitude", "status"
+            )
         return qs
 
     def view_cache_key(self):
@@ -196,3 +212,13 @@ class ReportViewSet(GeotrekMapentityViewSet):
                 self.request.user.pk if settings.SURICATE_WORKFLOW_ENABLED else "",
             )
         return geojson_lookup
+
+
+class ReportReferences(ReferencesMixin):
+    serializers = [
+        feedback_serializers.ReportActivityGTAMSerializer,
+        feedback_serializers.ReportCategoryGTAMSerializer,
+        feedback_serializers.ReportProblemMagnitudeGTAMSerializer,
+        feedback_serializers.ReportStatusGTAMSerializer,
+    ]
+    pictogram_filename = "report.png"
