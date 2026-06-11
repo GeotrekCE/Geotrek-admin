@@ -84,6 +84,10 @@ class BladeForm(CommonForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.fields["number"].help_text = _(
+            "Position of the blade on the signage (top=1). Assigning a position that has already been used will shift the positions of the other blades"
+        )
+
         self.helper.form_tag = False
         if not self.instance.pk:
             self.signage = kwargs.get("initial", {}).get("signage")
