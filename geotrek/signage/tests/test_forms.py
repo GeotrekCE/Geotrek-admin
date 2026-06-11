@@ -4,7 +4,12 @@ from django.test import TestCase, override_settings
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.signage.forms import BladeForm, LineFormset
 from geotrek.signage.models import Line
-from geotrek.signage.tests.factories import BladeFactory, LineFactory, SignageFactory, BladeTypeFactory
+from geotrek.signage.tests.factories import (
+    BladeFactory,
+    BladeTypeFactory,
+    LineFactory,
+    SignageFactory,
+)
 
 
 class BladeFormTest(TestCase):

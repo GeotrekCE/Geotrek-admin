@@ -305,7 +305,9 @@ class Blade(
     number = models.CharField(
         verbose_name=_("Number"),
         max_length=250,
-        help_text=_("Position of the blade on the signage (top=1). Assigning a position that has already been used will shift the positions of the other blades"),
+        help_text=_(
+            "Position of the blade on the signage (top=1). Assigning a position that has already been used will shift the positions of the other blades"
+        ),
     )
     direction = models.ForeignKey(
         Direction,

@@ -103,8 +103,7 @@ class BladeForm(CommonForm):
         current_number = self.cleaned_data["number"]
 
         blades = (
-            self.signage.blades
-            .exclude(pk=self.instance.pk)
+            self.signage.blades.exclude(pk=self.instance.pk)
             .filter(number__gte=current_number)
             .order_by("number")
         )
@@ -112,7 +111,7 @@ class BladeForm(CommonForm):
         to_update = []
         for blade in blades:
             if blade.number != current_number:
-                break # No more number to shift
+                break  # No more number to shift
             current_number = chr(ord(blade.number) + 1)
             blade.number = current_number
             to_update.append(blade)
