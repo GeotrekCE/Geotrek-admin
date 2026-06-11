@@ -72,4 +72,5 @@ docs/_build/
 /.cache/
 /.python_history
 /.bash_history
-/docker/install/var/*
+/cypress/cypress/videos/
+/docker/install/var/

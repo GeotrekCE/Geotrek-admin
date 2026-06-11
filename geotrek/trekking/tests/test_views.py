@@ -108,9 +108,12 @@ class POIViewsTest(CommonTest):
         return (
             f'<div class="d-flex flex-column justify-content-center">\n'
             f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
-            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/poi/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f'    <a id="detail-btn" href="/poi/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
     def test_status_only_review(self):
         element_not_published = self.modelfactory.create(published=False, review=True)
@@ -335,7 +338,7 @@ class TrekViewsTest(CommonTest):
             f'        <p class="m-0 p-1">\n'
             f"            {str(self.obj.practice)}<br>\n"
             f"        </p>\n    \n"
-            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/trek/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f'    <a id="detail-btn" href="/trek/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
 
@@ -998,9 +1001,13 @@ class ServiceViewsTest(CommonTest):
         return (
             f'<div class="d-flex flex-column justify-content-center">\n'
             f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
-            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/service/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f'    <a id="detail-btn" href="/service/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
+
 
     def test_empty_topology(self):
         data = self.get_good_data()

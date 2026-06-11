@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-27 20:07+0000\n"
+"POT-Creation-Date: 2026-05-21 13:14+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
@@ -69,6 +69,10 @@ msgstr "Labellisations"
 
 msgid "path"
 msgstr "tronçon"
+
+#, python-format
+msgid "You need to add a network of paths before importing '%(model)s' objects"
+msgstr "Vous devez ajouter un réseau de tronçons avant d'importer des objets de type '%(model)s'"
 
 #, python-format
 msgid "Invalid geometry type: should be 'Point', not '%(geom_type)s'"
@@ -196,6 +200,9 @@ msgstr "Topologie"
 
 msgid "Topologies"
 msgstr "Topologies"
+
+msgid "Can draw geometries uncoupled from the path network"
+msgstr "Peut dessiner des géométries découplées du réseau de tronçons"
 
 msgid "Start position"
 msgstr "Position de début"
@@ -325,6 +332,24 @@ msgstr "Le marqueur n'a pas été déposé sur un tronçon."
 
 msgid "No routing found for this marker. Please move or delete it."
 msgstr "Aucun routage n'a été trouvé pour ce marqueur. Veuillez le déplacer ou le supprimer."
+
+msgid "Add point"
+msgstr "Ajouter un point"
+
+msgid "Add intermediate point"
+msgstr "Ajouter un point intermédiaire"
+
+msgid "Delete point"
+msgstr "Supprimer le point"
+
+msgid "Round trip"
+msgstr "Boucle"
+
+msgid "One way"
+msgstr "Aller simple"
+
+msgid "Objects"
+msgstr "Objets"
 
 msgid "No certification"
 msgstr "Aucune labellisation"

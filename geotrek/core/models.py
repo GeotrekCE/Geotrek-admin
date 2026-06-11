@@ -520,6 +520,12 @@ class Topology(
             GistIndex(name="topology_geom_gist_idx", fields=["geom"]),
             GistIndex(name="topology_geom_3d_gist_idx", fields=["geom_3d"]),
         ]
+        permissions = [
+            (
+                "can_draw_off_path_network",
+                _("Can draw geometries uncoupled from the path network"),
+            ),
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -688,6 +694,7 @@ class Topology(
         return self
 
     def save(self, *args, **kwargs):
+        if self.pk:
         # HACK: these fields are readonly from the Django point of view,
         # but they can be changed at DB level. Since Django writes all fields
         # to DB anyway, it is important to update it before writing
@@ -703,6 +710,23 @@ class Topology(
         if is_coupled:
             self.coupled = True
             existing = self.__class__.objects.get(pk=self.pk)
+            # If the geometry is modified, decouple the topology from the path network
+            if existing.geom != self.geom:
+                self.coupled = False
+                # FIXME: compare the geoms correctly (currently not the same srid). This must
+                # work when using a form, but also when calling save() e.g. in a parser
+                ...
+            else:
+                # length is readonly from the Django point of view, but it can be changed at DB level.
+                # Since Django writes all fields to DB anyway, it is important to update it before writing
+                self.length = existing.length
+                # TODO: ensure that geom_3d and altimetry data are updated too
+
+        if not self.deleted and self.geom is None:
+            # We cannot have NULL geometry. So we use an empty one.
+            # The geom will be computed or overwritten by triggers.
+            self.geom = fromstr("POINT (0 0)")
+            # TODO: check that it's still overwritten by triggers
             self.length = existing.length
             self.geom_3d = existing.geom_3d
             self.ascent = existing.ascent

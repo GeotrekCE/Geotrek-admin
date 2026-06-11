@@ -1963,16 +1963,6 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_trek_detail(self.parent.id)
         self.assertEqual(response.status_code, 200)
 
-    @override_settings(SPLIT_TREKS_CATEGORIES_BY_ITINERANCY=True)
-    def test_trek_detail_categories_split_itinerancy(self):
-        response = self.get_trek_detail(self.parent.id)
-        self.assertEqual(response.status_code, 200)
-
-    @override_settings(SPLIT_TREKS_CATEGORIES_BY_PRACTICE=True)
-    def test_trek_detail_categories_split_practice(self):
-        response = self.get_trek_detail(self.treks[0].id)
-        self.assertEqual(response.status_code, 200)
-
     def test_trek_detail_with_lang(self):
         response = self.get_trek_list({"language": "en"})
         self.assertEqual(response.status_code, 200)

@@ -268,6 +268,15 @@ class LoadPathsCommandTest(TestCase):
 
 
 class ReorderTopologiesPathAggregationTest(TestCase):
+    def assertRecursiveAlmostEqual(self, a, b):
+        if type(a) is float:
+            assert type(b) is float
+            self.assertAlmostEqual(a, b)
+        else:
+            assert len(a) == len(b)
+            for i in range(len(a)):
+                self.assertRecursiveAlmostEqual(a[i], b[i])
+
     def setUp(self):
         """
         ⠳               ⠞
@@ -371,7 +380,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         deleted_topo.save()
 
         # Check their geometries
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -380,7 +389,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             existing_topo.geom,
         )
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -483,7 +492,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
 
         # Check their geometries
         for topo in [ignored_topo, existing_topo, deleted_topo]:
-            self.assertEqual(
+            self.assertRecursiveAlmostEqual(
                 LineString(
                     (700000, 6600000),
                     (700050, 6600050),
@@ -551,7 +560,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         topo = TopologyFactory.create(paths=[(self.path_1_a, 0, 1)])
 
         # Check its geometry and path aggregation
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString((700000, 6600000), (700050, 6600050), srid=settings.SRID),
             topo.geom,
         )
@@ -570,7 +579,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual("0 topologies have been updated\n", output.getvalue())
 
         # Check that its geometry and path aggregations have not changed
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString((700000, 6600000), (700050, 6600050), srid=settings.SRID),
             topo.geom,
         )
@@ -604,7 +613,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         )
 
         # Check its geometry and path aggregations
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -628,7 +637,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         self.assertEqual("0 topologies have been updated\n", output.getvalue())
 
         # Check that its geometry and path aggregations have not changed
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -679,7 +688,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
 
         # Check its geometry and coupling status
         self.assertTrue(topo.coupled)
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -708,6 +717,14 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             [0, 0, 1],
         )
         self.assertEqual(
+            list(
+                PathAggregation.objects.filter(topo_object=topo).values_list(
+                    "order", flat=True
+                )
+            ),
+            [0, 0, 1],
+        )
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -742,7 +759,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         # The topology should be recoupled and its geometry should have been updated
         topo.refresh_from_db()
         self.assertTrue(topo.coupled)
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700045, 6600045),
@@ -795,7 +812,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
 
         # Check its geometry and coupling status
         self.assertTrue(topo.coupled)
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700047.5, 6600047.5),
@@ -825,7 +842,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 0, 1, 2, 2, 3, 4, 4, 5],
         )
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700047.5, 6600047.5),
@@ -868,7 +885,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         # The topology should be recoupled and its geometry should have been updated
         topo.refresh_from_db()
         self.assertTrue(topo.coupled)
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700045, 6600045),
@@ -924,7 +941,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
 
         # Check its geometry and coupling status
         self.assertTrue(topo.coupled)
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -958,7 +975,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 0, 1, 1, 2, 3, 3, 4, 4],
         )
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -1005,7 +1022,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         # The topology should be recoupled and its geometry should have been updated
         topo.refresh_from_db()
         self.assertTrue(topo.coupled)
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700035, 6600035),
@@ -1062,7 +1079,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
 
         # Check its geometry and coupling status
         self.assertTrue(topo.coupled)
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -1096,7 +1113,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 0, 1, 3, 4, 4],
         )
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -1136,7 +1153,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         # The topology should be recoupled and its geometry should have been updated
         topo.refresh_from_db()
         self.assertTrue(topo.coupled)
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700035, 6600035),
@@ -1191,7 +1208,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
 
         # Check its geometry and coupling status
         self.assertTrue(topo.coupled)
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -1224,7 +1241,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 1, 1, 2, 2, 2, 3, 3, 4, 4],
         )  # /!\ Duplicated waypoint
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -1271,7 +1288,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         # The topology should be recoupled and its geometry should have been updated
         topo.refresh_from_db()
         self.assertTrue(topo.coupled)
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -1321,7 +1338,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
         # Check its geometry and coupling status
         topo.refresh_from_db()
         self.assertFalse(topo.coupled)
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -1351,7 +1368,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 0, 1, 2, 4],
         )
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),
@@ -1380,7 +1397,7 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 0, 1, 2, 4],
         )
-        self.assertEqual(
+        self.assertRecursiveAlmostEqual(
             LineString(
                 (700000, 6600000),
                 (700050, 6600050),

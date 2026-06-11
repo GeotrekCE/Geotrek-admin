@@ -3,6 +3,7 @@ from copy import deepcopy
 from crispy_forms.bootstrap import FormActions
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import HTML, Div, Layout, Submit
+from dal_select2.widgets import ModelSelect2Multiple
 from django import forms
 from django.conf import settings
 from django.contrib.gis.forms import LineStringField
@@ -14,6 +15,12 @@ from mapentity.widgets import MapWidget, SelectMultipleWithPop
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.forms import CommonForm
+from geotrek.core.mixins.forms import (
+    OffNetworkTopologyFormMixin,
+    OnNetworkTopologyFormMixin,
+    TopologyForm,
+)
+from geotrek.core.widgets import PointTopologyWidget
 from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
 
 from ..core.mixins.forms import TopologyForm
@@ -27,55 +34,24 @@ from .models import (
     WebLink,
 )
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
 
-    class BaseTrekForm(TopologyForm):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["topology"].widget.modifiable
-            # TODO: We should change LeafletWidget to keep modifiable.
-            # Init of TopologyForm -> commonForm -> mapentityForm
-            # already add a leafletwidget with modifiable
-            self.fields["topology"].widget = LineTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-            self.fields["points_reference"].label = ""
-            self.fields["points_reference"].widget.target_map = "topology"
-            self.fields["parking_location"].label = ""
-            self.fields["parking_location"].widget.target_map = "topology"
-
-        class Meta(TopologyForm.Meta):
-            model = Trek
-else:
-
-    class BaseTrekForm(CommonForm):
-        geom = LineStringField()
-        geomfields = ["geom", "parking_location", "points_reference"]
-
-        class Meta(CommonForm.Meta):
-            model = Trek
-            fields = [*CommonForm.Meta.fields, "geom"]
-            widgets = {
-                "parking_location": MapWidget(
-                    attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"}
-                ),
-                "points_reference": MapWidget(
-                    attrs={"target_map": "geom", "custom_icon": "markers/points.svg"}
-                ),
-            }
-
-
-class TrekForm(BaseTrekForm):
-    children_trek = forms.ModelMultipleChoiceField(
+class BaseTrekForm(CommonForm):
+    children = forms.ModelMultipleChoiceField(
         label=_("Children"),
-        queryset=Trek.objects.all(),
-        required=False,
         help_text=_("Select children in order"),
+        queryset=Trek.objects.existing(),
+        required=False,
+        widget=ModelSelect2Multiple(),
     )
     hidden_ordered_children = forms.CharField(
         label=_("Hidden ordered children"),
         widget=forms.widgets.HiddenInput(),
         required=False,
     )
+    geomfields = [
+        "parking_location",
+        "points_reference",
+    ]
 
     leftpanel_scrollable = False
 
@@ -127,7 +103,7 @@ class TrekForm(BaseTrekForm):
                     "information_desks",
                     "source",
                     "portal",
-                    "children_trek",
+                    "children",
                     "eid",
                     "eid2",
                     "reservation_system",
@@ -187,18 +163,6 @@ class TrekForm(BaseTrekForm):
         self.fields[
             build_localized_fieldname("name", settings.LANGUAGE_CODE)
         ].required = True
-
-        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
-            self.fields.pop("points_reference")
-        else:
-            # Edit points of reference with custom edition JavaScript class
-            self.fields[
-                "points_reference"
-            ].widget.geometry_field_class = "PointsReferenceField"
-
-        self.fields[
-            "parking_location"
-        ].widget.geometry_field_class = "ParkingLocationField"
         self.fields["duration"].widget.attrs["min"] = "0"
 
         # Since we use chosen() in trek_form.html, we don't need the default help text
@@ -218,10 +182,10 @@ class TrekForm(BaseTrekForm):
                 parent__id=self.instance.pk
             ).order_by("order")
             # init multiple children field with data
-            self.fields["children_trek"].queryset = Trek.objects.existing().exclude(
+            self.fields["children"].queryset = Trek.objects.existing().exclude(
                 pk=self.instance.pk
             )
-            self.fields["children_trek"].initial = [
+            self.fields["children"].initial = [
                 c.child.pk for c in self.instance.trek_children.all()
             ]
 
@@ -266,11 +230,11 @@ class TrekForm(BaseTrekForm):
                     )
         return cleaned_data
 
-    def clean_children_trek(self):
+    def clean_children(self):
         """
         Check the trek is not parent and child at the same time
         """
-        children = self.cleaned_data["children_trek"]
+        children = self.cleaned_data["children"]
         if children and self.instance and self.instance.trek_parents.exists():
             raise ValidationError(
                 _("Cannot add children because this trek is itself a child.")
@@ -287,21 +251,18 @@ class TrekForm(BaseTrekForm):
         """
         Custom form save override - ordered children management
         """
-        sid = transaction.savepoint()
-
-        try:
-            return_value = super().save(self, *args, **kwargs)
+        with transaction.atomic():
+            instance = super().save(self, *args, **kwargs)
             # Save ratings
-            # TODO : Go through practice and not rating_scales
-            if return_value.practice:
-                field = getattr(return_value, "ratings")
+            if instance.practice:
+                field = getattr(instance, "ratings")
                 to_remove = list(
-                    field.exclude(scale__practice=return_value.practice).values_list(
+                    field.exclude(scale__practice=instance.practice).values_list(
                         "pk", flat=True
                     )
                 )
                 to_add = []
-                for scale in return_value.practice.rating_scales.all():
+                for scale in instance.practice.rating_scales.all():
                     rating = self.cleaned_data.get(f"rating_scale_{scale.pk}")
                     needs_removal = field.filter(scale=scale)
                     if rating:
@@ -311,43 +272,43 @@ class TrekForm(BaseTrekForm):
                 field.remove(*to_remove)
                 field.add(*to_add)
 
-            # save ordered children
-            ordering = []
+            # Save ordered children links only (do not delete Trek objects)
+            selected_children = list(self.cleaned_data.get("children") or [])
+            selected_ids = [child.pk for child in selected_children]
+            ordered_ids = []
 
-            if self.cleaned_data["hidden_ordered_children"]:
-                ordering = self.cleaned_data["hidden_ordered_children"].split(",")
+            raw_ordering = self.cleaned_data.get("hidden_ordered_children", "")
+            if raw_ordering:
+                for value in raw_ordering.split(","):
+                    value = value.strip()
+                    if not value:
+                        continue
+                    try:
+                        child_id = int(value)
+                    except ValueError:
+                        continue
+                    if child_id in selected_ids and child_id not in ordered_ids:
+                        ordered_ids.append(child_id)
 
-            order = 0
+            # Keep selected items even if they were not present in the hidden order.
+            for child_id in selected_ids:
+                if child_id not in ordered_ids:
+                    ordered_ids.append(child_id)
 
-            # add and update
-            for value in ordering:
-                child, created = OrderedTrekChild.objects.get_or_create(
-                    parent=self.instance, child=Trek.objects.get(pk=value)
+            instance.trek_children.all().delete()
+            for order, child_id in enumerate(ordered_ids):
+                OrderedTrekChild.objects.create(
+                    parent=instance,
+                    child_id=child_id,
+                    order=order,
                 )
-                child.order = order
-                child.save()
-                order += 1
 
-            # delete
-            new_list_children = self.cleaned_data["children_trek"].values_list(
-                "pk", flat=True
-            )
+        return instance
 
-            for child_relation in self.instance.trek_children.all():
-                # if existant child not in selection, deletion
-                if child_relation.child_id not in new_list_children:
-                    child_relation.delete()
-
-            transaction.savepoint_commit(sid)
-            return return_value
-
-        except Exception as exc:
-            transaction.savepoint_rollback(sid)
-            raise exc
-
-    class Meta(BaseTrekForm.Meta):
+    class Meta(CommonForm.Meta):
+        model = Trek
         fields = [
-            *BaseTrekForm.Meta.fields,
+            *CommonForm.Meta.fields,
             "structure",
             "name",
             "review",
@@ -385,7 +346,7 @@ class TrekForm(BaseTrekForm):
             "information_desks",
             "source",
             "portal",
-            "children_trek",
+            "children",
             "eid",
             "eid2",
             "reservation_system",
@@ -393,6 +354,74 @@ class TrekForm(BaseTrekForm):
             "pois_excluded",
             "hidden_ordered_children",
         ]
+
+
+class OnNetworkTrekForm(OnNetworkTopologyFormMixin, BaseTrekForm):
+    class Meta(OnNetworkTopologyFormMixin.Meta, BaseTrekForm.Meta):
+        fields = [*OnNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
+        geomfields = [
+            *BaseTrekForm.geomfields,
+            *OnNetworkTopologyFormMixin.geomfields,
+        ]
+        widgets = {
+            "parking_location": MapWidget(
+                attrs={"target_map": "topology", "custom_icon": "markers/parking.svg"}
+            ),
+            "points_reference": MapWidget(
+                attrs={"target_map": "topology", "custom_icon": "markers/points.svg"}
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
+            self.fields.pop("points_reference")
+        else:
+            self.fields["points_reference"].label = ""
+            self.fields["points_reference"].widget.target_map = "topology"
+            # Edit points of reference with custom edition JavaScript class
+            self.fields[
+                "points_reference"
+            ].widget.geometry_field_class = "PointsReferenceField"
+
+        self.fields["parking_location"].label = ""
+        self.fields["parking_location"].widget.target_map = "topology"
+        self.fields[
+            "parking_location"
+        ].widget.geometry_field_class = "ParkingLocationField"
+
+
+class OffNetworkTrekForm(BaseTrekForm, OffNetworkTopologyFormMixin):
+    geomfields = [
+        *BaseTrekForm.geomfields,
+        *OffNetworkTopologyFormMixin.geomfields,
+    ]
+
+    class Meta(BaseTrekForm.Meta, OffNetworkTopologyFormMixin.Meta):
+        fields = [*OffNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
+        widgets = {
+            "parking_location": MapWidget(
+                attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"}
+            ),
+            "points_reference": MapWidget(
+                attrs={"target_map": "geom", "custom_icon": "markers/points.svg"}
+            ),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
+            self.fields.pop("points_reference")
+        else:
+            # Edit points of reference with custom edition JavaScript class
+            self.fields[
+                "points_reference"
+            ].widget.geometry_field_class = "PointsReferenceField"
+        self.fields[
+            "parking_location"
+        ].widget.geometry_field_class = "ParkingLocationField"
 
 
 if settings.TREKKING_TOPOLOGY_ENABLED:

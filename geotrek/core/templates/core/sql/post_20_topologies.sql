@@ -69,6 +69,17 @@ BEGIN
         RETURN;
     END IF;
 
+    -- If any path linked to this topology is currently being split, don't do anything.
+    -- This function will be called again once the split is complete.
+    IF EXISTS (
+        SELECT 1
+        FROM core_pathaggregation cpa
+        JOIN core_path cp ON cp.id = cpa.path_id
+        WHERE cpa.topo_object_id = topology_id AND cp.is_being_split = TRUE
+    ) THEN
+        RETURN;
+    END IF;
+
     -- See what kind of topology we have
     SELECT bool_and(et.start_position != et.end_position), bool_and(et.start_position = et.end_position), count(*)
         INTO lines_only, points_only, t_count

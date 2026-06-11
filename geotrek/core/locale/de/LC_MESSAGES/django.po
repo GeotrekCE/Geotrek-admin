@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-27 20:07+0000\n"
+"POT-Creation-Date: 2026-05-21 13:14+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/core/de/>\n"
@@ -68,6 +68,10 @@ msgid "Certifications"
 msgstr ""
 
 msgid "path"
+msgstr ""
+
+#, python-format
+msgid "You need to add a network of paths before importing '%(model)s' objects"
 msgstr ""
 
 #, python-format
@@ -197,6 +201,9 @@ msgstr ""
 msgid "Topologies"
 msgstr ""
 
+msgid "Can draw geometries uncoupled from the path network"
+msgstr ""
+
 msgid "Start position"
 msgstr ""
 
@@ -324,6 +331,24 @@ msgid "The marker was not dropped on a path."
 msgstr ""
 
 msgid "No routing found for this marker. Please move or delete it."
+msgstr ""
+
+msgid "Add point"
+msgstr ""
+
+msgid "Add intermediate point"
+msgstr ""
+
+msgid "Delete point"
+msgstr ""
+
+msgid "Round trip"
+msgstr ""
+
+msgid "One way"
+msgstr ""
+
+msgid "Objects"
 msgstr ""
 
 msgid "No certification"

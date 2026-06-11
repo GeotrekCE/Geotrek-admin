@@ -879,28 +879,13 @@ class TouristicContentTourInSoftParser(TouristicContentMixin, TourInSoftParser):
 class TouristicContentTourInSoftParserV3(TouristicContentTourInSoftParser):
     version_tourinsoft = 3
 
-
-class TouristicContentTourInSoftParserV3withMedias(TouristicContentTourInSoftParserV3):
     non_fields = {
         "attachments": "MediaPhotoss",
     }
 
-    def get_nb(self):
-        return len(self.root["value"])
 
-    def filter_attachments(self, src, val):
-        if not val:
-            return []
-        else:
-            return [
-                (
-                    entry["Photo"]["Url"],
-                    entry["Photo"]["Titre"],
-                    entry["Photo"]["Credit"],
-                )
-                for entry in val
-                if entry["Photo"] is not None
-            ]
+# The V3 API media is supported by  TourInSoftParser
+TouristicContentTourInSoftParserV3withMedias = TouristicContentTourInSoftParserV3
 
 
 class TouristicEventTourInSoftParser(TourInSoftParser):

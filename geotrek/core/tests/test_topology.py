@@ -1369,6 +1369,7 @@ class PointTopologyPathNetworkCoupling(TestCase):
         self.assertFalse(topology.coupled)
 
 
+@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class LineTopologyPathNetworkCoupling(TestCase):
     """
     Test the automatic coupling/decoupling behavior of line topologies.
@@ -1882,64 +1883,3 @@ class LineTopologyPathNetworkCoupling(TestCase):
         self.assertEqual(
             topology2.geom.coords, ((0, 0), (10, 0), (10, 5), (10, 10), (20, 10))
         )
-
-
-class MixedTopologyBehaviorTest(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.path = PathFactory(geom=LineString((0, 0), (10, 0)))
-
-    def test_deserialize_uncoupled_wkt(self):
-        # Deserializing WKT
-        topology = Topology.deserialize("SRID=2154;LINESTRING(0 0, 10 10)")
-        topology.save()
-        self.assertFalse(topology.coupled)
-        self.assertEqual(topology.geom.coords, ((0, 0), (10, 10)))
-
-    def test_deserialize_coupled_json_point(self):
-        # Deserializing coupled point topology
-        topology = Topology.deserialize('{"lng": 3.0, "lat": 46.5}')
-        topology.save()
-        self.assertTrue(topology.coupled)
-        self.assertEqual(topology.paths.count(), 1)
-
-    def test_altimetry_on_uncoupled_save(self):
-        # Creating an uncoupled topology
-        topology = Topology.objects.create(
-            geom=LineString((0, 0), (10, 10), srid=settings.SRID)
-        )
-        self.assertFalse(topology.coupled)
-        # Verify elevation parameters have been set by the trigger
-        self.assertIsNotNone(topology.geom_3d)
-        self.assertIsNotNone(topology.length)
-
-    def test_decoupled_to_coupled_transition(self):
-        # 1. Create a decoupled topology
-        topology = Topology.objects.create(
-            geom=LineString((0, 0), (10, 10), srid=settings.SRID)
-        )
-        self.assertFalse(topology.coupled)
-
-        # 2. Add path aggregation (transition to coupled)
-        topology.add_path(self.path, 0.0, 1.0)
-        self.assertTrue(topology.coupled)
-        # Geometry should now be updated to match the path
-        self.assertEqual(topology.geom.coords, ((0, 0), (10, 0)))
-
-    def test_coupled_to_decoupled_transition(self):
-        # 1. Create a coupled topology
-        topology = Topology.objects.create()
-        topology.add_path(self.path, 0.0, 1.0)
-        self.assertTrue(topology.coupled)
-
-        # 2. Delete aggregations (transition to decoupled)
-        PathAggregation.objects.filter(topo_object=topology).delete()
-        # Trigger should set coupled = False
-        topology.refresh_from_db()
-        self.assertFalse(topology.coupled)
-
-        # 3. Update geometry directly
-        topology.geom = LineString((0, 0), (20, 20), srid=settings.SRID)
-        topology.save()
-        topology.refresh_from_db()
-        self.assertEqual(topology.geom.coords, ((0, 0), (20, 20)))

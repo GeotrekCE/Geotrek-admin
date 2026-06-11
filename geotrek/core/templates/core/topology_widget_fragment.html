@@ -1,18 +1,25 @@
-{% load static %}
+{% load i18n static %}
 
-<style>
-    {% block map_css %}
-        #{{ id_map }} {
-        width: 100%;
-        height: 100%;
-        }
-        {% if not display_raw %}
-            #{{ id }} {
-            display: none;
+{% if not target_map %}
+    <style>
+        {% block map_css %}
+            #{{ id_map }} {
+                width: 100%;
+                height: 100%;
             }
-        {% endif %}
-    {% endblock map_css %}
-</style>
+            {% if not display_raw %}
+                #{{ id }} {
+                display: none;
+                }
+            {% endif %}
+        {% endblock map_css %}
+    </style>
+
+    {% block map %}
+        <link rel='stylesheet' href="{% static 'vendor/PATCHED-mapbox-gl-path/mapbox-gl-path.css' %}" />
+        <div id="{{ id_map }}" class="maplibre-map"></div>
+        {% include "core/toast_wrong_topology_route.html" %}
+    {% endblock map %}
 
 {% block map %}
     {% if not target_map %}
@@ -21,6 +28,490 @@
     {% endif %}
 {% endblock map %}
 
+    {% block vars %}
+        {{ module }}.is_point_topology = {{ is_point_topology|yesno:"true,false" }};
+        {{ module }}.is_line_topology = {{ is_line_topology|yesno:"true,false" }};
+    {% endblock vars %}
+{% endif %}
+
+<script type="module">
+    import MapboxPathControl from "{% static 'vendor/PATCHED-mapbox-gl-path/PATCHED-mapbox-gl-path.js' %}";
+
+    document.addEventListener('DOMContentLoaded', function () {
+        const fieldId = '{{ id }}';
+        const topologyElem = document.getElementById(fieldId);
+
+        const initialLineString = {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    1.444187,
+                    43.584461
+                  ],
+                  [
+                    1.444174,
+                    43.583902
+                  ],
+                  [
+                    1.447712,
+                    43.584401
+                  ],
+                  [
+                    1.448439,
+                    43.584258
+                  ],
+                  [
+                    1.450551,
+                    43.583664
+                  ],
+                  [
+                    1.450716,
+                    43.583681
+                  ],
+                  [
+                    1.456207,
+                    43.585915
+                  ]
+                ]
+              },
+              "properties": {
+                "index": 0,
+                "isFollowingDirections": true,
+                "directionID": 2
+              }
+            }
+        const initialFeatureCollection = {
+          "type": "FeatureCollection",
+          "features": [
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Point",
+                "coordinates": [
+                  1.4445662176173926,
+                  43.58445067008731
+                ]
+              },
+              "properties": {
+                "index": 0
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "Point",
+                "coordinates": [
+                  1.4561261842558224,
+                  43.5860158022156
+                ]
+              },
+              "properties": {
+                "index": 1
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    1.444187,
+                    43.584461
+                  ],
+                  [
+                    1.444174,
+                    43.583902
+                  ],
+                  [
+                    1.447712,
+                    43.584401
+                  ],
+                  [
+                    1.448439,
+                    43.584258
+                  ],
+                  [
+                    1.450551,
+                    43.583664
+                  ],
+                  [
+                    1.450716,
+                    43.583681
+                  ],
+                  [
+                    1.456207,
+                    43.585915
+                  ]
+                ]
+              },
+              "properties": {
+                "index": 0,
+                "isFollowingDirections": true,
+                "directionID": 2
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    1.4445662176173926,
+                    43.58445067008731
+                  ],
+                  [
+                    1.444187,
+                    43.584461
+                  ]
+                ]
+              },
+              "properties": {
+                "index": 0,
+                "isPhantomJunction": true,
+                "isDeparture": true
+              }
+            },
+            {
+              "type": "Feature",
+              "geometry": {
+                "type": "LineString",
+                "coordinates": [
+                  [
+                    1.456207,
+                    43.585915
+                  ],
+                  [
+                    1.4561261842558224,
+                    43.5860158022156
+                  ]
+                ]
+              },
+              "properties": {
+                "index": 0,
+                "isPhantomJunction": true,
+                "isDeparture": false
+              }
+            }
+          ]
+        }
+
+        function getCookie(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                let cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    let cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+            return cookieValue;
+        }
+
+        async function getRoute(coordinates, options) {
+
+            const [fromCoord, toCoord] = coordinates;
+            const [fromLng, fromLat] = fromCoord;
+            const [toLng, toLat] = toCoord;
+            const fromPathId = options?.fromSnappedId;
+            const toPathId = options?.toSnappedId;
+
+            // TODO: error handling -> si le back renvoie une erreur
+            // Fetch the route between these two waypoints
+            return fetch(
+                window.SETTINGS.urls['route_geometry'],
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json; charset=UTF-8",
+                        "X-CSRFToken": getCookie('csrftoken'),
+                    },
+                    body: `{"steps":[{"lat":${fromLat},"lng":${fromLng},"path_id":${fromPathId}},{"lat":${toLat},"lng":${toLng},"path_id":${toPathId}}]}`,
+                }
+            )
+            .then((response) => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    return undefined;
+                }
+            })
+            .then((data) => {
+                if (data !== undefined) {
+                    let routeCoords = data.geojson.geometries[0].coordinates;
+                    return {
+                        // Return the geometry to display
+                        coordinates: routeCoords,
+                        waypoints: {
+                            departure: routeCoords[0],
+                            arrival: routeCoords.at(-1),
+                        },
+                        // Save the serialized topology
+                        properties: {topology: data.serialized[0]},
+                    }
+                } else {
+                    return undefined;
+                }
+            })
+        }
+
+        // TODO : dans le css pour modifier l'icône du controller
+        // TODO: utiliser !important
+        // https://github.com/makinacorpus/mapbox-gl-path/tree/feature/snapping-and-routing
+        // .maplibregl-ctrl button.mapbox-gl-path-btn-edit {
+        //   background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='29' height='29' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/%3E%3C/svg%3E");
+        //   background-repeat: no-repeat;
+        //   background-position: center;
+        // }
+        //
+        // .maplibregl-ctrl button.mapbox-gl-path-btn-edit.mapbox-gl-path-active {
+        //   background-color: rgba(0, 0, 0, 0.05);
+        //   background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='29' height='29' viewBox='0 0 24 24' fill='none' stroke='%230D47A1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/%3E%3C/svg%3E");
+        // }
+
+        async function initRoutingControl () {
+
+            // Load the arrow image which displays the route's direction
+            const image = await map.getMap().loadImage("{% static 'vendor/PATCHED-mapbox-gl-path/assets/arrow.png' %}");
+            map.getMap().addImage('arrow', image.data);
+
+            // Add mapbox-gl-path control
+            const mapboxPathControl = new MapboxPathControl({
+                translate: (text) => {
+                    const locales = {
+                        "gl-pathControl.createPoint": "{% translate 'Add point' %}",
+                        "gl-pathControl.createIntermediatePoint": "{% translate 'Add intermediate point' %}",
+                        "gl-pathControl.deletePoint": "{% translate 'Delete point' %}",
+                        "gl-pathControl.loopPoint": "{% translate 'Round trip' %}",
+                        "gl-pathControl.oneWayPoint": "{% translate 'One way' %}",
+                    }
+                    return locales[text];
+                },
+                directionsThemes: [
+                    {
+                        id: 1,
+                        name: 'Tracé sur tronçons',
+                        selected: true,
+                        getPathByCoordinates: getRoute,
+                    }
+                ],
+                //featureCollection: initialFeatureCollection,
+                //lineString: initialLineString,
+                layersCustomisation: {
+                    pointLayerList: [
+                      {
+                        paint: {
+                          "circle-radius": 10,
+                          "circle-color": "#ffffff",
+                          "circle-stroke-width": 2,
+                          "circle-stroke-color": "#846b8a",
+                        },
+                      },
+                      {
+                        paint: {
+                          "text-color": "#000",
+                        },
+                        type: "symbol",
+                        layout: {
+                          "text-size": 14,
+                          "text-allow-overlap": true,
+                        },
+                      },
+                    ],
+                    lineLayerList: [
+                      {
+                        paint: { "line-width": 4, "line-color": "#846b8a" },
+                      },
+                      {
+                        type: "symbol",
+                        layout: {
+                          "icon-image": "arrow",
+                          "icon-size": 0.6,
+                          "symbol-placement": "line",
+                          "icon-allow-overlap": true,
+                        },
+                      },
+                    ],
+                    phantomJunctionLineLayerList: [
+                      {
+                        paint: {
+                          "line-width": 4,
+                          "line-color": "#c98bb9",
+                          "line-dasharray": [1, 1],
+                        },
+                      },
+                    ],
+                },
+                interactive: false,
+                showSnapControl: false,
+                defaultSnapping: true,
+                snapLayers: [window.pathLayerName],
+                snapMinZoom: 0,  // TODO
+                showDirectionsControl: false,
+                defaultRouting: true,
+            });
+
+            map.getMap().addControl(mapboxPathControl, "top-left");
+        }
+
+        async function addLayers() {
+            // Créer un layerManager dédié au widget (pas le singleton de la carte principale)
+            const layerManager = Object.create(MaplibreLayerManager.prototype);
+            // const layerManager = new MaplibreLayerManager();
+            layerManager.layers = {
+                baseLayers: {},
+                overlays: {},
+                lazyOverlays: {},
+                layerGroups: {},
+            };
+            layerManager.restoredContext = null;
+            layerManager._map = null;
+            layerManager._eventListeners = [];
+
+            window.mapentity_map = map.getMap();
+            layerManager.initialize(map.getMap());
+
+            // Chargement des base layers en premier depuis les settings
+            // TODO: tester
+            const baseLayersData = window.SETTINGS.map?.baseLayers || {};
+            const { base_layers, overlay_layers } = baseLayersData;
+
+            if (base_layers) {
+                for (const layer of base_layers) {
+                    await layerManager.addLayerFromUrl(layer.name, {
+                        id: 'mapbox-base-' + layer.slug,
+                        url: layer.url,
+                        isBaseLayer: true,
+                        attribution: layer.attribution || '',
+                    });
+                }
+            }
+            if (overlay_layers) {
+                for (const layer of overlay_layers) {
+                    await layerManager.addLayerFromUrl(layer.name, {
+                        id: 'mapbox-overlay-' + layer.slug,
+                        url: layer.url,
+                        isBaseLayer: false,
+                        attribution: layer.attribution || '',
+                    });
+                }
+            }
+
+            // Ajout de la couche d’objets contextuels
+            const modelname = document.body.getAttribute('data-modelname');
+            const objects_verbose_name = document.body.getAttribute('data-objectsname');
+            const layerUrl = window.SETTINGS.urls.layer.replace(/modelname/g, modelname);
+            const tilejsonUrl = window.SETTINGS.urls.tilejson ? window.SETTINGS.urls.tilejson.replace(/modelname/g, modelname) : undefined;
+            const style = window.SETTINGS.map.styles.others;
+            const objectsLayer = new MaplibreObjectsLayer(null, {
+                style: typeof style === "function" ? {} : style,
+                modelname: modelname,
+                readonly: true,
+                nameHTML: '<span style="color:' + style['color'] + ';">&#x25A3;</span>&nbsp;' + objects_verbose_name,
+                category: '{% trans "Objects" %}',
+                dataUrl: layerUrl,
+                tilejsonUrl: tilejsonUrl,
+                primaryKey: generateUniqueId(),
+                isLazy: false,
+            });
+            // Override the singleton layerManager for this objectsLayer
+            objectsLayer.layerManager = layerManager;
+            objectsLayer.initialize(map.getMap());
+
+            // Initialize additional layers
+            let pathLayerSettings = null;
+            window.SETTINGS.layers.forEach((model) => {
+                const nameHTML = model.name;
+                const additionalModelname = model.id;
+                const category = model.category;
+                const additionalLayerUrl = model.url;
+                const additionalTilejsonUrl = model.tilejsonUrl;
+
+                let additionalStyle = window.SETTINGS.map.styles[additionalModelname] ?? window.SETTINGS.map.styles['others'];
+                let primaryKey = generateUniqueId();
+
+                const additionalObjectsLayer = new MaplibreObjectsLayer(null, {
+                    style: additionalStyle,
+                    modelname: additionalModelname,
+                    readonly: true,
+                    nameHTML: nameHTML,
+                    category: category,
+                    primaryKey: primaryKey,
+                    dataUrl: additionalLayerUrl,
+                    tilejsonUrl: additionalTilejsonUrl,
+                    isLazy: true,
+                    displayPopup: true,
+                });
+
+                additionalObjectsLayer.layerManager = layerManager;
+                additionalObjectsLayer.initialize(map.getMap());
+                additionalObjectsLayer.registerLazyLayer(additionalModelname, category, nameHTML, primaryKey, additionalLayerUrl);
+
+                // Paths are displayed by default - load its layer
+                if (additionalModelname === 'path') {
+                    if (tilejsonUrl) {
+                        additionalObjectsLayer.loadMVT(additionalTilejsonUrl);
+                    } else {
+                        additionalObjectsLayer.load(additionalLayerUrl);
+                    }
+                    window.pathLayerName = "layer-" + additionalObjectsLayer.primaryKey + "-lines";
+                }
+
+            });
+
+            const layerControl = new MaplibreLayerControl(layerManager);
+            map.getMap().addControl(layerControl, 'top-right');
+
+            // TODO
+            // Restauration du contexte pour le widget
+            //const mapentityContext = new MaplibreMapentityContext(bounds, layerManager);
+            //const mapViewContext = getURLParameter("context");
+            //if (mapViewContext) {
+            //    layerManager.restoredContext = { restoredFromUrl: true };
+            //}
+            //await mapentityContext.restoreFullContext(map.getMap(), mapViewContext, {
+            //    prefix: 'widget-' + fieldId,
+            //});
+        }
+
+        function initAdditionalControls() {
+            map.getMap().addControl(new MaplibreFileLayerControl({
+                layerOptions: {
+                    style: window.SETTINGS.map.styles.filelayer,
+                }
+            }), 'top-left');
+            map.getMap().addControl(new MaplibreResetViewControl(bounds), 'top-left');
+        }
+
+        // Init the map
+        const mapId = '{{ id_map }}'; // TODO
+        // TODO: check that TILES works:
+        const { BOUNDS, DEFAULT_CENTER, DEFAULT_ZOOM, SCALE, TILES, MAX_ZOOM } = window.SETTINGS.map.maplibreConfig;
+        const bounds = [BOUNDS[0], BOUNDS[1]];
+        const map = new MaplibreMap(mapId, DEFAULT_CENTER, DEFAULT_ZOOM, MAX_ZOOM, bounds, SCALE);
+
+        map.getMap().on('load', async function () {
+            await addLayers();
+            initAdditionalControls();
+            await initRoutingControl();
+        });
+
+        map.getMap().on("MapboxPathControl.update", (event) => {
+            // Update the stored topology each time the route changes
+            const features = event.featureCollection.features;
+            const subRoutes = features.filter(f => f.geometry.type === "LineString" && !f.properties.isPhantomJunction);
+            const subTopologies = subRoutes.map(route => route.properties.topology);
+            topologyElem.value = JSON.stringify(subTopologies);
+        });
+    });
+</script>
+
+{% if display_raw %}<p>Geometry:</p>{% endif %}
+<textarea id="{{ id }}" class="required" cols="150" rows="10" name="{{ name }}">{{ serialized }}</textarea>
 {% block vars %}
     {{ module }}.is_point_topology = {{ is_point_topology|yesno:"true,false" }};
     {{ module }}.is_line_topology = {{ is_line_topology|yesno:"true,false" }};

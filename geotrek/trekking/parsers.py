@@ -484,6 +484,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         "informationsEquipement",
         "illustrations",
         "informations",
+        "distinctions",
     ]
     locales = ["fr", "en"]
 
@@ -523,6 +524,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         "labels": [
             "presentation.typologiesPromoSitra.*",
             "localisation.environnements.*",
+            "distinctions",
         ],
         "networks": "informationsEquipement.activites",
         "accessibilities": "informationsEquipement.itineraire.naturesTerrain.*",
@@ -610,18 +612,20 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
     typologies_sitra_ids_as_labels = [
         1599,  # Déconseillé par mauvais temps
         1676,  # En plein air
+        3845,  # Itinéraire France vélo
         4639,  # Conseillé par forte chaleur
         4819,  # Paysages
-        5022,  # Respirando
-        4971,  # Inscrit au PDIPR
-        3845,  # Itinéraire France vélo
-        6566,  # Label Espace Cyclosport
-        6049,  # Label Vélo et Fromages
-        1582,  # Label VTT - FFC
-        5538,  # Label VTT - FFCT
-        6825,  # Station de Trail®
         6608,  # Site sur-fréquenté
         1602,  # Circuits de France
+    ]
+    distinctions_ids_as_labels = [
+        8644,  # Respirando
+        8607,  # Inscrit au PDIPR
+        8671,  # Label Espace Cyclosport
+        8673,  # Label Vélo et Fromages
+        8674,  # Label VTT - FFC
+        8675,  # Label VTT - FFCT
+        8690,  # Station de Trail®
     ]
     typologies_sitra_ids_as_themes = [
         6155,  # Adrénaline
@@ -746,7 +750,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
             raise RowImportError(str(e))
 
     def filter_labels(self, src, val):
-        typologies, environnements = val
+        typologies, environnements, distinctions = val
         translation_src = self._get_default_translation_src()
         filtered_val = []
         if typologies:
@@ -760,6 +764,12 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
                 e[translation_src]
                 for e in environnements
                 if e["id"] in self.environnements_ids_as_labels
+            ]
+        if distinctions:
+            filtered_val += [
+                d["nom"][translation_src]
+                for d in distinctions
+                if d["nom"]["id"] in self.distinctions_ids_as_labels
             ]
         return self.apply_filter(dst="labels", src=src, val=filtered_val)
 
@@ -1215,6 +1225,7 @@ class ApidaeTrekLabelParser(ApidaeReferenceElementParser):
     element_reference_ids = (
         ApidaeTrekParser.typologies_sitra_ids_as_labels
         + ApidaeTrekParser.environnements_ids_as_labels
+        + ApidaeTrekParser.distinctions_ids_as_labels
     )
     name_field = "name"
 

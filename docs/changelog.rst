@@ -2,7 +2,40 @@
 CHANGELOG
 =========
 
-2.124.3+dev     (XXXX-XX-XX)
+2.124.5+dev     (XXXX-XX-XX)
+----------------------------
+
+**Warnings**
+
+* Topologies no longer need to depend on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
+
+**Improvements**
+
+* Add a "Network-coupled" boolean field and its corresponding filter to the ``Topology`` model
+* Strengthen the "invalid topology" filter criteria
+* Remove the "invalid geometry" filter
+
+**Bug fixes**
+**Warnings**
+
+* Topologies no longer need to depend on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
+* From now, if a module is disabled by its setting, it is completely hidden from menu, layer tree, admin and API responses.
+* All geotrek modules are now installed by default. Please remove `geotrek.outdoor`, `geotrek.sensitivity`, `geotrek.diving` from you custom.py file. User setting to disable module if you don't want to use them.
+  - `COURSE_MODEL_ENABLED = FALSE`
+  - `SITE_MODEL_ENABLED = FALSE`  # for outdoor module
+  - `SENSITIVE_AREA_MODEL_ENABLED = FALSE`  # for sensitivity module
+  - `DIVE_MODEL_ENABLED = FALSE`  # for diving module
+
+**Improvements**
+
+* Add a "Network-coupled" boolean field and its corresponding filter to the ``Topology`` model
+* Don't update the geometry of a topology when it's decoupled from the path network
+* Strengthen the "invalid topology" filter criteria
+* Remove the "invalid geometry" filter
+* Update popup to allow opening detail page in new tab (issue #4626)
+
+
+2.124.5         (2026-06-09)
 ----------------------------
 
 **Warnings**
@@ -20,6 +53,37 @@ CHANGELOG
 * Don't update the geometry of a topology when it's decoupled from the path network
 * Strengthen the "invalid topology" filter criteria
 * Remove the "invalid geometry" filter
+
+**Improvements**
+
+* Adapting ApidaeTrekParser to distinctions (#5180)
+* Delete outdated settings related to categories and pictures (refs #4482)
+
+**Bug fixes**
+
+* Fix the inversion of latitude/longitude columns in signage during CSV export. (refs #4116)
+
+**Documentation**
+
+* Add a ``--append`` option to the ``loaddem`` command to allow adding DEM data to an existing DEM and commands examples to recalculate altimetry (refs #5490)
+
+
+2.124.4         (2026-05-11)
+----------------------------
+
+**Warnings**
+
+* If you come from a version greater than or equal to 2.124.0 and have edited courses with children or itinerancies, please check child order.
+
+**Bug fixes**
+
+* Adapting TourInsoft parsers to the v3 API
+* Fix trek practice merge
+* Fix ordered children for trek and courses. (#5412)
+
+**Tests**
+
+* Fix mocking with OpenStreetMap attachment test parser
 
 
 2.124.3         (2026-04-02)

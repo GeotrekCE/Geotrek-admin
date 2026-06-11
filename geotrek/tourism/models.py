@@ -457,9 +457,11 @@ Topology.add_property(
 )
 Topology.add_property(
     "published_touristic_contents",
-    lambda self: intersecting(TouristicContent, self)
-    .filter(published=True)
-    .order_by(*settings.TOURISTIC_CONTENTS_API_ORDER),
+    lambda self: (
+        intersecting(TouristicContent, self)
+        .filter(published=True)
+        .order_by(*settings.TOURISTIC_CONTENTS_API_ORDER)
+    ),
     _("Published touristic contents"),
 )
 TouristicContent.add_property(
@@ -469,9 +471,11 @@ TouristicContent.add_property(
 )
 TouristicContent.add_property(
     "published_touristic_contents",
-    lambda self: intersecting(TouristicContent, self)
-    .filter(published=True)
-    .order_by(*settings.TOURISTIC_CONTENTS_API_ORDER),
+    lambda self: (
+        intersecting(TouristicContent, self)
+        .filter(published=True)
+        .order_by(*settings.TOURISTIC_CONTENTS_API_ORDER)
+    ),
     _("Published touristic contents"),
 )
 TouristicContent.add_property("signages", Signage.tourism_signages, _("Signages"))
