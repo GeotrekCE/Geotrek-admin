@@ -302,7 +302,10 @@ class Blade(
         on_delete=models.CASCADE,
         related_name="blades",
     )
-    number = models.CharField(verbose_name=_("Number"), max_length=250)
+    number = models.CharField(
+        verbose_name=_("Number"),
+        max_length=250,
+    )
     direction = models.ForeignKey(
         Direction,
         verbose_name=_("Direction"),

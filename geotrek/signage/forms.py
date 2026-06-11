@@ -84,6 +84,10 @@ class BladeForm(CommonForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        self.fields["number"].help_text = _(
+            "Position of the blade on the signage (top=1). Assigning a position that has already been used will shift the positions of the other blades"
+        )
+
         self.helper.form_tag = False
         if not self.instance.pk:
             self.signage = kwargs.get("initial", {}).get("signage")
@@ -100,17 +104,25 @@ class BladeForm(CommonForm):
         return super(CommonForm, self).save(*args, **kwargs)
 
     def clean_number(self):
-        blades = self.signage.blades.all()
-        if self.instance.pk:
-            blades = blades.exclude(number=self.instance.number)
-        already_used = ", ".join(
-            [str(number) for number in blades.values_list("number", flat=True)]
+        current_number = self.cleaned_data["number"]
+
+        blades = (
+            self.signage.blades.exclude(pk=self.instance.pk)
+            .filter(number__gte=current_number)
+            .order_by("number")
         )
-        if blades.filter(number=self.cleaned_data["number"]).exists():
-            raise forms.ValidationError(
-                _("Number already exists, numbers already used: %(number)s")
-                % {"number": already_used}
-            )
+
+        to_update = []
+        for blade in blades:
+            if blade.number != current_number:
+                break  # No more number to shift
+            current_number = chr(ord(blade.number) + 1)
+            blade.number = current_number
+            to_update.append(blade)
+
+        if to_update:
+            Blade.objects.bulk_update(to_update, ["number"])
+
         return self.cleaned_data["number"]
 
     def _set_number_field_initial_value(self):

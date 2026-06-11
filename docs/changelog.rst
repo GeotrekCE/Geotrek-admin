@@ -9,6 +9,10 @@ CHANGELOG
 
 - Update popup to allow opening detail page in new tab (issue #4626)
 
+**Improvements**
+
+* Allow the order of blades to be modified
+
 
 2.124.5         (2026-06-09)
 ----------------------------
