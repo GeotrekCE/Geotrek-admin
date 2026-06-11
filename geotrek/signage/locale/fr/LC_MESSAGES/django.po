@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-12 16:54+0000\n"
+"POT-Creation-Date: 2026-06-11 07:36+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/signage/fr/>\n"
@@ -38,10 +38,6 @@ msgstr "Filtrer par un ou plusieurs gestionnaires."
 
 msgid "Lines"
 msgstr "Lignes"
-
-#, python-format
-msgid "Number already exists, numbers already used: %(number)s"
-msgstr "Le numéro existe déjà, numéro(s) déjà utilisé(s) : %(number)s"
 
 msgid "Name"
 msgstr "Nom"
@@ -129,6 +125,9 @@ msgstr "États de lame"
 
 msgid "Number"
 msgstr "Numéro"
+
+msgid "Position of the blade on the signage (top=1). Assigning a position that has already been used will shift the positions of the other blades"
+msgstr ""
 
 msgid "Color"
 msgstr "Couleur"
