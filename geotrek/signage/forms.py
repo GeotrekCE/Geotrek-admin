@@ -3,7 +3,9 @@ from crispy_forms.layout import Div, Fieldset, Layout
 from dal import autocomplete
 from django import forms
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.db.models import Max
+from django.forms import BaseInlineFormSet
 from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
@@ -52,7 +54,34 @@ class LineForm(forms.ModelForm):
         )
 
 
-LineFormset = inlineformset_factory(Blade, Line, form=LineForm, extra=1)
+class BaseLineFormSet(BaseInlineFormSet):
+    def clean(self):
+        """Checks that no two lines have the same number."""
+        if any(self.errors):
+            # Don't bother validating the formset unless each form is valid on its own
+            return
+
+        msg = _("This order number is already used by another line.")
+        numbers = {}
+
+        for form in self.forms:
+            if self.can_delete and self._should_delete_form(form):
+                continue
+            number = form.cleaned_data.get("number")
+            numbers.setdefault(number, []).append(form)
+
+        duplicates = {n: forms for n, forms in numbers.items() if len(forms) > 1}
+
+        if duplicates:
+            for forms in duplicates.values():
+                for form in forms:
+                    form.add_error("number", msg)
+            raise ValidationError(msg)
+
+
+LineFormset = inlineformset_factory(
+    Blade, Line, form=LineForm, formset=BaseLineFormSet, extra=1
+)
 
 
 class BladeForm(CommonForm):

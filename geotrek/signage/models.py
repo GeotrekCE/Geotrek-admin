@@ -462,7 +462,6 @@ class Line(models.Model):
     linecode_verbose_name = _("Code")
 
     class Meta:
-        unique_together = (("blade", "number"),)
         verbose_name = _("Line")
         verbose_name_plural = _("Lines")
 
