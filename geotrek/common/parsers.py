@@ -1,3 +1,4 @@
+import copy
 import importlib
 import json
 import logging
@@ -1758,6 +1759,8 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+
+        self.field_options = copy.deepcopy(self.field_options)
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         self.bbox.srid = settings.SRID
         self.bbox.transform(4326)  # WGS84

@@ -1,5 +1,3 @@
-from unittest import skipIf
-
 from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.test import TestCase
@@ -130,9 +128,6 @@ class ZoningLayersUpdateTest(TestCase):
             signage = SignageFactory.create(geom=Point(1, 1.5, srid=settings.SRID))
         self.assertEqual(len(signage.cities), 0)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_city_with_topo_3(self):
         """
              +-------+

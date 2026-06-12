@@ -3,7 +3,7 @@ import shutil
 import tempfile
 from copy import deepcopy
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
@@ -222,7 +222,6 @@ class ViewsImportTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Communes")
 
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Topology is enabled")
     def test_import_update_access(self):
         self.client.force_login(user=self.super_user)
         url = reverse("common:import_update_json")

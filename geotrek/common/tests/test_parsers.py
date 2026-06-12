@@ -1,7 +1,7 @@
 import json
 import os
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 from urllib.parse import urlparse
 
 import requests
@@ -1739,9 +1739,13 @@ class GeotrekAggregatorTestParser(GeotrekAggregatorParser):
     pass
 
 
+@override_settings(TREKKING_TOPOLOGY_ENABLED=False)
 class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
     def setUp(self, *args, **kwargs):
         self.filetype = FileType.objects.create(type="Photographie")
+        from geotrek.authent.models import Structure
+
+        Structure.objects.get_or_create(name=settings.DEFAULT_STRUCTURE_NAME)
 
     def test_improperly_configurated_categories(self):
         with self.assertRaisesRegex(
@@ -1859,6 +1863,7 @@ class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
         self.assertEqual([t.pk], list(Trek.objects.values_list("pk", flat=True)))
 
 
+@override_settings(TREKKING_TOPOLOGY_ENABLED=False)
 class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
     def setUp(self, *args, **kwargs):
         self.filetype = FileType.objects.create(type="Photographie")
@@ -1875,9 +1880,6 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
                 verbosity=0,
             )
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     @mock.patch(
         "geotrek.common.parsers.importlib.import_module", return_value=mock.MagicMock()
     )
@@ -1917,9 +1919,7 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
         # Trek, POI, Service, InformationDesk, TouristicContent, TouristicEvent, Signage, Infrastructure
         self.assertEqual(10, mocked_import_module.call_count)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
+    @override_settings(TREKKING_TOPOLOGY_ENABLED=True)
     def test_geotrek_aggregator_parser_model_dynamic_segmentation(self):
         output = StringIO()
         filename = os.path.join(
@@ -1944,9 +1944,6 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
             "Treks can't be imported with dynamic segmentation", string_parser
         )
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     @mock.patch(
         "geotrek.common.parsers.importlib.import_module", return_value=mock.MagicMock()
     )
@@ -1989,9 +1986,6 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
         # "POI", "InformationDesk", "TouristicContent"
         self.assertEqual(8, mocked_import_module.call_count)
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     def test_geotrek_aggregator_parser_no_url(self):
         output = StringIO()
         filename = os.path.join(
@@ -2011,12 +2005,13 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
 
         self.assertIn("URL_1 has no url", string_parser)
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     @mock.patch("requests.get")
     @mock.patch("requests.head")
-    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="fr", LANGUAGE_CODE="fr")
+    @override_settings(
+        MODELTRANSLATION_DEFAULT_LANGUAGE="fr",
+        LANGUAGE_CODE="fr",
+        TREKKING_TOPOLOGY_ENABLED=False,
+    )
     def test_geotrek_aggregator_parser(self, mocked_head, mocked_get):
         self.mock_time = 0
         # First every categories (inside __init__)

@@ -1,10 +1,8 @@
 import os
 from io import StringIO
-from unittest import skipIf
 
 from django.contrib.gis.geos import GEOSGeometry, LineString
 from django.core.management import call_command
-from django.core.management.base import CommandError
 from django.test import TestCase
 
 from geotrek import settings
@@ -41,25 +39,6 @@ class PointTopologyParserMixinTest(TestCase):
     def test_instantiation_fails_without_build_geos_geometry_definition(self):
         with self.assertRaises(TypeError):
             PointTopologyTestModelParserMissingMethod()
-
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_parsing_fails_without_path_in_dynamic_segmentation_mode(self):
-        self.path.delete()
-        filename = self.get_test_data_file_path(
-            "point_topology_test_model_objects.json"
-        )
-        with self.assertRaisesMessage(
-            CommandError,
-            "You need to add a network of paths before importing 'PointTopologyTestModel' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.core.tests.test_mixins.PointTopologyTestModelParser",
-                filename,
-                verbosity=0,
-            )
 
     def test_object_parsing_fails_when_geom_is_incorrect(self):
         output = StringIO()

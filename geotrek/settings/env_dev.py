@@ -2,8 +2,8 @@
 # Django Development
 # ..........................
 
-import sys
 import os
+import sys
 
 # Makemessages uses Locale_paths's settings to get the list of translations to do.
 # We change 'var/extra_locale' to 'geotrek/locale'
@@ -25,7 +25,7 @@ INSTALLED_APPS += (
     'drf_yasg',
 )
 
-INTERNAL_IPS = type(str('c'), (), {'__contains__': lambda *a: True})()
+INTERNAL_IPS = type('c', (), {'__contains__': lambda *a: True})()
 
 ALLOWED_HOSTS = ['*']
 

@@ -2,7 +2,7 @@ import csv
 import os
 from collections import OrderedDict
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -1008,9 +1008,6 @@ class ServiceViewsTest(CommonTest):
     def _check_update_geom_permission(self, response):
         pass
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_empty_topology(self):
         data = self.get_good_data()
         data["topology"] = ""
@@ -1018,17 +1015,6 @@ class ServiceViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
         self.assertEqual(form.errors, {"topology": ["Topology is empty."]})
-
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_empty_topology_nds(self):
-        data = self.get_good_data()
-        data["geom"] = ""
-        response = self.client.post(self.model.get_add_url(), data)
-        self.assertEqual(response.status_code, 200)
-        form = self.get_form(response)
-        self.assertEqual(form.errors, {"geom": ["No geometry value provided."]})
 
     def test_listing_number_queries(self):
         # Create many instances

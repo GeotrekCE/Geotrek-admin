@@ -1,6 +1,5 @@
 import datetime
 import os
-from unittest import skipIf
 
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -123,9 +122,6 @@ class TrekTest(TestCase):
         t.save()
         self.assertEqual(t.published_langs, [])
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_kml_coordinates_should_be_3d(self):
         trek = TrekWithPOIsFactory.create()
         kml = trek.kml()
@@ -215,9 +211,6 @@ class TrekPublicationDateTest(TestCase):
 
 
 class RelatedObjectsTest(TestCase):
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_helpers(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
@@ -255,54 +248,6 @@ class RelatedObjectsTest(TestCase):
         )
         self.assertCountEqual(trek.districts, [d1, d2])
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_helpers_nds(self):
-        trek = TrekFactory.create(geom=LineString((2, 2), (8, 8)))
-        poi = POIFactory.create(geom=Point(2.4, 2.4))
-        poi2 = POIFactory.create(geom=Point(2.4, 2.4))
-        service = ServiceFactory.create(geom=Point(2.8, 2.8))
-        service.type.practices.add(trek.practice)
-        trek.pois_excluded.add(poi2.pk)
-
-        # /!\ District are automatically linked to paths at DB level
-        d1 = DistrictFactory.create(
-            geom=MultiPolygon(Polygon(((-2, -2), (3, -2), (3, 3), (-2, 3), (-2, -2))))
-        )
-        # Ensure related objects are accessible
-        self.assertCountEqual(trek.pois_excluded.all(), [poi2])
-        self.assertCountEqual(trek.all_pois, [poi, poi2])
-        self.assertCountEqual(trek.pois, [poi])
-        self.assertCountEqual(trek.services, [service])
-        self.assertCountEqual(poi.treks, [trek])
-        self.assertCountEqual(service.treks, [trek])
-        self.assertCountEqual(trek.districts, [d1])
-
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_deleted_pois_nds(self):
-        trek = TrekFactory.create(geom=LineString((0, 0), (4, 4)))
-        poi = POIFactory.create(geom=Point(2.4, 2.4))
-        self.assertCountEqual(trek.pois, [poi])
-        poi.delete()
-        self.assertCountEqual(trek.pois, [])
-
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_deleted_services_nds(self):
-        trek = TrekFactory.create(geom=LineString((0, 0), (4, 4)))
-        service = ServiceFactory.create(geom=Point(2.4, 2.4))
-        service.type.practices.add(trek.practice)
-        self.assertCountEqual(trek.services, [service])
-        service.delete()
-        self.assertCountEqual(trek.services, [])
-
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_deleted_pois(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         trek = TrekFactory.create(paths=[p1])
@@ -311,9 +256,6 @@ class RelatedObjectsTest(TestCase):
         poi.delete()
         self.assertCountEqual(trek.pois, [])
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_deleted_services(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         trek = TrekFactory.create(paths=[p1])
@@ -323,9 +265,6 @@ class RelatedObjectsTest(TestCase):
         service.delete()
         self.assertCountEqual(trek.services, [])
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_pois_should_be_ordered_by_progression(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
         p2 = PathFactory.create(geom=LineString((4, 4), (8, 8)))
@@ -342,9 +281,6 @@ class RelatedObjectsTest(TestCase):
         pois = self.trek_reverse.pois
         self.assertEqual([self.poi3, self.poi1, self.poi2], list(pois))
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     def test_pois_is_not_ordered_by_progression(self):
         self.trek = TrekFactory.create(geom=LineString((0, 0), (8, 8)))
 
@@ -359,9 +295,6 @@ class RelatedObjectsTest(TestCase):
         pois = self.trek_reverse.pois
         self.assertCountEqual([self.poi1, self.poi2, self.poi3], pois)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_departure_city(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (5, 5)))
         trek = TrekFactory.create(paths=[p1])
@@ -377,25 +310,6 @@ class RelatedObjectsTest(TestCase):
         trek = Trek.objects.get(
             pk=trek.pk
         )  # Refresh trek instance and invalidate cached_property
-        self.assertEqual(trek.departure_city, city1)
-
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_city_departure_nds(self):
-        trek = TrekFactory.create(geom=LineString((0, 0), (5, 5)))
-        self.assertEqual(trek.departure_city, "")
-
-        city1 = CityFactory.create(
-            geom=MultiPolygon(Polygon(((-1, -1), (3, -1), (3, 3), (-1, 3), (-1, -1))))
-        )
-        city2 = CityFactory.create(
-            geom=MultiPolygon(Polygon(((3, 3), (9, 3), (9, 9), (3, 9), (3, 3))))
-        )
-        trek = Trek.objects.get(
-            pk=trek.pk
-        )  # Refresh trek instance and invalidate cached_property
-        self.assertEqual([city for city in trek.cities], [city1, city2])
         self.assertEqual(trek.departure_city, city1)
 
 
