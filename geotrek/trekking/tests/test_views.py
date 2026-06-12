@@ -1008,7 +1008,6 @@ class ServiceViewsTest(CommonTest):
     def _check_update_geom_permission(self, response):
         pass
 
-
     def test_empty_topology(self):
         data = self.get_good_data()
         data["topology"] = ""

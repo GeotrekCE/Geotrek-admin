@@ -6,7 +6,6 @@ from crispy_forms.layout import HTML, Div, Layout, Submit
 from dal_select2.widgets import ModelSelect2Multiple
 from django import forms
 from django.conf import settings
-from django.contrib.gis.forms import LineStringField
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.translation import gettext as _
@@ -21,9 +20,7 @@ from geotrek.core.mixins.forms import (
     TopologyForm,
 )
 from geotrek.core.widgets import PointTopologyWidget
-from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
 
-from ..core.mixins.forms import TopologyForm
 from .models import (
     POI,
     OrderedTrekChild,

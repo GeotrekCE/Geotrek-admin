@@ -34,8 +34,7 @@ class ElevationTest(TestCase):
                         "UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)",
                         [x + 1, y + 1, demvalues[y][x]],
                     )
-            if settings.TREKKING_TOPOLOGY_ENABLED:
-                cls.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
+            cls.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
 
     def test_elevation_path(self):
         self.assertEqual(self.path.ascent, 16)

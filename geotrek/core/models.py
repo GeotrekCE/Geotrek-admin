@@ -46,6 +46,17 @@ from geotrek.zoning.mixins import ZoningPropertiesMixin
 logger = logging.getLogger(__name__)
 
 
+def _get_ewkt(geom):
+    if not geom:
+        return None
+    if isinstance(geom, str):
+        return geom
+    try:
+        return geom.ewkt
+    except Exception:
+        return str(geom)
+
+
 class Path(
     ZoningPropertiesMixin,
     AddPropertyMixin,
@@ -531,6 +542,7 @@ class Topology(
         super().__init__(*args, **kwargs)
         if not self.pk and not self.kind:
             self.kind = self.__class__.KIND
+        self._original_geom = _get_ewkt(self.geom)
 
     @property
     def paths(self):  # noqa
@@ -682,6 +694,7 @@ class Topology(
             # Update computed values
             fromdb = self.__class__.objects.get(pk=self.pk)
             self.geom = fromdb.geom
+            self._original_geom = _get_ewkt(fromdb.geom)
             self.coupled = fromdb.coupled
             # /!\ offset may be set by a trigger OR in
             # the django code, reload() will override
@@ -695,63 +708,39 @@ class Topology(
 
     def save(self, *args, **kwargs):
         if self.pk:
-        # HACK: these fields are readonly from the Django point of view,
-        # but they can be changed at DB level. Since Django writes all fields
-        # to DB anyway, it is important to update it before writing
-        is_coupled = False
-        if self.pk:
-            try:
-                is_coupled = self.__class__.objects.values_list(
-                    "coupled", flat=True
-                ).get(pk=self.pk)
-            except self.DoesNotExist:
-                pass
-
-        if is_coupled:
-            self.coupled = True
             existing = self.__class__.objects.get(pk=self.pk)
-            # If the geometry is modified, decouple the topology from the path network
-            if existing.geom != self.geom:
+
+            # Check if geometry was modified in Python
+            geom_modified_in_python = False
+            if self.geom is not None:
+                original_geom_ewkt = getattr(self, "_original_geom", None)
+                current_geom_ewkt = _get_ewkt(self.geom)
+                if original_geom_ewkt != current_geom_ewkt:
+                    geom_modified_in_python = True
+
+            # If geom is modified, we decouple the topology from the path network.
+            # Otherwise we keep coupled status from DB and reload computed values.
+            if geom_modified_in_python:
                 self.coupled = False
                 # FIXME: compare the geoms correctly (currently not the same srid). This must
                 # work when using a form, but also when calling save() e.g. in a parser
-                ...
             else:
-                # length is readonly from the Django point of view, but it can be changed at DB level.
-                # Since Django writes all fields to DB anyway, it is important to update it before writing
+                self.coupled = existing.coupled
                 self.length = existing.length
-                # TODO: ensure that geom_3d and altimetry data are updated too
-
-        if not self.deleted and self.geom is None:
-            # We cannot have NULL geometry. So we use an empty one.
-            # The geom will be computed or overwritten by triggers.
-            self.geom = fromstr("POINT (0 0)")
-            # TODO: check that it's still overwritten by triggers
-            self.length = existing.length
-            self.geom_3d = existing.geom_3d
-            self.ascent = existing.ascent
-            self.descent = existing.descent
-            self.min_elevation = existing.min_elevation
-            self.max_elevation = existing.max_elevation
-            self.slope = existing.slope
-            # In the case of points, the geom can be set by Django. Don't override.
-            point_geom_not_set = self.ispoint() and (
-                self.geom is None
-                or (
-                    self.geom.geom_type == "Point"
-                    and self.geom.x == 0
-                    and self.geom.y == 0
-                )
-            )
-            geom_already_in_db = not self.ispoint() and existing.geom is not None
-            if point_geom_not_set or geom_already_in_db:
-                self.geom = existing.geom
+                self.geom_3d = existing.geom_3d
+                self.ascent = existing.ascent
+                self.descent = existing.descent
+                self.min_elevation = existing.min_elevation
+                self.max_elevation = existing.max_elevation
+                self.slope = existing.slope
+                if existing.geom is not None:
+                    self.geom = existing.geom
+                    self._original_geom = _get_ewkt(existing.geom)
         else:
             if not self.deleted and self.geom is None:
                 # We cannot have NULL geometry. So we use an empty one,
                 # it will be computed or overwritten by triggers.
                 self.geom = fromstr("POINT (0 0)")
-
         if not self.kind:
             if self.KIND == "TOPOLOGYMIXIN":
                 msg = "Cannot save abstract topologies"

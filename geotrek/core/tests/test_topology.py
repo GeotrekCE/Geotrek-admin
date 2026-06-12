@@ -1369,7 +1369,6 @@ class PointTopologyPathNetworkCoupling(TestCase):
         self.assertFalse(topology.coupled)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class LineTopologyPathNetworkCoupling(TestCase):
     """
     Test the automatic coupling/decoupling behavior of line topologies.
