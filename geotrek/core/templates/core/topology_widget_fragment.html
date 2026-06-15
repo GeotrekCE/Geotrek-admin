@@ -491,6 +491,14 @@
             await addLayers();
             initAdditionalControls();
             await initRoutingControl();
+
+            // Notifier les autres champs géométriques de cette carte
+            window.dispatchEvent(new CustomEvent('map:init', {
+                detail: {
+                    map: map.getMap(),
+                    fieldId: fieldId,
+                }
+            }));
         });
 
         map.getMap().on("MapboxPathControl.update", (event) => {
