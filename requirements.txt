@@ -466,5 +466,5 @@ zope-interface==8.5
     #   zope-proxy
 zope-proxy==7.2
     # via zope-deferredimport
-zopfli==0.4.2
+zopfli==0.4.3
     # via fonttools
