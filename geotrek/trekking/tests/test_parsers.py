@@ -242,11 +242,10 @@ class POIParserTests(TestCase):
         self.assertEqual(poi.name, "pont")
         poi.reload()
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            poi_path = poi.topo_object.paths.get()
-            self.assertEqual(poi_path, path)
-            self.assertEqual(poi.topo_object.kind, "POI")
-            self.assertAlmostEqual(poi.topo_object.offset, 944460.127, places=2)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, path)
+        self.assertEqual(poi.topo_object.kind, "POI")
+        self.assertAlmostEqual(poi.topo_object.offset, 944460.127, places=2)
         self.assertEqual(poi.geom.geom_type, "Point")
         self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertEqual(WKTWriter(precision=4).write(poi.geom), WKT_POI)
@@ -1056,8 +1055,7 @@ class POIGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = PathFactory.create()
+        cls.path = PathFactory.create()
         cls.filetype = FileType.objects.create(type="Photographie")
 
     @mock.patch("requests.get")
@@ -1099,10 +1097,9 @@ class POIGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(str(poi.structure), "Struct3")
         self.assertEqual(str(poi.type), "Peak")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            poi_path = poi.topo_object.paths.get()
-            self.assertEqual(poi_path, self.path)
-            self.assertEqual(poi.topo_object.kind, "POI")
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
 
         self.assertEqual(poi.geom.geom_type, "Point")
         self.assertEqual(poi.geom.srid, settings.SRID)
@@ -1116,8 +1113,7 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = PathFactory.create()
+        cls.path = PathFactory.create()
 
     @mock.patch("requests.get")
     @mock.patch("requests.head")
@@ -1147,11 +1143,10 @@ class ServiceGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(str(service.type), "Eau potable")
         self.assertEqual(str(service.structure), "Struct3")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            service_path = service.topo_object.paths.get()
-            self.assertEqual(service_path, self.path)
-            self.assertEqual(service.topo_object.kind, "SERVICE")
-            self.assertAlmostEqual(service.topo_object.offset, -427263.473, places=2)
+        service_path = service.topo_object.paths.get()
+        self.assertEqual(service_path, self.path)
+        self.assertEqual(service.topo_object.kind, "SERVICE")
+        self.assertAlmostEqual(service.topo_object.offset, -427263.473, places=2)
         self.assertEqual(service.geom.geom_type, "Point")
         self.assertEqual(service.geom.srid, settings.SRID)
         self.assertAlmostEqual(service.geom.x, 572096.2266745908, places=5)
@@ -2094,8 +2089,7 @@ class ApidaePOIParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.filetype = FileType.objects.create(type="Photographie")
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = PathFactory.create()
+        cls.path = PathFactory.create()
 
     @mock.patch("requests.get")
     def test_POI_is_imported(self, mocked_get):
@@ -2114,11 +2108,10 @@ class ApidaePOIParserTests(TestCase):
         self.assertEqual(poi.description_fr, "La description courte en français.")
         self.assertEqual(poi.description_en, "The short description in english.")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            poi_path = poi.topo_object.paths.get()
-            self.assertEqual(poi_path, self.path)
-            self.assertEqual(poi.topo_object.kind, "POI")
-            self.assertAlmostEqual(poi.topo_object.offset, -126355.067, places=2)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
+        self.assertAlmostEqual(poi.topo_object.offset, -126355.067, places=2)
 
         self.assertEqual(poi.geom.geom_type, "Point")
         self.assertEqual(poi.geom.srid, settings.SRID)
@@ -2168,8 +2161,7 @@ class TestApidaeServiceParserMissingType(ApidaeServiceParser):
 class ApidaeServiceParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = PathFactory.create()
+        cls.path = PathFactory.create()
 
     @staticmethod
     def make_dummy_get(apidae_data_file):
@@ -2229,11 +2221,10 @@ class ApidaeServiceParserTests(TestCase):
         self.assertEqual(service.type.name, "Foo")
         self.assertEqual(service.eid, "1")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            service_path = service.topo_object.paths.get()
-            self.assertEqual(service_path, self.path)
-            self.assertEqual(service.topo_object.kind, "SERVICE")
-            self.assertAlmostEqual(service.topo_object.offset, 298317.556, places=2)
+        service_path = service.topo_object.paths.get()
+        self.assertEqual(service_path, self.path)
+        self.assertEqual(service.topo_object.kind, "SERVICE")
+        self.assertAlmostEqual(service.topo_object.offset, 298317.556, places=2)
         self.assertEqual(service.geom.geom_type, "Point")
         self.assertEqual(service.geom.srid, settings.SRID)
         self.assertAlmostEqual(service.geom.coords[0], 813833.6, delta=0.1)
@@ -2713,12 +2704,11 @@ class OpenStreetMapPOIParserTest(TestCase):
 
     def test_imported_object_point(self):
         poi = self.objects.get(eid="N1")
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertAlmostEqual(poi.topo_object.offset, 6437.493, places=2)
-            self.assertEqual(poi.topo_object.paths.count(), 1)
-            poi_path = poi.topo_object.paths.get()
-            self.assertEqual(poi_path, self.path)
-            self.assertEqual(poi.topo_object.kind, "POI")
+        self.assertAlmostEqual(poi.topo_object.offset, 6437.493, places=2)
+        self.assertEqual(poi.topo_object.paths.count(), 1)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
         self.assertEqual(poi.geom.geom_type, "Point")
         self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertAlmostEqual(poi.geom.x, 924596.692, places=2)
@@ -2726,11 +2716,10 @@ class OpenStreetMapPOIParserTest(TestCase):
 
     def test_imported_way(self):
         poi = self.objects.get(eid="W2")
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertAlmostEqual(poi.topo_object.offset, -1401.037, places=2)
-            poi_path = poi.topo_object.paths.get()
-            self.assertEqual(poi_path, self.path)
-            self.assertEqual(poi.topo_object.kind, "POI")
+        self.assertAlmostEqual(poi.topo_object.offset, -1401.037, places=2)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
         self.assertEqual(poi.geom.geom_type, "Point")
         self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertAlmostEqual(poi.geom.x, 926882.120, places=2)
@@ -2738,11 +2727,10 @@ class OpenStreetMapPOIParserTest(TestCase):
 
     def test_imported_object_polygon(self):
         poi = self.objects.get(eid="W3")
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertAlmostEqual(poi.topo_object.offset, -1398.99, places=2)
-            poi_path = poi.topo_object.paths.get()
-            self.assertEqual(poi_path, self.path)
-            self.assertEqual(poi.topo_object.kind, "POI")
+        self.assertAlmostEqual(poi.topo_object.offset, -1398.99, places=2)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
         self.assertEqual(poi.geom.geom_type, "Point")
         self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertAlmostEqual(poi.geom.x, 933496.557, places=2)
@@ -2750,11 +2738,10 @@ class OpenStreetMapPOIParserTest(TestCase):
 
     def test_imported_object_relation(self):
         poi = self.objects.get(eid="R4")
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertAlmostEqual(poi.topo_object.offset, -2589.235, places=2)
-            poi_path = poi.topo_object.paths.get()
-            self.assertEqual(poi_path, self.path)
-            self.assertEqual(poi.topo_object.kind, "POI")
+        self.assertAlmostEqual(poi.topo_object.offset, -2589.235, places=2)
+        poi_path = poi.topo_object.paths.get()
+        self.assertEqual(poi_path, self.path)
+        self.assertEqual(poi.topo_object.kind, "POI")
         self.assertEqual(poi.geom.geom_type, "Point")
         self.assertEqual(poi.geom.srid, settings.SRID)
         self.assertAlmostEqual(poi.geom.x, 930902.933, places=2)

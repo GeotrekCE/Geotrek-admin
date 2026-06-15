@@ -2218,11 +2218,9 @@ class TrailViewsTest(CommonTest):
             "certifications-MAX_NUM_FORMS": "1000",
             "certifications-MIN_NUM_FORMS": "",
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            good_data["topology"] = f'{{"paths": [{path.pk}]}}'
-        else:
-            good_data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
+        path = PathFactory.create()
+        good_data["topology"] = f'{{"paths": [{path.pk}]}}'
+
         return good_data
 
     def get_bad_data(self):

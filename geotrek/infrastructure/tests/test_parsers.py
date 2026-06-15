@@ -95,8 +95,7 @@ class TestApidaeInfrastructureParserMissingType(ApidaeInfrastructureParser):
 class ApidaeInfrastructureParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = PathFactory.create()
+        cls.path = PathFactory.create()
 
     @staticmethod
     def make_dummy_get(apidae_data_file):
@@ -182,10 +181,9 @@ class ApidaeInfrastructureParserTests(TestCase):
         self.assertEqual(infra.name, "Un objet avec un minimum de données")
         self.assertEqual(infra.type.label, "Foo")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            infra_path = infra.topo_object.paths.get()
-            self.assertEqual(infra_path, self.path)
-            self.assertEqual(infra.topo_object.kind, "INFRASTRUCTURE")
+        infra_path = infra.topo_object.paths.get()
+        self.assertEqual(infra_path, self.path)
+        self.assertEqual(infra.topo_object.kind, "INFRASTRUCTURE")
         self.assertEqual(infra.geom.geom_type, "Point")
         self.assertEqual(infra.geom.srid, settings.SRID)
         self.assertAlmostEqual(infra.geom.coords[0], 813833.6, delta=0.1)
@@ -289,14 +287,11 @@ class OpenStreetMapInfrastructureParserTests(TestCase):
     def test_topology_point(self):
         infrastructure = self.objects.get(eid="N1")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertAlmostEqual(
-                infrastructure.topo_object.offset, 27225.536, places=2
-            )
-            self.assertEqual(infrastructure.topo_object.paths.count(), 1)
-            infrastructure_path = infrastructure.topo_object.paths.get()
-            self.assertEqual(infrastructure_path, self.path)
-            self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
+        self.assertAlmostEqual(infrastructure.topo_object.offset, 27225.536, places=2)
+        self.assertEqual(infrastructure.topo_object.paths.count(), 1)
+        infrastructure_path = infrastructure.topo_object.paths.get()
+        self.assertEqual(infrastructure_path, self.path)
+        self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
 
         self.assertEqual(infrastructure.geom.geom_type, "Point")
         self.assertEqual(infrastructure.geom.srid, settings.SRID)
@@ -306,13 +301,10 @@ class OpenStreetMapInfrastructureParserTests(TestCase):
     def test_topology_way(self):
         infrastructure = self.objects.get(eid="W2")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertAlmostEqual(
-                infrastructure.topo_object.offset, -31942.149, places=2
-            )
-            infrastructure_path = infrastructure.topo_object.paths.get()
-            self.assertEqual(infrastructure_path, self.path)
-            self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
+        self.assertAlmostEqual(infrastructure.topo_object.offset, -31942.149, places=2)
+        infrastructure_path = infrastructure.topo_object.paths.get()
+        self.assertEqual(infrastructure_path, self.path)
+        self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
 
         self.assertEqual(infrastructure.geom.geom_type, "Point")
         self.assertEqual(infrastructure.geom.srid, settings.SRID)
@@ -322,13 +314,10 @@ class OpenStreetMapInfrastructureParserTests(TestCase):
     def test_topology_polygon(self):
         infrastructure = self.objects.get(eid="W3")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertAlmostEqual(
-                infrastructure.topo_object.offset, 48632.872, places=2
-            )
-            infrastructure_path = infrastructure.topo_object.paths.get()
-            self.assertEqual(infrastructure_path, self.path)
-            self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
+        self.assertAlmostEqual(infrastructure.topo_object.offset, 48632.872, places=2)
+        infrastructure_path = infrastructure.topo_object.paths.get()
+        self.assertEqual(infrastructure_path, self.path)
+        self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
 
         self.assertEqual(infrastructure.geom.geom_type, "Point")
         self.assertEqual(infrastructure.geom.srid, settings.SRID)
@@ -338,13 +327,10 @@ class OpenStreetMapInfrastructureParserTests(TestCase):
     def test_topology_relation(self):
         infrastructure = self.objects.get(eid="R4")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertAlmostEqual(
-                infrastructure.topo_object.offset, -31942.149, places=2
-            )
-            infrastructure_path = infrastructure.topo_object.paths.get()
-            self.assertEqual(infrastructure_path, self.path)
-            self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
+        self.assertAlmostEqual(infrastructure.topo_object.offset, -31942.149, places=2)
+        infrastructure_path = infrastructure.topo_object.paths.get()
+        self.assertEqual(infrastructure_path, self.path)
+        self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
 
         self.assertEqual(infrastructure.geom.geom_type, "Point")
         self.assertEqual(infrastructure.geom.srid, settings.SRID)

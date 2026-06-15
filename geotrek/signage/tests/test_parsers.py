@@ -36,8 +36,7 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = PathFactory.create()
+        cls.path = PathFactory.create()
         cls.filetype = FileType.objects.create(type="Photographie")
 
     @mock.patch("requests.get")
@@ -73,11 +72,10 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         conditions = [str(c.label) for c in signage.conditions.all()]
         self.assertEqual(conditions, ["Dégradé"])
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            signage_path = signage.topo_object.paths.get()
-            self.assertEqual(signage_path, self.path)
-            self.assertEqual(signage.topo_object.kind, "SIGNAGE")
-            self.assertAlmostEqual(signage.topo_object.offset, 430191.617, places=2)
+        signage_path = signage.topo_object.paths.get()
+        self.assertEqual(signage_path, self.path)
+        self.assertEqual(signage.topo_object.kind, "SIGNAGE")
+        self.assertAlmostEqual(signage.topo_object.offset, 430191.617, places=2)
 
         self.assertEqual(signage.geom.geom_type, "Point")
         self.assertEqual(signage.geom.srid, settings.SRID)

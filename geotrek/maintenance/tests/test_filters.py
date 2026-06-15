@@ -221,12 +221,7 @@ class InterventionDateFilterTest(TestCase):
 class InterventionContractorsFilterTest(TestCase):
     def test_filter_without_contractors(self):
         project = ProjectFactory.create()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            InterventionFactory.create(project=project)
-        else:
-            InterventionFactory.create(
-                project=project, geom="SRID=2154;POINT (700000 6600000)"
-            )
+        InterventionFactory.create(project=project)
 
         project_filter = ProjectFilterSet({})
 
@@ -237,12 +232,7 @@ class InterventionContractorsFilterTest(TestCase):
         project = ProjectFactory.create()
         project.contractors.set([contractor])
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            InterventionFactory.create(project=project)
-        else:
-            InterventionFactory.create(
-                project=project, geom="SRID=2154;POINT (700000 6600000)"
-            )
+        InterventionFactory.create(project=project)
 
         project_filter = ProjectFilterSet({"contractors": [contractor]})
         self.assertEqual(project_filter.qs.count(), 1)
@@ -253,12 +243,7 @@ class InterventionContractorsFilterTest(TestCase):
         project = ProjectFactory.create()
         project.contractors.set([contractor_2])
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            inter = InterventionFactory.create(project=project)
-        else:
-            inter = InterventionFactory.create(
-                project=project, geom="SRID=2154;POINT (700000 6600000)"
-            )
+        inter = InterventionFactory.create(project=project)
         inter.contractors.set([contractor])
 
         project_filter = ProjectFilterSet({"contractors": [contractor]})
@@ -271,12 +256,8 @@ class InterventionContractorsFilterTest(TestCase):
         project = ProjectFactory.create()
         project.contractors.set([contractor_2])
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            inter = InterventionFactory.create(project=project)
-        else:
-            inter = InterventionFactory.create(
-                project=project, geom="SRID=2154;POINT (700000 6600000)"
-            )
+        inter = InterventionFactory.create(project=project)
+
         inter.contractors.set([contractor])
 
         project_filter = ProjectFilterSet({"contractors": [contractor, contractor_2]})
@@ -289,12 +270,8 @@ class InterventionContractorsFilterTest(TestCase):
         project = ProjectFactory.create()
         project.contractors.set([contractor_2])
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            inter = InterventionFactory.create(project=project)
-        else:
-            inter = InterventionFactory.create(
-                project=project, geom="SRID=2154;POINT (700000 6600000)"
-            )
+        inter = InterventionFactory.create(project=project)
+
         inter.contractors.set([contractor])
 
         project_filter = ProjectFilterSet({"contractors": [contractor_3]})
@@ -476,26 +453,17 @@ class ProjectFilteringByLandTest(TestCase):
 class InterventionIntersectionFilterZoningTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path_in_1 = PathFactory.create(
-                geom=LineString((0, 0), (2, 1), srid=settings.SRID)
-            )
-            cls.path_in_2 = PathFactory.create(
-                geom=LineString((5, 5), (4, 4), srid=settings.SRID)
-            )
-            cls.topo_in_1 = TopologyFactory.create(paths=[cls.path_in_1])
-            cls.topo_in_2 = TopologyFactory.create(paths=[cls.path_in_2])
-            signage_in_1 = SignageFactory.create(paths=[cls.path_in_1])
-            signage_in_2 = SignageFactory.create(paths=[cls.path_in_2])
-        else:
-            cls.topo_in_1 = TopologyFactory.create(
-                geom=LineString((0, 0), (2, 1), srid=settings.SRID)
-            )
-            cls.topo_in_2 = TopologyFactory.create(
-                geom=LineString((5, 5), (4, 4), srid=settings.SRID)
-            )
-            signage_in_1 = SignageFactory.create(geom=Point(1, 1, srid=settings.SRID))
-            signage_in_2 = SignageFactory.create(geom=Point(5, 5, srid=settings.SRID))
+        cls.path_in_1 = PathFactory.create(
+            geom=LineString((0, 0), (2, 1), srid=settings.SRID)
+        )
+        cls.path_in_2 = PathFactory.create(
+            geom=LineString((5, 5), (4, 4), srid=settings.SRID)
+        )
+        cls.topo_in_1 = TopologyFactory.create(paths=[cls.path_in_1])
+        cls.topo_in_2 = TopologyFactory.create(paths=[cls.path_in_2])
+        signage_in_1 = SignageFactory.create(paths=[cls.path_in_1])
+        signage_in_2 = SignageFactory.create(paths=[cls.path_in_2])
+
         cls.intervention_topology_in_1 = InterventionFactory.create(
             target=cls.topo_in_1
         )
@@ -950,22 +918,15 @@ class InterventionIntersectionFilterZoningTest(TestCase):
 class ProjectIntersectionFilterZoningTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path_in = PathFactory.create(
-                geom=LineString((0, 0), (2, 1), srid=settings.SRID)
-            )
-            cls.path_out = PathFactory.create(
-                geom=LineString((5, 5), (4, 4), srid=settings.SRID)
-            )
-            cls.topo_in = TopologyFactory.create(paths=[cls.path_in])
-            cls.topo_out = TopologyFactory.create(paths=[cls.path_out])
-        else:
-            cls.topo_in = TopologyFactory.create(
-                geom=LineString((0, 0), (2, 1), srid=settings.SRID)
-            )
-            cls.topo_out = TopologyFactory.create(
-                geom=LineString((5, 5), (4, 4), srid=settings.SRID)
-            )
+        cls.path_in = PathFactory.create(
+            geom=LineString((0, 0), (2, 1), srid=settings.SRID)
+        )
+        cls.path_out = PathFactory.create(
+            geom=LineString((5, 5), (4, 4), srid=settings.SRID)
+        )
+        cls.topo_in = TopologyFactory.create(paths=[cls.path_in])
+        cls.topo_out = TopologyFactory.create(paths=[cls.path_out])
+
         cls.intervention_in = InterventionFactory.create(target=cls.topo_in)
         cls.intervention_out = InterventionFactory.create(target=cls.topo_out)
         cls.geom_zoning = MultiPolygon(

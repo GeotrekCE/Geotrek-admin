@@ -71,7 +71,7 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.max_elevation, 17)
         self.assertEqual(len(topo.geom_3d.coords), 5)
 
-    def test_elevation_topology_line_nds(self):
+    def test_elevation_uncoupled_topology_line(self):
         """
         No reason for this changements
         """
@@ -85,7 +85,7 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.max_elevation, 17)
         self.assertEqual(len(topo.geom_3d.coords), 5)
 
-    def test_elevation_topology_point(self):
+    def test_elevation_uncoupled_topology_point(self):
         topo = TopologyUncoupledFactory.create(geom="SRID=2154;POINT(33 57)")
         self.assertEqual(topo.geom_3d.coords[2], 15)
         self.assertEqual(topo.ascent, 0)
@@ -102,11 +102,17 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.max_elevation, 15)
 
     def test_elevation_topology_outside_dem(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            outside_path = Path.objects.create(geom=LineString((200, 200), (300, 300)))
-            topo = TopologyFactory.create(paths=[(outside_path, 0.5, 0.5)])
-        else:
-            topo = TopologyFactory.create(geom="SRID=2154;POINT(250 250)")
+        outside_path = Path.objects.create(geom=LineString((200, 200), (300, 300)))
+        topo = TopologyFactory.create(paths=[(outside_path, 0.5, 0.5)])
+
+        self.assertEqual(topo.geom_3d.coords[2], 0)
+        self.assertEqual(topo.ascent, 0)
+        self.assertEqual(topo.descent, 0)
+        self.assertEqual(topo.min_elevation, 0)
+        self.assertEqual(topo.max_elevation, 0)
+
+    def test_elevation_uncoupled_topology_outside_dem(self):
+        topo = TopologyUncoupledFactory.create(geom="SRID=2154;POINT(250 250)")
         self.assertEqual(topo.geom_3d.coords[2], 0)
         self.assertEqual(topo.ascent, 0)
         self.assertEqual(topo.descent, 0)

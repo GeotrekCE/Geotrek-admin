@@ -153,15 +153,12 @@ class TrekFactory(TopologyFactory):
 class TrekWithPOIsFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_poi(obj, create, extracted, **kwargs):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = obj.paths.first()
+        path = obj.paths.first()
+        if path:
             POIFactory.create(paths=[(path, 0.5, 0.5)])
             POIFactory.create(paths=[(path, 0.4, 0.4)])
-            if create:
-                obj.save()
-        else:
-            POIFactory.create(geom="SRID=2154;POINT (700040 6600040)")
-            POIFactory.create(geom="SRID=2154;POINT (700050 6600050)")
+        if create:
+            obj.save()
 
 
 class TrekWithPublishedPOIsFactory(TrekFactory):

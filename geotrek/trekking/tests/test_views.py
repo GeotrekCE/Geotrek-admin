@@ -97,11 +97,9 @@ class POIViewsTest(CommonTest):
             "description_en": "here",
             "type": POITypeFactory.create().pk,
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            PathFactory.create()
-            good_data["topology"] = '{"lat": 5.1, "lng": 6.6}'
-        else:
-            good_data["geom"] = "POINT(5.1 6.6)"
+        PathFactory.create()
+        good_data["topology"] = '{"lat": 5.1, "lng": 6.6}'
+
         return good_data
 
     def get_expected_popup_content(self):
@@ -158,17 +156,12 @@ class POIViewsTest(CommonTest):
 
     def test_empty_topology(self):
         data = self.get_good_data()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = ""
-        else:
-            data["geom"] = ""
+        data["topology"] = ""
+
         response = self.client.post(self.model.get_add_url(), data)
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertEqual(form.errors, {"topology": ["Topology is empty."]})
-        else:
-            self.assertEqual(form.errors, {"geom": ["No geometry value provided."]})
+        self.assertEqual(form.errors, {"topology": ["Topology is empty."]})
 
     def test_listing_number_queries(self):
         # Create many instances
@@ -321,14 +314,9 @@ class TrekViewsTest(CommonTest):
             "web_links": WebLinkFactory.create().pk,
             "information_desks": tourism_factories.InformationDeskFactory.create().pk,
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            good_data["topology"] = f'{{"paths": [{self.path.pk}]}}'
-            good_data["pois_excluded"] = POIFactory.create(paths=[self.path]).pk
-        else:
-            good_data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
-            good_data["pois_excluded"] = POIFactory.create(
-                geom="SRID=2154;POINT (700000 6600000)"
-            ).pk
+        good_data["topology"] = f'{{"paths": [{self.path.pk}]}}'
+        good_data["pois_excluded"] = POIFactory.create(paths=[self.path]).pk
+
         return good_data
 
     def get_expected_popup_content(self):
@@ -371,13 +359,10 @@ class TrekViewsTest(CommonTest):
         self.assertNotContains(response, "pois_excluded")
 
     def test_pois_detached_update(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
-            trek = TrekFactory.create(paths=[p1])
-            poi = POIFactory.create(paths=[(p1, 0.6, 0.6)])
-        else:
-            trek = TrekFactory.create(geom="SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)")
-            poi = POIFactory.create(geom="SRID=4326;POINT (0.6 0.6)")
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+        trek = TrekFactory.create(paths=[p1])
+        poi = POIFactory.create(paths=[(p1, 0.6, 0.6)])
+
         good_data = self.get_good_data()
         good_data["pois_excluded"] = poi.pk
         self.client.post(self.model.get_update_url(trek), good_data)
@@ -409,15 +394,8 @@ class TrekViewsTest(CommonTest):
             ),
             "parking_location": Point(0, 0, srid=settings.SRID),
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path1 = PathFactory.create(
-                geom=f"SRID={settings.SRID};LINESTRING(0 0, 1 0)"
-            )
-            self.trek = TrekFactory.create(paths=[path1], **trek_args)
-        else:
-            self.trek = TrekFactory.create(
-                geom=f"SRID={settings.SRID};LINESTRING(0 0, 1 0)", **trek_args
-            )
+        path1 = PathFactory.create(geom=f"SRID={settings.SRID};LINESTRING(0 0, 1 0)")
+        self.trek = TrekFactory.create(paths=[path1], **trek_args)
         fmt = "csv"
         response = self.client.get(self.model.get_format_list_url() + "?format=" + fmt)
         self.assertEqual(response.status_code, 200)
@@ -985,17 +963,11 @@ class ServiceViewsTest(CommonTest):
         }
 
     def get_good_data(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            PathFactory.create()
-            return {
-                "type": ServiceTypeFactory.create().pk,
-                "topology": '{"lat": 5.1, "lng": 6.6}',
-            }
-        else:
-            return {
-                "type": ServiceTypeFactory.create().pk,
-                "geom": "POINT(5.1 6.6)",
-            }
+        PathFactory.create()
+        return {
+            "type": ServiceTypeFactory.create().pk,
+            "topology": '{"lat": 5.1, "lng": 6.6}',
+        }
 
     def get_expected_popup_content(self):
         return (

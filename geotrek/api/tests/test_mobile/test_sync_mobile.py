@@ -7,10 +7,9 @@ from tempfile import mkdtemp
 from unittest import mock
 
 from django.conf import settings
-from django.contrib.gis.geos import LineString, MultiLineString, Point
+from django.contrib.gis.geos import LineString, MultiLineString
 from django.core import management
 from django.core.management.base import CommandError
-from django.db import connection
 from django.db.models import Q
 from django.http import HttpResponse, StreamingHttpResponse
 from django.test import TestCase
@@ -175,30 +174,19 @@ class SyncMobileTilesTest(VarTmpTestCase):
         trek_not_same_portal = TrekWithPublishedPOIsFactory.create(
             published=True, portals=(portal_a,)
         )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+        p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
 
-            trek_multi = TrekFactory.create(published=True)
-            cursor = connection.cursor()
-            cursor.execute(
-                """UPDATE core_topology SET geom=ST_GeomFromText('SRID=2154;MULTILINESTRING ((0 0, 0 1), (0 2, 0 3))') WHERE id=%s""",
-                [trek_multi.id],
-            )
+        trek_multi = TrekFactory.create(published=True)
+        trek_multi.geom = "SRID=2154;MULTILINESTRING ((0 0, 0 1), (0 2, 0 3))"
+        trek_multi.save()
 
-            trek_point = TrekFactory.create(
-                published=True,
-                paths=[
-                    (p, 0, 0),
-                ],
-            )
-        else:
-            trek_multi = TrekFactory.create(
-                published=True,
-                geom=MultiLineString(
-                    LineString((0, 0), (0, 1)), LineString((0, 2), (0, 3))
-                ),
-            )
-            trek_point = TrekFactory.create(published=True, geom=Point(0, 0))
+        trek_point = TrekFactory.create(
+            published=True,
+            paths=[
+                (p, 0, 0),
+            ],
+        )
+
         management.call_command(
             "sync_mobile",
             self.sync_directory,

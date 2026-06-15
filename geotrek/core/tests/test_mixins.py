@@ -28,10 +28,9 @@ class PointTopologyTestModelParserMissingMethod(PointTopologyParserMixin, JSONPa
 class PointTopologyParserMixinTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = PathFactory.create(
-                geom=LineString((2.0, 45.0), (5.0, 47.0), srid=4326)
-            )
+        cls.path = PathFactory.create(
+            geom=LineString((2.0, 45.0), (5.0, 47.0), srid=4326)
+        )
 
     def get_test_data_file_path(self, filename):
         return os.path.join(os.path.dirname(__file__), "data", filename)
@@ -81,21 +80,19 @@ class PointTopologyParserMixinTest(TestCase):
         obj_1 = test_objects.get(name="test1")
         obj_2 = test_objects.get(name="test2")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            obj_1_path = obj_1.topo_object.paths.get()
-            self.assertEqual(obj_1_path, self.path)
-            self.assertEqual(obj_1.topo_object.kind, "POINTTOPOLOGYTESTMODEL")
-            self.assertAlmostEqual(obj_1.topo_object.offset, -55184.442, places=2)
+        obj_1_path = obj_1.topo_object.paths.get()
+        self.assertEqual(obj_1_path, self.path)
+        self.assertEqual(obj_1.topo_object.kind, "POINTTOPOLOGYTESTMODEL")
+        self.assertAlmostEqual(obj_1.topo_object.offset, -55184.442, places=2)
         self.assertEqual(obj_1.geom.geom_type, "Point")
         self.assertEqual(obj_1.geom.srid, settings.SRID)
         self.assertAlmostEqual(obj_1.geom.x, 700000.000, places=2)
         self.assertAlmostEqual(obj_1.geom.y, 6433418.985, places=2)
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            obj_2_path = obj_2.topo_object.paths.get()
-            self.assertEqual(obj_2_path, self.path)
-            self.assertEqual(obj_2.topo_object.kind, "POINTTOPOLOGYTESTMODEL")
-            self.assertAlmostEqual(obj_2.topo_object.offset, -28914.952, places=2)
+        obj_2_path = obj_2.topo_object.paths.get()
+        self.assertEqual(obj_2_path, self.path)
+        self.assertEqual(obj_2.topo_object.kind, "POINTTOPOLOGYTESTMODEL")
+        self.assertAlmostEqual(obj_2.topo_object.offset, -28914.952, places=2)
         self.assertEqual(obj_2.geom.geom_type, "Point")
         self.assertEqual(obj_2.geom.srid, settings.SRID)
         self.assertAlmostEqual(obj_2.geom.x, 777390.880, places=2)
