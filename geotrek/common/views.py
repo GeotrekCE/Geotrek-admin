@@ -602,7 +602,7 @@ class ConfigView(APIView):
         "view": "read",
     }
 
-    pmtiles_folder = pathlib.Path(os.path.join(settings.STATIC_ROOT, "pmtiles"))
+    pmtiles_folder = pathlib.Path(os.path.join(settings.MEDIA_ROOT, "pmtiles"))
 
     def get_model_permissions(self, user, model):
         app_label, model_name = model
@@ -632,10 +632,10 @@ class ConfigView(APIView):
         return permissions
 
     def get_pmtiles_urls(self, filename):
-        pmtiles_endpoint = os.path.join(settings.STATIC_URL, "pmtiles", filename)
+        pmtiles_endpoint = os.path.join(settings.MEDIA_URL, "pmtiles", filename)
         pmtiles_url = self.request.build_absolute_uri(pmtiles_endpoint)
         json_filename = f"{filename.replace('.pmtiles', '')}.json"
-        json_endpoint = os.path.join(settings.STATIC_URL, "pmtiles", json_filename)
+        json_endpoint = os.path.join(settings.MEDIA_URL, "pmtiles", json_filename)
         json_url = self.request.build_absolute_uri(json_endpoint)
         return (pmtiles_url, json_url)
 
