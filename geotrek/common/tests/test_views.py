@@ -589,8 +589,8 @@ class ConfigViewTest(TestCase):
         center = [(west + east) / 2, (south + north) / 2]
 
         data = {
-            "pmtiles_url": "http://testserver/static/pmtiles/opentopomap-34.pmtiles",
-            "json_style_url": "http://testserver/static/pmtiles/opentopomap-34.json",
+            "pmtiles_url": "http://testserver/media/pmtiles/opentopomap-34.pmtiles",
+            "json_style_url": "http://testserver/media/pmtiles/opentopomap-34.json",
             "name": "Scan IGN VT",  # django-mapbox-baselayer
             "content-length": 537456,
             "options": {
