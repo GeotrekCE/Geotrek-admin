@@ -101,15 +101,10 @@ class InterventionZoningFilterTest(TestCase):
         cls.area = RestrictedAreaFactory.create(name="area_in", geom=cls.geom_1_wkt)
         cls.area_2 = RestrictedAreaFactory.create(name="area_out", geom=cls.geom_2_wkt)
         cls.area_type_3 = RestrictedAreaTypeFactory.create()
-        if not settings.TREKKING_TOPOLOGY_ENABLED:
-            seek_topo = TopologyFactory.create(
-                geom="SRID=2154;LINESTRING(200000 300000, 1100000 1200000)"
-            )
-        else:
-            cls.path = PathFactory.create(
-                geom="SRID=2154;LINESTRING(200000 300000, 1100000 1200000)"
-            )
-            seek_topo = TopologyFactory.create(paths=[cls.path])
+        cls.path = PathFactory.create(
+            geom="SRID=2154;LINESTRING(200000 300000, 1100000 1200000)"
+        )
+        seek_topo = TopologyFactory.create(paths=[cls.path])
         cls.seek_inter = InterventionFactory.create(target=seek_topo)
 
     def test_filter_zoning_city(self):

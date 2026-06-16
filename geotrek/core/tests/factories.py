@@ -148,12 +148,9 @@ class TopologyFactory(BaseTopologyFactory):
 
 
 class PointTopologyFactory(TopologyFactory):
-    if not settings.TREKKING_TOPOLOGY_ENABLED:
-        geom = "SRID=2154;POINT (700000 6600000)"
-
     @factory.post_generation
     def paths(obj, create, paths):
-        if not create or not settings.TREKKING_TOPOLOGY_ENABLED:
+        if not create:
             return
         if paths is None:
             PointPathAggregationFactory.create(topo_object=obj)
