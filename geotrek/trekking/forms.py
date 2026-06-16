@@ -387,41 +387,6 @@ class OnNetworkTrekForm(OnNetworkLinearTopologyFormMixin, BaseTrekForm):
             "parking_location"
         ].widget.geometry_field_class = "ParkingLocationField"
 
-# class OnNetworkTrekForm(PointTopologyFormMixin, BaseTrekForm):
-#     geomfields = [
-#         *BaseTrekForm.geomfields,
-#         *PointTopologyFormMixin.geomfields,
-#     ]
-#
-#     class Meta(PointTopologyFormMixin.Meta, BaseTrekForm.Meta):
-#         fields = [*PointTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
-#         widgets = {
-#             "parking_location": MapWidget(
-#                 attrs={"target_map": "topology", "custom_icon": "markers/parking.svg"}
-#             ),
-#             "points_reference": MapWidget(
-#                 attrs={"target_map": "topology", "custom_icon": "markers/points.svg"}
-#             ),
-#         }
-#
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#
-#         if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
-#             self.fields.pop("points_reference")
-#         else:
-#             self.fields["points_reference"].label = ""
-#             # Edit points of reference with custom edition JavaScript class
-#             self.fields[
-#                 "points_reference"
-#             ].widget.geometry_field_class = "PointsReferenceField"
-#
-#         self.fields["parking_location"].label = ""
-#         self.fields[
-#             "parking_location"
-#         ].widget.geometry_field_class = "ParkingLocationField"
-
-
 
 class OffNetworkTrekForm(BaseTrekForm, OffNetworkLinearTopologyFormMixin):
     geomfields = [
