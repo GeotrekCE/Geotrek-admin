@@ -15,13 +15,13 @@ export default function SignageForm({
   isEdit,
 }: {
   defaultValues: Omit<
-    SignageDataSchemaProps[0],
+    SignageDataSchemaProps,
     "id" | "date_insert" | "date_update" | "published"
   >
   pictogram?: { url?: string }
   isEdit?: boolean
 }) {
-  const validators = signageDataSchema.unwrap().omit({
+  const validators = signageDataSchema.omit({
     id: true,
     date_insert: true,
     date_update: true,
@@ -46,7 +46,7 @@ export default function SignageForm({
     },
   })
   const { FormTextField, FormSelectField, FormTextareaField, FormGeomField } =
-    useFormFields<SignageDataSchemaProps[0]>()
+    useFormFields<SignageDataSchemaProps>()
 
   const stored: StoredReferences = useReferencesQuery()
 

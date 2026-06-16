@@ -1,4 +1,5 @@
 import * as React from "react"
+import * as z from "zod"
 import { useQueries, type UseQueryResult } from "@tanstack/react-query"
 import { queryFnWithAuth } from "@/lib/api"
 import {
@@ -47,7 +48,7 @@ export function useDataQuery(
         queryFn: () =>
           infrastructure.read
             ? queryFnWithAuth("/infrastructure/drf/infrastructures", {
-                schema: infrastructureDataSchema,
+                schema: z.array(infrastructureDataSchema),
                 searchParams: { format: "gtam", ...cleanParams },
               })
             : () => null,
@@ -58,7 +59,7 @@ export function useDataQuery(
         queryFn: () =>
           signage.read
             ? queryFnWithAuth("/signage/drf/signages", {
-                schema: signageDataSchema,
+                schema: z.array(signageDataSchema),
                 searchParams: { format: "gtam", ...cleanParams },
               })
             : () => null,
@@ -69,7 +70,7 @@ export function useDataQuery(
         queryFn: () =>
           intervention.read
             ? queryFnWithAuth("/intervention/drf/interventions", {
-                schema: interventionDataSchema,
+                schema: z.array(interventionDataSchema),
                 searchParams: { format: "gtam", ...cleanParams },
               })
             : () => null,
@@ -80,7 +81,7 @@ export function useDataQuery(
         queryFn: () =>
           report.read
             ? queryFnWithAuth("/report/drf/reports", {
-                schema: reportDataSchema,
+                schema: z.array(reportDataSchema),
                 searchParams: { format: "gtam", ...cleanParams },
               })
             : () => null,
