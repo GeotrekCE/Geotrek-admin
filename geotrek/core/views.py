@@ -433,6 +433,7 @@ class PathViewSet(GeotrekMapentityViewSet):
         objects and subroutes as LineString objects, to be displayed by mapbox-gl-path.
         """
         cursor = connection.cursor()
+        feature_index = 0
 
         def generate_point(path_id, fraction):
             query = """
@@ -449,7 +450,7 @@ class PathViewSet(GeotrekMapentityViewSet):
                     """
             cursor.execute(query, [fraction, path_id])
             query_result = cursor.fetchall()
-            point = GEOSGeometry(query_result[0][0])
+            point = GEOSGeometry(query_result[0][0], srid=settings.SRID)
             return point
 
         def generate_linestring(paths, positions):
@@ -475,8 +476,36 @@ class PathViewSet(GeotrekMapentityViewSet):
                     """
             cursor.execute(query, [paths, starts, ends])
             query_result = cursor.fetchall()
-            linestring = GEOSGeometry(query_result[0][0])
+            linestring = GEOSGeometry(query_result[0][0], srid=settings.SRID)
             return linestring
+
+        def make_point_feature(point, path_id):
+            nonlocal feature_index
+            feature = {
+                "type": "Feature",
+                "geometry": json.loads(point.geojson),
+                "properties": {
+                    "index": feature_index,
+                    "snapFeatureId": path_id,
+                },
+            }
+            feature_index += 1
+            return feature
+
+        def make_linestring_feature(linestring, paths, positions):
+            nonlocal feature_index
+            feature = {
+                "type": "Feature",
+                "geometry": json.loads(linestring.geojson),
+                "properties": {
+                    "topology": {"positions": positions, "paths": paths},
+                    "index": feature_index,
+                    "isFollowingDirections": True,
+                    "directionID": 1
+                },
+            }
+            feature_index += 1
+            return feature
 
         # Check parameters
         try:
@@ -487,8 +516,10 @@ class PathViewSet(GeotrekMapentityViewSet):
 
         # Generate the feature collection
         try:
-            geometries = []
+            features = []
             previous_end_point = None
+            previous_end_path_id = None
+
             for i, subtopology in enumerate(topology):
                 pos = subtopology["positions"]
                 path_array = subtopology["paths"]
@@ -497,29 +528,32 @@ class PathViewSet(GeotrekMapentityViewSet):
                 start_fraction = pos["0"][0]
                 start_path_id = path_array[0]
                 start_point = generate_point(start_path_id, start_fraction)
-                geometries.append(start_point)
+                start_point.transform(settings.API_SRID)
+                features.append(make_point_feature(start_point, start_path_id))
 
                 # Generate the endpoint for this subtopology
                 end_fraction = pos[str(len(pos) - 1)][1]
                 end_path_id = path_array[-1]
                 end_point = generate_point(end_path_id, end_fraction)
+                end_point.transform(settings.API_SRID)
 
                 # If the start point of a subtopology is not the same as the previous one's end
                 # point (invalid topology), the previous end point is added too.
                 if previous_end_point is not None and previous_end_point != start_point:
-                    geometries.append(previous_end_point)
+                    features.append(make_point_feature(previous_end_point, previous_end_path_id))
                 previous_end_point = end_point
+                previous_end_path_id = end_path_id
 
                 # Add the linestring for this subtopology
                 linestr = generate_linestring(path_array, pos)
-                geometries.append(linestr)
+                linestr.transform(settings.API_SRID)
+                features.append(make_linestring_feature(linestr, path_array, pos))
 
                 # If this is the last subtopology, its endpoint should be added too.
                 if i == len(topology) - 1:
-                    geometries.append(end_point)
+                    features.append(make_point_feature(end_point, end_path_id))
 
-            geom_collection = GeometryCollection(geometries)
-            geojson = json.loads(geom_collection.geojson)
+            geojson = {"type": "FeatureCollection", "features": features}
             return Response(geojson, 200)
 
         except Exception as exc:
