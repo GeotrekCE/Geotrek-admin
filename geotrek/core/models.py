@@ -836,6 +836,49 @@ class Topology(
         topology.geom = point
         return topology
 
+    # TODO: unit tests
+    @classmethod
+    def check_serialized_topology(cls, topology):
+        """
+        Checks whether a serialized linear topology is deserializable by the `deserialize` class method.
+        If not, raises an Exception with an error message.
+        Note that this method does not check whether a topology will be valid or not.
+        """
+        if topology is None or type(topology) is not list or topology == []:
+            msg = "Request parameters should contain a non-empty 'topology' array"
+            raise Exception(msg)
+
+        for subtopology in topology:
+            paths = subtopology.get("paths")
+            positions = subtopology.get("positions")
+
+            if paths is None or type(paths) is not list or paths == []:
+                msg = "Each subtopology should contain a non-empty 'paths' array"
+                raise Exception(msg)
+            for path_id in paths:
+                if (
+                        not isinstance(path_id, int)
+                        or Path.objects.filter(pk=path_id).first() is None
+                ):
+                    msg = "Path arrays should contain valid path identifiers"
+                    raise Exception(msg)
+
+            if positions is None or type(positions) is not dict or positions == {}:
+                msg = "Each subtopology should contain a valid 'positions' object"
+                raise Exception(msg)
+            for index, (key, value) in enumerate(positions.items()):
+                if str(index) != key or value is None or type(value) is not list or len(value) != 2:
+                    msg = "'positions' objects should contain arrays associated to a correct key and containing two elements"
+                    raise Exception(msg)
+                for fraction in value:
+                    if fraction < 0 or fraction > 1:
+                        msg = "Positions start and end values should be between 0 and 1"
+                        raise Exception(msg)
+
+            if len(paths) != len(positions):
+                msg = "For each topology, the number of paths and positions should be the same"
+                raise Exception(msg)
+
     @classmethod
     def deserialize(cls, serialized):
         """

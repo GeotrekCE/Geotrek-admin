@@ -34,7 +34,7 @@
         const fieldId = '{{ id }}';
         const topologyElem = document.getElementById(fieldId);
 
-        const initialFeatureCollection = {
+        const initialFeatureCollection2 = {
           "type": "FeatureCollection",
           "features": [
             {
@@ -269,176 +269,35 @@
                 "isFollowingDirections": true,
                 "directionID": 1
               }
-            },
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [
-                    -0.5524576514147865,
-                    47.73328888759375
-                  ],
-                  [
-                    -0.552180011333631,
-                    47.733694259228365
-                  ]
-                ]
-              },
-              "properties": {
-                "index": 0,
-                "isPhantomJunction": true,
-                "isDeparture": true
-              }
-            },
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [
-                    0.00722808550772,
-                    48.07890965018288
-                  ],
-                  [
-                    0.007842748372841823,
-                    48.078707371517694
-                  ]
-                ]
-              },
-              "properties": {
-                "index": 0,
-                "isPhantomJunction": true,
-                "isDeparture": false
-              }
-            },
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [
-                    0.007842748372841823,
-                    48.078707371517694
-                  ],
-                  [
-                    0.00722808550772,
-                    48.07890965018288
-                  ]
-                ]
-              },
-              "properties": {
-                "index": 1,
-                "isPhantomJunction": true,
-                "isDeparture": true
-              }
-            },
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [
-                    0.604222955197326,
-                    48.34830803682069
-                  ],
-                  [
-                    0.6045200622676561,
-                    48.348212249961655
-                  ]
-                ]
-              },
-              "properties": {
-                "index": 1,
-                "isPhantomJunction": true,
-                "isDeparture": false
-              }
-            },
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [
-                    0.6045200622676561,
-                    48.348212249961655
-                  ],
-                  [
-                    0.604222955197326,
-                    48.34830803682069
-                  ]
-                ]
-              },
-              "properties": {
-                "index": 2,
-                "isPhantomJunction": true,
-                "isDeparture": true
-              }
-            },
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [
-                    0.721069605874581,
-                    48.3516883034151
-                  ],
-                  [
-                    0.7211701261017482,
-                    48.35168207088526
-                  ]
-                ]
-              },
-              "properties": {
-                "index": 2,
-                "isPhantomJunction": true,
-                "isDeparture": false
-              }
-            },
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [
-                    0.7211701261017482,
-                    48.35168207088526
-                  ],
-                  [
-                    0.721069605874581,
-                    48.3516883034151
-                  ]
-                ]
-              },
-              "properties": {
-                "index": 3,
-                "isPhantomJunction": true,
-                "isDeparture": true
-              }
-            },
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [
-                    0.821623892194267,
-                    48.15320815525273
-                  ],
-                  [
-                    0.8215522699600866,
-                    48.152845659317165
-                  ]
-                ]
-              },
-              "properties": {
-                "index": 3,
-                "isPhantomJunction": true,
-                "isDeparture": false
-              }
             }
           ]
+        }
+
+        function getInitialFeatureCollection() {
+            console.log(topologyElem.value)
+            console.log(`{"topology: ${topologyElem.value}}`)
+            return fetch(
+                window.SETTINGS.urls['topology_to_feature_collection'],
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json; charset=UTF-8",
+                        "X-CSRFToken": getCookie('csrftoken'),
+                    },
+                    body: `{"topology": ${topologyElem.value}}`,
+                }
+            ).then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    return null;
+                }
+            })
+                .then(data => {
+                    // TODO: convert geom collection to feature collection (with properties?)
+                    console.log({data})
+                    return initialFeatureCollection2
+                })
         }
 
         function getCookie(name) {
@@ -508,6 +367,9 @@
             // Load the arrow image which displays the route's direction
             const image = await map.getMap().loadImage("{% static 'vendor/PATCHED-mapbox-gl-path/assets/arrow.png' %}");
             map.getMap().addImage('arrow', image.data);
+
+            // Get the initial feature collection to display the topology
+            const initialFeatureCollection = await getInitialFeatureCollection()
 
             // Add mapbox-gl-path control
             const mapboxPathControl = new MapboxPathControl({
@@ -579,7 +441,7 @@
                 showSnapControl: false,
                 defaultSnapping: true,
                 snapLayers: [window.pathLayerName],
-                snapMinZoom: 0,  // TODO
+                snapMinZoom: 0,
                 showDirectionsControl: false,
                 defaultRouting: true,
             });
@@ -743,6 +605,7 @@
             const subRoutes = features.filter(f => f.geometry.type === "LineString" && !f.properties.isPhantomJunction);
             const subTopologies = subRoutes.map(route => route.properties.topology);
             topologyElem.value = JSON.stringify(subTopologies);
+            console.log({subTopologies})
         });
     });
 </script>
