@@ -7,6 +7,7 @@
     {%  if path_enabled %}
     window.SETTINGS.urls['path_layer'] = "{% url "core:path-drf-list" format="geojson" %}";
     window.SETTINGS.urls['route_geometry'] = "{% url "core:path-drf-route-geometry" %}";
+    window.SETTINGS.urls['topology_to_feature_collection'] = "{% url "core:path-drf-topology-to-feature-collection" %}";
     {% endif %}
     {% if trail_enabled %}
     window.SETTINGS.urls['trail_layer'] = "{% url "core:trail-drf-list" format="geojson" %}";

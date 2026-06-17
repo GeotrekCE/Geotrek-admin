@@ -1,3 +1,4 @@
+import json
 import logging
 from collections import defaultdict
 
@@ -5,6 +6,8 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.gis.db.models.functions import Transform
+from django.contrib.gis.geos import GEOSGeometry, GeometryCollection
+from django.db import connection
 from django.db.models import Prefetch, Sum
 from django.http.response import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
@@ -289,7 +292,7 @@ class PathViewSet(GeotrekMapentityViewSet):
         return [PathVectorLayer]
 
     def get_permissions(self):
-        if self.action == "route_geometry":
+        if self.action in ["route_geometry", "topology_to_feature_collection"]:
             return [permissions.IsAuthenticated()]
         return super().get_permissions()
 
@@ -415,6 +418,112 @@ class PathViewSet(GeotrekMapentityViewSet):
                 500,
             )
         return Response(response, status)
+
+    @action(
+        methods=["POST"],
+        detail=False,
+        url_path="topology-to-feature-collection",
+        renderer_classes=[JSONRenderer],
+    )
+
+    # TODO: unit tests
+    def topology_to_feature_collection(self, request, *args, **kwargs):
+        """
+        Turns a serialized linear topology into a feature collection containing waypoints as Point
+        objects and subroutes as LineString objects, to be displayed by mapbox-gl-path.
+        """
+        cursor = connection.cursor()
+
+        def generate_point(path_id, fraction):
+            query = """
+                    SELECT ST_GeometryN(
+                            ST_LocateAlong(
+                                ST_AddMeasure(ST_Force2D(geom), 0, 1),
+                                %s::float,
+                                0
+                            ),
+                            1
+                        )
+                    FROM core_path
+                    WHERE id = %s::int;
+                    """
+            cursor.execute(query, [fraction, path_id])
+            query_result = cursor.fetchall()
+            point = GEOSGeometry(query_result[0][0])
+            return point
+
+        def generate_linestring(paths, positions):
+            starts = [positions[str(i)][0] for i in range(len(paths))]
+            ends = [positions[str(i)][1] for i in range(len(paths))]
+
+            query = """
+                    WITH
+                        ordered_paths AS (
+                            SELECT cp.geom, data.start_frac, data.end_frac, data.ord
+                            FROM unnest(%s::int[], %s::float[], %s::float[])
+                                WITH ORDINALITY AS data(path_id, start_frac, end_frac, ord)
+                            JOIN core_path cp ON cp.id = data.path_id
+                        ), 
+                        geometries AS (
+                            SELECT array_agg(
+                                ST_SmartLineSubstring(geom, start_frac, end_frac) ORDER BY ord
+                            ) AS geoms
+                            FROM ordered_paths
+                        )
+                    SELECT st_astext(new_geometry)
+                    FROM ft_Smart_MakeLine((SELECT geoms FROM geometries));
+                    """
+            cursor.execute(query, [paths, starts, ends])
+            query_result = cursor.fetchall()
+            linestring = GEOSGeometry(query_result[0][0])
+            return linestring
+
+        # Check parameters
+        try:
+            topology = request.data.get("topology")
+            Topology.check_serialized_topology(topology)
+        except Exception as exc:
+            return Response({"error": f"{exc}"},400)
+
+        # Generate the feature collection
+        try:
+            geometries = []
+            previous_end_point = None
+            for i, subtopology in enumerate(topology):
+                pos = subtopology["positions"]
+                path_array = subtopology["paths"]
+
+                # Add the start point of this subtopology
+                start_fraction = pos["0"][0]
+                start_path_id = path_array[0]
+                start_point = generate_point(start_path_id, start_fraction)
+                geometries.append(start_point)
+
+                # Generate the endpoint for this subtopology
+                end_fraction = pos[str(len(pos) - 1)][1]
+                end_path_id = path_array[-1]
+                end_point = generate_point(end_path_id, end_fraction)
+
+                # If the start point of a subtopology is not the same as the previous one's end
+                # point (invalid topology), the previous end point is added too.
+                if previous_end_point is not None and previous_end_point != start_point:
+                    geometries.append(previous_end_point)
+                previous_end_point = end_point
+
+                # Add the linestring for this subtopology
+                linestr = generate_linestring(path_array, pos)
+                geometries.append(linestr)
+
+                # If this is the last subtopology, its endpoint should be added too.
+                if i == len(topology) - 1:
+                    geometries.append(end_point)
+
+            geom_collection = GeometryCollection(geometries)
+            geojson = json.loads(geom_collection.geojson)
+            return Response(geojson, 200)
+
+        except Exception as exc:
+            return Response({"error": f"{exc}"},500)
 
 
 class PathMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
