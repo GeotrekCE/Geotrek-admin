@@ -7,7 +7,6 @@ const Popup = maplibregl.Popup;
 
 /* ------------------------------------- END OF PATCH N°1 --------------------------------------- */
 
-
 /*! *****************************************************************************
 Copyright (c) Microsoft Corporation.
 
@@ -207,6 +206,31 @@ function featureCollection(features, options) {
     }
     fc.features = features;
     return fc;
+}
+/**
+ * Creates a {@link Feature<MultiLineString>} based on a
+ * coordinate array. Properties can be added optionally.
+ *
+ * @name multiLineString
+ * @param {Array<Array<Array<number>>>} coordinates an array of LineStrings
+ * @param {Object} [properties={}] an Object of key-value pairs to add as properties
+ * @param {Object} [options={}] Optional Parameters
+ * @param {Array<number>} [options.bbox] Bounding Box Array [west, south, east, north] associated with the Feature
+ * @param {string|number} [options.id] Identifier associated with the Feature
+ * @returns {Feature<MultiLineString>} a MultiLineString feature
+ * @throws {Error} if no coordinates are passed
+ * @example
+ * var multiLine = turf.multiLineString([[[0,0],[10,10]]]);
+ *
+ * //=multiLine
+ */
+function multiLineString(coordinates, properties, options) {
+    if (options === void 0) { options = {}; }
+    var geom = {
+        type: "MultiLineString",
+        coordinates: coordinates,
+    };
+    return feature(geom, properties, options);
 }
 /**
  * Convert a distance measurement (assuming a spherical Earth) from radians to a more friendly unit.
@@ -8650,8 +8674,11 @@ class MapboxPathControl {
                         nearestLineString = line;
                     }
                 });
-                const nearestPointInLineString = nearestPointOnLine(nearestLineString, newPoint);
-                const newLines = lineSplit(nearestLineString, nearestPointInLineString);
+                const currentLineString = nearestLineString.geometry.type === "MultiLineString"
+                    ? multiLineString(nearestLineString.geometry.coordinates)
+                    : lineString(nearestLineString.geometry.coordinates);
+                const nearestPointInLineString = nearestPointOnLine(currentLineString, newPoint);
+                const newLines = lineSplit(currentLineString, nearestPointInLineString);
                 const { features: [from, to = from], } = newLines;
                 const _c = nearestLineString.properties, customProperties = __rest(_c, ["index", "isFollowingDirections", "directionID", "isPhantomJunction", "isDeparture"]);
                 this.selectedReferencePointIndex =
@@ -8757,7 +8784,9 @@ class MapboxPathControl {
         const actualLine = this.linesBetweenReferencePoints.find(line => line.properties.index === lineUnderMouseIndex);
         if (!actualLine)
             return;
-        const currentLineString = lineString(actualLine.geometry.coordinates);
+        const currentLineString = actualLine.geometry.type === "MultiLineString"
+            ? multiLineString(actualLine.geometry.coordinates)
+            : lineString(actualLine.geometry.coordinates);
         const clickedPoint = point(event.lngLat.toArray());
         const nearestPointOnPath = nearestPointOnLine(currentLineString, clickedPoint);
         this.actionsPanel
@@ -8801,11 +8830,14 @@ class MapboxPathControl {
                 this.changeDirectionsModeOnPreviousLineWithDebounce(previousLine, true);
             }
             else {
-                this.linesBetweenReferencePoints[previousLine.properties.index].geometry.coordinates = [
-                    this.linesBetweenReferencePoints[previousLine.properties.index]
-                        .geometry.coordinates[0],
-                    coordinates,
-                ];
+                const lineToUpdate = this.linesBetweenReferencePoints[previousLine.properties.index];
+                const startPoint = lineToUpdate.geometry.type === "MultiLineString"
+                    ? lineToUpdate.geometry.coordinates[0][0]
+                    : lineToUpdate.geometry.coordinates[0];
+                lineToUpdate.geometry = {
+                    type: "LineString",
+                    coordinates: [startPoint, coordinates],
+                };
             }
         }
         if (nextLine) {
@@ -8813,11 +8845,14 @@ class MapboxPathControl {
                 this.changeDirectionsModeOnNextLineWithDebounce(nextLine, true);
             }
             else {
-                this.linesBetweenReferencePoints[nextLine.properties.index].geometry.coordinates = [
-                    coordinates,
-                    this.linesBetweenReferencePoints[nextLine.properties.index].geometry
-                        .coordinates[1],
-                ];
+                const lineToUpdate = this.linesBetweenReferencePoints[nextLine.properties.index];
+                const endPoint = lineToUpdate.geometry.type === "MultiLineString"
+                    ? lineToUpdate.geometry.coordinates.slice(-1)[0].slice(-1)[0]
+                    : lineToUpdate.geometry.coordinates.slice(-1)[0];
+                lineToUpdate.geometry = {
+                    type: "LineString",
+                    coordinates: [coordinates, endPoint],
+                };
             }
         }
     }
@@ -8878,7 +8913,7 @@ class MapboxPathControl {
             const previousLineBetweenReferencePoint = {
                 type: "Feature",
                 geometry: {
-                    type: "LineString",
+                    type: Array.isArray(previousLineCoordinates[0][0]) ? "MultiLineString" : "LineString",
                     coordinates: previousLineCoordinates,
                 },
                 properties: Object.assign(Object.assign(Object.assign({}, lineProperties), { index: currentLineIndex, isFollowingDirections }), (isFollowingDirections && {
@@ -8898,7 +8933,7 @@ class MapboxPathControl {
             const nextLineBetweenReferencePoint = {
                 type: "Feature",
                 geometry: {
-                    type: "LineString",
+                    type: Array.isArray(nextLineCoordinates[0][0]) ? "MultiLineString" : "LineString",
                     coordinates: nextLineCoordinates,
                 },
                 properties: Object.assign(Object.assign(Object.assign({}, lineProperties), { index: currentLineIndex + 1, isFollowingDirections }), (isFollowingDirections && {
@@ -8951,7 +8986,9 @@ class MapboxPathControl {
                 const actualLine = this.linesBetweenReferencePoints.find(line => line.properties.index === lineUnderMouseIndex);
                 if (!actualLine)
                     return;
-                const currentLineString = lineString(actualLine.geometry.coordinates);
+                const currentLineString = actualLine.geometry.type === "MultiLineString"
+                    ? multiLineString(actualLine.geometry.coordinates)
+                    : lineString(actualLine.geometry.coordinates);
                 const currentPoint = point(clickCoordinates);
                 const nearestPoint = nearestPointOnLine(currentLineString, currentPoint);
                 const previousReferencePoint = this.referencePoints[this.referencePoints.length - 1];
@@ -8990,7 +9027,9 @@ class MapboxPathControl {
                 const actualLine = this.linesBetweenReferencePoints.find(line => line.properties.index === lineUnderMouseIndex);
                 if (!actualLine)
                     return;
-                const currentLineString = lineString(actualLine.geometry.coordinates);
+                const currentLineString = actualLine.geometry.type === "MultiLineString"
+                    ? multiLineString(actualLine.geometry.coordinates)
+                    : lineString(actualLine.geometry.coordinates);
                 const currentPoint = point(clickCoordinates);
                 const nearestPoint = nearestPointOnLine(currentLineString, currentPoint);
                 const newLines = lineSplit(currentLineString, nearestPoint);
@@ -9053,10 +9092,13 @@ class MapboxPathControl {
                 if (!previousLine.properties.isFollowingDirections ||
                     !nextLine.properties.isFollowingDirections) {
                     const lineBetweenReferencePoint = this.linesBetweenReferencePoints[previousLine.properties.index];
-                    this.linesBetweenReferencePoints[previousLine.properties.index] = Object.assign(Object.assign({}, lineBetweenReferencePoint), { geometry: Object.assign(Object.assign({}, lineBetweenReferencePoint.geometry), { coordinates: [
+                    this.linesBetweenReferencePoints[previousLine.properties.index] = Object.assign(Object.assign({}, lineBetweenReferencePoint), { geometry: {
+                            type: "LineString",
+                            coordinates: [
                                 previousPoint.geometry.coordinates,
                                 nextPoint.geometry.coordinates,
-                            ] }), properties: {
+                            ],
+                        }, properties: {
                             index: lineBetweenReferencePoint.properties.index,
                             isFollowingDirections: false,
                         } });
@@ -9067,13 +9109,16 @@ class MapboxPathControl {
                         toSnappedId: (_b = nextPoint.properties) === null || _b === void 0 ? void 0 : _b.snapFeatureId,
                     });
                     const lineToUpdate = this.linesBetweenReferencePoints[previousLine.properties.index];
-                    lineToUpdate.geometry.coordinates =
-                        directionsResponse && directionsResponse.coordinates
-                            ? directionsResponse.coordinates
-                            : [
-                                previousPoint.geometry.coordinates,
-                                nextPoint.geometry.coordinates,
-                            ];
+                    const newCoords = directionsResponse && directionsResponse.coordinates
+                        ? directionsResponse.coordinates
+                        : [
+                            previousPoint.geometry.coordinates,
+                            nextPoint.geometry.coordinates,
+                        ];
+                    lineToUpdate.geometry = {
+                        type: Array.isArray(newCoords[0][0]) ? "MultiLineString" : "LineString",
+                        coordinates: newCoords,
+                    };
                     const { index, isFollowingDirections, directionID, isPhantomJunction, isDeparture, } = lineToUpdate.properties;
                     lineToUpdate.properties = Object.assign(Object.assign({}, (directionsResponse === null || directionsResponse === void 0 ? void 0 : directionsResponse.properties)), { index,
                         isFollowingDirections,
@@ -9211,7 +9256,7 @@ class MapboxPathControl {
             if (coordinates) {
                 const isNewFollowingDirections = !Boolean(line.properties.isFollowingDirections) || forceDirections;
                 this.linesBetweenReferencePoints.splice(line.properties.index, 1, Object.assign(Object.assign({}, line), { geometry: {
-                        type: "LineString",
+                        type: Array.isArray(coordinates[0][0]) ? "MultiLineString" : "LineString",
                         coordinates,
                     }, properties: Object.assign(Object.assign(Object.assign({}, (directionsResponse === null || directionsResponse === void 0 ? void 0 : directionsResponse.properties)), { index: line.properties.index, isFollowingDirections: isNewFollowingDirections }), (isNewFollowingDirections && {
                         directionID: (_c = line.properties.directionID) !== null && _c !== void 0 ? _c : this.selectedDirectionsTheme.id,
@@ -9222,23 +9267,29 @@ class MapboxPathControl {
         });
     }
     filterFeaturesByTypeAndSortByIndex(features, type) {
+        const types = Array.isArray(type) ? type : [type];
         return features
-            .filter((feature) => feature.geometry.type === type)
+            .filter((feature) => types.includes(feature.geometry.type))
             .sort((a, b) => a.properties.index - b.properties.index);
     }
     setFeatureCollection({ features, }) {
-        var _a;
         this.referencePoints = this.filterFeaturesByTypeAndSortByIndex(features, "Point");
-        const lines = this.filterFeaturesByTypeAndSortByIndex(features, "LineString");
+        const lines = this.filterFeaturesByTypeAndSortByIndex(features, ["LineString", "MultiLineString"]);
         this.linesBetweenReferencePoints = lines.filter(({ properties }) => !properties.isPhantomJunction);
         this.phantomJunctionLines = lines.filter(({ properties }) => properties.isPhantomJunction);
         if (this.referencePoints.length > 2) {
             const lastLineWithoutDeparture = [...lines]
                 .reverse()
                 .find((line) => line.properties.isDeparture !== true);
-            if (((_a = lastLineWithoutDeparture === null || lastLineWithoutDeparture === void 0 ? void 0 : lastLineWithoutDeparture.geometry.coordinates[1]) === null || _a === void 0 ? void 0 : _a.join()) ===
-                this.referencePoints[0].geometry.coordinates.join()) {
-                this.isLoopTrail = true;
+            if (lastLineWithoutDeparture) {
+                const coords = lastLineWithoutDeparture.geometry.type === "MultiLineString"
+                    ? lastLineWithoutDeparture.geometry.coordinates.slice(-1)[0]
+                    : lastLineWithoutDeparture.geometry.coordinates;
+                const endPoint = coords[coords.length - 1];
+                if ((endPoint === null || endPoint === void 0 ? void 0 : endPoint.join()) ===
+                    this.referencePoints[0].geometry.coordinates.join()) {
+                    this.isLoopTrail = true;
+                }
             }
         }
         // In case of the featureCollection contains only one LineString
@@ -9261,7 +9312,9 @@ class MapboxPathControl {
     }
     setLineString(feature) {
         var _a, _b;
-        const coordinates = [...feature.geometry.coordinates];
+        const coordinates = feature.geometry.type === "MultiLineString"
+            ? feature.geometry.coordinates.reduce((acc, coords) => [...acc, ...coords], [])
+            : [...feature.geometry.coordinates];
         this.isLoopTrail =
             coordinates.length > 2 &&
                 coordinates[0].join() === coordinates[coordinates.length - 1].join();
@@ -9337,7 +9390,7 @@ class MapboxPathControl {
         const { coordinates, points, paths } = features
             // Get the order of the path with "lineString" and "point" mixed
             .sort((a, b) => {
-            if (a.geometry.type === "LineString" &&
+            if ((a.geometry.type === "LineString" || a.geometry.type === "MultiLineString") &&
                 a.properties.index === b.properties.index) {
                 if (a.properties.isDeparture === true) {
                     return -1;
@@ -9354,19 +9407,22 @@ class MapboxPathControl {
                 lineStringify.coordinates.push(feature.geometry.coordinates);
                 lineStringify.points.push(lineStringify.coordinates.length - 1);
             }
-            if (feature.geometry.type === "LineString") {
+            if (feature.geometry.type === "LineString" || feature.geometry.type === "MultiLineString") {
+                const lineCoordinates = feature.geometry.type === "MultiLineString"
+                    ? feature.geometry.coordinates.reduce((acc, coords) => [...acc, ...coords], [])
+                    : feature.geometry.coordinates;
                 if (feature.properties.isDeparture === false) {
                     lineStringify.points.push(lineStringify.coordinates.length);
                 }
                 lineStringify.coordinates.push(
                 // Remove the first and last item because we already got them with the push of points
-                ...feature.geometry.coordinates.slice(1, -1));
+                ...lineCoordinates.slice(1, -1));
                 if (feature.properties.isDeparture === true) {
                     lineStringify.points.push(lineStringify.coordinates.length);
                 }
                 if (feature.properties.isPhantomJunction) {
                     // If the phantomJunction is departure, we push the first one if not the second
-                    lineStringify.coordinates.push(feature.geometry.coordinates[Number(feature.properties.isDeparture)]);
+                    lineStringify.coordinates.push(lineCoordinates[Number(feature.properties.isDeparture)]);
                     lineStringify.paths.push(`junction${feature.properties.isDeparture ? "Departure" : "Arrival"}`);
                 }
                 else if (feature.properties.isFollowingDirections) {
