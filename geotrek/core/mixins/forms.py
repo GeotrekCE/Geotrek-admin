@@ -52,7 +52,7 @@ class TopologyForm(CommonForm):
 
 class PointTopologyFormMixin(CommonForm):
     """
-    Unique form mixin for drawing points, on or off the path network depending on whether paths exist.
+    Form mixin for drawing points, on or off the path network depending on whether paths exist.
     """
     geomfields = ["topology"]
     topology = PointTopologyField(label="")
@@ -69,22 +69,16 @@ class PointTopologyFormMixin(CommonForm):
         return instance
 
 
-class OnNetworkLinearTopologyFormMixin(ModelForm):
+class LinearTopologyFormMixin(ModelForm):
     """
-        Form mixin for drawing linear topologies snapped to the path network.
-
-        We use an extra field (topology) in order to edit the whole model instance (we use
-        concrete inheritance for topology models).
-        Thus, at init, we load the instance into the field, and when saving, we
-        save the field into the instance.
-
-        The geom field is fully ignored, since we edit a topology linked to the path network.
+        Form mixin for drawing linear topologies on or off the path network, depending on:
+          - whether paths exist
+          - the user's permissions
     """
 
-    topological = True  # Form URL parameter to select which form to display
     topology = TopologyField(label=_("Geometry/Topology"), widget=LineTopologyWidget())
     topology_changed = BooleanField(required=False, widget=HiddenInput())
-    geom = LineStringField(widget=MapWidget(attrs={"target_map": "topology"}))
+    geom = LineStringField(widget=MapWidget(attrs={"target_map": "topology", "modifiable": False}))
     geom_changed = BooleanField(required=False, widget=HiddenInput())
     geomfields = ["topology", "geom"]
 
@@ -121,13 +115,3 @@ class OnNetworkLinearTopologyFormMixin(ModelForm):
         if not self.cleaned_data.get('geom_changed'):
             instance.geom = self.instance.geom
         return instance
-
-
-class OffNetworkLinearTopologyFormMixin(ModelForm):
-    """ Form mixin for drawing linear topologies off the path network. """
-    topological = False  # Form URL parameter to select which form to display
-    geom = LineStringField()
-    geomfields = ["geom"]
-
-    class Meta:
-        fields = ["geom"]

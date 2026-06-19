@@ -46,8 +46,7 @@ from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.views import DocumentBookletPublic, DocumentPublic, MarkupPublic
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
-from geotrek.core.views import CreateFromTopologyMixin, LinearTopologyViewFormMixin, \
-    LinearTopologyDetailMixin
+from geotrek.core.views import CreateFromTopologyMixin
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.serializers import InfrastructureAPIGeojsonSerializer
 from geotrek.signage.models import Signage
@@ -56,8 +55,7 @@ from geotrek.zoning.models import City, District, RestrictedArea
 
 from .filters import POIFilterSet, ServiceFilterSet, TrekFilterSet
 from .forms import (
-    OffNetworkTrekForm,
-    OnNetworkTrekForm,
+    TrekForm,
     POIForm,
     ServiceForm,
     WebLinkCreateFormPopup,
@@ -193,7 +191,7 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
         return response
 
 
-class TrekDetail(LinearTopologyDetailMixin, CompletenessMixin, MapEntityDetail):
+class TrekDetail(CompletenessMixin, MapEntityDetail):
     queryset = (
         Trek.objects.existing()
         .select_related("topo_object", "structure")
@@ -296,16 +294,14 @@ class TrekMarkupPublic(TrekDocumentPublicMixin, MarkupPublic):
     pass
 
 
-class TrekCreate(LinearTopologyViewFormMixin, CreateFromTopologyMixin, MapEntityCreate):
+class TrekCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Trek
-    on_network_form = OnNetworkTrekForm
-    off_network_form = OffNetworkTrekForm
+    form_class = TrekForm
 
 
-class TrekUpdate(LinearTopologyViewFormMixin, MapEntityUpdate):
+class TrekUpdate(MapEntityUpdate):
     queryset = Trek.objects.existing()
-    on_network_form = OnNetworkTrekForm
-    off_network_form = OffNetworkTrekForm
+    form_class = TrekForm
 
     @same_structure_required("trekking:trek_detail")
     def dispatch(self, *args, **kwargs):

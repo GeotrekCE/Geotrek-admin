@@ -15,9 +15,8 @@ from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.mixins.forms import (
-    OffNetworkLinearTopologyFormMixin,
-    OnNetworkLinearTopologyFormMixin,
-    TopologyForm, PointTopologyFormMixin,
+    LinearTopologyFormMixin,
+    PointTopologyFormMixin,
 )
 from geotrek.core.widgets import PointTopologyWidget
 
@@ -355,14 +354,14 @@ class BaseTrekForm(CommonForm):
         ]
 
 
-class OnNetworkTrekForm(OnNetworkLinearTopologyFormMixin, BaseTrekForm):
+class TrekForm(LinearTopologyFormMixin, BaseTrekForm):
     geomfields = [
         *BaseTrekForm.geomfields,
-        *OnNetworkLinearTopologyFormMixin.geomfields,
+        *LinearTopologyFormMixin.geomfields,
     ]
 
-    class Meta(OnNetworkLinearTopologyFormMixin.Meta, BaseTrekForm.Meta):
-        fields = [*OnNetworkLinearTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
+    class Meta(LinearTopologyFormMixin.Meta, BaseTrekForm.Meta):
+        fields = [*LinearTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
         widgets = {
             "parking_location": MapWidget(
                 attrs={"target_map": "topology", "custom_icon": "markers/parking.svg"}
@@ -385,38 +384,6 @@ class OnNetworkTrekForm(OnNetworkLinearTopologyFormMixin, BaseTrekForm):
             ].widget.geometry_field_class = "PointsReferenceField"
 
         self.fields["parking_location"].label = ""
-        self.fields[
-            "parking_location"
-        ].widget.geometry_field_class = "ParkingLocationField"
-
-
-class OffNetworkTrekForm(BaseTrekForm, OffNetworkLinearTopologyFormMixin):
-    geomfields = [
-        *BaseTrekForm.geomfields,
-        *OffNetworkLinearTopologyFormMixin.geomfields,
-    ]
-
-    class Meta(BaseTrekForm.Meta, OffNetworkLinearTopologyFormMixin.Meta):
-        fields = [*OffNetworkLinearTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
-        widgets = {
-            "parking_location": MapWidget(
-                attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"}
-            ),
-            "points_reference": MapWidget(
-                attrs={"target_map": "geom", "custom_icon": "markers/points.svg"}
-            ),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
-            self.fields.pop("points_reference")
-        else:
-            # Edit points of reference with custom edition JavaScript class
-            self.fields[
-                "points_reference"
-            ].widget.geometry_field_class = "PointsReferenceField"
         self.fields[
             "parking_location"
         ].widget.geometry_field_class = "ParkingLocationField"
