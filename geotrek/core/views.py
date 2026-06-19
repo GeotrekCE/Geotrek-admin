@@ -433,7 +433,8 @@ class PathViewSet(GeotrekMapentityViewSet):
         objects and subroutes as LineString objects, to be displayed by mapbox-gl-path.
         """
         cursor = connection.cursor()
-        feature_index = 0
+        point_index = 0
+        linestring_index = 0
 
         def generate_point(path_id, fraction):
             query = """
@@ -480,31 +481,31 @@ class PathViewSet(GeotrekMapentityViewSet):
             return linestring
 
         def make_point_feature(point, path_id):
-            nonlocal feature_index
+            nonlocal point_index
             feature = {
                 "type": "Feature",
                 "geometry": json.loads(point.geojson),
                 "properties": {
-                    "index": feature_index,
+                    "index": point_index,
                     "snapFeatureId": path_id,
                 },
             }
-            feature_index += 1
+            point_index += 1
             return feature
 
         def make_linestring_feature(linestring, paths, positions):
-            nonlocal feature_index
+            nonlocal linestring_index
             feature = {
                 "type": "Feature",
                 "geometry": json.loads(linestring.geojson),
                 "properties": {
                     "topology": {"positions": positions, "paths": paths},
-                    "index": feature_index,
+                    "index": linestring_index,
                     "isFollowingDirections": True,
                     "directionID": 1
                 },
             }
-            feature_index += 1
+            linestring_index += 1
             return feature
 
         # Check parameters
