@@ -101,7 +101,7 @@ class PathForm(CommonForm):
         return path
 
 
-class BaseTrailForm(CommonForm):
+class TrailForm(LinearTopologyFormMixin, CommonForm):
     fieldslayout = [
         Div(
             "structure",
@@ -114,9 +114,10 @@ class BaseTrailForm(CommonForm):
         )
     ]
 
-    class Meta(CommonForm.Meta):
+    class Meta(LinearTopologyFormMixin.Meta, CommonForm.Meta):
         model = Trail
         fields = [
+            *LinearTopologyFormMixin.Meta.fields,
             *CommonForm.Meta.fields,
             "structure",
             "name",
@@ -125,11 +126,6 @@ class BaseTrailForm(CommonForm):
             "arrival",
             "comments",
         ]
-
-
-class TrailForm(LinearTopologyFormMixin, BaseTrailForm):
-    class Meta(LinearTopologyFormMixin.Meta, BaseTrailForm.Meta):
-        fields = [*LinearTopologyFormMixin.Meta.fields, *BaseTrailForm.Meta.fields]
 
 
 class CertificationTrailForm(forms.ModelForm):

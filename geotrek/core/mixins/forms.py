@@ -1,13 +1,14 @@
-from django.conf import settings
+from copy import deepcopy
+
+from crispy_forms.layout import Div
 from django.contrib.gis.forms import LineStringField
 from django.contrib.gis.geos import fromstr
 from django.forms import ModelForm, ValidationError, BooleanField, HiddenInput
 from django.utils.translation import gettext_lazy as _
-from mapentity.widgets import MapWidget
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField, PointTopologyField
-from geotrek.core.widgets import LineTopologyWidget
+from geotrek.core.widgets import LineTopologyWidget, LinearTopologyMapWidget
 
 
 # TODO: delete
@@ -78,7 +79,7 @@ class LinearTopologyFormMixin(ModelForm):
 
     topology = TopologyField(label=_("Geometry/Topology"), widget=LineTopologyWidget())
     topology_changed = BooleanField(required=False, widget=HiddenInput())
-    geom = LineStringField(widget=MapWidget(attrs={"target_map": "topology", "modifiable": False}))
+    geom = LineStringField(widget=LinearTopologyMapWidget(attrs={"target_map": "topology"}))
     geom_changed = BooleanField(required=False, widget=HiddenInput())
     geomfields = ["topology", "geom"]
 
@@ -87,16 +88,27 @@ class LinearTopologyFormMixin(ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+
+        # Add topology_changed and geom_changed to the fields layout
+        if self.fieldslayout is not None:
+            self.fieldslayout = deepcopy(self.fieldslayout)
+            self.fieldslayout.append("geom_changed")
+            self.fieldslayout.append("topology_changed")
+            self._init_layout()
+
         if self.instance and self.instance.pk:
             self.fields["topology"].initial = self.instance
         # TODO
-        # if not self.user_can_draw_off_path_network():
-        #     self.fields.pop("geom")
-        #     self.fields.pop("geom_changed")
+        if True:#not self.user_can_draw_off_path_network():
+            # self.fields.pop("geom")
+            self.fields["geom"].disabled = True
+            self.fields["geom"].widget = LinearTopologyMapWidget(attrs={"target_map": "topology", "modifiable": False})
+            self.fields.pop("geom_changed")
 
     def clean(self, *args, **kwargs):
         data = super().clean()
         geom_changed = data.get('geom_changed')
+
         topology_changed = data.get('topology_changed')
         if geom_changed and topology_changed:
             raise ValidationError(_("Either the geometry (off the path network) or the topology (on the path network) can be modified, not both."))

@@ -6,6 +6,7 @@ Basés sur BaseGeometryWidget, complètement séparés de MapWidget.
 from django.contrib.gis.forms.widgets import BaseGeometryWidget
 from django.core import validators
 from django.template.defaultfilters import slugify
+from mapentity.widgets import MapWidget
 
 from .models import Topology
 
@@ -103,14 +104,24 @@ class BaseTopologyWidget(BaseGeometryWidget):
         return super().render(name, value, attrs, renderer)
 
 
+# TODO: rename BaseTopologyWidget to LineTopologyWidget?
 class LineTopologyWidget(BaseTopologyWidget):
     is_line_topology = True
 
 
-class PointTopologyWidget(BaseTopologyWidget):
-    is_point_topology = True
-
-
+# TODO: remove ?
 class PointLineTopologyWidget(BaseTopologyWidget):
     is_line_topology = True
     is_point_topology = True
+
+
+class LinearTopologyMapWidget(MapWidget):
+    #template_name = ... # TODO
+
+    def __init__(self, attrs=None, geom_type=None):
+        attrs = attrs or {}
+        self.modifiable = attrs.pop("modifiable", True)
+        print(f"{self.modifiable=}")
+        super().__init__(attrs=attrs, geom_type=geom_type)
+
+

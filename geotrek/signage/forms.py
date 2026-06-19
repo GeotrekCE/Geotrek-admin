@@ -3,13 +3,11 @@ from crispy_forms.layout import Div, Fieldset, Layout
 from dal import autocomplete
 from django import forms
 from django.conf import settings
-from django.contrib.gis.forms import PointField
 from django.db.models import Max
 from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.widgets import PointTopologyWidget
 from geotrek.infrastructure.forms import BaseInfrastructureForm
 from geotrek.signage.models import Blade, Line, LinePictogram, Signage
 

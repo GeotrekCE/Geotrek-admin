@@ -18,7 +18,6 @@ from geotrek.core.mixins.forms import (
     LinearTopologyFormMixin,
     PointTopologyFormMixin,
 )
-from geotrek.core.widgets import PointTopologyWidget
 
 from .models import (
     POI,
@@ -31,7 +30,7 @@ from .models import (
 )
 
 
-class BaseTrekForm(CommonForm):
+class TrekForm(LinearTopologyFormMixin, CommonForm):
     children = forms.ModelMultipleChoiceField(
         label=_("Children"),
         help_text=_("Select children in order"),
@@ -44,9 +43,11 @@ class BaseTrekForm(CommonForm):
         widget=forms.widgets.HiddenInput(),
         required=False,
     )
+
     geomfields = [
         "parking_location",
         "points_reference",
+        *LinearTopologyFormMixin.geomfields,
     ]
 
     leftpanel_scrollable = False
@@ -106,8 +107,6 @@ class BaseTrekForm(CommonForm):
                     "reservation_id",
                     "pois_excluded",
                     "hidden_ordered_children",
-                    "topology_changed",
-                    "geom_changed",
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane",
                 ),
@@ -129,6 +128,65 @@ class BaseTrekForm(CommonForm):
             css_class="tabbable",
         ),
     ]
+
+    class Meta(LinearTopologyFormMixin.Meta, CommonForm.Meta):
+        model = Trek
+        fields = [
+            *LinearTopologyFormMixin.Meta.fields,
+            *CommonForm.Meta.fields,
+            "structure",
+            "name",
+            "review",
+            "published",
+            "labels",
+            "departure",
+            "arrival",
+            "duration",
+            "difficulty",
+            "route",
+            "ambiance",
+            "access",
+            "description_teaser",
+            "description",
+            "ratings_description",
+            "points_reference",
+            "accessibility_infrastructure",
+            "advised_parking",
+            "parking_location",
+            "public_transport",
+            "advice",
+            "gear",
+            "themes",
+            "networks",
+            "practice",
+            "accessibilities",
+            "accessibility_level",
+            "accessibility_signage",
+            "accessibility_slope",
+            "accessibility_covering",
+            "accessibility_exposure",
+            "accessibility_width",
+            "accessibility_advice",
+            "web_links",
+            "information_desks",
+            "source",
+            "portal",
+            "children",
+            "eid",
+            "eid2",
+            "reservation_system",
+            "reservation_id",
+            "pois_excluded",
+            "hidden_ordered_children",
+        ]
+        widgets = {
+            "parking_location": MapWidget(
+                attrs={"target_map": "topology", "custom_icon": "markers/parking.svg"}
+            ),
+            "points_reference": MapWidget(
+                attrs={"target_map": "topology", "custom_icon": "markers/points.svg"}
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         self.fieldslayout = deepcopy(self.base_fieldslayout)
@@ -212,6 +270,20 @@ class BaseTrekForm(CommonForm):
             self.fields["pois_excluded"].queryset = self.instance.all_pois.all()
         else:
             self.fieldslayout[0][1][1].remove("pois_excluded")
+
+        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
+            self.fields.pop("points_reference")
+        else:
+            self.fields["points_reference"].label = ""
+            # Edit points of reference with custom edition JavaScript class
+            self.fields[
+                "points_reference"
+            ].widget.geometry_field_class = "PointsReferenceField"
+
+        self.fields["parking_location"].label = ""
+        self.fields[
+            "parking_location"
+        ].widget.geometry_field_class = "ParkingLocationField"
 
     def clean(self):
         cleaned_data = super().clean()
@@ -302,91 +374,6 @@ class BaseTrekForm(CommonForm):
                 )
 
         return instance
-
-    class Meta(CommonForm.Meta):
-        model = Trek
-        fields = [
-            *CommonForm.Meta.fields,
-            "structure",
-            "name",
-            "review",
-            "published",
-            "labels",
-            "departure",
-            "arrival",
-            "duration",
-            "difficulty",
-            "route",
-            "ambiance",
-            "access",
-            "description_teaser",
-            "description",
-            "ratings_description",
-            "points_reference",
-            "accessibility_infrastructure",
-            "advised_parking",
-            "parking_location",
-            "public_transport",
-            "advice",
-            "gear",
-            "themes",
-            "networks",
-            "practice",
-            "accessibilities",
-            "accessibility_level",
-            "accessibility_signage",
-            "accessibility_slope",
-            "accessibility_covering",
-            "accessibility_exposure",
-            "accessibility_width",
-            "accessibility_advice",
-            "web_links",
-            "information_desks",
-            "source",
-            "portal",
-            "children",
-            "eid",
-            "eid2",
-            "reservation_system",
-            "reservation_id",
-            "pois_excluded",
-            "hidden_ordered_children",
-        ]
-
-
-class TrekForm(LinearTopologyFormMixin, BaseTrekForm):
-    geomfields = [
-        *BaseTrekForm.geomfields,
-        *LinearTopologyFormMixin.geomfields,
-    ]
-
-    class Meta(LinearTopologyFormMixin.Meta, BaseTrekForm.Meta):
-        fields = [*LinearTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
-        widgets = {
-            "parking_location": MapWidget(
-                attrs={"target_map": "topology", "custom_icon": "markers/parking.svg"}
-            ),
-            "points_reference": MapWidget(
-                attrs={"target_map": "topology", "custom_icon": "markers/points.svg"}
-            ),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
-            self.fields.pop("points_reference")
-        else:
-            self.fields["points_reference"].label = ""
-            # Edit points of reference with custom edition JavaScript class
-            self.fields[
-                "points_reference"
-            ].widget.geometry_field_class = "PointsReferenceField"
-
-        self.fields["parking_location"].label = ""
-        self.fields[
-            "parking_location"
-        ].widget.geometry_field_class = "ParkingLocationField"
 
 
 class POIForm(PointTopologyFormMixin):
