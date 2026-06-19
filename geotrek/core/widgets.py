@@ -5,6 +5,7 @@ Basés sur BaseGeometryWidget, complètement séparés de MapWidget.
 
 from django.contrib.gis.forms.widgets import BaseGeometryWidget
 from django.core import validators
+from django.forms import Media
 from django.template.defaultfilters import slugify
 from mapentity.widgets import MapWidget
 
@@ -14,10 +15,10 @@ from .models import Topology
 class BaseTopologyWidget(BaseGeometryWidget):
     """
     Widget de base pour les topologies, complètement indépendant de MapWidget.
-    Utilise uniquement le template topology_widget_fragment.html.
+    Utilise uniquement le template linear_topology_widget.html.
     """
 
-    template_name = "core/topology_widget_fragment.html"
+    template_name = "core/linear_topology_widget.html"
     display_raw = False
     modifiable = True
     is_line_topology = False
@@ -64,7 +65,7 @@ class BaseTopologyWidget(BaseGeometryWidget):
 
     def get_context(self, name, value, attrs):
         """
-        Prépare le contexte pour le rendu du template topology_widget_fragment.html.
+        Prépare le contexte pour le rendu du template linear_topology_widget.html.
         """
         # Gestion des valeurs vides
         value = None if value in validators.EMPTY_VALUES else value
@@ -116,12 +117,15 @@ class PointLineTopologyWidget(BaseTopologyWidget):
 
 
 class LinearTopologyMapWidget(MapWidget):
-    #template_name = ... # TODO
 
     def __init__(self, attrs=None, geom_type=None):
         attrs = attrs or {}
         self.modifiable = attrs.pop("modifiable", True)
-        print(f"{self.modifiable=}")
         super().__init__(attrs=attrs, geom_type=geom_type)
+
+    @property
+    def media(self):
+        media = super().media
+        return media + Media(js=["core/mapwidget_set_geom_changed.js"])
 
 
