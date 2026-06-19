@@ -492,7 +492,12 @@ class GeotrekMapEntityMixin(MapEntityMixin):
             elements_duplication["name"] = f"{self.name} (copy)"
         if "structure" in [field.name for field in self._meta.get_fields()]:
             request = kwargs.pop("request", None)
-            if request:
+            if (
+                request
+                and hasattr(request, "user")
+                and hasattr(request.user, "profile")
+                and getattr(request.user.profile, "structure", None)
+            ):
                 elements_duplication["structure"] = request.user.profile.structure
         clone = super(MapEntityMixin, self).duplicate(**elements_duplication)
         if hasattr(clone, "mutate"):

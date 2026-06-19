@@ -3,7 +3,6 @@ import json
 from collections import OrderedDict
 from io import StringIO
 
-from django.conf import settings
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -35,13 +34,8 @@ from geotrek.signage.tests.factories import (
 class SignageTest(TestCase):
     def test_helpers(self):
         p = PathFactory.create()
-
         self.assertEqual(len(p.signages), 0)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            sign = SignageFactory.create(paths=[(p, 0.5, 0.5)])
-        else:
-            sign = SignageFactory.create(geom="SRID=2154;POINT (700050 6600050)")
-
+        sign = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         self.assertCountEqual(p.signages, [sign])
 
 
@@ -146,14 +140,10 @@ class BladeViewsTest(CommonTest):
             "lines-1-id": "",
             "lines-1-DELETE": "",
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            signage = SignageFactory.create()
-            good_data["topology"] = '{"lat": 5.1, "lng": 6.6}'
-            good_data["signage"] = signage.pk
-        else:
-            signage = SignageFactory.create(geom="SRID=2154;POINT(5.1 6.6)")
-            good_data["signage"] = signage.pk
-            good_data["topology"] = signage.geom.ewkt
+        signage = SignageFactory.create()
+        good_data["topology"] = '{"lat": 5.1, "lng": 6.6}'
+        good_data["signage"] = signage.pk
+
         return good_data
 
     def get_expected_popup_content(self):
@@ -400,11 +390,9 @@ class SignageViewsTest(CommonTest):
             "type": SignageTypeFactory.create().pk,
             "conditions": SignageConditionFactory.create().pk,
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            good_data["topology"] = f'{{"paths": [{path.pk}]}}'
-        else:
-            good_data["geom"] = "POINT(0.42 0.666)"
+        path = PathFactory.create()
+        good_data["topology"] = f'{{"paths": [{path.pk}]}}'
+
         return good_data
 
     def get_expected_popup_content(self):
