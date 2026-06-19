@@ -15,12 +15,11 @@
         {% endblock map_css %}
     </style>
 
-{% block map %}
-    {% if not target_map %}
+    {% block map %}
+        <link rel='stylesheet' href="{% static 'vendor/PATCHED-mapbox-gl-path/mapbox-gl-path.css' %}" />
         <div id="{{ id_map }}" class="maplibre-map"></div>
         {% include "core/toast_wrong_topology_route.html" %}
-    {% endif %}
-{% endblock map %}
+    {% endblock map %}
 
     {% block vars %}
         {{ module }}.is_point_topology = {{ is_point_topology|yesno:"true,false" }};

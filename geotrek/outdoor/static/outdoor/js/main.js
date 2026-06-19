@@ -1,12 +1,13 @@
 $(window).on('entity:view:add entity:view:update', function (e, data) {
-    if (data.modelname == 'site') {
+    var context = data || (e.originalEvent && e.originalEvent.detail) || e.detail;
+    if (context && context.modelname == 'site') {
         // Refresh site types by practice
         $('#id_practice').change(function () {
             update_site_types_and_cotations();
         });
         $('#id_practice').trigger('change');
     }
-    if (data.modelname == 'course') {
+    if (context && context.modelname == 'course') {
         // Important : course must inherit practice form parent site(s). Cotations and types and practice-dependent.
         // Refresh course types and course cotations by practice on site change
         $('#id_parent_sites').change(function () {
