@@ -1,10 +1,13 @@
+from django.conf import settings
 from django.contrib.gis.forms import LineStringField
-from django.forms import ModelForm
+from django.contrib.gis.geos import fromstr
+from django.forms import ModelForm, ValidationError, BooleanField, HiddenInput
+from django.utils.translation import gettext_lazy as _
 from mapentity.widgets import MapWidget
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.fields import TopologyField, PointTopologyField
-from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
+from geotrek.core.widgets import LineTopologyWidget
 
 
 # TODO: delete
@@ -79,36 +82,50 @@ class OnNetworkLinearTopologyFormMixin(ModelForm):
     """
 
     topological = True  # Form URL parameter to select which form to display
-    topology = TopologyField(label="", widget=LineTopologyWidget())
-    geomfields = ["topology"]
+    topology = TopologyField(label=_("Geometry/Topology"), widget=LineTopologyWidget())
+    topology_changed = BooleanField(required=False, widget=HiddenInput())
+    geom = LineStringField(widget=MapWidget(attrs={"target_map": "topology"}))
+    geom_changed = BooleanField(required=False, widget=HiddenInput())
+    geomfields = ["topology", "geom"]
 
     class Meta:
-        fields = ["topology"]
+        fields = ["topology", "geom", "topology_changed", "geom_changed"]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if self.instance and self.instance.pk:
             self.fields["topology"].initial = self.instance
+        # TODO
+        # if not self.user_can_draw_off_path_network():
+        #     self.fields.pop("geom")
+        #     self.fields.pop("geom_changed")
 
     def clean(self, *args, **kwargs):
         data = super().clean()
-        # geom is computed at db-level and never edited
-        if "geom" in self.errors:
+        geom_changed = data.get('geom_changed')
+        topology_changed = data.get('topology_changed')
+        if geom_changed and topology_changed:
+            raise ValidationError(_("Either the geometry (off the path network) or the topology (on the path network) can be modified, not both."))
+        if topology_changed and "geom" in self.errors:
             del self.errors["geom"]
+            data['geom'] = fromstr("POINT (0 0)")
+        if geom_changed and "topology" in self.errors:
+            del self.errors["topology"]
         return data
 
     def save(self, *args, **kwargs):
-        topology = self.cleaned_data.pop("topology")
         instance = super().save(*args, **kwargs)
-        was_edited = instance.pk != topology.pk
-        if was_edited:
+        if self.cleaned_data.get('topology_changed'):
+            topology = self.cleaned_data.pop("topology")
             instance.mutate(topology)
+        if not self.cleaned_data.get('geom_changed'):
+            instance.geom = self.instance.geom
         return instance
 
 
 class OffNetworkLinearTopologyFormMixin(ModelForm):
     """ Form mixin for drawing linear topologies off the path network. """
-    topological = False
+    topological = False  # Form URL parameter to select which form to display
     geom = LineStringField()
     geomfields = ["geom"]
 

@@ -722,7 +722,7 @@ class Topology(
             # Otherwise we keep coupled status from DB and reload computed values.
             if geom_modified_in_python:
                 self.coupled = False
-                # TODO: delete path aggregations
+                PathAggregation.objects.filter(topo_object=self).delete()
             else:
                 self.coupled = existing.coupled
                 self.length = existing.length

@@ -1,31 +1,29 @@
 {% load i18n static %}
 
-{% if not target_map %}
-    <style>
-        {% block map_css %}
-            #{{ id_map }} {
-                width: 100%;
-                height: 100%;
+<style>
+    {% block map_css %}
+        #{{ id_map }} {
+            width: 100%;
+            height: 100%;
+        }
+        {% if not display_raw %}
+            #{{ id }} {
+            display: none;
             }
-            {% if not display_raw %}
-                #{{ id }} {
-                display: none;
-                }
-            {% endif %}
-        {% endblock map_css %}
-    </style>
+        {% endif %}
+    {% endblock map_css %}
+</style>
 
-    {% block map %}
-        <link rel='stylesheet' href="{% static 'vendor/PATCHED-mapbox-gl-path/mapbox-gl-path.css' %}" />
-        <div id="{{ id_map }}" class="maplibre-map"></div>
-        {% include "core/toast_wrong_topology_route.html" %}
-    {% endblock map %}
+{% block map %}
+    <link rel='stylesheet' href="{% static 'vendor/PATCHED-mapbox-gl-path/mapbox-gl-path.css' %}" />
+    <div id="{{ id_map }}" class="maplibre-map"></div>
+    {% include "core/toast_wrong_topology_route.html" %}
+{% endblock map %}
 
-    {% block vars %}
-        {{ module }}.is_point_topology = {{ is_point_topology|yesno:"true,false" }};
-        {{ module }}.is_line_topology = {{ is_line_topology|yesno:"true,false" }};
-    {% endblock vars %}
-{% endif %}
+{% block vars %}
+    {{ module }}.is_point_topology = {{ is_point_topology|yesno:"true,false" }};
+    {{ module }}.is_line_topology = {{ is_line_topology|yesno:"true,false" }};
+{% endblock vars %}
 
 <script type="module">
     import MapboxPathControl from "{% static 'vendor/PATCHED-mapbox-gl-path/PATCHED-mapbox-gl-path.js' %}";
@@ -33,6 +31,8 @@
     document.addEventListener('DOMContentLoaded', function () {
         const fieldId = '{{ id }}';
         const topologyElem = document.getElementById(fieldId);
+        const topologyChangedElem = document.getElementById('id_topology_changed');
+        let routingControlFirstUpdate = false;
 
         function getInitialFeatureCollection() {
             if (topologyElem.value === "")
@@ -364,6 +364,13 @@
             const subRoutes = features.filter(f => f.geometry.type === "LineString" && !f.properties.isPhantomJunction);
             const subTopologies = subRoutes.map(route => route.properties.topology);
             topologyElem.value = JSON.stringify(subTopologies);
+            if (!routingControlFirstUpdate) {
+                routingControlFirstUpdate = true;
+            } else {
+                topologyChangedElem.checked = true;
+                topologyChangedElem.value = true;
+            }
+
         });
     });
 </script>

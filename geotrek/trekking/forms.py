@@ -107,6 +107,8 @@ class BaseTrekForm(CommonForm):
                     "reservation_id",
                     "pois_excluded",
                     "hidden_ordered_children",
+                    "topology_changed",
+                    "geom_changed",
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane",
                 ),
