@@ -42,8 +42,7 @@ from geotrek.common.permissions import PublicOrReadPermMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 
 from .filters import PathFilterSet, TrailFilterSet
-from .forms import CertificationTrailFormSet, PathForm, OnNetworkTrailForm, \
-    OffNetworkTrailForm
+from .forms import CertificationTrailFormSet, PathForm, TrailForm
 from .layers import PathVectorLayer
 from .models import AltimetryMixin, CertificationTrail, Path, Topology, Trail
 from .path_router import PathRouter
@@ -74,32 +73,6 @@ class CreateFromTopologyMixin:
         if topology:
             initial["topology"] = topology.serialize(with_pk=False)
         return initial
-
-
-class LinearTopologyDetailMixin:
-    def get_context_data(self, *args, **kwargs):
-        context = super().get_context_data(*args, **kwargs)
-        context["can_draw_off_path_network"] = self.request.user.has_perm("core.can_draw_off_path_network")
-        context["path_model_enabled"] = settings.PATH_MODEL_ENABLED
-        return context
-
-
-class LinearTopologyViewFormMixin:
-    def get_form_class(self):
-        """
-        - Returns the off-network form (free drawing), `off_network_form`, if the Path model is
-        disabled or if the user requested to draw off the path network and has permission to do so.
-        - Otherwise, returns the on-network form (routing on paths),`on_network_form`.
-        """
-        if not settings.PATH_MODEL_ENABLED:
-            return self.off_network_form
-        topological = self.request.GET.get("topological", "true") == "true"
-        can_draw_off_path_network = self.request.user.has_perm(
-            "core.can_draw_off_path_network"
-        )
-        if not topological and can_draw_off_path_network:
-            return self.off_network_form
-        return self.on_network_form
 
 
 class PathList(CustomColumnsMixin, MapEntityList):
@@ -686,7 +659,7 @@ class TrailFormatList(MapEntityFormat, TrailList):
         )
 
 
-class TrailDetail(LinearTopologyDetailMixin, MapEntityDetail):
+class TrailDetail(MapEntityDetail):
     queryset = Trail.objects.existing()
 
     def get_context_data(self, *args, **kwargs):
@@ -721,16 +694,14 @@ class TrailDocument(MapEntityDocument):
     queryset = Trail.objects.existing()
 
 
-class TrailCreate(LinearTopologyViewFormMixin, CreateFromTopologyMixin, CertificationTrailMixin, MapEntityCreate):
+class TrailCreate(CreateFromTopologyMixin, CertificationTrailMixin, MapEntityCreate):
     model = Trail
-    on_network_form = OnNetworkTrailForm
-    off_network_form = OffNetworkTrailForm
+    form_class = TrailForm
 
 
-class TrailUpdate(LinearTopologyViewFormMixin, CertificationTrailMixin, MapEntityUpdate):
+class TrailUpdate(CertificationTrailMixin, MapEntityUpdate):
     queryset = Trail.objects.existing()
-    on_network_form = OnNetworkTrailForm
-    off_network_form = OffNetworkTrailForm
+    form_class = TrailForm
 
     @same_structure_required("core:trail_detail")
     def dispatch(self, *args, **kwargs):

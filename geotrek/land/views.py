@@ -5,15 +5,11 @@ from mapentity import views as me_views
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
-from geotrek.core.views import CreateFromTopologyMixin, LinearTopologyViewFormMixin, \
-    LinearTopologyDetailMixin
+from geotrek.core.views import CreateFromTopologyMixin
 
-from . import filters, forms, layers, models, serializers
-from .forms import OnNetworkPhysicalEdgeForm, OffNetworkPhysicalEdgeForm, OnNetworkLandEdgeForm, \
-    OffNetworkLandEdgeForm, OnNetworkCirculationEdgeForm, OffNetworkCirculationEdgeForm, \
-    OnNetworkCompetenceEdgeForm, OffNetworkCompetenceEdgeForm, OnNetworkWorkManagementEdgeForm, \
-    OffNetworkWorkManagementEdgeForm, OnNetworkSignageManagementEdgeForm, \
-    OffNetworkSignageManagementEdgeForm
+from . import filters, layers, models, serializers
+from .forms import PhysicalEdgeForm, LandEdgeForm, CirculationEdgeForm, \
+    CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
 
 
 class PhysicalEdgeList(
@@ -44,7 +40,7 @@ class PhysicalEdgeFormatList(me_views.MapEntityFormat, PhysicalEdgeList):
     ]
 
 
-class PhysicalEdgeDetail(LinearTopologyDetailMixin, me_views.MapEntityDetail):
+class PhysicalEdgeDetail(me_views.MapEntityDetail):
     queryset = models.PhysicalEdge.objects.existing()
 
 
@@ -52,16 +48,14 @@ class PhysicalEdgeDocument(me_views.MapEntityDocument):
     model = models.PhysicalEdge
 
 
-class PhysicalEdgeCreate(LinearTopologyViewFormMixin, CreateFromTopologyMixin, me_views.MapEntityCreate):
+class PhysicalEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.PhysicalEdge
-    on_network_form = OnNetworkPhysicalEdgeForm
-    off_network_form = OffNetworkPhysicalEdgeForm
+    form_class = PhysicalEdgeForm
 
 
-class PhysicalEdgeUpdate(LinearTopologyViewFormMixin, me_views.MapEntityUpdate):
+class PhysicalEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.PhysicalEdge.objects.existing()
-    on_network_form = OnNetworkPhysicalEdgeForm
-    off_network_form = OffNetworkPhysicalEdgeForm
+    form_class = PhysicalEdgeForm
 
 
 class PhysicalEdgeDelete(me_views.MapEntityDelete):
@@ -119,7 +113,7 @@ class LandEdgeFormatList(me_views.MapEntityFormat, LandEdgeList):
     ]
 
 
-class LandEdgeDetail(LinearTopologyDetailMixin, me_views.MapEntityDetail):
+class LandEdgeDetail(me_views.MapEntityDetail):
     queryset = models.LandEdge.objects.existing()
 
 
@@ -127,16 +121,14 @@ class LandEdgeDocument(me_views.MapEntityDocument):
     model = models.LandEdge
 
 
-class LandEdgeCreate(LinearTopologyViewFormMixin, CreateFromTopologyMixin, me_views.MapEntityCreate):
+class LandEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.LandEdge
-    on_network_form = OnNetworkLandEdgeForm
-    off_network_form = OffNetworkLandEdgeForm
+    form_class = LandEdgeForm
 
 
-class LandEdgeUpdate(LinearTopologyViewFormMixin, me_views.MapEntityUpdate):
+class LandEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.LandEdge.objects.existing()
-    on_network_form = OnNetworkLandEdgeForm
-    off_network_form = OffNetworkLandEdgeForm
+    form_class = LandEdgeForm
 
 
 class LandEdgeDelete(me_views.MapEntityDelete):
@@ -191,7 +183,7 @@ class CirculationEdgeFormatList(me_views.MapEntityFormat, CirculationEdgeList):
     ]
 
 
-class CirculationEdgeDetail(LinearTopologyDetailMixin, me_views.MapEntityDetail):
+class CirculationEdgeDetail(me_views.MapEntityDetail):
     queryset = models.CirculationEdge.objects.existing()
 
 
@@ -199,16 +191,14 @@ class CirculationEdgeDocument(me_views.MapEntityDocument):
     model = models.CirculationEdge
 
 
-class CirculationEdgeCreate(LinearTopologyViewFormMixin, CreateFromTopologyMixin, me_views.MapEntityCreate):
+class CirculationEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.CirculationEdge
-    on_network_form = OnNetworkCirculationEdgeForm
-    off_network_form = OffNetworkCirculationEdgeForm
+    form_class = CirculationEdgeForm
 
 
-class CirculationEdgeUpdate(LinearTopologyViewFormMixin, me_views.MapEntityUpdate):
+class CirculationEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.CirculationEdge.objects.existing()
-    on_network_form = OnNetworkCirculationEdgeForm
-    off_network_form = OffNetworkCirculationEdgeForm
+    form_class = CirculationEdgeForm
 
 
 class CirculationEdgeDelete(me_views.MapEntityDelete):
@@ -261,7 +251,7 @@ class CompetenceEdgeFormatList(me_views.MapEntityFormat, CompetenceEdgeList):
     ]
 
 
-class CompetenceEdgeDetail(LinearTopologyDetailMixin, me_views.MapEntityDetail):
+class CompetenceEdgeDetail(me_views.MapEntityDetail):
     queryset = models.CompetenceEdge.objects.existing()
 
 
@@ -269,16 +259,14 @@ class CompetenceEdgeDocument(me_views.MapEntityDocument):
     model = models.CompetenceEdge
 
 
-class CompetenceEdgeCreate(LinearTopologyViewFormMixin, CreateFromTopologyMixin, me_views.MapEntityCreate):
+class CompetenceEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.CompetenceEdge
-    on_network_form = OnNetworkCompetenceEdgeForm
-    off_network_form = OffNetworkCompetenceEdgeForm
+    form_class = CompetenceEdgeForm
 
 
-class CompetenceEdgeUpdate(LinearTopologyViewFormMixin, me_views.MapEntityUpdate):
+class CompetenceEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.CompetenceEdge.objects.existing()
-    on_network_form = OnNetworkCompetenceEdgeForm
-    off_network_form = OffNetworkCompetenceEdgeForm
+    form_class = CompetenceEdgeForm
 
 
 class CompetenceEdgeDelete(me_views.MapEntityDelete):
@@ -331,7 +319,7 @@ class WorkManagementEdgeFormatList(me_views.MapEntityFormat, WorkManagementEdgeL
     ]
 
 
-class WorkManagementEdgeDetail(LinearTopologyDetailMixin, me_views.MapEntityDetail):
+class WorkManagementEdgeDetail(me_views.MapEntityDetail):
     queryset = models.WorkManagementEdge.objects.existing()
 
 
@@ -339,16 +327,14 @@ class WorkManagementEdgeDocument(me_views.MapEntityDocument):
     model = models.WorkManagementEdge
 
 
-class WorkManagementEdgeCreate(LinearTopologyViewFormMixin, CreateFromTopologyMixin, me_views.MapEntityCreate):
+class WorkManagementEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.WorkManagementEdge
-    on_network_form = OnNetworkWorkManagementEdgeForm
-    off_network_form = OffNetworkWorkManagementEdgeForm
+    form_class = WorkManagementEdgeForm
 
 
-class WorkManagementEdgeUpdate(LinearTopologyViewFormMixin, me_views.MapEntityUpdate):
+class WorkManagementEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.WorkManagementEdge.objects.existing()
-    on_network_form = OnNetworkWorkManagementEdgeForm
-    off_network_form = OffNetworkWorkManagementEdgeForm
+    form_class = WorkManagementEdgeForm
 
 
 class WorkManagementEdgeDelete(me_views.MapEntityDelete):
@@ -403,7 +389,7 @@ class SignageManagementEdgeFormatList(
     ]
 
 
-class SignageManagementEdgeDetail(LinearTopologyDetailMixin, me_views.MapEntityDetail):
+class SignageManagementEdgeDetail(me_views.MapEntityDetail):
     queryset = models.SignageManagementEdge.objects.existing()
 
 
@@ -411,16 +397,14 @@ class SignageManagementEdgeDocument(me_views.MapEntityDocument):
     model = models.SignageManagementEdge
 
 
-class SignageManagementEdgeCreate(LinearTopologyViewFormMixin, CreateFromTopologyMixin, me_views.MapEntityCreate):
+class SignageManagementEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.SignageManagementEdge
-    on_network_form = OnNetworkSignageManagementEdgeForm
-    off_network_form = OffNetworkSignageManagementEdgeForm
+    form_class = SignageManagementEdgeForm
 
 
-class SignageManagementEdgeUpdate(LinearTopologyViewFormMixin, me_views.MapEntityUpdate):
+class SignageManagementEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.SignageManagementEdge.objects.existing()
-    on_network_form = OnNetworkSignageManagementEdgeForm
-    off_network_form = OffNetworkSignageManagementEdgeForm
+    form_class = SignageManagementEdgeForm
 
 
 class SignageManagementEdgeDelete(me_views.MapEntityDelete):
