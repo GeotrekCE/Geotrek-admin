@@ -1,6 +1,3 @@
-from unittest import skipIf
-
-from django.conf import settings
 from django.test import TestCase
 
 from geotrek.authent.tests.factories import StructureFactory
@@ -26,7 +23,6 @@ from .factories import (
 )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathFilterLandTest(LandFiltersTest):
     filterclass = PathFilterSet
 
@@ -43,7 +39,6 @@ class TopologyFilterTest(TestCase):
             topology.values_to_edges(["Value"])
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologyFilterTrailTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -60,7 +55,6 @@ class TopologyFilterTrailTest(TestCase):
         self.assertEqual(qs.count(), 1)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class ValidTopologyFilterTest(TestCase):
     @classmethod
     def setUpTestData(cls):

@@ -202,13 +202,12 @@ class InterventionTest(TestCase):
         infra = InfrastructureFactory.create()
         interv = InterventionFactory.create(target=infra)
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertNotEqual(infra.length, 0.0)
+        self.assertNotEqual(infra.length, 0.0)
 
-            # After update related infrastructure
-            infra.length = 3.14
-            infra.save()
-            interv.reload()
+        # After update related infrastructure
+        infra.length = 3.14
+        infra.save()
+        interv.reload()
 
         self.assertEqual(interv.length, infra.length)
 

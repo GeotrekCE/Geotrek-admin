@@ -16,6 +16,7 @@ $(window).on('entity:view:filter', function (e, data) {
 });
 
 $(window).on('entity:view:add entity:view:update', function (e, data) {
+    var context = data || (e.originalEvent && e.originalEvent.detail) || e.detail;
     // Date picker
     $('#id_begin_date, #id_end_date').datepicker({
         autoclose: true,
@@ -23,13 +24,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         format: window.SETTINGS.date_format
     });
 
-    // Chosen on themes etc...
-    $('select[multiple]').chosen({
-        no_results_text: tr("No result"),
-        placeholder_text_multiple: tr("Choose value(s)")
-    });
-
-    if(data.modelname == 'touristicevent') {
+    if(context && context.modelname == 'touristicevent') {
         $('#div_id_cancellation_reason').prop("hidden", !$('#id_cancelled').is(":checked"));
         $('#id_cancelled').change(function () {
             $('#div_id_cancellation_reason').prop("hidden", !this.checked);
@@ -40,7 +35,7 @@ $(window).on('entity:view:add entity:view:update', function (e, data) {
         })
     }
 
-    if (data.modelname != 'touristiccontent')
+    if (!context || context.modelname != 'touristiccontent')
         return;
 
     // Refresh types by category

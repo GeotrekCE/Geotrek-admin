@@ -1,7 +1,6 @@
-
 $(window).on('entity:view:add entity:view:update', function (e, data) {
-    if (data.modelname == 'trek') {
-
+ var context = data || (e.originalEvent && e.originalEvent.detail) || e.detail;
+    if (context && context.modelname == 'trek') {
         // Refresh trek cotations by practice on site change
         $('#id_practice').change(function () {
             update_trek_cotations();

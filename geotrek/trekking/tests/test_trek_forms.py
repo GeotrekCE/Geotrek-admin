@@ -1,6 +1,5 @@
 import json
 
-from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
@@ -229,11 +228,8 @@ class BaseTrekFormItinerancyTest(TestCase):
             ),
         }
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            data["topology"] = json.dumps({"paths": [path.pk]})
-        else:
-            data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
+        path = PathFactory.create()
+        data["topology"] = json.dumps({"paths": [path.pk]})
 
         form = BaseTrekForm(instance=self.trek2, user=self.user, data=data)
         self.assertTrue(form.is_valid())
@@ -261,11 +257,8 @@ class BaseTrekFormItinerancyTest(TestCase):
             "hidden_ordered_children": str(self.trek1.pk),
         }
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            data["topology"] = json.dumps({"paths": [path.pk]})
-        else:
-            data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
+        path = PathFactory.create()
+        data["topology"] = json.dumps({"paths": [path.pk]})
 
         form = BaseTrekForm(instance=self.trek2, user=self.user, data=data)
         self.assertTrue(form.is_valid())

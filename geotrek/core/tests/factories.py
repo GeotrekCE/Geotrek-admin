@@ -117,24 +117,25 @@ class PathInBoundsExistingGeomFactory(PathFactory):
     geom = factory.Sequence(getExistingLineStringInBounds)
 
 
-class TopologyFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = models.Topology
-
-    # Factory
-    # paths (M2M)
-    # if not settings.TREKKING_TOPOLOGY_ENABLED:
-    # geom = "SRID=2154;LINESTRING (700000 6600000, 700100 6600100)"
+class BaseTopologyFactory(factory.django.DjangoModelFactory):
     offset = 0
     deleted = False
-
     # Trigger will override :
     date_insert = dbnow()
     date_update = dbnow()
 
+    class Meta:
+        model = models.Topology
+
+
+class TopologyUncoupledFactory(BaseTopologyFactory):
+    geom = "SRID=2154;LINESTRING (700000 6600000, 700100 6600100)"
+
+
+class TopologyFactory(BaseTopologyFactory):
     @factory.post_generation
     def paths(obj, create, paths):
-        if not create or not settings.TREKKING_TOPOLOGY_ENABLED:
+        if not create:
             return
         if paths is None:
             PathAggregationFactory.create(topo_object=obj)
@@ -147,12 +148,9 @@ class TopologyFactory(factory.django.DjangoModelFactory):
 
 
 class PointTopologyFactory(TopologyFactory):
-    if not settings.TREKKING_TOPOLOGY_ENABLED:
-        geom = "SRID=2154;POINT (700000 6600000)"
-
     @factory.post_generation
     def paths(obj, create, paths):
-        if not create or not settings.TREKKING_TOPOLOGY_ENABLED:
+        if not create:
             return
         if paths is None:
             PointPathAggregationFactory.create(topo_object=obj)

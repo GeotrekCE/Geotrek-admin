@@ -1,22 +1,14 @@
 from abc import ABC, abstractmethod
 
+from django.conf import settings
 from django.utils.translation import gettext as _
 
-from geotrek import settings
-from geotrek.common.parsers import GlobalImportError, RowImportError
-from geotrek.core.models import Path, Topology
+from geotrek.common.parsers import RowImportError
+from geotrek.core.models import Topology
 
 
 class PointTopologyParserMixin(ABC):
     topology = None
-
-    def start(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED and not Path.objects.exists():
-            msg = _(
-                "You need to add a network of paths before importing '%(model)s' objects"
-            ) % {"model": self.model.__name__}
-            raise GlobalImportError(msg)
-        super().start()
 
     @abstractmethod
     def build_geos_geometry(self, src, val):

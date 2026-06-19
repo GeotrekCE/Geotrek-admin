@@ -1,6 +1,3 @@
-from unittest import skipIf
-
-from django.conf import settings
 from django.core.checks import Error
 from django.forms.widgets import HiddenInput
 from django.test import TestCase
@@ -17,7 +14,6 @@ from geotrek.core.tests.factories import (
 )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologyFormTest(TestCase):
     def test_save_form_when_topology_has_not_changed(self):
         user = UserFactory()

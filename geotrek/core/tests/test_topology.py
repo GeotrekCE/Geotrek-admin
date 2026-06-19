@@ -1,6 +1,5 @@
 import json
 import math
-from unittest import skipIf
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
@@ -18,7 +17,6 @@ from geotrek.core.tests.factories import (
 )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologyTest(TestCase):
     def test_geom_null_is_safe(self):
         t = TopologyFactory.create()
@@ -203,7 +201,6 @@ class TopologyTest(TestCase):
             )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologyDeletionTest(TestCase):
     def test_deleted_is_hidden_but_still_exists(self):
         topology = TopologyFactory.create(offset=1)
@@ -227,7 +224,6 @@ class TopologyDeletionTest(TestCase):
         self.assertEqual(path.topology_set.existing().count(), 0)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologyMutateTest(TestCase):
     def test_mutate(self):
         topology1 = TopologyFactory.create(paths=[])
@@ -260,7 +256,6 @@ class TopologyMutateTest(TestCase):
         self.assertEqual(topology2.paths.all().count(), 3)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologyPointTest(TestCase):
     def test_point_geom_3d(self):
         """
@@ -429,7 +424,6 @@ class TopologyPointTest(TestCase):
         self.assertAlmostEqual(father.geom.y, 600, places=6)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologyLineTest(TestCase):
     def test_topology_geom(self):
         p1 = PathFactory.create(geom=LineString((0, 0), (2, 2)))
@@ -516,7 +510,6 @@ class TopologyLineTest(TestCase):
         )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologyCornerCases(TestCase):
     def test_opposite_paths(self):
         """
@@ -626,7 +619,6 @@ class TopologyCornerCases(TestCase):
         )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologyLoopTests(TestCase):
     def test_simple_loop(self):
         """
@@ -793,7 +785,6 @@ class TopologyLoopTests(TestCase):
         )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologySerialization(TestCase):
     def test_serialize_line(self):
         path = PathFactory.create()
@@ -857,7 +848,6 @@ class TopologySerialization(TestCase):
         self.assertEqual(len(field), 2)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologyDeserialization(TestCase):
     def test_deserialize_foreignkey(self):
         topology = TopologyFactory.create(offset=1)
@@ -943,7 +933,6 @@ class TopologyDeserialization(TestCase):
         self.assertAlmostEqual(end_before, end_after, places=6)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologyOverlappingTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -1004,7 +993,6 @@ class TopologyOverlappingTest(TestCase):
         self.assertEqual(list(overlaps), [])
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PointTopologyPathNetworkCoupling(TestCase):
     """Test the automatic coupling/decoupling behavior of point topologies."""
 
@@ -1381,7 +1369,6 @@ class PointTopologyPathNetworkCoupling(TestCase):
         self.assertFalse(topology.coupled)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class LineTopologyPathNetworkCoupling(TestCase):
     """
     Test the automatic coupling/decoupling behavior of line topologies.

@@ -37,23 +37,26 @@ function setDatePickerConfig(idList) {
     });
 }
 
-document.addEventListener('entity:view:add', function (e, data) {
+window.addEventListener('entity:view:add', function (e) {
+    var data = e.detail;
     console.log('entity:view:add', data);
-    if (data.modelname === "intervention"){
+    if (data && data.modelname === "intervention"){
         setDatePickerConfig('#id_begin_date, #id_end_date');
     };
 });
 
-document.addEventListener('entity:view:filter', function (e, data) {
+window.addEventListener('entity:view:filter', function (e) {
+    var data = e.detail;
     console.log('entity:view:filter', data);
-    if (data.modelname === "intervention"){
+    if (data && data.modelname === "intervention"){
         setDatePickerConfig('#id_begin_date_0, #id_begin_date_1, #id_end_date_0, #id_end_date_1');
     };
 });
 
-document.addEventListener('entity:view:update', function (e, data) {
+window.addEventListener('entity:view:update', function (e) {
+    var data = e.detail;
     console.log('entity:view:update', data);
-    if (data.modelname === "intervention"){
+    if (data && data.modelname === "intervention"){
         setDatePickerConfig('#id_begin_date, #id_end_date');
     };
 });
