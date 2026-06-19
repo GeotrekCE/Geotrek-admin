@@ -99,7 +99,7 @@ class LinearTopologyFormMixin(ModelForm):
         if self.instance and self.instance.pk:
             self.fields["topology"].initial = self.instance
         # TODO
-        if True:#not self.user_can_draw_off_path_network():
+        if False:#not self.user_can_draw_off_path_network():
             # self.fields.pop("geom")
             self.fields["geom"].disabled = True
             self.fields["geom"].widget = LinearTopologyMapWidget(attrs={"target_map": "topology", "modifiable": False})
