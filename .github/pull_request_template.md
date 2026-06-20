@@ -30,7 +30,7 @@
 
 * [ ] I used AI assistance to produce part or all of this contribution
 * [ ] I have read, reviewed, understood and can explain the code I am submitting
-* [ ] I can explainand discuss my work to a maintainer
+* [ ] I can explain and discuss my work to a maintainer
 * [ ] I pasted the prompt used and mentionned the model used below
 
 <!-- ⚠️ IMPORTANT : All new lines of code should be tested -->
