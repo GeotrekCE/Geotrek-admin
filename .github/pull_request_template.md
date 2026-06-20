@@ -24,6 +24,14 @@
 - [ ] I added a label to the PR corresponding to the perimeter of my contribution
 - [ ] The title of my PR mentionned the issue associated
 
+### AI requirements
+
+*Skip the checkboxes below 👇 If you didn't use AI for your contribution*
+
+* [ ] I used AI assistance to produce part or all of this contribution
+* [ ] I have read, reviewed, understood and can explain the code I am submitting
+* [ ] I can explainand discuss my work to a maintainer
+* [ ] I pasted the prompt used and mentionned the model used below
 
 <!-- ⚠️ IMPORTANT : All new lines of code should be tested -->
 <!-- ⚠️ PR are always reviewed by at least one person before being merged -->
