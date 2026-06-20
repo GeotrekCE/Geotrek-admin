@@ -9,6 +9,10 @@ CHANGELOG
 
 - Update popup to allow opening detail page in new tab (issue #4626)
 
+**Documentation**
+
+- Add AI contribution requirements to PR template (#5525)
+
 
 2.124.5         (2026-06-09)
 ----------------------------
