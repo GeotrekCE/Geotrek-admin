@@ -297,6 +297,7 @@ pillow==12.2.0
     #   large-image
     #   paperclip
     #   reportlab
+    #   svglib
     #   weasyprint
 prompt-toolkit==3.0.52
     # via click-repl
