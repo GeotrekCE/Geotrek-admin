@@ -50,12 +50,16 @@ class PhysicalEdgeDocument(me_views.MapEntityDocument):
 
 class PhysicalEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.PhysicalEdge
-    form_class = PhysicalEdgeForm
+
+    def get_form_class(self):
+        return PhysicalEdgeForm
 
 
 class PhysicalEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.PhysicalEdge.objects.existing()
-    form_class = PhysicalEdgeForm
+
+    def get_form_class(self):
+        return PhysicalEdgeForm
 
 
 class PhysicalEdgeDelete(me_views.MapEntityDelete):
@@ -123,12 +127,16 @@ class LandEdgeDocument(me_views.MapEntityDocument):
 
 class LandEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.LandEdge
-    form_class = LandEdgeForm
+
+    def get_form_class(self):
+        return LandEdgeForm
 
 
 class LandEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.LandEdge.objects.existing()
-    form_class = LandEdgeForm
+
+    def get_form_class(self):
+        return LandEdgeForm
 
 
 class LandEdgeDelete(me_views.MapEntityDelete):
@@ -193,12 +201,16 @@ class CirculationEdgeDocument(me_views.MapEntityDocument):
 
 class CirculationEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.CirculationEdge
-    form_class = CirculationEdgeForm
+
+    def get_form_class(self):
+        return CirculationEdgeForm
 
 
 class CirculationEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.CirculationEdge.objects.existing()
-    form_class = CirculationEdgeForm
+
+    def get_form_class(self):
+        return CirculationEdgeForm
 
 
 class CirculationEdgeDelete(me_views.MapEntityDelete):
@@ -261,12 +273,16 @@ class CompetenceEdgeDocument(me_views.MapEntityDocument):
 
 class CompetenceEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.CompetenceEdge
-    form_class = CompetenceEdgeForm
+
+    def get_form_class(self):
+        return CompetenceEdgeForm
 
 
 class CompetenceEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.CompetenceEdge.objects.existing()
-    form_class = CompetenceEdgeForm
+
+    def get_form_class(self):
+        return CompetenceEdgeForm
 
 
 class CompetenceEdgeDelete(me_views.MapEntityDelete):
@@ -329,12 +345,16 @@ class WorkManagementEdgeDocument(me_views.MapEntityDocument):
 
 class WorkManagementEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.WorkManagementEdge
-    form_class = WorkManagementEdgeForm
+
+    def get_form_class(self):
+        return WorkManagementEdgeForm
 
 
 class WorkManagementEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.WorkManagementEdge.objects.existing()
-    form_class = WorkManagementEdgeForm
+
+    def get_form_class(self):
+        return WorkManagementEdgeForm
 
 
 class WorkManagementEdgeDelete(me_views.MapEntityDelete):
@@ -399,12 +419,16 @@ class SignageManagementEdgeDocument(me_views.MapEntityDocument):
 
 class SignageManagementEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.SignageManagementEdge
-    form_class = SignageManagementEdgeForm
+
+    def get_form_class(self):
+        return SignageManagementEdgeForm
 
 
 class SignageManagementEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.SignageManagementEdge.objects.existing()
-    form_class = SignageManagementEdgeForm
+
+    def get_form_class(self):
+        return SignageManagementEdgeForm
 
 
 class SignageManagementEdgeDelete(me_views.MapEntityDelete):
