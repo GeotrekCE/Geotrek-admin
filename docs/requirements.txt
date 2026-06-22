@@ -14,7 +14,7 @@ babel==2.17.0
     # via
     #   sphinx
     #   sphinx-intl
-certifi==2026.5.20
+certifi==2026.6.17
     # via
     #   -c ../requirements.txt
     #   requests
