@@ -1,5 +1,7 @@
 from copy import deepcopy
+from operator import truediv
 
+from django.conf import settings
 from django.contrib.gis.forms import LineStringField
 from django.contrib.gis.geos import fromstr
 from django.forms import ModelForm, ValidationError, BooleanField, HiddenInput
@@ -97,11 +99,16 @@ class LinearTopologyFormMixin(ModelForm):
 
         if self.instance and self.instance.pk:
             self.fields["topology"].initial = self.instance
-        # TODO
-        if False:#not self.user_can_draw_off_path_network():
+
+        if not self.is_drawing_off_path_network_allowed():
             self.fields["geom"].disabled = True
             self.fields["geom"].widget = LinearTopologyMapWidget(attrs={"target_map": "topology", "modifiable": False})
             self.fields.pop("geom_changed")
+
+    def is_drawing_off_path_network_allowed(self):
+        if not settings.PATH_MODEL_ENABLED:
+            return True
+        return self.user.has_perm("core.can_draw_off_path_network")
 
     def clean(self, *args, **kwargs):
         data = super().clean()
