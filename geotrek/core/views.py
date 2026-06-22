@@ -696,12 +696,16 @@ class TrailDocument(MapEntityDocument):
 
 class TrailCreate(CreateFromTopologyMixin, CertificationTrailMixin, MapEntityCreate):
     model = Trail
-    form_class = TrailForm
+
+    def get_form_class(self):
+        return TrailForm
 
 
 class TrailUpdate(CertificationTrailMixin, MapEntityUpdate):
     queryset = Trail.objects.existing()
-    form_class = TrailForm
+
+    def get_form_class(self):
+        return TrailForm
 
     @same_structure_required("core:trail_detail")
     def dispatch(self, *args, **kwargs):

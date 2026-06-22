@@ -296,12 +296,16 @@ class TrekMarkupPublic(TrekDocumentPublicMixin, MarkupPublic):
 
 class TrekCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Trek
-    form_class = TrekForm
+
+    def get_form_class(self):
+        return TrekForm
 
 
 class TrekUpdate(MapEntityUpdate):
     queryset = Trek.objects.existing()
-    form_class = TrekForm
+
+    def get_form_class(self):
+        return TrekForm
 
     @same_structure_required("trekking:trek_detail")
     def dispatch(self, *args, **kwargs):
