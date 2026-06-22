@@ -1,6 +1,5 @@
 from copy import deepcopy
 
-from crispy_forms.layout import Div
 from django.contrib.gis.forms import LineStringField
 from django.contrib.gis.geos import fromstr
 from django.forms import ModelForm, ValidationError, BooleanField, HiddenInput
@@ -100,7 +99,6 @@ class LinearTopologyFormMixin(ModelForm):
             self.fields["topology"].initial = self.instance
         # TODO
         if False:#not self.user_can_draw_off_path_network():
-            # self.fields.pop("geom")
             self.fields["geom"].disabled = True
             self.fields["geom"].widget = LinearTopologyMapWidget(attrs={"target_map": "topology", "modifiable": False})
             self.fields.pop("geom_changed")
