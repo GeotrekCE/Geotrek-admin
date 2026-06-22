@@ -1,7 +1,7 @@
 import * as React from "react"
+import { useLiveQuery } from "dexie-react-hooks"
 import { useStore } from "@tanstack/react-form"
 import Map from "@/components/map"
-import { useAppSettings } from "@/hook/useAppSettings"
 import type { LngLatBoundsLike } from "maplibre-gl"
 import { FieldDescription, FieldLabel } from "@/components/ui/field"
 import {
@@ -15,7 +15,8 @@ import Required from "./required"
 import { Marker } from "react-map-gl/maplibre"
 import { cn } from "@/lib/utils"
 import { MapPin } from "lucide-react"
-import { Button } from "../ui/button"
+import { Button } from "@/components/ui/button"
+import { db } from "@/lib/db"
 
 type GeomFieldProps = {
   label: string
@@ -34,8 +35,8 @@ export function GeomField({
   const field = useFieldContext()
   const value = useStore(field.store, (s) => s.value) as [number, number]
   const [lng, lat] = value
-  const { data } = useAppSettings()
-  const { bounds } = data?.syncData || {}
+  const appSync = useLiveQuery(() => db.appSync.get("data"))
+  const { bounds } = appSync || {}
 
   const [isEditing, setEditing] = React.useState(false)
 

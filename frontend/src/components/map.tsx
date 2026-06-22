@@ -1,12 +1,13 @@
+import { useLiveQuery } from "dexie-react-hooks"
+import { Loader2 } from "lucide-react"
 import MapLibre, {
   GeolocateControl,
   NavigationControl,
   type MapProps,
 } from "react-map-gl/maplibre"
-import { useSettingsQueryOfflineFirst } from "@/hook/useSettingsQuery"
 import "maplibre-gl/dist/maplibre-gl.css"
-import { Loader2 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { db } from "@/lib/db"
 
 export default function Map({
   className,
@@ -19,12 +20,11 @@ export default function Map({
   style?: React.CSSProperties
   noControls?: boolean
 }) {
-  const { data, isLoading } = useSettingsQueryOfflineFirst()
-
+  const settings = useLiveQuery(() => db.settings.get("settings"))
   const classNameWrapper = "grid grow place-items-center bg-accent"
-  const mapSettings = data?.settings?.maps.layers[0]
+  const mapSettings = settings?.settings.maps.layers[0]
 
-  if (isLoading) {
+  if (!settings) {
     return (
       <div className={classNameWrapper}>
         <Loader2 className="size-4 animate-spin" />

@@ -5,43 +5,15 @@ import {
   Query,
   QueryCache,
   QueryClient,
+  QueryClientProvider,
 } from "@tanstack/react-query"
 import { routeTree } from "./routeTree.gen"
 import { createRouter, RouterProvider } from "@tanstack/react-router"
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client"
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister"
-import { compress, decompress } from "lz-string"
 import { toast } from "sonner"
 import { Toaster } from "@/components/ui/sonner"
 import { AuthProvider, useAuth } from "@/lib/auth"
 import { deLocalizeUrl, localizeUrl } from "@/paraglide/runtime"
 import { useAppInit } from "@/hook/useAppInit"
-
-// import { get, set, del, createStore, type UseStore } from "idb-keyval"
-
-// function newIdbStorage(idbStore: UseStore): AsyncStorage {
-//   return {
-//     getItem: async (key) => await get(key, idbStore),
-//     setItem: async (key, value) => await set(key, value, idbStore),
-//     removeItem: async (key) => await del(key, idbStore),
-//   }
-// }
-
-const persister = createAsyncStoragePersister(
-  // {
-  //   storage: newIdbStorage(createStore("db_GTAM", "store_name")),
-  //   maxAge: 1000 * 60 * 60 * 12, // 12 hours
-  // }
-  {
-    storage: window.localStorage, // TODO indexedDB V1 https://dexie.org/docs/API-Reference
-    serialize: (data) =>
-      import.meta.env.DEV
-        ? JSON.stringify(data)
-        : compress(JSON.stringify(data)),
-    deserialize: (data) =>
-      import.meta.env.DEV ? JSON.parse(data) : JSON.parse(decompress(data)),
-  }
-)
 
 const router = createRouter({
   basepath: import.meta.env.BASE_URL,
@@ -80,24 +52,29 @@ function InnerApp() {
           },
         },
         mutationCache: new MutationCache({
-          // onSuccess: (data) => {
-          //   toast.success(data.message)
-          // },
           onError: (error) => {
             toast.error(error.message)
           },
         }),
         queryCache: new QueryCache({
-          onSettled: (data, error, query) => {
+          onSettled: (_data, error, query) => {
             if (error instanceof ZodError) {
               toast.error("Mismatching SCHEMAS between API and app", {
                 position: "top-center",
               })
+              return
             }
             // @ts-expect-error - deal with API error shape
             if (error?.res?.status === 401) {
               auth.refreshAuthToken(query as Query)
-              console.log("erreur de requête:", data, error)
+              return
+            }
+            if (error) {
+              toast.error("Une erreur s'est produite", {
+                position: "top-center",
+                description: error.message,
+              })
+              return
             }
           },
         }),
@@ -105,19 +82,10 @@ function InnerApp() {
   )
 
   return (
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister }}
-      onSuccess={() => {
-        // resume mutations after initial restore from localStorage was successful
-        queryClient.resumePausedMutations().then(() => {
-          queryClient.invalidateQueries()
-        })
-      }}
-    >
+    <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} context={{ auth, queryClient }} />
       <Toaster />
-    </PersistQueryClientProvider>
+    </QueryClientProvider>
   )
 }
 

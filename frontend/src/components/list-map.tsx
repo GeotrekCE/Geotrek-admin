@@ -1,17 +1,20 @@
+import * as React from "react"
+import { useLiveQuery } from "dexie-react-hooks"
 import { useNavigate } from "@tanstack/react-router"
 import { MapPin } from "lucide-react"
 import { Marker } from "react-map-gl/maplibre"
-import Map from "@/components/map"
-import { useAppSettings } from "@/hook/useAppSettings"
 import { useList } from "@/lib/list"
 import { cn } from "@/lib/utils"
-import React from "react"
+import { db } from "@/lib/db"
+import Map from "@/components/map"
 
 export default function ListMap() {
   const navigate = useNavigate()
   const { elements, filters, snapPoint, snapPoints } = useList()
-  const { data } = useAppSettings()
-  const { bounds } = data?.syncData || {}
+
+  const appSync = useLiveQuery(() => db.appSync.get("data"))
+
+  const { bounds } = appSync || {}
 
   const [lng1, lat1, lng2, lat2] = bounds || []
 
@@ -71,7 +74,7 @@ export default function ListMap() {
               />
               <img
                 loading="lazy"
-                src={item.pictogram.url}
+                src={item?.pictogram.url}
                 alt=""
                 className={cn(
                   "col-start-1 row-start-1 m-auto",

@@ -1,31 +1,20 @@
-import type { AppConfigSchemaProps } from "@/schemas/settings"
-import { useQueryClient } from "@tanstack/react-query"
+const APP_SETTINGS_KEY = "appSettings"
 
-export const APP_SETTINGS_QUERY_KEY = ["appsettings"]
+function getStorageElement(key: string) {
+  return JSON.parse(localStorage.getItem(key) || "{}")
+}
 
 export function useAppSettings() {
-  const queryClient = useQueryClient()
-  const data = queryClient.getQueryData<AppConfigSchemaProps>(
-    APP_SETTINGS_QUERY_KEY
-  )
-
   return {
-    data,
-    setData: (nextData: Partial<AppConfigSchemaProps>) =>
-      queryClient.setQueryData(
-        APP_SETTINGS_QUERY_KEY,
-        (prevData: AppConfigSchemaProps) => ({
-          ...prevData,
+    data: getStorageElement(APP_SETTINGS_KEY),
+    setData: (nextData: Record<string, string | null | number>) => {
+      localStorage.setItem(
+        "appSettings",
+        JSON.stringify({
+          ...getStorageElement(APP_SETTINGS_KEY),
           ...nextData,
-          syncData: {
-            ...prevData?.syncData,
-            ...nextData.syncData,
-          },
-          list: {
-            ...prevData?.list,
-            ...nextData.list,
-          },
         })
-      ),
+      )
+    },
   }
 }

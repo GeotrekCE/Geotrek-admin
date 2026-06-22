@@ -1,12 +1,37 @@
-import { createFileRoute } from "@tanstack/react-router"
+import { createFileRoute, redirect } from "@tanstack/react-router"
 import Header from "@/components/header"
 import { useStoredDataElement } from "@/hook/useStoredData"
 import SignageForm from "@/components/signage-form"
 import type { SignageDataSchemaProps } from "@/schemas/data"
+import { useLiveQuery } from "dexie-react-hooks"
+import { db } from "@/lib/db"
+import type {
+  CommonReferencesSchemaProps,
+  SignageReferencesSchemaProps,
+} from "@/schemas/references"
+import { toast } from "sonner"
 
 export const Route = createFileRoute(
   "/{-$locale}/_authenticated/data/$type/$id/edit"
 )({
+  beforeLoad: async () => {
+    const hasDataSettings = await db.appSync.get("data")
+    if (!hasDataSettings) {
+      toast.info(
+        <div>
+          <p className="font-bold">Une mise à jour est nécessaire</p>
+          <p>
+            Veuillez mettre à jour les données de référentiel de saisie avant
+            votre sortie de terrain.
+          </p>
+        </div>,
+        {
+          position: "top-center",
+        }
+      )
+      throw redirect({ to: "/{-$locale}/sync" })
+    }
+  },
   component: RouteComponent,
 })
 
@@ -27,8 +52,13 @@ function getTitle(type: string) {
 
 function RouteComponent() {
   const params = Route.useParams()
-  const element = useStoredDataElement(params.type, Number(params.id))
-  if (!element) {
+  const detail = useStoredDataElement(params.type, Number(params.id))
+  const references = useLiveQuery(
+    () => db.references.bulkGet([params.type, "common"]),
+    [params.type]
+  )
+
+  if (!detail) {
     return (
       <div>
         <Header title={getTitle(params.type)} withBackbutton />
@@ -40,21 +70,40 @@ function RouteComponent() {
       </div>
     )
   }
-  const { reference: _ref, pictogram, ...defaultValues } = element
+
+  if (
+    references === undefined ||
+    references[0] === undefined ||
+    references[1] === undefined
+  ) {
+    // todo loading
+    return null
+  }
+
+  const name = "name" in detail ? detail.name : `Signalement (id: ${detail.id})`
+
   return (
     <div>
       <Header title={getTitle(params.type)} withBackbutton />
       <div className="m-auto max-w-120 p-4">
         {params.type === "signage" ? (
           <SignageForm
-            defaultValues={defaultValues as SignageDataSchemaProps[0]}
-            pictogram={pictogram}
+            defaultValues={detail as SignageDataSchemaProps}
+            pictogram={
+              "pictogram" in references[0] ? references[0].pictogram : undefined
+            }
+            references={
+              references as unknown as [
+                SignageReferencesSchemaProps,
+                CommonReferencesSchemaProps,
+              ]
+            }
             isEdit
           />
         ) : (
           <section>
             <h2 className="text-2xl font-medium text-accent-foreground">
-              {defaultValues.name}
+              {name}
             </h2>
             <p> TODO: formulaire pour "{params.type}"</p>
           </section>

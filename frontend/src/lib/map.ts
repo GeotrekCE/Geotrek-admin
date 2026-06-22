@@ -11,6 +11,9 @@ export function getPolygonFromBounds(
 
 export function getBoundsFromPolygon(polygon: string) {
   const [sw, _, ne] = polygon.replace("POLYGON((", "").split(",")
+  if (!sw && !ne) {
+    return []
+  }
   return [sw.split(" "), ne.split(" ")].flat().map(Number) as [
     number,
     number,

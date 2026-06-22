@@ -46,6 +46,7 @@ export default function Login() {
     },
     onSubmit: async ({ value }) => {
       toast.promise(() => login(value.username, value.password), {
+        id: "login",
         loading: m["login.loading"](),
         success: () => {
           navigate({ to: search.redirect || "/" })

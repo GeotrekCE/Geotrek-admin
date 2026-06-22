@@ -76,7 +76,11 @@ export default function List() {
                             }}
                           >
                             <ItemMedia>
-                              <img src={item.pictogram.url} alt="" />
+                              <img
+                                loading="lazy"
+                                src={item?.pictogram.url}
+                                alt=""
+                              />
                             </ItemMedia>
                             <ItemContent>
                               <ItemTitle className="text-accent-foreground">

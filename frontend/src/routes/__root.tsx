@@ -6,6 +6,7 @@ import {
 import type { QueryClient } from "@tanstack/react-query"
 import { Navigation } from "@/components/navigation"
 import { getLocale, shouldRedirect } from "@/paraglide/runtime"
+import { useSettingsQuery } from "@/hook/useSettingsQuery"
 
 interface AuthState {
   isAuthenticated: boolean
@@ -31,12 +32,17 @@ export const Route = createRootRouteWithContext<RouterContext>()({
       throw redirect({ href: decision.redirectUrl.href })
     }
   },
-  component: () => (
+  component: RootComponent,
+})
+
+function RootComponent() {
+  useSettingsQuery()
+  return (
     <div className="flex min-h-dvh flex-col">
       <main className="flex grow flex-col">
         <Outlet />
       </main>
       <Navigation />
     </div>
-  ),
-})
+  )
+}

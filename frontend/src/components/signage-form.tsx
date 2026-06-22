@@ -1,46 +1,71 @@
 import { toast } from "sonner"
 import { signageDataSchema, type SignageDataSchemaProps } from "@/schemas/data"
+
+import type {
+  CommonReferencesSchemaProps,
+  SignageReferencesSchemaProps,
+} from "@/schemas/references"
+import { db } from "@/lib/db"
 import { FieldGroup } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
-import {
-  useReferencesQuery,
-  type StoredReferences,
-} from "@/hook/useReferencesQuery"
-
-import { useAppForm, useFormFields } from "./ui/tanstack-form"
+import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 
 export default function SignageForm({
   defaultValues,
-  pictogram,
   isEdit,
+  pictogram,
+  references,
 }: {
-  defaultValues: Omit<
-    SignageDataSchemaProps,
-    "id" | "date_insert" | "date_update" | "published"
-  >
-  pictogram?: { url?: string }
+  defaultValues: SignageDataSchemaProps
   isEdit?: boolean
+  pictogram?: { url?: string }
+  references: [SignageReferencesSchemaProps, CommonReferencesSchemaProps]
 }) {
+  const [
+    { signagetype, signagecondition, sealing },
+    { structure, accessmean, organism },
+  ] = references
+
+  const {
+    id,
+    date_insert,
+    date_update: _dateUpdate,
+    ...defaultValuesForForm
+  } = defaultValues
+
   const validators = signageDataSchema.omit({
     id: true,
     date_insert: true,
     date_update: true,
-    published: true,
   })
   const form = useAppForm({
-    defaultValues,
+    defaultValues: defaultValuesForForm,
     validators: {
       onBlur: validators,
       onSubmit: validators,
     },
     onSubmit: ({ value }) => {
-      toast(
-        <pre className="max-h-80 w-max overflow-auto">
-          {JSON.stringify(value, null, 2)}
-        </pre>,
+      if (isEdit) {
+        db.signageData.put({
+          ...value,
+          id,
+          date_insert,
+          date_update: new Date().toISOString(),
+        })
+      } else {
+        // @ts-expect-error "id" is auto-incremented in indexedDB
+        db.signageData.add({
+          ...value,
+          date_insert: new Date().toISOString(),
+          date_update: new Date().toISOString(),
+        })
+      }
+      toast.success(
+        isEdit
+          ? `La signalétique "${value.name}" a bien été modifiée`
+          : `La signalétique "${value.name}" a bien été créée`,
         {
           position: "top-center",
-          dismissible: false,
         }
       )
     },
@@ -48,32 +73,23 @@ export default function SignageForm({
   const { FormTextField, FormSelectField, FormTextareaField, FormGeomField } =
     useFormFields<SignageDataSchemaProps>()
 
-  const stored: StoredReferences = useReferencesQuery()
-
-  const structureList = stored.references.common.data?.structure ?? []
-
-  const typeList = stored.references.signage.data?.signagetype ?? []
-
-  const conditionList = stored.references.signage.data?.signagecondition ?? []
-
-  const sealingList = stored.references.signage.data?.sealing ?? []
-
-  const accessList = stored.references.common.data?.accessmean ?? []
-
-  const managerList = stored.references.common.data?.organism ?? []
-
   return (
     <form.AppForm>
       <form.Form>
         <FieldGroup className="mb-4">
           <FormTextField name="name" label="Nom" required />
 
-          <FormSelectField name="type" label="Type" list={typeList} required />
+          <FormSelectField
+            name="type"
+            label="Type"
+            list={signagetype}
+            required
+          />
 
           <FormSelectField
             name="structure"
             label="Structure liée"
-            list={structureList}
+            list={structure}
             required
           />
 
@@ -89,7 +105,7 @@ export default function SignageForm({
           <FormSelectField
             name="conditions"
             label="État"
-            list={conditionList}
+            list={signagecondition}
             multiple
           />
 
@@ -112,19 +128,15 @@ export default function SignageForm({
           <FormSelectField
             name="manager"
             label="Gestionnaire"
-            list={managerList}
+            list={organism}
           />
 
-          <FormSelectField
-            name="sealing"
-            label="Scellement"
-            list={sealingList}
-          />
+          <FormSelectField name="sealing" label="Scellement" list={sealing} />
 
           <FormSelectField
             name="access"
             label="Moyen d'accès"
-            list={accessList}
+            list={accessmean}
           />
 
           <Button type="submit">

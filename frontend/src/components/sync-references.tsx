@@ -1,24 +1,16 @@
-import { useQueryClient } from "@tanstack/react-query"
-import {
-  COMMON_REFERENCES_QUERY_KEY,
-  useReferencesQuery,
-} from "@/hook/useReferencesQuery"
+import { useLiveQuery } from "dexie-react-hooks"
+import { useReferencesQuery } from "@/hook/useReferencesQuery"
 import CardSync from "@/components/card-sync"
 import { getUpdatedStatus } from "@/lib/date"
 import { useIntervalSync } from "@/hook/useSettingsQuery"
 import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
+import { db } from "@/lib/db"
 
 export default function SyncReferences() {
-  const queryClient = useQueryClient()
-  const { references, refetch } = useReferencesQuery()
-  const { references: updateLimitation } = useIntervalSync()
-
-  const dataSettings =
-    references.common.data ||
-    queryClient.getQueryData(COMMON_REFERENCES_QUERY_KEY)
-
-  const lastSync = dataSettings?.lastSync
+  const { refetch } = useReferencesQuery()
+  const updateLimitation = useIntervalSync("references")
+  const appSync = useLiveQuery(() => db.appSync.get("references"))
+  const lastSync = appSync?.lastSync
 
   return (
     <CardSync
@@ -29,15 +21,7 @@ export default function SyncReferences() {
       lastSync={lastSync}
       updatedStatus={getUpdatedStatus(lastSync, updateLimitation)}
       actions={
-        <Button
-          className="w-full"
-          onClick={() => {
-            refetch()
-            toast.success("Référentiels de saisie synchronisés avec succès", {
-              position: "top-center",
-            })
-          }}
-        >
+        <Button className="w-full" onClick={refetch}>
           Mettre à jour
         </Button>
       }

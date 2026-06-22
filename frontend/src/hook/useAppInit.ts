@@ -3,21 +3,22 @@ import { getSerwist } from "virtual:serwist"
 import { onlineManager } from "@tanstack/react-query"
 
 export function useAppInit() {
-  // PWA
   React.useEffect(() => {
+    // Service worker
     const loadSerwist = async () => {
       if ("serviceWorker" in navigator) {
         const serwist = await getSerwist()
-
         serwist?.addEventListener("installed", () => {
           console.log("Serwist installed!")
         })
-
         void serwist?.register()
       }
     }
-
     loadSerwist()
+
+    // Remove old cache system
+    // TODO remove this line for 1st version
+    window.localStorage.removeItem("REACT_QUERY_OFFLINE_CACHE")
   }, [])
 
   // Online/Offline status

@@ -1,7 +1,7 @@
 import Header from "@/components/header"
 import { useStoredDataElement } from "@/hook/useStoredData"
 import { getLocale } from "@/paraglide/runtime"
-import { createFileRoute, Link } from "@tanstack/react-router"
+import { createFileRoute, Link, redirect } from "@tanstack/react-router"
 import Map from "@/components/map"
 import { Marker } from "react-map-gl/maplibre"
 import { Badge } from "@/components/ui/badge"
@@ -15,22 +15,42 @@ import {
 } from "@/components/ui/item"
 import { ChevronRight, Info } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
+import { db } from "@/lib/db"
+import { toast } from "sonner"
 export const Route = createFileRoute(
   "/{-$locale}/_authenticated/data/$type/$id/"
 )({
+  beforeLoad: async () => {
+    const hasDataSettings = await db.appSync.get("data")
+    if (!hasDataSettings) {
+      toast.info(
+        <div>
+          <p className="font-bold">Une mise à jour est nécessaire</p>
+          <p>
+            Veuillez mettre à jour les données de référentiel de saisie avant
+            votre sortie de terrain.
+          </p>
+        </div>,
+        {
+          position: "top-center",
+        }
+      )
+      throw redirect({ to: "/{-$locale}/sync" })
+    }
+  },
   component: RouteComponent,
 })
 
 function getTitle(type: string) {
   switch (type) {
     case "infrastructure":
-      return "Détails aménagement"
+      return "Détail aménagement"
     case "signage":
-      return "Détails signalétique"
+      return "Détail signalétique"
     case "intervention":
-      return "Détails intervention"
+      return "Détail intervention"
     case "report":
-      return "Détails signalement"
+      return "Détail signalement"
     default:
       return "Détails"
   }
@@ -38,8 +58,8 @@ function getTitle(type: string) {
 
 function RouteComponent() {
   const params = Route.useParams()
-  const element = useStoredDataElement(params.type, Number(params.id))
-  if (!element) {
+  const detail = useStoredDataElement(params.type, Number(params.id))
+  if (!detail) {
     return (
       <div>
         <Header title={getTitle(params.type)} withBackbutton />
@@ -51,12 +71,15 @@ function RouteComponent() {
       </div>
     )
   }
-  const createDate = new Date(element.date_insert).toLocaleDateString(
+  const createDate = new Date(detail.date_insert).toLocaleDateString(
     getLocale()
   )
-  const updateDate = new Date(element.date_update).toLocaleDateString(
+  const updateDate = new Date(detail.date_update).toLocaleDateString(
     getLocale()
   )
+
+  const name = "name" in detail ? detail.name : `Signalement (id: ${detail.id})`
+  console.log(detail)
 
   return (
     <div>
@@ -76,15 +99,15 @@ function RouteComponent() {
       <div className="m-auto max-w-120 p-4">
         <section>
           <h2 className="text-2xl font-medium text-accent-foreground">
-            {element.name}
+            {name}
           </h2>
           <p>
-            <span className="text-primary">{element.reference}</span>
-            {"type" in element && ` - ${element.type.name}`}
+            <span className="text-primary">{params.type}</span>
+            {"type" in detail && ` - ${detail.type.name}`}
           </p>
-          {"conditions" in element && element.conditions.length > 0 && (
+          {"conditions" in detail && detail.conditions.length > 0 && (
             <p className="mt-1 flex flex-wrap gap-1">
-              {element.conditions.map((c) => (
+              {detail.conditions.map((c) => (
                 <Badge key={c.id} variant="outline">
                   {c.name}
                 </Badge>
@@ -99,26 +122,26 @@ function RouteComponent() {
           </div>
         </section>
 
-        {"structure" in element && (
+        {"structure" in detail && (
           <section className="my-8">
             <h3 className="mb-2 text-xl font-bold text-accent-foreground">
               Structure liée
             </h3>
-            {element.structure ? (
-              <p>{element.structure.name}</p>
+            {detail.structure ? (
+              <p>{detail.structure.name}</p>
             ) : (
               <p className="italic">Aucune structure liée.</p>
             )}
           </section>
         )}
 
-        {"description" in element && (
+        {"description" in detail && (
           <section className="my-8">
             <h3 className="mb-2 text-xl font-bold text-accent-foreground">
               Description
             </h3>
-            {element.description ? (
-              <div dangerouslySetInnerHTML={{ __html: element.description }} />
+            {detail.description ? (
+              <div dangerouslySetInnerHTML={{ __html: detail.description }} />
             ) : (
               <p className="italic">Aucune description disponible.</p>
             )}
@@ -129,34 +152,34 @@ function RouteComponent() {
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
             Localisation
           </h3>
-          {element.api_geom && (
+          {detail.api_geom && (
             <Map
               className="pointer-none aspect-square max-h-80 touch-none"
-              longitude={element.api_geom.coordinates[0]}
-              latitude={element.api_geom.coordinates[1]}
+              longitude={detail.api_geom.coordinates[0]}
+              latitude={detail.api_geom.coordinates[1]}
             >
               <Marker
-                longitude={element.api_geom.coordinates[0]}
-                latitude={element.api_geom.coordinates[1]}
+                longitude={detail.api_geom.coordinates[0]}
+                latitude={detail.api_geom.coordinates[1]}
                 anchor="bottom"
               />
             </Map>
           )}
         </section>
 
-        {"blades" in element && (
+        {"blades" in detail && (
           <section className="my-8">
             <h3 className="mb-2 flex items-center gap-2 text-xl font-bold text-accent-foreground">
-              Lames <Badge className="size-6">{element.blades.length}</Badge>
+              Lames <Badge className="size-6">{detail.blades.length}</Badge>
             </h3>
-            {element.blades && element.blades.length > 0 ? (
+            {"blade" in detail && detail.blades && detail.blades.length > 0 ? (
               <ul>
-                {element.blades.map((blade) => (
+                {detail.blades.map((blade) => (
                   <li
                     key={blade.id}
                     className="my-2 rounded-lg border px-4 pt-2"
                   >
-                    <h4>{[element.code, blade.number].join("-")}</h4>
+                    <h4>{[detail.code, blade.number].join("-")}</h4>
 
                     <h5 className="my-2 font-semibold">Type</h5>
                     <p>{blade.type.name}</p>

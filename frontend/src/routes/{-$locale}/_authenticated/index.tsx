@@ -1,6 +1,5 @@
 import * as z from "zod"
 import { toast } from "sonner"
-import { APP_SETTINGS_QUERY_KEY } from "@/hook/useAppSettings"
 import { useStoredData } from "@/hook/useStoredData"
 import { createFileRoute, redirect } from "@tanstack/react-router"
 import { ListProvider } from "@/lib/list"
@@ -8,6 +7,7 @@ import List from "@/components/list"
 import Map from "@/components/list-map"
 import Details from "@/components/list-details"
 import Filters from "@/components/list-filters"
+import { db } from "@/lib/db"
 
 const schemaSearchParams = z
   .object({
@@ -27,8 +27,9 @@ const schemaSearchParams = z
 export type ListSearchParams = z.infer<typeof schemaSearchParams>
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/")({
-  beforeLoad: ({ context }) => {
-    if (!context.queryClient.getQueryData(APP_SETTINGS_QUERY_KEY)) {
+  beforeLoad: async () => {
+    const hasDataSettings = await db.appSync.get("data")
+    if (!hasDataSettings) {
       toast.info(
         <div>
           <p className="font-bold">Une mise à jour est nécessaire</p>
@@ -46,10 +47,19 @@ export const Route = createFileRoute("/{-$locale}/_authenticated/")({
   },
   component: Home,
   validateSearch: schemaSearchParams.parse,
+  errorComponent: Home,
 })
 
 function Home() {
-  const filters = Route.useSearch()
+  const rawFilters = Route.useSearch()
+  const filters = { ...rawFilters }
+
+  if (rawFilters.type) {
+    filters.type = rawFilters.type.filter((item) =>
+      ["infrastructure", "intervention", "signage", "report"].includes(item)
+    )
+  }
+
   const elements = useStoredData(filters)
 
   return (

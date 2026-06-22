@@ -12,11 +12,11 @@ import { cn } from "@/lib/utils"
 import type { ViewStateChangeEvent } from "react-map-gl/maplibre"
 import type { LngLatBoundsLike, MapLibreEvent } from "maplibre-gl"
 import { useDataQuery } from "@/hook/useDataQuery"
-import { getBoundsFromPolygon, getPolygonFromBounds } from "@/lib/map"
+import { getPolygonFromBounds } from "@/lib/map"
 import { useQueryClient } from "@tanstack/react-query"
 import type { SettingsSchemaProps } from "@/schemas/settings"
-import { useAppSettings } from "@/hook/useAppSettings"
-import { toast } from "sonner"
+import { db } from "@/lib/db"
+import { useLiveQuery } from "dexie-react-hooks"
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/sync/data")({
   component: RouteComponent,
@@ -30,7 +30,8 @@ function RouteComponent() {
   const minZoom = settings?.settings?.maps.localOptions.minZoom ?? 10
   const attachedStructure = settings?.user.attachedStructure.id
 
-  const { data: appConfig, setData: setAppConfig } = useAppSettings()
+  const appSync = useLiveQuery(() => db.appSync.get("data"))
+
   const [currentZoom, setZoom] = React.useState<number>(0)
   const [queryParams, setParams] = React.useState<
     Record<string, string | number>
@@ -45,9 +46,7 @@ function RouteComponent() {
     defaultValues: {
       bbox: "",
       structure:
-        appConfig?.syncData.structure !== null && attachedStructure
-          ? "own"
-          : "all",
+        appSync?.structure !== null && attachedStructure ? "own" : "all",
     },
     validators: {
       onSubmit: z.object({
@@ -63,17 +62,7 @@ function RouteComponent() {
         params.structure = attachedStructure
       }
       setParams(params)
-      setAppConfig({
-        syncData: {
-          bounds: getBoundsFromPolygon(value.bbox) ?? null,
-          structure: params.structure ?? null,
-          lastSync: new Date().toISOString(),
-        },
-      })
       window.setTimeout(refetch, 1)
-      toast.success("Données embarquées dans l'application avec succès", {
-        position: "top-center",
-      })
       router.invalidate()
       navigate({ to: "/{-$locale}/sync" })
     },
@@ -81,13 +70,13 @@ function RouteComponent() {
 
   const handleMapInit = React.useCallback(
     (event: MapLibreEvent) => {
-      if (appConfig?.syncData?.bounds) {
-        event.target.fitBounds(appConfig.syncData.bounds as LngLatBoundsLike)
+      if (appSync?.bounds) {
+        event.target.fitBounds(appSync.bounds as LngLatBoundsLike)
       }
       setZoom(event.target.getZoom())
       form.setFieldValue("bbox", getPolygonFromBounds(event.target.getBounds()))
     },
-    [appConfig, form]
+    [appSync, form]
   )
 
   const handleMapChange = React.useCallback(

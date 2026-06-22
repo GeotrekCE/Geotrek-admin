@@ -1,96 +1,144 @@
-import { useAppSettings } from "@/hook/useAppSettings"
-import { useDataQuery, type StoredData } from "@/hook/useDataQuery"
-import { getPolygonFromBounds } from "@/lib/map"
-import * as React from "react"
-import { useReferencesQuery, type StoredReferences } from "./useReferencesQuery"
-import type { DataSchemaPropsMixed } from "@/schemas/data"
+import type {
+  DataSchemaPropsMixed,
+  InfrastructureDataSchemaProps,
+  InterventionDataSchemaProps,
+  ReportDataSchemaProps,
+  SignageDataSchemaProps,
+} from "@/schemas/data"
 import type { ListSearchParams } from "../routes/{-$locale}/_authenticated/index"
+import { useLiveQuery } from "dexie-react-hooks"
+import { db } from "@/lib/db"
+import type { EntityTable } from "dexie"
+import type {
+  InfrastructureReferencesSchemaProps,
+  InterventionReferencesSchemaProps,
+  ReportReferencesSchemaProps,
+  SignageReferencesSchemaProps,
+} from "@/schemas/references"
 
-function getElements(
-  elements: StoredData,
-  { references }: StoredReferences
-): DataSchemaPropsMixed[] {
-  const { common: _common, ...referencesMap } = references
-
-  return Object.entries(elements.data)
-    .map(([key, value]) =>
-      (value.data?.data || []).filter(Boolean).map((item) => {
-        const name = "name" in item ? item.name : undefined
-        const element = {
-          reference: key,
-          name:
-            name || key === "report"
-              ? `Signalement (id: ${item.id})`
-              : "Données sans nom",
-          pictogram: {
-            url: referencesMap[key as keyof typeof referencesMap]?.data
-              ?.pictogram.url,
-          },
-          ...item,
-        }
-        return element as DataSchemaPropsMixed
-      })
-    )
-    .flat()
-}
-
-export function useStoredData(filters: ListSearchParams) {
-  const { data } = useAppSettings()
-  const { q, type } = filters
-
-  const { bounds, structure } = data?.syncData || {}
-  const allReferences = useReferencesQuery()
-  const allData = useDataQuery({
-    bbox: bounds
-      ? getPolygonFromBounds(bounds as [number, number, number, number])
-      : undefined,
-    structure: structure ?? undefined,
-  })
-
-  let result = React.useMemo(
-    () => getElements(allData, allReferences),
-    [allData, allReferences]
+export function useStoredData({
+  q,
+  type,
+}: ListSearchParams): DataSchemaPropsMixed[] {
+  const references = useLiveQuery(() =>
+    db.references.bulkGet([
+      "intervention",
+      "signage",
+      "report",
+      "infrastructure",
+    ])
   )
-  if (allData === undefined) {
-    // Todo
-    return allData
-  }
+  const [intervention, signage, report, infrastructure] =
+    (references as
+      | [
+          InterventionReferencesSchemaProps,
+          SignageReferencesSchemaProps,
+          ReportReferencesSchemaProps,
+          InfrastructureReferencesSchemaProps,
+        ]
+      | undefined) || []
 
-  if (q) {
-    result = result.filter(
-      (item) =>
-        item.name?.toLowerCase().includes(q.toLowerCase()) ||
-        ("description" in item &&
-          item.description?.toLowerCase().includes(q.toLowerCase()))
+  const queries = useLiveQuery(() => {
+    const results = []
+    if (!type || type?.includes("signage")) {
+      results.push({ collection: db.signageData, reference: signage })
+    }
+    if (!type || type?.includes("intervention")) {
+      results.push({
+        collection: db.interventionData,
+        reference: intervention,
+      })
+    }
+    if (!type || type?.includes("infrastructure")) {
+      results.push({
+        collection: db.infraStructureData,
+        reference: infrastructure,
+      })
+    }
+    if (!type || type?.includes("report")) {
+      results.push({ collection: db.reportData, reference: report })
+    }
+    return Promise.all(
+      results.map(
+        async ({
+          collection,
+          reference,
+        }: {
+          collection: EntityTable<
+            | SignageDataSchemaProps
+            | InfrastructureDataSchemaProps
+            | InterventionDataSchemaProps
+            | ReportDataSchemaProps
+          >
+          reference?:
+            | InterventionReferencesSchemaProps
+            | SignageReferencesSchemaProps
+            | ReportReferencesSchemaProps
+            | InfrastructureReferencesSchemaProps
+        }) => {
+          if (collection.name === "reportData") {
+            return collection.toArray((data) =>
+              data.map((item) => ({
+                ...item,
+                name: `Signalement (id: ${item.id})`,
+                reference: collection.name.replace("Data", "").toLowerCase(),
+                pictogram: { url: reference?.pictogram.url },
+              }))
+            )
+          }
+          if (!q) {
+            return collection.toArray((data) =>
+              data.map((item) => ({
+                ...item,
+                reference: collection.name.replace("Data", "").toLowerCase(),
+                pictogram: { url: reference?.pictogram.url },
+              }))
+            )
+          }
+          return (
+            collection as EntityTable<
+              | SignageDataSchemaProps
+              | InfrastructureDataSchemaProps
+              | InterventionDataSchemaProps
+            >
+          )
+            .filter(
+              (data) =>
+                data.name.toLowerCase().includes(q.toLowerCase()) ||
+                data.description.toLowerCase().includes(q.toLowerCase())
+            )
+            .toArray((data) =>
+              data.map((item) => ({
+                ...item,
+                reference: collection.name.replace("Data", "").toLowerCase(),
+                pictogram: { url: reference?.pictogram.url },
+              }))
+            )
+        }
+      )
     )
+  }, [references, type, q])
+
+  if (!queries) {
+    return []
   }
 
-  if (type && type.length > 0) {
-    result = result.filter((item) =>
-      type.includes(item.reference as (typeof type)[number])
-    )
-  }
-
-  // Sort by UPDATE_DATE DESC
-  return result.sort((a, b) => b.date_update.localeCompare(a.date_update))
+  return (queries as unknown as DataSchemaPropsMixed[])
+    .flat()
+    .sort((a, b) => b.date_update.localeCompare(a.date_update))
 }
 
 export function useStoredDataElement(type: string, id: number) {
-  const { data } = useAppSettings()
-
-  const { bounds, structure } = data?.syncData || {}
-  const allReferences = useReferencesQuery()
-  const allData = useDataQuery({
-    bbox: bounds
-      ? getPolygonFromBounds(bounds as [number, number, number, number])
-      : undefined,
-    structure: structure ?? undefined,
-  })
-
-  const result = React.useMemo(() => {
-    const elements = getElements(allData, allReferences)
-    return elements.find((item) => item.reference === type && item.id === id)
-  }, [allData, allReferences, type, id])
-
-  return result
+  return useLiveQuery(async () => {
+    if (type === "signage") {
+      return db.signageData.get({ id })
+    }
+    if (type === "intervention") {
+      return db.interventionData.get({ id })
+    }
+    if (type === "infrastructure") {
+      return db.infraStructureData.get({ id })
+    }
+    return db.reportData.get({ id })
+  }, [type, id])
 }

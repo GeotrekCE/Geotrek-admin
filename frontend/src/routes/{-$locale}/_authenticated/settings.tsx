@@ -1,14 +1,14 @@
+import { useLiveQuery } from "dexie-react-hooks"
+import { createFileRoute, useNavigate } from "@tanstack/react-router"
+import { setLocale, getLocale } from "@/paraglide/runtime"
+import { m } from "@/paraglide/messages"
+import { useAuth } from "@/lib/auth"
+import { db } from "@/lib/db"
 import Header from "@/components/header"
 import { useTheme } from "@/components/theme-provider"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
-import { useSettingsQuery } from "@/hook/useSettingsQuery"
-import { setLocale, getLocale } from "@/paraglide/runtime"
-import { useAuth } from "@/lib/auth"
-
-import { createFileRoute, useNavigate } from "@tanstack/react-router"
-import { m } from "@/paraglide/messages"
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/settings")({
   component: RouteComponent,
@@ -17,11 +17,11 @@ export const Route = createFileRoute("/{-$locale}/_authenticated/settings")({
 function RouteComponent() {
   const { logout } = useAuth()
   const navigate = useNavigate()
-  const { data } = useSettingsQuery()
+  const settings = useLiveQuery(() => db.settings.get("settings"))
   const { theme, setTheme } = useTheme()
   const name =
-    `${data?.user?.firstName || ""} ${data?.user?.lastName || ""}`.trim() ||
-    data?.user?.userName
+    `${settings?.user?.firstName || ""} ${settings?.user?.lastName || ""}`.trim() ||
+    settings?.user?.userName
   return (
     <div>
       <Header title={m["settings.title"]()} />
@@ -32,7 +32,8 @@ function RouteComponent() {
         <p className="mt-2 text-sm">
           {m["settings.structure"]()}{" "}
           <span className="text-accent-foreground">
-            {data?.user?.attachedStructure?.label || m["settings.undefined"]()}
+            {settings?.user?.attachedStructure?.label ||
+              m["settings.undefined"]()}
           </span>
         </p>
         <Button

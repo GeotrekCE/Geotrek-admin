@@ -1,11 +1,12 @@
 import * as z from "zod"
 
 export type SettingsSchemaProps = z.infer<typeof settingsSchema>
-export type AppConfigSchemaProps = z.infer<typeof appConfig>
+export type AppSyncSchemaProps = z.infer<typeof appSync>
 
 export const settingsSchema = z.object({
   settings: z.object({
     intervalSyncInHours: z.object({
+      data: z.number().int().positive(),
       references: z.number().int().positive(),
     }),
     maps: z.object({
@@ -70,17 +71,9 @@ export const settingsSchema = z.object({
   }),
 })
 
-export const appConfig = z.object({
-  syncReferences: z.object({
-    lastSync: z.string(),
-  }),
-  syncData: z.object({
-    bounds: z.array(z.number()).length(4),
-    structure: z.union([z.null(), z.number()]),
-    lastSync: z.string(),
-  }),
-  list: z.object({
-    snapPointIndex: z.number(),
-    scrollPosition: z.union([z.number(), z.null()]),
-  }),
+export const appSync = z.object({
+  id: z.string(),
+  lastSync: z.string(),
+  bounds: z.array(z.number()).length(4).optional(),
+  structure: z.union([z.null(), z.number()]).optional(),
 })

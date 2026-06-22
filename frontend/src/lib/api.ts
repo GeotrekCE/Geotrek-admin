@@ -57,14 +57,10 @@ export async function queryFn<T extends z.ZodObject | z.ZodArray>(
   if (Array.isArray(schemaData.data)) {
     return {
       data: schemaData.data,
-      lastSync: new Date().toISOString(),
     }
   }
 
-  return {
-    ...schemaData.data,
-    lastSync: new Date().toISOString(),
-  }
+  return schemaData.data
 }
 
 export async function queryFnWithAuth<T extends z.ZodObject | z.ZodArray>(

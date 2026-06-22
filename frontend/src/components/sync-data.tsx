@@ -3,19 +3,21 @@ import Map from "@/components/map"
 import { getUpdatedStatus } from "@/lib/date"
 import { useIntervalSync } from "@/hook/useSettingsQuery"
 import { Link } from "@tanstack/react-router"
-import { useAppSettings } from "@/hook/useAppSettings"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useDataQuery } from "@/hook/useDataQuery"
-import { toast } from "sonner"
 import { cn } from "@/lib/utils"
 import { getPolygonFromBounds } from "@/lib/map"
 import type { LngLatBoundsLike } from "maplibre-gl"
+import { db } from "@/lib/db"
+import { useLiveQuery } from "dexie-react-hooks"
 
 export default function SyncData() {
-  const { data: updateLimitation } = useIntervalSync()
-  const { data, setData } = useAppSettings()
+  const updateLimitation = useIntervalSync("data")
 
-  const { bounds, structure, lastSync } = data?.syncData || {}
+  const appSync = useLiveQuery(() => db.appSync.get("data"), [])
+
+  const { bounds, structure, lastSync } = appSync || {}
+
   const { refetch } = useDataQuery({
     bbox: bounds
       ? getPolygonFromBounds(bounds as [number, number, number, number])
@@ -65,22 +67,7 @@ export default function SyncData() {
             <Button
               className="w-full"
               variant="outline"
-              onClick={() => {
-                setData({
-                  syncData: {
-                    bounds,
-                    structure: structure || null,
-                    lastSync: new Date().toISOString(),
-                  },
-                })
-                window.setTimeout(refetch, 1)
-                toast.success(
-                  "Données embarquées dans l'application avec succès",
-                  {
-                    position: "top-center",
-                  }
-                )
-              }}
+              onClick={refetch}
               type="button"
             >
               Re-télécharger les données

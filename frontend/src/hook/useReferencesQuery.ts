@@ -13,7 +13,9 @@ import {
   type ReportReferencesSchemaProps,
   type SignageReferencesSchemaProps,
 } from "@/schemas/references"
-import { useSettingsQuery } from "@/hook/useSettingsQuery"
+import { usePermission } from "@/hook/useSettingsQuery"
+import { db } from "@/lib/db"
+import { toast } from "sonner"
 
 export type StoredReferences = {
   references: {
@@ -35,83 +37,178 @@ export const INTERVENTION_REFERENCES_QUERY_KEY = ["references", "intervention"]
 export const REPORT_REFERENCES_QUERY_KEY = ["references", "report"]
 
 export function useReferencesQuery() {
-  const settings = useSettingsQuery()
-  const {
-    signage = {},
-    infrastructure = {},
-    intervention = {},
-    report = {},
-  } = settings?.data?.user.permissions || {}
-  const results = useQueries({
+  const { signage, infrastructure, intervention, report } = usePermission()
+  const references = useQueries({
     queries: [
       {
         queryKey: COMMON_REFERENCES_QUERY_KEY,
-        queryFn: () =>
-          infrastructure.read ||
-          signage.read ||
-          intervention.read ||
-          report.read
-            ? queryFnWithAuth("/common/references/", {
-                schema: commonReferencesSchema,
-              })
-            : () => null,
+        queryFn: () => {
+          if (
+            !infrastructure.read &&
+            !signage.read &&
+            !intervention.read &&
+            !report.read
+          ) {
+            return null
+          }
+          const promise = queryFnWithAuth("/common/references/", {
+            schema: commonReferencesSchema,
+          })
+          toast.promise(promise, {
+            id: "sync-ref",
+            loading: "Chargement",
+            success: (data) => {
+              console.log(data, "data")
+              db.references.put({ id: "common", ...data })
+              return "Références enregistrées"
+            },
+            error: (error) => {
+              console.log(error)
+              return "Erreur lors de l'ajout des références communes"
+            },
+            position: "top-center",
+          })
+          return promise
+        },
         enabled: false,
       },
       {
         queryKey: INFRASTRUCTURE_REFERENCES_QUERY_KEY,
-        queryFn: () =>
-          infrastructure.read
-            ? queryFnWithAuth("/infrastructure/references/", {
-                schema: infrastructureReferencesSchema,
+        queryFn: () => {
+          if (!infrastructure.read) {
+            return null
+          }
+          const promise = queryFnWithAuth("/infrastructure/references/", {
+            schema: infrastructureReferencesSchema,
+          })
+          toast.promise(promise, {
+            id: "sync-ref",
+            loading: "Chargement",
+            success: (data) => {
+              console.log(data, "data")
+              db.references.put({ id: "infrastructure", ...data })
+              db.appSync.put({
+                id: "references",
+                lastSync: new Date().toISOString(),
               })
-            : () => null,
+              return "Références enregistrées"
+            },
+            error: (error) => {
+              console.log(error)
+              return "Erreur lors de l'ajout des références aménagements"
+            },
+            position: "top-center",
+          })
+          return promise
+        },
         enabled: false,
       },
       {
         queryKey: SIGNAGE_REFERENCES_QUERY_KEY,
-        queryFn: () =>
-          signage.read
-            ? queryFnWithAuth("/signage/references/", {
-                schema: signageReferencesSchema,
+        queryFn: () => {
+          if (!signage.read) {
+            return null
+          }
+          const promise = queryFnWithAuth("/signage/references/", {
+            schema: signageReferencesSchema,
+          })
+          toast.promise(promise, {
+            id: "sync-ref",
+            loading: "Chargement",
+            success: (data) => {
+              console.log(data, "data")
+              db.references.put({ id: "signage", ...data })
+              db.appSync.put({
+                id: "references",
+                lastSync: new Date().toISOString(),
               })
-            : () => null,
+              return "Références enregistrées"
+            },
+            error: (error) => {
+              console.log(error)
+              return "Erreur lors de l'ajout des références signalétiques"
+            },
+            position: "top-center",
+          })
+          return promise
+        },
         enabled: false,
       },
       {
         queryKey: INTERVENTION_REFERENCES_QUERY_KEY,
-        queryFn: () =>
-          intervention.read
-            ? queryFnWithAuth("/intervention/references/", {
-                schema: interventionReferencesSchema,
+        queryFn: () => {
+          if (!intervention.read) {
+            return null
+          }
+          const promise = queryFnWithAuth("/intervention/references/", {
+            schema: interventionReferencesSchema,
+          })
+          toast.promise(promise, {
+            id: "sync-ref",
+            loading: "Chargement",
+            success: (data) => {
+              console.log(data, "data")
+              db.references.put({ id: "intervention", ...data })
+              db.appSync.put({
+                id: "references",
+                lastSync: new Date().toISOString(),
               })
-            : () => null,
+              return "Références enregistrées"
+            },
+            error: (error) => {
+              console.log(error, "error")
+              return "Erreur lors de l'ajout des références signalétiques"
+            },
+            position: "top-center",
+          })
+          return promise
+        },
         enabled: false,
       },
       {
         queryKey: REPORT_REFERENCES_QUERY_KEY,
-        queryFn: () =>
-          report.read
-            ? queryFnWithAuth("/report/references/", {
-                schema: reportReferencesSchema,
+        queryFn: () => {
+          if (!report.read) {
+            return null
+          }
+          const promise = queryFnWithAuth("/report/references/", {
+            schema: reportReferencesSchema,
+          })
+          toast.promise(promise, {
+            id: "sync-ref",
+            loading: "Chargement",
+            success: (data) => {
+              console.log(data, "data")
+              db.references.put({
+                id: "report",
+                ...data,
               })
-            : () => null,
+              db.appSync.put({
+                id: "references",
+                lastSync: new Date().toISOString(),
+              })
+              return "Références enregistrées"
+            },
+            error: (error) => {
+              console.log(error)
+              return "Erreur lors de l'ajout des références signalements"
+            },
+            position: "top-center",
+          })
+
+          return promise
+        },
         enabled: false,
       },
     ],
   })
 
   const refetch = React.useCallback(() => {
-    results.forEach((result) => result?.refetch())
-  }, [results])
+    references.forEach((result) => result?.refetch())
+  }, [references])
 
   return {
-    references: {
-      common: results[0],
-      infrastructure: results[1],
-      signage: results[2],
-      intervention: results[3],
-      report: results[4],
-    },
+    references,
     refetch,
   }
 }

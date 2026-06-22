@@ -1,6 +1,5 @@
 import { toast } from "sonner"
 import { createFileRoute, Link, redirect } from "@tanstack/react-router"
-import { APP_SETTINGS_QUERY_KEY } from "@/hook/useAppSettings"
 import {
   Item,
   ItemActions,
@@ -10,11 +9,19 @@ import {
   ItemTitle,
 } from "@/components/ui/item"
 import { ChevronRight } from "lucide-react"
-import { useReferencesQuery } from "@/hook/useReferencesQuery"
+import { db } from "@/lib/db"
+import { useLiveQuery } from "dexie-react-hooks"
+import type {
+  InfrastructureReferencesSchemaProps,
+  InterventionReferencesSchemaProps,
+  ReportReferencesSchemaProps,
+  SignageReferencesSchemaProps,
+} from "@/schemas/references"
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/create")({
-  beforeLoad: ({ context }) => {
-    if (!context.queryClient.getQueryData(APP_SETTINGS_QUERY_KEY)) {
+  beforeLoad: async () => {
+    const hasDataSettings = await db.appSync.get("data")
+    if (!hasDataSettings) {
       toast.info(
         <div>
           <p className="font-bold">Une mise à jour est nécessaire</p>
@@ -34,33 +41,52 @@ export const Route = createFileRoute("/{-$locale}/_authenticated/create")({
 })
 
 function RouteComponent() {
-  const { references } = useReferencesQuery()
-  const elements = [
-    {
-      label: "Intervention",
-      type: "intervention",
-      description: "Ceci est un exemple d'élément à créer.",
-      pictogram: references.intervention.data?.pictogram,
-    },
-    {
-      label: "Signalétique",
-      type: "signage",
-      description: "Ceci est un exemple d'élément à créer.",
-      pictogram: references.signage.data?.pictogram,
-    },
-    {
-      label: "Signalement",
-      type: "report",
-      description: "Ceci est un exemple d'élément à créer.",
-      pictogram: references.report.data?.pictogram,
-    },
-    {
-      label: "Aménagement",
-      type: "infrastructure",
-      description: "Ceci est un exemple d'élément à créer.",
-      pictogram: references.infrastructure.data?.pictogram,
-    },
-  ]
+  const references = useLiveQuery(() =>
+    db.references.bulkGet([
+      "intervention",
+      "signage",
+      "report",
+      "infrastructure",
+    ])
+  )
+  const [intervention, signage, report, infrastructure] =
+    (references as
+      | [
+          InterventionReferencesSchemaProps,
+          SignageReferencesSchemaProps,
+          ReportReferencesSchemaProps,
+          InfrastructureReferencesSchemaProps,
+        ]
+      | undefined) || []
+
+  const elements = references?.length
+    ? [
+        {
+          label: "Intervention",
+          type: "intervention",
+          description: "Ceci est un exemple d'élément à créer.",
+          pictogram: intervention?.pictogram,
+        },
+        {
+          label: "Signalétique",
+          type: "signage",
+          description: "Ceci est un exemple d'élément à créer.",
+          pictogram: signage?.pictogram,
+        },
+        {
+          label: "Signalement",
+          type: "report",
+          description: "Ceci est un exemple d'élément à créer.",
+          pictogram: report?.pictogram,
+        },
+        {
+          label: "Aménagement",
+          type: "infrastructure",
+          description: "Ceci est un exemple d'élément à créer.",
+          pictogram: infrastructure?.pictogram,
+        },
+      ]
+    : []
   return (
     <div className="flex grow flex-col p-4">
       <h1 className="font-bold text-accent-foreground">Nouvel élément</h1>
@@ -77,9 +103,11 @@ function RouteComponent() {
                     type: item.type,
                   }}
                 >
-                  <ItemMedia>
-                    <img loading="lazy" src={item.pictogram.url} alt="" />
-                  </ItemMedia>
+                  {item.pictogram && (
+                    <ItemMedia>
+                      <img loading="lazy" src={item.pictogram.url} alt="" />
+                    </ItemMedia>
+                  )}
                   <ItemContent>
                     <ItemTitle className="text-accent-foreground">
                       {item.label}

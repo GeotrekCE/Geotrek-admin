@@ -86,6 +86,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const logout = (isExpired?: boolean) => {
     if (isExpired) {
       toast.info(m["settings.user.logout-fail"](), {
+        id: "login",
         position: "top-center",
         dismissible: false,
         duration: Infinity,
@@ -100,6 +101,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
     } else {
       toast.success(m["settings.user.logout-success"](), {
+        id: "login",
         position: "top-center",
       })
     }

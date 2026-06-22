@@ -28,7 +28,6 @@ export const infrastructureDataSchema = z.object({
     type: z.string().min(1),
     coordinates: z.array(z.number()),
   }),
-  published: z.boolean(),
   name: z.string().min(1, "Le nom est obligatoire"),
   description: z.string(),
   implantation_year: z.union([z.number(), z.null()]),
@@ -70,7 +69,6 @@ export const signageDataSchema = z.object({
 
   date_insert: z.string(),
   date_update: z.string(),
-  published: z.boolean(),
   name: z.string().min(1, "Le nom est obligatoire"),
   description: z.string(),
   implantation_year: z.union([z.number(), z.null()]),
@@ -136,14 +134,13 @@ export const signageDataSchema = z.object({
           id: z.number().int().positive(),
           number: z.number().int().positive(),
           text: z.string().min(1),
-          distance: z.string().min(1),
-          time: z.string().min(1),
+          distance: z.union([z.null(), z.string().min(1)]),
+          time: z.union([z.null(), z.string().min(1)]),
         })
       ),
     })
   ),
 })
-//)
 
 export const interventionDataSchema = z.object({
   id: z.number().int().positive(),

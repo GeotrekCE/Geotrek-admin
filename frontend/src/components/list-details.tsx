@@ -1,5 +1,10 @@
 import { Link, useNavigate } from "@tanstack/react-router"
+import { useLiveQuery } from "dexie-react-hooks"
 import { useList } from "@/lib/list"
+import { buttonVariants } from "@/components/ui/button"
+import { useStoredDataElement } from "@/hook/useStoredData"
+import { getLocale } from "@/paraglide/runtime"
+import { db } from "@/lib/db"
 import {
   Sheet,
   SheetContent,
@@ -8,18 +13,22 @@ import {
   SheetHeader,
   SheetTitle,
 } from "@/components/ui/sheet"
-import { buttonVariants } from "@/components/ui/button"
-import { useStoredDataElement } from "@/hook/useStoredData"
-import { getLocale } from "@/paraglide/runtime"
-import { Badge } from "./ui/badge"
+import { Badge } from "@/components/ui/badge"
 
 function ListDetailContent({
   element,
 }: {
   element: { id: number; reference: string }
 }) {
-  const details = useStoredDataElement(element.reference, element.id)
-  if (!details) {
+  const detail = useStoredDataElement(element.reference, element.id)
+  const reference = useLiveQuery(
+    () => db.references.get(element.reference),
+    [element.reference]
+  )
+
+  console.log(detail, reference)
+
+  if (!detail) {
     return (
       <SheetContent side="bottom" className="pb-22">
         <SheetHeader>
@@ -31,22 +40,25 @@ function ListDetailContent({
       </SheetContent>
     )
   }
+
+  const name = "name" in detail ? detail.name : `Signalement (id: ${detail.id})`
+
   return (
     <SheetContent side="bottom" className="pb-22">
       <SheetHeader className="pb-0">
         <SheetTitle className="flex items-center gap-2" render={<div />}>
-          {details.pictogram.url && (
-            <img loading="lazy" src={details.pictogram.url} alt="" />
+          {reference && "pictogram" in reference && reference.pictogram.url && (
+            <img loading="lazy" src={reference.pictogram.url} alt="" />
           )}
           <div>
-            <h2 className="text-xl text-accent-foreground">{details.name}</h2>
+            <h2 className="text-xl text-accent-foreground">{name}</h2>
             <p>
-              <span className="text-primary">{details.reference}</span>
-              {"type" in details && ` - ${details.type.name}`}
+              <span className="text-primary">{element.reference}</span>
+              {"type" in detail && ` - ${detail.type.name}`}
             </p>
-            {"conditions" in details && details.conditions.length > 0 && (
+            {"conditions" in detail && detail.conditions.length > 0 && (
               <p className="mt-1 flex flex-wrap gap-1">
-                {details.conditions.map((c) => (
+                {detail.conditions.map((c) => (
                   <Badge key={c.id} variant="outline">
                     {c.name}
                   </Badge>
@@ -56,15 +68,15 @@ function ListDetailContent({
             <div className="mt-2 text-xs">
               <p>
                 Modifié le{" "}
-                {new Date(details.date_update).toLocaleDateString(getLocale())}
+                {new Date(detail.date_update).toLocaleDateString(getLocale())}
               </p>
             </div>
           </div>
         </SheetTitle>
-        {"description" in details && details.description && (
+        {"description" in detail && detail.description && (
           <SheetDescription
             className="mt-4 line-clamp-3"
-            dangerouslySetInnerHTML={{ __html: details.description }}
+            dangerouslySetInnerHTML={{ __html: detail.description }}
           />
         )}
       </SheetHeader>

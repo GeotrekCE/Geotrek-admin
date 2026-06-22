@@ -29,7 +29,7 @@ export function ListProvider({
   const { data, setData } = useAppSettings()
 
   const [snapPoint, _setSnapPoint] = React.useState<SnapPoint>(
-    SNAP_POINTS[data?.list.snapPointIndex || 0]
+    SNAP_POINTS[data.snapPointIndex || 0]
   )
 
   return (
@@ -46,10 +46,8 @@ export function ListProvider({
             typeof value === "function" ? value(snapPoint) : value
           _setSnapPoint(snapState)
           setData({
-            list: {
-              scrollPosition: null,
-              snapPointIndex: SNAP_POINTS.indexOf(snapState),
-            },
+            scrollPosition: null, //TODO
+            snapPointIndex: SNAP_POINTS.indexOf(snapState),
           })
         },
       }}
