@@ -1,6 +1,7 @@
 import * as React from "react"
 import { useNavigate } from "@tanstack/react-router"
 import { useForm } from "@tanstack/react-form"
+import { useDebouncedCallback } from "use-debounce"
 import Header from "@/components/header"
 import { Button } from "@/components/ui/button"
 import {
@@ -28,6 +29,14 @@ export default function ListFilters({
   const navigate = useNavigate()
   const [open, setOpen] = React.useState(false)
 
+  const debounced = useDebouncedCallback((value) => {
+    navigate({
+      to: ".",
+      search: { ...filters, q: value || undefined },
+      replace: true,
+    })
+  }, 300)
+
   const form = useForm({
     defaultValues: {
       type: filters.type as ListSearchParams["type"],
@@ -52,14 +61,7 @@ export default function ListFilters({
           defaultValue={filters.q}
           type="search"
           placeholder="Rechercher"
-          onChange={(event) => {
-            const nextValue = event.target.value
-            navigate({
-              to: ".",
-              search: { ...filters, q: nextValue.toString() || undefined },
-              replace: true,
-            })
-          }}
+          onChange={(event) => debounced(event.target.value.toString())}
         />
         <InputGroupAddon>
           <Search
