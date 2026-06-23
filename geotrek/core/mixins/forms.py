@@ -122,9 +122,7 @@ class LinearTopologyFormMixin(ModelForm):
         topology_changed = data.get("topology_changed")
         if geom_changed and topology_changed:
             raise ValidationError(
-                _(
-                    "The route can only be drawn on or off the path network, not both."
-                )
+                _("The route can only be drawn on or off the path network, not both.")
             )
         if topology_changed and "geom" in self.errors:
             del self.errors["geom"]
