@@ -78,9 +78,7 @@ class LinearTopologyFormMixin(ModelForm):
       - the user's permissions
     """
 
-    topology = TopologyField(
-        required=False, label=_("Geometry/Topology"), widget=LineTopologyWidget()
-    )
+    topology = TopologyField(required=False, label="", widget=LineTopologyWidget())
     topology_changed = BooleanField(required=False, widget=HiddenInput())
     geom = LineStringField(
         required=False, widget=LinearTopologyMapWidget(attrs={"target_map": "topology"})
@@ -120,10 +118,17 @@ class LinearTopologyFormMixin(ModelForm):
         data = super().clean()
         geom_changed = data.get("geom_changed")
         topology_changed = data.get("topology_changed")
+
         if geom_changed and topology_changed:
             raise ValidationError(
-                _("The route can only be drawn on or off the path network, not both.")
+                _(
+                    "The geometry can only be drawn on or off the path network, not both."
+                )
             )
+        # At creation, geometry and topology cannot both be None:
+        if self.instance.pk is None and not geom_changed and not topology_changed:
+            raise ValidationError(_("A geometry must be provided."))
+
         if topology_changed and "geom" in self.errors:
             del self.errors["geom"]
             data["geom"] = fromstr("POINT (0 0)")

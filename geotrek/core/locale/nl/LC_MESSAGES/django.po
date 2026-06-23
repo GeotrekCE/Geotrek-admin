@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-23 08:26+0000\n"
+"POT-Creation-Date: 2026-06-23 09:09+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/core/nl/>\n"
@@ -70,10 +70,10 @@ msgstr ""
 msgid "path"
 msgstr ""
 
-msgid "Geometry/Topology"
+msgid "The geometry can only be drawn on or off the path network, not both."
 msgstr ""
 
-msgid "The route can only be drawn on or off the path network, not both."
+msgid "A geometry must be provided."
 msgstr ""
 
 #, python-format
