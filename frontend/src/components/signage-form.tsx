@@ -9,6 +9,7 @@ import { db } from "@/lib/db"
 import { FieldGroup } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
+import { useNavigate } from "@tanstack/react-router"
 
 export default function SignageForm({
   defaultValues,
@@ -21,6 +22,8 @@ export default function SignageForm({
   pictogram?: { url?: string }
   references: [SignageReferencesSchemaProps, CommonReferencesSchemaProps]
 }) {
+  const navigate = useNavigate()
+
   const [
     { signagetype, signagecondition, sealing },
     { structure, accessmean, organism },
@@ -44,22 +47,29 @@ export default function SignageForm({
       onBlur: validators,
       onSubmit: validators,
     },
-    onSubmit: ({ value }) => {
-      if (isEdit) {
-        db.signageData.put({
-          ...value,
-          id,
-          date_insert,
-          date_update: new Date().toISOString(),
-        })
-      } else {
-        // @ts-expect-error "id" is auto-incremented in indexedDB
-        db.signageData.add({
-          ...value,
-          date_insert: new Date().toISOString(),
-          date_update: new Date().toISOString(),
-        })
-      }
+    onSubmit: async ({ value }) => {
+      const nextId = isEdit
+        ? await db.signageData.put({
+            ...value,
+            id,
+            date_insert,
+            date_update: new Date().toISOString(),
+          })
+        : // @ts-expect-error "id" is auto-incremented in indexedDB
+          await db.signageData.add({
+            ...value,
+            date_insert: new Date().toISOString(),
+            date_update: new Date().toISOString(),
+          })
+
+      navigate({
+        to: "/{-$locale}/data/$type/$id",
+        params: {
+          type: "signage",
+          id: nextId,
+        },
+      })
+
       toast.success(
         isEdit
           ? `La signalétique "${value.name}" a bien été modifiée`
