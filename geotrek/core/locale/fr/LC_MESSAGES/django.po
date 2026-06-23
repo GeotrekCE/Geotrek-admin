@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-12 07:37+0000\n"
+"POT-Creation-Date: 2026-06-23 08:26+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
@@ -69,6 +69,12 @@ msgstr "Labellisations"
 
 msgid "path"
 msgstr "tronçon"
+
+msgid "Geometry/Topology"
+msgstr "Géométrie/Topologie"
+
+msgid "The route can only be drawn on or off the path network, not both."
+msgstr "Le tracé ne peut être dessiné que sur ou hors réseau de tronçons, pas les deux."
 
 #, python-format
 msgid "Invalid geometry type: should be 'Point', not '%(geom_type)s'"
@@ -270,6 +276,24 @@ msgstr "Ajouter un sentier"
 msgid "%(obj)s has changed state to draft. "
 msgstr "%(obj)s a été mis en brouillon. "
 
+msgid "Add end point"
+msgstr "Ajouter un point d'arrivée"
+
+msgid "Add intermediate point"
+msgstr "Ajouter un point intermédiaire"
+
+msgid "Delete point"
+msgstr "Supprimer le point"
+
+msgid "Round trip"
+msgstr "Boucle"
+
+msgid "One way"
+msgstr "Aller simple"
+
+msgid "Objects"
+msgstr "Objets"
+
 #, python-format
 msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
 msgstr "Voulez-vous réellement supprimer <strong>%(object)s</strong> ?"
@@ -328,24 +352,6 @@ msgstr "Le marqueur n'a pas été déposé sur un tronçon."
 
 msgid "No routing found for this marker. Please move or delete it."
 msgstr "Aucun routage n'a été trouvé pour ce marqueur. Veuillez le déplacer ou le supprimer."
-
-msgid "Add point"
-msgstr "Ajouter un point"
-
-msgid "Add intermediate point"
-msgstr "Ajouter un point intermédiaire"
-
-msgid "Delete point"
-msgstr "Supprimer le point"
-
-msgid "Round trip"
-msgstr "Boucle"
-
-msgid "One way"
-msgstr "Aller simple"
-
-msgid "Objects"
-msgstr "Objets"
 
 msgid "No certification"
 msgstr "Aucune labellisation"
