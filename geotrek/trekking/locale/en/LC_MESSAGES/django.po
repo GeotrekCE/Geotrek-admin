@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-21 13:17+0000\n"
+"POT-Creation-Date: 2026-06-23 08:20+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -494,9 +494,6 @@ msgstr ""
 msgid "KML"
 msgstr ""
 
-msgid "Edit off the path network"
-msgstr ""
-
 msgid "Itinerancy"
 msgstr ""
 
@@ -507,24 +504,6 @@ msgid "Parent of:"
 msgstr ""
 
 msgid "Map"
-msgstr ""
-
-msgid "Add a point of reference"
-msgstr ""
-
-msgid "Move points of reference"
-msgstr ""
-
-msgid "Delete a point of reference"
-msgstr ""
-
-msgid "Set the parking location"
-msgstr ""
-
-msgid "Move the parking location"
-msgstr ""
-
-msgid "Delete the parking location"
 msgstr ""
 
 msgid "Add relation"
