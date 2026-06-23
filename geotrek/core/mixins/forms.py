@@ -78,9 +78,9 @@ class LinearTopologyFormMixin(ModelForm):
           - the user's permissions
     """
 
-    topology = TopologyField(label=_("Geometry/Topology"), widget=LineTopologyWidget())
+    topology = TopologyField(required=False, label=_("Geometry/Topology"), widget=LineTopologyWidget())
     topology_changed = BooleanField(required=False, widget=HiddenInput())
-    geom = LineStringField(widget=LinearTopologyMapWidget(attrs={"target_map": "topology"}))
+    geom = LineStringField(required=False, widget=LinearTopologyMapWidget(attrs={"target_map": "topology"}))
     geom_changed = BooleanField(required=False, widget=HiddenInput())
     geomfields = ["topology", "geom"]
 
@@ -113,7 +113,6 @@ class LinearTopologyFormMixin(ModelForm):
     def clean(self, *args, **kwargs):
         data = super().clean()
         geom_changed = data.get('geom_changed')
-
         topology_changed = data.get('topology_changed')
         if geom_changed and topology_changed:
             raise ValidationError(_("Either the geometry (off the path network) or the topology (on the path network) can be modified, not both."))
@@ -122,6 +121,8 @@ class LinearTopologyFormMixin(ModelForm):
             data['geom'] = fromstr("POINT (0 0)")
         if geom_changed and "topology" in self.errors:
             del self.errors["topology"]
+        if not geom_changed:
+            data.pop('geom')
         return data
 
     def save(self, *args, **kwargs):
