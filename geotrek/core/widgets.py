@@ -117,7 +117,6 @@ class PointLineTopologyWidget(BaseTopologyWidget):
 
 
 class LinearTopologyMapWidget(MapWidget):
-
     def __init__(self, attrs=None, geom_type=None):
         attrs = attrs or {}
         self.modifiable = attrs.pop("modifiable", True)
@@ -127,5 +126,3 @@ class LinearTopologyMapWidget(MapWidget):
     def media(self):
         media = super().media
         return media + Media(js=["core/mapwidget_set_geom_changed.js"])
-
-

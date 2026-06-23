@@ -247,7 +247,8 @@ class Path(
         return (
             qs.exclude(visible=False)
             .annotate(distance=Distance("geom", point))
-            .order_by("distance").first()
+            .order_by("distance")
+            .first()
         )
 
     @classmethod
@@ -857,8 +858,8 @@ class Topology(
                 raise Exception(msg)
             for path_id in paths:
                 if (
-                        not isinstance(path_id, int)
-                        or Path.objects.filter(pk=path_id).first() is None
+                    not isinstance(path_id, int)
+                    or Path.objects.filter(pk=path_id).first() is None
                 ):
                     msg = "Path arrays should contain valid path identifiers"
                     raise Exception(msg)
@@ -867,7 +868,12 @@ class Topology(
                 msg = "Each subtopology should contain a valid 'positions' object"
                 raise Exception(msg)
             for index, (key, value) in enumerate(positions.items()):
-                if str(index) != key or value is None or type(value) is not list or len(value) != 2:
+                if (
+                    str(index) != key
+                    or value is None
+                    or type(value) is not list
+                    or len(value) != 2
+                ):
                     msg = "'positions' objects should contain arrays associated to a correct key and containing two elements"
                     raise Exception(msg)
                 for fraction in value:

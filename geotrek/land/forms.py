@@ -1,3 +1,5 @@
+from ..common.forms import CommonForm
+from ..core.mixins.forms import LinearTopologyFormMixin
 from .models import (
     CirculationEdge,
     CompetenceEdge,
@@ -6,9 +8,6 @@ from .models import (
     SignageManagementEdge,
     WorkManagementEdge,
 )
-from ..common.forms import CommonForm
-
-from ..core.mixins.forms import LinearTopologyFormMixin
 
 
 class PhysicalEdgeForm(LinearTopologyFormMixin, CommonForm):
@@ -20,13 +19,22 @@ class PhysicalEdgeForm(LinearTopologyFormMixin, CommonForm):
 class LandEdgeForm(LinearTopologyFormMixin, CommonForm):
     class Meta(LinearTopologyFormMixin.Meta):
         model = LandEdge
-        fields = [*LinearTopologyFormMixin.Meta.fields, "land_type", "owner", "agreement"]
+        fields = [
+            *LinearTopologyFormMixin.Meta.fields,
+            "land_type",
+            "owner",
+            "agreement",
+        ]
 
 
 class CirculationEdgeForm(LinearTopologyFormMixin, CommonForm):
     class Meta(LinearTopologyFormMixin.Meta):
         model = CirculationEdge
-        fields = [*LinearTopologyFormMixin.Meta.fields, "circulation_type", "authorization_type"]
+        fields = [
+            *LinearTopologyFormMixin.Meta.fields,
+            "circulation_type",
+            "authorization_type",
+        ]
 
 
 class CompetenceEdgeForm(LinearTopologyFormMixin, CommonForm):

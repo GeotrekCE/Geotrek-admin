@@ -402,6 +402,7 @@ class POIForm(PointTopologyFormMixin):
             "review",
         ]
 
+
 class ServiceForm(PointTopologyFormMixin):
     class Meta(PointTopologyFormMixin.Meta):
         model = Service

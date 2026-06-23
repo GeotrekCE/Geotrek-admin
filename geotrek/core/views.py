@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.gis.db.models.functions import Transform
-from django.contrib.gis.geos import GEOSGeometry, GeometryCollection
+from django.contrib.gis.geos import GEOSGeometry
 from django.db import connection
 from django.db.models import Prefetch, Sum
 from django.http.response import HttpResponse, HttpResponseRedirect
@@ -475,7 +475,7 @@ class PathViewSet(GeotrekMapentityViewSet):
                     "topology": {"positions": positions, "paths": paths},
                     "index": linestring_index,
                     "isFollowingDirections": True,
-                    "directionID": 1
+                    "directionID": 1,
                 },
             }
             linestring_index += 1
@@ -486,7 +486,7 @@ class PathViewSet(GeotrekMapentityViewSet):
             topology = request.data.get("topology")
             Topology.check_serialized_topology(topology)
         except Exception as exc:
-            return Response({"error": f"{exc}"},400)
+            return Response({"error": f"{exc}"}, 400)
 
         # Generate the feature collection
         try:
@@ -514,7 +514,9 @@ class PathViewSet(GeotrekMapentityViewSet):
                 # If the start point of a subtopology is not the same as the previous one's end
                 # point (invalid topology), the previous end point is added too.
                 if previous_end_point is not None and previous_end_point != start_point:
-                    features.append(make_point_feature(previous_end_point, previous_end_path_id))
+                    features.append(
+                        make_point_feature(previous_end_point, previous_end_path_id)
+                    )
                 previous_end_point = end_point
                 previous_end_path_id = end_path_id
 
@@ -531,7 +533,7 @@ class PathViewSet(GeotrekMapentityViewSet):
             return Response(geojson, 200)
 
         except Exception as exc:
-            return Response({"error": f"{exc}"},500)
+            return Response({"error": f"{exc}"}, 500)
 
 
 class PathMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
