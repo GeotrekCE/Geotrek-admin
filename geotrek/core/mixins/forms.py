@@ -62,11 +62,15 @@ class PointTopologyFormMixin(CommonForm):
     class Meta(CommonForm.Meta):
         fields = [*CommonForm.Meta.fields, "topology"]
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance.pk:
+            self.fields["topology"].required = False
+
     def save(self, *args, **kwargs):
         topology = self.cleaned_data.pop("topology")
         instance = super().save(*args, **kwargs)
-        was_edited = instance.pk != topology.pk
-        if was_edited:
+        if topology is not None:
             instance.mutate(topology)
         return instance
 
