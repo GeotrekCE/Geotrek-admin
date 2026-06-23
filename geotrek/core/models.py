@@ -882,6 +882,7 @@ class Topology(
     @classmethod
     def deserialize(cls, serialized):
         """
+        ---- Topologies ----
         Topologies can be points or lines. Serialized topologies come from Javascript
         module ``topology_helper.js``.
 
@@ -905,8 +906,8 @@ class Topology(
         * If has lat/lng return point topology
         * Otherwise, create path aggregations from serialized data.
         ____________________________________________________________________________________________
-        Without Dynamic Segmentation :
 
+        ---- Geometries ----
         Deserialize normally and create a topology from the geojson
         """
         try:
