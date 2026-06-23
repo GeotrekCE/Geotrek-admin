@@ -1,15 +1,14 @@
 from copy import deepcopy
-from operator import truediv
 
 from django.conf import settings
 from django.contrib.gis.forms import LineStringField
 from django.contrib.gis.geos import fromstr
-from django.forms import ModelForm, ValidationError, BooleanField, HiddenInput
+from django.forms import BooleanField, HiddenInput, ModelForm, ValidationError
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.fields import TopologyField, PointTopologyField
-from geotrek.core.widgets import LineTopologyWidget, LinearTopologyMapWidget
+from geotrek.core.fields import PointTopologyField, TopologyField
+from geotrek.core.widgets import LinearTopologyMapWidget, LineTopologyWidget
 
 
 # TODO: delete
@@ -56,6 +55,7 @@ class PointTopologyFormMixin(CommonForm):
     """
     Form mixin for drawing points, on or off the path network depending on whether paths exist.
     """
+
     geomfields = ["topology"]
     topology = PointTopologyField(label="")
 
@@ -73,14 +73,18 @@ class PointTopologyFormMixin(CommonForm):
 
 class LinearTopologyFormMixin(ModelForm):
     """
-        Form mixin for drawing linear topologies on or off the path network, depending on:
-          - whether paths exist
-          - the user's permissions
+    Form mixin for drawing linear topologies on or off the path network, depending on:
+      - whether paths exist
+      - the user's permissions
     """
 
-    topology = TopologyField(required=False, label=_("Geometry/Topology"), widget=LineTopologyWidget())
+    topology = TopologyField(
+        required=False, label=_("Geometry/Topology"), widget=LineTopologyWidget()
+    )
     topology_changed = BooleanField(required=False, widget=HiddenInput())
-    geom = LineStringField(required=False, widget=LinearTopologyMapWidget(attrs={"target_map": "topology"}))
+    geom = LineStringField(
+        required=False, widget=LinearTopologyMapWidget(attrs={"target_map": "topology"})
+    )
     geom_changed = BooleanField(required=False, widget=HiddenInput())
     geomfields = ["topology", "geom"]
 
@@ -102,7 +106,9 @@ class LinearTopologyFormMixin(ModelForm):
 
         if not self.is_drawing_off_path_network_allowed():
             self.fields["geom"].disabled = True
-            self.fields["geom"].widget = LinearTopologyMapWidget(attrs={"target_map": "topology", "modifiable": False})
+            self.fields["geom"].widget = LinearTopologyMapWidget(
+                attrs={"target_map": "topology", "modifiable": False}
+            )
             self.fields.pop("geom_changed")
 
     def is_drawing_off_path_network_allowed(self):
@@ -112,24 +118,28 @@ class LinearTopologyFormMixin(ModelForm):
 
     def clean(self, *args, **kwargs):
         data = super().clean()
-        geom_changed = data.get('geom_changed')
-        topology_changed = data.get('topology_changed')
+        geom_changed = data.get("geom_changed")
+        topology_changed = data.get("topology_changed")
         if geom_changed and topology_changed:
-            raise ValidationError(_("Either the geometry (off the path network) or the topology (on the path network) can be modified, not both."))
+            raise ValidationError(
+                _(
+                    "Either the geometry (off the path network) or the topology (on the path network) can be modified, not both."
+                )
+            )
         if topology_changed and "geom" in self.errors:
             del self.errors["geom"]
-            data['geom'] = fromstr("POINT (0 0)")
+            data["geom"] = fromstr("POINT (0 0)")
         if geom_changed and "topology" in self.errors:
             del self.errors["topology"]
         if not geom_changed:
-            data.pop('geom')
+            data.pop("geom")
         return data
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
-        if self.cleaned_data.get('topology_changed'):
+        if self.cleaned_data.get("topology_changed"):
             topology = self.cleaned_data.pop("topology")
             instance.mutate(topology)
-        if not self.cleaned_data.get('geom_changed'):
+        if not self.cleaned_data.get("geom_changed"):
             instance.geom = self.instance.geom
         return instance

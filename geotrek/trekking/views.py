@@ -55,9 +55,9 @@ from geotrek.zoning.models import City, District, RestrictedArea
 
 from .filters import POIFilterSet, ServiceFilterSet, TrekFilterSet
 from .forms import (
-    TrekForm,
     POIForm,
     ServiceForm,
+    TrekForm,
     WebLinkCreateFormPopup,
 )
 from .models import POI, Service, Trek, WebLink

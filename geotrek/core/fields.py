@@ -40,6 +40,7 @@ class TopologyField(forms.CharField):
 
 class PointTopologyField(TopologyField):
     """This field builds a topology from a point geometry, drawn using MapWidget."""
+
     widget = MapWidget(
         geom_type="POINT",
         attrs={
@@ -48,7 +49,7 @@ class PointTopologyField(TopologyField):
                 "layers": ["core.Path"],
                 "snap_distance": 20,
             }
-        }
+        },
     )
 
     def clean(self, value):

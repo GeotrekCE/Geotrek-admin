@@ -8,8 +8,14 @@ from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.views import CreateFromTopologyMixin
 
 from . import filters, layers, models, serializers
-from .forms import PhysicalEdgeForm, LandEdgeForm, CirculationEdgeForm, \
-    CompetenceEdgeForm, WorkManagementEdgeForm, SignageManagementEdgeForm
+from .forms import (
+    CirculationEdgeForm,
+    CompetenceEdgeForm,
+    LandEdgeForm,
+    PhysicalEdgeForm,
+    SignageManagementEdgeForm,
+    WorkManagementEdgeForm,
+)
 
 
 class PhysicalEdgeList(
