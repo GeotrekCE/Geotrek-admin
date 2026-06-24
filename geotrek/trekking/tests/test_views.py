@@ -315,6 +315,7 @@ class TrekViewsTest(CommonTest):
             "information_desks": tourism_factories.InformationDeskFactory.create().pk,
         }
         good_data["topology"] = f'{{"paths": [{self.path.pk}]}}'
+        good_data["topology_changed"] = True
         good_data["pois_excluded"] = POIFactory.create(paths=[self.path]).pk
 
         return good_data
