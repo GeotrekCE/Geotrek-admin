@@ -137,7 +137,7 @@ function RouteComponent() {
               type: { id: -1, name: "" },
               date_insert: "",
               date_update: "",
-              begin_date: "",
+              begin_date: new Date().toISOString().split("T")[0],
               end_date: null,
               subcontracting: false,
               width: 0,

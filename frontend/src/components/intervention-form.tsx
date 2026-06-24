@@ -153,6 +153,7 @@ export default function InterventionForm({
             label="Localisation"
             icon={pictogram}
             required
+            description="Les interventions de type linéaire ne sont pas encore pris en charge."
           />
 
           <FormSelectField

@@ -81,7 +81,6 @@ export const signageDataSchema = z.object({
       .array(z.number())
       .length(2, "Les coordonnées sont obligatoires"),
   }),
-
   structure: z
     .object({
       id: z.number().int(),
@@ -168,7 +167,9 @@ export const interventionDataSchema = z.object({
   id: z.number().int().positive(),
   api_geom: z.object({
     type: z.string().min(1),
-    coordinates: z.array(z.number()),
+    coordinates: z
+      .array(z.number())
+      .length(2, "Les coordonnées sont obligatoires"),
   }),
   structure: z
     .object({
@@ -223,7 +224,7 @@ export const interventionDataSchema = z.object({
   man_day: z.array(
     z.object({
       id: z.number().int().positive(),
-      nb_days: z.string(),
+      nb_days: z.number(),
       job: z.object({
         id: z.number().int().positive(),
         name: z.string(),
@@ -248,7 +249,9 @@ export const reportDataSchema = z.object({
   comment: z.string(),
   api_geom: z.object({
     type: z.string().min(1),
-    coordinates: z.array(z.number()),
+    coordinates: z
+      .array(z.number())
+      .length(2, "Les coordonnées sont obligatoires"),
   }),
   activity: z.object({
     id: z.number().int().positive(),
