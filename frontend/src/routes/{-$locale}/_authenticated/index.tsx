@@ -1,13 +1,12 @@
 import * as z from "zod"
-import { toast } from "sonner"
 import { useStoredData } from "@/hook/useStoredData"
-import { createFileRoute, redirect } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 import { ListProvider } from "@/lib/list"
 import List from "@/components/list"
 import Map from "@/components/list-map"
 import Details from "@/components/list-details"
 import Filters from "@/components/list-filters"
-import { db } from "@/lib/db"
+import { UpdateDataWarning } from "@/components/update-data-warning"
 
 const schemaSearchParams = z
   .object({
@@ -27,24 +26,7 @@ const schemaSearchParams = z
 export type ListSearchParams = z.infer<typeof schemaSearchParams>
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/")({
-  beforeLoad: async () => {
-    const hasDataSettings = await db.appSync.get("data")
-    if (!hasDataSettings) {
-      toast.info(
-        <div>
-          <p className="font-bold">Une mise à jour est nécessaire</p>
-          <p>
-            Veuillez mettre à jour les données de référentiel de saisie avant
-            votre sortie de terrain.
-          </p>
-        </div>,
-        {
-          position: "top-center",
-        }
-      )
-      throw redirect({ to: "/{-$locale}/sync" })
-    }
-  },
+  beforeLoad: UpdateDataWarning,
   component: Home,
   validateSearch: schemaSearchParams.parse,
   errorComponent: Home,

@@ -1,4 +1,4 @@
-import { createFileRoute, redirect } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 import Header from "@/components/header"
 import { useStoredDataElement } from "@/hook/useStoredData"
 import SignageForm from "@/components/signage-form"
@@ -9,29 +9,12 @@ import type {
   CommonReferencesSchemaProps,
   SignageReferencesSchemaProps,
 } from "@/schemas/references"
-import { toast } from "sonner"
+import { UpdateDataWarning } from "@/components/update-data-warning"
 
 export const Route = createFileRoute(
   "/{-$locale}/_authenticated/data/$type/$id/edit"
 )({
-  beforeLoad: async () => {
-    const hasDataSettings = await db.appSync.get("data")
-    if (!hasDataSettings) {
-      toast.info(
-        <div>
-          <p className="font-bold">Une mise à jour est nécessaire</p>
-          <p>
-            Veuillez mettre à jour les données de référentiel de saisie avant
-            votre sortie de terrain.
-          </p>
-        </div>,
-        {
-          position: "top-center",
-        }
-      )
-      throw redirect({ to: "/{-$locale}/sync" })
-    }
-  },
+  beforeLoad: UpdateDataWarning,
   component: RouteComponent,
 })
 

@@ -1,7 +1,7 @@
 import Header from "@/components/header"
 import { useStoredDataElement } from "@/hook/useStoredData"
 import { getLocale } from "@/paraglide/runtime"
-import { createFileRoute, Link, redirect } from "@tanstack/react-router"
+import { createFileRoute, Link } from "@tanstack/react-router"
 import Map from "@/components/map"
 import { Marker } from "react-map-gl/maplibre"
 import { Badge } from "@/components/ui/badge"
@@ -15,29 +15,11 @@ import {
 } from "@/components/ui/item"
 import { ChevronRight, Info } from "lucide-react"
 import { buttonVariants } from "@/components/ui/button"
-import { db } from "@/lib/db"
-import { toast } from "sonner"
+import { UpdateDataWarning } from "@/components/update-data-warning"
 export const Route = createFileRoute(
   "/{-$locale}/_authenticated/data/$type/$id/"
 )({
-  beforeLoad: async () => {
-    const hasDataSettings = await db.appSync.get("data")
-    if (!hasDataSettings) {
-      toast.info(
-        <div>
-          <p className="font-bold">Une mise à jour est nécessaire</p>
-          <p>
-            Veuillez mettre à jour les données de référentiel de saisie avant
-            votre sortie de terrain.
-          </p>
-        </div>,
-        {
-          position: "top-center",
-        }
-      )
-      throw redirect({ to: "/{-$locale}/sync" })
-    }
-  },
+  beforeLoad: UpdateDataWarning,
   component: RouteComponent,
 })
 
@@ -103,7 +85,7 @@ function RouteComponent() {
           </h2>
           <p>
             <span className="text-primary">{params.type}</span>
-            {"type" in detail && ` - ${detail.type.name}`}
+            {"type" in detail && detail.type && ` - ${detail.type.name}`}
           </p>
           {"conditions" in detail && detail.conditions.length > 0 && (
             <p className="mt-1 flex flex-wrap gap-1">
