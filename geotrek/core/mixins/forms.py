@@ -138,7 +138,7 @@ class LinearTopologyFormMixin(ModelForm):
             data["geom"] = fromstr("POINT (0 0)")
         if geom_changed and "topology" in self.errors:
             del self.errors["topology"]
-        if not geom_changed:
+        if not geom_changed and data.get("geom") is not None:
             data.pop("geom")
         return data
 
