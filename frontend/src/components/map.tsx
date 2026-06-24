@@ -1,3 +1,4 @@
+import type { MapLibreEvent } from "maplibre-gl"
 import { useLiveQuery } from "dexie-react-hooks"
 import { Loader2 } from "lucide-react"
 import MapLibre, {
@@ -52,6 +53,12 @@ export default function Map({
         touchPitch={!noControls}
         dragPan={!noControls}
         {...props}
+        onLoad={(event: MapLibreEvent) => {
+          props.onLoad?.(event)
+          document
+            .querySelector(".maplibregl-ctrl-attrib")
+            ?.classList.remove("maplibregl-compact-show")
+        }}
       >
         {!noControls && (
           <>

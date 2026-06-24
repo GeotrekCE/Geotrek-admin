@@ -10,7 +10,12 @@ import Map from "@/components/map"
 
 export default function ListMap() {
   const navigate = useNavigate()
-  const { elements, filters, snapPoint, snapPoints } = useList()
+  const {
+    elements: { isPending, data: elements },
+    filters,
+    snapPoint,
+    snapPoints,
+  } = useList()
 
   const appSync = useLiveQuery(() => db.appSync.get("data"))
 
@@ -27,6 +32,10 @@ export default function ListMap() {
       return "calc(50% - 2rem)"
     }
   }, [filters.focusOn, snapPoint, snapPoints])
+
+  if (isPending) {
+    return null
+  }
 
   return (
     <Map
@@ -45,7 +54,7 @@ export default function ListMap() {
       }
     >
       {elements
-        ?.filter((item) => !!item?.api_geom)
+        .filter((item) => !!item?.api_geom)
         .map((item) => (
           <Marker
             key={`${item.reference}-${item.id}`}

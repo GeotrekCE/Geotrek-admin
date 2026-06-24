@@ -11,7 +11,7 @@ interface ListState {
   snapPoints: SnapPoint[]
   snapPoint: SnapPoint
   setSnapPoint: React.Dispatch<React.SetStateAction<SnapPoint>>
-  elements: DataSchemaPropsMixed[]
+  elements: { isPending: boolean; data: DataSchemaPropsMixed[] }
   filters: ListSearchParams
 }
 
@@ -22,7 +22,7 @@ export function ListProvider({
   filters,
   children,
 }: {
-  elements: DataSchemaPropsMixed[]
+  elements: { isPending: boolean; data: DataSchemaPropsMixed[] }
   filters: ListSearchParams
   children: React.ReactNode
 }) {

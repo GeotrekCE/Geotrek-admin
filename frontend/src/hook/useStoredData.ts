@@ -120,12 +120,15 @@ export function useStoredData({
   }, [references, type, q])
 
   if (!queries) {
-    return []
+    return { isPending: true, data: [] }
   }
 
-  return (queries as unknown as DataSchemaPropsMixed[])
-    .flat()
-    .sort((a, b) => b.date_update.localeCompare(a.date_update))
+  return {
+    isPending: false,
+    data: (queries as unknown as DataSchemaPropsMixed[])
+      .flat()
+      .sort((a, b) => b.date_update.localeCompare(a.date_update)),
+  }
 }
 
 export function useStoredDataElement(type: string, id: number) {
