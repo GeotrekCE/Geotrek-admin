@@ -35,22 +35,18 @@ export const db = new Dexie(DB_NAME) as Dexie & {
     },
     "id"
   >
-  signageData: EntityTable<SignageDataSchemaProps & { sync?: boolean }>
-  infrastructureData: EntityTable<
-    InfrastructureDataSchemaProps & { sync?: boolean }
-  >
-  interventionData: EntityTable<
-    InterventionDataSchemaProps & { sync?: boolean }
-  >
-  reportData: EntityTable<ReportDataSchemaProps & { sync?: boolean }>
+  signageData: EntityTable<SignageDataSchemaProps>
+  infrastructureData: EntityTable<InfrastructureDataSchemaProps>
+  interventionData: EntityTable<InterventionDataSchemaProps>
+  reportData: EntityTable<ReportDataSchemaProps>
 }
 
 db.version(1).stores({
   settings: "id",
   appSync: "id",
   references: "id",
-  signageData: "++id, name, description",
-  infrastructureData: "++id, name, description",
-  interventionData: "++id, name, description",
-  reportData: "++id",
+  signageData: "++id, name, description, date_update",
+  infrastructureData: "++id, name, description, date_update",
+  interventionData: "++id, name, description, date_update",
+  reportData: "++id, date_update",
 })

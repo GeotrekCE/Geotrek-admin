@@ -15,6 +15,7 @@ import { Route as Char123LocaleChar125AuthenticatedIndexRouteImport } from './ro
 import { Route as Char123LocaleChar125AuthenticatedSettingsRouteImport } from './routes/{-$locale}/_authenticated/settings'
 import { Route as Char123LocaleChar125AuthenticatedCreateRouteImport } from './routes/{-$locale}/_authenticated/create'
 import { Route as Char123LocaleChar125AuthenticatedSyncIndexRouteImport } from './routes/{-$locale}/_authenticated/sync/index'
+import { Route as Char123LocaleChar125AuthenticatedSyncUploadRouteImport } from './routes/{-$locale}/_authenticated/sync/upload'
 import { Route as Char123LocaleChar125AuthenticatedSyncMapRouteImport } from './routes/{-$locale}/_authenticated/sync/map'
 import { Route as Char123LocaleChar125AuthenticatedSyncDataRouteImport } from './routes/{-$locale}/_authenticated/sync/data'
 import { Route as Char123LocaleChar125AuthenticatedDataTypeCreateRouteImport } from './routes/{-$locale}/_authenticated/data/$type/create'
@@ -57,6 +58,12 @@ const Char123LocaleChar125AuthenticatedSyncIndexRoute =
     path: '/sync/',
     getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
   } as any)
+const Char123LocaleChar125AuthenticatedSyncUploadRoute =
+  Char123LocaleChar125AuthenticatedSyncUploadRouteImport.update({
+    id: '/sync/upload',
+    path: '/sync/upload',
+    getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
+  } as any)
 const Char123LocaleChar125AuthenticatedSyncMapRoute =
   Char123LocaleChar125AuthenticatedSyncMapRouteImport.update({
     id: '/sync/map',
@@ -96,6 +103,7 @@ export interface FileRoutesByFullPath {
   '/{-$locale}/': typeof Char123LocaleChar125AuthenticatedIndexRoute
   '/{-$locale}/sync/data': typeof Char123LocaleChar125AuthenticatedSyncDataRoute
   '/{-$locale}/sync/map': typeof Char123LocaleChar125AuthenticatedSyncMapRoute
+  '/{-$locale}/sync/upload': typeof Char123LocaleChar125AuthenticatedSyncUploadRoute
   '/{-$locale}/sync/': typeof Char123LocaleChar125AuthenticatedSyncIndexRoute
   '/{-$locale}/data/$type/create': typeof Char123LocaleChar125AuthenticatedDataTypeCreateRoute
   '/{-$locale}/data/$type/$id/edit': typeof Char123LocaleChar125AuthenticatedDataTypeIdEditRoute
@@ -108,6 +116,7 @@ export interface FileRoutesByTo {
   '/{-$locale}': typeof Char123LocaleChar125AuthenticatedIndexRoute
   '/{-$locale}/sync/data': typeof Char123LocaleChar125AuthenticatedSyncDataRoute
   '/{-$locale}/sync/map': typeof Char123LocaleChar125AuthenticatedSyncMapRoute
+  '/{-$locale}/sync/upload': typeof Char123LocaleChar125AuthenticatedSyncUploadRoute
   '/{-$locale}/sync': typeof Char123LocaleChar125AuthenticatedSyncIndexRoute
   '/{-$locale}/data/$type/create': typeof Char123LocaleChar125AuthenticatedDataTypeCreateRoute
   '/{-$locale}/data/$type/$id/edit': typeof Char123LocaleChar125AuthenticatedDataTypeIdEditRoute
@@ -122,6 +131,7 @@ export interface FileRoutesById {
   '/{-$locale}/_authenticated/': typeof Char123LocaleChar125AuthenticatedIndexRoute
   '/{-$locale}/_authenticated/sync/data': typeof Char123LocaleChar125AuthenticatedSyncDataRoute
   '/{-$locale}/_authenticated/sync/map': typeof Char123LocaleChar125AuthenticatedSyncMapRoute
+  '/{-$locale}/_authenticated/sync/upload': typeof Char123LocaleChar125AuthenticatedSyncUploadRoute
   '/{-$locale}/_authenticated/sync/': typeof Char123LocaleChar125AuthenticatedSyncIndexRoute
   '/{-$locale}/_authenticated/data/$type/create': typeof Char123LocaleChar125AuthenticatedDataTypeCreateRoute
   '/{-$locale}/_authenticated/data/$type/$id/edit': typeof Char123LocaleChar125AuthenticatedDataTypeIdEditRoute
@@ -137,6 +147,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/'
     | '/{-$locale}/sync/data'
     | '/{-$locale}/sync/map'
+    | '/{-$locale}/sync/upload'
     | '/{-$locale}/sync/'
     | '/{-$locale}/data/$type/create'
     | '/{-$locale}/data/$type/$id/edit'
@@ -149,6 +160,7 @@ export interface FileRouteTypes {
     | '/{-$locale}'
     | '/{-$locale}/sync/data'
     | '/{-$locale}/sync/map'
+    | '/{-$locale}/sync/upload'
     | '/{-$locale}/sync'
     | '/{-$locale}/data/$type/create'
     | '/{-$locale}/data/$type/$id/edit'
@@ -162,6 +174,7 @@ export interface FileRouteTypes {
     | '/{-$locale}/_authenticated/'
     | '/{-$locale}/_authenticated/sync/data'
     | '/{-$locale}/_authenticated/sync/map'
+    | '/{-$locale}/_authenticated/sync/upload'
     | '/{-$locale}/_authenticated/sync/'
     | '/{-$locale}/_authenticated/data/$type/create'
     | '/{-$locale}/_authenticated/data/$type/$id/edit'
@@ -217,6 +230,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125AuthenticatedSyncIndexRouteImport
       parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
     }
+    '/{-$locale}/_authenticated/sync/upload': {
+      id: '/{-$locale}/_authenticated/sync/upload'
+      path: '/sync/upload'
+      fullPath: '/{-$locale}/sync/upload'
+      preLoaderRoute: typeof Char123LocaleChar125AuthenticatedSyncUploadRouteImport
+      parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
+    }
     '/{-$locale}/_authenticated/sync/map': {
       id: '/{-$locale}/_authenticated/sync/map'
       path: '/sync/map'
@@ -261,6 +281,7 @@ interface Char123LocaleChar125AuthenticatedRouteChildren {
   Char123LocaleChar125AuthenticatedIndexRoute: typeof Char123LocaleChar125AuthenticatedIndexRoute
   Char123LocaleChar125AuthenticatedSyncDataRoute: typeof Char123LocaleChar125AuthenticatedSyncDataRoute
   Char123LocaleChar125AuthenticatedSyncMapRoute: typeof Char123LocaleChar125AuthenticatedSyncMapRoute
+  Char123LocaleChar125AuthenticatedSyncUploadRoute: typeof Char123LocaleChar125AuthenticatedSyncUploadRoute
   Char123LocaleChar125AuthenticatedSyncIndexRoute: typeof Char123LocaleChar125AuthenticatedSyncIndexRoute
   Char123LocaleChar125AuthenticatedDataTypeCreateRoute: typeof Char123LocaleChar125AuthenticatedDataTypeCreateRoute
   Char123LocaleChar125AuthenticatedDataTypeIdEditRoute: typeof Char123LocaleChar125AuthenticatedDataTypeIdEditRoute
@@ -279,6 +300,8 @@ const Char123LocaleChar125AuthenticatedRouteChildren: Char123LocaleChar125Authen
       Char123LocaleChar125AuthenticatedSyncDataRoute,
     Char123LocaleChar125AuthenticatedSyncMapRoute:
       Char123LocaleChar125AuthenticatedSyncMapRoute,
+    Char123LocaleChar125AuthenticatedSyncUploadRoute:
+      Char123LocaleChar125AuthenticatedSyncUploadRoute,
     Char123LocaleChar125AuthenticatedSyncIndexRoute:
       Char123LocaleChar125AuthenticatedSyncIndexRoute,
     Char123LocaleChar125AuthenticatedDataTypeCreateRoute:

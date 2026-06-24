@@ -54,7 +54,7 @@ function RouteComponent() {
   return (
     <div>
       <Header title={getTitle(params.type)} withBackbutton />
-      <div className="m-auto max-w-120 p-4">
+      <div className="m-auto max-w-140 p-4">
         {params.type === "signage" && (
           <SignageForm
             defaultValues={{

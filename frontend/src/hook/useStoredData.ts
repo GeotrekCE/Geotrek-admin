@@ -16,10 +16,7 @@ import type {
   SignageReferencesSchemaProps,
 } from "@/schemas/references"
 
-export function useStoredData({
-  q,
-  type,
-}: ListSearchParams): DataSchemaPropsMixed[] {
+export function useStoredData({ q, type }: ListSearchParams) {
   const references = useLiveQuery(() =>
     db.references.bulkGet([
       "intervention",
@@ -144,4 +141,26 @@ export function useStoredDataElement(type: string, id: number) {
     }
     return db.reportData.get({ id })
   }, [type, id])
+}
+
+export function useAsyncStoredData() {
+  const syncData = useLiveQuery(() => db.appSync.get("data"))
+  const data = useLiveQuery(async () => {
+    if (!syncData) {
+      return undefined
+    }
+    return Promise.all([
+      db.signageData.where("date_update").above(syncData.lastSync).toArray(),
+      db.interventionData
+        .where("date_update")
+        .above(syncData.lastSync)
+        .toArray(),
+      db.infrastructureData
+        .where("date_update")
+        .above(syncData.lastSync)
+        .toArray(),
+      db.reportData.where("date_update").above(syncData.lastSync).toArray(),
+    ])
+  }, [syncData])
+  return data
 }

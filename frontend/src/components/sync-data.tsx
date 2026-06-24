@@ -10,8 +10,10 @@ import { getPolygonFromBounds } from "@/lib/map"
 import type { LngLatBoundsLike } from "maplibre-gl"
 import { db } from "@/lib/db"
 import { useLiveQuery } from "dexie-react-hooks"
+import { Alert, AlertTitle } from "./ui/alert"
+import { CircleAlert } from "lucide-react"
 
-export default function SyncData() {
+export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
   const updateLimitation = useIntervalSync("data")
 
   const appSync = useLiveQuery(() => db.appSync.get("data"), [])
@@ -56,24 +58,52 @@ export default function SyncData() {
       lastSync={lastSync}
       updatedStatus={getUpdatedStatus(lastSync, updateLimitation)}
       actions={
-        <>
-          <Link
-            className={cn("w-full", buttonVariants())}
-            to="/{-$locale}/sync/data"
-          >
-            {lastSync && bounds ? "Changer de zone" : "Choisir"}
-          </Link>
-          {lastSync && bounds && (
-            <Button
-              className="w-full"
-              variant="outline"
-              onClick={refetch}
-              type="button"
-            >
-              Re-télécharger les données
+        hasAsyncData ? (
+          <>
+            <Button className="w-full" disabled>
+              {lastSync && bounds ? "Changer de zone" : "Choisir"}
             </Button>
-          )}
-        </>
+            {lastSync && bounds && (
+              <Button
+                className="w-full"
+                variant="outline"
+                type="button"
+                disabled
+              >
+                Re-télécharger les données
+              </Button>
+            )}
+            <Alert
+              variant="destructive"
+              className="m-0 w-full border-0 bg-transparent p-0"
+            >
+              <CircleAlert aria-hidden />
+              <AlertTitle>
+                Synchronisez vos relevés de terrain avant de pouvoir choisir de
+                nouvelles données à télécharger
+              </AlertTitle>
+            </Alert>
+          </>
+        ) : (
+          <>
+            <Link
+              className={cn("w-full", buttonVariants())}
+              to="/{-$locale}/sync/data"
+            >
+              {lastSync && bounds ? "Changer de zone" : "Choisir"}
+            </Link>
+            {lastSync && bounds && (
+              <Button
+                className="w-full"
+                variant="outline"
+                onClick={refetch}
+                type="button"
+              >
+                Re-télécharger les données
+              </Button>
+            )}
+          </>
+        )
       }
     />
   )

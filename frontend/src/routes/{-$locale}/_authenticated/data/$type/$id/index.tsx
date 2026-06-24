@@ -1,7 +1,8 @@
+import * as React from "react"
 import Header from "@/components/header"
 import { useStoredDataElement } from "@/hook/useStoredData"
 import { getLocale } from "@/paraglide/runtime"
-import { createFileRoute, Link } from "@tanstack/react-router"
+import { createFileRoute, Link, useNavigate } from "@tanstack/react-router"
 import Map from "@/components/map"
 import { Marker } from "react-map-gl/maplibre"
 import { Badge } from "@/components/ui/badge"
@@ -13,9 +14,13 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item"
-import { ChevronRight, Info } from "lucide-react"
-import { buttonVariants } from "@/components/ui/button"
+import { ChevronRight, CircleAlert, Info } from "lucide-react"
+import { Button, buttonVariants } from "@/components/ui/button"
 import { UpdateDataWarning } from "@/components/update-data-warning"
+import { useLiveQuery } from "dexie-react-hooks"
+import { db } from "@/lib/db"
+import { cn } from "@/lib/utils"
+import { toast } from "sonner"
 export const Route = createFileRoute(
   "/{-$locale}/_authenticated/data/$type/$id/"
 )({
@@ -40,11 +45,41 @@ function getTitle(type: string) {
 
 function RouteComponent() {
   const params = Route.useParams()
-  const detail = useStoredDataElement(params.type, Number(params.id))
+  const navigate = useNavigate()
+  const { type, id } = params
+  const detail = useStoredDataElement(type, Number(id))
+  const syncData = useLiveQuery(() => db.appSync.get("data"))
+
+  const name =
+    detail && "name" in detail ? detail.name : `Signalement (id: ${detail?.id})`
+
+  const handleDelete = React.useCallback(() => {
+    if (type === "signage") {
+      // @ts-expect-error not never
+      db.signageData.delete(Number(id))
+    }
+    if (type === "intervention") {
+      // @ts-expect-error not never
+      db.interventionData.delete(Number(id))
+    }
+    if (type === "infrastructure") {
+      // @ts-expect-error not never
+      db.infrastructureData.delete(Number(id))
+    }
+    if (type === "report") {
+      // @ts-expect-error not never
+      db.infrastructureData.delete(Number(id))
+    }
+    toast.success(`"${name}" supprimé avec succès`, { position: "top-center" })
+    navigate({
+      to: "/{-$locale}",
+    })
+  }, [type, name, navigate, id])
+
   if (!detail) {
     return (
       <div>
-        <Header title={getTitle(params.type)} withBackbutton />
+        <Header title={getTitle(type)} withBackbutton />
         <section className="m-4">
           <h2 className="mb-4 font-bold text-accent-foreground">
             Élément non trouvé
@@ -60,13 +95,13 @@ function RouteComponent() {
     getLocale()
   )
 
-  const name = "name" in detail ? detail.name : `Signalement (id: ${detail.id})`
-  console.log(detail)
+  const isAsyncItem =
+    detail.date_update.localeCompare(syncData?.lastSync ?? "") > -1
 
   return (
     <div>
       <Header
-        title={getTitle(params.type)}
+        title={getTitle(type)}
         withBackbutton
         afterTitle={
           <Link
@@ -78,10 +113,17 @@ function RouteComponent() {
           </Link>
         }
       />
-      <div className="m-auto max-w-120 p-4">
+      <div className="m-auto max-w-140 p-4">
         <section>
-          <h2 className="text-2xl font-medium text-accent-foreground">
-            {name}
+          <h2 className="flex flex-wrap justify-between">
+            <span className="text-2xl font-medium text-accent-foreground">
+              {name}
+            </span>
+            {isAsyncItem && (
+              <span className="flex items-center gap-2 text-sm text-destructive">
+                <CircleAlert className="size-4" aria-hidden /> Non synchronisé
+              </span>
+            )}
           </h2>
           <p>
             <span className="text-primary">{params.type}</span>
@@ -213,6 +255,26 @@ function RouteComponent() {
               <p className="italic">Aucune lame.</p>
             )}
           </section>
+        )}
+        {isAsyncItem && (
+          <div className="mt-4 flex flex-col gap-4">
+            <Link
+              className={cn("w-full", buttonVariants())}
+              to="/{-$locale}/data/$type/$id/edit"
+              params={params}
+            >
+              Modifier {params.type}
+            </Link>
+            {detail.date_update === detail.date_insert && (
+              <Button
+                variant="destructive"
+                className="w-full"
+                onClick={handleDelete}
+              >
+                Supprimer {params.type}
+              </Button>
+            )}
+          </div>
         )}
       </div>
     </div>
