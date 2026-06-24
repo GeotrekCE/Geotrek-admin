@@ -128,6 +128,7 @@ export default function InterventionForm({
                 const beginDateValue = fieldApi.form.getFieldValue("begin_date")
                 if (
                   beginDateValue &&
+                  value &&
                   value.localeCompare(beginDateValue) === -1
                 ) {
                   return {
@@ -163,16 +164,14 @@ export default function InterventionForm({
             multiple
           />
 
-          {/* Afficher que pour les tracés linéaires
-            <FormTextField
-              name="length"
-              label="Longueur"
-              type="number"
-              min="0"
-              readOnly
-              description="Valeur calculée automatiquement"
-            />
-           */}
+          <FormTextField
+            name="length"
+            label="Longueur"
+            type="number"
+            min="0"
+            readOnly
+            description="Valeur calculée automatiquement"
+          />
 
           <FormTextField name="width" label="Largeur" type="number" min="0" />
 
@@ -228,7 +227,6 @@ export default function InterventionForm({
                   variant="outline"
                   onClick={() => {
                     field.pushValue({
-                      id: -1,
                       job: interventionjob[0],
                       nb_days: 0,
                     })

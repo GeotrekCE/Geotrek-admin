@@ -223,7 +223,6 @@ export const interventionDataSchema = z.object({
   ),
   man_day: z.array(
     z.object({
-      id: z.number().int().positive(),
       nb_days: z.number(),
       job: z.object({
         id: z.number().int().positive(),
