@@ -27,7 +27,7 @@ import {
   createFormField,
 } from "@/components/ui/form-context"
 import Required from "./required"
-import { itemToOption, listToOptions } from "@/lib/utils"
+import { cn, itemToOption, listToOptions } from "@/lib/utils"
 import { ChevronDown } from "lucide-react"
 
 type List = { name: string; id: number }
@@ -39,6 +39,7 @@ interface SelectFieldProps {
   list: List[]
   placeholder?: string
   multiple?: boolean
+  className?: string
 }
 
 export function SelectField({
@@ -48,6 +49,7 @@ export function SelectField({
   list,
   placeholder = "Sélectionnez",
   multiple = false,
+  className,
 }: SelectFieldProps) {
   const id = React.useId()
   const field = useFieldContext()
@@ -90,7 +92,7 @@ export function SelectField({
               itemValue?.value === selectedValue?.value
             }
           >
-            <ComboboxChips className="relative w-full">
+            <ComboboxChips className={cn("relative w-full", className)}>
               <ComboboxValue>
                 {(values) => (
                   <React.Fragment>
@@ -101,7 +103,7 @@ export function SelectField({
                     ))}
                     <ComboboxChipsInput />
                     <ChevronDown
-                      className="pointer-events-none absolute inset-e-2 bottom-1.5 size-4 shrink-0 cursor-pointer"
+                      className="pointer-events-none absolute inset-e-2 bottom-2 size-4 shrink-0 cursor-pointer"
                       aria-hidden
                     />
                   </React.Fragment>
@@ -133,7 +135,11 @@ export function SelectField({
               if (!open) field.handleBlur()
             }}
           >
-            <SelectTrigger id={id} aria-invalid={isTouched && !isValid}>
+            <SelectTrigger
+              id={id}
+              aria-invalid={isTouched && !isValid}
+              className={className}
+            >
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>
             <SelectContent>

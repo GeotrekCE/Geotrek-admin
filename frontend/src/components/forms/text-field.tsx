@@ -19,7 +19,7 @@ interface TextFieldProps extends Omit<
   label: string
   description?: string
   required?: boolean
-  type?: "text" | "email" | "password" | "tel" | "url" | "number"
+  type?: "text" | "email" | "password" | "tel" | "url" | "number" | "date"
 }
 
 export function TextField({
@@ -52,8 +52,7 @@ export function TextField({
             onBlur={field.handleBlur}
             onChange={(e) => {
               if (type === "number") {
-                const v = e.target.value
-                field.handleChange(v === "" ? "" : parseFloat(v))
+                field.handleChange(e.target.valueAsNumber)
               } else {
                 field.handleChange(e.target.value)
               }

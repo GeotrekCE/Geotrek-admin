@@ -28,7 +28,7 @@ import {
   TextareaField,
   SelectField,
   GeomField,
-  // CheckboxField,
+  CheckboxField,
   // SwitchField,
   // RadioGroupField,
   // SliderField,
@@ -37,7 +37,7 @@ import {
   FormTextareaField,
   FormSelectField,
   FormGeomField,
-  // FormCheckboxField,
+  FormCheckboxField,
   // FormSwitchField,
   // FormRadioGroupField,
   // FormSliderField,
@@ -163,7 +163,7 @@ const { useAppForm, withForm, withFieldGroup } = createFormHook({
     TextareaField,
     SelectField,
     GeomField,
-    // CheckboxField,
+    CheckboxField,
     // SwitchField,
     // RadioGroupField,
     // SliderField,
@@ -184,7 +184,7 @@ const { useAppForm, withForm, withFieldGroup } = createFormHook({
     TextareaField: FormTextareaField,
     SelectField: FormSelectField,
     GeomField: FormGeomField,
-    // CheckboxField: FormCheckboxField,
+    CheckboxField: FormCheckboxField,
     // SwitchField: FormSwitchField,
     // RadioGroupField: FormRadioGroupField,
     // SliderField: FormSliderField,
@@ -223,9 +223,9 @@ function useFormFields<TValues extends Record<string, unknown>>() {
       typeof FormSelectField
     >,
     FormGeomField: FormGeomField as unknown as Typed<typeof FormGeomField>,
-    // FormCheckboxField: FormCheckboxField as unknown as Typed<
-    //   typeof FormCheckboxField
-    // >,
+    FormCheckboxField: FormCheckboxField as unknown as Typed<
+      typeof FormCheckboxField
+    >,
     // FormSwitchField: FormSwitchField as unknown as Typed<
     //   typeof FormSwitchField
     // >,
