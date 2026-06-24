@@ -2,13 +2,21 @@ import { createFileRoute } from "@tanstack/react-router"
 import Header from "@/components/header"
 import { useStoredDataElement } from "@/hook/useStoredData"
 import SignageForm from "@/components/signage-form"
-import type { SignageDataSchemaProps } from "@/schemas/data"
+import type {
+  InfrastructureDataSchemaProps,
+  InterventionDataSchemaProps,
+  SignageDataSchemaProps,
+} from "@/schemas/data"
 import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
 import type {
   CommonReferencesSchemaProps,
+  InfrastructureReferencesSchemaProps,
+  InterventionReferencesSchemaProps,
   SignageReferencesSchemaProps,
 } from "@/schemas/references"
+import InfrastructureForm from "@/components/infrastructure-form"
+import InterventionForm from "@/components/intervention-form"
 import { UpdateDataWarning } from "@/components/update-data-warning"
 
 export const Route = createFileRoute(
@@ -69,7 +77,7 @@ function RouteComponent() {
     <div>
       <Header title={getTitle(params.type)} withBackbutton />
       <div className="m-auto max-w-120 p-4">
-        {params.type === "signage" ? (
+        {params.type === "signage" && (
           <SignageForm
             defaultValues={detail as SignageDataSchemaProps}
             pictogram={
@@ -83,7 +91,42 @@ function RouteComponent() {
             }
             isEdit
           />
-        ) : (
+        )}
+
+        {params.type === "infrastructure" && (
+          <InfrastructureForm
+            defaultValues={detail as InfrastructureDataSchemaProps}
+            pictogram={
+              "pictogram" in references[0] ? references[0].pictogram : undefined
+            }
+            references={
+              references as unknown as [
+                InfrastructureReferencesSchemaProps,
+                CommonReferencesSchemaProps,
+              ]
+            }
+            isEdit
+          />
+        )}
+
+        {params.type === "intervention" && (
+          <InterventionForm
+            defaultValues={detail as InterventionDataSchemaProps}
+            pictogram={
+              "pictogram" in references[0] ? references[0].pictogram : undefined
+            }
+            references={
+              references as unknown as [
+                InterventionReferencesSchemaProps,
+                CommonReferencesSchemaProps,
+              ]
+            }
+            isEdit
+          />
+        )}
+        {!["signage", "infrastructure", "intervention"].includes(
+          params.type
+        ) && (
           <section>
             <h2 className="text-2xl font-medium text-accent-foreground">
               {name}

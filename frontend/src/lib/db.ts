@@ -36,7 +36,7 @@ export const db = new Dexie(DB_NAME) as Dexie & {
     "id"
   >
   signageData: EntityTable<SignageDataSchemaProps & { sync?: boolean }>
-  infraStructureData: EntityTable<
+  infrastructureData: EntityTable<
     InfrastructureDataSchemaProps & { sync?: boolean }
   >
   interventionData: EntityTable<
@@ -50,7 +50,7 @@ db.version(1).stores({
   appSync: "id",
   references: "id",
   signageData: "++id, name, description",
-  infraStructureData: "++id, name, description",
+  infrastructureData: "++id, name, description",
   interventionData: "++id, name, description",
   reportData: "++id",
 })

@@ -51,7 +51,7 @@ export function useStoredData({
     }
     if (!type || type?.includes("infrastructure")) {
       results.push({
-        collection: db.infraStructureData,
+        collection: db.infrastructureData,
         reference: infrastructure,
       })
     }
@@ -81,7 +81,7 @@ export function useStoredData({
               data.map((item) => ({
                 ...item,
                 name: `Signalement (id: ${item.id})`,
-                reference: collection.name.replace("Data", "").toLowerCase(),
+                reference: collection.name.replace("Data", ""),
                 pictogram: { url: reference?.pictogram.url },
               }))
             )
@@ -90,7 +90,7 @@ export function useStoredData({
             return collection.toArray((data) =>
               data.map((item) => ({
                 ...item,
-                reference: collection.name.replace("Data", "").toLowerCase(),
+                reference: collection.name.replace("Data", ""),
                 pictogram: { url: reference?.pictogram.url },
               }))
             )
@@ -110,7 +110,7 @@ export function useStoredData({
             .toArray((data) =>
               data.map((item) => ({
                 ...item,
-                reference: collection.name.replace("Data", "").toLowerCase(),
+                reference: collection.name.replace("Data", ""),
                 pictogram: { url: reference?.pictogram.url },
               }))
             )
@@ -137,7 +137,7 @@ export function useStoredDataElement(type: string, id: number) {
       return db.interventionData.get({ id })
     }
     if (type === "infrastructure") {
-      return db.infraStructureData.get({ id })
+      return db.infrastructureData.get({ id })
     }
     return db.reportData.get({ id })
   }, [type, id])

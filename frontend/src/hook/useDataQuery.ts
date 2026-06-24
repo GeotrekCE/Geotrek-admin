@@ -63,9 +63,9 @@ export function useDataQuery(
             id: "sync-data",
             loading: "Chargement",
             success: (data) => {
-              db.infraStructureData.clear()
+              db.infrastructureData.clear()
               data.data.map((item: InfrastructureDataSchemaProps) =>
-                db.infraStructureData.put(item)
+                db.infrastructureData.put(item)
               )
               db.appSync.put({
                 id: "data",

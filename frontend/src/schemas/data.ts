@@ -26,23 +26,45 @@ export const infrastructureDataSchema = z.object({
   date_update: z.string(),
   api_geom: z.object({
     type: z.string().min(1),
-    coordinates: z.array(z.number()),
+    coordinates: z
+      .array(z.number())
+      .length(2, "Les coordonnées sont obligatoires"),
   }),
   name: z.string().min(1, "Le nom est obligatoire"),
   description: z.string(),
   implantation_year: z.union([z.number(), z.null()]),
   accessibility: z.string(),
-  structure: z.object({
-    id: z.number().int().positive(),
-    name: z.string().min(1),
-  }),
-  access: z.null(),
+  structure: z
+    .object({
+      id: z.number().int(),
+      name: z.string(),
+    })
+    .refine((data) => !!data.name, "La structure est obligatoire"),
+  access: z.union([
+    z.null(),
+    z.object({
+      id: z.number().int().positive(),
+      name: z.string(),
+    }),
+  ]),
   type: z.object({
     id: z.number().int().positive({ message: "Le type est obligatoire" }),
     name: z.string().min(1),
   }),
-  maintenance_difficulty: z.null(),
-  usage_difficulty: z.null(),
+  maintenance_difficulty: z.union([
+    z.null(),
+    z.object({
+      id: z.number().int().positive(),
+      name: z.string(),
+    }),
+  ]),
+  usage_difficulty: z.union([
+    z.null(),
+    z.object({
+      id: z.number().int().positive(),
+      name: z.string(),
+    }),
+  ]),
   conditions: z.array(
     z.object({
       id: z.number().int().positive(),
@@ -148,11 +170,17 @@ export const interventionDataSchema = z.object({
     type: z.string().min(1),
     coordinates: z.array(z.number()),
   }),
+  structure: z
+    .object({
+      id: z.number().int(),
+      name: z.string(),
+    })
+    .refine((data) => !!data.name, "La structure est obligatoire"),
   name: z.string().min(1, "Le nom est obligatoire"),
   date_insert: z.string(),
   date_update: z.string(),
-  begin_date: z.string(),
-  end_date: z.string(),
+  begin_date: z.string().min(1, "La date de début est obligatoire"),
+  end_date: z.union([z.null(), z.string()]),
   subcontracting: z.boolean(),
   width: z.number(),
   height: z.number(),
@@ -166,20 +194,26 @@ export const interventionDataSchema = z.object({
     })
   ),
   length: z.number(),
-  stake: z.object({
-    id: z.number().int().positive(),
-    name: z.string().min(1),
-  }),
-  status: z.object({
-    id: z.number().int().positive(),
-    name: z.string().min(1),
-  }),
-  type: z
+  stake: z.union([
+    z.null(),
+    z.object({
+      id: z.number().int().positive(),
+      name: z.string().min(1),
+    }),
+  ]),
+  status: z
     .object({
       id: z.number().int().positive(),
       name: z.string().min(1),
     })
-    .refine((data) => data, "Le type est obligatoire"),
+    .refine((data) => !!data.name, "Le statut est obligatoire"),
+  type: z.union([
+    z.null(),
+    z.object({
+      id: z.number().int().positive(),
+      name: z.string().min(1),
+    }),
+  ]),
   disorders: z.array(
     z.object({
       id: z.number().int().positive(),
@@ -189,18 +223,21 @@ export const interventionDataSchema = z.object({
   man_day: z.array(
     z.object({
       id: z.number().int().positive(),
-      nb_days: z.string().min(1),
+      nb_days: z.string(),
       job: z.object({
         id: z.number().int().positive(),
-        name: z.string().min(1),
+        name: z.string(),
       }),
     })
   ),
   description: z.string(),
-  access: z.object({
-    id: z.number().int().positive(),
-    name: z.string().min(1),
-  }),
+  access: z.union([
+    z.null(),
+    z.object({
+      id: z.number().int().positive(),
+      name: z.string(),
+    }),
+  ]),
 })
 
 export const reportDataSchema = z.object({

@@ -54,7 +54,7 @@ function ListDetailContent({
             <h2 className="text-xl text-accent-foreground">{name}</h2>
             <p>
               <span className="text-primary">{element.reference}</span>
-              {"type" in detail && ` - ${detail.type.name}`}
+              {"type" in detail && detail.type && ` - ${detail.type.name}`}
             </p>
             {"conditions" in detail && detail.conditions.length > 0 && (
               <p className="mt-1 flex flex-wrap gap-1">

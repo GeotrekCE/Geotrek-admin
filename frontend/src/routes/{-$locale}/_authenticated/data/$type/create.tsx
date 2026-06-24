@@ -1,12 +1,16 @@
-import { createFileRoute, redirect } from "@tanstack/react-router"
+import { createFileRoute } from "@tanstack/react-router"
 import Header from "@/components/header"
 import SignageForm from "@/components/signage-form"
 import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
 import type {
   CommonReferencesSchemaProps,
+  InfrastructureReferencesSchemaProps,
+  InterventionReferencesSchemaProps,
   SignageReferencesSchemaProps,
 } from "@/schemas/references"
+import InfrastructureForm from "@/components/infrastructure-form"
+import InterventionForm from "@/components/intervention-form"
 import { UpdateDataWarning } from "@/components/update-data-warning"
 
 export const Route = createFileRoute(
@@ -51,7 +55,7 @@ function RouteComponent() {
     <div>
       <Header title={getTitle(params.type)} withBackbutton />
       <div className="m-auto max-w-120 p-4">
-        {params.type === "signage" ? (
+        {params.type === "signage" && (
           <SignageForm
             defaultValues={{
               id: -1,
@@ -84,7 +88,87 @@ function RouteComponent() {
               ]
             }
           />
-        ) : (
+        )}
+        {params.type === "infrastructure" && (
+          <InfrastructureForm
+            defaultValues={{
+              id: -1,
+              api_geom: {
+                type: "Point",
+                coordinates: [],
+              },
+              name: "",
+              accessibility: "",
+              description: "",
+              implantation_year: null,
+              structure: { id: -1, name: "" },
+              access: null,
+              type: { id: -1, name: "" },
+              conditions: [],
+              maintenance_difficulty: null,
+              usage_difficulty: null,
+              date_insert: "",
+              date_update: "",
+            }}
+            pictogram={
+              "pictogram" in references[0] ? references[0].pictogram : undefined
+            }
+            references={
+              references as unknown as [
+                InfrastructureReferencesSchemaProps,
+                CommonReferencesSchemaProps,
+              ]
+            }
+          />
+        )}
+
+        {params.type === "intervention" && (
+          <InterventionForm
+            defaultValues={{
+              id: -1,
+              api_geom: {
+                type: "Point",
+                coordinates: [],
+              },
+              name: "",
+              description: "",
+              access: null,
+              structure: { id: -1, name: "" },
+              type: { id: -1, name: "" },
+              date_insert: "",
+              date_update: "",
+              begin_date: "",
+              end_date: null,
+              subcontracting: false,
+              width: 0,
+              height: 0,
+              material_cost: 0,
+              heliport_cost: 0,
+              contractor_cost: 0,
+              contractors: [],
+              length: 0,
+              stake: null,
+              status: {
+                id: -1,
+                name: "",
+              },
+              disorders: [],
+              man_day: [],
+            }}
+            pictogram={
+              "pictogram" in references[0] ? references[0].pictogram : undefined
+            }
+            references={
+              references as unknown as [
+                InterventionReferencesSchemaProps,
+                CommonReferencesSchemaProps,
+              ]
+            }
+          />
+        )}
+        {!["signage", "infrastructure", "intervention"].includes(
+          params.type
+        ) && (
           <section>
             <h2 className="text-2xl font-medium text-accent-foreground">
               {getTitle(params.type)}
