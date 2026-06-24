@@ -151,12 +151,6 @@ class ReportViewSet(GeotrekMapentityViewSet):
     serializer_class = feedback_serializers.ReportSerializer
     geojson_serializer_class = feedback_serializers.ReportGeojsonSerializer
     gtam_serializer_class = feedback_serializers.ReportGTAMSerializer
-    authentication_classes = [
-        BasicAuthentication,
-        SessionAuthentication,
-        JWTAuthentication,
-    ]
-    permission_classes = [IsAuthenticated]
     filterset_class = ReportEmailFilterSet
     mapentity_list_class = ReportList
 
