@@ -722,7 +722,7 @@ class InfrastructureGTAMTest(TestCase):
                 "man_day": [
                     {
                         "id": self.intervention.manday_set.first().id,
-                        "nb_days": str(self.intervention.manday_set.first().nb_days),
+                        "nb_days": self.intervention.manday_set.first().nb_days,
                         "job": {
                             "id": self.intervention.manday_set.first().job.id,
                             "name": self.intervention.manday_set.first().job.job,
