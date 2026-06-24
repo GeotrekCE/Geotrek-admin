@@ -2,6 +2,7 @@ import {
   createRootRouteWithContext,
   Outlet,
   redirect,
+  useLocation,
 } from "@tanstack/react-router"
 import type { QueryClient } from "@tanstack/react-query"
 import { Navigation } from "@/components/navigation"
@@ -36,7 +37,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 })
 
 function RootComponent() {
-  useSettingsQuery()
+  const { pathname } = useLocation()
+  useSettingsQuery(pathname !== "/login")
   return (
     <div className="flex min-h-dvh flex-col">
       <main className="flex grow flex-col">
