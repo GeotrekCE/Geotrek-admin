@@ -67,6 +67,9 @@ class InterventionJobsGTAMSerializer(serializers.ModelSerializer):
 
 class InterventionManDayGTAMSerializer(serializers.ModelSerializer):
     job = InterventionJobsGTAMSerializer()
+    nb_days = serializers.DecimalField(
+        max_digits=6, decimal_places=2, coerce_to_string=False
+    )
 
     class Meta:
         model = ManDay

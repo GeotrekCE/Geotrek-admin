@@ -9,9 +9,6 @@ from django.urls.base import reverse
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from mapentity import views as mapentity_views
-from rest_framework.authentication import BasicAuthentication, SessionAuthentication
-from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from geotrek.common.functions import ST_X, ST_Y
 from geotrek.common.mixins.views import CustomColumnsMixin, ReferencesMixin
