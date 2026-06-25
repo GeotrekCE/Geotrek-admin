@@ -1,5 +1,5 @@
-import { useTheme } from "next-themes"
 import { Toaster as Sonner, type ToasterProps } from "sonner"
+import { useTheme } from "@/components/theme-provider"
 import {
   CircleCheckIcon,
   InfoIcon,
