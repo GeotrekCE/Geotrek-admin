@@ -265,7 +265,8 @@ function RouteComponent() {
             >
               Modifier {params.type}
             </Link>
-            {detail.date_update === detail.date_insert && (
+            {detail.date_insert.localeCompare(syncData?.lastSync ?? "") >
+              -1 && (
               <Button
                 variant="destructive"
                 className="w-full"
