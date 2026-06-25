@@ -1180,6 +1180,7 @@ class PointTopologyPathNetworkCoupling(TestCase):
 
         # Delete path1 and check its path aggregations and its coupling status again
         self.path1.delete()
+        topology.refresh_from_db()
         self.assertTrue(topology.coupled)
         self.assertEqual(
             PathAggregation.objects.filter(topo_object=topology).count(), 1
