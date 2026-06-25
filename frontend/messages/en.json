@@ -7,7 +7,7 @@
     "settings": "Settings"
   },
   "login": {
-    "title": "Welcome to Geotrek Admin Mobile",
+    "title": "Welcome to Geotrek-admin Mobile",
     "description": "Log in to synchronize your data and access your field features.",
     "form": {
       "title": "Identification",

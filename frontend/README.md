@@ -1,4 +1,4 @@
-# Geotrek admin mobile
+# Geotrek-admin mobile
 
 TODO intoduction
 
