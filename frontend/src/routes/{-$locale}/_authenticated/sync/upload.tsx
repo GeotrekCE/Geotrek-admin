@@ -23,7 +23,7 @@ import type {
 import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
 import { Button } from "@/components/ui/button"
-import { queryFnWithAuth } from "@/lib/api"
+import { FetchError, queryFnWithAuth } from "@/lib/api"
 import {
   infrastructureDataSchema,
   interventionDataSchema,
@@ -73,6 +73,7 @@ function RouteComponent() {
                 body.date_insert.localeCompare(lastSync) > -1
                   ? "POST"
                   : "PATCH",
+              searchParams: { format: "gtam" },
               schema: z.array(signageDataSchema),
               body: JSON.stringify(
                 body.date_insert.localeCompare(lastSync) > -1
@@ -92,6 +93,7 @@ function RouteComponent() {
                 body.date_insert.localeCompare(lastSync) > -1
                   ? "POST"
                   : "PATCH",
+              searchParams: { format: "gtam" },
               schema: z.array(interventionDataSchema),
               body: JSON.stringify(
                 body.date_insert.localeCompare(lastSync) > -1
@@ -112,6 +114,7 @@ function RouteComponent() {
                 body.date_insert.localeCompare(lastSync) > -1
                   ? "POST"
                   : "PATCH",
+              searchParams: { format: "gtam" },
               schema: z.array(infrastructureDataSchema),
               body: JSON.stringify(
                 body.date_insert.localeCompare(lastSync) > -1
@@ -132,6 +135,7 @@ function RouteComponent() {
                 body.date_insert.localeCompare(lastSync) > -1
                   ? "POST"
                   : "PATCH",
+              searchParams: { format: "gtam" },
               schema: z.array(reportDataSchema),
               body: JSON.stringify(
                 body.date_insert.localeCompare(lastSync) > -1
@@ -143,10 +147,13 @@ function RouteComponent() {
         )
       }
     } catch (error: unknown) {
-      const message = error instanceof Error ? error.message : String(error)
+      const message =
+        error instanceof FetchError ? error.res.message : String(error)
       toast.error("Une erreur s'est produite", {
         position: "top-center",
-        description: message,
+        description: (
+          <pre>{JSON.stringify(JSON.parse(message ?? "{}"), null, 2)}</pre>
+        ),
       })
     }
   }, [asyncData, syncData?.lastSync])

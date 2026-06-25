@@ -11,9 +11,9 @@ import {
 import * as z from "zod"
 
 export const API_URL = `${__HOST_URL__}/api`
-class FetchError extends Error {
+export class FetchError extends Error {
   constructor(
-    public res: Response,
+    public res: Response & { message?: string },
     message?: string
   ) {
     super(message)
@@ -42,7 +42,9 @@ export async function queryFn<T extends z.ZodObject | z.ZodArray>(
   const json = await response.json()
 
   if (!response.ok) {
-    throw new FetchError(response)
+    throw new FetchError(
+      Object.assign(response, { message: JSON.stringify(json) })
+    )
   }
 
   const schemaData = schema
