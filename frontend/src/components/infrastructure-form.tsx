@@ -13,6 +13,7 @@ import { FieldGroup } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
+import { usePermission } from "@/hook/useSettingsQuery"
 
 export default function InfrastructureForm({
   defaultValues,
@@ -91,6 +92,8 @@ export default function InfrastructureForm({
   const { FormTextField, FormSelectField, FormTextareaField, FormGeomField } =
     useFormFields<InfrastructureDataSchemaProps>()
 
+  const { can_bypass_structure, is_superuser } = usePermission()
+
   return (
     <form.AppForm>
       <form.Form>
@@ -104,12 +107,14 @@ export default function InfrastructureForm({
             required
           />
 
-          <FormSelectField
-            name="structure"
-            label="Structure liée"
-            list={structure}
-            required
-          />
+          {can_bypass_structure && is_superuser && (
+            <FormSelectField
+              name="structure"
+              label="Structure liée"
+              list={structure}
+              required
+            />
+          )}
 
           <FormTextareaField name="description" label="Description" />
 

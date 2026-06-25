@@ -34,7 +34,7 @@ export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
         <>
           <p>
             Fiches métiers (signalétiques, signalements, interventions,
-            aménagements) de la zone géographique sélectionnée"
+            aménagements) de la zone géographique sélectionnée
           </p>
           {lastSync && bounds && (
             <div>

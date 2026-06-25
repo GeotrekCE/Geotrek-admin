@@ -42,13 +42,21 @@ function RouteComponent() {
     [params.type]
   )
 
+  const settings = useLiveQuery(() => db.settings.get("settings"))
+
   if (
     references === undefined ||
     references[0] === undefined ||
-    references[1] === undefined
+    references[1] === undefined ||
+    settings === undefined
   ) {
     // todo loading
     return null
+  }
+
+  const structure = {
+    id: settings.user.attachedStructure.id,
+    name: settings.user.attachedStructure.label,
   }
 
   return (
@@ -66,7 +74,7 @@ function RouteComponent() {
               name: "",
               description: "",
               implantation_year: null,
-              structure: { id: -1, name: "" },
+              structure,
               access: null,
               type: { id: -1, name: "" },
               conditions: [],
@@ -101,7 +109,7 @@ function RouteComponent() {
               accessibility: "",
               description: "",
               implantation_year: null,
-              structure: { id: -1, name: "" },
+              structure,
               access: null,
               type: { id: -1, name: "" },
               conditions: [],
@@ -133,7 +141,7 @@ function RouteComponent() {
               name: "",
               description: "",
               access: null,
-              structure: { id: -1, name: "" },
+              structure,
               type: { id: -1, name: "" },
               date_insert: "",
               date_update: "",

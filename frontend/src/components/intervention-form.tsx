@@ -15,6 +15,7 @@ import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { FormCheckboxField } from "./forms"
 import { Trash } from "lucide-react"
+import { usePermission } from "@/hook/useSettingsQuery"
 
 export default function InterventionForm({
   defaultValues,
@@ -94,6 +95,8 @@ export default function InterventionForm({
   const { FormTextField, FormSelectField, FormTextareaField, FormGeomField } =
     useFormFields<InterventionDataSchemaProps>()
 
+  const { can_bypass_structure, is_superuser } = usePermission()
+
   return (
     <form.AppForm>
       <form.Form>
@@ -104,12 +107,14 @@ export default function InterventionForm({
 
           <FormCheckboxField name="subcontracting" label="Sous-traitance" />
 
-          <FormSelectField
-            name="structure"
-            label="Structure liée"
-            list={structure}
-            required
-          />
+          {can_bypass_structure && is_superuser && (
+            <FormSelectField
+              name="structure"
+              label="Structure liée"
+              list={structure}
+              required
+            />
+          )}
 
           <FormTextField
             name="begin_date"
@@ -164,14 +169,14 @@ export default function InterventionForm({
             multiple
           />
 
-          <FormTextField
+          {/* <FormTextField
             name="length"
             label="Longueur"
             type="number"
             min="0"
             readOnly
             description="Valeur calculée automatiquement"
-          />
+          /> */}
 
           <FormTextField name="width" label="Largeur" type="number" min="0" />
 

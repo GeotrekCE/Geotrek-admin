@@ -66,6 +66,8 @@ export const settingsSchema = z.object({
         delete: z.boolean(),
         read: z.boolean(),
       }),
+      is_superuser: z.boolean(),
+      can_bypass_structure: z.boolean(),
     }),
     userName: z.string().min(1),
   }),

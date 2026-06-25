@@ -63,6 +63,8 @@ export function usePermission() {
         update: false,
         delete: false,
       },
+      is_superuser: false,
+      can_bypass_structure: false,
     }
   )
 }
