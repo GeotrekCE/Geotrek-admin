@@ -3,7 +3,6 @@ import * as z from "zod"
 import { createFileRoute, useNavigate, useRouter } from "@tanstack/react-router"
 import Header from "@/components/header"
 import Map from "@/components/map"
-import { SETTINGS_QUERY_KEY } from "@/hook/useSettingsQuery"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Field, FieldLabel } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
@@ -13,8 +12,6 @@ import type { ViewStateChangeEvent } from "react-map-gl/maplibre"
 import type { LngLatBoundsLike, MapLibreEvent } from "maplibre-gl"
 import { useDataQuery } from "@/hook/useDataQuery"
 import { getPolygonFromBounds } from "@/lib/map"
-import { useQueryClient } from "@tanstack/react-query"
-import type { SettingsSchemaProps } from "@/schemas/settings"
 import { db } from "@/lib/db"
 import { useLiveQuery } from "dexie-react-hooks"
 
@@ -23,9 +20,7 @@ export const Route = createFileRoute("/{-$locale}/_authenticated/sync/data")({
 })
 
 function RouteComponent() {
-  const queryClient = useQueryClient()
-  const settings =
-    queryClient.getQueryData<SettingsSchemaProps>(SETTINGS_QUERY_KEY)
+  const settings = useLiveQuery(() => db.settings.get("settings"))
 
   const minZoom = settings?.settings?.maps.localOptions.minZoom ?? 10
   const attachedStructure = settings?.user.attachedStructure.id
