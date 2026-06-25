@@ -21,7 +21,7 @@ export default function LastSync({ date }: { date: string }) {
           getLocale()
         )
       )
-    }, 1 * SECOND)
+    }, 60 * SECOND)
     return () => {
       clearInterval(id)
     }

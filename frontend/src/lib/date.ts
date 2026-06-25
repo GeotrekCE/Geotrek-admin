@@ -44,7 +44,6 @@ export function getDurationLabel(timeInMs: number, locale: string) {
     days: 0,
     hours: 0,
     minutes: 0,
-    seconds: 0,
   }
 
   if (diff >= YEAR) {
@@ -77,7 +76,5 @@ export function getDurationLabel(timeInMs: number, locale: string) {
     diff -= result.minutes * MINUTE
   }
 
-  if (diff > 0) result.seconds = Math.floor(diff / 1000)
-
-  return durationFormatter.format(result)
+  return durationFormatter.format(result) || "moins d'une minute"
 }
