@@ -74,7 +74,9 @@ class TrekFormCompletenessTest(TestCase):
         call_command("update_geotrek_permissions", verbosity=0)
         cls.user = UserFactory.create()
         cls.user.user_permissions.add(Permission.objects.get(codename="publish_trek"))
-        cls.user.user_permissions.add(Permission.objects.get(codename="can_draw_off_path_network"))
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="can_draw_off_path_network")
+        )
         cls.data = {
             "name_en": "My trek",
             "name_fr": "Ma rando",

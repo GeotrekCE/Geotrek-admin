@@ -2,7 +2,6 @@ import os
 import tempfile
 from io import StringIO
 
-from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
