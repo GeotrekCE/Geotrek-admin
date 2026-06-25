@@ -294,7 +294,7 @@
                     dataUrl: additionalLayerUrl,
                     tilejsonUrl: additionalTilejsonUrl,
                     isLazy: true,
-                    displayPopup: true,
+                    displayPopup: additionalModelname !== 'path',
                 });
 
                 additionalObjectsLayer.layerManager = layerManager;
