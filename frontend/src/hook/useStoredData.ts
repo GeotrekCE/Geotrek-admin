@@ -151,23 +151,31 @@ export function useAsyncStoredData() {
     }
     const collections = await Promise.all([
       db.signageData
-        .where("date_update")
-        .above(syncData.lastSync)
+        .filter(
+          ({ date_update: date }) =>
+            new Date(date).getTime() - new Date(syncData.lastSync).getTime() > 0
+        )
         .reverse()
         .sortBy("date_update"),
       db.interventionData
-        .where("date_update")
-        .above(syncData.lastSync)
+        .filter(
+          ({ date_update: date }) =>
+            new Date(date).getTime() - new Date(syncData.lastSync).getTime() > 0
+        )
         .reverse()
         .sortBy("date_update"),
       db.infrastructureData
-        .where("date_update")
-        .above(syncData.lastSync)
+        .filter(
+          ({ date_update: date }) =>
+            new Date(date).getTime() - new Date(syncData.lastSync).getTime() > 0
+        )
         .reverse()
         .sortBy("date_update"),
       db.reportData
-        .where("date_update")
-        .above(syncData.lastSync)
+        .filter(
+          ({ date_update: date }) =>
+            new Date(date).getTime() - new Date(syncData.lastSync).getTime() > 0
+        )
         .reverse()
         .sortBy("date_update"),
     ])

@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/item"
 import { ChevronRight } from "lucide-react"
 import { getLocale } from "@/paraglide/runtime"
-import { getDurationLabel } from "@/lib/date"
+import { dateCompare, getDurationLabel } from "@/lib/date"
 import type {
   InfrastructureReferencesSchemaProps,
   InterventionReferencesSchemaProps,
@@ -70,13 +70,11 @@ function RouteComponent() {
             const { id: _id, ...bodyForPost } = body
             return queryFnWithAuth("/signage/drf/signages", {
               method:
-                body.date_insert.localeCompare(lastSync) > -1
-                  ? "POST"
-                  : "PATCH",
+                dateCompare(body.date_insert, lastSync) > -1 ? "POST" : "PATCH",
               searchParams: { format: "gtam" },
               schema: z.array(signageDataSchema),
               body: JSON.stringify(
-                body.date_insert.localeCompare(lastSync) > -1
+                dateCompare(body.date_insert, lastSync) > -1
                   ? bodyForPost
                   : body
               ),
@@ -90,13 +88,11 @@ function RouteComponent() {
             const { id: _id, ...bodyForPost } = body
             return queryFnWithAuth("/intervention/drf/interventions", {
               method:
-                body.date_insert.localeCompare(lastSync) > -1
-                  ? "POST"
-                  : "PATCH",
+                dateCompare(body.date_insert, lastSync) > -1 ? "POST" : "PATCH",
               searchParams: { format: "gtam" },
               schema: z.array(interventionDataSchema),
               body: JSON.stringify(
-                body.date_insert.localeCompare(lastSync) > -1
+                dateCompare(body.date_insert, lastSync) > -1
                   ? bodyForPost
                   : body
               ),
@@ -111,13 +107,11 @@ function RouteComponent() {
             const { id: _id, ...bodyForPost } = body
             return queryFnWithAuth("/infrastructure/drf/infrastructures", {
               method:
-                body.date_insert.localeCompare(lastSync) > -1
-                  ? "POST"
-                  : "PATCH",
+                dateCompare(body.date_insert, lastSync) > -1 ? "POST" : "PATCH",
               searchParams: { format: "gtam" },
               schema: z.array(infrastructureDataSchema),
               body: JSON.stringify(
-                body.date_insert.localeCompare(lastSync) > -1
+                dateCompare(body.date_insert, lastSync) > -1
                   ? bodyForPost
                   : body
               ),
@@ -132,13 +126,11 @@ function RouteComponent() {
             const { id: _id, ...bodyForPost } = body
             return queryFnWithAuth("/report/drf/reports", {
               method:
-                body.date_insert.localeCompare(lastSync) > -1
-                  ? "POST"
-                  : "PATCH",
+                dateCompare(body.date_insert, lastSync) > -1 ? "POST" : "PATCH",
               searchParams: { format: "gtam" },
               schema: z.array(reportDataSchema),
               body: JSON.stringify(
-                body.date_insert.localeCompare(lastSync) > -1
+                dateCompare(body.date_insert, lastSync) > -1
                   ? bodyForPost
                   : body
               ),
@@ -199,7 +191,7 @@ function RouteComponent() {
     })
     .filter((item) => !!item)
     .flat()
-    .sort((a, b) => b.date_update.localeCompare(a.date_update))
+    .sort((a, b) => dateCompare(b.date_update, a.date_update))
 
   return (
     <div>
@@ -238,9 +230,8 @@ function RouteComponent() {
                           dateTime={item.date_update}
                           className="text-xs text-muted-foreground"
                         >
-                          {item.date_insert.localeCompare(
-                            syncData?.lastSync ?? ""
-                          ) > -1
+                          {dateCompare(item.date_insert, syncData?.lastSync) >
+                          -1
                             ? "Crée "
                             : "Modifié "}
                           il y a{" "}

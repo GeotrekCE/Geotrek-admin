@@ -17,6 +17,13 @@ function isOutDated(date: string, timeInMS: number) {
   return new Date().getTime() - new Date(date).getTime() > timeInMS
 }
 
+export function dateCompare(firsDate: string, secondDate?: string) {
+  if (!secondDate || !isValidDate(secondDate)) {
+    return -Infinity
+  }
+  return new Date(firsDate).getTime() - new Date(secondDate).getTime()
+}
+
 export function getUpdatedStatus(date: string | undefined, timeInMS: number) {
   if (!date || !isValidDate(date)) {
     return "EXPIRED"

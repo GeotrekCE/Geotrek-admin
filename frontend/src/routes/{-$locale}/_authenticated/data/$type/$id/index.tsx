@@ -21,6 +21,7 @@ import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
+import { dateCompare } from "@/lib/date"
 export const Route = createFileRoute(
   "/{-$locale}/_authenticated/data/$type/$id/"
 )({
@@ -95,8 +96,7 @@ function RouteComponent() {
     getLocale()
   )
 
-  const isAsyncItem =
-    detail.date_update.localeCompare(syncData?.lastSync ?? "") > -1
+  const isAsyncItem = dateCompare(detail.date_update, syncData?.lastSync) > -1
 
   return (
     <div>
@@ -265,8 +265,7 @@ function RouteComponent() {
             >
               Modifier {params.type}
             </Link>
-            {detail.date_insert.localeCompare(syncData?.lastSync ?? "") >
-              -1 && (
+            {dateCompare(detail.date_insert, syncData?.lastSync) > -1 && (
               <Button
                 variant="destructive"
                 className="w-full"

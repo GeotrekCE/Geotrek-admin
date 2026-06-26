@@ -16,6 +16,7 @@ import { getLocale } from "@/paraglide/runtime"
 import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
 import { Skeleton } from "@/components/ui/skeleton"
+import { dateCompare } from "@/lib/date"
 
 const TOP_MARGIN_REM = 1
 
@@ -126,8 +127,9 @@ export default function List() {
                                 </time>
                               </ItemContent>
                               <ItemActions>
-                                {item.date_update.localeCompare(
-                                  syncData?.lastSync ?? ""
+                                {dateCompare(
+                                  item.date_update,
+                                  syncData?.lastSync
                                 ) > -1 && (
                                   <CircleAlert
                                     className="size-4 text-destructive"
