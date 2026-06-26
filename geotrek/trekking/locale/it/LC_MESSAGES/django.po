@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-21 13:17+0000\n"
+"POT-Creation-Date: 2026-06-23 08:20+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/trekking/it/>\n"
@@ -495,9 +495,6 @@ msgstr "GPX"
 msgid "KML"
 msgstr "KML"
 
-msgid "Edit off the path network"
-msgstr ""
-
 msgid "Itinerancy"
 msgstr "itinerari a tappe"
 
@@ -509,24 +506,6 @@ msgstr "Genitore di:"
 
 msgid "Map"
 msgstr "Mappa"
-
-msgid "Add a point of reference"
-msgstr "Aggiungere un punto di riferimento"
-
-msgid "Move points of reference"
-msgstr "Spostare i punti di riferimento"
-
-msgid "Delete a point of reference"
-msgstr "Sopprimere un punto di riferimento"
-
-msgid "Set the parking location"
-msgstr "Definire la posizione del parcheggio"
-
-msgid "Move the parking location"
-msgstr "Spostare la posizione di parcheggio"
-
-msgid "Delete the parking location"
-msgstr "Cancellare la posizione di parcheggio"
 
 msgid "Add relation"
 msgstr "Aggiungi relazione"

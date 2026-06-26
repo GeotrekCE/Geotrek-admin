@@ -1,8 +1,5 @@
-from django.conf import settings
-from django.contrib.gis.forms import LineStringField
-
-from geotrek.core.widgets import LineTopologyWidget
-
+from ..common.forms import CommonForm
+from ..core.mixins.forms import LinearTopologyFormMixin
 from .models import (
     CirculationEdge,
     CompetenceEdge,
@@ -12,64 +9,47 @@ from .models import (
     WorkManagementEdge,
 )
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
-    from ..core.mixins.forms import TopologyForm as BaseForm
-else:
-    from geotrek.common.forms import CommonForm as BaseForm
+
+class PhysicalEdgeForm(LinearTopologyFormMixin, CommonForm):
+    class Meta(LinearTopologyFormMixin.Meta):
+        model = PhysicalEdge
+        fields = [*LinearTopologyFormMixin.Meta.fields, "physical_type"]
 
 
-class EdgeForm(BaseForm):
-    if settings.TREKKING_TOPOLOGY_ENABLED:
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["topology"].widget.modifiable
-            self.fields["topology"].widget = LineTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-    else:
-        geom = LineStringField()
-
-        geom_fields = [
-            "geom",
+class LandEdgeForm(LinearTopologyFormMixin, CommonForm):
+    class Meta(LinearTopologyFormMixin.Meta):
+        model = LandEdge
+        fields = [
+            *LinearTopologyFormMixin.Meta.fields,
+            "land_type",
+            "owner",
+            "agreement",
         ]
 
-        class Meta(BaseForm.Meta):
-            fields = [*BaseForm.Meta.fields, "geom"]
 
-
-class PhysicalEdgeForm(EdgeForm):
-    class Meta(EdgeForm.Meta):
-        model = PhysicalEdge
-        fields = [*EdgeForm.Meta.fields, "physical_type"]
-
-
-class LandEdgeForm(EdgeForm):
-    class Meta(EdgeForm.Meta):
-        model = LandEdge
-        fields = [*EdgeForm.Meta.fields, "land_type", "owner", "agreement"]
-
-
-class CirculationEdgeForm(EdgeForm):
-    class Meta(EdgeForm.Meta):
+class CirculationEdgeForm(LinearTopologyFormMixin, CommonForm):
+    class Meta(LinearTopologyFormMixin.Meta):
         model = CirculationEdge
-        fields = [*EdgeForm.Meta.fields, "circulation_type", "authorization_type"]
+        fields = [
+            *LinearTopologyFormMixin.Meta.fields,
+            "circulation_type",
+            "authorization_type",
+        ]
 
 
-class OrganismForm(EdgeForm):
-    class Meta(EdgeForm.Meta):
-        fields = [*EdgeForm.Meta.fields, "organization"]
-
-
-class CompetenceEdgeForm(OrganismForm):
-    class Meta(OrganismForm.Meta):
+class CompetenceEdgeForm(LinearTopologyFormMixin, CommonForm):
+    class Meta(LinearTopologyFormMixin.Meta):
         model = CompetenceEdge
+        fields = [*LinearTopologyFormMixin.Meta.fields, "organization"]
 
 
-class WorkManagementEdgeForm(OrganismForm):
-    class Meta(OrganismForm.Meta):
+class WorkManagementEdgeForm(LinearTopologyFormMixin, CommonForm):
+    class Meta(LinearTopologyFormMixin.Meta):
         model = WorkManagementEdge
+        fields = [*LinearTopologyFormMixin.Meta.fields, "organization"]
 
 
-class SignageManagementEdgeForm(OrganismForm):
-    class Meta(OrganismForm.Meta):
+class SignageManagementEdgeForm(LinearTopologyFormMixin, CommonForm):
+    class Meta(LinearTopologyFormMixin.Meta):
         model = SignageManagementEdge
+        fields = [*LinearTopologyFormMixin.Meta.fields, "organization"]

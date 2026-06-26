@@ -54,15 +54,15 @@
 /* Mapbox/Maplibre native control buttons */
 .mapboxgl-ctrl button.mapbox-gl-path-btn-edit,
 .maplibregl-ctrl button.mapbox-gl-path-btn-edit {
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='29' height='29' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/%3E%3C/svg%3E");
+  background-image: url("/static/core/images/linetopology-control.png");
   background-repeat: no-repeat;
   background-position: center;
 }
 
 .mapboxgl-ctrl button.mapbox-gl-path-btn-edit.mapbox-gl-path-active,
 .maplibregl-ctrl button.mapbox-gl-path-btn-edit.mapbox-gl-path-active {
-  background-color: rgba(0, 0, 0, 0.05);
-  background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='29' height='29' viewBox='0 0 24 24' fill='none' stroke='%230D47A1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/%3E%3C/svg%3E");
+  background-color: rgba(0, 0, 0, 0.1);
+  background-image: url("/static/core/images/linetopology-control.png");
 }
 
 .mapboxgl-ctrl button.mapbox-gl-path-btn-theme,

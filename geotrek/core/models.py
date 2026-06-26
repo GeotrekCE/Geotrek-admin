@@ -236,7 +236,7 @@ class Path(
     def closest(cls, point, exclude=None):
         """
         Returns the closest path of the point.
-        Will fail if no path in database.
+        Returns None if no path in database.
         """
         # TODO: move to custom manager
         if point.srid != settings.SRID:
@@ -247,7 +247,8 @@ class Path(
         return (
             qs.exclude(visible=False)
             .annotate(distance=Distance("geom", point))
-            .order_by("distance")[0]
+            .order_by("distance")
+            .first()
         )
 
     @classmethod
@@ -359,20 +360,26 @@ class Path(
         if Path.objects.exists():
             for topology in topologies_list:
                 if isinstance(topology.geom, Point):
+                    was_on_intersection = (
+                        PathAggregation.objects.filter(topo_object=topology)
+                        .exclude(path__pk=self.pk)
+                        .exists()
+                    )
+                    if was_on_intersection:
+                        continue  # The topology is still linked to the other paths
                     closest = self.closest(topology.geom, self)
                     position, offset = closest.interpolate(topology.geom)
-                    new_topology = Topology.objects.create()
+                    new_topology = Topology()
                     aggrobj = PathAggregation(
                         topo_object=new_topology,
                         start_position=position,
                         end_position=position,
                         path=closest,
                     )
-                    aggrobj.save()
-                    point = Point(topology.geom.x, topology.geom.y, srid=settings.SRID)
-                    new_topology.geom = point
+                    new_topology.aggregations = [aggrobj]
+                    closest.aggregations.add(aggrobj)
+                    new_topology.geom = GEOSGeometry(topology.geom.ewkt)
                     new_topology.offset = offset
-                    new_topology.position = position
                     new_topology.save()
                     topology.mutate(new_topology)
         return r
@@ -722,8 +729,7 @@ class Topology(
             # Otherwise we keep coupled status from DB and reload computed values.
             if geom_modified_in_python:
                 self.coupled = False
-                # FIXME: compare the geoms correctly (currently not the same srid). This must
-                # work when using a form, but also when calling save() e.g. in a parser
+                PathAggregation.objects.filter(topo_object=self).delete()
             else:
                 self.coupled = existing.coupled
                 self.length = existing.length
@@ -800,19 +806,28 @@ class Topology(
     @classmethod
     def _topologypoint(cls, lng, lat, kind=None, snap=None):
         """
-        Receives a point (lng, lat) with API_SRID, and returns
-        a topology objects with a computed path aggregation.
+        Receives a point (lng, lat) with API_SRID, and returns a point topology object with:
+        - if a path exists: a computed path aggregation
+        - else: a geometry
         """
         # Find closest path
         point = Point(lng, lat, srid=settings.API_SRID)
         point.transform(settings.SRID)
+
         if snap is None:
             closest = Path.closest(point)
-            position, offset = closest.interpolate(point)
         else:
-            closest = Path.objects.get(pk=snap)
-            position, offset = closest.interpolate(point)
+            try:
+                closest = Path.objects.get(pk=snap)
+            except Path.DoesNotExist:
+                msg = "Invalid serialized point topology: snap path not found"
+                raise ValueError(msg)
+        if closest is None:
+            return Topology(kind="TMP", geom=point)
+        position, offset = closest.interpolate(point)
+        if snap is not None:
             offset = 0
+
         # We can now instantiante a Topology object
         topology = Topology(kind=kind, offset=offset)
         aggr = PathAggregation(
@@ -827,9 +842,58 @@ class Topology(
         topology.geom = point
         return topology
 
+    # TODO: unit tests
+    @classmethod
+    def check_serialized_topology(cls, topology):
+        """
+        Checks whether a serialized linear topology is deserializable by the `deserialize` class method.
+        If not, raises an Exception with an error message.
+        Note that this method does not check whether a topology will be valid or not.
+        """
+        if topology is None or type(topology) is not list or topology == []:
+            msg = "Request parameters should contain a non-empty 'topology' array"
+            raise Exception(msg)
+
+        for subtopology in topology:
+            paths = subtopology.get("paths")
+            positions = subtopology.get("positions")
+
+            if paths is None or type(paths) is not list or paths == []:
+                msg = "Each subtopology should contain a non-empty 'paths' array"
+                raise Exception(msg)
+            for path_id in paths:
+                if (
+                    not isinstance(path_id, int)
+                    or Path.objects.filter(pk=path_id).first() is None
+                ):
+                    msg = "Path arrays should contain valid path identifiers"
+                    raise Exception(msg)
+
+            if positions is None or type(positions) is not dict or positions == {}:
+                msg = "Each subtopology should contain a valid 'positions' object"
+                raise Exception(msg)
+            for index, (key, value) in enumerate(positions.items()):
+                if (
+                    str(index) != key
+                    or value is None
+                    or type(value) is not list
+                    or len(value) != 2
+                ):
+                    msg = "'positions' objects should contain arrays associated to a correct key and containing two elements"
+                    raise Exception(msg)
+                for fraction in value:
+                    if fraction < 0 or fraction > 1:
+                        msg = "Positions start and end values should be between 0 and 1"
+                        raise Exception(msg)
+
+            if len(paths) != len(positions):
+                msg = "For each topology, the number of paths and positions should be the same"
+                raise Exception(msg)
+
     @classmethod
     def deserialize(cls, serialized):
         """
+        ---- Topologies ----
         Topologies can be points or lines. Serialized topologies come from Javascript
         module ``topology_helper.js``.
 
@@ -853,8 +917,8 @@ class Topology(
         * If has lat/lng return point topology
         * Otherwise, create path aggregations from serialized data.
         ____________________________________________________________________________________________
-        Without Dynamic Segmentation :
 
+        ---- Geometries ----
         Deserialize normally and create a topology from the geojson
         """
         try:

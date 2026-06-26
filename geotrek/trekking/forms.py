@@ -15,11 +15,9 @@ from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.mixins.forms import (
-    OffNetworkTopologyFormMixin,
-    OnNetworkTopologyFormMixin,
-    TopologyForm,
+    LinearTopologyFormMixin,
+    PointTopologyFormMixin,
 )
-from geotrek.core.widgets import PointTopologyWidget
 
 from .models import (
     POI,
@@ -32,7 +30,7 @@ from .models import (
 )
 
 
-class BaseTrekForm(CommonForm):
+class TrekForm(LinearTopologyFormMixin, CommonForm):
     children = forms.ModelMultipleChoiceField(
         label=_("Children"),
         help_text=_("Select children in order"),
@@ -45,9 +43,11 @@ class BaseTrekForm(CommonForm):
         widget=forms.widgets.HiddenInput(),
         required=False,
     )
+
     geomfields = [
         "parking_location",
         "points_reference",
+        *LinearTopologyFormMixin.geomfields,
     ]
 
     leftpanel_scrollable = False
@@ -128,6 +128,65 @@ class BaseTrekForm(CommonForm):
             css_class="tabbable",
         ),
     ]
+
+    class Meta(LinearTopologyFormMixin.Meta, CommonForm.Meta):
+        model = Trek
+        fields = [
+            *LinearTopologyFormMixin.Meta.fields,
+            *CommonForm.Meta.fields,
+            "structure",
+            "name",
+            "review",
+            "published",
+            "labels",
+            "departure",
+            "arrival",
+            "duration",
+            "difficulty",
+            "route",
+            "ambiance",
+            "access",
+            "description_teaser",
+            "description",
+            "ratings_description",
+            "points_reference",
+            "accessibility_infrastructure",
+            "advised_parking",
+            "parking_location",
+            "public_transport",
+            "advice",
+            "gear",
+            "themes",
+            "networks",
+            "practice",
+            "accessibilities",
+            "accessibility_level",
+            "accessibility_signage",
+            "accessibility_slope",
+            "accessibility_covering",
+            "accessibility_exposure",
+            "accessibility_width",
+            "accessibility_advice",
+            "web_links",
+            "information_desks",
+            "source",
+            "portal",
+            "children",
+            "eid",
+            "eid2",
+            "reservation_system",
+            "reservation_id",
+            "pois_excluded",
+            "hidden_ordered_children",
+        ]
+        widgets = {
+            "parking_location": MapWidget(
+                attrs={"target_map": "topology", "custom_icon": "markers/parking.svg"}
+            ),
+            "points_reference": MapWidget(
+                attrs={"target_map": "topology", "custom_icon": "markers/points.svg"}
+            ),
+        }
 
     def __init__(self, *args, **kwargs):
         self.fieldslayout = deepcopy(self.base_fieldslayout)
@@ -211,6 +270,20 @@ class BaseTrekForm(CommonForm):
             self.fields["pois_excluded"].queryset = self.instance.all_pois.all()
         else:
             self.fieldslayout[0][1][1].remove("pois_excluded")
+
+        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
+            self.fields.pop("points_reference")
+        else:
+            self.fields["points_reference"].label = ""
+            # Edit points of reference with custom edition JavaScript class
+            self.fields[
+                "points_reference"
+            ].widget.geometry_field_class = "PointsReferenceField"
+
+        self.fields["parking_location"].label = ""
+        self.fields[
+            "parking_location"
+        ].widget.geometry_field_class = "ParkingLocationField"
 
     def clean(self):
         cleaned_data = super().clean()
@@ -302,154 +375,8 @@ class BaseTrekForm(CommonForm):
 
         return instance
 
-    class Meta(CommonForm.Meta):
-        model = Trek
-        fields = [
-            *CommonForm.Meta.fields,
-            "structure",
-            "name",
-            "review",
-            "published",
-            "labels",
-            "departure",
-            "arrival",
-            "duration",
-            "difficulty",
-            "route",
-            "ambiance",
-            "access",
-            "description_teaser",
-            "description",
-            "ratings_description",
-            "points_reference",
-            "accessibility_infrastructure",
-            "advised_parking",
-            "parking_location",
-            "public_transport",
-            "advice",
-            "gear",
-            "themes",
-            "networks",
-            "practice",
-            "accessibilities",
-            "accessibility_level",
-            "accessibility_signage",
-            "accessibility_slope",
-            "accessibility_covering",
-            "accessibility_exposure",
-            "accessibility_width",
-            "accessibility_advice",
-            "web_links",
-            "information_desks",
-            "source",
-            "portal",
-            "children",
-            "eid",
-            "eid2",
-            "reservation_system",
-            "reservation_id",
-            "pois_excluded",
-            "hidden_ordered_children",
-        ]
 
-
-class OnNetworkTrekForm(OnNetworkTopologyFormMixin, BaseTrekForm):
-    class Meta(OnNetworkTopologyFormMixin.Meta, BaseTrekForm.Meta):
-        fields = [*OnNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
-        geomfields = [
-            *BaseTrekForm.geomfields,
-            *OnNetworkTopologyFormMixin.geomfields,
-        ]
-        widgets = {
-            "parking_location": MapWidget(
-                attrs={"target_map": "topology", "custom_icon": "markers/parking.svg"}
-            ),
-            "points_reference": MapWidget(
-                attrs={"target_map": "topology", "custom_icon": "markers/points.svg"}
-            ),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
-            self.fields.pop("points_reference")
-        else:
-            self.fields["points_reference"].label = ""
-            self.fields["points_reference"].widget.target_map = "topology"
-            # Edit points of reference with custom edition JavaScript class
-            self.fields[
-                "points_reference"
-            ].widget.geometry_field_class = "PointsReferenceField"
-
-        self.fields["parking_location"].label = ""
-        self.fields["parking_location"].widget.target_map = "topology"
-        self.fields[
-            "parking_location"
-        ].widget.geometry_field_class = "ParkingLocationField"
-
-
-class OffNetworkTrekForm(BaseTrekForm, OffNetworkTopologyFormMixin):
-    geomfields = [
-        *BaseTrekForm.geomfields,
-        *OffNetworkTopologyFormMixin.geomfields,
-    ]
-
-    class Meta(BaseTrekForm.Meta, OffNetworkTopologyFormMixin.Meta):
-        fields = [*OffNetworkTopologyFormMixin.Meta.fields, *BaseTrekForm.Meta.fields]
-        widgets = {
-            "parking_location": MapWidget(
-                attrs={"target_map": "geom", "custom_icon": "markers/parking.svg"}
-            ),
-            "points_reference": MapWidget(
-                attrs={"target_map": "geom", "custom_icon": "markers/points.svg"}
-            ),
-        }
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
-        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
-            self.fields.pop("points_reference")
-        else:
-            # Edit points of reference with custom edition JavaScript class
-            self.fields[
-                "points_reference"
-            ].widget.geometry_field_class = "PointsReferenceField"
-        self.fields[
-            "parking_location"
-        ].widget.geometry_field_class = "ParkingLocationField"
-
-
-if settings.TREKKING_TOPOLOGY_ENABLED:
-
-    class BasePOIForm(TopologyForm):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["topology"].widget.modifiable
-            self.fields["topology"].widget = PointTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-
-        class Meta(TopologyForm.Meta):
-            model = POI
-
-else:
-
-    class BasePOIForm(CommonForm):
-        geomfields = ["geom"]
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["geom"].widget.modifiable
-            self.fields["geom"].widget = MapWidget(attrs={"geom_type": "POINT"})
-            self.fields["geom"].widget.modifiable = modifiable
-
-        class Meta(CommonForm.Meta):
-            model = POI
-            fields = [*CommonForm.Meta.fields, "geom"]
-
-
-class POIForm(BasePOIForm):
+class POIForm(PointTopologyFormMixin):
     fieldslayout = [
         Div(
             "structure",
@@ -462,9 +389,10 @@ class POIForm(BasePOIForm):
         )
     ]
 
-    class Meta(BasePOIForm.Meta):
+    class Meta(PointTopologyFormMixin.Meta):
+        model = POI
         fields = [
-            *BasePOIForm.Meta.fields,
+            *PointTopologyFormMixin.Meta.fields,
             "structure",
             "name",
             "description",
@@ -475,35 +403,11 @@ class POIForm(BasePOIForm):
         ]
 
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
+class ServiceForm(PointTopologyFormMixin):
+    class Meta(PointTopologyFormMixin.Meta):
+        model = Service
+        fields = [*PointTopologyFormMixin.Meta.fields, "structure", "type", "eid"]
 
-    class BaseServiceForm(TopologyForm):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["topology"].widget.modifiable
-            self.fields["topology"].widget = PointTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-
-        class Meta(TopologyForm.Meta):
-            model = Service
-
-else:
-
-    class BaseServiceForm(CommonForm):
-        geomfields = ["geom"]
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["geom"].widget.modifiable
-            self.fields["geom"].widget = MapWidget(attrs={"geom_type": "POINT"})
-            self.fields["geom"].widget.modifiable = modifiable
-
-        class Meta(CommonForm.Meta):
-            model = Service
-            fields = [*CommonForm.Meta.fields, "geom"]
-
-
-class ServiceForm(BaseServiceForm):
     fieldslayout = [
         Div(
             "structure",
@@ -511,9 +415,6 @@ class ServiceForm(BaseServiceForm):
             "eid",
         )
     ]
-
-    class Meta(BaseServiceForm.Meta):
-        fields = [*BaseServiceForm.Meta.fields, "structure", "type", "eid"]
 
 
 class WebLinkCreateFormPopup(TranslatedModelForm):

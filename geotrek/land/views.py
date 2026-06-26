@@ -7,7 +7,15 @@ from geotrek.common.mixins.views import CustomColumnsMixin
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.views import CreateFromTopologyMixin
 
-from . import filters, forms, layers, models, serializers
+from . import filters, layers, models, serializers
+from .forms import (
+    CirculationEdgeForm,
+    CompetenceEdgeForm,
+    LandEdgeForm,
+    PhysicalEdgeForm,
+    SignageManagementEdgeForm,
+    WorkManagementEdgeForm,
+)
 
 
 class PhysicalEdgeList(
@@ -48,12 +56,16 @@ class PhysicalEdgeDocument(me_views.MapEntityDocument):
 
 class PhysicalEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.PhysicalEdge
-    form_class = forms.PhysicalEdgeForm
+
+    def get_form_class(self):
+        return PhysicalEdgeForm
 
 
 class PhysicalEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.PhysicalEdge.objects.existing()
-    form_class = forms.PhysicalEdgeForm
+
+    def get_form_class(self):
+        return PhysicalEdgeForm
 
 
 class PhysicalEdgeDelete(me_views.MapEntityDelete):
@@ -121,12 +133,16 @@ class LandEdgeDocument(me_views.MapEntityDocument):
 
 class LandEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.LandEdge
-    form_class = forms.LandEdgeForm
+
+    def get_form_class(self):
+        return LandEdgeForm
 
 
 class LandEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.LandEdge.objects.existing()
-    form_class = forms.LandEdgeForm
+
+    def get_form_class(self):
+        return LandEdgeForm
 
 
 class LandEdgeDelete(me_views.MapEntityDelete):
@@ -191,12 +207,16 @@ class CirculationEdgeDocument(me_views.MapEntityDocument):
 
 class CirculationEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.CirculationEdge
-    form_class = forms.CirculationEdgeForm
+
+    def get_form_class(self):
+        return CirculationEdgeForm
 
 
 class CirculationEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.CirculationEdge.objects.existing()
-    form_class = forms.CirculationEdgeForm
+
+    def get_form_class(self):
+        return CirculationEdgeForm
 
 
 class CirculationEdgeDelete(me_views.MapEntityDelete):
@@ -259,12 +279,16 @@ class CompetenceEdgeDocument(me_views.MapEntityDocument):
 
 class CompetenceEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.CompetenceEdge
-    form_class = forms.CompetenceEdgeForm
+
+    def get_form_class(self):
+        return CompetenceEdgeForm
 
 
 class CompetenceEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.CompetenceEdge.objects.existing()
-    form_class = forms.CompetenceEdgeForm
+
+    def get_form_class(self):
+        return CompetenceEdgeForm
 
 
 class CompetenceEdgeDelete(me_views.MapEntityDelete):
@@ -327,12 +351,16 @@ class WorkManagementEdgeDocument(me_views.MapEntityDocument):
 
 class WorkManagementEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.WorkManagementEdge
-    form_class = forms.WorkManagementEdgeForm
+
+    def get_form_class(self):
+        return WorkManagementEdgeForm
 
 
 class WorkManagementEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.WorkManagementEdge.objects.existing()
-    form_class = forms.WorkManagementEdgeForm
+
+    def get_form_class(self):
+        return WorkManagementEdgeForm
 
 
 class WorkManagementEdgeDelete(me_views.MapEntityDelete):
@@ -397,12 +425,16 @@ class SignageManagementEdgeDocument(me_views.MapEntityDocument):
 
 class SignageManagementEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.SignageManagementEdge
-    form_class = forms.SignageManagementEdgeForm
+
+    def get_form_class(self):
+        return SignageManagementEdgeForm
 
 
 class SignageManagementEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.SignageManagementEdge.objects.existing()
-    form_class = forms.SignageManagementEdgeForm
+
+    def get_form_class(self):
+        return SignageManagementEdgeForm
 
 
 class SignageManagementEdgeDelete(me_views.MapEntityDelete):

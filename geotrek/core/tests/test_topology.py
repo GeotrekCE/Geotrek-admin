@@ -1084,7 +1084,7 @@ class PointTopologyPathNetworkCoupling(TestCase):
         self.move_point_topology_geom(topology, 10, 0)
         self.assertTrue(topology.coupled)
 
-    def test_points_get_decoupled_when_paths_are_deleted(self):
+    def test_points_get_decoupled_when_all_paths_are_deleted(self):
         """
         1. Create three point topologies:
             - one that is not on a path (p1)
@@ -1146,6 +1146,62 @@ class PointTopologyPathNetworkCoupling(TestCase):
         self.assertEqual(topo2.geom.coords, geom_coords2)
         self.assertEqual(topo3.geom.coords, geom_coords3)
 
+    def test_point_recouples_automatically_when_its_path_is_deleted(self):
+        """
+        1. Create two point topologies:
+            - one that is not on a path (p1)
+            - one that is on a path (p2)
+        2. Delete the path they are linked to
+            -> they should stay coupled
+            -> they should both have one path aggregation
+            -> its geometry should not have changed
+
+                            │
+        p1                  │
+        x                   ^ path2
+                            │
+            p2              │
+        ━━━━━x━━━━>━━━━━━━━━━
+                path1
+
+        ━>━ : direction of the path
+         x  : position of the point topology
+        """
+        # Create topologies linked to path 1 and save their geometries coordinates
+        topo1 = self.create_point_topology(0, 3)
+        geom_coords1 = topo1.geom.coords
+        topo2 = self.create_point_topology(3, 0)
+        geom_coords2 = topo2.geom.coords
+
+        # Check their coupling status and path aggregations before deleting path1
+        self.assertTrue(topo1.coupled)
+        self.assertTrue(topo2.coupled)
+        topo1_aggreg = PathAggregation.objects.filter(topo_object=topo1)
+        topo2_aggreg = PathAggregation.objects.filter(topo_object=topo2)
+        self.assertEqual(topo1_aggreg.count(), 1)
+        self.assertEqual(topo2_aggreg.count(), 1)
+        self.assertEqual(topo1_aggreg.first().path.pk, self.path1.pk)
+        self.assertEqual(topo2_aggreg.first().path.pk, self.path1.pk)
+
+        # Delete path1
+        self.path1.delete()
+        topo1.refresh_from_db()
+        topo2.refresh_from_db()
+
+        # Check that the topologies are still coupled
+        self.assertTrue(topo1.coupled)
+        self.assertTrue(topo2.coupled)
+
+        # Check their path aggregations
+        self.assertEqual(PathAggregation.objects.filter(topo_object=topo1).count(), 1)
+        self.assertEqual(PathAggregation.objects.filter(topo_object=topo2).count(), 1)
+        self.assertEqual(topo1_aggreg.first().path.pk, self.path2.pk)
+        self.assertEqual(topo2_aggreg.first().path.pk, self.path2.pk)
+
+        # Check that their geometries have not changed
+        self.assertEqual(topo1.geom.coords, geom_coords1)
+        self.assertEqual(topo2.geom.coords, geom_coords2)
+
     def test_point_on_intersection_doesnt_get_decoupled_when_one_path_is_deleted(self):
         """
         1. Create one point topology, on a path intersection
@@ -1180,6 +1236,7 @@ class PointTopologyPathNetworkCoupling(TestCase):
 
         # Delete path1 and check its path aggregations and its coupling status again
         self.path1.delete()
+        topology.refresh_from_db()
         self.assertTrue(topology.coupled)
         self.assertEqual(
             PathAggregation.objects.filter(topo_object=topology).count(), 1

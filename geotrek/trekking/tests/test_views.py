@@ -98,7 +98,7 @@ class POIViewsTest(CommonTest):
             "type": POITypeFactory.create().pk,
         }
         PathFactory.create()
-        good_data["topology"] = '{"lat": 5.1, "lng": 6.6}'
+        good_data["topology"] = '{"type":"Point","coordinates":[6.6,5.1]}'
 
         return good_data
 
@@ -315,6 +315,7 @@ class TrekViewsTest(CommonTest):
             "information_desks": tourism_factories.InformationDeskFactory.create().pk,
         }
         good_data["topology"] = f'{{"paths": [{self.path.pk}]}}'
+        good_data["topology_changed"] = "true"
         good_data["pois_excluded"] = POIFactory.create(paths=[self.path]).pk
 
         return good_data
@@ -966,7 +967,7 @@ class ServiceViewsTest(CommonTest):
         PathFactory.create()
         return {
             "type": ServiceTypeFactory.create().pk,
-            "topology": '{"lat": 5.1, "lng": 6.6}',
+            "topology": '{"type":"Point","coordinates":[6.6,5.1]}',
         }
 
     def get_expected_popup_content(self):

@@ -1,7 +1,6 @@
 import os
 from io import StringIO
 
-from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
@@ -264,22 +263,6 @@ class InfrastructureCommandTest(TestCase):
             self.assertIn(
                 f"Field '{element}' not found in data source", output.getvalue()
             )
-
-    def test_line_fail_rolling_back(self):
-        self.path.delete()
-        StructureFactory.create(name="structure")
-        filename = os.path.join(os.path.dirname(__file__), "data", "line.geojson")
-        output = StringIO()
-        with self.assertRaises(GEOSException):
-            call_command(
-                "loadinfrastructure",
-                filename,
-                type_default="label",
-                name_default="name",
-                stdout=output,
-            )
-        self.assertIn("An error occured, rolling back operations.", output.getvalue())
-        self.assertEqual(Infrastructure.objects.count(), 0)
 
     def test_update_same_eid(self):
         output = StringIO()

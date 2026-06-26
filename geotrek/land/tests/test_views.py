@@ -96,6 +96,7 @@ class PhysicalEdgeViewsTest(CommonTest):
         return {
             "physical_type": PhysicalTypeFactory.create().pk,
             "topology": f'{{"paths": [{path.pk}]}}',
+            "topology_changed": "true",
         }
 
     def get_expected_datatables_attrs(self):
@@ -145,6 +146,7 @@ class LandEdgeViewsTest(CommonTest):
         return {
             "land_type": LandTypeFactory.create().pk,
             "topology": f'{{"paths": [{path.pk}]}}',
+            "topology_changed": "true",
         }
 
     def get_expected_datatables_attrs(self):
@@ -195,6 +197,7 @@ class CirculationEdgeViewsTest(CommonTest):
             "circulation_type": CirculationTypeFactory.create().pk,
             "authorization_type": AuthorizationTypeFactory.create().pk,
             "topology": f'{{"paths": [{path.pk}]}}',
+            "topology_changed": "true",
         }
 
     def get_expected_datatables_attrs(self):
@@ -245,6 +248,7 @@ class CompetenceEdgeViewsTest(CommonTest):
         return {
             "organization": OrganismFactory.create().pk,
             "topology": f'{{"paths": [{path.pk}]}}',
+            "topology_changed": "true",
         }
 
     def get_expected_datatables_attrs(self):
@@ -294,6 +298,7 @@ class WorkManagementEdgeViewsTest(CommonTest):
         return {
             "organization": OrganismFactory.create().pk,
             "topology": f'{{"paths": [{path.pk}]}}',
+            "topology_changed": "true",
         }
 
     def get_expected_datatables_attrs(self):
@@ -343,6 +348,7 @@ class SignageManagementEdgeViewsTest(CommonTest):
         return {
             "organization": OrganismFactory.create().pk,
             "topology": f'{{"paths": [{path.pk}]}}',
+            "topology_changed": "true",
         }
 
     def get_expected_datatables_attrs(self):

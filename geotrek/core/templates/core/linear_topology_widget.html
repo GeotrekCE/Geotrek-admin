@@ -1,31 +1,29 @@
 {% load i18n static %}
 
-{% if not target_map %}
-    <style>
-        {% block map_css %}
-            #{{ id_map }} {
-                width: 100%;
-                height: 100%;
+<style>
+    {% block map_css %}
+        #{{ id_map }} {
+            width: 100%;
+            height: 100%;
+        }
+        {% if not display_raw %}
+            #{{ id }} {
+            display: none;
             }
-            {% if not display_raw %}
-                #{{ id }} {
-                display: none;
-                }
-            {% endif %}
-        {% endblock map_css %}
-    </style>
+        {% endif %}
+    {% endblock map_css %}
+</style>
 
-    {% block map %}
-        <link rel='stylesheet' href="{% static 'vendor/PATCHED-mapbox-gl-path/mapbox-gl-path.css' %}" />
-        <div id="{{ id_map }}" class="maplibre-map"></div>
-        {% include "core/toast_wrong_topology_route.html" %}
-    {% endblock map %}
+{% block map %}
+    <link rel='stylesheet' href="{% static 'vendor/PATCHED-mapbox-gl-path/mapbox-gl-path.css' %}" />
+    <div id="{{ id_map }}" class="maplibre-map"></div>
+    {% include "core/toast_wrong_topology_route.html" %}
+{% endblock map %}
 
-    {% block vars %}
-        {{ module }}.is_point_topology = {{ is_point_topology|yesno:"true,false" }};
-        {{ module }}.is_line_topology = {{ is_line_topology|yesno:"true,false" }};
-    {% endblock vars %}
-{% endif %}
+{% block vars %}
+    {{ module }}.is_point_topology = {{ is_point_topology|yesno:"true,false" }};
+    {{ module }}.is_line_topology = {{ is_line_topology|yesno:"true,false" }};
+{% endblock vars %}
 
 <script type="module">
     import MapboxPathControl from "{% static 'vendor/PATCHED-mapbox-gl-path/PATCHED-mapbox-gl-path.js' %}";
@@ -33,161 +31,32 @@
     document.addEventListener('DOMContentLoaded', function () {
         const fieldId = '{{ id }}';
         const topologyElem = document.getElementById(fieldId);
+        const topologyChangedElem = document.getElementById('id_topology_changed');
+        let routingControlFirstUpdate = false;
 
-        const initialLineString = {
-              "type": "Feature",
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [
-                    1.444187,
-                    43.584461
-                  ],
-                  [
-                    1.444174,
-                    43.583902
-                  ],
-                  [
-                    1.447712,
-                    43.584401
-                  ],
-                  [
-                    1.448439,
-                    43.584258
-                  ],
-                  [
-                    1.450551,
-                    43.583664
-                  ],
-                  [
-                    1.450716,
-                    43.583681
-                  ],
-                  [
-                    1.456207,
-                    43.585915
-                  ]
-                ]
-              },
-              "properties": {
-                "index": 0,
-                "isFollowingDirections": true,
-                "directionID": 2
-              }
-            }
-        const initialFeatureCollection = {
-          "type": "FeatureCollection",
-          "features": [
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "Point",
-                "coordinates": [
-                  1.4445662176173926,
-                  43.58445067008731
-                ]
-              },
-              "properties": {
-                "index": 0
-              }
-            },
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "Point",
-                "coordinates": [
-                  1.4561261842558224,
-                  43.5860158022156
-                ]
-              },
-              "properties": {
-                "index": 1
-              }
-            },
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [
-                    1.444187,
-                    43.584461
-                  ],
-                  [
-                    1.444174,
-                    43.583902
-                  ],
-                  [
-                    1.447712,
-                    43.584401
-                  ],
-                  [
-                    1.448439,
-                    43.584258
-                  ],
-                  [
-                    1.450551,
-                    43.583664
-                  ],
-                  [
-                    1.450716,
-                    43.583681
-                  ],
-                  [
-                    1.456207,
-                    43.585915
-                  ]
-                ]
-              },
-              "properties": {
-                "index": 0,
-                "isFollowingDirections": true,
-                "directionID": 2
-              }
-            },
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [
-                    1.4445662176173926,
-                    43.58445067008731
-                  ],
-                  [
-                    1.444187,
-                    43.584461
-                  ]
-                ]
-              },
-              "properties": {
-                "index": 0,
-                "isPhantomJunction": true,
-                "isDeparture": true
-              }
-            },
-            {
-              "type": "Feature",
-              "geometry": {
-                "type": "LineString",
-                "coordinates": [
-                  [
-                    1.456207,
-                    43.585915
-                  ],
-                  [
-                    1.4561261842558224,
-                    43.5860158022156
-                  ]
-                ]
-              },
-              "properties": {
-                "index": 0,
-                "isPhantomJunction": true,
-                "isDeparture": false
-              }
-            }
-          ]
+        function getInitialFeatureCollection() {
+            if (topologyElem.value === "")
+                return null
+            return fetch(
+                window.SETTINGS.urls['topology_to_feature_collection'],
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json; charset=UTF-8",
+                        "X-CSRFToken": getCookie('csrftoken'),
+                    },
+                    body: `{"topology": ${topologyElem.value}}`,
+                }
+            ).then(response => {
+                if (response.status === 200) {
+                    return response.json();
+                } else {
+                    return null;
+                }
+            })
+            .then(data => {
+                return data
+            })
         }
 
         function getCookie(name) {
@@ -252,31 +121,20 @@
             })
         }
 
-        // TODO : dans le css pour modifier l'icône du controller
-        // TODO: utiliser !important
-        // https://github.com/makinacorpus/mapbox-gl-path/tree/feature/snapping-and-routing
-        // .maplibregl-ctrl button.mapbox-gl-path-btn-edit {
-        //   background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='29' height='29' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/%3E%3C/svg%3E");
-        //   background-repeat: no-repeat;
-        //   background-position: center;
-        // }
-        //
-        // .maplibregl-ctrl button.mapbox-gl-path-btn-edit.mapbox-gl-path-active {
-        //   background-color: rgba(0, 0, 0, 0.05);
-        //   background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg width='29' height='29' viewBox='0 0 24 24' fill='none' stroke='%230D47A1' stroke-width='2' stroke-linecap='round' stroke-linejoin='round' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7'/%3E%3Cpath d='M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z'/%3E%3C/svg%3E");
-        // }
-
         async function initRoutingControl () {
 
             // Load the arrow image which displays the route's direction
             const image = await map.getMap().loadImage("{% static 'vendor/PATCHED-mapbox-gl-path/assets/arrow.png' %}");
             map.getMap().addImage('arrow', image.data);
 
+            // Get the initial feature collection to display the topology
+            const initialFeatureCollection = await getInitialFeatureCollection()
+
             // Add mapbox-gl-path control
             const mapboxPathControl = new MapboxPathControl({
                 translate: (text) => {
                     const locales = {
-                        "gl-pathControl.createPoint": "{% translate 'Add point' %}",
+                        "gl-pathControl.createPoint": "{% translate 'Add end point' %}",
                         "gl-pathControl.createIntermediatePoint": "{% translate 'Add intermediate point' %}",
                         "gl-pathControl.deletePoint": "{% translate 'Delete point' %}",
                         "gl-pathControl.loopPoint": "{% translate 'Round trip' %}",
@@ -292,8 +150,7 @@
                         getPathByCoordinates: getRoute,
                     }
                 ],
-                //featureCollection: initialFeatureCollection,
-                //lineString: initialLineString,
+                featureCollection: initialFeatureCollection,
                 layersCustomisation: {
                     pointLayerList: [
                       {
@@ -343,7 +200,7 @@
                 showSnapControl: false,
                 defaultSnapping: true,
                 snapLayers: [window.pathLayerName],
-                snapMinZoom: 0,  // TODO
+                snapMinZoom: 0,
                 showDirectionsControl: false,
                 defaultRouting: true,
             });
@@ -437,7 +294,7 @@
                     dataUrl: additionalLayerUrl,
                     tilejsonUrl: additionalTilejsonUrl,
                     isLazy: true,
-                    displayPopup: true,
+                    displayPopup: additionalModelname !== 'path',
                 });
 
                 additionalObjectsLayer.layerManager = layerManager;
@@ -491,6 +348,14 @@
             await addLayers();
             initAdditionalControls();
             await initRoutingControl();
+
+            // Notifier les autres champs géométriques de cette carte
+            window.dispatchEvent(new CustomEvent('map:init', {
+                detail: {
+                    map: map.getMap(),
+                    fieldId: fieldId,
+                }
+            }));
         });
 
         map.getMap().on("MapboxPathControl.update", (event) => {
@@ -499,6 +364,13 @@
             const subRoutes = features.filter(f => f.geometry.type === "LineString" && !f.properties.isPhantomJunction);
             const subTopologies = subRoutes.map(route => route.properties.topology);
             topologyElem.value = JSON.stringify(subTopologies);
+            if (!routingControlFirstUpdate) {
+                routingControlFirstUpdate = true;
+            } else {
+                topologyChangedElem.checked = true;
+                topologyChangedElem.value = true;
+            }
+
         });
     });
 </script>

@@ -9,12 +9,12 @@ from django.test.utils import override_settings
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.core.tests.factories import PathFactory
 
-from ..forms import BaseTrekForm
+from ..forms import TrekForm
 from ..models import OrderedTrekChild
 from .factories import RatingFactory, TrekFactory
 
 
-class BaseTrekFormRatingTests(TestCase):
+class TrekFormRatingTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory.create()
@@ -28,7 +28,7 @@ class BaseTrekFormRatingTests(TestCase):
             f"rating_scale_{self.rating.scale.pk}": str(self.rating.pk),
         }
 
-        form = BaseTrekForm(user=self.user, instance=self.trek, data=data)
+        form = TrekForm(user=self.user, instance=self.trek, data=data)
         self.assertTrue(form.is_valid())
         form.save()
         self.assertListEqual(
@@ -40,7 +40,7 @@ class BaseTrekFormRatingTests(TestCase):
             "name_en": "Trek",
             "practice": str(self.rating.scale.practice.pk),
         }
-        form = BaseTrekForm(user=self.user, instance=self.trek, data=data)
+        form = TrekForm(user=self.user, instance=self.trek, data=data)
         self.assertTrue(form.is_valid())
         form.save()
         self.assertQuerySetEqual(self.trek.ratings.all(), [])
@@ -52,7 +52,7 @@ class BaseTrekFormRatingTests(TestCase):
             "practice": str(self.rating.scale.practice.pk),
             f"rating_scale_{other_rating.scale.pk}": str(other_rating.pk),
         }
-        form = BaseTrekForm(user=self.user, instance=self.trek, data=data)
+        form = TrekForm(user=self.user, instance=self.trek, data=data)
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
             ValidationError,
@@ -66,7 +66,7 @@ class BaseTrekFormRatingTests(TestCase):
         "trek": ["practice", "departure", "duration", "description_teaser"]
     }
 )
-class BaseTrekFormCompletenessTest(TestCase):
+class TrekFormCompletenessTest(TestCase):
     """Test completeness fields on error if empty, according to COMPLETENESS_LEVEL setting"""
 
     @classmethod
@@ -74,9 +74,14 @@ class BaseTrekFormCompletenessTest(TestCase):
         call_command("update_geotrek_permissions", verbosity=0)
         cls.user = UserFactory.create()
         cls.user.user_permissions.add(Permission.objects.get(codename="publish_trek"))
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="can_draw_off_path_network")
+        )
         cls.data = {
             "name_en": "My trek",
             "name_fr": "Ma rando",
+            "geom": '{"type": "LineString", "coordinates": [[0, 0], [1, 1]]}',
+            "geom_changed": "true",
         }
 
     def test_completeness_warning(self):
@@ -84,7 +89,7 @@ class BaseTrekFormCompletenessTest(TestCase):
         data = self.data
         data["published_en"] = True
 
-        form = BaseTrekForm(user=self.user, data=data)
+        form = TrekForm(user=self.user, data=data)
         self.assertTrue(form.is_valid())
 
     @override_settings(COMPLETENESS_LEVEL="error_on_publication")
@@ -93,7 +98,7 @@ class BaseTrekFormCompletenessTest(TestCase):
         data = self.data
         data["published_en"] = False
 
-        form = BaseTrekForm(user=self.user, data=data)
+        form = TrekForm(user=self.user, data=data)
         self.assertTrue(form.is_valid())
 
     @override_settings(COMPLETENESS_LEVEL="error_on_publication")
@@ -102,7 +107,7 @@ class BaseTrekFormCompletenessTest(TestCase):
         data = self.data
         data["published_en"] = True
 
-        form = BaseTrekForm(user=self.user, data=data)
+        form = TrekForm(user=self.user, data=data)
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
             ValidationError,
@@ -118,7 +123,7 @@ class BaseTrekFormCompletenessTest(TestCase):
         data["published_en"] = False
         data["published_fr"] = True
 
-        form = BaseTrekForm(user=self.user, data=data)
+        form = TrekForm(user=self.user, data=data)
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
             ValidationError,
@@ -135,7 +140,7 @@ class BaseTrekFormCompletenessTest(TestCase):
         data["published_en"] = True
         data["published_fr"] = False
 
-        form = BaseTrekForm(user=self.user, data=data)
+        form = TrekForm(user=self.user, data=data)
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
             ValidationError,
@@ -152,7 +157,7 @@ class BaseTrekFormCompletenessTest(TestCase):
         data = self.data
         data["published_en"] = False
         data["review"] = True
-        form = BaseTrekForm(user=self.user, data=data)
+        form = TrekForm(user=self.user, data=data)
 
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
@@ -166,7 +171,7 @@ class BaseTrekFormCompletenessTest(TestCase):
         data["published_en"] = False
         data["published_fr"] = True
         data["review"] = False
-        form = BaseTrekForm(user=self.user, data=data)
+        form = TrekForm(user=self.user, data=data)
 
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
@@ -177,7 +182,7 @@ class BaseTrekFormCompletenessTest(TestCase):
             form.clean()
 
 
-class BaseTrekFormItinerancyTest(TestCase):
+class TrekFormItinerancyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -187,7 +192,7 @@ class BaseTrekFormItinerancyTest(TestCase):
 
     def test_two_children(self):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()
-        form = BaseTrekForm(instance=self.trek2, user=self.user)
+        form = TrekForm(instance=self.trek2, user=self.user)
         form.cleaned_data = {
             "children": [self.trek3],
             "hidden_ordered_children": str(self.trek3.pk),
@@ -196,7 +201,7 @@ class BaseTrekFormItinerancyTest(TestCase):
 
     def test_parent_as_child(self):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()
-        form = BaseTrekForm(instance=self.trek3, user=self.user)
+        form = TrekForm(instance=self.trek3, user=self.user)
         form.cleaned_data = {
             "children": [self.trek2],
             "hidden_ordered_children": str(self.trek2.pk),
@@ -208,7 +213,7 @@ class BaseTrekFormItinerancyTest(TestCase):
 
     def test_child_with_itself_child(self):
         OrderedTrekChild(child=self.trek1, parent=self.trek2, order=0).save()
-        form = BaseTrekForm(instance=self.trek1, user=self.user)
+        form = TrekForm(instance=self.trek1, user=self.user)
         form.cleaned_data = {
             "children": [self.trek3],
             "hidden_ordered_children": str(self.trek3.pk),
@@ -231,7 +236,7 @@ class BaseTrekFormItinerancyTest(TestCase):
         path = PathFactory.create()
         data["topology"] = json.dumps({"paths": [path.pk]})
 
-        form = BaseTrekForm(instance=self.trek2, user=self.user, data=data)
+        form = TrekForm(instance=self.trek2, user=self.user, data=data)
         self.assertTrue(form.is_valid())
         form.save()
 
@@ -260,7 +265,7 @@ class BaseTrekFormItinerancyTest(TestCase):
         path = PathFactory.create()
         data["topology"] = json.dumps({"paths": [path.pk]})
 
-        form = BaseTrekForm(instance=self.trek2, user=self.user, data=data)
+        form = TrekForm(instance=self.trek2, user=self.user, data=data)
         self.assertTrue(form.is_valid())
         form.save()
 
