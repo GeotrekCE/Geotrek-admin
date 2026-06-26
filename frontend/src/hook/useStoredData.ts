@@ -150,20 +150,28 @@ export function useAsyncStoredData() {
       return undefined
     }
     const collections = await Promise.all([
-      db.signageData.where("date_update").above(syncData.lastSync).toArray(),
+      db.signageData
+        .where("date_update")
+        .above(syncData.lastSync)
+        .reverse()
+        .sortBy("date_update"),
       db.interventionData
         .where("date_update")
         .above(syncData.lastSync)
-        .toArray(),
+        .reverse()
+        .sortBy("date_update"),
       db.infrastructureData
         .where("date_update")
         .above(syncData.lastSync)
-        .toArray(),
-      db.reportData.where("date_update").above(syncData.lastSync).toArray(),
+        .reverse()
+        .sortBy("date_update"),
+      db.reportData
+        .where("date_update")
+        .above(syncData.lastSync)
+        .reverse()
+        .sortBy("date_update"),
     ])
-    return collections.map((collection) =>
-      collection.sort((a, b) => b.date_update.localeCompare(a.date_update))
-    )
+    return collections
   }, [syncData])
   return data
 }
