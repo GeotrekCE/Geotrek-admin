@@ -152,7 +152,7 @@ export default function InterventionForm({
             required
           />
 
-          <FormTextareaField name="description" label="Description" />
+          <FormTextareaField name="description" label="Description" isRTE />
 
           <FormGeomField
             name="api_geom.coordinates"

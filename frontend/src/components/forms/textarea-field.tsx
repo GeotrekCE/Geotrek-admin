@@ -10,6 +10,7 @@ import {
   createFormField,
 } from "@/components/ui/form-context"
 import Required from "./required"
+import { RichTextEditor } from "../rich-text-editor"
 
 interface TextareaFieldProps extends Omit<
   React.ComponentProps<"textarea">,
@@ -20,6 +21,7 @@ interface TextareaFieldProps extends Omit<
   required?: boolean
   maxLength?: number
   showCount?: boolean
+  isRTE?: boolean
 }
 
 export function TextareaField({
@@ -29,6 +31,7 @@ export function TextareaField({
   maxLength,
   showCount = !!maxLength,
   className,
+  isRTE = false,
   ...textareaProps
 }: TextareaFieldProps) {
   const id = React.useId()
@@ -44,23 +47,39 @@ export function TextareaField({
           {label}
           {required && <Required />}
         </FieldLabel>
-        <Textarea
-          id={id}
-          value={value}
-          onBlur={field.handleBlur}
-          onChange={(e) => field.handleChange(e.target.value)}
-          maxLength={maxLength}
-          aria-invalid={isTouched && !isValid}
-          className={className}
-          {...textareaProps}
-        />
+        {isRTE ? (
+          <RichTextEditor
+            content={value}
+            onChange={field.handleChange}
+            aria-invalid={isTouched && !isValid}
+            className={className}
+          />
+        ) : (
+          <Textarea
+            id={id}
+            value={value}
+            onBlur={field.handleBlur}
+            onChange={(e) => field.handleChange(e.target.value)}
+            maxLength={maxLength}
+            aria-invalid={isTouched && !isValid}
+            className={className}
+            {...textareaProps}
+          />
+        )}
         {showCount && (
           <div className="text-right text-xs text-muted-foreground tabular-nums">
             {value.length}
             {maxLength ? ` / ${maxLength}` : ""}
           </div>
         )}
-        {description && <FieldDescription>{description}</FieldDescription>}
+        {description ||
+          (isRTE && (
+            <FieldDescription>
+              {isRTE &&
+                "L'ajout d'images et d'intégrations vidéos ne sont pas pris en charge."}
+              {description && ` ${description}`}
+            </FieldDescription>
+          ))}
       </FormField>
       <FormFieldError />
     </FormFieldSet>

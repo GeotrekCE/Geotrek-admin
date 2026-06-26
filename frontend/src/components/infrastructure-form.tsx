@@ -116,7 +116,7 @@ export default function InfrastructureForm({
             />
           )}
 
-          <FormTextareaField name="description" label="Description" />
+          <FormTextareaField name="description" label="Description" isRTE />
 
           <FormGeomField
             name="api_geom.coordinates"
@@ -125,7 +125,7 @@ export default function InfrastructureForm({
             required
           />
 
-          <FormTextareaField name="accessibility" label="Accessibilité" />
+          <FormTextareaField name="accessibility" label="Accessibilité" isRTE />
 
           <FormSelectField
             name="conditions"
