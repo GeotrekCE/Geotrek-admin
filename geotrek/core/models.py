@@ -360,7 +360,11 @@ class Path(
         if Path.objects.exists():
             for topology in topologies_list:
                 if isinstance(topology.geom, Point):
-                    was_on_intersection = PathAggregation.objects.filter(topo_object=topology).exclude(path__pk=self.pk).exists()
+                    was_on_intersection = (
+                        PathAggregation.objects.filter(topo_object=topology)
+                        .exclude(path__pk=self.pk)
+                        .exists()
+                    )
                     if was_on_intersection:
                         continue  # The topology is still linked to the other paths
                     closest = self.closest(topology.geom, self)
