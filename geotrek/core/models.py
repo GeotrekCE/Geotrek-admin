@@ -747,7 +747,6 @@ class Topology(
                 # We cannot have NULL geometry. So we use an empty one,
                 # it will be computed or overwritten by triggers.
                 self.geom = fromstr("POINT (0 0)")
-                # TODO: check that it's still overwritten by triggers
         if not self.kind:
             if self.KIND == "TOPOLOGYMIXIN":
                 msg = "Cannot save abstract topologies"
