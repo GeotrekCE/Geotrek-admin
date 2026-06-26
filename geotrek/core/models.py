@@ -365,18 +365,17 @@ class Path(
                         continue  # The topology is still linked to the other paths
                     closest = self.closest(topology.geom, self)
                     position, offset = closest.interpolate(topology.geom)
-                    new_topology = Topology.objects.create()
+                    new_topology = Topology()
                     aggrobj = PathAggregation(
                         topo_object=new_topology,
                         start_position=position,
                         end_position=position,
                         path=closest,
                     )
-                    aggrobj.save()
-                    point = Point(topology.geom.x, topology.geom.y, srid=settings.SRID)
-                    new_topology.geom = point
+                    new_topology.aggregations = [aggrobj]
+                    closest.aggregations.add(aggrobj)
+                    new_topology.geom = GEOSGeometry(topology.geom.ewkt)
                     new_topology.offset = offset
-                    new_topology.position = position
                     new_topology.save()
                     topology.mutate(new_topology)
         return r
