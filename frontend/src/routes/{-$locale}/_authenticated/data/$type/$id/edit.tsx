@@ -5,6 +5,7 @@ import SignageForm from "@/components/signage-form"
 import type {
   InfrastructureDataSchemaProps,
   InterventionDataSchemaProps,
+  ReportDataSchemaProps,
   SignageDataSchemaProps,
 } from "@/schemas/data"
 import { useLiveQuery } from "dexie-react-hooks"
@@ -13,11 +14,14 @@ import type {
   CommonReferencesSchemaProps,
   InfrastructureReferencesSchemaProps,
   InterventionReferencesSchemaProps,
+  ReportReferencesSchemaProps,
   SignageReferencesSchemaProps,
 } from "@/schemas/references"
 import InfrastructureForm from "@/components/infrastructure-form"
 import InterventionForm from "@/components/intervention-form"
 import { UpdateDataWarning } from "@/components/update-data-warning"
+import ReportForm from "@/components/report-form"
+import NotFound from "@/components/not-found"
 
 export const Route = createFileRoute(
   "/{-$locale}/_authenticated/data/$type/$id/edit"
@@ -63,6 +67,14 @@ function RouteComponent() {
   }
 
   if (
+    !["signage", "infrastructure", "intervention", "report"].includes(
+      params.type
+    )
+  ) {
+    return <NotFound />
+  }
+
+  if (
     references === undefined ||
     references[0] === undefined ||
     references[1] === undefined
@@ -70,8 +82,6 @@ function RouteComponent() {
     // todo loading
     return null
   }
-
-  const name = "name" in detail ? detail.name : `Signalement (id: ${detail.id})`
 
   return (
     <div>
@@ -124,15 +134,16 @@ function RouteComponent() {
             isEdit
           />
         )}
-        {!["signage", "infrastructure", "intervention"].includes(
-          params.type
-        ) && (
-          <section>
-            <h2 className="text-2xl font-medium text-accent-foreground">
-              {name}
-            </h2>
-            <p> TODO: formulaire pour "{params.type}"</p>
-          </section>
+
+        {params.type === "report" && (
+          <ReportForm
+            defaultValues={detail as ReportDataSchemaProps}
+            pictogram={
+              "pictogram" in references[0] ? references[0].pictogram : undefined
+            }
+            references={references as unknown as [ReportReferencesSchemaProps]}
+            isEdit
+          />
         )}
       </div>
     </div>

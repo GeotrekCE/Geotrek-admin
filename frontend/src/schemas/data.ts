@@ -252,17 +252,32 @@ export const reportDataSchema = z.object({
       .array(z.number())
       .length(2, "Les coordonnées sont obligatoires"),
   }),
-  activity: z.object({
-    id: z.number().int().positive(),
-    name: z.string().min(1),
-  }),
-  category: z.object({
-    id: z.number().int().positive(),
-    name: z.string().min(1),
-  }),
-  problem_magnitude: z.object({
-    id: z.number().int().positive(),
-    name: z.string(),
-  }),
-  status: z.null(),
+  activity: z.union([
+    z.null(),
+    z.object({
+      id: z.number().int().positive(),
+      name: z.string(),
+    }),
+  ]),
+  category: z.union([
+    z.null(),
+    z.object({
+      id: z.number().int().positive(),
+      name: z.string(),
+    }),
+  ]),
+  problem_magnitude: z.union([
+    z.null(),
+    z.object({
+      id: z.number().int().positive(),
+      name: z.string(),
+    }),
+  ]),
+  status: z.union([
+    z.null(),
+    z.object({
+      id: z.number().int().positive(),
+      name: z.string(),
+    }),
+  ]),
 })

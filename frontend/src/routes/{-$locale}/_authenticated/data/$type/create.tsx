@@ -7,11 +7,14 @@ import type {
   CommonReferencesSchemaProps,
   InfrastructureReferencesSchemaProps,
   InterventionReferencesSchemaProps,
+  ReportReferencesSchemaProps,
   SignageReferencesSchemaProps,
 } from "@/schemas/references"
 import InfrastructureForm from "@/components/infrastructure-form"
 import InterventionForm from "@/components/intervention-form"
 import { UpdateDataWarning } from "@/components/update-data-warning"
+import ReportForm from "@/components/report-form"
+import NotFound from "@/components/not-found"
 
 export const Route = createFileRoute(
   "/{-$locale}/_authenticated/data/$type/create"
@@ -43,6 +46,14 @@ function RouteComponent() {
   )
 
   const settings = useLiveQuery(() => db.settings.get("settings"))
+
+  if (
+    !["signage", "infrastructure", "intervention", "report"].includes(
+      params.type
+    )
+  ) {
+    return <NotFound />
+  }
 
   if (
     references === undefined ||
@@ -174,15 +185,29 @@ function RouteComponent() {
             }
           />
         )}
-        {!["signage", "infrastructure", "intervention"].includes(
-          params.type
-        ) && (
-          <section>
-            <h2 className="text-2xl font-medium text-accent-foreground">
-              {getTitle(params.type)}
-            </h2>
-            <p>TODO: formulaire pour "{params.type}"</p>
-          </section>
+
+        {params.type === "report" && (
+          <ReportForm
+            defaultValues={{
+              id: -1,
+              api_geom: {
+                type: "Point",
+                coordinates: [],
+              },
+              email: "",
+              comment: "",
+              date_insert: "",
+              date_update: "",
+              activity: null,
+              category: null,
+              problem_magnitude: null,
+              status: null,
+            }}
+            pictogram={
+              "pictogram" in references[0] ? references[0].pictogram : undefined
+            }
+            references={references as unknown as [ReportReferencesSchemaProps]}
+          />
         )}
       </div>
     </div>
