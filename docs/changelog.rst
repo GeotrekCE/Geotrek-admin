@@ -15,6 +15,10 @@ CHANGELOG
 
 * Update requirements for each scale deployments (refs #5524)
 
+**Documentation**
+
+- Add AI contribution requirements to PR template (#5525)
+
 
 2.124.5         (2026-06-09)
 ----------------------------
