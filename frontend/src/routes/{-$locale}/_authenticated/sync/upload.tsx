@@ -1,5 +1,4 @@
 import * as React from "react"
-import * as z from "zod"
 import { createFileRoute, Link } from "@tanstack/react-router"
 import Header from "@/components/header"
 import { useAsyncStoredData } from "@/hook/useStoredData"
@@ -25,16 +24,41 @@ import { db } from "@/lib/db"
 import { Button } from "@/components/ui/button"
 import { FetchError, queryFnWithAuth } from "@/lib/api"
 import {
-  infrastructureDataSchema,
-  interventionDataSchema,
-  reportDataSchema,
-  signageDataSchema,
+  type InfrastructureDataSchemaProps,
+  type InterventionDataSchemaProps,
+  type ReportDataSchemaProps,
+  type SignageDataSchemaProps,
 } from "@/schemas/data"
 import { toast } from "sonner"
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/sync/upload")({
   component: RouteComponent,
 })
+
+function getBodyForMutation(
+  body:
+    | InfrastructureDataSchemaProps
+    | SignageDataSchemaProps
+    | InterventionDataSchemaProps
+    | ReportDataSchemaProps
+): Record<string, null | string | number | string[] | number[]> {
+  return Object.fromEntries(
+    Object.entries(body)
+      .map(([key, value]) => {
+        if (["id", "date_insert", "date_update"].includes(key)) {
+          return null
+        }
+        if (Array.isArray(value)) {
+          return [`${key}_id`, value.map((item) => item.id)]
+        }
+        if (value !== null && typeof value === "object" && "id" in value) {
+          return [`${key}_id`, value.id]
+        }
+        return [key, value]
+      })
+      .filter((item) => item !== null)
+  )
+}
 
 function RouteComponent() {
   const asyncData = useAsyncStoredData()
@@ -67,17 +91,12 @@ function RouteComponent() {
       if (signageData && signageData.length) {
         await Promise.all(
           signageData.map((body) => {
-            const { id: _id, ...bodyForPost } = body
+            console.log(body, getBodyForMutation(body))
             return queryFnWithAuth("/signage/drf/signages", {
               method:
                 dateCompare(body.date_insert, lastSync) > -1 ? "POST" : "PATCH",
               searchParams: { format: "gtam" },
-              schema: z.array(signageDataSchema),
-              body: JSON.stringify(
-                dateCompare(body.date_insert, lastSync) > -1
-                  ? bodyForPost
-                  : body
-              ),
+              body: JSON.stringify(getBodyForMutation(body)),
             })
           })
         )
@@ -85,17 +104,11 @@ function RouteComponent() {
       if (interventionData && interventionData.length) {
         await Promise.all(
           interventionData.map((body) => {
-            const { id: _id, ...bodyForPost } = body
             return queryFnWithAuth("/intervention/drf/interventions", {
               method:
                 dateCompare(body.date_insert, lastSync) > -1 ? "POST" : "PATCH",
               searchParams: { format: "gtam" },
-              schema: z.array(interventionDataSchema),
-              body: JSON.stringify(
-                dateCompare(body.date_insert, lastSync) > -1
-                  ? bodyForPost
-                  : body
-              ),
+              body: JSON.stringify(getBodyForMutation(body)),
             })
           })
         )
@@ -104,17 +117,11 @@ function RouteComponent() {
       if (infrastructureData && infrastructureData.length) {
         await Promise.all(
           infrastructureData.map((body) => {
-            const { id: _id, ...bodyForPost } = body
             return queryFnWithAuth("/infrastructure/drf/infrastructures", {
               method:
                 dateCompare(body.date_insert, lastSync) > -1 ? "POST" : "PATCH",
               searchParams: { format: "gtam" },
-              schema: z.array(infrastructureDataSchema),
-              body: JSON.stringify(
-                dateCompare(body.date_insert, lastSync) > -1
-                  ? bodyForPost
-                  : body
-              ),
+              body: JSON.stringify(getBodyForMutation(body)),
             })
           })
         )
@@ -123,17 +130,11 @@ function RouteComponent() {
       if (reportData && reportData.length) {
         await Promise.all(
           reportData.map((body) => {
-            const { id: _id, ...bodyForPost } = body
             return queryFnWithAuth("/report/drf/reports", {
               method:
                 dateCompare(body.date_insert, lastSync) > -1 ? "POST" : "PATCH",
               searchParams: { format: "gtam" },
-              schema: z.array(reportDataSchema),
-              body: JSON.stringify(
-                dateCompare(body.date_insert, lastSync) > -1
-                  ? bodyForPost
-                  : body
-              ),
+              body: JSON.stringify(getBodyForMutation(body)),
             })
           })
         )
