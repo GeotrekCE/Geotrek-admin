@@ -36,6 +36,9 @@ msgstr ""
 msgid "Filter by one or more manager."
 msgstr ""
 
+msgid "This order number is already used by another line."
+msgstr ""
+
 msgid "Lines"
 msgstr ""
 

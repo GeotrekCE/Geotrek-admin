@@ -5,9 +5,14 @@ CHANGELOG
 2.124.5+dev     (XXXX-XX-XX)
 ----------------------------
 
-**Bug fixes**
+**Improvements**
 
-- Update popup to allow opening detail page in new tab (issue #4626)
+* Allow to modify blade line order
+* Update popup to allow opening detail page in new tab (issue #4626)
+
+**Documentation**
+
+* Update requirements for each scale deployments (refs #5524)
 
 **Improvements**
 
@@ -20,7 +25,7 @@ CHANGELOG
 **Improvements**
 
 * Adapting ApidaeTrekParser to distinctions (#5180)
-* Delete outdated settings related to categories and pictures (refs #4482) 
+* Delete outdated settings related to categories and pictures (refs #4482)
 
 **Bug fixes**
 

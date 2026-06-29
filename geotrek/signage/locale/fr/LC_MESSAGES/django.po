@@ -36,6 +36,9 @@ msgstr "Filtrer par une ou plusieurs structure."
 msgid "Filter by one or more manager."
 msgstr "Filtrer par un ou plusieurs gestionnaires."
 
+msgid "This order number is already used by another line."
+msgstr "Ce numéro d'ordre est déjà utilisé par une autre ligne."
+
 msgid "Lines"
 msgstr "Lignes"
 

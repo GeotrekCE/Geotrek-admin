@@ -14,24 +14,57 @@ Lastly, for a developer instance, please follow :ref:`the dedicated procedure <d
 Requirements
 =============
 
-Geotrek is mostly a CPU-bound application due to the complex queries including geometric operations (such as intersection)
-which are executed on the database. This is especially true in the setup with a Geotrek Rando v3 portal requesting
-dynamic geometric data through the Geotrek API.
+Geotrek is mostly a CPU-bound application due to the complex queries including geometric operations (such as intersections)
+which are executed on the database. This is especially true when using a Geotrek-rando v3 portal that requests dynamic
+geographic data through the Geotrek API.
 
-In such a configuration the required system resources should be:
+Minimum requirements
+--------------------
 
-* 4 cores
-* 8 Go RAM or more
-* 50 Go disk space or more (20 Go + estimated size of attached files like photos, including elements imported from SIT)
+For small deployments with limited datasets and a low number of concurrent users:
 
-If spreading the components on multiple hosts keep in mind the bottleneck will most likely be the CPU and RAM at the
-database server level.
+* 4 CPU cores
+* 8 GB RAM
+* 50 GB disk space (20 GB for the application and database, plus storage for attached files such as photos and data imported from third-party tourism information systems)
+
+Recommended requirements
+------------------------
+
+For most production deployments:
+
+* 8 CPU cores
+* 8 GB RAM or more
+* SSD storage
+* 50 GB disk space or more (depending on the volume of media files and imported tourism data)
+
+
+Large-scale deployments and shared database server
+--------------------------------------------------
+
+For deployments managing large datasets, extensive trail networks, high volumes of tourism information,
+or serving multiple territories, it is strongly recommended to increase resources beyond the minimum requirements.
+
+The same recommendation applies when PostgreSQL/PostGIS is hosted on the same server as Geotrek, as database
+operations are often the primary performance bottleneck.
+
+In such cases, the following configuration should be considered as a baseline:
+
+* 8 CPU cores or more
+* 16 GB RAM or more
+* SSD storage
+* Additional disk space depending on the volume of media files and imported tourism data
+
+.. warning::
+
+  Undersized servers may lead to long processing times when editing topology, generating dynamic geographic data, synchronizing large datasets, or serving concurrent API requests. These delays can result in reverse-proxy application or database timeouts.
+
+When possible, monitor CPU and memory usage regularly and scale resources according to dataset size and user activity.
 
 An Internet connection with open HTTP and HTTPS destination ports is required.
 
-Software requirements are :
+**Software requirements are:**
 
-* Ubuntu Noble 24.04 LTS. Server flavor is recommended but any other flavors work too (desktop…)
+* **Ubuntu Noble 24.04 LTS**. Server flavor is recommended, but other Ubuntu flavors (including Desktop) are also supported.
 
 .. warning::
 
@@ -42,7 +75,6 @@ Software requirements are :
   However, if you are in one of the following cases, make sure pgRouting stays on a 3.x version and is not upgraded to 4.x:
     - installations using the `PostgreSQL APT Repository <https://wiki.postgresql.org/wiki/Apt>`_
     - installations using an external PostgreSQL database
-
 
 Information to prepare before installation
 ===========================================
