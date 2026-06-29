@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-12 16:54+0000\n"
+"POT-Creation-Date: 2026-06-10 07:27+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,6 +34,9 @@ msgid "Filter by one or more structure."
 msgstr ""
 
 msgid "Filter by one or more manager."
+msgstr ""
+
+msgid "This order number is already used by another line."
 msgstr ""
 
 msgid "Lines"
