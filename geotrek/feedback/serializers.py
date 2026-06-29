@@ -1,31 +1,18 @@
 from django.conf import settings
-from django.core.exceptions import ImproperlyConfigured, ValidationError
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis.fields import GeometryField
 
 from geotrek.feedback import models as feedback_models
-from geotrek.feedback.models import ReportActivity
 
 
 class ReportActivityGTAMSerializer(rest_serializers.RelatedField):
-    queryset = ReportActivity.objects.all()
+    name = rest_serializers.CharField(source="label")
 
-    def to_representation(self, value):
-        data = {
-            "id": value.id,
-            "name": value.label,
-        }
-        return data
-
-    def to_internal_value(self, value):
-        try:
-            obj = ReportActivity.objects.get(pk=value["id"])
-            return obj
-        except:
-            msg = {"reportactivity": f"There is no activity with id {value['id']}"}
-            raise ValidationError(msg)
+    class Meta:
+        model = feedback_models.ReportActivity
+        fields = ("id", "name")
 
 
 class ReportCategoryGTAMSerializer(rest_serializers.ModelSerializer):
@@ -78,9 +65,9 @@ class ReportGeojsonSerializer(MapentityGeojsonModelSerializer):
 class ReportGTAMSerializer(rest_serializers.ModelSerializer):
     geom = GeometryField(precision=7, transform=settings.API_SRID)
     activity = ReportActivityGTAMSerializer()
-    #category = ReportCategoryGTAMSerializer()
-    #problem_magnitude = ReportProblemMagnitudeGTAMSerializer()
-    #status = ReportStatusGTAMSerializer()
+    category = ReportCategoryGTAMSerializer()
+    problem_magnitude = ReportProblemMagnitudeGTAMSerializer()
+    status = ReportStatusGTAMSerializer()
 
     class Meta:
         model = feedback_models.Report
@@ -92,9 +79,9 @@ class ReportGTAMSerializer(rest_serializers.ModelSerializer):
             "comment",
             "geom",
             "activity",
-            #"category",
-            #"problem_magnitude",
-            #"status",
+            "category",
+            "problem_magnitude",
+            "status",
         ]
         geo_field = "geom"
 

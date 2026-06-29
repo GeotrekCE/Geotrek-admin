@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.gis.db.models.functions import Transform
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers

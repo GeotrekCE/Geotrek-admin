@@ -96,10 +96,9 @@ class InterventionGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class InterventionRelatedField(serializers.RelatedField):
-
     def to_representation(self, value):
         model = type(value)._meta.verbose_name
-        return {"model": model, "id": getattr(value, 'id', '')}
+        return {"model": model, "id": getattr(value, "id", "")}
 
 
 class InterventionGTAMSerializer(serializers.ModelSerializer):
@@ -142,7 +141,7 @@ class InterventionGTAMSerializer(serializers.ModelSerializer):
             "man_day",
             "description",
             "access",
-            "target"
+            "target",
         ]
         geo_field = "geom"
 

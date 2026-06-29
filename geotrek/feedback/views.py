@@ -172,7 +172,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
                 api_geom=Transform("geom", settings.API_SRID),
                 name=Concat(
                     Value(_("Report")), Value(" "), F(number), output_field=CharField()
-                )
+                ),
             )
             qs = qs.only("id", "status")
             return qs
