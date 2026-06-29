@@ -220,7 +220,7 @@ gevent==26.5.0
     # via gunicorn
 gpxpy==1.6.2
     # via mapentity
-greenlet==3.5.2
+greenlet==3.5.3
     # via gevent
 gunicorn==26.0.0
     # via geotrek (setup.py)
