@@ -22,7 +22,7 @@ charset-normalizer==3.4.7
     # via
     #   -c ../requirements.txt
     #   requests
-click==8.4.1
+click==8.4.2
     # via
     #   -c ../requirements.txt
     #   sphinx-intl
