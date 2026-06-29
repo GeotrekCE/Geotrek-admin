@@ -7,7 +7,7 @@ from rest_framework_gis.fields import GeometryField
 from geotrek.feedback import models as feedback_models
 
 
-class ReportActivityGTAMSerializer(rest_serializers.RelatedField):
+class ReportActivityGTAMSerializer(rest_serializers.ModelSerializer):
     name = rest_serializers.CharField(source="label")
 
     class Meta:
