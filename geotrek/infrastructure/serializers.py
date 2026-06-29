@@ -14,6 +14,8 @@ from geotrek.common.serializers import (
     StructureGTAMSerializer,
 )
 
+from ..authent.models import Structure
+from ..common.models import AccessMean
 from . import models as infrastructure_models
 from .models import (
     InfrastructureCondition,
@@ -83,13 +85,48 @@ class InfrastructureGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 class InfrastructureGTAMSerializer(serializers.ModelSerializer):
     geom = GeometryField(precision=7, transform=settings.API_SRID)
-    structure = StructureGTAMSerializer()
-    access = AccessMeanGTAMSerializer()
-    type = InfrastructureTypeGTAMSerializer()
-    maintenance_difficulty = InfrastructureMaintenanceDifficultyGTAMSerializer()
-    usage_difficulty = InfrastructureUsageDifficultyGTAMSerializer()
-    conditions = InfrastructureConditionsGTAMSerializer(
-        source="conditions_list", many=True
+
+    # read-only
+    structure = StructureGTAMSerializer(read_only=True)
+    access = AccessMeanGTAMSerializer(read_only=True)
+    type = InfrastructureTypeGTAMSerializer(read_only=True)
+    maintenance_difficulty = InfrastructureMaintenanceDifficultyGTAMSerializer(
+        read_only=True
+    )
+    usage_difficulty = InfrastructureUsageDifficultyGTAMSerializer(read_only=True)
+    conditions = InfrastructureConditionsGTAMSerializer(many=True, read_only=True)
+
+    # write-only
+    structure_id = serializers.PrimaryKeyRelatedField(
+        source="structure", write_only=True, queryset=Structure.objects.all()
+    )
+    access_id = serializers.PrimaryKeyRelatedField(
+        source="access",
+        write_only=True,
+        allow_null=True,
+        queryset=AccessMean.objects.all(),
+    )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type", write_only=True, queryset=InfrastructureType.objects.all()
+    )
+    maintenance_difficulty_id = serializers.PrimaryKeyRelatedField(
+        source="maintenance_difficulty",
+        write_only=True,
+        allow_null=True,
+        queryset=InfrastructureMaintenanceDifficultyLevel.objects.all(),
+    )
+    usage_difficulty_id = serializers.PrimaryKeyRelatedField(
+        source="usage_difficulty",
+        write_only=True,
+        allow_null=True,
+        queryset=InfrastructureUsageDifficultyLevel.objects.all(),
+    )
+    conditions_id = serializers.PrimaryKeyRelatedField(
+        source="conditions",
+        many=True,
+        write_only=True,
+        allow_null=True,
+        queryset=InfrastructureCondition.objects.all(),
     )
 
     class Meta:
@@ -104,12 +141,20 @@ class InfrastructureGTAMSerializer(serializers.ModelSerializer):
             "description",
             "implantation_year",
             "accessibility",
+            # read-only
             "structure",
             "access",
             "type",
             "maintenance_difficulty",
             "usage_difficulty",
             "conditions",
+            # write-only
+            "structure_id",
+            "access_id",
+            "type_id",
+            "maintenance_difficulty_id",
+            "usage_difficulty_id",
+            "conditions_id",
         ]
         geom = "geom"
 
