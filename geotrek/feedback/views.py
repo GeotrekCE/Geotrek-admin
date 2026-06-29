@@ -154,10 +154,6 @@ class ReportViewSet(GeotrekMapentityViewSet):
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("status")
         renderer, media_type = self.perform_content_negotiation(self.request)
-        if getattr(renderer, "format") in ["geojson", "gtam"]:
-            qs = qs.annotate(
-                api_geom=Transform("geom", settings.API_SRID),
-            )
         if not self.request.user.is_superuser:
             if (
                 settings.SURICATE_WORKFLOW_ENABLED
@@ -173,6 +169,7 @@ class ReportViewSet(GeotrekMapentityViewSet):
         if getattr(renderer, "format") == "geojson":
             number = "eid" if settings.SURICATE_WORKFLOW_ENABLED else "id"
             qs = qs.annotate(
+                api_geom=Transform("geom", settings.API_SRID),
                 name=Concat(
                     Value(_("Report")), Value(" "), F(number), output_field=CharField()
                 )

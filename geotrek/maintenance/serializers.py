@@ -1,3 +1,4 @@
+from django.conf import settings
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
@@ -94,8 +95,15 @@ class InterventionGeojsonSerializer(MapentityGeojsonModelSerializer):
         fields = ["id", "name"]
 
 
+class InterventionRelatedField(serializers.RelatedField):
+
+    def to_representation(self, value):
+        model = type(value)._meta.verbose_name
+        return {"model": model, "id": getattr(value, 'id', '')}
+
+
 class InterventionGTAMSerializer(serializers.ModelSerializer):
-    api_geom = GeometryField(read_only=True, precision=7)
+    geom = GeometryField(read_only=True, precision=7, transform=settings.API_SRID)
     structure = StructureGTAMSerializer()
     contractors = InterventionContractorGTAMSerializer(
         many=True, source="contractors_list"
@@ -106,13 +114,14 @@ class InterventionGTAMSerializer(serializers.ModelSerializer):
     disorders = InterventionDisordersGTAMSerializer(many=True, source="disorders_list")
     man_day = InterventionManDayGTAMSerializer(many=True, source="manday_list")
     access = AccessMeanGTAMSerializer()
+    target = InterventionRelatedField(read_only=True, required=False)
 
     class Meta:
         model = Intervention
         fields = [
             "id",
             "structure",
-            "api_geom",
+            "geom",
             "name",
             "date_insert",
             "date_update",
@@ -133,7 +142,9 @@ class InterventionGTAMSerializer(serializers.ModelSerializer):
             "man_day",
             "description",
             "access",
+            "target"
         ]
+        geo_field = "geom"
 
 
 class ProjectSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

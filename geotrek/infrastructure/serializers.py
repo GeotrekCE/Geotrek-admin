@@ -1,3 +1,5 @@
+from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
@@ -81,7 +83,7 @@ class InfrastructureGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class InfrastructureGTAMSerializer(serializers.ModelSerializer):
-    api_geom = GeometryField(read_only=True, precision=7)
+    geom = GeometryField(precision=7, transform=settings.API_SRID)
     structure = StructureGTAMSerializer()
     access = AccessMeanGTAMSerializer()
     type = InfrastructureTypeGTAMSerializer()
@@ -97,7 +99,7 @@ class InfrastructureGTAMSerializer(serializers.ModelSerializer):
             "id",
             "date_insert",
             "date_update",
-            "api_geom",
+            "geom",
             "published",
             "name",
             "description",
@@ -110,7 +112,7 @@ class InfrastructureGTAMSerializer(serializers.ModelSerializer):
             "usage_difficulty",
             "conditions",
         ]
-        geom = "api_geom"
+        geom = "geom"
 
 
 class InfrastructureAPISerializer(BasePublishableSerializerMixin):

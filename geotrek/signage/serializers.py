@@ -1,5 +1,6 @@
 import csv
 
+from django.conf import settings
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from mapentity.serializers.commasv import CSVSerializer
@@ -131,7 +132,7 @@ class SignageGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 
 class SignageGTAMSerializer(serializers.ModelSerializer):
-    api_geom = GeometryField(read_only=True, precision=7)
+    geom = GeometryField(precision=7, transform=settings.API_SRID)
     structure = StructureGTAMSerializer()
     access = AccessMeanGTAMSerializer()
     conditions = SignageConditionGTAMSerializer(many=True, source="conditions_list")
@@ -144,7 +145,7 @@ class SignageGTAMSerializer(serializers.ModelSerializer):
         model = signage_models.Signage
         fields = [
             "id",
-            "api_geom",
+            "geom",
             "structure",
             "date_insert",
             "date_update",
@@ -161,7 +162,7 @@ class SignageGTAMSerializer(serializers.ModelSerializer):
             "conditions",
             "blades",
         ]
-        geom = "api_geom"
+        geom = "geom"
 
 
 class SignageAPISerializer(BasePublishableSerializerMixin):

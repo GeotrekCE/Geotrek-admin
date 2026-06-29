@@ -20,11 +20,9 @@ class GeotrekMapentityViewSet(MapEntityViewSet):
     def get_serializer_class(self):
         """Use specific Serializer for GeoJSON"""
         renderer, media_type = self.perform_content_negotiation(self.request)
-        if getattr(renderer, "format") == "gtam":
-            if self.gtam_serializer_class:
-                return self.gtam_serializer_class
-        else:
-            return super().get_serializer_class()
+        if getattr(renderer, "format") == "gtam" and self.gtam_serializer_class:
+            return self.gtam_serializer_class
+        return super().get_serializer_class()
 
     def get_serializer_context(self):
         context = super().get_serializer_context()
