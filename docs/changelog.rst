@@ -10,6 +10,9 @@ CHANGELOG
 * Allow to modify blade line order
 * Update popup to allow opening detail page in new tab (issue #4626)
 
+**Documentation**
+
+* Update requirements for each scale deployments (refs #5524)
 
 2.124.5         (2026-06-09)
 ----------------------------
