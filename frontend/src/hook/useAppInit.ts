@@ -3,8 +3,8 @@ import { getSerwist } from "virtual:serwist"
 import { onlineManager } from "@tanstack/react-query"
 
 export function useAppInit() {
+  // Service worker
   React.useEffect(() => {
-    // Service worker
     const loadSerwist = async () => {
       if ("serviceWorker" in navigator) {
         const serwist = await getSerwist()
@@ -22,15 +22,32 @@ export function useAppInit() {
   }, [])
 
   // Online/Offline status
-  onlineManager.setEventListener((setOnline) => {
-    const handleOnline = (event: Event) => setOnline(event.type === "online")
+  React.useEffect(() => {
+    onlineManager.setEventListener((setOnline) => {
+      const handleOnline = () => {
+        const ping = async () => {
+          try {
+            await fetch(`${import.meta.env.BASE_URL}ping`, {
+              cache: "no-store",
+              method: "HEAD",
+            })
+            setOnline(true)
+          } catch {
+            setOnline(false)
+          }
+        }
+        ping()
+      }
 
-    window.addEventListener("online", handleOnline)
-    window.addEventListener("offline", handleOnline)
+      handleOnline()
 
-    return () => {
-      window.removeEventListener("online", handleOnline)
-      window.removeEventListener("offline", handleOnline)
-    }
-  })
+      window.addEventListener("online", handleOnline)
+      window.addEventListener("offline", handleOnline)
+
+      return () => {
+        window.removeEventListener("online", handleOnline)
+        window.removeEventListener("offline", handleOnline)
+      }
+    })
+  }, [])
 }

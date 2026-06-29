@@ -3,12 +3,13 @@ import {
   dataTagSymbol,
   onlineManager,
   useQuery,
-  useQueryClient,
   type OmitKeyof,
   type QueryFunction,
   type UseQueryOptions,
 } from "@tanstack/react-query"
 import * as z from "zod"
+import { db } from "./db"
+import { useLiveQuery } from "dexie-react-hooks"
 
 export const API_URL = `${__HOST_URL__}/api`
 export class FetchError extends Error {
@@ -96,8 +97,7 @@ export function useAppQuery<T>({
     }
   }
 }) {
-  const queryClient = useQueryClient()
-  const localData = queryClient.getQueryData(queryOptions.queryKey)
+  const localData = useLiveQuery(() => db.settings.get("settings"))
   const enabled = onlineManager.isOnline() && queryOptions.enabled !== false
   const query = useQuery({
     ...queryOptions,

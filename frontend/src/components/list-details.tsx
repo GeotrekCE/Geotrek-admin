@@ -26,8 +26,6 @@ function ListDetailContent({
     [element.reference]
   )
 
-  console.log(detail, reference)
-
   if (!detail) {
     return (
       <SheetContent side="bottom" className="pb-22">
