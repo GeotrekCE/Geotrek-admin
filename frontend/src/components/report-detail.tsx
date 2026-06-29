@@ -100,19 +100,19 @@ export default function ReportDetail(params: { id: string; type: string }) {
           )}
         </section>
 
-        {detail.api_geom && (
+        {detail.geom && (
           <section className="my-8">
             <h3 className="mb-2 text-xl font-bold text-accent-foreground">
               Localisation
             </h3>
             <Map
               className="pointer-none aspect-square touch-none"
-              longitude={detail.api_geom.coordinates[0]}
-              latitude={detail.api_geom.coordinates[1]}
+              longitude={detail.geom.coordinates[0]}
+              latitude={detail.geom.coordinates[1]}
             >
               <Marker
-                longitude={detail.api_geom.coordinates[0]}
-                latitude={detail.api_geom.coordinates[1]}
+                longitude={detail.geom.coordinates[0]}
+                latitude={detail.geom.coordinates[1]}
                 anchor="bottom"
               />
             </Map>

@@ -155,7 +155,7 @@ export default function InterventionForm({
           <FormTextareaField name="description" label="Description" isRTE />
 
           <FormGeomField
-            name="api_geom.coordinates"
+            name="geom.coordinates"
             label="Localisation"
             icon={pictogram}
             required

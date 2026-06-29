@@ -54,12 +54,12 @@ export default function ListMap() {
       }
     >
       {elements
-        .filter((item) => !!item?.api_geom)
+        .filter((item) => !!item?.geom)
         .map((item) => (
           <Marker
             key={`${item.reference}-${item.id}`}
-            longitude={item.api_geom.coordinates[0]}
-            latitude={item.api_geom.coordinates[1]}
+            longitude={item.geom.coordinates[0]}
+            latitude={item.geom.coordinates[1]}
             anchor="bottom"
             onClick={() => {
               navigate({

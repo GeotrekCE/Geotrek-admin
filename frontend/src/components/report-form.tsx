@@ -87,7 +87,7 @@ export default function ReportForm({
           <FormTextareaField name="comment" label="Description" isRTE />
 
           <FormGeomField
-            name="api_geom.coordinates"
+            name="geom.coordinates"
             label="Localisation"
             icon={pictogram}
             required

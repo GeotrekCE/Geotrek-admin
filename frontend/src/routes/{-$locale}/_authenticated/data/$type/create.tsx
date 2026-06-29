@@ -78,7 +78,7 @@ function RouteComponent() {
           <SignageForm
             defaultValues={{
               id: -1,
-              api_geom: {
+              geom: {
                 type: "Point",
                 coordinates: [],
               },
@@ -112,7 +112,7 @@ function RouteComponent() {
           <InfrastructureForm
             defaultValues={{
               id: -1,
-              api_geom: {
+              geom: {
                 type: "Point",
                 coordinates: [],
               },
@@ -145,7 +145,7 @@ function RouteComponent() {
           <InterventionForm
             defaultValues={{
               id: -1,
-              api_geom: {
+              geom: {
                 type: "Point",
                 coordinates: [],
               },
@@ -190,7 +190,7 @@ function RouteComponent() {
           <ReportForm
             defaultValues={{
               id: -1,
-              api_geom: {
+              geom: {
                 type: "Point",
                 coordinates: [],
               },

@@ -24,7 +24,7 @@ export const infrastructureDataSchema = z.object({
   id: z.number().int().positive(),
   date_insert: z.string(),
   date_update: z.string(),
-  api_geom: z.object({
+  geom: z.object({
     type: z.string().min(1),
     coordinates: z
       .array(z.number())
@@ -75,7 +75,7 @@ export const infrastructureDataSchema = z.object({
 
 export const signageDataSchema = z.object({
   id: z.number().int().positive(),
-  api_geom: z.object({
+  geom: z.object({
     type: z.string().min(1),
     coordinates: z
       .array(z.number())
@@ -165,7 +165,7 @@ export const signageDataSchema = z.object({
 
 export const interventionDataSchema = z.object({
   id: z.number().int().positive(),
-  api_geom: z.object({
+  geom: z.object({
     type: z.string().min(1),
     coordinates: z
       .array(z.number())
@@ -246,7 +246,7 @@ export const reportDataSchema = z.object({
   date_update: z.string(),
   email: z.string(),
   comment: z.string(),
-  api_geom: z.object({
+  geom: z.object({
     type: z.string().min(1),
     coordinates: z
       .array(z.number())

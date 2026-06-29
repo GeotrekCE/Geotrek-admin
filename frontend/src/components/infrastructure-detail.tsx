@@ -137,15 +137,15 @@ export default function InfrastructureDetail(params: {
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
             Localisation
           </h3>
-          {detail.api_geom && (
+          {detail.geom && (
             <Map
               className="pointer-none aspect-square touch-none"
-              longitude={detail.api_geom.coordinates[0]}
-              latitude={detail.api_geom.coordinates[1]}
+              longitude={detail.geom.coordinates[0]}
+              latitude={detail.geom.coordinates[1]}
             >
               <Marker
-                longitude={detail.api_geom.coordinates[0]}
-                latitude={detail.api_geom.coordinates[1]}
+                longitude={detail.geom.coordinates[0]}
+                latitude={detail.geom.coordinates[1]}
                 anchor="bottom"
               />
             </Map>
