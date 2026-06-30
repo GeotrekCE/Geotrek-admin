@@ -13,7 +13,8 @@ import {
 const runtimeCaching: RuntimeCaching[] = import.meta.env.DEV
   ? [
       {
-        matcher: /.*/i,
+        // Do not understand why the .pmtiles files fail
+        matcher: /^.*(?<!.pmtiles)$/i,
         handler: new NetworkOnly(),
       },
     ]

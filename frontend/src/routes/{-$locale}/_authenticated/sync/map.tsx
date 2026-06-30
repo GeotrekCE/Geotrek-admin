@@ -1,7 +1,8 @@
 import * as z from "zod"
+import { db } from "@/lib/db"
+import { useLiveQuery } from "dexie-react-hooks"
 import { createFileRoute } from "@tanstack/react-router"
 import Header from "@/components/header"
-import { SETTINGS_QUERY_KEY } from "@/hook/useSettingsQuery"
 import {
   Field,
   FieldError,
@@ -9,28 +10,23 @@ import {
   FieldLabel,
 } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
-import { useForm } from "@tanstack/react-form"
-import { useQueryClient } from "@tanstack/react-query"
-import type { SettingsSchemaProps } from "@/schemas/settings"
-// import { toast } from "sonner"
+import { useForm, useStore } from "@tanstack/react-form"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useOfflineMaps } from "@/hook/useOfflineMaps"
+import React from "react"
+import MapDownloadProgress from "@/components/map-download-progress"
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/sync/map")({
   component: RouteComponent,
 })
 
 function RouteComponent() {
-  const queryClient = useQueryClient()
-  const settings =
-    queryClient.getQueryData<SettingsSchemaProps>(SETTINGS_QUERY_KEY)
-
+  const settings = useLiveQuery(() => db.settings.get("settings"))
   const layers = settings?.settings?.maps.layers ?? []
 
-  const {
-    // getRemoteSize, formatSize,
-    downloadZone,
-  } = useOfflineMaps()
+  const [open, setOpen] = React.useState(false)
+
+  const { formatSize } = useOfflineMaps()
 
   const form = useForm({
     defaultValues: {
@@ -50,23 +46,34 @@ function RouteComponent() {
           ),
       }),
     },
-    onSubmit: async ({ value }) => {
-      await Promise.all(
-        value.layers.map((layerName) => {
-          const layer = layers.find((l) => l.name === layerName)
-          return layer && downloadZone(layer)
-        })
-      )
-      // toast.success("Cartes embarquées dans l'application avec succès", {
-      //   position: "top-center",
-      // })
-      // router.invalidate()
-      // navigate({ to: "/sync" })
+    onSubmit: () => {
+      setOpen(true)
     },
   })
+
+  const getTotalSize = (layersName: string[]) => {
+    const selectedLayers = layersName
+      .map((name) => layers.find((layer) => layer.name === name))
+      .filter((layer) => layer !== undefined)
+    const totalSize = selectedLayers.reduce(
+      (sum, layer) => sum + (layer["content-length"] ?? 0),
+      0
+    )
+    return totalSize
+  }
+  const layersName = useStore(form.store, (state) => state.values.layers)
+
   return (
     <div>
       <Header title="Fonds de cartes et tuiles" withBackbutton />
+
+      <MapDownloadProgress
+        layers={layers}
+        layersName={layersName}
+        open={open}
+        setOpen={setOpen}
+        size={formatSize(getTotalSize(layersName))}
+      />
 
       <form
         onSubmit={(event) => {
@@ -75,7 +82,7 @@ function RouteComponent() {
         }}
       >
         <fieldset className="m-4">
-          <legend className="my-4 font-bold text-accent-foreground uppercase">
+          <legend className="my-4 text-xl font-bold text-accent-foreground">
             Sélectionnez les fonds cartographiques
           </legend>
           <form.Field
@@ -117,12 +124,10 @@ function RouteComponent() {
                           className="font-normal"
                         >
                           {layer.name}
-                          {/* {getRemoteSize(layer.json_style_url) && (
-                            <span className="text-sm text-muted-foreground">
-                              ({formatSize(getRemoteSize(layer.json_style_url))}
-                              )
-                            </span>
-                          )} */}
+
+                          <span className="text-xs text-muted-foreground">
+                            ({formatSize(getTotalSize([layer.name]))})
+                          </span>
                         </FieldLabel>
                       </Field>
                     ))}
@@ -143,12 +148,14 @@ function RouteComponent() {
           <Button type="submit" aria-describedby="submit-helptext">
             Télécharger
           </Button>
-          <p
-            id="submit-helptext"
-            className="text-center text-sm text-muted-foreground"
-          >
-            Taille estimée : TODO <abbr title="Mégaoctets">Mo</abbr>
-          </p>
+          {layersName.length > 0 && (
+            <p
+              id="submit-helptext"
+              className="text-center text-sm text-muted-foreground"
+            >
+              Taille estimée : {formatSize(getTotalSize(layersName))}
+            </p>
+          )}
         </Field>
       </form>
     </div>

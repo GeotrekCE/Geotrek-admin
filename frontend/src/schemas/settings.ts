@@ -15,6 +15,7 @@ export const settingsSchema = z.object({
           pmtiles_url: z.string(),
           json_style_url: z.string(),
           name: z.string().min(1),
+          "content-length": z.number().int().positive(),
           options: z.object({
             attribution: z.string().min(1),
             center: z.array(z.number().positive()),

@@ -4,30 +4,34 @@ import {
   OFFLINE_STATUS,
 } from "@makina-corpus/maplibre-offline-pmtiles"
 import type { SettingsSchemaProps } from "@/schemas/settings"
-// import { storageManager } from "@/lib/storage"
+import { useQueryClient } from "@tanstack/react-query"
 
 export type MapZone = SettingsSchemaProps["settings"]["maps"]["layers"][0]
 
 export interface OfflineZoneMetadata {
   id: string
   lastSync: string
-  size?: number
 }
 
+export const OFFLINE_MAP_QUERY_KEY = ["offlinemap"]
 export const offlineManager = new OfflinePlugin()
 
 export function useOfflineMaps() {
-  const mapZonesData: MapZone[] = []
+  const queryClient = useQueryClient()
+  // const mapZonesData: MapZone[] = []
+  const metadata = queryClient.getQueryData<
+    Record<string, OfflineZoneMetadata>
+  >(OFFLINE_MAP_QUERY_KEY)
   const [downloadedZonesMetadata, setDownloadedZonesMetadata] = React.useState<
     Record<string, OfflineZoneMetadata>
-  >({})
+  >(metadata ?? ({} as Record<string, OfflineZoneMetadata>))
   const [loadingZoneId, setLoadingZoneId] = React.useState<string | null>(null)
   const [currentProgress, setCurrentProgress] = React.useState<number | null>(
     null
   )
-  const [mapZones, setMapZones] = React.useState<MapZone[]>(
-    mapZonesData as MapZone[]
-  )
+  // const [mapZones, setMapZones] = React.useState<MapZone[]>(
+  //   mapZonesData as MapZone[]
+  // )
   const [storageEstimate, setStorageEstimate] = React.useState<{
     used: number
     quota: number
@@ -36,52 +40,10 @@ export function useOfflineMaps() {
   const abortControllerRef = React.useRef<AbortController | null>(null)
 
   /**
-   * Load metadata of already downloaded zones from local storage
-   */
-  async function loadMetadata() {
-    // const metadata = await storageManager.adapter.get<
-    //   Record<string, OfflineZoneMetadata>
-    // >("offline_map_zones_metadata")
-    // setDownloadedZonesMetadata(metadata || {})
-  }
-
-  /**
-   * Save current metadata to local storage
-   */
-  async function saveMetadata() {
-    // await storageManager.adapter.set(
-    //   "offline_map_zones_metadata",
-    //   downloadedZonesMetadata
-    // )
-  }
-
-  /**
    * Update storage usage estimate
    */
   async function loadStorageEstimate() {
     setStorageEstimate(await offlineManager.getStorageUsage())
-  }
-
-  /**
-   * Get the size of a remote file using a HEAD request
-   */
-  async function getRemoteSize(url: string): Promise<number | null> {
-    try {
-      const response = await fetch(url, {
-        method: "HEAD",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-      const size = response.headers.get("content-length")
-      return size ? parseInt(size, 10) : null
-    } catch (error) {
-      console.warn(
-        `[useOfflineMaps] Could not fetch remote size for ${url}`,
-        error
-      )
-      return null
-    }
   }
 
   /**
@@ -92,13 +54,10 @@ export function useOfflineMaps() {
     setCurrentProgress(0)
     abortControllerRef.current = new AbortController()
     try {
-      // Get remote size for metadata if possible
-      const size = await getRemoteSize(zone.pmtiles_url)
-
       // Use the library to download the map with native AbortSignal support
       await offlineManager.downloadMap(
         zone.pmtiles_url,
-        zone.name,
+        zone.name.replaceAll(" ", "-"),
         (p) => {
           if (p.code === OFFLINE_STATUS.PROGRESS && p.progress !== undefined) {
             setCurrentProgress(
@@ -112,17 +71,19 @@ export function useOfflineMaps() {
         { signal: abortControllerRef.current?.signal }
       )
 
-      // Update local metadata
-      setDownloadedZonesMetadata((prev) => ({
-        ...prev,
-        [zone.name]: {
-          id: zone.name,
-          lastSync: new Date().toISOString(),
-          size: size || undefined,
-        },
-      }))
-      await saveMetadata()
+      queryClient.setQueryData(
+        OFFLINE_MAP_QUERY_KEY,
+        (prevData: Record<string, OfflineZoneMetadata> = {}) => ({
+          ...prevData,
+          [zone.name.replaceAll(" ", "-")]: {
+            id: zone.name.replaceAll(" ", "-"),
+            lastSync: new Date().toISOString(),
+          },
+        })
+      )
+      // await saveMetadata()
       await loadStorageEstimate()
+      return true
     } catch (error: AbortController["signal"]["reason"]) {
       if (error.name === "AbortError" || error.message === "Aborted") {
         console.log(
@@ -165,7 +126,7 @@ export function useOfflineMaps() {
         delete newMetadata[zoneId]
         return newMetadata
       })
-      await saveMetadata()
+      // await saveMetadata()
       await loadStorageEstimate()
     } catch (error) {
       console.error(`[useOfflineMaps] Failed to delete zone ${zoneId}`, error)
@@ -180,23 +141,16 @@ export function useOfflineMaps() {
    */
   function formatSize(bytes?: number): string {
     if (bytes === undefined || bytes === null) return "?"
-    if (bytes === 0) return "0 B"
-    const k = 1024
-    const sizes = ["B", "KB", "MB", "GB"]
+    if (bytes === 0) return "0 octet"
+    const k = 1000
+    const sizes = ["octets", "Ko", "Mo", "Go"]
     const i = Math.floor(Math.log(bytes) / Math.log(k))
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(1))} ${sizes[i]}`
   }
 
-  React.useEffect(() => {
-    const init = async () => {
-      await Promise.all([loadMetadata(), loadStorageEstimate()])
-    }
-    init()
-  }, [])
-
   return {
-    mapZones,
-    setMapZones,
+    mapZones: metadata,
+    // setMapZones,
     downloadedZonesMetadata,
     setDownloadedZonesMetadata,
     loadingZoneId,
@@ -208,9 +162,9 @@ export function useOfflineMaps() {
     downloadZone,
     deleteZone,
     cancelDownload,
-    loadMetadata,
+    // loadMetadata,
     formatSize,
-    getRemoteSize,
     loadStorageEstimate,
+    loadMap: offlineManager.loadMap,
   }
 }
