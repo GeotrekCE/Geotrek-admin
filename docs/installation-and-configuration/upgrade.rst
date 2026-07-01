@@ -67,6 +67,17 @@ From Geotrek-admin >= 2.113.0 to 3.x
   At first run, base layers and overlays from ``LEAFLET_CONFIG`` will be moved in database, so you would be able to edit and manage them in the admin interface. You should check that your base layers and overlays are still valid after upgrade.
   For this, Geotrek-admin now use django-mapbox-baselayer, which expose commands to help you installing layers from OSM, or IGN (https://github.com/makinacorpus/django-mapbox-baselayer#unified-install_layer-command)
 
+.. warning::
+
+  Take care of your settings, update them anbd don't override them if possible
+  Do:
+  ```
+  MAPENTITY_CONFIG['MAP_STYLES']['detail'].update({'color': '#981d97', 'weight': 4, 'opacity': 0.7})
+  ```
+  Instead of:
+  ```
+  MAPENTITY_CONFIG['MAP_STYLES']['detail'] = {'color': '#981d97', 'weight': 4, 'opacity': 0.7}
+  ```
 
 From Geotrek-admin < 2.113.0
 ------------------------------
