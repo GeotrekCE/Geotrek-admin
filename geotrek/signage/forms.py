@@ -205,7 +205,6 @@ class SignageForm(PointTopologyFormMixin):
             "name",
             "type",
             "description",
-            "type",
             "conditions",
             "implantation_year",
             "published",

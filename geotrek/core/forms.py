@@ -11,9 +11,6 @@ from geotrek.core.models import CertificationTrail, Path, Trail
 from geotrek.core.widgets import LineTopologyWidget
 
 
-
-
-
 class PathForm(CommonForm):
     reverse_geom = forms.BooleanField(
         required=False,
