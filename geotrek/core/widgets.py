@@ -1,51 +1,35 @@
 """
-
-We distinguish two types of widgets : Geometry and Topology.
-
-Geometry widgets receive a WKT string, deserialized by GEOS.
-Leaflet.Draw is used for edition.
-
-Topology widgets receive a JSON string, deserialized by Topology.deserialize().
-Geotrek custom code is used for edition.
+Widgets de topologie indépendants avec leur propre logique de rendu.
+Basés sur BaseGeometryWidget, complètement séparés de MapWidget.
 """
 
-import json
-
+from django.contrib.gis.forms.widgets import BaseGeometryWidget
+from django.core import validators
+from django.forms import Media
+from django.template.defaultfilters import slugify
 from mapentity.widgets import MapWidget
 
 from .models import Topology
 
 
-class SnappedLineStringWidget(MapWidget):
-    geometry_field_class = "MapEntity.GeometryField.GeometryFieldSnap"
+class BaseTopologyWidget(BaseGeometryWidget):
+    """
+    Widget de base pour les topologies, complètement indépendant de MapWidget.
+    Utilise uniquement le template linear_topology_widget.html.
+    """
 
-    def serialize(self, value):
-        geojson = super().serialize(value)
-        snaplist = []
-        if value:
-            snaplist = [None for c in range(len(value.coords))]
-        value = {"geom": geojson, "snap": snaplist}
-        return json.dumps(value)
-
-    def deserialize(self, value):
-        if isinstance(value, str) and value:
-            value = json.loads(value)
-            value = value["geom"]
-        return super().deserialize(value)
-
-
-class BaseTopologyWidget(MapWidget):
-    """A widget allowing to create topologies on a map."""
-
-    template_name = "core/topology_widget_fragment.html"
-    geometry_field_class = "MapEntity.GeometryField.TopologyField"
+    template_name = "core/linear_topology_widget.html"
+    display_raw = False
+    modifiable = True
     is_line_topology = False
     is_point_topology = False
 
     def serialize(self, value):
-        return value.serialize() if value else ""
+        """Sérialise une topologie en JSON."""
+        return value.serialize() if hasattr(value, "serialize") else ""
 
     def deserialize(self, value):
+        """Désérialise une valeur en objet Topology."""
         if isinstance(value, int):
             return Topology.objects.get(pk=value)
         try:
@@ -53,31 +37,92 @@ class BaseTopologyWidget(MapWidget):
         except ValueError:
             return None
 
+    def _get_topology_attrs(self, name, attrs=None):
+        """
+        Prépare les attributs nécessaires pour le rendu du template de topologie.
+        Reprend la logique de MapWidget mais pour les topologies.
+        """
+        attrs = attrs or {}
+
+        # Génération des IDs pour les éléments HTML et JavaScript
+        map_id_css = slugify(attrs.get("id", name))
+        map_id = map_id_css.replace("-", "_")
+
+        attrs.update(
+            {
+                "id": map_id,
+                "id_css": map_id_css,
+                "id_map": map_id_css + "_map",
+                "modifiable": self.modifiable,
+                "is_line_topology": self.is_line_topology,
+                "is_point_topology": self.is_point_topology,
+                "target_map": attrs.get(
+                    "target_map", getattr(self, "target_map", None)
+                ),
+            }
+        )
+        return attrs
+
+    def get_context(self, name, value, attrs):
+        """
+        Prépare le contexte pour le rendu du template linear_topology_widget.html.
+        """
+        # Gestion des valeurs vides
+        value = None if value in validators.EMPTY_VALUES else value
+
+        # Récupération du contexte parent
+        context = super().get_context(name, value, attrs)
+
+        # Ajout des attributs spécifiques à la topologie
+        topology_attrs = self._get_topology_attrs(name, attrs)
+        context.update(topology_attrs)
+
+        # Ajout de la valeur sérialisée pour le template
+        context["serialized"] = self.serialize(value)
+
+        return context
+
     def render(self, name, value, attrs=None, renderer=None):
-        """Renders the fields. Parent class calls `serialize()` with the value."""
+        """
+        Rendu du widget de topologie.
+        Gère la conversion des valeurs entières en objets Topology.
+        """
         if isinstance(value, int):
-            value = Topology.objects.get(pk=value)
+            try:
+                value = Topology.objects.get(pk=value)
+            except Topology.DoesNotExist:
+                value = None
+
+        # Mise à jour des attributs avec les flags de topologie
         attrs = attrs or {}
         attrs.update(
-            is_line_topology=self.is_line_topology,
-            is_point_topology=self.is_point_topology,
+            {
+                "is_line_topology": self.is_line_topology,
+                "is_point_topology": self.is_point_topology,
+            }
         )
+
         return super().render(name, value, attrs, renderer)
 
 
+# TODO: rename BaseTopologyWidget to LineTopologyWidget?
 class LineTopologyWidget(BaseTopologyWidget):
-    """A widget allowing to select a list of paths."""
-
     is_line_topology = True
 
 
-class PointTopologyWidget(BaseTopologyWidget):
-    """A widget allowing to point a position with a marker."""
-
+# TODO: remove ?
+class PointLineTopologyWidget(BaseTopologyWidget):
+    is_line_topology = True
     is_point_topology = True
 
 
-class PointLineTopologyWidget(PointTopologyWidget, LineTopologyWidget):
-    """A widget allowing to point a position with a marker or a list of paths."""
+class LinearTopologyMapWidget(MapWidget):
+    def __init__(self, attrs=None, geom_type=None):
+        attrs = attrs or {}
+        self.modifiable = attrs.pop("modifiable", True)
+        super().__init__(attrs=attrs, geom_type=geom_type)
 
-    pass
+    @property
+    def media(self):
+        media = super().media
+        return media + Media(js=["core/mapwidget_set_geom_changed.js"])

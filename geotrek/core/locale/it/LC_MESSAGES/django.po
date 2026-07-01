@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-09 11:30+0100\n"
+"POT-Creation-Date: 2026-06-23 09:09+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/core/it/>\n"
@@ -34,13 +34,7 @@ msgstr ""
 msgid "Topology %s does not exist."
 msgstr ""
 
-msgid "Linestring invalid snapping."
-msgstr ""
-
 msgid "Valid topology"
-msgstr ""
-
-msgid "Valid geometry"
 msgstr ""
 
 msgid "Provider"
@@ -73,8 +67,13 @@ msgstr ""
 msgid "Certifications"
 msgstr ""
 
-#, python-format
-msgid "You need to add a network of paths before importing '%(model)s' objects"
+msgid "path"
+msgstr ""
+
+msgid "The geometry can only be drawn on or off the path network, not both."
+msgstr ""
+
+msgid "A geometry must be provided."
 msgstr ""
 
 #, python-format
@@ -195,10 +194,16 @@ msgstr ""
 msgid "Kind"
 msgstr ""
 
+msgid "Network-coupled"
+msgstr ""
+
 msgid "Topology"
 msgstr ""
 
 msgid "Topologies"
+msgstr ""
+
+msgid "Can draw geometries uncoupled from the path network"
 msgstr ""
 
 msgid "Start position"
@@ -271,6 +276,24 @@ msgstr ""
 msgid "%(obj)s has changed state to draft. "
 msgstr ""
 
+msgid "Add end point"
+msgstr ""
+
+msgid "Add intermediate point"
+msgstr ""
+
+msgid "Delete point"
+msgstr ""
+
+msgid "Round trip"
+msgstr ""
+
+msgid "One way"
+msgstr ""
+
+msgid "Objects"
+msgstr ""
+
 #, python-format
 msgid "Do you really wish to delete <strong>%(object)s</strong> ?"
 msgstr ""
@@ -339,13 +362,13 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
+msgid "Invalid geometry value."
+msgstr ""
+
 msgid "This field is required."
 msgstr ""
 
 msgid "Access to the requested resource is restricted. You have been redirected."
-msgstr ""
-
-msgid "path"
 msgstr ""
 
 msgid "You should select two paths"

@@ -52,146 +52,444 @@
 
 {% block extrabody %}
     {{ block.super }}
-    <script src="{% static "trekking/poilayer.js" %}"></script>
-    <script src="{% static "trekking/servicelayer.js" %}"></script>
-    <script src="{% static "trekking/signagelayer.js" %}"></script>
-    <script src="{% static "trekking/infrastructurelayer.js" %}"></script>
+{#    <script src="{% static "trekking/poilayer.js" %}"></script>#}
+{#    <script src="{% static "trekking/servicelayer.js" %}"></script>#}
+{#    <script src="{% static "trekking/signagelayer.js" %}"></script>#}
+{#    <script src="{% static "trekking/infrastructurelayer.js" %}"></script>#}
+{#    <script type="text/javascript">#}
+{#        $(window).on('detailmap:ready', function (e, data) {#}
+{#            var map = data.map;#}
+{##}
+{#            //#}
+{#            // Parking#}
+{#            {% if object.parking_location %}#}
+{#                var parkingIcon = L.icon({#}
+{#                    iconUrl: "{% static "trekking/parking.png" %}",#}
+{#                    iconSize: [{{ view.icon_sizes.parking }}, {{ view.icon_sizes.parking }}],#}
+{#                    iconAnchor: [{{ view.icon_sizes.parking }}/2, {{ view.icon_sizes.parking }}/2],#}
+{#                });#}
+{#                var point = {{object.parking_location.geojson|safe}};#}
+{#                var location = point.coordinates.reverse();#}
+{#                L.marker(location, {icon: parkingIcon})#}
+{#                 .bindPopup("{{ object.advised_parking|default:_("None") }}")#}
+{#                 .addTo(map);#}
+{##}
+{#                // Make sure parking icon is visible on the map#}
+{#                var bounds = map.getBounds();#}
+{#                bounds.extend(location);#}
+{#                map.fitBounds(bounds);#}
+{#            {% endif %}#}
+{##}
+{#            //#}
+{#            // Trek POIs layer#}
+{#            $.getJSON('{% url 'trekking:trek_poi_geojson' LANGUAGE_CODE object.pk %}?fields=api_geom,id,name,type', function (data) {#}
+{#                var pois = new POILayer(data, {#}
+{#                    iconSize: {{ view.icon_sizes.POI }}#}
+{#                });#}
+{##}
+{#                var poiUrl = "{% url 'trekking:poi_detail' 0 %}";#}
+{#                pois.eachLayer(function (layer) {#}
+{#                    layer.on('dblclick', function (e) {#}
+{#                        window.location = poiUrl.replace('0', layer.properties.pk);#}
+{#                    });#}
+{#                });#}
+{#                map.layerscontrol.addOverlay(pois, tr('POIs'), tr('Objects'));#}
+{#                map.addLayer(pois);#}
+{##}
+{#                pois.showEnumeration();#}
+{#                $('.map-panel').addClass('poi_enum_loaded');#}
+{#            });#}
+{##}
+{#            //#}
+{#            // Trek services layer#}
+{#            $.getJSON('{% url 'trekking:trek_service_geojson' LANGUAGE_CODE object.pk %}', function (data) {#}
+{#                var services = new ServiceLayer(data, {#}
+{#                    iconSize: {{ view.icon_sizes.service }}#}
+{#                });#}
+{##}
+{#                var serviceUrl = "{% url 'trekking:service_detail' 0 %}";#}
+{#                services.eachLayer(function (layer) {#}
+{#                    layer.on('dblclick', function (e) {#}
+{#                        window.location = serviceUrl.replace('0', layer.properties.pk);#}
+{#                    });#}
+{#                });#}
+{#                map.layerscontrol.addOverlay(services, tr('Services'), tr('Objects'));#}
+{#                map.addLayer(services);#}
+{#                $('.map-panel').addClass('services_loaded');#}
+{#            });#}
+{##}
+{#            //#}
+{#            // Trek signage layer#}
+{#            $.getJSON('{% url 'signage:trek_signage_geojson' LANGUAGE_CODE object.pk %}', function (data) {#}
+{#                var signages = new SignagesLayer(data, {#}
+{#                    iconSize: {{ view.icon_sizes.signage }}#}
+{#                });#}
+{##}
+{#                var signageUrl = "{% url 'signage:signage_detail' 0 %}";#}
+{#                signages.eachLayer(function (layer) {#}
+{#                    layer.on('dblclick', function (e) {#}
+{#                        window.location = signageUrl.replace('0', layer.properties.pk);#}
+{#                    });#}
+{#                });#}
+{#                map.layerscontrol.addOverlay(signages, tr('Signages'), tr('Objects'));#}
+{#                map.addLayer(signages);#}
+{#                $('.map-panel').addClass('signages_loaded');#}
+{#            });#}
+{##}
+{#            //#}
+{#            // Trek infrastructure layer#}
+{#            $.getJSON('{% url 'infrastructure:trek_infrastructure_geojson' LANGUAGE_CODE object.pk %}', function (data) {#}
+{#                var infrastructures = new InfrastructuresLayer(data, {#}
+{#                    iconSize: {{ view.icon_sizes.infrastructure }}#}
+{#                });#}
+{##}
+{#                var infrastructureUrl = "{% url 'infrastructure:infrastructure_detail' 0 %}";#}
+{#                infrastructures.eachLayer(function (layer) {#}
+{#                    layer.on('dblclick', function (e) {#}
+{#                        window.location = infrastructureUrl.replace('0', layer.properties.pk);#}
+{#                    });#}
+{#                });#}
+{#                map.layerscontrol.addOverlay(infrastructures, tr('Infrastructures'), tr('Objects'));#}
+{#                map.addLayer(infrastructures);#}
+{#                $('.map-panel').addClass('services_loaded');#}
+{#            });#}
+{##}
+{#            //#}
+{#            // Trek information desks layer#}
+{#            $.getJSON('{% url 'tourism:trek_information_desk_geojson' LANGUAGE_CODE object.pk %}', function (data) {#}
+{#                L.geoJson(data, {#}
+{#                    pointToLayer: function (feature, latlng) {#}
+{#                        var infoDeskIcon = L.icon({#}
+{#                            iconUrl: feature.properties.type.pictogram,#}
+{#                            iconSize: [{{ view.icon_sizes.information_desk }}, {{ view.icon_sizes.information_desk }}],#}
+{#                            iconAnchor: [{{ view.icon_sizes.information_desk }}/2, {{ view.icon_sizes.information_desk }}/2],#}
+{#                        });#}
+{#                        return L.marker(latlng, feature.properties.type.pictogram ? {icon: infoDeskIcon} : {});#}
+{#                    }#}
+{#                }).addTo(map);#}
+{#                $('.map-panel').addClass('info_desks_loaded');#}
+{#            });#}
+{##}
+{#            //#}
+{#            // Points of reference#}
+{#            (function (map) {#}
+{#                var data = {{ object.points_reference.geojson|safe|default:'null' }};#}
+{#                L.geoJson(data, {#}
+{#                    pointToLayer: (function () {#}
+{#                        var counter = 1;#}
+{#                        return function (featureData, latlng) {#}
+{#                            var icon = L.divIcon({html: counter++,#}
+{#                                                  className: 'point-reference'});#}
+{#                            return L.marker(latlng, {#}
+{#                                clickable: false,#}
+{#                                icon: icon,#}
+{#                                zIndexOffset: 9999#}
+{#                            }).addTo(map);#}
+{#                        };#}
+{#                    })()#}
+{#                }).addTo(map);#}
+{#                $('.map-panel').addClass('ref_points_loaded');#}
+{#            })(map);#}
+{##}
+{#        });#}
+{#    </script>#}
+
     <script type="text/javascript">
-        $(window).on('detailmap:ready', function (e, data) {
-            var map = data.map;
+        window.addEventListener('entity:map:detail', function (e) {
+            const map = e.detail.map.getMap();
+            const layerManager = e.detail.layerManager || MaplibreLayerManager.getInstance();
+
+            // Stockage des markers par couche pour le contrôle de visibilité
+            const markerGroups = {};
+
+            // Fonction utilitaire pour créer des markers HTML personnalisés
+            function createCustomMarker(feature, iconSize, className, showPopup = false) {
+                const el = document.createElement('div');
+                el.className = `custom-marker ${className}`;
+                el.style.width = `${iconSize}px`;
+                el.style.height = `${iconSize}px`;
+
+                const img = document.createElement('img');
+                img.src = feature.properties.type.pictogram;
+                img.style.width = '100%';
+                img.style.height = '100%';
+
+                img.onerror = function () {
+                    switch (className) {
+                        case 'poi-marker':
+                            this.src = "{% static 'trekking/img/default-poi.png' %}";
+                            break;
+                        case 'service-marker':
+                            this.src = "{% static 'trekking/img/default-service.png' %}";
+                            break;
+                        case 'signage-marker':
+                            this.src = "{% static 'trekking/img/default-signage.png' %}";
+                            break;
+                        case 'infrastructure-marker':
+                            this.src = "{% static 'trekking/img/default-infra.png' %}";
+                            break;
+                        default:
+                            this.src = "{% static 'trekking/img/default-marker.png' %}";
+                            break;
+                    }
+                };
+
+                let title = '';
+                switch (className) {
+                    case 'poi-marker':
+                    case 'infrastructure-marker':
+                    case 'signage-marker': {
+                        const category = feature.properties.type.label;
+                        const name = feature.properties.name;
+                        title = name.indexOf(category) === 0 ? name : `${category}: ${name}`;
+                        break;
+                    }
+                    case 'service-marker': {
+                        title = feature.properties.type.name;
+                        break;
+                    }
+                }
+
+                img.title = title;
+                el.appendChild(img);
+
+                if (showPopup && feature.properties.thumbnail) {
+                    const popup = new maplibregl.Popup({ offset: 25 })
+                        .setHTML(`<img src="${feature.properties.thumbnail}" width="110" height="110">`);
+                    el.addEventListener('click', () => {
+                        popup.setLngLat(feature.geometry.coordinates).addTo(map);
+                    });
+                }
+
+                return el;
+            }
+
+            // Fonction pour basculer la visibilité des markers DOM d'un groupe
+            function toggleMarkerGroup(groupName, visible) {
+                const markers = markerGroups[groupName] || [];
+                markers.forEach(marker => {
+                    marker.getElement().style.display = visible ? '' : 'none';
+                });
+            }
+
+            // Intercepter toggleLayer une seule fois pour gérer les markers DOM
+            if (layerManager) {
+                const originalToggleLayer = layerManager.toggleLayer.bind(layerManager);
+                layerManager.toggleLayer = function(layerIds, visible) {
+                    const id = Array.isArray(layerIds) ? layerIds[0] : layerIds;
+                    if (markerGroups[id]) {
+                        toggleMarkerGroup(id, visible);
+                    }
+                    return originalToggleLayer(layerIds, visible);
+                };
+            }
+
+            // File d'attente pour enregistrer les couches APRÈS "Itinéraires" dans la section Objects
+            const pendingOverlays = [];
+            let mainObjectsRegistered = false;
+
+            function flushPendingOverlays() {
+                pendingOverlays.forEach(({ groupName, displayName, category }) => {
+                    layerManager.registerOverlay(category, groupName, [], displayName);
+                });
+                pendingOverlays.length = 0;
+            }
+
+            // Écouter l'événement overlayAdded pour détecter quand la couche principale est enregistrée
+            if (layerManager && layerManager.getMap()) {
+                layerManager.getMap().on('layerManager:overlayAdded', function(e) {
+                    if (!mainObjectsRegistered && e.category === gettext('Objects')) {
+                        mainObjectsRegistered = true;
+                        flushPendingOverlays();
+                    }
+                });
+            }
+
+            // Fonction pour enregistrer un groupe de markers dans le contrôle de couches
+            function registerMarkerGroupInLayerControl(groupName, displayName, category) {
+                if (!layerManager) return;
+                if (mainObjectsRegistered) {
+                    // La couche principale est déjà enregistrée, on peut ajouter directement
+                    layerManager.registerOverlay(category, groupName, [], displayName);
+                } else {
+                    // Mettre en file d'attente pour insertion après "Itinéraires"
+                    pendingOverlays.push({ groupName, displayName, category });
+                }
+            }
+
+            // Fonction pour ajouter une couche de markers DOM
+            function addMarkerLayer(url, layerName, displayName, iconSize, className) {
+                $.getJSON(url, function (data) {
+                    if (!data.features || data.features.length === 0) {
+                        $('.map-panel').addClass(`${layerName}_loaded`);
+                        return;
+                    }
+
+                    markerGroups[layerName] = [];
+
+                    data.features.forEach(feature => {
+                        const marker = new maplibregl.Marker({
+                            element: createCustomMarker(feature, iconSize, className, className === 'poi-marker')
+                        })
+                        .setLngLat(feature.geometry.coordinates)
+                        .addTo(map);
+
+                        marker.getElement().style.zIndex = '10';
+                        markerGroups[layerName].push(marker);
+                    });
+
+                    // Enregistrer dans le contrôle de couches sous "Objets"
+                    registerMarkerGroupInLayerControl(layerName, displayName, gettext('Objects'));
+
+                    $('.map-panel').addClass(`${layerName}_loaded`);
+                });
+            }
 
             //
-            // Parking
+            // Parking popup - rendre le marker parking cliquable
             {% if object.parking_location %}
-                var parkingIcon = L.icon({
-                    iconUrl: "{% static "trekking/parking.png" %}",
-                    iconSize: [{{ view.icon_sizes.parking }}, {{ view.icon_sizes.parking }}],
-                    iconAnchor: [{{ view.icon_sizes.parking }}/2, {{ view.icon_sizes.parking }}/2],
-                });
-                var point = {{ object.parking_location.geojson|safe }};
-                var location = point.coordinates.reverse();
-                L.marker(location, {icon: parkingIcon})
-                 .bindPopup("{{ object.advised_parking|default:_("None") }}")
-                 .addTo(map);
+                (function() {
+                    const parkingText = "{{ object.advised_parking|escapejs|default:_("None") }}";
 
-                // Make sure parking icon is visible on the map
-                var bounds = map.getBounds();
-                bounds.extend(location);
-                map.fitBounds(bounds);
+                    // Récupérer les coordonnées parking en 4326 depuis data-extra-geometries
+                    const detailMapEl = document.getElementById('detailmap');
+                    let parkingLngLat = null;
+                    if (detailMapEl) {
+                        try {
+                            const extras = JSON.parse(detailMapEl.getAttribute('data-extra-geometries') || '[]');
+                            const parkingExtra = extras.find(function(eg) { return eg.field === 'parking_location'; });
+                            if (parkingExtra && parkingExtra.geojson && parkingExtra.geojson.coordinates) {
+                                parkingLngLat = parkingExtra.geojson.coordinates;
+                            }
+                        } catch(err) {
+                            console.warn('Failed to parse extra geometries for parking', err);
+                        }
+                    }
+
+                    // _renderExtraGeometries crée les markers avec pointerEvents='none' sur le .maplibregl-marker
+                    // Le parking est identifié par : pointerEvents='none' + SVG enfant contenant un <rect> (icône P)
+                    const mapContainer = map.getContainer();
+                    let found = false;
+                    const observer = new MutationObserver(function() {
+                        if (found) return;
+                        const allMarkers = mapContainer.querySelectorAll('.maplibregl-marker');
+                        allMarkers.forEach(function(markerEl) {
+                            if (found) return;
+                            if (markerEl.style.pointerEvents === 'none'
+                                && markerEl.querySelector('rect')) {
+                                found = true;
+                                markerEl.style.pointerEvents = 'auto';
+                                markerEl.style.cursor = 'pointer';
+                                markerEl.addEventListener('click', function(evt) {
+                                    evt.stopPropagation();
+                                    // Calculer la position LngLat depuis la position pixel du marker
+                                    let lngLat;
+                                    if (parkingLngLat) {
+                                        lngLat = parkingLngLat;
+                                    } else {
+                                        const rect = markerEl.getBoundingClientRect();
+                                        const mapRect = mapContainer.getBoundingClientRect();
+                                        const x = rect.left + rect.width / 2 - mapRect.left;
+                                        const y = rect.top + rect.height / 2 - mapRect.top;
+                                        lngLat = map.unproject([x, y]).toArray();
+                                    }
+                                    new maplibregl.Popup({ offset: 25 })
+                                        .setLngLat(lngLat)
+                                        .setHTML(parkingText)
+                                        .addTo(map);
+                                });
+                                observer.disconnect();
+                            }
+                        });
+                    });
+                    observer.observe(mapContainer, { childList: true, subtree: true });
+                })();
             {% endif %}
 
             //
             // Trek POIs layer
-            {% translate "Trek's POIs" as poi_layer_label %}
-            $.getJSON('{% url 'trekking:trek_poi_geojson' LANGUAGE_CODE object.pk %}?fields=api_geom,id,name,type', function (data) {
-                var pois = new POILayer(data, {
-                    iconSize: {{ view.icon_sizes.POI }}
-                });
+            addMarkerLayer(
+                '{% url 'trekking:trek_poi_geojson' LANGUAGE_CODE object.pk %}?fields=api_geom,id,name,type',
+                'poi',
+                gettext('POIs'),
+                {{ view.icon_sizes.POI }},
+                'poi-marker'
+            );
 
-                var poiUrl = "{% url 'trekking:poi_detail' 0 %}";
-                pois.eachLayer(function (layer) {
-                    layer.on('dblclick', function (e) {
-                        window.location = poiUrl.replace('0', layer.feature.id);
-                    });
-                });
-                map.layerscontrol.addOverlay(pois, "{{ poi_layer_label }}", tr('Objects'));
-                map.addLayer(pois);
-
-                pois.showEnumeration();
+            setTimeout(() => {
                 $('.map-panel').addClass('poi_enum_loaded');
-            });
+            }, 1000);
 
             //
             // Trek services layer
-            {% translate "Trek's services" as service_layer_label %}
-            $.getJSON('{% url 'trekking:trek_service_geojson' LANGUAGE_CODE object.pk %}', function (data) {
-                var services = new ServiceLayer(data, {
-                    iconSize: {{ view.icon_sizes.service }}
-                });
-
-                var serviceUrl = "{% url 'trekking:service_detail' 0 %}";
-                services.eachLayer(function (layer) {
-                    layer.on('dblclick', function (e) {
-                        window.location = serviceUrl.replace('0', layer.feature.id);
-                    });
-                });
-                map.layerscontrol.addOverlay(services, "{{ service_layer_label }}", tr('Objects'));
-                map.addLayer(services);
-                $('.map-panel').addClass('services_loaded');
-            });
+            addMarkerLayer(
+                '{% url 'trekking:trek_service_geojson' LANGUAGE_CODE object.pk %}',
+                'services',
+                gettext('Services'),
+                {{ view.icon_sizes.service }},
+                'service-marker'
+            );
 
             //
             // Trek signage layer
-            {% translate "Trek's signages" as signage_layer_label %}
-            $.getJSON('{% url 'signage:trek_signage_geojson' LANGUAGE_CODE object.pk %}', function (data) {
-                var signages = new SignagesLayer(data, {
-                    iconSize: {{ view.icon_sizes.signage }}
-                });
-
-                var signageUrl = "{% url 'signage:signage_detail' 0 %}";
-                signages.eachLayer(function (layer) {
-                    layer.on('dblclick', function (e) {
-                        window.location = signageUrl.replace('0', layer.feature.id);
-                    });
-                });
-                map.layerscontrol.addOverlay(signages, "{{ signage_layer_label }}", tr('Objects'));
-                map.addLayer(signages);
-                $('.map-panel').addClass('signages_loaded');
-            });
+            addMarkerLayer(
+                '{% url 'signage:trek_signage_geojson' LANGUAGE_CODE object.pk %}',
+                'signages',
+                gettext('Signages'),
+                {{ view.icon_sizes.signage }},
+                'signage-marker'
+            );
 
             //
             // Trek infrastructure layer
-            {% translate "Trek's infrastructures" as infrastructure_layer_label %}
-            $.getJSON('{% url 'infrastructure:trek_infrastructure_geojson' LANGUAGE_CODE object.pk %}', function (data) {
-                var infrastructures = new InfrastructuresLayer(data, {
-                    iconSize: {{ view.icon_sizes.infrastructure }}
-                });
-
-                var infrastructureUrl = "{% url 'infrastructure:infrastructure_detail' 0 %}";
-                infrastructures.eachLayer(function (layer) {
-                    layer.on('dblclick', function (e) {
-                        window.location = infrastructureUrl.replace('0', layer.feature.id);
-                    });
-                });
-                map.layerscontrol.addOverlay(infrastructures, "{{ infrastructure_layer_label }}", tr('Objects'));
-                map.addLayer(infrastructures);
-                $('.map-panel').addClass('services_loaded');
-            });
+            addMarkerLayer(
+                '{% url 'infrastructure:trek_infrastructure_geojson' LANGUAGE_CODE object.pk %}',
+                'infrastructures',
+                gettext('Infrastructures'),
+                {{ view.icon_sizes.infrastructure }},
+                'infrastructure-marker'
+            );
 
             //
             // Trek information desks layer
-            $.getJSON('{% url 'tourism:trek_information_desk_geojson' LANGUAGE_CODE object.pk %}', function (data) {
-                L.geoJson(data, {
-                    pointToLayer: function (feature, latlng) {
-                        var infoDeskIcon = L.icon({
-                            iconUrl: feature.properties.type.pictogram,
-                            iconSize: [{{ view.icon_sizes.information_desk }}, {{ view.icon_sizes.information_desk }}],
-                            iconAnchor: [{{ view.icon_sizes.information_desk }}/2, {{ view.icon_sizes.information_desk }}/2],
-                        });
-                        return L.marker(latlng, feature.properties.type.pictogram ? {icon: infoDeskIcon} : {});
-                    }
-                }).addTo(map);
-                $('.map-panel').addClass('info_desks_loaded');
-            });
+            addMarkerLayer(
+                '{% url 'tourism:trek_information_desk_geojson' LANGUAGE_CODE object.pk %}',
+                'info_desks',
+                gettext('Information desks'),
+                {{ view.icon_sizes.information_desk }},
+                'info-desk-marker'
+            );
 
             //
             // Points of reference
             (function (map) {
-                var data = {{ object.points_reference.geojson|safe|default:'null' }};
-                L.geoJson(data, {
-                    pointToLayer: (function () {
-                        var counter = 1;
-                        return function (featureData, latlng) {
-                            var icon = L.divIcon({html: counter++,
-                                                  className: 'point-reference'});
-                            return L.marker(latlng, {
-                                clickable: false,
-                                icon: icon,
-                                zIndexOffset: 9999
-                            }).addTo(map);
-                        };
-                    })()
-                }).addTo(map);
+                const data = {{ object.points_reference.geojson|safe|default:'null' }};
+                if (data && data.coordinates) {
+                    data.coordinates.forEach((coords, index) => {
+                        const refPointEl = document.createElement('div');
+                        refPointEl.className = 'point-reference';
+                        refPointEl.textContent = index + 1;
+                        refPointEl.style.width = '25px';
+                        refPointEl.style.height = '25px';
+                        refPointEl.style.backgroundColor = 'red';
+                        refPointEl.style.border = '2px solid white';
+                        refPointEl.style.borderRadius = '50%';
+                        refPointEl.style.display = 'flex';
+                        refPointEl.style.alignItems = 'center';
+                        refPointEl.style.justifyContent = 'center';
+                        refPointEl.style.fontWeight = 'bold';
+                        refPointEl.style.fontSize = '12px';
+                        refPointEl.style.zIndex = '9999';
+                        refPointEl.style.color = 'white'
+
+                        new maplibregl.Marker({
+                            element: refPointEl,
+                            anchor: 'center'
+                        })
+                        .setLngLat(coords)
+                        .addTo(map);
+                    });
+                }
                 $('.map-panel').addClass('ref_points_loaded');
             })(map);
 

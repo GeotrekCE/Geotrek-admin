@@ -46,6 +46,17 @@ from geotrek.zoning.mixins import ZoningPropertiesMixin
 logger = logging.getLogger(__name__)
 
 
+def _get_ewkt(geom):
+    if not geom:
+        return None
+    if isinstance(geom, str):
+        return geom
+    try:
+        return geom.ewkt
+    except Exception:
+        return str(geom)
+
+
 class Path(
     ZoningPropertiesMixin,
     AddPropertyMixin,
@@ -157,6 +168,12 @@ class Path(
     objects = PathManager()
     include_invisible = PathInvisibleManager()
 
+    is_being_split = models.BooleanField(
+        default=False,
+        editable=False,
+        help_text="Internal field preventing geometry updates on related topologies during path splitting",
+    )
+
     is_reversed = False
     can_duplicate = False
 
@@ -167,19 +184,6 @@ class Path(
     @classproperty
     def length_2d_verbose_name(cls):
         return _("2D Length")
-
-    @classmethod
-    def no_draft_latest_updated(cls):
-        try:
-            latest = (
-                cls.objects.filter(draft=False)
-                .only("date_update")
-                .latest("date_update")
-                .get_date_update()
-            )
-        except cls.DoesNotExist:
-            latest = None
-        return latest
 
     @property
     def length_2d_display(self):
@@ -232,7 +236,7 @@ class Path(
     def closest(cls, point, exclude=None):
         """
         Returns the closest path of the point.
-        Will fail if no path in database.
+        Returns None if no path in database.
         """
         # TODO: move to custom manager
         if point.srid != settings.SRID:
@@ -243,7 +247,8 @@ class Path(
         return (
             qs.exclude(visible=False)
             .annotate(distance=Distance("geom", point))
-            .order_by("distance")[0]
+            .order_by("distance")
+            .first()
         )
 
     @classmethod
@@ -342,8 +347,6 @@ class Path(
         self.reload()
 
     def delete(self, *args, **kwargs):
-        if not settings.TREKKING_TOPOLOGY_ENABLED:
-            return super().delete(*args, **kwargs)
         topologies = self.topology_set.all()
         if topologies.exists() and not settings.ALLOW_PATH_DELETION_TOPOLOGY:
             raise ProtectedError(
@@ -354,26 +357,31 @@ class Path(
             )
         topologies_list = list(topologies)
         r = super().delete(*args, **kwargs)
-        if not Path.objects.exists():
-            return r
-        for topology in topologies_list:
-            if isinstance(topology.geom, Point):
-                closest = self.closest(topology.geom, self)
-                position, offset = closest.interpolate(topology.geom)
-                new_topology = Topology.objects.create()
-                aggrobj = PathAggregation(
-                    topo_object=new_topology,
-                    start_position=position,
-                    end_position=position,
-                    path=closest,
-                )
-                aggrobj.save()
-                point = Point(topology.geom.x, topology.geom.y, srid=settings.SRID)
-                new_topology.geom = point
-                new_topology.offset = offset
-                new_topology.position = position
-                new_topology.save()
-                topology.mutate(new_topology)
+        if Path.objects.exists():
+            for topology in topologies_list:
+                if isinstance(topology.geom, Point):
+                    was_on_intersection = (
+                        PathAggregation.objects.filter(topo_object=topology)
+                        .exclude(path__pk=self.pk)
+                        .exists()
+                    )
+                    if was_on_intersection:
+                        continue  # The topology is still linked to the other paths
+                    closest = self.closest(topology.geom, self)
+                    position, offset = closest.interpolate(topology.geom)
+                    new_topology = Topology()
+                    aggrobj = PathAggregation(
+                        topo_object=new_topology,
+                        start_position=position,
+                        end_position=position,
+                        path=closest,
+                    )
+                    new_topology.aggregations = [aggrobj]
+                    closest.aggregations.add(aggrobj)
+                    new_topology.geom = GEOSGeometry(topology.geom.ewkt)
+                    new_topology.offset = offset
+                    new_topology.save()
+                    topology.mutate(new_topology)
         return r
 
     @property
@@ -411,42 +419,37 @@ class Path(
         return ", ".join([str(n) for n in self.networks.all()])
 
     def topologies_by_path(self, default_dict):
-        if "geotrek.core" in settings.INSTALLED_APPS:
-            for trail in self.trails:
-                default_dict[_("Trails")].append(
-                    {"name": trail.name, "url": trail.get_detail_url()}
-                )
-        if "geotrek.trekking" in settings.INSTALLED_APPS:
-            for trek in self.treks:
-                default_dict[_("Treks")].append(
-                    {"name": trek.name, "url": trek.get_detail_url()}
-                )
-            for service in self.services:
-                default_dict[_("Services")].append(
-                    {"name": service.type.name, "url": service.get_detail_url()}
-                )
-            for poi in self.pois:
-                default_dict[_("Pois")].append(
-                    {"name": poi.name, "url": poi.get_detail_url()}
-                )
-        if "geotrek.signage" in settings.INSTALLED_APPS:
-            for signage in self.signages:
-                default_dict[_("Signages")].append(
-                    {"name": signage.name, "url": signage.get_detail_url()}
-                )
-        if "geotrek.infrastructure" in settings.INSTALLED_APPS:
-            for infrastructure in self.infrastructures:
-                default_dict[_("Infrastructures")].append(
-                    {
-                        "name": infrastructure.name,
-                        "url": infrastructure.get_detail_url(),
-                    }
-                )
-        if "geotrek.maintenance" in settings.INSTALLED_APPS:
-            for intervention in self.interventions:
-                default_dict[_("Interventions")].append(
-                    {"name": intervention.name, "url": intervention.get_detail_url()}
-                )
+        for trail in self.trails:
+            default_dict[_("Trails")].append(
+                {"name": trail.name, "url": trail.get_detail_url()}
+            )
+        for trek in self.treks:
+            default_dict[_("Treks")].append(
+                {"name": trek.name, "url": trek.get_detail_url()}
+            )
+        for service in self.services:
+            default_dict[_("Services")].append(
+                {"name": service.type.name, "url": service.get_detail_url()}
+            )
+        for poi in self.pois:
+            default_dict[_("Pois")].append(
+                {"name": poi.name, "url": poi.get_detail_url()}
+            )
+        for signage in self.signages:
+            default_dict[_("Signages")].append(
+                {"name": signage.name, "url": signage.get_detail_url()}
+            )
+        for infrastructure in self.infrastructures:
+            default_dict[_("Infrastructures")].append(
+                {
+                    "name": infrastructure.name,
+                    "url": infrastructure.get_detail_url(),
+                }
+            )
+        for intervention in self.interventions:
+            default_dict[_("Interventions")].append(
+                {"name": intervention.name, "url": intervention.get_detail_url()}
+            )
 
     def merge_path(self, path_to_merge):
         """
@@ -496,7 +499,7 @@ class Topology(
     kind = models.CharField(editable=False, verbose_name=_("Kind"), max_length=32)
     geom_need_update = models.BooleanField(default=False, editable=False)
     geom = models.GeometryField(
-        editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
+        editable=True,
         srid=settings.SRID,
         null=True,
         default=None,
@@ -516,6 +519,12 @@ class Topology(
     )
     uuid = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
 
+    # The geometry is coupled to the path network when the topology is valid and linked to path aggregations
+    # See https://github.com/GeotrekCE/Geotrek-admin/issues/4982
+    coupled = models.BooleanField(
+        default=False, editable=False, verbose_name=_("Network-coupled")
+    )
+
     """ Fake srid attribute, that prevents transform() calls when using Django map widgets. """
     srid = settings.API_SRID
 
@@ -529,11 +538,18 @@ class Topology(
             GistIndex(name="topology_geom_gist_idx", fields=["geom"]),
             GistIndex(name="topology_geom_3d_gist_idx", fields=["geom_3d"]),
         ]
+        permissions = [
+            (
+                "can_draw_off_path_network",
+                _("Can draw geometries uncoupled from the path network"),
+            ),
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if not self.pk and not self.kind:
             self.kind = self.__class__.KIND
+        self._original_geom = _get_ewkt(self.geom)
 
     @property
     def paths(self):  # noqa
@@ -555,7 +571,7 @@ class Topology(
         return "{} ({})".format(_("Topology"), self.pk)
 
     def ispoint(self):
-        if not settings.TREKKING_TOPOLOGY_ENABLED or not self.pk:
+        if not self.pk:
             return self.geom and self.geom.geom_type == "Point"
         return all(
             [a.start_position == a.end_position for a in self.aggregations.all()]
@@ -648,17 +664,13 @@ class Topology(
 
     def mutate(self, other):
         """
-        Take alls attributes of the other topology specified and
-        save them into this one. Optionnally deletes the other.
+        Take all attributes of the other topology specified and save them into this one.
         """
         self.offset = other.offset
         self.save(update_fields=["offset"])
         PathAggregation.objects.filter(topo_object=self).delete()
-        # The previous operation has put deleted = True (in triggers)
-        # and NULL in geom (see update_geometry_of_topology:: IF t_count = 0)
-        self.deleted = False
         self.geom = other.geom
-        self.save(update_fields=["deleted", "geom"])
+        self.save(update_fields=["geom"])
 
         # Now copy all agregations from other to self
         aggrs = other.aggregations.all()
@@ -689,6 +701,8 @@ class Topology(
             # Update computed values
             fromdb = self.__class__.objects.get(pk=self.pk)
             self.geom = fromdb.geom
+            self._original_geom = _get_ewkt(fromdb.geom)
+            self.coupled = fromdb.coupled
             # /!\ offset may be set by a trigger OR in
             # the django code, reload() will override
             # any unsaved value
@@ -700,23 +714,39 @@ class Topology(
         return self
 
     def save(self, *args, **kwargs):
-        # HACK: these fields are readonly from the Django point of view
-        # but they can be changed at DB level. Since Django write all fields
-        # to DB anyway, it is important to update it before writting
-        if self.pk and settings.TREKKING_TOPOLOGY_ENABLED:
+        if self.pk:
             existing = self.__class__.objects.get(pk=self.pk)
-            self.length = existing.length
-            # In the case of points, the geom can be set by Django. Don't override.
-            point_geom_not_set = self.ispoint() and self.geom is None
-            geom_already_in_db = not self.ispoint() and existing.geom is not None
-            if point_geom_not_set or geom_already_in_db:
-                self.geom = existing.geom
+
+            # Check if geometry was modified in Python
+            geom_modified_in_python = False
+            if self.geom is not None:
+                original_geom_ewkt = getattr(self, "_original_geom", None)
+                current_geom_ewkt = _get_ewkt(self.geom)
+                if original_geom_ewkt != current_geom_ewkt:
+                    geom_modified_in_python = True
+
+            # If geom is modified, we decouple the topology from the path network.
+            # Otherwise we keep coupled status from DB and reload computed values.
+            if geom_modified_in_python:
+                self.coupled = False
+                PathAggregation.objects.filter(topo_object=self).delete()
+            else:
+                self.coupled = existing.coupled
+                self.length = existing.length
+                self.geom_3d = existing.geom_3d
+                self.ascent = existing.ascent
+                self.descent = existing.descent
+                self.min_elevation = existing.min_elevation
+                self.max_elevation = existing.max_elevation
+                self.slope = existing.slope
+                if existing.geom is not None:
+                    self.geom = existing.geom
+                    self._original_geom = _get_ewkt(existing.geom)
         else:
             if not self.deleted and self.geom is None:
                 # We cannot have NULL geometry. So we use an empty one,
                 # it will be computed or overwritten by triggers.
                 self.geom = fromstr("POINT (0 0)")
-
         if not self.kind:
             if self.KIND == "TOPOLOGYMIXIN":
                 msg = "Cannot save abstract topologies"
@@ -741,7 +771,7 @@ class Topology(
             objdict = dict(kind=self.kind, lng=point.x, lat=point.y)
             if with_pk:
                 objdict["pk"] = self.pk
-            if settings.TREKKING_TOPOLOGY_ENABLED and self.offset == 0:
+            if self.offset == 0:
                 objdict["snap"] = self.aggregations.all()[0].path.pk
         else:
             # Line topology
@@ -776,19 +806,28 @@ class Topology(
     @classmethod
     def _topologypoint(cls, lng, lat, kind=None, snap=None):
         """
-        Receives a point (lng, lat) with API_SRID, and returns
-        a topology objects with a computed path aggregation.
+        Receives a point (lng, lat) with API_SRID, and returns a point topology object with:
+        - if a path exists: a computed path aggregation
+        - else: a geometry
         """
         # Find closest path
         point = Point(lng, lat, srid=settings.API_SRID)
         point.transform(settings.SRID)
+
         if snap is None:
             closest = Path.closest(point)
-            position, offset = closest.interpolate(point)
         else:
-            closest = Path.objects.get(pk=snap)
-            position, offset = closest.interpolate(point)
+            try:
+                closest = Path.objects.get(pk=snap)
+            except Path.DoesNotExist:
+                msg = "Invalid serialized point topology: snap path not found"
+                raise ValueError(msg)
+        if closest is None:
+            return Topology(kind="TMP", geom=point)
+        position, offset = closest.interpolate(point)
+        if snap is not None:
             offset = 0
+
         # We can now instantiante a Topology object
         topology = Topology(kind=kind, offset=offset)
         aggr = PathAggregation(
@@ -803,9 +842,58 @@ class Topology(
         topology.geom = point
         return topology
 
+    # TODO: unit tests
+    @classmethod
+    def check_serialized_topology(cls, topology):
+        """
+        Checks whether a serialized linear topology is deserializable by the `deserialize` class method.
+        If not, raises an Exception with an error message.
+        Note that this method does not check whether a topology will be valid or not.
+        """
+        if topology is None or type(topology) is not list or topology == []:
+            msg = "Request parameters should contain a non-empty 'topology' array"
+            raise Exception(msg)
+
+        for subtopology in topology:
+            paths = subtopology.get("paths")
+            positions = subtopology.get("positions")
+
+            if paths is None or type(paths) is not list or paths == []:
+                msg = "Each subtopology should contain a non-empty 'paths' array"
+                raise Exception(msg)
+            for path_id in paths:
+                if (
+                    not isinstance(path_id, int)
+                    or Path.objects.filter(pk=path_id).first() is None
+                ):
+                    msg = "Path arrays should contain valid path identifiers"
+                    raise Exception(msg)
+
+            if positions is None or type(positions) is not dict or positions == {}:
+                msg = "Each subtopology should contain a valid 'positions' object"
+                raise Exception(msg)
+            for index, (key, value) in enumerate(positions.items()):
+                if (
+                    str(index) != key
+                    or value is None
+                    or type(value) is not list
+                    or len(value) != 2
+                ):
+                    msg = "'positions' objects should contain arrays associated to a correct key and containing two elements"
+                    raise Exception(msg)
+                for fraction in value:
+                    if fraction < 0 or fraction > 1:
+                        msg = "Positions start and end values should be between 0 and 1"
+                        raise Exception(msg)
+
+            if len(paths) != len(positions):
+                msg = "For each topology, the number of paths and positions should be the same"
+                raise Exception(msg)
+
     @classmethod
     def deserialize(cls, serialized):
         """
+        ---- Topologies ----
         Topologies can be points or lines. Serialized topologies come from Javascript
         module ``topology_helper.js``.
 
@@ -829,8 +917,8 @@ class Topology(
         * If has lat/lng return point topology
         * Otherwise, create path aggregations from serialized data.
         ____________________________________________________________________________________________
-        Without Dynamic Segmentation :
 
+        ---- Geometries ----
         Deserialize normally and create a topology from the geojson
         """
         try:
@@ -839,10 +927,41 @@ class Topology(
             raise
         except (TypeError, ValueError):
             pass  # value is not integer, thus should be deserialized
-        if not settings.TREKKING_TOPOLOGY_ENABLED:
-            return Topology(
-                kind="TMP", geom=GEOSGeometry(serialized, srid=settings.API_SRID)
-            )
+
+        # Support uncoupled geometry directly
+        if isinstance(serialized, GEOSGeometry):
+            if serialized.srid != settings.SRID:
+                serialized.transform(settings.SRID)
+            return Topology(kind="TMP", geom=serialized, coupled=False)
+
+        if isinstance(serialized, str):
+            trimmed = serialized.strip()
+            # If it looks like WKT or GeoJSON but not standard coupled JSON
+            if (
+                trimmed.startswith("{")
+                and "paths" not in trimmed
+                and "lat" not in trimmed
+            ):
+                try:
+                    geom = GEOSGeometry(trimmed, srid=settings.API_SRID)
+                    if geom.srid != settings.SRID:
+                        geom.transform(settings.SRID)
+                    return Topology(kind="TMP", geom=geom, coupled=False)
+                except Exception:
+                    pass
+            elif any(
+                trimmed.upper().startswith(prefix)
+                for prefix in ["POINT", "LINESTRING", "MULTILINESTRING", "SRID="]
+            ):
+                try:
+                    srid = None if "SRID=" in trimmed.upper() else settings.API_SRID
+                    geom = GEOSGeometry(trimmed, srid=srid)
+                    if geom.srid != settings.SRID:
+                        geom.transform(settings.SRID)
+                    return Topology(kind="TMP", geom=geom, coupled=False)
+                except Exception:
+                    pass
+
         objdict = serialized
         if isinstance(serialized, str):
             try:

@@ -12,6 +12,7 @@
             <th>{{ object|verbose:"name" }}</th>
             <td>{{ object.name }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=object %}
         <tr>
             <th>{{ object|verbose:"type" }}</th>
             <td>{{ object.type }}</td>

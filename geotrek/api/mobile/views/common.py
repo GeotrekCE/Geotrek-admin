@@ -8,6 +8,7 @@ from rest_framework_extensions.mixins import DetailSerializerMixin
 
 from geotrek.api.mobile.serializers import common as api_serializers
 from geotrek.flatpages.models import MenuItem
+from geotrek.sensitivity.models import SportPractice
 from geotrek.tourism.models import (
     InformationDesk,
     InformationDeskType,
@@ -26,9 +27,6 @@ from geotrek.trekking.models import (
     TrekNetwork,
 )
 from geotrek.zoning.models import City, District
-
-if "geotrek.sensitivity" in settings.INSTALLED_APPS:
-    from geotrek.sensitivity.models import SportPractice
 
 
 class SettingsView(APIView):
@@ -300,18 +298,17 @@ class SettingsView(APIView):
             },
         ]
 
-        if "geotrek.sensitivity" in settings.INSTALLED_APPS:
-            data.append(
-                {
-                    "id": "sensitive_area_practices",
-                    "name": _("Sensitive area practices"),
-                    "values": api_serializers.SportPracticeSerializer(
-                        SportPractice.objects.all().order_by("name"),
-                        many=True,
-                        context={"request": request},
-                    ).data,
-                }
-            )
+        data.append(
+            {
+                "id": "sensitive_area_practices",
+                "name": _("Sensitive area practices"),
+                "values": api_serializers.SportPracticeSerializer(
+                    SportPractice.objects.all().order_by("name"),
+                    many=True,
+                    context={"request": request},
+                ).data,
+            }
+        )
 
         return response.Response({"filters": filters, "data": data})
 

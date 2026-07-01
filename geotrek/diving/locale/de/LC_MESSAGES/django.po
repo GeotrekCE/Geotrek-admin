@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-23 11:11+0200\n"
+"POT-Creation-Date: 2026-03-12 15:52+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/diving/de/>\n"
@@ -18,16 +18,8 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Generator: Weblate 5.13.3\n"
 
-#, python-format
-msgid "Difficulty with id '%s' already exists"
-msgstr ""
-
 #, python-brace-format
 msgid "Difficulty id {old} was changed to {new} successfully."
-msgstr ""
-
-#, python-format
-msgid "Level with id '%s' already exists"
 msgstr ""
 
 #, python-brace-format
@@ -35,6 +27,14 @@ msgid "Level id {old} was changed to {new} successfully."
 msgstr ""
 
 msgid "Diving"
+msgstr ""
+
+#, python-format
+msgid "Difficulty with id '%s' already exists"
+msgstr ""
+
+#, python-format
+msgid "Level with id '%s' already exists"
 msgstr ""
 
 msgid "Name"

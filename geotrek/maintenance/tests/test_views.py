@@ -4,7 +4,6 @@ from collections import OrderedDict
 from decimal import Decimal
 from io import BytesIO, StringIO
 from tempfile import TemporaryDirectory
-from unittest import skipIf
 from zipfile import ZipFile
 
 from django.conf import settings
@@ -138,11 +137,9 @@ class InterventionViewsTest(CommonTest):
             "manday_set-1-id": "",
             "manday_set-1-DELETE": "",
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            good_data["topology"] = (f'{{"paths": [{path.pk}]}}',)
-        else:
-            good_data["topology"] = "SRID=4326;POINT (5.1 6.6)"
+        path = PathFactory.create()
+        good_data["topology"] = (f'{{"paths": [{path.pk}]}}',)
+
         return good_data
 
     def get_expected_datatables_attrs(self):
@@ -168,11 +165,12 @@ class InterventionViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
+
     def test_creation_form_on_signage(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            signa = SignageFactory.create()
-        else:
-            signa = SignageFactory.create(geom="SRID=2154;POINT (700000 6600000)")
+        signa = SignageFactory.create()
+
         signage = f"{signa}"
 
         response = self.client.get(
@@ -190,48 +188,31 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(signa, Intervention.objects.get().target)
 
     def test_detail_target_objects(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create(geom=LineString((200, 200), (300, 300)))
-            signa = SignageFactory.create(paths=[(path, 0.5, 0.5)])
-            signa.save()
-            infrastructure = InfrastructureFactory.create(paths=[(path, 0.5, 0.5)])
-            infrastructure.save()
-            poi = POIFactory.create(paths=[(path, 0.5, 0.5)])
-            trek = TrekFactory.create(paths=[(path, 0.5, 0.5)])
-            service = ServiceFactory.create(paths=[(path, 0.5, 0.5)])
-            topo = TopologyFactory.create(paths=[(path, 0.5, 0.5)])
-            topo.save()
-            land = LandEdgeFactory.create(paths=[(path, 0, 0.5)])
-            physical = PhysicalEdgeFactory.create(paths=[(path, 0, 0.5)])
-            competence = CompetenceEdgeFactory.create(paths=[(path, 0, 0.5)])
-            workmanagement = WorkManagementEdgeFactory.create(paths=[(path, 0, 0.5)])
-            signagemanagement = SignageManagementEdgeFactory.create(
-                paths=[(path, 0, 0.5)]
-            )
-            intervention_land = InterventionFactory.create(target=land)
-            intervention_physical = InterventionFactory.create(target=physical)
-            intervention_competence = InterventionFactory.create(target=competence)
-            intervention_workmanagement = InterventionFactory.create(
-                target=workmanagement
-            )
-            intervention_signagemanagement = InterventionFactory.create(
-                target=signagemanagement
-            )
-            path_other = PathFactory.create(geom=LineString((10000, 0), (10010, 0)))
-            signa_other = SignageFactory.create(paths=[(path_other, 0.5, 0.5)])
-            signa_other.save()
-
-        else:
-            signa = SignageFactory.create(geom="SRID=2154;POINT (250 250)")
-            infrastructure = InfrastructureFactory.create(
-                geom="SRID=2154;POINT (250 250)"
-            )
-            poi = POIFactory.create(geom="SRID=2154;POINT (250 250)")
-            trek = TrekFactory.create(geom="SRID=2154;POINT (250 250)")
-            service = ServiceFactory.create(geom="SRID=2154;POINT (250 250)")
-            topo = TopologyFactory.create(geom="SRID=2154;POINT (250 250)")
-
-            signa_other = SignageFactory.create(geom="SRID=2154;POINT (10005 0)")
+        path = PathFactory.create(geom=LineString((200, 200), (300, 300)))
+        signa = SignageFactory.create(paths=[(path, 0.5, 0.5)])
+        signa.save()
+        infrastructure = InfrastructureFactory.create(paths=[(path, 0.5, 0.5)])
+        infrastructure.save()
+        poi = POIFactory.create(paths=[(path, 0.5, 0.5)])
+        trek = TrekFactory.create(paths=[(path, 0.5, 0.5)])
+        service = ServiceFactory.create(paths=[(path, 0.5, 0.5)])
+        topo = TopologyFactory.create(paths=[(path, 0.5, 0.5)])
+        topo.save()
+        land = LandEdgeFactory.create(paths=[(path, 0, 0.5)])
+        physical = PhysicalEdgeFactory.create(paths=[(path, 0, 0.5)])
+        competence = CompetenceEdgeFactory.create(paths=[(path, 0, 0.5)])
+        workmanagement = WorkManagementEdgeFactory.create(paths=[(path, 0, 0.5)])
+        signagemanagement = SignageManagementEdgeFactory.create(paths=[(path, 0, 0.5)])
+        intervention_land = InterventionFactory.create(target=land)
+        intervention_physical = InterventionFactory.create(target=physical)
+        intervention_competence = InterventionFactory.create(target=competence)
+        intervention_workmanagement = InterventionFactory.create(target=workmanagement)
+        intervention_signagemanagement = InterventionFactory.create(
+            target=signagemanagement
+        )
+        path_other = PathFactory.create(geom=LineString((10000, 0), (10010, 0)))
+        signa_other = SignageFactory.create(paths=[(path_other, 0.5, 0.5)])
+        signa_other.save()
 
         intervention_signa = InterventionFactory.create(target=signa)
         intervention_infra = InterventionFactory.create(target=infrastructure)
@@ -254,19 +235,16 @@ class InterventionViewsTest(CommonTest):
         self.assertContains(response, intervention_service.target_display)
         self.assertContains(response, intervention_blade.target_display)
         self.assertContains(response, intervention_topo.target_display)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertContains(response, intervention_land.target_display)
-            self.assertContains(response, intervention_physical.target_display)
-            self.assertContains(response, intervention_competence.target_display)
-            self.assertContains(response, intervention_workmanagement.target_display)
-            self.assertContains(response, intervention_signagemanagement.target_display)
+        self.assertContains(response, intervention_land.target_display)
+        self.assertContains(response, intervention_physical.target_display)
+        self.assertContains(response, intervention_competence.target_display)
+        self.assertContains(response, intervention_workmanagement.target_display)
+        self.assertContains(response, intervention_signagemanagement.target_display)
         self.assertNotContains(response, intervention_other.target_display)
 
     def test_creation_form_on_signage_with_errors(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            signa = SignageFactory.create()
-        else:
-            signa = SignageFactory.create(geom="SRID=2154;POINT (700000 6600000)")
+        signa = SignageFactory.create()
+
         signage = f"{signa}"
 
         response = self.client.get(
@@ -286,10 +264,8 @@ class InterventionViewsTest(CommonTest):
         self.assertFalse(Intervention.objects.exists())
 
     def test_update_form_on_signage(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            signa = SignageFactory.create()
-        else:
-            signa = SignageFactory.create(geom="SRID=2154;POINT (700000 6600000)")
+        signa = SignageFactory.create()
+
         signage = f"{signa}"
 
         intervention = InterventionFactory.create(target=signa)
@@ -319,12 +295,8 @@ class InterventionViewsTest(CommonTest):
     def test_update_signage(self):
         """Test updating signage also updates intervention"""
         target_year = 2017
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            intervention = SignageInterventionFactory.create()
-        else:
-            intervention = SignageInterventionFactory.create(
-                geom="SRID=2154;POINT (700000 6600000)"
-            )
+        intervention = SignageInterventionFactory.create()
+
         signa = intervention.target
         # Save infrastructure form
         access_mean = AccessMeanFactory()
@@ -336,10 +308,8 @@ class InterventionViewsTest(CommonTest):
             "access": access_mean.pk,
             "manager": OrganismFactory.create().pk,
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = f'{{"paths": [{PathFactory.create().pk}]}}'
-        else:
-            data["geom"] = "SRID=4326;POINT (2.0 6.6)"
+        data["topology"] = f'{{"paths": [{PathFactory.create().pk}]}}'
+
         self.super_user = SuperUserFactory.create()
         form = SignageForm(instance=signa, data=data, user=self.super_user)
         self.assertTrue(form.is_valid(), form.errors)
@@ -353,12 +323,7 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(intervention.target.implantation_year, target_year)
 
     def test_creation_form_on_infrastructure(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            infra = InfrastructureFactory.create()
-        else:
-            infra = InfrastructureFactory.create(
-                geom="SRID=2154;POINT (700000 6600000)"
-            )
+        infra = InfrastructureFactory.create()
 
         response = self.client.get(
             f"{Intervention.get_add_url()}?target_id={infra.pk}&target_type={ContentType.objects.get_for_model(Infrastructure).pk}"
@@ -373,12 +338,7 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 302)
 
     def test_creation_form_on_infrastructure_with_errors(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            infra = InfrastructureFactory.create()
-        else:
-            infra = InfrastructureFactory.create(
-                geom="SRID=2154;POINT (700000 6600000)"
-            )
+        infra = InfrastructureFactory.create()
 
         response = self.client.get(
             f"{Intervention.get_add_url()}?target_id={infra.pk}&target_type={ContentType.objects.get_for_model(Infrastructure).pk}"
@@ -395,12 +355,7 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
 
     def test_update_form_on_infrastructure(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            infra = InfrastructureFactory.create()
-        else:
-            infra = InfrastructureFactory.create(
-                geom="SRID=2154;POINT (700000 6600000)"
-            )
+        infra = InfrastructureFactory.create()
 
         intervention = InterventionFactory.create(target=infra)
         response = self.client.get(intervention.get_update_url())
@@ -433,12 +388,8 @@ class InterventionViewsTest(CommonTest):
 
     def test_update_infrastructure(self):
         target_year = 2017
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            intervention = InfrastructureInterventionFactory.create()
-        else:
-            intervention = InfrastructureInterventionFactory.create(
-                geom="SRID=2154;POINT (700000 6600000)"
-            )
+        intervention = InfrastructureInterventionFactory.create()
+
         infra = intervention.target
         # Save infrastructure form
         response = self.client.get(infra.get_update_url())
@@ -449,10 +400,7 @@ class InterventionViewsTest(CommonTest):
         data["accessibility"] = ""
         data["access"] = ""
         data["conditions"] = list(form.instance.conditions.values_list("pk", flat=True))
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = f'{{"paths": [{PathFactory.create().pk}]}}'
-        else:
-            data["geom"] = "SRID=4326;POINT (2.0 6.6)"
+        data["topology"] = f'{{"paths": [{PathFactory.create().pk}]}}'
         response = self.client.post(infra.get_update_url(), data)
         self.assertEqual(response.status_code, 302)
         intervention = Intervention.objects.first()
@@ -460,9 +408,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(intervention.target.name, "modified")
         self.assertEqual(intervention.target.implantation_year, target_year)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_form_default_stake(self):
         """
         Without segmentation dynamic we do not have paths so we can't put any stake by default coming from paths
@@ -492,9 +437,6 @@ class InterventionViewsTest(CommonTest):
         projects = form.fields["project"].queryset.all()
         self.assertCountEqual(projects, [p1])
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_csv_on_topology_multiple_paths(self):
         # We create an intervention on multiple paths and we check in csv target's field we have all the paths
         path_AB = PathFactory.create(name="PATH_AB", geom=LineString((0, 0), (4, 0)))
@@ -517,19 +459,11 @@ class InterventionViewsTest(CommonTest):
         )
 
     def test_no_html_in_csv_infrastructure(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            InfrastructureInterventionFactory.create()
-        else:
-            InfrastructureInterventionFactory.create(
-                geom="SRID=2154;POINT (700000 6600000)"
-            )
+        InfrastructureInterventionFactory.create()
         super().test_no_html_in_csv()
 
     def test_no_html_in_csv_signage(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            SignageInterventionFactory.create()
-        else:
-            SignageInterventionFactory.create(geom="SRID=2154;POINT (700000 6600000)")
+        SignageInterventionFactory.create()
         super().test_no_html_in_csv()
 
     def test_structurerelated_not_loggedin(self):
@@ -542,9 +476,6 @@ class InterventionViewsTest(CommonTest):
         response = self.client.get(i.get_update_url())
         self.assertEqual(response.status_code, 302)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_creation_form_line(self):
         path = PathFactory.create(
             geom=LineString(
@@ -650,12 +581,7 @@ class ProjectViewsTest(CommonTest):
     def test_project_layer(self):
         p1 = ProjectFactory.create()
         ProjectFactory.create()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            InterventionFactory.create(project=p1)
-        else:
-            InterventionFactory.create(
-                project=p1, geom="SRID=2154;POINT (700000 6600000)"
-            )
+        InterventionFactory.create(project=p1)
 
         # Check that only p1 is in geojson
         response = self.client.get(self.model.get_layer_url())
@@ -671,10 +597,7 @@ class ProjectViewsTest(CommonTest):
         p1 = ProjectFactory.create()
         ProjectFactory.create()
         ProjectFactory.create()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            t = TopologyFactory.create()
-        else:
-            t = TopologyFactory.create(geom="SRID=2154;POINT (700000 6600000)")
+        t = TopologyFactory.create()
         InterventionFactory.create(project=p1, target=t)
 
         def jsonlist(bbox):
@@ -702,12 +625,7 @@ class ProjectViewsTest(CommonTest):
 
     def test_deleted_interventions(self):
         project = ProjectFactory.create()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            intervention = InterventionFactory.create()
-        else:
-            intervention = InterventionFactory.create(
-                geom="SRID=2154;POINT (700000 6600000)"
-            )
+        intervention = InterventionFactory.create()
         project.interventions.add(intervention)
         response = self.client.get(project.get_detail_url())
         self.assertEqual(response.status_code, 200)
@@ -724,7 +642,6 @@ class ProjectViewsTest(CommonTest):
         self.assertEqual(Funding.objects.count(), 2)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class ExportTest(TestCase):
     def test_shape_mixed(self):
         """
@@ -765,6 +682,7 @@ class ExportTest(TestCase):
         proj.interventions.add(it_point)
         proj.interventions.add(it_line)
         proj.interventions.add(it_geometrycollection)
+        proj.refresh_from_db()
 
         # instanciate the class based view 'abnormally' to use create_shape directly
         # to avoid making http request, authent and reading from a zip
