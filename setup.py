@@ -17,7 +17,7 @@ setup(
     scripts=["manage.py"],
     install_requires=[
         "Django==5.2.*",
-        "mapentity@git+https://github.com/makinacorpus/django-mapentity@update-leaflet-maplibre#egg=mapentity",
+        "mapentity@git+https://github.com/makinacorpus/django-mapentity@geom_type_list#egg=mapentity",
         "chardet",
         "cairosvg",
         "cairocffi",

@@ -15,10 +15,10 @@ from .models import Topology
 class BaseTopologyWidget(BaseGeometryWidget):
     """
     Widget de base pour les topologies, complètement indépendant de MapWidget.
-    Utilise uniquement le template linear_topology_widget.html.
+    Utilise uniquement le template line_topology_widget.html.
     """
 
-    template_name = "core/linear_topology_widget.html"
+    template_name = "core/line_topology_widget.html"
     display_raw = False
     modifiable = True
     is_line_topology = False
@@ -65,7 +65,7 @@ class BaseTopologyWidget(BaseGeometryWidget):
 
     def get_context(self, name, value, attrs):
         """
-        Prépare le contexte pour le rendu du template linear_topology_widget.html.
+        Prépare le contexte pour le rendu du template line_topology_widget.html.
         """
         # Gestion des valeurs vides
         value = None if value in validators.EMPTY_VALUES else value
@@ -105,22 +105,24 @@ class BaseTopologyWidget(BaseGeometryWidget):
         return super().render(name, value, attrs, renderer)
 
 
-# TODO: rename BaseTopologyWidget to LineTopologyWidget?
 class LineTopologyWidget(BaseTopologyWidget):
     is_line_topology = True
 
 
-# TODO: remove ?
 class PointLineTopologyWidget(BaseTopologyWidget):
     is_line_topology = True
     is_point_topology = True
 
 
-class LinearTopologyMapWidget(MapWidget):
-    def __init__(self, attrs=None, geom_type=None):
+class GeotrekMapWidget(MapWidget):
+    """
+    MapWidget with features specific to Geotrek:
+      - Set geom_changed to True when geom is modified.
+    """
+    def __init__(self, attrs=None, *args, **kwargs):
         attrs = attrs or {}
         self.modifiable = attrs.pop("modifiable", True)
-        super().__init__(attrs=attrs, geom_type=geom_type)
+        super().__init__(attrs=attrs, *args, **kwargs)
 
     @property
     def media(self):

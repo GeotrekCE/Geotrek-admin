@@ -12,7 +12,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.fields import TopologyField
+from geotrek.core.fields import LineTopologyField
 from geotrek.core.models import Topology
 from geotrek.feedback.models import WorkflowManager
 
@@ -78,7 +78,7 @@ FundingFormSet = inlineformset_factory(
 class InterventionForm(CommonForm):
     """An intervention can be a Point or a Line"""
 
-    topology = TopologyField(label="")
+    topology = LineTopologyField(label="")
     length = FloatField(required=False, label=_("Length"))
     project = forms.ModelChoiceField(
         required=False, label=_("Project"), queryset=Project.objects.existing()

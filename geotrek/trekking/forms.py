@@ -15,7 +15,7 @@ from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.forms import CommonForm
 from geotrek.core.mixins.forms import (
-    LinearTopologyFormMixin,
+    LineTopologyFormMixin,
     PointTopologyFormMixin,
 )
 
@@ -30,7 +30,7 @@ from .models import (
 )
 
 
-class TrekForm(LinearTopologyFormMixin, CommonForm):
+class TrekForm(LineTopologyFormMixin):
     children = forms.ModelMultipleChoiceField(
         label=_("Children"),
         help_text=_("Select children in order"),
@@ -47,7 +47,7 @@ class TrekForm(LinearTopologyFormMixin, CommonForm):
     geomfields = [
         "parking_location",
         "points_reference",
-        *LinearTopologyFormMixin.geomfields,
+        *LineTopologyFormMixin.geomfields,
     ]
 
     leftpanel_scrollable = False
@@ -129,11 +129,10 @@ class TrekForm(LinearTopologyFormMixin, CommonForm):
         ),
     ]
 
-    class Meta(LinearTopologyFormMixin.Meta, CommonForm.Meta):
+    class Meta(LineTopologyFormMixin.Meta):
         model = Trek
         fields = [
-            *LinearTopologyFormMixin.Meta.fields,
-            *CommonForm.Meta.fields,
+            *LineTopologyFormMixin.Meta.fields,
             "structure",
             "name",
             "review",

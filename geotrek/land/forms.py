@@ -1,5 +1,5 @@
 from ..common.forms import CommonForm
-from ..core.mixins.forms import LinearTopologyFormMixin
+from ..core.mixins.forms import LineTopologyFormMixin
 from .models import (
     CirculationEdge,
     CompetenceEdge,
@@ -10,46 +10,46 @@ from .models import (
 )
 
 
-class PhysicalEdgeForm(LinearTopologyFormMixin, CommonForm):
-    class Meta(LinearTopologyFormMixin.Meta):
+class PhysicalEdgeForm(LineTopologyFormMixin):
+    class Meta(LineTopologyFormMixin.Meta):
         model = PhysicalEdge
-        fields = [*LinearTopologyFormMixin.Meta.fields, "physical_type"]
+        fields = [*LineTopologyFormMixin.Meta.fields, "physical_type"]
 
 
-class LandEdgeForm(LinearTopologyFormMixin, CommonForm):
-    class Meta(LinearTopologyFormMixin.Meta):
+class LandEdgeForm(LineTopologyFormMixin):
+    class Meta(LineTopologyFormMixin.Meta):
         model = LandEdge
         fields = [
-            *LinearTopologyFormMixin.Meta.fields,
+            *LineTopologyFormMixin.Meta.fields,
             "land_type",
             "owner",
             "agreement",
         ]
 
 
-class CirculationEdgeForm(LinearTopologyFormMixin, CommonForm):
-    class Meta(LinearTopologyFormMixin.Meta):
+class CirculationEdgeForm(LineTopologyFormMixin):
+    class Meta(LineTopologyFormMixin.Meta):
         model = CirculationEdge
         fields = [
-            *LinearTopologyFormMixin.Meta.fields,
+            *LineTopologyFormMixin.Meta.fields,
             "circulation_type",
             "authorization_type",
         ]
 
 
-class CompetenceEdgeForm(LinearTopologyFormMixin, CommonForm):
-    class Meta(LinearTopologyFormMixin.Meta):
+class CompetenceEdgeForm(LineTopologyFormMixin):
+    class Meta(LineTopologyFormMixin.Meta):
         model = CompetenceEdge
-        fields = [*LinearTopologyFormMixin.Meta.fields, "organization"]
+        fields = [*LineTopologyFormMixin.Meta.fields, "organization"]
 
 
-class WorkManagementEdgeForm(LinearTopologyFormMixin, CommonForm):
-    class Meta(LinearTopologyFormMixin.Meta):
+class WorkManagementEdgeForm(LineTopologyFormMixin):
+    class Meta(LineTopologyFormMixin.Meta):
         model = WorkManagementEdge
-        fields = [*LinearTopologyFormMixin.Meta.fields, "organization"]
+        fields = [*LineTopologyFormMixin.Meta.fields, "organization"]
 
 
-class SignageManagementEdgeForm(LinearTopologyFormMixin, CommonForm):
-    class Meta(LinearTopologyFormMixin.Meta):
+class SignageManagementEdgeForm(LineTopologyFormMixin):
+    class Meta(LineTopologyFormMixin.Meta):
         model = SignageManagementEdge
-        fields = [*LinearTopologyFormMixin.Meta.fields, "organization"]
+        fields = [*LineTopologyFormMixin.Meta.fields, "organization"]
