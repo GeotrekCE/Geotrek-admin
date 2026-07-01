@@ -153,7 +153,7 @@ function RouteComponent() {
               description: "",
               access: null,
               structure,
-              type: { id: -1, name: "" },
+              type: null,
               date_insert: "",
               date_update: "",
               begin_date: new Date().toISOString().split("T")[0],
