@@ -1,4 +1,3 @@
-from ..common.forms import CommonForm
 from ..core.mixins.forms import LineTopologyFormMixin
 from .models import (
     CirculationEdge,

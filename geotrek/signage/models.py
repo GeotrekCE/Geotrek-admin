@@ -303,7 +303,10 @@ class Blade(
         on_delete=models.CASCADE,
         related_name="blades",
     )
-    number = models.CharField(verbose_name=_("Number"), max_length=250)
+    number = models.CharField(
+        verbose_name=_("Number"),
+        max_length=250,
+    )
     direction = models.ForeignKey(
         Direction,
         verbose_name=_("Direction"),
@@ -463,7 +466,6 @@ class Line(models.Model):
     linecode_verbose_name = _("Code")
 
     class Meta:
-        unique_together = (("blade", "number"),)
         verbose_name = _("Line")
         verbose_name_plural = _("Lines")
 
