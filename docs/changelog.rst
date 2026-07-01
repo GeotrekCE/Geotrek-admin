@@ -2,20 +2,9 @@
 CHANGELOG
 =========
 
-2.124.6+dev     (XXXX-XX-XX)
+3.0.0a1         (XXXX-XX-XX)
 ----------------------------
 
-**Warnings**
-
-* Topologies no longer need to depend on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
-
-**Improvements**
-
-* Add a "Network-coupled" boolean field and its corresponding filter to the ``Topology`` model
-* Strengthen the "invalid topology" filter criteria
-* Remove the "invalid geometry" filter
-
-**Bug fixes**
 **Warnings**
 
 * Topologies no longer need to depend on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
@@ -54,22 +43,6 @@ CHANGELOG
 
 2.124.5         (2026-06-09)
 ----------------------------
-
-**Warnings**
-
-* Topologies no longer need to depend on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.
-* All geotrek modules are now installed by default. Please remove `geotrek.outdoor`, `geotrek.sensitivity`, `geotrek.diving` from you custom.py file. User setting to disable module if you don't want to use them.
-  - `COURSE_MODEL_ENABLED = FALSE`
-  - `SITE_MODEL_ENABLED = FALSE`  # for outdoor module
-  - `SENSITIVE_AREA_MODEL_ENABLED = FALSE`  # for sensitivity module
-  - `DIVE_MODEL_ENABLED = FALSE`  # for diving module
-
-**Improvements**
-
-* Add a "Network-coupled" boolean field and its corresponding filter to the ``Topology`` model
-* Don't update the geometry of a topology when it's decoupled from the path network
-* Strengthen the "invalid topology" filter criteria
-* Remove the "invalid geometry" filter
 
 **Improvements**
 
