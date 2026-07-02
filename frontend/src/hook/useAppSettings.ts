@@ -1,12 +1,10 @@
-const APP_SETTINGS_KEY = "appSettings"
+const APP_SETTINGS_KEY = "gtam-app-settings"
 
 function getStorageElement(key: string) {
   return JSON.parse(localStorage.getItem(key) || "{}")
 }
 
 export function useAppSettings() {
-  const data = getStorageElement(APP_SETTINGS_KEY)
-
   function setData(nextData: Record<string, unknown>) {
     localStorage.setItem(
       APP_SETTINGS_KEY,
@@ -18,6 +16,7 @@ export function useAppSettings() {
   }
 
   function addMapLayer(key: string, mapData: Record<string, unknown>) {
+    const data = getStorageElement(APP_SETTINGS_KEY)
     if (data.maps && data.maps.layers) {
       let updatedLayers = []
       if (data.maps.layers.some((layer: { id: string }) => layer.id === key)) {
@@ -45,6 +44,7 @@ export function useAppSettings() {
   }
 
   function removeMapLayer(key: string) {
+    const data = getStorageElement(APP_SETTINGS_KEY)
     if (data.maps && data.maps.layers) {
       setData({
         maps: {
@@ -58,7 +58,7 @@ export function useAppSettings() {
   }
 
   return {
-    data,
+    data: getStorageElement(APP_SETTINGS_KEY),
     setData,
     removeMapLayer,
     addMapLayer,

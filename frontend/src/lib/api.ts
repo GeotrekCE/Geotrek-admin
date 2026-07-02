@@ -10,6 +10,7 @@ import {
 import * as z from "zod"
 import { db } from "./db"
 import { useLiveQuery } from "dexie-react-hooks"
+import { AUTH_TOKENS_KEY } from "@/hook/useTokens"
 
 export const API_URL = `${__HOST_URL__}/api`
 export class FetchError extends Error {
@@ -74,7 +75,7 @@ export async function queryFnWithAuth<T extends z.ZodObject | z.ZodArray>(
     ...options
   }: RequestInit & { schema?: T; searchParams?: Record<string, string> } = {}
 ) {
-  const { access } = JSON.parse(localStorage.getItem("auth-token") || "{}")
+  const { access } = JSON.parse(localStorage.getItem(AUTH_TOKENS_KEY) || "{}")
   const nextOptions = {
     ...options,
     headers: {

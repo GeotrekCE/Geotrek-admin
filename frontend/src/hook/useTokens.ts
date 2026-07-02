@@ -1,17 +1,15 @@
-const LOCAL_STORAGE_KEY = "auth-token"
+export const AUTH_TOKENS_KEY = "gtam-auth-token"
 
 export default function useTokens() {
-  const storedToken = JSON.parse(
-    localStorage.getItem(LOCAL_STORAGE_KEY) || "{}"
-  )
+  const storedToken = JSON.parse(localStorage.getItem(AUTH_TOKENS_KEY) || "{}")
   return {
     accessToken: storedToken.access || null,
     refreshToken: storedToken.refresh || null,
     setAuthToken: (tokens: { access: string; refresh: string }) => {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(tokens))
+      localStorage.setItem(AUTH_TOKENS_KEY, JSON.stringify(tokens))
     },
     clearAuthToken: () => {
-      localStorage.removeItem(LOCAL_STORAGE_KEY)
+      localStorage.removeItem(AUTH_TOKENS_KEY)
     },
   }
 }
