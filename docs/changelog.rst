@@ -5,6 +5,12 @@ CHANGELOG
 3.0.0a1         (XXXX-XX-XX)
 ----------------------------
 
+**Breaking changes**
+
+* Bye Leaflet, Hello MaplibreGL JS
+* Take a look to https://geotrek.readthedocs.io/en/stable/installation-and-configuration/upgrade.html#from-geotrek-admin-2-113-0-to-3-x
+
+
 **Warnings**
 
 * Topologies no longer need to depend on the path network: they can now exist independently or be based on paths, regardless of the dynamic segmentation setting.

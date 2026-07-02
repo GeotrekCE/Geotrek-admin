@@ -52,6 +52,34 @@ Once geotrek-admin has been upgraded you may want to prevent unwanted upgrade wi
 
    sudo apt-mark hold geotrek-admin
 
+.. _gta-3:
+
+From Geotrek-admin >= 2.113.0 to 3.x
+------------------------------------
+
+.. warning::
+
+  - Geotrek-admin 3.x is a bug change, leaving Leaflet maps and using MaplibreGL JS and vector tiles.
+  - Some of your settings should be checked after upgrade. In particular ``LEAFLET_CONFIG`` should be reported in ``MAPLIBRE_CONFIG_OVERRIDE`` in your ``custom.py`` file.
+
+.. note::
+
+  At first run, base layers and overlays from ``LEAFLET_CONFIG`` will be moved in database, so you would be able to edit and manage them in the admin interface. You should check that your base layers and overlays are still valid after upgrade.
+  For this, Geotrek-admin now use django-mapbox-baselayer, which expose commands to help you installing layers from OSM, or IGN (https://github.com/makinacorpus/django-mapbox-baselayer#unified-install_layer-command)
+
+.. warning::
+
+  Take care of your settings, update them and don't override them if possible
+  Do:
+  ::
+
+    MAPENTITY_CONFIG['MAP_STYLES']['detail'].update({'color': '#981d97', 'weight': 4, 'opacity': 0.7})
+
+  Instead of:
+  ::
+
+    MAPENTITY_CONFIG['MAP_STYLES']['detail'] = {'color': '#981d97', 'weight': 4, 'opacity': 0.7}
+
 From Geotrek-admin < 2.113.0
 ------------------------------
 
