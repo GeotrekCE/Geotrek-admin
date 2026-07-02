@@ -1,4 +1,6 @@
 from crispy_forms.layout import Div
+from django import forms
+from django.utils.translation import gettext_lazy as _
 
 from geotrek.core.mixins.forms import PointLineTopologyFormMixin
 
@@ -6,6 +8,10 @@ from .models import Infrastructure
 
 
 class InfrastructureForm(PointLineTopologyFormMixin):
+    implantation_year = forms.IntegerField(
+        label=_("Implantation year"), required=False
+    )
+
     fieldslayout = [
         Div(
             "structure",
