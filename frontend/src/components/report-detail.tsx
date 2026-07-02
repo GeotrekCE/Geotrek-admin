@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import { dateCompare } from "@/lib/date"
 import NotFound from "@/components/not-found"
+import type { ReportDataSchemaProps } from "@/schemas/data"
 
 export default function ReportDetail(params: { id: string; type: string }) {
   const navigate = useNavigate()
@@ -23,17 +24,25 @@ export default function ReportDetail(params: { id: string; type: string }) {
     []
   )
   const syncData = useLiveQuery(() => db.appSync.get("data"))
+  const rawDataItem = useLiveQuery(() =>
+    db.rawData
+      .where({
+        reference: "signage",
+        id: params.id ? Number(params.id) : undefined,
+      })
+      .first()
+  )
 
   const name = `Signalement (id: ${params.id})`
 
   const handleDelete = React.useCallback(() => {
     // @ts-expect-error not never
-    db.reportData.delete(Number(id))
+    db.reportData.delete(Number(params.id))
     toast.success(`"${name}" supprimé avec succès`, { position: "top-center" })
     navigate({
       to: "/{-$locale}",
     })
-  }, [name, navigate])
+  }, [name, navigate, params.id])
 
   if (!loaded) {
     return null
@@ -179,6 +188,24 @@ export default function ReportDetail(params: { id: string; type: string }) {
                 onClick={handleDelete}
               >
                 Supprimer le signalement
+              </Button>
+            )}
+            {rawDataItem && (
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={async () => {
+                  await db.rawData
+                    .where({ reference: "report", id: rawDataItem.id })
+                    .delete()
+                  const { reference: _reference, ...restoredData } = rawDataItem
+                  await db.reportData.put(restoredData as ReportDataSchemaProps)
+                  toast.success("Restoration du signalement terminée", {
+                    position: "top-center",
+                  })
+                }}
+              >
+                Annuler les modifications en attente
               </Button>
             )}
           </div>

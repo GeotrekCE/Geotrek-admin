@@ -14,6 +14,8 @@ import { Button } from "@/components/ui/button"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { usePermission } from "@/hook/useSettingsQuery"
+import { useLiveQuery } from "dexie-react-hooks"
+import { dateCompare } from "@/lib/date"
 
 export default function InfrastructureForm({
   defaultValues,
@@ -27,6 +29,20 @@ export default function InfrastructureForm({
   references: [InfrastructureReferencesSchemaProps, CommonReferencesSchemaProps]
 }) {
   const navigate = useNavigate()
+
+  const rawDataItem = useLiveQuery(() =>
+    db.rawData
+      .where({
+        reference: "infrastructure",
+        id: isEdit ? defaultValues.id : undefined,
+      })
+      .first()
+  )
+
+  const syncData = useLiveQuery(() => db.appSync.get("data"))
+
+  const isAsyncItem =
+    dateCompare(defaultValues.date_insert, syncData?.lastSync) > -1
 
   const [
     {
@@ -57,6 +73,12 @@ export default function InfrastructureForm({
       onSubmit: validators,
     },
     onSubmit: async ({ value }) => {
+      if (isEdit && !isAsyncItem) {
+        await db.rawData.put({
+          ...defaultValues,
+          reference: "infrastructure",
+        })
+      }
       const nextId = isEdit
         ? await db.infrastructureData.put({
             ...value,
@@ -162,8 +184,28 @@ export default function InfrastructureForm({
           />
 
           <Button type="submit">
-            {isEdit ? "Modifier" : "Créer"} la signalétique
+            {isEdit ? "Modifier" : "Créer"} l'aménagement
           </Button>
+          {rawDataItem && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={async () => {
+                await db.rawData
+                  .where({ reference: "infrastructure", id: rawDataItem.id })
+                  .delete()
+                const { reference: _reference, ...restoredData } = rawDataItem
+                await db.infrastructureData.put(
+                  restoredData as InfrastructureDataSchemaProps
+                )
+                toast.success("Restoration de l'infrastructure terminée", {
+                  position: "top-center",
+                })
+              }}
+            >
+              Annuler les modifications en attente
+            </Button>
+          )}
         </FieldGroup>
       </form.Form>
     </form.AppForm>

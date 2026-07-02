@@ -39,6 +39,14 @@ export const db = new Dexie(DB_NAME) as Dexie & {
   infrastructureData: EntityTable<InfrastructureDataSchemaProps>
   interventionData: EntityTable<InterventionDataSchemaProps>
   reportData: EntityTable<ReportDataSchemaProps>
+  rawData: EntityTable<
+    (
+      | SignageDataSchemaProps
+      | InfrastructureDataSchemaProps
+      | InterventionDataSchemaProps
+      | ReportDataSchemaProps
+    ) & { reference: string }
+  >
 }
 
 db.version(1).stores({
@@ -49,4 +57,5 @@ db.version(1).stores({
   infrastructureData: "++id, name, description, date_update",
   interventionData: "++id, name, description, date_update",
   reportData: "++id, date_update",
+  rawData: "id, reference",
 })

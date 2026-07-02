@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { usePermission } from "@/hook/useSettingsQuery"
+import { useLiveQuery } from "dexie-react-hooks"
+import { dateCompare } from "@/lib/date"
 
 export default function SignageForm({
   defaultValues,
@@ -24,6 +26,19 @@ export default function SignageForm({
   references: [SignageReferencesSchemaProps, CommonReferencesSchemaProps]
 }) {
   const navigate = useNavigate()
+
+  const rawDataItem = useLiveQuery(() =>
+    db.rawData
+      .where({
+        reference: "signage",
+        id: isEdit ? defaultValues.id : undefined,
+      })
+      .first()
+  )
+  const syncData = useLiveQuery(() => db.appSync.get("data"))
+
+  const isAsyncItem =
+    dateCompare(defaultValues.date_insert, syncData?.lastSync) > -1
 
   const [
     { signagetype, signagecondition, sealing },
@@ -49,6 +64,12 @@ export default function SignageForm({
       onSubmit: validators,
     },
     onSubmit: async ({ value }) => {
+      if (isEdit && !isAsyncItem) {
+        await db.rawData.add({
+          ...defaultValues,
+          reference: "signage",
+        })
+      }
       const nextId = isEdit
         ? await db.signageData.put({
             ...value,
@@ -157,6 +178,24 @@ export default function SignageForm({
           <Button type="submit">
             {isEdit ? "Modifier" : "Créer"} la signalétique
           </Button>
+          {rawDataItem && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={async () => {
+                await db.rawData
+                  .where({ reference: "signage", id: rawDataItem.id })
+                  .delete()
+                const { reference: _reference, ...restoredData } = rawDataItem
+                await db.signageData.put(restoredData as SignageDataSchemaProps)
+                toast.success("Restoration de la signalétique terminée", {
+                  position: "top-center",
+                })
+              }}
+            >
+              Annuler les modifications en attente
+            </Button>
+          )}
         </FieldGroup>
       </form.Form>
     </form.AppForm>

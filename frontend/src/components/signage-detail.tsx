@@ -22,6 +22,7 @@ import { toast } from "sonner"
 import { dateCompare } from "@/lib/date"
 import NotFound from "@/components/not-found"
 import { usePermission } from "@/hook/useSettingsQuery"
+import type { SignageDataSchemaProps } from "@/schemas/data"
 
 export default function SignageDetail(params: { id: string; type: string }) {
   const navigate = useNavigate()
@@ -35,17 +36,25 @@ export default function SignageDetail(params: { id: string; type: string }) {
     []
   )
   const syncData = useLiveQuery(() => db.appSync.get("data"))
+  const rawDataItem = useLiveQuery(() =>
+    db.rawData
+      .where({
+        reference: "signage",
+        id: params.id ? Number(params.id) : undefined,
+      })
+      .first()
+  )
 
   const handleDelete = React.useCallback(() => {
     // @ts-expect-error not never
-    db.signageData.delete(Number(id))
+    db.signageData.delete(Number(params.id))
     toast.success(`"${detail?.name}" supprimé avec succès`, {
       position: "top-center",
     })
     navigate({
       to: "/{-$locale}",
     })
-  }, [detail?.name, navigate])
+  }, [detail?.name, navigate, params.id])
 
   const { can_bypass_structure, is_superuser } = usePermission()
 
@@ -300,6 +309,26 @@ export default function SignageDetail(params: { id: string; type: string }) {
                 onClick={handleDelete}
               >
                 Supprimer {params.type}
+              </Button>
+            )}
+            {rawDataItem && (
+              <Button
+                type="button"
+                variant="destructive"
+                onClick={async () => {
+                  await db.rawData
+                    .where({ reference: "signage", id: rawDataItem.id })
+                    .delete()
+                  const { reference: _reference, ...restoredData } = rawDataItem
+                  await db.signageData.put(
+                    restoredData as SignageDataSchemaProps
+                  )
+                  toast.success("Restoration de la signalétique terminée", {
+                    position: "top-center",
+                  })
+                }}
+              >
+                Annuler les modifications en attente
               </Button>
             )}
           </div>

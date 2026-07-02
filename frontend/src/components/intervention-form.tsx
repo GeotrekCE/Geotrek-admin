@@ -16,6 +16,8 @@ import { useNavigate } from "@tanstack/react-router"
 import { FormCheckboxField } from "./forms"
 import { Trash } from "lucide-react"
 import { usePermission } from "@/hook/useSettingsQuery"
+import { useLiveQuery } from "dexie-react-hooks"
+import { dateCompare } from "@/lib/date"
 
 export default function InterventionForm({
   defaultValues,
@@ -29,6 +31,20 @@ export default function InterventionForm({
   references: [InterventionReferencesSchemaProps, CommonReferencesSchemaProps]
 }) {
   const navigate = useNavigate()
+
+  const rawDataItem = useLiveQuery(() =>
+    db.rawData
+      .where({
+        reference: "intervention",
+        id: isEdit ? defaultValues.id : undefined,
+      })
+      .first()
+  )
+
+  const syncData = useLiveQuery(() => db.appSync.get("data"))
+
+  const isAsyncItem =
+    dateCompare(defaultValues.date_insert, syncData?.lastSync) > -1
 
   const [
     {
@@ -60,6 +76,12 @@ export default function InterventionForm({
       onSubmit: validators,
     },
     onSubmit: async ({ value }) => {
+      if (isEdit && !isAsyncItem) {
+        await db.rawData.put({
+          ...defaultValues,
+          reference: "intervention",
+        })
+      }
       const nextId = isEdit
         ? await db.interventionData.put({
             ...value,
@@ -244,8 +266,29 @@ export default function InterventionForm({
           </form.Field>
 
           <Button type="submit">
-            {isEdit ? "Modifier" : "Créer"} la signalétique
+            {isEdit ? "Modifier" : "Créer"} l'intervention
           </Button>
+
+          {rawDataItem && (
+            <Button
+              type="button"
+              variant="destructive"
+              onClick={async () => {
+                await db.rawData
+                  .where({ reference: "intervention", id: rawDataItem.id })
+                  .delete()
+                const { reference: _reference, ...restoredData } = rawDataItem
+                await db.interventionData.put(
+                  restoredData as InterventionDataSchemaProps
+                )
+                toast.success("Restoration de l'intervention terminée", {
+                  position: "top-center",
+                })
+              }}
+            >
+              Annuler les modifications en attente
+            </Button>
+          )}
         </FieldGroup>
       </form.Form>
     </form.AppForm>
