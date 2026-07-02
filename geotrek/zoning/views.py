@@ -68,13 +68,11 @@ class AutocompleteMixin:
         return Response({"results": serializer.data, "pagination": {"more": has_more}})
 
     def _parse_forwarded(self, forwarded_str):
-        if forwarded_str:
-            forwarded = json.loads(forwarded_str)
-            parsed_dict = {}
-            for key, value in forwarded.items():
-                parsed_dict[f"{key}__in"] = [int(x) for x in value]
-            return parsed_dict
-        return None
+        forwarded = json.loads(forwarded_str)
+        parsed_dict = {}
+        for key, value in forwarded.items():
+            parsed_dict[f"{key}__in"] = [int(x) for x in value]
+        return parsed_dict
 
     @action(detail=False)
     def autocomplete(self, request, *args, **kwargs):

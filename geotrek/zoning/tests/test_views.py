@@ -1,3 +1,5 @@
+import json
+
 from django.urls import reverse
 from mapentity.tests.factories import UserFactory
 from rest_framework.test import APITestCase
@@ -248,3 +250,19 @@ class RestrictedAreaViewTest(AutocompleteTestMixin, LandLayersViewsTest, APITest
         )
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200, response.json())
+
+    def test_autocomplete_forward(self):
+        type_1 = RestrictedAreaTypeFactory()
+        type_1_areas = RestrictedAreaFactory.create_batch(2, area_type=type_1)
+        type_2 = RestrictedAreaTypeFactory()
+        RestrictedAreaFactory.create_batch(2, area_type=type_2)
+        url = reverse(f"zoning:{self.layer}-autocomplete")
+        response = self.client.get(
+            url, data={"forward": json.dumps({"area_type": [type_1.pk]})}
+        )
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 2)
+        self.assertEqual(
+            {area["id"] for area in response.json()["results"]},
+            {area.pk for area in type_1_areas},
+        )
