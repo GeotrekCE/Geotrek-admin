@@ -591,10 +591,9 @@ class ConfigViewTest(TestCase):
         data = {
             "pmtiles_url": "http://testserver/media/pmtiles/opentopomap-34.pmtiles",
             "json_style_url": "http://testserver/media/pmtiles/opentopomap-34.json",
-            "name": "Scan IGN VT",  # django-mapbox-baselayer
+            "name": "opentopomap",
             "content-length": 537456,
             "options": {
-                "attribution": "© IGN - GeoPortail",  # django-mapbox-baselayer
                 "center": center,
                 "maxBounds": max_bounds,
                 "maxZoom": 15,

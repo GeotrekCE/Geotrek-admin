@@ -658,15 +658,16 @@ class ConfigView(APIView):
         layers = []
         for f in self.pmtiles_folder.iterdir():
             if f.is_file() and f.name.endswith(".pmtiles"):
+                name_parts = f.name.replace('.pmtiles', '').split("-")
+                name = " ".join(name_parts[:-1])
                 urls = self.get_pmtiles_urls(f.name)
                 # zooms = self.read_pmtiles_header(f)
                 data = {
                     "pmtiles_url": urls[0],
                     "json_style_url": urls[1],
-                    "name": "Scan IGN VT",  # django-mapbox-baselayer
+                    "name": name,  # django-mapbox-baselayer
                     "content-length": f.stat().st_size,
                     "options": {
-                        "attribution": "© IGN - GeoPortail",  # django-mapbox-baselayer
                         "center": center,
                         "maxBounds": max_bounds,
                         "maxZoom": 15,
