@@ -4,34 +4,27 @@ import {
   OFFLINE_STATUS,
 } from "@makina-corpus/maplibre-offline-pmtiles"
 import type { SettingsSchemaProps } from "@/schemas/settings"
-import { useQueryClient } from "@tanstack/react-query"
+import { useAppSettings } from "@/hook/useAppSettings"
 
 export type MapZone = SettingsSchemaProps["settings"]["maps"]["layers"][0]
 
-export interface OfflineZoneMetadata {
+export type OfflineZoneMetadata = {
   id: string
   lastSync: string
 }
 
 export const OFFLINE_MAP_QUERY_KEY = ["offlinemap"]
+
 export const offlineManager = new OfflinePlugin()
 
 export function useOfflineMaps() {
-  const queryClient = useQueryClient()
-  // const mapZonesData: MapZone[] = []
-  const metadata = queryClient.getQueryData<
-    Record<string, OfflineZoneMetadata>
-  >(OFFLINE_MAP_QUERY_KEY)
-  const [downloadedZonesMetadata, setDownloadedZonesMetadata] = React.useState<
-    Record<string, OfflineZoneMetadata>
-  >(metadata ?? ({} as Record<string, OfflineZoneMetadata>))
+  const { addMapLayer, removeMapLayer } = useAppSettings()
+
   const [loadingZoneId, setLoadingZoneId] = React.useState<string | null>(null)
   const [currentProgress, setCurrentProgress] = React.useState<number | null>(
     null
   )
-  // const [mapZones, setMapZones] = React.useState<MapZone[]>(
-  //   mapZonesData as MapZone[]
-  // )
+
   const [storageEstimate, setStorageEstimate] = React.useState<{
     used: number
     quota: number
@@ -40,24 +33,18 @@ export function useOfflineMaps() {
   const abortControllerRef = React.useRef<AbortController | null>(null)
 
   /**
-   * Update storage usage estimate
-   */
-  async function loadStorageEstimate() {
-    setStorageEstimate(await offlineManager.getStorageUsage())
-  }
-
-  /**
    * Download a map zone and store it for offline use
    */
   async function downloadZone(zone: MapZone) {
     setLoadingZoneId(zone.name)
     setCurrentProgress(0)
     abortControllerRef.current = new AbortController()
+    const id = zone.name.replaceAll(" ", "-")
     try {
       // Use the library to download the map with native AbortSignal support
       await offlineManager.downloadMap(
         zone.pmtiles_url,
-        zone.name.replaceAll(" ", "-"),
+        id,
         (p) => {
           if (p.code === OFFLINE_STATUS.PROGRESS && p.progress !== undefined) {
             setCurrentProgress(
@@ -71,18 +58,8 @@ export function useOfflineMaps() {
         { signal: abortControllerRef.current?.signal }
       )
 
-      queryClient.setQueryData(
-        OFFLINE_MAP_QUERY_KEY,
-        (prevData: Record<string, OfflineZoneMetadata> = {}) => ({
-          ...prevData,
-          [zone.name.replaceAll(" ", "-")]: {
-            id: zone.name.replaceAll(" ", "-"),
-            lastSync: new Date().toISOString(),
-          },
-        })
-      )
-      // await saveMetadata()
-      await loadStorageEstimate()
+      addMapLayer(id, { ...zone, id, lastSync: new Date().toISOString() })
+
       return true
     } catch (error: AbortController["signal"]["reason"]) {
       if (error.name === "AbortError" || error.message === "Aborted") {
@@ -118,16 +95,8 @@ export function useOfflineMaps() {
   async function deleteZone(zoneId: string) {
     setLoadingZoneId(zoneId)
     try {
-      // Library removeMap takes (mapInstance, name, onProgress)
-      // We don't have a map instance here, we just want to clear storage
       await offlineManager.removeMap(null, zoneId)
-      setDownloadedZonesMetadata((prev) => {
-        const newMetadata = { ...prev }
-        delete newMetadata[zoneId]
-        return newMetadata
-      })
-      // await saveMetadata()
-      await loadStorageEstimate()
+      removeMapLayer(zoneId)
     } catch (error) {
       console.error(`[useOfflineMaps] Failed to delete zone ${zoneId}`, error)
       throw error
@@ -149,10 +118,6 @@ export function useOfflineMaps() {
   }
 
   return {
-    mapZones: metadata,
-    // setMapZones,
-    downloadedZonesMetadata,
-    setDownloadedZonesMetadata,
     loadingZoneId,
     setLoadingZoneId,
     currentProgress,
@@ -162,9 +127,7 @@ export function useOfflineMaps() {
     downloadZone,
     deleteZone,
     cancelDownload,
-    // loadMetadata,
     formatSize,
-    loadStorageEstimate,
     loadMap: offlineManager.loadMap,
   }
 }

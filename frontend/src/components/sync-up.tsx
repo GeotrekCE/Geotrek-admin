@@ -69,12 +69,10 @@ export default function SyncUp({ data }: { data?: Data }) {
       </h2>
       {hasAsyncData && <Message data={data} />}
       {!hasAsyncData && (
-        <div className="m-4">
-          <p className="text-sm text-muted-foreground">
-            Aucun relevé de terrain n'a été crée ou modifié depuis la dernière
-            synchronisation.
-          </p>
-        </div>
+        <p className="my-4 text-sm text-muted-foreground">
+          Aucun relevé de terrain n'a été crée ou modifié depuis la dernière
+          synchronisation.
+        </p>
       )}
     </section>
   )

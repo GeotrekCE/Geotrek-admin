@@ -23,7 +23,7 @@ export default function MapDownloadProgress({
   setOpen: Dispatch<SetStateAction<boolean>>
   size: string
 }) {
-  const { downloadZone, currentProgress } = useOfflineMaps()
+  const { cancelDownload, currentProgress, downloadZone } = useOfflineMaps()
 
   const queries = useQueries({
     queries: layersName.map((layerName) => ({
@@ -45,7 +45,17 @@ export default function MapDownloadProgress({
     queries.forEach((result) => result?.refetch())
   }, [queries])
 
-  const progress = currentProgress ?? (isFailed ? 0 : 100)
+  const getProgress = () => {
+    if (isAllSuccess) {
+      return 100
+    }
+    if (isFailed) {
+      return 0
+    }
+    return currentProgress ?? 100
+  }
+
+  const progress = getProgress()
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -80,9 +90,11 @@ export default function MapDownloadProgress({
           <div>
             <div className="my-2 flex flex-wrap items-center justify-between gap-2">
               <span className="font-bold text-primary">{progress}%</span>
-              <span>
-                {((parseFloat(size) / 100) * progress).toFixed(1)} / {size}
-              </span>
+              {parseFloat(size) > 0 && (
+                <span>
+                  {((parseFloat(size) / 100) * progress).toFixed(1)} / {size}
+                </span>
+              )}
             </div>
             <Progress value={progress} />
           </div>
@@ -128,7 +140,10 @@ export default function MapDownloadProgress({
               type="submit"
               className="w-full"
               variant="destructive"
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                cancelDownload()
+                setOpen(false)
+              }}
             >
               Annuler
             </Button>

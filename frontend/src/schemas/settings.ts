@@ -79,4 +79,9 @@ export const appSync = z.object({
   lastSync: z.string(),
   bounds: z.array(z.number()).length(4).optional(),
   structure: z.union([z.null(), z.number()]).optional(),
+  maps: z
+    .object({
+      layers: z.array(z.string()),
+    })
+    .optional(),
 })
