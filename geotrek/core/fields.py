@@ -103,7 +103,7 @@ class PointLineTopoGeomField(GeometryField):
         """
         if value in validators.EMPTY_VALUES:
             if self.required:
-                raise ValidationError(self.error_messages["empty_topology"])
+                raise ValidationError(_("A geometry must be provided."))
             return None
         try:
             raw_geom = json.loads(value)
@@ -114,11 +114,11 @@ class PointLineTopoGeomField(GeometryField):
                 raise ValidationError(_("The geometry should either be a point or a linestring."))
             coords = raw_geom.get("coordinates")
             if coords is None:
-                raise ValidationError(self.error_messages["invalid_topology"])
+                raise ValidationError(_("Point geometry is incorrect (missing coordinates)."))
             return Topology.deserialize(f'{{"lat": {coords[1]}, "lng": {coords[0]}}}')
         except Topology.DoesNotExist:
-            raise ValidationError(self.error_messages["unknown_topology"] % value)
+            raise ValidationError(_("Topology %s does not exist.") % value)
         except ValueError as e:
             logger.warning("User input error: %s", e)
-            raise ValidationError(self.error_messages["invalid_topology"])
+            raise ValidationError(_("User input error"))
 

@@ -92,34 +92,48 @@ class LineTopologyFormMixin(CommonForm):
             return True
         return self.user.has_perm("core.can_draw_off_path_network")
 
-    def clean(self, *args, **kwargs):
+    def clean(self):
         data = super().clean()
-        geom = data.get("geom")
-        geom_changed = data.get("geom_changed")
-        topology_changed = data.get("topology_changed")
+        self.validate_exclusive_inputs(data)
+        self.validate_off_network_permission(data)
+        self.validate_creation_requires_input(data)
+        self.clear_irrelevant_field_errors(data)
+        self.discard_unused_fields(data)
+        return data
 
-        if geom_changed and topology_changed:
+    def validate_exclusive_inputs(self, data):
+        """A geometry can be drawn on the network or off, never both."""
+        if data.get("geom_changed") and data.get("topology_changed"):
             raise ValidationError(
-                _(
-                    "The geometry can only be drawn on or off the path network, not both."
-                )
+                _("The geometry can only be drawn on or off the path network, not both.")
             )
-        if geom_changed and isinstance(geom, LineString) and not self.is_drawing_off_path_network_allowed():
+
+    def validate_off_network_permission(self, data):
+        if data.get("geom_changed") and isinstance(data.get("geom"), LineString) and not self.is_drawing_off_path_network_allowed():
             raise ValidationError(_("You are not allowed to draw off the path network."))
-        if self.instance.pk is None and not geom_changed and not topology_changed:
-            # At creation, geometry and topology cannot both be None
+
+    def validate_creation_requires_input(self, data):
+        """At creation, geometry and topology cannot both be left empty."""
+        if self.instance.pk is None and not data.get("geom_changed") and not data.get("topology_changed"):
             raise ValidationError(_("A geometry must be provided."))
 
-        if topology_changed and "geom" in self.errors:
+    def clear_irrelevant_field_errors(self, data):
+        """
+        Only one of geom/topology is actually used per submission. Drop validation
+        errors on the field that wasn't the one being edited.
+        """
+        if data.get("topology_changed") and "geom" in self.errors:
             del self.errors["geom"]
-            # This geom will be overwritten be triggers
+            # This geom will be overwritten by triggers
             data["geom"] = fromstr("POINT (0 0)")
-        if geom_changed and "topology" in self.errors:
+        if data.get("geom_changed") and "topology" in self.errors:
             del self.errors["topology"]
-        if not geom_changed and geom is not None:
-            data.pop("geom")
 
-        return data
+    def discard_unused_fields(self, data):
+        # Discard geom if it hasn't been marked as changed, otherwise a slight shift caused by
+        # transforms will cause the geometry to be modified, and the object to be decoupled
+        if not data.get("geom_changed") and data.get("geom") is not None:
+            data["geom"] = None
 
     def save(self, *args, **kwargs):
         instance = super().save(*args, **kwargs)
@@ -151,29 +165,28 @@ class PointLineTopologyFormMixin(LineTopologyFormMixin):
     def disable_drawing_off_network_at_init(self):
         self.fields['geom'].widget.attrs["allowed_types"] = ["POINT"]
 
-    def clean(self, *args, **kwargs):
-        # If geom is a point topology, assign it to the topology field instead of the geom field
-        data = super().clean()
+    def clean(self):
+        # An equivalent to validate_exclusive_inputs must be executed before reroute_point_topology
+        # sets geom_changed to False.
+        # We should wait until after reroute_point_topology to raise the corresponding ValidationError
+        # and call super().clean(), because in case of a ValidationError, clean()'s return value is
+        # discarded and self.cleaned_data is used instead.
+        geom_and_topo_changed = self.cleaned_data.get("geom_changed") and self.cleaned_data.get("topology_changed")
+        self.reroute_point_topology(self.cleaned_data)
+        if geom_and_topo_changed:
+            raise ValidationError(
+                _("The geometry can only be drawn on or off the path network, not both.")
+            )
+        return super().clean()
+
+    def reroute_point_topology(self, data):
+        """
+        The geom field can also carry a point topology (see PointLineTopoGeomField).
+        When that happens, treat it as a topology submission instead of a geometry one.
+        """
         geom = data.get("geom")
-        geom_changed = data.get("geom_changed")
-        if geom_changed and isinstance(geom, Topology):
+        if data.get("geom_changed") and isinstance(geom, Topology):
             data["topology"] = geom
             data["topology_changed"] = True
-            data.pop("geom")
+            data["geom"] = None
             data["geom_changed"] = False
-        return data
-
-    def save(self, *args, **kwargs):
-        # Don't handle point geometries in parents' save methods -> save them as topologies is possible
-        geom = None
-        if self.cleaned_data.get("geom_changed"):
-            geom = self.cleaned_data.get("geom")
-            if isinstance(geom, Point):
-                self.cleaned_data.pop("geom")
-
-        instance = super().save(*args, **kwargs)
-
-        if geom is not None and isinstance(geom, Topology):
-            instance.mutate(geom)
-
-        return instance
