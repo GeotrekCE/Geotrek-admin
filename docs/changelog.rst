@@ -5,6 +5,10 @@ CHANGELOG
 2.124.6+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Revert filters behavior as before select2 migration
+
 
 2.124.6         (2026-06-29)
 ----------------------------
