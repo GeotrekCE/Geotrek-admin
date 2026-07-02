@@ -70,7 +70,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
         const token = await response.json()
 
-        setAuthToken(token)
+        setAuthToken({ access: token.access, refresh: tokens.refreshToken })
         query.fetch()
       } catch {
         logout(true)
