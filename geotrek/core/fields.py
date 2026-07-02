@@ -10,7 +10,7 @@ from django.utils.translation import gettext_lazy as _
 from mapentity.widgets import MapWidget
 
 from .models import Topology
-from .widgets import GeotrekMapWidget, LineTopologyWidget
+from .widgets import GeotrekMapWidget, LineTopologyWidget, PointLineTopologyWidget
 
 logger = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ logger = logging.getLogger(__name__)
 class TopologyField(forms.CharField):
     """Instead of building a geometry, this field builds a Topology."""
 
-    widget = None
+    widget = PointLineTopologyWidget
 
     default_error_messages = {
         "empty_topology": _("Topology is empty."),
