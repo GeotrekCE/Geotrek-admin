@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-11 07:52+0000\n"
+"POT-Creation-Date: 2026-07-02 09:42+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/signage/nl/>\n"
@@ -19,6 +19,15 @@ msgstr ""
 "X-Generator: Weblate 5.13.3\n"
 
 msgid "Signage"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Code"
+msgstr ""
+
+msgid "Description"
 msgstr ""
 
 msgid "Intervention year"
@@ -45,9 +54,6 @@ msgstr ""
 msgid "Position of the blade on the signage (top=1). Assigning a position that has already been used will shift the positions of the other blades"
 msgstr ""
 
-msgid "Name"
-msgstr ""
-
 msgid "Sealing"
 msgstr ""
 
@@ -61,12 +67,6 @@ msgid "Signage Types"
 msgstr ""
 
 msgid "Label"
-msgstr ""
-
-msgid "Code"
-msgstr ""
-
-msgid "Description"
 msgstr ""
 
 msgid "Complete description"
