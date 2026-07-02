@@ -665,26 +665,6 @@ This parameter is used to assign the ``direction`` field to lines rather than bl
               DIRECTION_ON_LINES_ENABLED = True
 
 
-Enable signage lines
-~~~~~~~~~~~~~~~~~~~~~
-
-This parameter is used to manage lines per blade.
-
-.. md-tab-set::
-  :name: signage-line-enabled-tabs
-
-  .. md-tab-item:: Default configuration
-
-      .. code-block:: python
-
-              SIGNAGE_LINE_ENABLED = False
-
-  .. md-tab-item:: Example
-
-      .. code-block:: python
-
-              SIGNAGE_LINE_ENABLED = True
-
 Blade code type
 ~~~~~~~~~~~~~~~~
 

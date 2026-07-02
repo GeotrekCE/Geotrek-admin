@@ -308,7 +308,8 @@ class InterventionViewsTest(CommonTest):
             "access": access_mean.pk,
             "manager": OrganismFactory.create().pk,
         }
-        data["topology"] = f'{{"paths": [{PathFactory.create().pk}]}}'
+        data["topology"] = '{"type":"Point","coordinates":[3.0,46.5]}'
+        data["topology_changed"] = "true"
 
         self.super_user = SuperUserFactory.create()
         form = SignageForm(instance=signa, data=data, user=self.super_user)
@@ -401,6 +402,7 @@ class InterventionViewsTest(CommonTest):
         data["access"] = ""
         data["conditions"] = list(form.instance.conditions.values_list("pk", flat=True))
         data["topology"] = f'{{"paths": [{PathFactory.create().pk}]}}'
+        data["topology_changed"] = "true"
         response = self.client.post(infra.get_update_url(), data)
         self.assertEqual(response.status_code, 302)
         intervention = Intervention.objects.first()

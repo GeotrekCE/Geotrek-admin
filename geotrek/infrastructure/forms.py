@@ -1,55 +1,15 @@
 from crispy_forms.layout import Div
 from django import forms
-from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-from geotrek.common.forms import CommonForm
-from geotrek.core.mixins.forms import TopologyForm
+from geotrek.core.mixins.forms import PointLineTopologyFormMixin
 
 from .models import Infrastructure
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
 
-    class BaseInfrastructureForm(TopologyForm):
-        implantation_year = forms.IntegerField(
-            label=_("Implantation year"), required=False
-        )
+class InfrastructureForm(PointLineTopologyFormMixin):
+    implantation_year = forms.IntegerField(label=_("Implantation year"), required=False)
 
-        class Meta(TopologyForm.Meta):
-            fields = [
-                *TopologyForm.Meta.fields,
-                "structure",
-                "name",
-                "type",
-                "description",
-                "access",
-                "implantation_year",
-                "published",
-            ]
-else:
-
-    class BaseInfrastructureForm(CommonForm):
-        implantation_year = forms.IntegerField(
-            label=_("Implantation year"), required=False
-        )
-        geomfields = ["geom"]
-
-        class Meta(CommonForm.Meta):
-            model = Infrastructure
-            fields = [
-                *CommonForm.Meta.fields,
-                "geom",
-                "structure",
-                "name",
-                "type",
-                "description",
-                "access",
-                "implantation_year",
-                "published",
-            ]
-
-
-class InfrastructureForm(BaseInfrastructureForm):
     fieldslayout = [
         Div(
             "structure",
@@ -66,10 +26,17 @@ class InfrastructureForm(BaseInfrastructureForm):
         )
     ]
 
-    class Meta(BaseInfrastructureForm.Meta):
+    class Meta(PointLineTopologyFormMixin.Meta):
         model = Infrastructure
         fields = [
-            *BaseInfrastructureForm.Meta.fields,
+            *PointLineTopologyFormMixin.Meta.fields,
+            "structure",
+            "name",
+            "type",
+            "description",
+            "access",
+            "implantation_year",
+            "published",
             "accessibility",
             "maintenance_difficulty",
             "usage_difficulty",

@@ -85,12 +85,16 @@ class InfrastructureDocument(MapEntityDocument):
 
 class InfrastructureCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Infrastructure
-    form_class = InfrastructureForm
+
+    def get_form_class(self):
+        return InfrastructureForm
 
 
 class InfrastructureUpdate(MapEntityUpdate):
     queryset = Infrastructure.objects.existing()
-    form_class = InfrastructureForm
+
+    def get_form_class(self):
+        return InfrastructureForm
 
     @same_structure_required("infrastructure:infrastructure_detail")
     def dispatch(self, *args, **kwargs):

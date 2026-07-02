@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 from mapentity.widgets import MapWidget
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.mixins.forms import LinearTopologyFormMixin
+from geotrek.core.mixins.forms import LineTopologyFormMixin
 from geotrek.core.models import CertificationTrail, Path, Trail
 
 
@@ -101,7 +101,7 @@ class PathForm(CommonForm):
         return path
 
 
-class TrailForm(LinearTopologyFormMixin, CommonForm):
+class TrailForm(LineTopologyFormMixin):
     fieldslayout = [
         Div(
             "structure",
@@ -114,11 +114,10 @@ class TrailForm(LinearTopologyFormMixin, CommonForm):
         )
     ]
 
-    class Meta(LinearTopologyFormMixin.Meta, CommonForm.Meta):
+    class Meta(LineTopologyFormMixin.Meta):
         model = Trail
         fields = [
-            *LinearTopologyFormMixin.Meta.fields,
-            *CommonForm.Meta.fields,
+            *LineTopologyFormMixin.Meta.fields,
             "structure",
             "name",
             "category",

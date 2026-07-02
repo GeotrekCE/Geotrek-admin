@@ -1,6 +1,6 @@
 /**
  * Marks the `geom_changed` hidden field as checked whenever the user creates, edits or
- * removes the geometry for the `geom` field's map widget (LinearTopologyMapWidget).
+ * removes the geometry for the `geom` field's map widget (GeotrekMapWidget).
  */
 
 document.addEventListener('DOMContentLoaded', function () {
