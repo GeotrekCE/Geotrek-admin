@@ -8,6 +8,7 @@ from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.common.models import Attachment
 from geotrek.signage import models as signage_models
+from geotrek.signage.models import Blade
 
 
 class SignageViewSet(api_viewsets.GeotrekGeometricViewset):
@@ -30,6 +31,12 @@ class SignageViewSet(api_viewsets.GeotrekGeometricViewset):
                 "attachments",
                 queryset=Attachment.objects.select_related(
                     "license", "filetype", "filetype__structure"
+                ),
+            ),
+            Prefetch(
+                "blades",
+                queryset=Blade.objects.existing().select_related(
+                    "direction", "type", "color"
                 ),
             ),
         )
