@@ -13,7 +13,6 @@ from mapentity.forms import TranslatedModelForm
 from mapentity.widgets import MapWidget, SelectMultipleWithPop
 from modeltranslation.utils import build_localized_fieldname
 
-from geotrek.common.forms import CommonForm
 from geotrek.core.mixins.forms import (
     LineTopologyFormMixin,
     PointTopologyFormMixin,

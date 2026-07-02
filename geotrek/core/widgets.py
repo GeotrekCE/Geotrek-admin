@@ -119,6 +119,7 @@ class GeotrekMapWidget(MapWidget):
     MapWidget with features specific to Geotrek:
       - Set geom_changed to True when geom is modified.
     """
+
     def __init__(self, attrs=None, *args, **kwargs):
         attrs = attrs or {}
         self.modifiable = attrs.pop("modifiable", True)

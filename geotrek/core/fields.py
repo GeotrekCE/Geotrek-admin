@@ -74,6 +74,7 @@ class PointTopoGeomField(TopologyField):
 
 class LineTopologyField(TopologyField):
     """This fields builds a line topology."""
+
     widget = LineTopologyWidget()
 
 
@@ -83,6 +84,7 @@ class PointLineTopoGeomField(GeometryField):
       - a point geometry or point topology (depending on whether paths exist);
       - a line geometry.
     """
+
     geom_type = "GEOMETRY"
     widget = GeotrekMapWidget(
         attrs={
@@ -92,13 +94,13 @@ class PointLineTopoGeomField(GeometryField):
                 "enabled": True,
                 "layers": ["core.Path"],
                 "snap_distance": 20,
-            }
+            },
         }
     )
 
     def __init__(self, target_map=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.widget.attrs['target_map'] = target_map
+        self.widget.attrs["target_map"] = target_map
 
     def clean(self, value):
         """
@@ -115,14 +117,17 @@ class PointLineTopoGeomField(GeometryField):
             if isinstance(geom, LineString):
                 return geom
             if not isinstance(geom, Point):
-                raise ValidationError(_("The geometry should either be a point or a linestring."))
+                raise ValidationError(
+                    _("The geometry should either be a point or a linestring.")
+                )
             coords = raw_geom.get("coordinates")
             if coords is None:
-                raise ValidationError(_("Point geometry is incorrect (missing coordinates)."))
+                raise ValidationError(
+                    _("Point geometry is incorrect (missing coordinates).")
+                )
             return Topology.deserialize(f'{{"lat": {coords[1]}, "lng": {coords[0]}}}')
         except Topology.DoesNotExist:
             raise ValidationError(_("Topology %s does not exist.") % value)
         except ValueError as e:
             logger.warning("User input error: %s", e)
             raise ValidationError(_("User input error"))
-

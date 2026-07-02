@@ -172,9 +172,7 @@ class BladeForm(CommonForm):
 
 
 class SignageForm(PointTopologyFormMixin):
-    implantation_year = forms.IntegerField(
-        label=_("Implantation year"), required=False
-    )
+    implantation_year = forms.IntegerField(label=_("Implantation year"), required=False)
 
     class Meta(PointTopologyFormMixin.Meta):
         model = Signage

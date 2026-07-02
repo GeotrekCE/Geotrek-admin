@@ -2,13 +2,16 @@ from copy import deepcopy
 
 from django.conf import settings
 from django.contrib.gis.forms import LineStringField
-from django.contrib.gis.geos import fromstr, LineString, Point, GEOSGeometry
-from django.forms import BooleanField, HiddenInput, ModelForm, ValidationError
+from django.contrib.gis.geos import LineString, fromstr
+from django.forms import BooleanField, HiddenInput, ValidationError
 from django.utils.translation import gettext_lazy as _
-from mapentity.widgets import MapWidget
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.fields import PointTopoGeomField, LineTopologyField, PointLineTopoGeomField
+from geotrek.core.fields import (
+    LineTopologyField,
+    PointLineTopoGeomField,
+    PointTopoGeomField,
+)
 from geotrek.core.models import Topology
 from geotrek.core.widgets import GeotrekMapWidget
 
@@ -43,6 +46,7 @@ class LineTopologyFormMixin(CommonForm):
       - whether paths exist
       - the user's permissions
     """
+
     geomfields = ["topology", "geom"]
     topology = LineTopologyField(required=False, label="")
     geom = LineStringField(
@@ -54,15 +58,21 @@ class LineTopologyFormMixin(CommonForm):
                     "enabled": True,
                     "layers": ["core.Path"],
                     "snap_distance": 20,
-                }
+                },
             }
-        )
+        ),
     )
     topology_changed = BooleanField(required=False, widget=HiddenInput())
     geom_changed = BooleanField(required=False, widget=HiddenInput())
 
     class Meta(CommonForm.Meta):
-        fields = [*CommonForm.Meta.fields, "topology", "geom", "topology_changed", "geom_changed"]
+        fields = [
+            *CommonForm.Meta.fields,
+            "topology",
+            "geom",
+            "topology_changed",
+            "geom_changed",
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -105,16 +115,28 @@ class LineTopologyFormMixin(CommonForm):
         """A geometry can be drawn on the network or off, never both."""
         if data.get("geom_changed") and data.get("topology_changed"):
             raise ValidationError(
-                _("The geometry can only be drawn on or off the path network, not both.")
+                _(
+                    "The geometry can only be drawn on or off the path network, not both."
+                )
             )
 
     def validate_off_network_permission(self, data):
-        if data.get("geom_changed") and isinstance(data.get("geom"), LineString) and not self.is_drawing_off_path_network_allowed():
-            raise ValidationError(_("You are not allowed to draw off the path network."))
+        if (
+            data.get("geom_changed")
+            and isinstance(data.get("geom"), LineString)
+            and not self.is_drawing_off_path_network_allowed()
+        ):
+            raise ValidationError(
+                _("You are not allowed to draw off the path network.")
+            )
 
     def validate_creation_requires_input(self, data):
         """At creation, geometry and topology cannot both be left empty."""
-        if self.instance.pk is None and not data.get("geom_changed") and not data.get("topology_changed"):
+        if (
+            self.instance.pk is None
+            and not data.get("geom_changed")
+            and not data.get("topology_changed")
+        ):
             raise ValidationError(_("A geometry must be provided."))
 
     def clear_irrelevant_field_errors(self, data):
@@ -151,6 +173,7 @@ class PointLineTopologyFormMixin(LineTopologyFormMixin):
       - whether paths exist
       - the user's permissions
     """
+
     # Parent's topology field handles line topologies. This geom field handles:
     #   - line geometries
     #   - point geometries
@@ -163,7 +186,7 @@ class PointLineTopologyFormMixin(LineTopologyFormMixin):
     )
 
     def disable_drawing_off_network_at_init(self):
-        self.fields['geom'].widget.attrs["allowed_types"] = ["POINT"]
+        self.fields["geom"].widget.attrs["allowed_types"] = ["POINT"]
 
     def clean(self):
         # An equivalent to validate_exclusive_inputs must be executed before reroute_point_topology
@@ -171,11 +194,15 @@ class PointLineTopologyFormMixin(LineTopologyFormMixin):
         # We should wait until after reroute_point_topology to raise the corresponding ValidationError
         # and call super().clean(), because in case of a ValidationError, clean()'s return value is
         # discarded and self.cleaned_data is used instead.
-        geom_and_topo_changed = self.cleaned_data.get("geom_changed") and self.cleaned_data.get("topology_changed")
+        geom_and_topo_changed = self.cleaned_data.get(
+            "geom_changed"
+        ) and self.cleaned_data.get("topology_changed")
         self.reroute_point_topology(self.cleaned_data)
         if geom_and_topo_changed:
             raise ValidationError(
-                _("The geometry can only be drawn on or off the path network, not both.")
+                _(
+                    "The geometry can only be drawn on or off the path network, not both."
+                )
             )
         return super().clean()
 

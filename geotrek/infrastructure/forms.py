@@ -8,9 +8,7 @@ from .models import Infrastructure
 
 
 class InfrastructureForm(PointLineTopologyFormMixin):
-    implantation_year = forms.IntegerField(
-        label=_("Implantation year"), required=False
-    )
+    implantation_year = forms.IntegerField(label=_("Implantation year"), required=False)
 
     fieldslayout = [
         Div(

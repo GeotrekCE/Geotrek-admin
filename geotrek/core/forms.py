@@ -8,7 +8,6 @@ from mapentity.widgets import MapWidget
 from geotrek.common.forms import CommonForm
 from geotrek.core.mixins.forms import LineTopologyFormMixin
 from geotrek.core.models import CertificationTrail, Path, Trail
-from geotrek.core.widgets import LineTopologyWidget
 
 
 class PathForm(CommonForm):
