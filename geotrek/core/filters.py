@@ -3,7 +3,7 @@ from django.conf import settings
 from django.db.models import Count, F, Q
 from django.forms import widgets
 from django.utils.translation import gettext_lazy as _
-from django_filters import filters
+from django_filters import FilterSet, filters
 
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -17,7 +17,7 @@ from geotrek.zoning.filters import ZoningFilterSet
 from .models import CertificationLabel, Comfort, Network, Path, Topology, Trail, Usage
 
 
-class ValidTopologyFilterSet(filters.FilterSet):
+class ValidTopologyFilterSet(FilterSet):
     # Do not forget to add geometry_types_allowed on models if you add this filterset
     # geometry_types_allowed = ["LINESTRING"] for example
     # Types possible with topologies are linestring and points only
