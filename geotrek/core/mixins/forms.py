@@ -156,11 +156,11 @@ class PointLineTopologyFormMixin(LineTopologyFormMixin):
     #   - point geometries
     #   - point topologies
     # This allows to use only two widgets: one for line topologies, and one for point/line geometries.
-    geom = PointLineTopoGeomField(label="", required=False)
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields['geom'].widget.attrs["target_map"] = "topology"
+    geom = PointLineTopoGeomField(
+        label="",
+        required=False,
+        target_map="topology",
+    )
 
     def disable_drawing_off_network_at_init(self):
         self.fields['geom'].widget.attrs["allowed_types"] = ["POINT"]

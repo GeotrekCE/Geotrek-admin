@@ -96,6 +96,10 @@ class PointLineTopoGeomField(GeometryField):
         }
     )
 
+    def __init__(self, target_map=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.widget.attrs['target_map'] = target_map
+
     def clean(self, value):
         """
         If the geometry is a line, return it as a geometry.
