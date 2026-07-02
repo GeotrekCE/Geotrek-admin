@@ -175,7 +175,6 @@ class SignageForm(PointTopologyFormMixin):
     implantation_year = forms.IntegerField(
         label=_("Implantation year"), required=False
     )
-    geomfields = ["geom"]
 
     class Meta(PointTopologyFormMixin.Meta):
         model = Signage
