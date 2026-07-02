@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-11 07:52+0000\n"
+"POT-Creation-Date: 2026-07-02 11:11+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/signage/fr/>\n"
@@ -44,6 +44,9 @@ msgstr "Lignes"
 
 msgid "Position of the blade on the signage (top=1). Assigning a position that has already been used will shift the positions of the other blades"
 msgstr "Position de la lame sur la signalétique (haut = 1). Si vous attribuez une position déjà utilisée, cela déplacera les positions des autres lames"
+
+msgid "Implantation year"
+msgstr "Année d'implantation"
 
 msgid "Name"
 msgstr "Nom"
