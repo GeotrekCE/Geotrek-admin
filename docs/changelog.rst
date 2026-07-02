@@ -5,6 +5,10 @@ CHANGELOG
 2.124.6+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+* Remove deleted attribut of blade model
+
 
 2.124.6         (2026-06-29)
 ----------------------------

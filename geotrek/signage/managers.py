@@ -1,3 +1,5 @@
+from django.db.models import Manager as DefaultManager
+
 from geotrek.common.mixins.managers import NoDeleteManager
 
 
@@ -14,3 +16,8 @@ class SignageGISManager(NoDeleteManager):
             .values_list("implantation_year", flat=True)
         )
         return tuple((value, value) for value in values)
+
+
+class BladeManager(DefaultManager):
+    def existing(self):
+        return self.get_queryset().filter(signage__deleted=False)

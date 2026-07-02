@@ -76,6 +76,18 @@ class BladeModelTest(TestCase):
             f'<img src="{static("images/signage-16.png")}" title="Signage" />',
         )
 
+    def test_manager(self):
+        """
+        test that is the signage attached to a blade is deleted the blade does not appear in the Blade.objects.existing() queryset
+        """
+        blade = BladeFactory()
+        self.assertEqual(list(Blade.objects.all()), [blade])
+        self.assertEqual(list(Blade.objects.existing()), [blade])
+
+        blade.signage.delete()
+        self.assertEqual(list(Blade.objects.all()), [blade])
+        self.assertEqual(list(Blade.objects.existing()), [])
+
 
 class SignageModelTest(TestCase):
     def test_order_blades_C(self):
