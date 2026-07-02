@@ -1,18 +1,22 @@
 import csv
 
+from django.conf import settings
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from mapentity.serializers.commasv import CSVSerializer
 from mapentity.serializers.shapefile import ZipShapeSerializer
 from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
-from rest_framework_gis.fields import GeometrySerializerMethodField
+from rest_framework_gis.fields import GeometryField, GeometrySerializerMethodField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import (
+    AccessMeanGTAMSerializer,
     BasePublishableSerializerMixin,
+    OrganismGTAMSerializer,
     PictogramSerializerMixin,
+    StructureGTAMSerializer,
 )
 
 from . import models as signage_models
@@ -22,6 +26,88 @@ class SignageTypeSerializer(PictogramSerializerMixin):
     class Meta:
         model = signage_models.SignageType
         fields = ("id", "pictogram", "label")
+
+
+class SignageTypeGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="label")
+
+    class Meta:
+        model = signage_models.SignageType
+        fields = ("id", "name")
+
+
+class SignageConditionGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="label")
+
+    class Meta:
+        model = signage_models.SignageCondition
+        fields = ("id", "name")
+
+
+class SignageSealingGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="label")
+
+    class Meta:
+        model = signage_models.Sealing
+        fields = ("id", "name")
+
+
+class DirectionGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="label")
+
+    class Meta:
+        model = signage_models.Direction
+        fields = ("id", "name")
+
+
+class BladeTypeGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="label")
+
+    class Meta:
+        model = signage_models.BladeType
+        fields = ("id", "name")
+
+
+class BladeConditionGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="label")
+
+    class Meta:
+        model = signage_models.BladeCondition
+        fields = ("id", "name")
+
+
+class BladeColorGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="label")
+
+    class Meta:
+        model = signage_models.Color
+        fields = ("id", "name")
+
+
+class LineGTAMSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = signage_models.Line
+        fields = ["id", "number", "text", "distance", "time"]
+
+
+class BladesGTAMSerializer(serializers.ModelSerializer):
+    lines = LineGTAMSerializer(many=True, source="lines_list")
+    direction = DirectionGTAMSerializer()
+    type = BladeTypeGTAMSerializer()
+    color = BladeColorGTAMSerializer()
+    conditions = BladeConditionGTAMSerializer(many=True, source="conditions_list")
+
+    class Meta:
+        model = signage_models.Blade
+        fields = [
+            "id",
+            "number",
+            "direction",
+            "type",
+            "color",
+            "conditions",
+            "lines",
+        ]
 
 
 class SignageSerializer(
@@ -43,6 +129,40 @@ class SignageGeojsonSerializer(MapentityGeojsonModelSerializer):
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = signage_models.Signage
         fields = ("id", "name", "published")
+
+
+class SignageGTAMSerializer(serializers.ModelSerializer):
+    geom = GeometryField(precision=7, transform=settings.API_SRID)
+    structure = StructureGTAMSerializer()
+    access = AccessMeanGTAMSerializer()
+    conditions = SignageConditionGTAMSerializer(many=True, source="conditions_list")
+    type = SignageTypeGTAMSerializer()
+    sealing = SignageSealingGTAMSerializer()
+    manager = OrganismGTAMSerializer()
+    blades = BladesGTAMSerializer(many=True, source="blades_list")
+
+    class Meta:
+        model = signage_models.Signage
+        fields = [
+            "id",
+            "geom",
+            "structure",
+            "date_insert",
+            "date_update",
+            "published",
+            "name",
+            "description",
+            "implantation_year",
+            "code",
+            "printed_elevation",
+            "access",
+            "manager",
+            "sealing",
+            "type",
+            "conditions",
+            "blades",
+        ]
+        geom = "geom"
 
 
 class SignageAPISerializer(BasePublishableSerializerMixin):

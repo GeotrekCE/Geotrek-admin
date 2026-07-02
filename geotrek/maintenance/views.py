@@ -2,7 +2,7 @@ import logging
 import re
 
 from django.conf import settings
-from django.db.models import OuterRef, Subquery, Sum
+from django.db.models import OuterRef, Prefetch, Subquery, Sum
 from django.db.models.expressions import Value
 from django.utils.translation import gettext_lazy as _
 from mapentity.views import (
@@ -21,16 +21,27 @@ from mapentity.views import (
 from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
-from geotrek.common.mixins.views import BelongStructureMixin, CustomColumnsMixin
+from geotrek.common.mixins.views import (
+    BelongStructureMixin,
+    CustomColumnsMixin,
+    ReferencesMixin,
+)
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.feedback.models import Report
 
 from .filters import InterventionFilterSet, ProjectFilterSet
 from .forms import FundingFormSet, InterventionForm, ManDayFormSet, ProjectForm
-from .models import Intervention, ManDay, Project
+from .models import Contractor, Intervention, InterventionDisorder, ManDay, Project
 from .serializers import (
+    InterventionContractorGTAMSerializer,
+    InterventionDisordersGTAMSerializer,
     InterventionGeojsonSerializer,
+    InterventionGTAMSerializer,
+    InterventionJobsGTAMSerializer,
     InterventionSerializer,
+    InterventionStakeGTAMSerializer,
+    InterventionStatusGTAMSerializer,
+    InterventionTypeGTAMSerializer,
     ProjectGeojsonSerializer,
     ProjectSerializer,
 )
@@ -225,13 +236,35 @@ class InterventionViewSet(GeotrekMapentityViewSet):
     model = Intervention
     serializer_class = InterventionSerializer
     geojson_serializer_class = InterventionGeojsonSerializer
+    gtam_serializer_class = InterventionGTAMSerializer
     filterset_class = InterventionFilterSet
     mapentity_list_class = InterventionList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        if self.format_kwarg == "geojson":
+        renderer, media_type = self.perform_content_negotiation(self.request)
+        if getattr(renderer, "format") == "geojson":
             qs = qs.only("id", "name")
+        elif getattr(renderer, "format") == "gtam":
+            qs = qs.select_related(
+                "stake", "status", "type", "access", "structure"
+            ).prefetch_related(
+                Prefetch(
+                    "contractors",
+                    queryset=Contractor.objects.all(),
+                    to_attr="contractors_list",
+                ),
+                Prefetch(
+                    "disorders",
+                    queryset=InterventionDisorder.objects.all(),
+                    to_attr="disorders_list",
+                ),
+                Prefetch(
+                    "manday_set",
+                    queryset=ManDay.objects.select_related("job"),
+                    to_attr="manday_list",
+                ),
+            )
         else:
             qs = qs.select_related(
                 "stake", "status", "type", "target_type"
@@ -245,6 +278,18 @@ class InterventionMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
 
 class InterventionMultiUpdate(BelongStructureMixin, MapEntityMultiUpdate):
     model = Intervention
+
+
+class InterventionReferences(ReferencesMixin):
+    serializers = [
+        InterventionContractorGTAMSerializer,
+        InterventionDisordersGTAMSerializer,
+        InterventionStakeGTAMSerializer,
+        InterventionStatusGTAMSerializer,
+        InterventionTypeGTAMSerializer,
+        InterventionJobsGTAMSerializer,
+    ]
+    pictogram_filename = "intervention.png"
 
 
 class ProjectList(CustomColumnsMixin, MapEntityList):

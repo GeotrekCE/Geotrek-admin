@@ -1,4 +1,5 @@
 import os
+import pathlib
 import shutil
 import tempfile
 from copy import deepcopy
@@ -8,10 +9,10 @@ from unittest import mock, skipIf
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import Point, Polygon
 from django.core.files import File
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from mapentity.tests import SuperUserFactory
@@ -19,18 +20,27 @@ from mapentity.tests.factories import UserFactory
 from mapentity.views.generic import MapEntityList
 
 import geotrek.trekking.parsers  # noqa  # noqa
+from geotrek.authent.models import Structure
+from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory
 from geotrek.common.forms import HDViewPointAnnotationForm
 from geotrek.common.mixins.views import CustomColumnsMixin
-from geotrek.common.models import FileType, HDViewPoint
+from geotrek.common.models import AccessMean, FileType, HDViewPoint, Organism
 from geotrek.common.parsers import Parser
 from geotrek.common.tasks import import_datas
 from geotrek.common.tests.factories import (
+    AccessMeanFactory,
     HDViewPointFactory,
     LicenseFactory,
+    OrganismFactory,
     TargetPortalFactory,
 )
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.common.views import ConfigView
 from geotrek.core.models import Path
+from geotrek.feedback.models import Report
+from geotrek.infrastructure.models import Infrastructure
+from geotrek.maintenance.models import Intervention
+from geotrek.signage.models import Signage
 from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import TrekFactory
 
@@ -525,3 +535,206 @@ class HDViewPointViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("id", response.json().get("properties"))
         self.assertIn("title", response.json().get("properties"))
+
+
+class ConfigViewTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.superuser = SuperUserFactory.create(password="password")
+        UserProfileFactory.create(user=cls.superuser)
+        cls.user = UserFactory.create(password="password")
+        UserProfileFactory.create(user=cls.user)
+
+        Permission.objects.get_or_create(
+            codename="change_geom_signage",
+            content_type=ContentType.objects.get_for_model(Signage),
+        )
+        perm_change_geom_infrastructure, _ = Permission.objects.get_or_create(
+            codename="change_geom_infrastructure",
+            content_type=ContentType.objects.get_for_model(Infrastructure),
+        )
+        Permission.objects.get_or_create(
+            codename="change_geom_intervention",
+            content_type=ContentType.objects.get_for_model(Intervention),
+        )
+        Permission.objects.get_or_create(
+            codename="change_geom_report",
+            content_type=ContentType.objects.get_for_model(Report),
+        )
+        perm_add_signage = Permission.objects.get(codename="add_signage")
+        perm_delete_intervention = Permission.objects.get(
+            codename="delete_intervention"
+        )
+        perm_view_report = Permission.objects.get(codename="view_report")
+        cls.user.user_permissions.add(perm_add_signage)
+        cls.user.user_permissions.add(perm_change_geom_infrastructure)
+        cls.user.user_permissions.add(perm_delete_intervention)
+        cls.user.user_permissions.add(perm_view_report)
+
+    def authenticate(self, user):
+        r = self.client.post(
+            reverse("common:token_obtain_pair"),
+            data={"username": user.username, "password": "password"},
+        )
+        data = r.json()
+        return f"Bearer {data['access']}"
+
+    def get_good_layers_data(self):
+        bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
+        bbox.srid = settings.SRID
+        bbox.transform(settings.API_SRID)
+        west, south, east, north = bbox.extent
+
+        max_bounds = [[west, south], [east, north]]
+        center = [(west + east) / 2, (south + north) / 2]
+
+        data = {
+            "pmtiles_url": "http://testserver/media/pmtiles/opentopomap-34.pmtiles",
+            "json_style_url": "http://testserver/media/pmtiles/opentopomap-34.json",
+            "name": "Scan IGN VT",  # django-mapbox-baselayer
+            "content-length": 537456,
+            "options": {
+                "attribution": "© IGN - GeoPortail",  # django-mapbox-baselayer
+                "center": center,
+                "maxBounds": max_bounds,
+                "maxZoom": 15,
+                "minZoom": 0,
+                "zoom": 0,
+            },
+        }
+        return data
+
+    def get_permissions(self):
+        data = {
+            "signage": {
+                "create": True,
+                "update_geom": False,
+                "update": False,
+                "delete": False,
+                "read": False,
+            },
+            "infrastructure": {
+                "create": False,
+                "update_geom": True,
+                "update": False,
+                "delete": False,
+                "read": False,
+            },
+            "intervention": {
+                "create": False,
+                "update_geom": False,
+                "update": False,
+                "delete": True,
+                "read": False,
+            },
+            "report": {
+                "create": False,
+                "update_geom": False,
+                "update": False,
+                "delete": False,
+                "read": True,
+            },
+            "attachment": {
+                "create": False,
+                "update": False,
+                "delete": False,
+            },
+            "is_superuser": False,
+            "can_bypass_structure": False,
+        }
+        return data
+
+    def test_wrong_user_authentification(self):
+        token = "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30"
+        r = self.client.get(
+            reverse("common:gtam_config"), headers={"Authorization": token}
+        )
+        data = r.json()
+        self.assertEqual(data["code"], "token_not_valid")
+
+    def test_IntervalSyncData(self):
+        token = self.authenticate(self.superuser)
+        r = self.client.get(
+            reverse("common:gtam_config"), headers={"Authorization": token}
+        )
+
+        data = r.json()
+        self.assertEqual(
+            data["settings"]["intervalSyncInHours"]["data"],
+            settings.GTAM_CONFIG["DATA_INTERVAL_SYNC"],
+        )
+        self.assertEqual(
+            data["settings"]["intervalSyncInHours"]["references"],
+            settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],
+        )
+
+    def test_layers(self):
+        view = ConfigView()
+        cwd = os.getcwd()
+        view.pmtiles_folder = pathlib.Path(
+            os.path.join(cwd, "geotrek/common/tests/data/pmtiles")
+        )
+        view.request = RequestFactory().get("/")
+
+        data = view.get_layers()
+        self.assertEqual(data, [self.get_good_layers_data()])
+
+    def test_user(self):
+        token = self.authenticate(self.user)
+        r = self.client.get(
+            reverse("common:gtam_config"), headers={"Authorization": token}
+        )
+
+        data = r.json()
+        self.assertEqual(
+            data["user"]["attachedStructure"]["id"], self.user.userprofile.structure.id
+        )
+        self.assertEqual(
+            data["user"]["attachedStructure"]["label"],
+            self.user.userprofile.structure.name,
+        )
+        self.assertEqual(data["user"]["email"], self.user.email)
+        self.assertEqual(data["user"]["firstName"], self.user.first_name)
+        self.assertEqual(data["user"]["lastName"], self.user.last_name)
+        self.assertEqual(data["user"]["userName"], self.user.username)
+        self.assertEqual(data["user"]["permissions"], self.get_permissions())
+
+
+class CommonReferencesTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.structure = StructureFactory.create()
+        cls.organism = OrganismFactory.create()
+        cls.access_mean = AccessMeanFactory.create()
+        cls.user = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.user)
+
+    def authenticate(self, user):
+        r = self.client.post(
+            reverse("common:token_obtain_pair"),
+            data={"username": user.username, "password": "password"},
+        )
+        data = r.json()
+        return f"Bearer {data['access']}"
+
+    def test_data(self):
+        token = self.authenticate(self.user)
+        r = self.client.get(
+            reverse("common:common_references"), headers={"Authorization": token}
+        )
+        data = r.json()
+
+        self.assertEqual(len(data["structure"]), Structure.objects.all().count())
+        self.assertEqual(len(data["organism"]), Organism.objects.all().count())
+        self.assertEqual(len(data["accessmean"]), AccessMean.objects.all().count())
+        self.assertEqual(
+            data["structure"][0], {"id": self.structure.id, "name": self.structure.name}
+        )
+        self.assertEqual(
+            data["organism"][0],
+            {"id": self.organism.id, "name": self.organism.organism},
+        )
+        self.assertEqual(
+            data["accessmean"][0],
+            {"id": self.access_mean.id, "name": self.access_mean.label},
+        )

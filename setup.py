@@ -55,6 +55,7 @@ setup(
         "pyopenair",
         "django-treebeard",
         "easy-thumbnails[svg]",
+        "djangorestframework-simplejwt",
         "django-maintenance-mode",
         "django-flask-authent-backend@git+https://github.com/PnX-SI/django-flask-authent-backend@1.0.0#egg=django-flask-authent-backend",
         # prod,

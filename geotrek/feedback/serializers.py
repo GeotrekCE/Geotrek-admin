@@ -1,8 +1,42 @@
+from django.conf import settings
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers as rest_serializers
+from rest_framework_gis.fields import GeometryField
 
 from geotrek.feedback import models as feedback_models
+
+
+class ReportActivityGTAMSerializer(rest_serializers.ModelSerializer):
+    name = rest_serializers.CharField(source="label")
+
+    class Meta:
+        model = feedback_models.ReportActivity
+        fields = ("id", "name")
+
+
+class ReportCategoryGTAMSerializer(rest_serializers.ModelSerializer):
+    name = rest_serializers.CharField(source="label")
+
+    class Meta:
+        model = feedback_models.ReportCategory
+        fields = ("id", "name")
+
+
+class ReportProblemMagnitudeGTAMSerializer(rest_serializers.ModelSerializer):
+    name = rest_serializers.CharField(source="label")
+
+    class Meta:
+        model = feedback_models.ReportProblemMagnitude
+        fields = ("id", "name")
+
+
+class ReportStatusGTAMSerializer(rest_serializers.ModelSerializer):
+    name = rest_serializers.CharField(source="label")
+
+    class Meta:
+        model = feedback_models.ReportStatus
+        fields = ("id", "name")
 
 
 class ReportSerializer(DynamicFieldsMixin, rest_serializers.ModelSerializer):
@@ -26,6 +60,30 @@ class ReportGeojsonSerializer(MapentityGeojsonModelSerializer):
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = feedback_models.Report
         fields = ["id", "name", "color"]
+
+
+class ReportGTAMSerializer(rest_serializers.ModelSerializer):
+    geom = GeometryField(precision=7, transform=settings.API_SRID)
+    activity = ReportActivityGTAMSerializer()
+    category = ReportCategoryGTAMSerializer()
+    problem_magnitude = ReportProblemMagnitudeGTAMSerializer()
+    status = ReportStatusGTAMSerializer()
+
+    class Meta:
+        model = feedback_models.Report
+        fields = [
+            "id",
+            "date_insert",
+            "date_update",
+            "email",
+            "comment",
+            "geom",
+            "activity",
+            "category",
+            "problem_magnitude",
+            "status",
+        ]
+        geo_field = "geom"
 
 
 class ReportActivitySerializer(rest_serializers.ModelSerializer):

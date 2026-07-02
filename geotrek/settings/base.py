@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+from datetime import timedelta
 
 from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 from django.contrib.gis.geos import fromstr
@@ -307,6 +308,7 @@ PROJECT_APPS += (
     "mapentity",
     "paperclip",  # paperclip should be load after mapentity for templates
     "leaflet",  # After mapentity to allow it to patch settings
+    "rest_framework_simplejwt",
     "rest_framework",
     "rest_framework_gis",
     "embed_video",
@@ -799,6 +801,18 @@ TINYMCE_DEFAULT_CONFIG = {
 SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, "mobile")
 SYNC_MOBILE_OPTIONS = {"skip_tiles": False}
 
+GTAM_CONFIG = {
+    "REFERENCES_INTERVAL_SYNC": 7 * 24,
+    "DATA_INTERVAL_SYNC": 7 * 24,
+    "SYNC_MAP_MIN_ZOOM": 10,
+}
+
+"""
+If true; displays the attached pois pictures in the Trek's geojson pictures property.
+In Geotrek-rando it enables correlated pictures to be displayed in the slideshow.
+"""
+TREK_WITH_POIS_PICTURES = False
+
 SWAGGER_SETTINGS = {
     "USE_SESSION_AUTH": False,
     "APIS_SORTER": "alpha",
@@ -949,6 +963,11 @@ USE_X_FORWARDED_HOST = False
 
 REST_FRAMEWORK = {
     "STRICT_JSON": False,  # allow serialize float NaN values
+}
+
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
 }
 
 ALLOW_PATH_DELETION_TOPOLOGY = True

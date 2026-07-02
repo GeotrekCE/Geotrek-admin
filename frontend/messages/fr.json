@@ -1,0 +1,51 @@
+{
+  "$schema": "https://inlang.com/schema/inlang-message-format",
+  "menu": {
+    "browse": "Explorer",
+    "create": "Créer",
+    "sync": "Synchronisation",
+    "settings": "Paramètres"
+  },
+  "login": {
+    "title": "Bienvenue sur Geotrek-admin Mobile",
+    "description": "Connectez-vous pour synchroniser vos données et accéder à vos fonctionnalités de terrain.",
+    "form": {
+      "title": "Identification",
+      "user-name": {
+        "label": "Nom d'utilisateur",
+        "placeholder": "Entrez le nom d'utilisateur",
+        "required-message": "Le nom d'utilisateur est requis"
+      },
+      "password": {
+        "label": "Mot de passe",
+        "placeholder": "Entrez votre mot de passe",
+        "required-message": "Le mot de passe est requis"
+      },
+      "submit": "Connexion"
+    },
+    "loading": "Identification...",
+    "success": "Connexion réussie"
+  },
+  "settings": {
+    "title": "Paramètres",
+    "structure": "Structure liée :",
+    "undefined": "Non définie",
+    "preferences": {
+      "lang": {
+        "title": "Langue de l'application"
+      },
+      "theme": {
+        "title": "Thème",
+        "light": "Clair",
+        "dark": "Sombre",
+        "system": "Système"
+      },
+      "title": "Préférences d'affichage"
+    },
+    "user": {
+      "logout": "Se déconnecter",
+      "logout-success": "Vous êtes déconnecté",
+      "logout-fail": "Votre session a expiré, veuillez vous reconnecter"
+    }
+  }
+}
