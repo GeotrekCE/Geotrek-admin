@@ -7,7 +7,7 @@ function getStorageElement(key: string) {
 export function useAppSettings() {
   const data = getStorageElement(APP_SETTINGS_KEY)
 
-  function setData(nextData: Record<string, string | null | number>) {
+  function setData(nextData: Record<string, unknown>) {
     localStorage.setItem(
       APP_SETTINGS_KEY,
       JSON.stringify({
@@ -28,7 +28,18 @@ export function useAppSettings() {
         updatedLayers = [...data.maps.layers, { ...mapData, id: key }]
       }
       setData({
-        maps: { ...data.maps, layers: updatedLayers },
+        maps: {
+          ...data.maps,
+          layers: updatedLayers,
+          lastSync: new Date().toISOString(),
+        },
+      })
+    } else {
+      setData({
+        maps: {
+          layers: [{ ...mapData, id: key }],
+          lastSync: new Date().toISOString(),
+        },
       })
     }
   }

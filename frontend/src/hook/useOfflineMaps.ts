@@ -58,7 +58,7 @@ export function useOfflineMaps() {
         { signal: abortControllerRef.current?.signal }
       )
 
-      addMapLayer(id, { ...zone, id, lastSync: new Date().toISOString() })
+      addMapLayer(id, { ...zone, id })
 
       return true
     } catch (error: AbortController["signal"]["reason"]) {
