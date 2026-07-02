@@ -3,17 +3,14 @@
 from django.db import migrations
 
 
-def remove_deleted_blades(apps, schema_editor):
-    blade_model = apps.get_model("signage", "Blade")
-    qs = blade_model.objects.filter(deleted=True)
-    qs.delete()
-
-
 class Migration(migrations.Migration):
     dependencies = [
         ("signage", "0047_alter_line_unique_together"),
     ]
 
     operations = [
-        migrations.RunPython(remove_deleted_blades, migrations.RunPython.noop),
+        migrations.RemoveField(
+            model_name="blade",
+            name="deleted",
+        ),
     ]
