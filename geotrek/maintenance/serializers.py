@@ -1,11 +1,15 @@
 from django.conf import settings
+from django.contrib.gis.geos import Point
+from django.core.exceptions import ValidationError
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 
+from ..authent.models import Structure
+from ..common.models import AccessMean
 from ..common.serializers import AccessMeanGTAMSerializer, StructureGTAMSerializer
-from ..core.models import Stake
+from ..core.models import Stake, Topology
 from .models import (
     Contractor,
     Intervention,
@@ -67,14 +71,23 @@ class InterventionJobsGTAMSerializer(serializers.ModelSerializer):
 
 
 class InterventionManDayGTAMSerializer(serializers.ModelSerializer):
-    job = InterventionJobsGTAMSerializer()
     nb_days = serializers.DecimalField(
         max_digits=6, decimal_places=2, coerce_to_string=False
     )
 
+    # read-only
+    job = InterventionJobsGTAMSerializer(read_only=True)
+
+    # write-only
+    job_id = serializers.PrimaryKeyRelatedField(
+        source="job",
+        write_only=True,
+        queryset=InterventionJob.objects.all(),
+    )
+
     class Meta:
         model = ManDay
-        fields = ("id", "nb_days", "job")
+        fields = ("id", "nb_days", "job", "job_id")
 
 
 class InterventionSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -97,29 +110,71 @@ class InterventionGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 class InterventionRelatedField(serializers.RelatedField):
     def to_representation(self, value):
-        model = type(value)._meta.verbose_name
+        model = type(value)._meta.model_name
         return {"model": model, "id": getattr(value, "id", "")}
 
 
 class InterventionGTAMSerializer(serializers.ModelSerializer):
-    geom = GeometryField(read_only=True, precision=7, transform=settings.API_SRID)
-    structure = StructureGTAMSerializer()
-    contractors = InterventionContractorGTAMSerializer(
-        many=True, source="contractors_list"
+    geom = GeometryField(precision=7, transform=settings.API_SRID)
+    target = InterventionRelatedField(read_only=True)
+    man_day = InterventionManDayGTAMSerializer(many=True, source="manday_set")
+
+    # read-only
+    structure = StructureGTAMSerializer(read_only=True)
+    contractors = InterventionContractorGTAMSerializer(many=True, read_only=True)
+    stake = InterventionStakeGTAMSerializer(read_only=True)
+    status = InterventionStatusGTAMSerializer(read_only=True)
+    type = InterventionTypeGTAMSerializer(read_only=True)
+    disorders = InterventionDisordersGTAMSerializer(many=True, read_only=True)
+    access = AccessMeanGTAMSerializer(read_only=True)
+
+    # write-only
+    structure_id = serializers.PrimaryKeyRelatedField(
+        source="structure",
+        write_only=True,
+        queryset=Structure.objects.all(),
     )
-    stake = InterventionStakeGTAMSerializer()
-    status = InterventionStatusGTAMSerializer()
-    type = InterventionTypeGTAMSerializer()
-    disorders = InterventionDisordersGTAMSerializer(many=True, source="disorders_list")
-    man_day = InterventionManDayGTAMSerializer(many=True, source="manday_list")
-    access = AccessMeanGTAMSerializer()
-    target = InterventionRelatedField(read_only=True, required=False)
+    contractors_id = serializers.PrimaryKeyRelatedField(
+        source="contractors",
+        many=True,
+        write_only=True,
+        queryset=Contractor.objects.all(),
+    )
+    stake_id = serializers.PrimaryKeyRelatedField(
+        source="stake",
+        write_only=True,
+        allow_null=True,
+        queryset=Stake.objects.all(),
+    )
+    status_id = serializers.PrimaryKeyRelatedField(
+        source="status",
+        write_only=True,
+        allow_null=True,
+        queryset=InterventionStatus.objects.all(),
+    )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type",
+        write_only=True,
+        allow_null=True,
+        queryset=InterventionType.objects.all(),
+    )
+    disorders_id = serializers.PrimaryKeyRelatedField(
+        source="disorders",
+        many=True,
+        write_only=True,
+        queryset=InterventionDisorder.objects.all(),
+    )
+    access_id = serializers.PrimaryKeyRelatedField(
+        source="access",
+        write_only=True,
+        allow_null=True,
+        queryset=AccessMean.objects.all(),
+    )
 
     class Meta:
         model = Intervention
         fields = [
             "id",
-            "structure",
             "geom",
             "name",
             "date_insert",
@@ -132,18 +187,69 @@ class InterventionGTAMSerializer(serializers.ModelSerializer):
             "material_cost",
             "heliport_cost",
             "contractor_cost",
-            "contractors",
             "length",
+            "target",
+            "description",
+            "man_day",
+            # read-only
+            "structure",
+            "contractors",
             "stake",
             "status",
             "type",
             "disorders",
-            "man_day",
-            "description",
             "access",
-            "target",
+            # write-only
+            "structure_id",
+            "contractors_id",
+            "stake_id",
+            "status_id",
+            "type_id",
+            "disorders_id",
+            "access_id",
         ]
         geo_field = "geom"
+
+    def create(self, validated_data):
+        mandays_data = validated_data.pop("manday_set", [])
+        geom = validated_data.pop("geom", None)
+
+        intervention = super().create(validated_data)
+
+        self._sync_manday(intervention, mandays_data)
+        self._sync_target(intervention, geom)
+        return intervention
+
+    def update(self, instance, validated_data):
+        mandays_data = validated_data.pop("manday_set", [])
+        geom = validated_data.pop("geom", None)
+        target = instance.target
+
+        intervention = super().update(instance, validated_data)
+
+        self._sync_manday(intervention, mandays_data)
+
+        if type(target) == Topology and geom:
+            self._sync_target(intervention, geom)
+
+        return intervention
+
+    def _sync_manday(self, intervention, mandays_data):
+        intervention.manday_set.all().delete()
+
+        for manday in mandays_data:
+            ManDay.objects.create(intervention=intervention, **manday)
+
+    def _sync_target(self, intervention, geom):
+        if type(geom) != Point:
+            msg = "New intervention geometry must be points"
+            raise ValidationError(msg)
+
+        serialized = f'{{"lng": {geom.x}, "lat": {geom.y}, "kind": "INTERVENTION"}}'
+        topology = Topology.deserialize(serialized)
+        topology.save()
+        intervention.target = topology
+        intervention.save()
 
 
 class ProjectSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

@@ -658,7 +658,7 @@ class ConfigView(APIView):
         layers = []
         for f in self.pmtiles_folder.iterdir():
             if f.is_file() and f.name.endswith(".pmtiles"):
-                name_parts = f.name.replace('.pmtiles', '').split("-")
+                name_parts = f.name.replace(".pmtiles", "").split("-")
                 name = " ".join(name_parts[:-1])
                 urls = self.get_pmtiles_urls(f.name)
                 # zooms = self.read_pmtiles_header(f)

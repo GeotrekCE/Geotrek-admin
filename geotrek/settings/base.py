@@ -966,8 +966,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=10),
-    'REFRESH_TOKEN_LIFETIME': timedelta(days=3),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=3),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=21),
 }
 
 ALLOW_PATH_DELETION_TOPOLOGY = True
