@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db import transaction
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
@@ -16,6 +17,7 @@ from geotrek.common.serializers import (
 
 from ..authent.models import Structure
 from ..common.models import AccessMean
+from ..core.models import Topology
 from . import models as infrastructure_models
 from .models import (
     InfrastructureCondition,
@@ -157,6 +159,31 @@ class InfrastructureGTAMSerializer(serializers.ModelSerializer):
             "conditions_id",
         ]
         geom = "geom"
+
+    def create(self, validated_data):
+        geom = validated_data.pop("geom", None)
+
+        with transaction.atomic():
+            infrastructure = super().create(validated_data)
+            infrastructure = self._sync_topology(infrastructure, geom)
+
+        return infrastructure
+
+    def update(self, instance, validated_data):
+        geom = validated_data.pop("geom", None)
+
+        with transaction.atomic():
+            infrastructure = super().update(instance, validated_data)
+            if geom:
+                infrastructure = self._sync_topology(infrastructure, geom)
+
+        return infrastructure
+
+    def _sync_topology(self, obj, geom):
+        serialized = f'{{"lng": {geom.x}, "lat": {geom.y}, "kind": "SIGNAGE"}}'
+        topology = Topology.deserialize(serialized)
+        obj.topo_object.mutate(topology)
+        return obj
 
 
 class InfrastructureAPISerializer(BasePublishableSerializerMixin):

@@ -263,10 +263,7 @@ class SignageGTAMSerializer(serializers.ModelSerializer):
         with transaction.atomic():
             signage = super().create(validated_data)
 
-            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}, "kind": "SIGNAGE"}}'
-            topology = Topology.deserialize(serialized)
-            signage.topo_object.mutate(topology)
-
+            self._sync_topology(signage, geom)
             self._sync_blades(signage, blades_data)
         return signage
 
@@ -278,12 +275,16 @@ class SignageGTAMSerializer(serializers.ModelSerializer):
             signage = super().update(instance, validated_data)
 
             if geom:
-                serialized = f'{{"lng": {geom.x}, "lat": {geom.y}, "kind": "SIGNAGE"}}'
-                topology = Topology.deserialize(serialized)
-                signage.topo_object.mutate(topology)
+                self._sync_topology(signage, geom)
 
             self._sync_blades(signage, blades_data)
         return signage
+
+    def _sync_topology(self, obj, geom):
+        serialized = f'{{"lng": {geom.x}, "lat": {geom.y}, "kind": "SIGNAGE"}}'
+        topology = Topology.deserialize(serialized)
+        obj.topo_object.mutate(topology)
+        return obj
 
     def _sync_blades(self, signage, blades_data):
         qs = signage.blades.all()
