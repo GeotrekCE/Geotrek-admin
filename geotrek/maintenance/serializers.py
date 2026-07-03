@@ -229,7 +229,7 @@ class InterventionGTAMSerializer(serializers.ModelSerializer):
 
         self._sync_manday(intervention, mandays_data)
 
-        if type(target) == Topology and geom:
+        if isinstance(target, Topology) and geom:
             self._sync_target(intervention, geom)
 
         return intervention
@@ -241,7 +241,7 @@ class InterventionGTAMSerializer(serializers.ModelSerializer):
             ManDay.objects.create(intervention=intervention, **manday)
 
     def _sync_target(self, intervention, geom):
-        if type(geom) != Point:
+        if isinstance(geom, Point):
             msg = "New intervention geometry must be points"
             raise ValidationError(msg)
 
