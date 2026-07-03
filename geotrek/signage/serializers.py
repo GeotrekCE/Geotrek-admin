@@ -1,6 +1,8 @@
 import csv
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
+from django.db import transaction
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from mapentity.serializers.commasv import CSVSerializer
@@ -19,7 +21,11 @@ from geotrek.common.serializers import (
     StructureGTAMSerializer,
 )
 
+from ..authent.models import Structure
+from ..common.models import AccessMean, Organism
+from ..core.models import Topology
 from . import models as signage_models
+from .models import Sealing, SignageCondition, SignageType
 
 
 class SignageTypeSerializer(PictogramSerializerMixin):
@@ -91,22 +97,57 @@ class LineGTAMSerializer(serializers.ModelSerializer):
 
 
 class BladesGTAMSerializer(serializers.ModelSerializer):
-    lines = LineGTAMSerializer(many=True, source="lines_list")
-    direction = DirectionGTAMSerializer()
-    type = BladeTypeGTAMSerializer()
-    color = BladeColorGTAMSerializer()
-    conditions = BladeConditionGTAMSerializer(many=True, source="conditions_list")
+    lines = LineGTAMSerializer(many=True)
+
+    # read-only
+    direction = DirectionGTAMSerializer(read_only=True)
+    type = BladeTypeGTAMSerializer(read_only=True)
+    color = BladeColorGTAMSerializer(read_only=True)
+    conditions = BladeConditionGTAMSerializer(many=True, read_only=True)
+
+    # write-only
+    direction_id = serializers.PrimaryKeyRelatedField(
+        source="direction",
+        write_only=True,
+        allow_null=True,
+        queryset=signage_models.Direction.objects.all(),
+    )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type",
+        write_only=True,
+        allow_null=True,
+        queryset=signage_models.BladeType.objects.all(),
+    )
+    color_id = serializers.PrimaryKeyRelatedField(
+        source="color",
+        write_only=True,
+        allow_null=True,
+        queryset=signage_models.Color.objects.all(),
+    )
+    conditions_id = serializers.PrimaryKeyRelatedField(
+        source="conditions",
+        many=True,
+        write_only=True,
+        allow_null=True,
+        queryset=signage_models.BladeCondition.objects.all(),
+    )
 
     class Meta:
         model = signage_models.Blade
         fields = [
             "id",
             "number",
+            "lines",
+            # read-only
             "direction",
             "type",
             "color",
             "conditions",
-            "lines",
+            # write-only
+            "direction_id",
+            "type_id",
+            "color_id",
+            "conditions_id",
         ]
 
 
@@ -133,20 +174,58 @@ class SignageGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 class SignageGTAMSerializer(serializers.ModelSerializer):
     geom = GeometryField(precision=7, transform=settings.API_SRID)
-    structure = StructureGTAMSerializer()
-    access = AccessMeanGTAMSerializer()
-    conditions = SignageConditionGTAMSerializer(many=True, source="conditions_list")
-    type = SignageTypeGTAMSerializer()
-    sealing = SignageSealingGTAMSerializer()
-    manager = OrganismGTAMSerializer()
-    blades = BladesGTAMSerializer(many=True, source="blades_list")
+    blades = BladesGTAMSerializer(many=True)
+
+    # read-only
+    structure = StructureGTAMSerializer(read_only=True)
+    access = AccessMeanGTAMSerializer(read_only=True)
+    conditions = SignageConditionGTAMSerializer(many=True, read_only=True)
+    type = SignageTypeGTAMSerializer(read_only=True)
+    sealing = SignageSealingGTAMSerializer(read_only=True)
+    manager = OrganismGTAMSerializer(read_only=True)
+
+    # write-only
+    structure_id = serializers.PrimaryKeyRelatedField(
+        source="structure",
+        write_only=True,
+        queryset=Structure.objects.all(),
+    )
+    access_id = serializers.PrimaryKeyRelatedField(
+        source="access",
+        write_only=True,
+        allow_null=True,
+        queryset=AccessMean.objects.all(),
+    )
+    conditions_id = serializers.PrimaryKeyRelatedField(
+        source="conditions",
+        many=True,
+        write_only=True,
+        allow_null=True,
+        queryset=SignageCondition.objects.all(),
+    )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type",
+        write_only=True,
+        queryset=SignageType.objects.all(),
+    )
+    sealing_id = serializers.PrimaryKeyRelatedField(
+        source="sealing",
+        write_only=True,
+        allow_null=True,
+        queryset=Sealing.objects.all(),
+    )
+    manager_id = serializers.PrimaryKeyRelatedField(
+        source="manager",
+        write_only=True,
+        allow_null=True,
+        queryset=Organism.objects.all(),
+    )
 
     class Meta:
         model = signage_models.Signage
         fields = [
             "id",
             "geom",
-            "structure",
             "date_insert",
             "date_update",
             "published",
@@ -155,14 +234,80 @@ class SignageGTAMSerializer(serializers.ModelSerializer):
             "implantation_year",
             "code",
             "printed_elevation",
+            "blades",
+            # read-only
+            "structure",
             "access",
             "manager",
             "sealing",
             "type",
             "conditions",
-            "blades",
+            # write-only
+            "structure_id",
+            "access_id",
+            "manager_id",
+            "sealing_id",
+            "type_id",
+            "conditions_id",
         ]
         geom = "geom"
+
+    def create(self, validated_data):
+        blades_data = validated_data.pop("blades", [])
+        geom = validated_data.pop("geom", None)
+
+        if not geom:
+            msg = "Geom must be defined"
+            raise ValidationError(msg)
+
+        with transaction.atomic():
+            signage = super().create(validated_data)
+
+            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}, "kind": "SIGNAGE"}}'
+            topology = Topology.deserialize(serialized)
+            signage.topo_object.mutate(topology)
+
+            self._sync_blades(signage, blades_data)
+        return signage
+
+    def update(self, instance, validated_data):
+        blades_data = validated_data.pop("blades", [])
+        geom = validated_data.pop("geom", None)
+
+        with transaction.atomic():
+            signage = super().update(instance, validated_data)
+
+            if geom:
+                serialized = f'{{"lng": {geom.x}, "lat": {geom.y}, "kind": "SIGNAGE"}}'
+                topology = Topology.deserialize(serialized)
+                signage.topo_object.mutate(topology)
+
+            self._sync_blades(signage, blades_data)
+        return signage
+
+    def _sync_blades(self, signage, blades_data):
+        qs = signage.blades.all()
+        qs.delete()
+
+        for blade_data in blades_data:
+            self._create_blade(signage, blade_data)
+
+    def _create_blade(self, signage, blade_data):
+        lines_data = blade_data.pop("lines", [])
+        conditions = blade_data.pop("conditions", [])
+
+        blade = signage_models.Blade.objects.create(signage=signage, **blade_data)
+        blade.conditions.set(conditions)
+
+        self._sync_lines(blade, lines_data)
+
+        return blade
+
+    def _sync_lines(self, blade, lines_data):
+        blade.lines.all().delete()
+
+        for line_data in lines_data:
+            signage_models.Line.objects.create(blade=blade, **line_data)
 
 
 class SignageAPISerializer(BasePublishableSerializerMixin):

@@ -36,10 +36,8 @@ from .filters import BladeFilterSet, SignageFilterSet
 from .forms import BladeForm, LineFormset, SignageForm
 from .models import (
     Blade,
-    BladeCondition,
     Line,
     Signage,
-    SignageCondition,
 )
 from .serializers import (
     BladeColorGTAMSerializer,
@@ -163,28 +161,19 @@ class SignageViewSet(GeotrekMapentityViewSet):
                 "sealing",
                 "manager",
             ).prefetch_related(
-                Prefetch(
-                    "conditions",
-                    queryset=SignageCondition.objects.all(),
-                    to_attr="conditions_list",
-                ),
+                "conditions",
                 Prefetch(
                     "blades",
-                    queryset=Blade.objects.select_related(
+                    queryset=Blade.objects.existing()
+                    .select_related(
                         "direction",
                         "type",
                         "color",
-                    ).prefetch_related(
-                        Prefetch(
-                            "conditions",
-                            queryset=BladeCondition.objects.all(),
-                            to_attr="conditions_list",
-                        ),
-                        Prefetch(
-                            "lines", queryset=Line.objects.all(), to_attr="lines_list"
-                        ),
+                    )
+                    .prefetch_related(
+                        "conditions",
+                        Prefetch("lines", queryset=Line.objects.all()),
                     ),
-                    to_attr="blades_list",
                 ),
             )
         else:
