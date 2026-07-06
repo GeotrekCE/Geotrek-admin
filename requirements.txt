@@ -402,7 +402,7 @@ tzdata==2026.2
     # via
     #   kombu
     #   mapentity
-tzlocal==5.4.3
+tzlocal==5.4.4
     # via celery
 uritemplate==4.2.0
     # via
