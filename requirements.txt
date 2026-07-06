@@ -354,7 +354,7 @@ requests==2.34.2
     #   mapentity
 rjsmin==1.2.5
     # via django-compressor
-rpds-py==2026.6.3
+rpds-py==0.30.0
     # via
     #   jsonschema
     #   referencing
