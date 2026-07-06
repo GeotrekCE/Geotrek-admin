@@ -22,6 +22,7 @@ from geotrek.common.serializers import (
 )
 
 from ..authent.models import Structure
+from ..common.mixins.serializers import LimitStructurePermission
 from ..common.models import AccessMean, Organism
 from ..core.models import Topology
 from . import models as signage_models
@@ -172,7 +173,7 @@ class SignageGeojsonSerializer(MapentityGeojsonModelSerializer):
         fields = ("id", "name", "published")
 
 
-class SignageGTAMSerializer(serializers.ModelSerializer):
+class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerializer):
     geom = GeometryField(precision=7, transform=settings.API_SRID)
     blades = BladesGTAMSerializer(many=True)
 
@@ -251,6 +252,34 @@ class SignageGTAMSerializer(serializers.ModelSerializer):
             "conditions_id",
         ]
         geom = "geom"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        request = self.context["request"]
+        user = request.user
+        structure = user.profile.structure
+
+        signage_limitated_fields = [
+            ("sealing_id", signage_models.Sealing, False),
+            ("type_id", signage_models.SignageType, False),
+            ("conditions_id", signage_models.SignageCondition, True),
+        ]
+        blade_limitated_fields = [
+            ("type_id", signage_models.BladeType, False),
+            ("conditions_id", signage_models.BladeCondition, True),
+        ]
+
+        if not (user.is_superuser or user.has_perm("authent.can_bypass_structure")):
+            self.fields["structure_id"].queryset = Structure.objects.filter(
+                pk=structure.pk
+            )
+            self._apply_structure_limitation(
+                self.fields, signage_limitated_fields, structure
+            )
+            self._apply_structure_limitation(
+                self.fields["blades"].child.fields, blade_limitated_fields, structure
+            )
 
     def create(self, validated_data):
         blades_data = validated_data.pop("blades", [])

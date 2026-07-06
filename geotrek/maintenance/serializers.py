@@ -1,12 +1,12 @@
 from django.conf import settings
 from django.contrib.gis.geos import Point
-from django.core.exceptions import ValidationError
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
-from rest_framework import serializers
+from rest_framework import exceptions, serializers
 from rest_framework_gis.fields import GeometryField
 
 from ..authent.models import Structure
+from ..common.mixins.serializers import LimitStructurePermission
 from ..common.models import AccessMean
 from ..common.serializers import AccessMeanGTAMSerializer, StructureGTAMSerializer
 from ..core.models import Stake, Topology
@@ -114,7 +114,7 @@ class InterventionRelatedField(serializers.RelatedField):
         return {"model": model, "id": getattr(value, "id", "")}
 
 
-class InterventionGTAMSerializer(serializers.ModelSerializer):
+class InterventionGTAMSerializer(LimitStructurePermission, serializers.ModelSerializer):
     geom = GeometryField(precision=7, transform=settings.API_SRID)
     target = InterventionRelatedField(read_only=True)
     man_day = InterventionManDayGTAMSerializer(many=True, source="manday_set")
@@ -210,6 +210,35 @@ class InterventionGTAMSerializer(serializers.ModelSerializer):
         ]
         geo_field = "geom"
 
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        request = self.context["request"]
+        user = request.user
+        structure = user.profile.structure
+
+        intervention_limitated_fields = [
+            ("contractors_id", Contractor, True),
+            ("stake_id", Stake, False),
+            ("status_id", InterventionStatus, False),
+            ("type_id", InterventionType, False),
+            ("disorders_id", InterventionDisorder, True),
+        ]
+        manday_limitated_fields = [
+            ("job_id", InterventionJob, False),
+        ]
+
+        if not (user.is_superuser or user.has_perm("authent.can_bypass_structure")):
+            self.fields["structure_id"].queryset = Structure.objects.filter(
+                pk=structure.pk
+            )
+            self._apply_structure_limitation(
+                self.fields, intervention_limitated_fields, structure
+            )
+            self._apply_structure_limitation(
+                self.fields["man_day"].child.fields, manday_limitated_fields, structure
+            )
+
     def create(self, validated_data):
         mandays_data = validated_data.pop("manday_set", [])
         geom = validated_data.pop("geom", None)
@@ -241,9 +270,9 @@ class InterventionGTAMSerializer(serializers.ModelSerializer):
             ManDay.objects.create(intervention=intervention, **manday)
 
     def _sync_target(self, intervention, geom):
-        if isinstance(geom, Point):
-            msg = "New intervention geometry must be points"
-            raise ValidationError(msg)
+        if not isinstance(geom, Point):
+            msg = {"geom": "New intervention geometry must be points"}
+            raise exceptions.ValidationError(msg)
 
         serialized = f'{{"lng": {geom.x}, "lat": {geom.y}, "kind": "INTERVENTION"}}'
         topology = Topology.deserialize(serialized)

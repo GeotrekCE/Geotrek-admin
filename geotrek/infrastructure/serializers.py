@@ -16,6 +16,7 @@ from geotrek.common.serializers import (
 )
 
 from ..authent.models import Structure
+from ..common.mixins.serializers import LimitStructurePermission
 from ..common.models import AccessMean
 from ..core.models import Topology
 from . import models as infrastructure_models
@@ -85,7 +86,9 @@ class InfrastructureGeojsonSerializer(MapentityGeojsonModelSerializer):
         fields = ["id", "name", "published"]
 
 
-class InfrastructureGTAMSerializer(serializers.ModelSerializer):
+class InfrastructureGTAMSerializer(
+    LimitStructurePermission, serializers.ModelSerializer
+):
     geom = GeometryField(precision=7, transform=settings.API_SRID)
 
     # read-only
@@ -159,6 +162,29 @@ class InfrastructureGTAMSerializer(serializers.ModelSerializer):
             "conditions_id",
         ]
         geom = "geom"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        user = self.context["request"].user
+        structure = user.profile.structure
+
+        limitated_fields = [
+            ("type_id", InfrastructureType, False),
+            (
+                "maintenance_difficulty_id",
+                InfrastructureMaintenanceDifficultyLevel,
+                False,
+            ),
+            ("usage_difficulty_id", InfrastructureUsageDifficultyLevel, False),
+            ("conditions_id", InfrastructureCondition, True),
+        ]
+
+        if not (user.is_superuser or user.has_perm("authent.can_bypass_structure")):
+            self.fields["structure_id"].queryset = Structure.objects.filter(
+                pk=structure.pk
+            )
+            self._apply_structure_limitation(self.fields, limitated_fields, structure)
 
     def create(self, validated_data):
         geom = validated_data.pop("geom", None)
