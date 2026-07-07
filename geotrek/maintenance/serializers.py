@@ -211,7 +211,7 @@ class InterventionGTAMSerializer(LimitStructurePermission, serializers.ModelSeri
         geo_field = "geom"
 
     def validate(self, data):
-        if data['begin_date'] > data['end_date']:
+        if data["begin_date"] > data["end_date"]:
             msg = {"end_date": "End date must occur after start date"}
             raise serializers.ValidationError(msg)
         return data

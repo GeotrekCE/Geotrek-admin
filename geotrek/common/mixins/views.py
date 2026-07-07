@@ -3,6 +3,7 @@ from io import BytesIO
 
 from django.conf import settings
 from django.contrib import messages
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.functional import classproperty
@@ -316,7 +317,18 @@ class ReferencesMixin(APIView):
     pictogram_filename = None
 
     def get_reference(self, model, serializer):
-        qs = model.objects.all().order_by("id")
+        user = self.request.user
+        if (
+            user.is_superuser
+            or user.has_perm("authent.can_bypass_structure")
+            or not hasattr(model, "structure")
+        ):
+            qs = model.objects.all().order_by("id")
+        else:
+            structure = user.profile.structure
+            qs = model.objects.filter(
+                Q(structure=structure) | Q(structure__isnull=True)
+            ).order_by("id")
         data = serializer(qs, many=True).data
         return data
 
