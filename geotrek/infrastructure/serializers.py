@@ -109,6 +109,7 @@ class InfrastructureGTAMSerializer(
         source="access",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=AccessMean.objects.all(),
     )
     type_id = serializers.PrimaryKeyRelatedField(
@@ -118,12 +119,14 @@ class InfrastructureGTAMSerializer(
         source="maintenance_difficulty",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=InfrastructureMaintenanceDifficultyLevel.objects.all(),
     )
     usage_difficulty_id = serializers.PrimaryKeyRelatedField(
         source="usage_difficulty",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=InfrastructureUsageDifficultyLevel.objects.all(),
     )
     conditions_id = serializers.PrimaryKeyRelatedField(
@@ -131,6 +134,7 @@ class InfrastructureGTAMSerializer(
         many=True,
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=InfrastructureCondition.objects.all(),
     )
 

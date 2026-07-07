@@ -138,36 +138,42 @@ class InterventionGTAMSerializer(LimitStructurePermission, serializers.ModelSeri
         source="contractors",
         many=True,
         write_only=True,
+        required=False,
         queryset=Contractor.objects.all(),
     )
     stake_id = serializers.PrimaryKeyRelatedField(
         source="stake",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=Stake.objects.all(),
     )
     status_id = serializers.PrimaryKeyRelatedField(
         source="status",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=InterventionStatus.objects.all(),
     )
     type_id = serializers.PrimaryKeyRelatedField(
         source="type",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=InterventionType.objects.all(),
     )
     disorders_id = serializers.PrimaryKeyRelatedField(
         source="disorders",
         many=True,
         write_only=True,
+        required=False,
         queryset=InterventionDisorder.objects.all(),
     )
     access_id = serializers.PrimaryKeyRelatedField(
         source="access",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=AccessMean.objects.all(),
     )
 

@@ -76,24 +76,28 @@ class ReportGTAMSerializer(rest_serializers.ModelSerializer):
         source="activity",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=feedback_models.ReportActivity.objects.all(),
     )
     category_id = rest_serializers.PrimaryKeyRelatedField(
         source="category",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=feedback_models.ReportCategory.objects.all(),
     )
     problem_magnitude_id = rest_serializers.PrimaryKeyRelatedField(
         source="problem_magnitude",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=feedback_models.ReportProblemMagnitude.objects.all(),
     )
     status_id = rest_serializers.PrimaryKeyRelatedField(
         source="status",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=feedback_models.ReportStatus.objects.all(),
     )
 
