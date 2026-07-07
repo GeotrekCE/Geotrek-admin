@@ -271,9 +271,6 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
         ]
 
         if not (user.is_superuser or user.has_perm("authent.can_bypass_structure")):
-            self.fields["structure_id"].queryset = Structure.objects.filter(
-                pk=structure.pk
-            )
             self._apply_structure_limitation(
                 self.fields, signage_limitated_fields, structure
             )
@@ -282,6 +279,7 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
             )
 
     def create(self, validated_data):
+        validated_data = self._check_assigned_structure(validated_data)
         blades_data = validated_data.pop("blades", [])
         geom = validated_data.pop("geom", None)
 
@@ -297,6 +295,7 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
         return signage
 
     def update(self, instance, validated_data):
+        validated_data = self._check_assigned_structure(validated_data)
         blades_data = validated_data.pop("blades", [])
         geom = validated_data.pop("geom", None)
 

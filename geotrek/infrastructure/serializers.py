@@ -181,12 +181,10 @@ class InfrastructureGTAMSerializer(
         ]
 
         if not (user.is_superuser or user.has_perm("authent.can_bypass_structure")):
-            self.fields["structure_id"].queryset = Structure.objects.filter(
-                pk=structure.pk
-            )
             self._apply_structure_limitation(self.fields, limitated_fields, structure)
 
     def create(self, validated_data):
+        validated_data = self._check_assigned_structure(validated_data)
         geom = validated_data.pop("geom", None)
 
         with transaction.atomic():
@@ -196,6 +194,7 @@ class InfrastructureGTAMSerializer(
         return infrastructure
 
     def update(self, instance, validated_data):
+        validated_data = self._check_assigned_structure(validated_data)
         geom = validated_data.pop("geom", None)
 
         with transaction.atomic():

@@ -12,3 +12,10 @@ class LimitStructurePermission:
                 fields[attribute].queryset = model.objects.filter(
                     Q(structure=structure) | Q(structure__isnull=True)
                 )
+
+    def _check_assigned_structure(self, validated_data):
+        user = self.context["request"].user
+        if not (user.is_superuser or user.has_perm("authent.can_bypass_structure")):
+            validated_data["structure"] = user.profile.structure
+
+        return validated_data
