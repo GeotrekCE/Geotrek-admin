@@ -175,7 +175,7 @@ class SignageGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerializer):
     geom = GeometryField(precision=7, transform=settings.API_SRID)
-    blades = BladesGTAMSerializer(many=True)
+    blades = BladesGTAMSerializer(many=True, read_only=True) # blades are not supported in v0
 
     # read-only
     structure = StructureGTAMSerializer(read_only=True)
@@ -195,6 +195,7 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
         source="access",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=AccessMean.objects.all(),
     )
     conditions_id = serializers.PrimaryKeyRelatedField(
@@ -202,6 +203,7 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
         many=True,
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=SignageCondition.objects.all(),
     )
     type_id = serializers.PrimaryKeyRelatedField(
@@ -213,12 +215,14 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
         source="sealing",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=Sealing.objects.all(),
     )
     manager_id = serializers.PrimaryKeyRelatedField(
         source="manager",
         write_only=True,
         allow_null=True,
+        required=False,
         queryset=Organism.objects.all(),
     )
 
@@ -291,7 +295,7 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
             signage = super().create(validated_data)
 
             self._sync_topology(signage, geom)
-            self._sync_blades(signage, blades_data)
+            #self._sync_blades(signage, blades_data)
         return signage
 
     def update(self, instance, validated_data):
@@ -305,7 +309,7 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
             if geom:
                 self._sync_topology(signage, geom)
 
-            self._sync_blades(signage, blades_data)
+            #self._sync_blades(signage, blades_data)
         return signage
 
     def _sync_topology(self, obj, geom):
