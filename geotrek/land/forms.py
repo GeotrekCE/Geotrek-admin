@@ -1,4 +1,5 @@
-from ..core.mixins.forms import LineTopologyFormMixin
+from geotrek.core.mixins.forms import LineTopologyFormMixin
+
 from .models import (
     CirculationEdge,
     CompetenceEdge,

@@ -10,11 +10,11 @@ from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
+from geotrek.common.models import Organism
+from geotrek.core.mixins.forms import LineTopologyFormMixin, PointLineTopologyFormMixin
 from geotrek.core.models import Topology
 from geotrek.feedback.models import WorkflowManager
 
-from ..common.models import Organism
-from ..core.mixins.forms import LineTopologyFormMixin, PointLineTopologyFormMixin
 from .models import Intervention, InterventionJob, InterventionStatus, ManDay, Project
 
 if "geotrek.feedback" in settings.INSTALLED_APPS:

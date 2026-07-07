@@ -118,7 +118,7 @@ class PointLineTopoGeomField(GeometryField):
                 return geom
             if not isinstance(geom, Point):
                 raise ValidationError(
-                    _("The geometry should either be a point or a linestring.")
+                    _("The geometry should either be a point or a line.")
                 )
             coords = raw_geom.get("coordinates")
             if coords is None:
