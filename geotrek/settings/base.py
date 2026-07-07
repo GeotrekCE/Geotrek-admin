@@ -1042,11 +1042,6 @@ POPUP_CONTENT = {
     "service": [],
 }
 
-MAP_UTILS_CONFIG = {
-    "TMP_FOLDER": TMP_DIR,
-    "DEFAULT_BBOX": api_bbox(SPATIAL_EXTENT, 0),
-}
-
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv("ENV", "prod")
 assert ENV in ("prod", "dev", "tests", "tests_nds")
@@ -1055,13 +1050,17 @@ with open(env_settings_file) as f:
     logger.info("Read env configuration from %s", env_settings_file)
     exec(f.read())
 
-
 # Override with custom settings
 custom_settings_file = os.getenv("CUSTOM_SETTINGS_FILE")
 if custom_settings_file and "tests" not in ENV:
     with open(custom_settings_file) as f:
         logger.info("Read custom configuration from %s", custom_settings_file)
         exec(f.read())
+
+MAP_UTILS_CONFIG = {
+    "TMP_FOLDER": TMP_DIR,
+    "DEFAULT_BBOX": api_bbox(SPATIAL_EXTENT, 0),
+}
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 
