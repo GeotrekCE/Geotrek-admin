@@ -175,7 +175,9 @@ class SignageGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerializer):
     geom = GeometryField(precision=7, transform=settings.API_SRID)
-    blades = BladesGTAMSerializer(many=True, read_only=True) # blades are not supported in v0
+    blades = BladesGTAMSerializer(
+        many=True, read_only=True
+    )  # blades are not supported in v0
 
     # read-only
     structure = StructureGTAMSerializer(read_only=True)
@@ -284,7 +286,7 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
 
     def create(self, validated_data):
         validated_data = self._check_assigned_structure(validated_data)
-        blades_data = validated_data.pop("blades", [])
+        # blades_data = validated_data.pop("blades", [])
         geom = validated_data.pop("geom", None)
 
         if not geom:
@@ -295,12 +297,12 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
             signage = super().create(validated_data)
 
             self._sync_topology(signage, geom)
-            #self._sync_blades(signage, blades_data)
+            # self._sync_blades(signage, blades_data)
         return signage
 
     def update(self, instance, validated_data):
         validated_data = self._check_assigned_structure(validated_data)
-        blades_data = validated_data.pop("blades", [])
+        # blades_data = validated_data.pop("blades", [])
         geom = validated_data.pop("geom", None)
 
         with transaction.atomic():
@@ -309,7 +311,7 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
             if geom:
                 self._sync_topology(signage, geom)
 
-            #self._sync_blades(signage, blades_data)
+            # self._sync_blades(signage, blades_data)
         return signage
 
     def _sync_topology(self, obj, geom):
