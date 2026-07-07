@@ -9,7 +9,7 @@ CHANGELOG
 
 * Bye Leaflet, Hello MaplibreGL JS
 * Take a look to https://geotrek.readthedocs.io/en/stable/installation-and-configuration/upgrade.html#from-geotrek-admin-2-113-0-to-3-x
-
+* The ``SIGNAGE_LINE_ENABLED``setting, which allows to create linear signage, has been removed.
 
 **Warnings**
 
