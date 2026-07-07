@@ -19,7 +19,7 @@ export const settingsSchema = z.object({
           options: z.object({
             attribution: z.string(),
             center: z.array(z.number().positive()),
-            maxBounds: z.array(z.array(z.number().positive())),
+            maxBounds: z.array(z.array(z.number())),
             maxZoom: z.number().int().positive(),
             minZoom: z.number().int(),
             zoom: z.number().int(),
