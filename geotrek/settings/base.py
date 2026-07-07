@@ -306,6 +306,7 @@ PROJECT_APPS += (
     "tinymce",
     "easy_thumbnails",
     "mapentity",
+    "mapbox_baselayer",
     "paperclip",  # paperclip should be load after mapentity for templates
     "leaflet",  # After mapentity to allow it to patch settings
     "rest_framework_simplejwt",
@@ -1041,6 +1042,11 @@ POPUP_CONTENT = {
     "service": [],
 }
 
+MAP_UTILS_CONFIG = {
+    "TMP_FOLDER": TMP_DIR,
+    "DEFAULT_BBOX": api_bbox(SPATIAL_EXTENT, 0),
+}
+
 # Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv("ENV", "prod")
 assert ENV in ("prod", "dev", "tests", "tests_nds")
@@ -1048,6 +1054,7 @@ env_settings_file = os.path.join(os.path.dirname(__file__), f"env_{ENV}.py")
 with open(env_settings_file) as f:
     logger.info("Read env configuration from %s", env_settings_file)
     exec(f.read())
+
 
 # Override with custom settings
 custom_settings_file = os.getenv("CUSTOM_SETTINGS_FILE")
