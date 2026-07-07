@@ -139,6 +139,7 @@ class InterventionViewsTest(CommonTest):
         }
         path = PathFactory.create()
         good_data["topology"] = (f'{{"paths": [{path.pk}]}}',)
+        good_data["topology_changed"] = "true"
 
         return good_data
 
