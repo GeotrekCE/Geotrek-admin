@@ -18,6 +18,7 @@ setup(
     install_requires=[
         "Django==5.2.*",
         "mapentity",
+        "django-mapbox-baselayer",
         "chardet",
         "cairosvg",
         "cairocffi",

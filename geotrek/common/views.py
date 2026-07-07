@@ -20,7 +20,6 @@ from django.contrib.auth.decorators import (
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Permission
 from django.contrib.gis.db.models import Extent, GeometryField
-from django.contrib.gis.geos import Polygon
 from django.core.exceptions import PermissionDenied
 from django.db.models.functions import Cast
 from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
@@ -37,6 +36,7 @@ from django.views.generic import TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
 from django_large_image.rest import LargeImageFileDetailMixin
 from large_image import config
+from mapbox_baselayer.utils import get_pmtiles
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
@@ -49,7 +49,6 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from geotrek import __version__
 from geotrek.altimetry.models import Dem
-from geotrek.authent.models import UserProfile
 from geotrek.celery import app as celery_app
 from geotrek.common import models as common_models
 from geotrek.common import serializers as common_serializers
@@ -631,60 +630,8 @@ class ConfigView(APIView):
         )
         return permissions
 
-    def get_pmtiles_urls(self, filename):
-        pmtiles_endpoint = os.path.join(settings.MEDIA_URL, "pmtiles", filename)
-        pmtiles_url = self.request.build_absolute_uri(pmtiles_endpoint)
-        json_filename = f"{filename.replace('.pmtiles', '')}.json"
-        json_endpoint = os.path.join(settings.MEDIA_URL, "pmtiles", json_filename)
-        json_url = self.request.build_absolute_uri(json_endpoint)
-        return (pmtiles_url, json_url)
-
-    # def read_pmtiles_header(self, f):
-    #    buf = BytesIO(f.read())
-    #    reader = Reader(MemorySource(buf.getvalue())) # need to install pmtiles
-    #    header = reader.header()
-    #    return (header["min_zoom"], header["max_zoom"])
-
-    def get_layers(self):
-        # convert SPATIAL_EXTENT projection to 4326
-        bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
-        bbox.srid = settings.SRID
-        bbox.transform(settings.API_SRID)
-        west, south, east, north = bbox.extent
-
-        max_bounds = [[west, south], [east, north]]
-        center = [(west + east) / 2, (south + north) / 2]
-
-        layers = []
-        for f in self.pmtiles_folder.iterdir():
-            if f.is_file() and f.name.endswith(".pmtiles"):
-                name_parts = f.name.replace(".pmtiles", "").split("-")
-                name = " ".join(name_parts[:-1])
-                urls = self.get_pmtiles_urls(f.name)
-                # zooms = self.read_pmtiles_header(f)
-                data = {
-                    "pmtiles_url": urls[0],
-                    "json_style_url": urls[1],
-                    "name": name,  # django-mapbox-baselayer
-                    "content-length": f.stat().st_size,
-                    "options": {
-                        "center": center,
-                        "maxBounds": max_bounds,
-                        "maxZoom": 15,
-                        # use pmtiles metadata: https://github.com/protomaps/PMTiles/blob/0cebcaeade40034b86facb6e7da4ec726b9053fb/python/pmtiles/pmtiles/reader.py#L37-L42
-                        "minZoom": 0,
-                        # use pmtiles metadata: https://github.com/protomaps/PMTiles/blob/0cebcaeade40034b86facb6e7da4ec726b9053fb/python/pmtiles/pmtiles/reader.py#L37-L42
-                        "zoom": 0,
-                    },
-                }
-                layers.append(data)
-        return layers
-
     def get(self, request, *args, **kwargs):
         user = request.user
-        user_profile = UserProfile.objects.get(user=user)
-
-        layers = self.get_layers() if os.path.exists(self.pmtiles_folder) else []
 
         data = {
             "settings": {
@@ -693,7 +640,7 @@ class ConfigView(APIView):
                     "references": settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],
                 },
                 "maps": {
-                    "layers": layers,
+                    "layers": get_pmtiles(request),
                     "localOptions": {
                         "minZoom": settings.GTAM_CONFIG["SYNC_MAP_MIN_ZOOM"],
                     },
@@ -701,8 +648,8 @@ class ConfigView(APIView):
             },
             "user": {
                 "attachedStructure": {
-                    "id": user_profile.structure.id,
-                    "label": user_profile.structure.name,
+                    "id": user.profile.structure_id,
+                    "label": user.profile.structure.name,
                 },
                 "email": user.email,
                 "firstName": user.first_name,
