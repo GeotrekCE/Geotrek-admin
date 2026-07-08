@@ -61,6 +61,13 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       allowedHosts: true,
+      proxy: {
+        "/api": {
+          target: env.HOST_URL || "http://localhost:8000",
+          changeOrigin: true,
+          secure: false,
+        },
+      },
     },
   }
 })
