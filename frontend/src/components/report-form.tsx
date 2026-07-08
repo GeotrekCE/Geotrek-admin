@@ -62,6 +62,7 @@ export default function ReportForm({
         await db.rawData.add({
           ...defaultValues,
           reference: "report",
+          synced: false,
         })
       }
       const nextId = isEdit
@@ -76,6 +77,7 @@ export default function ReportForm({
             ...value,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
+            synced: false,
           })
 
       navigate({

@@ -88,12 +88,14 @@ export default function InterventionForm({
             id,
             date_insert,
             date_update: new Date().toISOString(),
+            synced: false,
           })
         : // @ts-expect-error "id" is auto-incremented in indexedDB
           await db.interventionData.add({
             ...value,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
+            synced: false,
           })
 
       navigate({

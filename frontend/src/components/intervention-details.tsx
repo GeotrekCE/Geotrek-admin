@@ -68,7 +68,7 @@ export default function InterventionDetail(params: {
     getLocale()
   )
 
-  const isAsyncItem = dateCompare(detail.date_update, syncData?.lastSync) > -1
+  const isAsyncItem = detail.synced === false
 
   return (
     <div>

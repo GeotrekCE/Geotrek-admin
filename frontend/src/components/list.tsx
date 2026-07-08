@@ -127,10 +127,7 @@ export default function List() {
                                 </time>
                               </ItemContent>
                               <ItemActions>
-                                {dateCompare(
-                                  item.date_update,
-                                  syncData?.lastSync
-                                ) > -1 && (
+                                {item.synced === false && (
                                   <CircleAlert
                                     className="size-4 text-destructive"
                                     role="img"
