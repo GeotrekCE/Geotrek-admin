@@ -18,7 +18,7 @@ import type {
   SignageDataSchemaProps,
 } from "@/schemas/data"
 
-export const API_URL = `${__HOST_URL__}/api`
+export const API_URL = "/api"
 export class FetchError extends Error {
   constructor(
     public res: Response & { message?: string },
