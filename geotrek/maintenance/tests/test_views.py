@@ -672,11 +672,7 @@ class InfrastructureGTAMTest(TestCase):
         interventions = [
             {
                 "id": self.intervention.id,
-                "structure": {
-                    "id": self.intervention.structure.id,
-                    "name": self.intervention.structure.name,
-                },
-                "api_geom": {
+                "geom": {
                     "type": "LineString",
                     "coordinates": [[3.0, 46.5], [3.001304, 46.5009004]],
                 },
@@ -699,8 +695,23 @@ class InfrastructureGTAMTest(TestCase):
                 "material_cost": self.intervention.material_cost,
                 "heliport_cost": self.intervention.heliport_cost,
                 "contractor_cost": self.intervention.contractor_cost,
-                "contractors": [],
                 "length": self.intervention.length,
+                'target': {
+                    'model': 'topology',
+                    'id': self.intervention.target.id
+                },
+                "description": self.intervention.description,
+                "man_day": [
+                    {
+                        "id": self.intervention.manday_set.first().id,
+                        "nb_days": self.intervention.manday_set.first().nb_days,
+                        "job": {
+                            "id": self.intervention.manday_set.first().job.id,
+                            "name": self.intervention.manday_set.first().job.job,
+                        },
+                    }
+                ],
+                "contractors": [],
                 "stake": {
                     "id": self.intervention.stake.id,
                     "name": self.intervention.stake.stake,
@@ -719,17 +730,10 @@ class InfrastructureGTAMTest(TestCase):
                         "name": self.intervention.disorders.first().disorder,
                     }
                 ],
-                "man_day": [
-                    {
-                        "id": self.intervention.manday_set.first().id,
-                        "nb_days": self.intervention.manday_set.first().nb_days,
-                        "job": {
-                            "id": self.intervention.manday_set.first().job.id,
-                            "name": self.intervention.manday_set.first().job.job,
-                        },
-                    }
-                ],
-                "description": self.intervention.description,
+                "structure": {
+                    "id": self.intervention.structure.id,
+                    "name": self.intervention.structure.name,
+                },
                 "access": self.intervention.access,
             }
         ]

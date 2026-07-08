@@ -1,5 +1,7 @@
+from django.conf import settings
 from mapentity.views import MapEntityViewSet
 from rest_framework import permissions
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from geotrek.common.renderers import GTAMRenderer
@@ -7,9 +9,8 @@ from geotrek.common.renderers import GTAMRenderer
 
 class GeotrekMapentityViewSet(MapEntityViewSet):
     """Custom MapentityViewSet for geotrek."""
-
     permission_classes = [permissions.DjangoModelPermissionsOrAnonReadOnly]
-    authentication_classes = [JWTAuthentication]
+    authentication_classes = [JWTAuthentication, SessionAuthentication, BasicAuthentication]
     mapentity_list_class = []
     gtam_serializer_class = None
     renderer_classes = MapEntityViewSet.renderer_classes + [GTAMRenderer]

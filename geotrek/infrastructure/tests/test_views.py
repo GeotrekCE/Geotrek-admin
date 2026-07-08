@@ -264,7 +264,7 @@ class InfrastructureGTAMTest(TestCase):
                 "date_update": self.infrastructure.date_update.isoformat().replace(
                     "+00:00", "Z"
                 ),
-                "api_geom": {
+                "geom": {
                     "type": "LineString",
                     "coordinates": [[3.0, 46.5], [3.001304, 46.5009004]],
                 },

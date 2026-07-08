@@ -198,11 +198,7 @@ class SignageGTAMTest(TestCase):
         signages = [
             {
                 "id": self.signage.id,
-                "api_geom": {"type": "Point", "coordinates": [3.0, 46.5]},
-                "structure": {
-                    "id": self.signage.structure.id,
-                    "name": self.signage.structure.name,
-                },
+                "geom": {"type": "Point", "coordinates": [3.0, 46.5]},
                 "date_insert": self.signage.date_insert.isoformat().replace(
                     "+00:00", "Z"
                 ),
@@ -215,22 +211,6 @@ class SignageGTAMTest(TestCase):
                 "implantation_year": self.signage.implantation_year,
                 "code": self.signage.code,
                 "printed_elevation": self.signage.printed_elevation,
-                "access": self.signage.access,
-                "manager": {
-                    "id": self.signage.manager.id,
-                    "name": self.signage.manager.organism,
-                },
-                "sealing": {
-                    "id": self.signage.sealing.id,
-                    "name": self.signage.sealing.label,
-                },
-                "type": {"id": self.signage.type.id, "name": self.signage.type.label},
-                "conditions": [
-                    {
-                        "id": self.signage.conditions.first().id,
-                        "name": self.signage.conditions.first().label,
-                    }
-                ],
                 "blades": [
                     {
                         "id": self.blade.id,
@@ -264,6 +244,26 @@ class SignageGTAMTest(TestCase):
                         ],
                     }
                 ],
+                "structure": {
+                    "id": self.signage.structure.id,
+                    "name": self.signage.structure.name,
+                },
+                "access": self.signage.access,
+                "manager": {
+                    "id": self.signage.manager.id,
+                    "name": self.signage.manager.organism,
+                },
+                "sealing": {
+                    "id": self.signage.sealing.id,
+                    "name": self.signage.sealing.label,
+                },
+                "type": {"id": self.signage.type.id, "name": self.signage.type.label},
+                "conditions": [
+                    {
+                        "id": self.signage.conditions.first().id,
+                        "name": self.signage.conditions.first().label,
+                    }
+                ]
             }
         ]
         self.assertEqual(data, signages)

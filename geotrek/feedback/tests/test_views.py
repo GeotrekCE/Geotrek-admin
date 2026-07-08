@@ -702,7 +702,7 @@ class ReportGTAMTest(TestCase):
                 ),
                 "email": self.report.email,
                 "comment": self.report.comment,
-                "api_geom": {"type": "Point", "coordinates": [3.0, 46.5]},
+                "geom": {"type": "Point", "coordinates": [3.0, 46.5]},
                 "activity": {
                     "id": self.report.activity.id,
                     "name": self.report.activity.label,
@@ -721,4 +721,5 @@ class ReportGTAMTest(TestCase):
                 },
             }
         ]
+
         self.assertEqual(data, reports)

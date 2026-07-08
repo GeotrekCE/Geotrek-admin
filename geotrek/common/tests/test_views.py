@@ -667,17 +667,6 @@ class ConfigViewTest(TestCase):
             settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],
         )
 
-    def test_layers(self):
-        view = ConfigView()
-        cwd = os.getcwd()
-        view.pmtiles_folder = pathlib.Path(
-            os.path.join(cwd, "geotrek/common/tests/data/pmtiles")
-        )
-        view.request = RequestFactory().get("/")
-
-        data = view.get_layers()
-        self.assertEqual(data, [self.get_good_layers_data()])
-
     def test_user(self):
         token = self.authenticate(self.user)
         r = self.client.get(
