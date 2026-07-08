@@ -259,6 +259,8 @@ jobs:
             tags: "geotrek:latest"
             load: true
             file: ./docker/Dockerfile
+            build-args:
+              FRONTEND_IMAGE=geotrek_frontend
 
       - name: Upload image
         uses: ishworkh/container-image-artifact-upload@v2.0.0
