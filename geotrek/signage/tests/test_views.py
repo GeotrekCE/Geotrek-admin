@@ -263,7 +263,7 @@ class SignageGTAMTest(TestCase):
                         "id": self.signage.conditions.first().id,
                         "name": self.signage.conditions.first().label,
                     }
-                ]
+                ],
             }
         ]
         self.assertEqual(data, signages)

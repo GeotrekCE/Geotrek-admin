@@ -696,10 +696,7 @@ class InfrastructureGTAMTest(TestCase):
                 "heliport_cost": self.intervention.heliport_cost,
                 "contractor_cost": self.intervention.contractor_cost,
                 "length": self.intervention.length,
-                'target': {
-                    'model': 'topology',
-                    'id': self.intervention.target.id
-                },
+                "target": {"model": "topology", "id": self.intervention.target.id},
                 "description": self.intervention.description,
                 "man_day": [
                     {

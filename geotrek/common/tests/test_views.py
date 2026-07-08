@@ -1,5 +1,4 @@
 import os
-import pathlib
 import shutil
 import tempfile
 from copy import deepcopy
@@ -12,7 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point, Polygon
 from django.core.files import File
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import RequestFactory, TestCase
+from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from mapentity.tests import SuperUserFactory
@@ -35,7 +34,6 @@ from geotrek.common.tests.factories import (
     TargetPortalFactory,
 )
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.common.views import ConfigView
 from geotrek.core.models import Path
 from geotrek.feedback.models import Report
 from geotrek.infrastructure.models import Infrastructure
