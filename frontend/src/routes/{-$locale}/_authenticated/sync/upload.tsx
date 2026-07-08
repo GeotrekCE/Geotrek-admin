@@ -73,7 +73,6 @@ export const Route = createFileRoute("/{-$locale}/_authenticated/sync/upload")({
 
 function RouteComponent() {
   const asyncData = useAsyncStoredData()
-  const syncData = useLiveQuery(() => db.appSync.get("data"))
 
   const {
     signageMutation,
