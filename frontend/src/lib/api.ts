@@ -12,7 +12,7 @@ import { db } from "./db"
 import { useLiveQuery } from "dexie-react-hooks"
 import { AUTH_TOKENS_KEY } from "@/hook/useTokens"
 
-export const API_URL = `${__HOST_URL__}/api`
+export const API_URL = `/api`
 export class FetchError extends Error {
   constructor(
     public res: Response & { message?: string },
