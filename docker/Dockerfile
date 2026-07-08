@@ -1,5 +1,6 @@
 ARG BASE_IMAGE=ubuntu:noble
 ARG PYTHON_VERSION=3.12
+ARG FRONTEND_IMAGE=scratch
 
 FROM ${BASE_IMAGE} AS base
 
@@ -107,8 +108,6 @@ RUN --mount=type=bind,src=./requirements-dev.txt,dst=/requirements-dev.txt \
     uv pip install -r /requirements-dev.txt -r /requirements-doc.txt
 
 CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
-
-ARG FRONTEND_IMAGE=scratch
 
 FROM ${FRONTEND_IMAGE} AS frontend
 FROM base AS prod
