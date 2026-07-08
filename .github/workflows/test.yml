@@ -242,9 +242,10 @@ jobs:
           path: ./frontend/dist
           key: frontend-${{ steps.get-key.outputs.FRONTEND_CACHE_KEY }}
 
-      - name: Build frontend container
+      - name: Prepare frontend build context
         run: |
-          make build_frontend
+          mkdir -p tmp_frontend/frontend
+          cp -r frontend/dist tmp_frontend/frontend/
 
       - name: Set up Docker Buildx
         id: buildx
@@ -259,8 +260,10 @@ jobs:
             tags: "geotrek:latest"
             load: true
             file: ./docker/Dockerfile
-            build-args:
+            build-args: |
               FRONTEND_IMAGE=geotrek_frontend
+            build-contexts: |
+              geotrek_frontend=./tmp_frontend
 
       - name: Upload image
         uses: ishworkh/container-image-artifact-upload@v2.0.0
@@ -506,9 +509,10 @@ jobs:
           path: ./frontend/dist
           key: frontend-${{ steps.get-key.outputs.FRONTEND_CACHE_KEY }}
 
-      - name: Build frontend container
+      - name: Prepare frontend build context
         run: |
-          make build_frontend
+          mkdir -p tmp_frontend/frontend
+          cp -r frontend/dist tmp_frontend/frontend/
 
       - name: Download 22.04 debian artifact
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
@@ -561,6 +565,10 @@ jobs:
           builder: ${{ steps.buildx.outputs.name }}
           tags: ${{ steps.meta.outputs.tags }}
           file: ./docker/Dockerfile
+          build-args: |
+            FRONTEND_IMAGE=geotrek_frontend
+          build-contexts: |
+            geotrek_frontend=./tmp_frontend
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
