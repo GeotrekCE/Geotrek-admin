@@ -71,7 +71,8 @@ export const infrastructureDataSchema = z.object({
       name: z.string().min(1),
     })
   ),
-  synced: z.boolean().optional(),
+  appSynced: z.boolean().optional(),
+  appNewItem: z.boolean().optional(),
 })
 
 export const signageDataSchema = z.object({
@@ -162,7 +163,8 @@ export const signageDataSchema = z.object({
       ),
     })
   ),
-  synced: z.boolean().optional(),
+  appSynced: z.boolean().optional(),
+  appNewItem: z.boolean().optional(),
 })
 
 export const interventionDataSchema = z.object({
@@ -240,7 +242,8 @@ export const interventionDataSchema = z.object({
       name: z.string(),
     }),
   ]),
-  synced: z.boolean().optional(),
+  appSynced: z.boolean().optional(),
+  appNewItem: z.boolean().optional(),
 })
 
 export const reportDataSchema = z.object({
@@ -283,5 +286,6 @@ export const reportDataSchema = z.object({
       name: z.string(),
     }),
   ]),
-  synced: z.boolean().optional(),
+  appSynced: z.boolean().optional(),
+  appNewItem: z.boolean().optional(),
 })

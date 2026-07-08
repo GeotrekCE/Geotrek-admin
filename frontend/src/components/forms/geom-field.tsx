@@ -34,7 +34,7 @@ export function GeomField({
   const id = React.useId()
   const field = useFieldContext()
   const value = useStore(field.store, (s) => s.value) as [number, number]
-  const [lng, lat] = value
+  const [lng, lat] = value || []
   const appSync = useLiveQuery(() => db.appSync.get("data"))
   const { bounds } = appSync || {}
 

@@ -11,6 +11,12 @@ import * as z from "zod"
 import { db } from "./db"
 import { useLiveQuery } from "dexie-react-hooks"
 import { AUTH_TOKENS_KEY } from "@/hook/useTokens"
+import type {
+  InfrastructureDataSchemaProps,
+  InterventionDataSchemaProps,
+  ReportDataSchemaProps,
+  SignageDataSchemaProps,
+} from "@/schemas/data"
 
 export const API_URL = `${__HOST_URL__}/api`
 export class FetchError extends Error {
@@ -113,4 +119,57 @@ export function useAppQuery<T>({
     }
   }
   return query
+}
+
+export function getBodyForMutation(
+  body:
+    | InfrastructureDataSchemaProps
+    | SignageDataSchemaProps
+    | InterventionDataSchemaProps
+    | ReportDataSchemaProps
+): Record<
+  string,
+  null | string | number | string[] | number[] | { id: string; name: string }[]
+> {
+  return Object.fromEntries(
+    Object.entries(body)
+      .map(([key, value]) => {
+        if (
+          [
+            "id",
+            "date_insert",
+            "date_update",
+            "appSynced",
+            "appNewItem",
+          ].includes(key) ||
+          value === null
+        ) {
+          return null
+        }
+        if (Array.isArray(value)) {
+          // This API is a mess for POST/PATCH
+          if (["blades", "man_day"].includes(key)) {
+            return [
+              key,
+              value.map((item) =>
+                Object.fromEntries(
+                  Object.entries(item).map(([subKey, subValue]) => {
+                    if (typeof subValue === "object" && "id" in subValue) {
+                      return [`${subKey}_id`, subValue.id]
+                    }
+                    return [key, value]
+                  })
+                )
+              ),
+            ]
+          }
+          return [`${key}_id`, value.map((item) => item.id)]
+        }
+        if (typeof value === "object" && "id" in value) {
+          return [`${key}_id`, value.id]
+        }
+        return [key, value]
+      })
+      .filter((item) => item !== null)
+  )
 }

@@ -11,7 +11,6 @@ import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
-import { dateCompare } from "@/lib/date"
 import NotFound from "@/components/not-found"
 import { usePermission } from "@/hook/useSettingsQuery"
 import type { InterventionDataSchemaProps } from "@/schemas/data"
@@ -30,7 +29,6 @@ export default function InterventionDetail(params: {
     [],
     []
   )
-  const syncData = useLiveQuery(() => db.appSync.get("data"))
   const rawDataItem = useLiveQuery(() =>
     db.rawData
       .where({
@@ -68,7 +66,7 @@ export default function InterventionDetail(params: {
     getLocale()
   )
 
-  const isAsyncItem = detail.synced === false
+  const isAsyncItem = detail.appSynced === false
 
   return (
     <div>
@@ -275,15 +273,15 @@ export default function InterventionDetail(params: {
               to="/{-$locale}/data/$type/$id/edit"
               params={params}
             >
-              Modifier {params.type}
+              Modifier l'intervention
             </Link>
-            {dateCompare(detail.date_insert, syncData?.lastSync) > -1 && (
+            {detail.appNewItem === true && (
               <Button
                 variant="destructive"
                 className="w-full"
                 onClick={handleDelete}
               >
-                Supprimer {params.type}
+                Supprimer l'intervention
               </Button>
             )}
             {rawDataItem && (
@@ -292,7 +290,7 @@ export default function InterventionDetail(params: {
                 variant="destructive"
                 onClick={async () => {
                   await db.rawData
-                    .where({ reference: "signage", id: rawDataItem.id })
+                    .where({ reference: "intervention", id: rawDataItem.id })
                     .delete()
                   const { reference: _reference, ...restoredData } = rawDataItem
                   await db.interventionData.put(

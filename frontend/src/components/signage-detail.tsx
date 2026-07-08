@@ -19,7 +19,6 @@ import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
-import { dateCompare } from "@/lib/date"
 import NotFound from "@/components/not-found"
 import { usePermission } from "@/hook/useSettingsQuery"
 import type { SignageDataSchemaProps } from "@/schemas/data"
@@ -35,7 +34,6 @@ export default function SignageDetail(params: { id: string; type: string }) {
     [],
     []
   )
-  const syncData = useLiveQuery(() => db.appSync.get("data"))
   const rawDataItem = useLiveQuery(() =>
     db.rawData
       .where({
@@ -73,7 +71,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
     getLocale()
   )
 
-  const isAsyncItem = detail.synced === false
+  const isAsyncItem = detail.appSynced === false
 
   return (
     <div>
@@ -300,15 +298,15 @@ export default function SignageDetail(params: { id: string; type: string }) {
               to="/{-$locale}/data/$type/$id/edit"
               params={params}
             >
-              Modifier {params.type}
+              Modifier la signalétique
             </Link>
-            {dateCompare(detail.date_insert, syncData?.lastSync) > -1 && (
+            {detail.appNewItem === true && (
               <Button
                 variant="destructive"
                 className="w-full"
                 onClick={handleDelete}
               >
-                Supprimer {params.type}
+                Supprimer la signalétique
               </Button>
             )}
             {rawDataItem && (

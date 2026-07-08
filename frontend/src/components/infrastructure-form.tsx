@@ -15,7 +15,6 @@ import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { usePermission } from "@/hook/useSettingsQuery"
 import { useLiveQuery } from "dexie-react-hooks"
-import { dateCompare } from "@/lib/date"
 
 export default function InfrastructureForm({
   defaultValues,
@@ -38,11 +37,6 @@ export default function InfrastructureForm({
       })
       .first()
   )
-
-  const syncData = useLiveQuery(() => db.appSync.get("data"))
-
-  const isAsyncItem =
-    dateCompare(defaultValues.date_insert, syncData?.lastSync) > -1
 
   const [
     {
@@ -73,7 +67,7 @@ export default function InfrastructureForm({
       onSubmit: validators,
     },
     onSubmit: async ({ value }) => {
-      if (isEdit && !isAsyncItem) {
+      if (isEdit && value.appNewItem !== true) {
         await db.rawData.put({
           ...defaultValues,
           reference: "infrastructure",
@@ -85,14 +79,15 @@ export default function InfrastructureForm({
             id,
             date_insert,
             date_update: new Date().toISOString(),
-            synced: false,
+            appSynced: false,
           })
         : // @ts-expect-error "id" is auto-incremented in indexedDB
           await db.infrastructureData.add({
             ...value,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
-            synced: false,
+            appSynced: false,
+            appNewItem: true,
           })
 
       navigate({
