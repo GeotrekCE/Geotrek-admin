@@ -8,7 +8,6 @@ import { Button } from "@/components/ui/button"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { useLiveQuery } from "dexie-react-hooks"
-import { dateCompare } from "@/lib/date"
 
 export default function ReportForm({
   defaultValues,
@@ -31,10 +30,6 @@ export default function ReportForm({
       })
       .first()
   )
-  const syncData = useLiveQuery(() => db.appSync.get("data"))
-
-  const isAsyncItem =
-    dateCompare(defaultValues.date_insert, syncData?.lastSync) > -1
 
   const [{ reportactivity, reportcategory, reportproblemmagnitude }] =
     references
@@ -58,10 +53,11 @@ export default function ReportForm({
       onSubmit: validators,
     },
     onSubmit: async ({ value }) => {
-      if (isEdit && !isAsyncItem) {
+      if (isEdit && value.appNewItem !== true) {
         await db.rawData.add({
           ...defaultValues,
           reference: "report",
+          appSynced: false,
         })
       }
       const nextId = isEdit
@@ -76,6 +72,8 @@ export default function ReportForm({
             ...value,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
+            appSynced: false,
+            appNewItem: true,
           })
 
       navigate({

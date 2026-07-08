@@ -15,10 +15,6 @@ export function useAppInit() {
       }
     }
     loadSerwist()
-
-    // Remove old cache system
-    // TODO remove this line for 1st version
-    window.localStorage.removeItem("REACT_QUERY_OFFLINE_CACHE")
   }, [])
 
   // Online/Offline status

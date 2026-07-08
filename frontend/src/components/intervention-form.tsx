@@ -17,7 +17,6 @@ import { FormCheckboxField } from "./forms"
 import { Trash } from "lucide-react"
 import { usePermission } from "@/hook/useSettingsQuery"
 import { useLiveQuery } from "dexie-react-hooks"
-import { dateCompare } from "@/lib/date"
 
 export default function InterventionForm({
   defaultValues,
@@ -40,11 +39,6 @@ export default function InterventionForm({
       })
       .first()
   )
-
-  const syncData = useLiveQuery(() => db.appSync.get("data"))
-
-  const isAsyncItem =
-    dateCompare(defaultValues.date_insert, syncData?.lastSync) > -1
 
   const [
     {
@@ -76,7 +70,7 @@ export default function InterventionForm({
       onSubmit: validators,
     },
     onSubmit: async ({ value }) => {
-      if (isEdit && !isAsyncItem) {
+      if (isEdit && value.appNewItem !== true) {
         await db.rawData.put({
           ...defaultValues,
           reference: "intervention",
@@ -88,12 +82,15 @@ export default function InterventionForm({
             id,
             date_insert,
             date_update: new Date().toISOString(),
+            appSynced: false,
           })
         : // @ts-expect-error "id" is auto-incremented in indexedDB
           await db.interventionData.add({
             ...value,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
+            appSynced: false,
+            appNewItem: true,
           })
 
       navigate({

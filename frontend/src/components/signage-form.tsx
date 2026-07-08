@@ -12,7 +12,6 @@ import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { usePermission } from "@/hook/useSettingsQuery"
 import { useLiveQuery } from "dexie-react-hooks"
-import { dateCompare } from "@/lib/date"
 
 export default function SignageForm({
   defaultValues,
@@ -35,10 +34,6 @@ export default function SignageForm({
       })
       .first()
   )
-  const syncData = useLiveQuery(() => db.appSync.get("data"))
-
-  const isAsyncItem =
-    dateCompare(defaultValues.date_insert, syncData?.lastSync) > -1
 
   const [
     { signagetype, signagecondition, sealing },
@@ -64,7 +59,7 @@ export default function SignageForm({
       onSubmit: validators,
     },
     onSubmit: async ({ value }) => {
-      if (isEdit && !isAsyncItem) {
+      if (isEdit && value.appNewItem !== true) {
         await db.rawData.add({
           ...defaultValues,
           reference: "signage",
@@ -76,12 +71,15 @@ export default function SignageForm({
             id,
             date_insert,
             date_update: new Date().toISOString(),
+            appSynced: false,
           })
         : // @ts-expect-error "id" is auto-incremented in indexedDB
           await db.signageData.add({
             ...value,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
+            appSynced: false,
+            appNewItem: true,
           })
 
       navigate({

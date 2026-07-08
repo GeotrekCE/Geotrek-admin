@@ -1,0 +1,24 @@
+import { getBodyForMutation, queryFnWithAuth } from "@/lib/api"
+import { useMutation } from "@tanstack/react-query"
+import type { SignageDataSchemaProps } from "@/schemas/data"
+
+export default function useSyncSignageMutation() {
+  return useMutation({
+    mutationKey: ["upSync", "signage"],
+    mutationFn: async (data: SignageDataSchemaProps[]) => {
+      return Promise.all(
+        data.map((body) => {
+          const isPOST = body.appNewItem === true
+          return queryFnWithAuth(
+            `/signage/drf/signages${!isPOST ? "/" + body.id : ""}`,
+            {
+              method: isPOST ? "POST" : "PATCH",
+              searchParams: { format: "gtam" },
+              body: JSON.stringify(getBodyForMutation(body)),
+            }
+          ).catch((error) => error)
+        })
+      )
+    },
+  })
+}

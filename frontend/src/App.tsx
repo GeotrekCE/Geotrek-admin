@@ -53,7 +53,11 @@ function InnerApp() {
         },
         mutationCache: new MutationCache({
           onError: (error) => {
-            toast.error(error.message)
+            toast.error("Une erreur s'est produite", {
+              position: "top-center",
+              // @ts-expect-error - deal with API error shape
+              description: error.res?.message,
+            })
           },
         }),
         queryCache: new QueryCache({

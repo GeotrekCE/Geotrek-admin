@@ -10,7 +10,7 @@ import {
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item"
-import { ChevronRight } from "lucide-react"
+import { Check, ChevronRight, X } from "lucide-react"
 import { getLocale } from "@/paraglide/runtime"
 import { dateCompare, getDurationLabel } from "@/lib/date"
 import type {
@@ -22,47 +22,64 @@ import type {
 import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
 import { Button } from "@/components/ui/button"
-import { FetchError, queryFnWithAuth } from "@/lib/api"
-import {
-  type InfrastructureDataSchemaProps,
-  type InterventionDataSchemaProps,
-  type ReportDataSchemaProps,
-  type SignageDataSchemaProps,
+import useSyncDataMutations from "@/hook/useSyncDataMutations"
+import { cn } from "@/lib/utils"
+import { FetchError } from "@/lib/api"
+import type {
+  InfrastructureDataSchemaProps,
+  InterventionDataSchemaProps,
+  ReportDataSchemaProps,
+  SignageDataSchemaProps,
 } from "@/schemas/data"
-import { toast } from "sonner"
+
+function getStatusFromResult(
+  result?:
+    | string
+    | SignageDataSchemaProps
+    | InfrastructureDataSchemaProps
+    | InterventionDataSchemaProps
+    | ReportDataSchemaProps
+    | FetchError
+) {
+  if (result === undefined) {
+    return {
+      isError: null,
+      isSuccess: null,
+    }
+  }
+  if (result instanceof FetchError) {
+    const message =
+      typeof result.res?.message === "string" ? result.res.message : "{}"
+
+    return {
+      isError: true,
+      isSuccess: false,
+      data: Object.entries(JSON.parse(message)).map(
+        ([key, value]) =>
+          `${key.replace("_id", "")} : ${Array.isArray(value) ? value.join(", ") : value}`
+      ),
+    }
+  }
+  return {
+    isError: null,
+    isSuccess: true,
+    data: [result],
+  }
+}
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/sync/upload")({
   component: RouteComponent,
 })
 
-function getBodyForMutation(
-  body:
-    | InfrastructureDataSchemaProps
-    | SignageDataSchemaProps
-    | InterventionDataSchemaProps
-    | ReportDataSchemaProps
-): Record<string, null | string | number | string[] | number[]> {
-  return Object.fromEntries(
-    Object.entries(body)
-      .map(([key, value]) => {
-        if (["id", "date_insert", "date_update"].includes(key)) {
-          return null
-        }
-        if (Array.isArray(value)) {
-          return [`${key}_id`, value.map((item) => item.id)]
-        }
-        if (value !== null && typeof value === "object" && "id" in value) {
-          return [`${key}_id`, value.id]
-        }
-        return [key, value]
-      })
-      .filter((item) => item !== null)
-  )
-}
-
 function RouteComponent() {
   const asyncData = useAsyncStoredData()
-  const syncData = useLiveQuery(() => db.appSync.get("data"))
+
+  const {
+    signageMutation,
+    interventionMutation,
+    infrastructureMutation,
+    reportMutation,
+  } = useSyncDataMutations()
 
   const references = useLiveQuery(() =>
     db.references.bulkGet([
@@ -86,70 +103,97 @@ function RouteComponent() {
     const [signageData, interventionData, infrastructureData, reportData] =
       asyncData ?? []
 
-    const lastSync = syncData?.lastSync ?? ""
-    try {
-      if (signageData && signageData.length) {
-        await Promise.all(
-          signageData.map((body) => {
-            console.log(body, getBodyForMutation(body))
-            return queryFnWithAuth("/signage/drf/signages", {
-              method:
-                dateCompare(body.date_insert, lastSync) > -1 ? "POST" : "PATCH",
-              searchParams: { format: "gtam" },
-              body: JSON.stringify(getBodyForMutation(body)),
-            })
+    if (signageData && signageData.length) {
+      signageMutation.mutate(signageData, {
+        onSuccess(result, variables) {
+          result.map(getStatusFromResult).map(({ data, isSuccess }, index) => {
+            if (isSuccess) {
+              db.signageData.where({ id: variables[index].id }).delete()
+              if (variables[index].appNewItem) {
+                db.rawData
+                  .where({
+                    reference: "signage",
+                    id: variables[index].id,
+                  })
+                  .delete()
+              }
+              db.signageData.put(data[0] as SignageDataSchemaProps)
+            }
           })
-        )
-      }
-      if (interventionData && interventionData.length) {
-        await Promise.all(
-          interventionData.map((body) => {
-            return queryFnWithAuth("/intervention/drf/interventions", {
-              method:
-                dateCompare(body.date_insert, lastSync) > -1 ? "POST" : "PATCH",
-              searchParams: { format: "gtam" },
-              body: JSON.stringify(getBodyForMutation(body)),
-            })
-          })
-        )
-      }
-
-      if (infrastructureData && infrastructureData.length) {
-        await Promise.all(
-          infrastructureData.map((body) => {
-            return queryFnWithAuth("/infrastructure/drf/infrastructures", {
-              method:
-                dateCompare(body.date_insert, lastSync) > -1 ? "POST" : "PATCH",
-              searchParams: { format: "gtam" },
-              body: JSON.stringify(getBodyForMutation(body)),
-            })
-          })
-        )
-      }
-
-      if (reportData && reportData.length) {
-        await Promise.all(
-          reportData.map((body) => {
-            return queryFnWithAuth("/report/drf/reports", {
-              method:
-                dateCompare(body.date_insert, lastSync) > -1 ? "POST" : "PATCH",
-              searchParams: { format: "gtam" },
-              body: JSON.stringify(getBodyForMutation(body)),
-            })
-          })
-        )
-      }
-    } catch (error: unknown) {
-      const message =
-        error instanceof FetchError ? error.res.message : String(error)
-      toast.error("Une erreur s'est produite", {
-        position: "top-center",
-        description: (
-          <pre>{JSON.stringify(JSON.parse(message ?? "{}"), null, 2)}</pre>
-        ),
+        },
       })
     }
-  }, [asyncData, syncData?.lastSync])
+    if (interventionData && interventionData.length) {
+      interventionMutation.mutate(interventionData, {
+        onSuccess(result, variables) {
+          result.map(getStatusFromResult).map(({ data, isSuccess }, index) => {
+            if (isSuccess) {
+              db.interventionData.where({ id: variables[index].id }).delete()
+              if (variables[index].appNewItem) {
+                db.rawData
+                  .where({
+                    reference: "intervention",
+                    id: variables[index].id,
+                  })
+                  .delete()
+              }
+              db.interventionData.put(data[0] as InterventionDataSchemaProps)
+            }
+          })
+        },
+      })
+    }
+
+    if (infrastructureData && infrastructureData.length) {
+      infrastructureMutation.mutate(infrastructureData, {
+        onSuccess(result, variables) {
+          result.map(getStatusFromResult).map(({ data, isSuccess }, index) => {
+            if (isSuccess) {
+              db.infrastructureData.where({ id: variables[index].id }).delete()
+              if (variables[index].appNewItem) {
+                db.rawData
+                  .where({
+                    reference: "infrastructure",
+                    id: variables[index].id,
+                  })
+                  .delete()
+              }
+              db.infrastructureData.put(
+                data[0] as InfrastructureDataSchemaProps
+              )
+            }
+          })
+        },
+      })
+    }
+
+    if (reportData && reportData.length) {
+      reportMutation.mutate(reportData, {
+        onSuccess(result, variables) {
+          result.map(getStatusFromResult).map(({ data, isSuccess }, index) => {
+            if (isSuccess) {
+              db.reportData.where({ id: variables[index].id }).delete()
+              if (variables[index].appNewItem) {
+                db.rawData
+                  .where({
+                    reference: "report",
+                    id: variables[index].id,
+                  })
+                  .delete()
+              }
+              db.reportData.put(data[0] as ReportDataSchemaProps)
+            }
+          })
+        },
+      })
+    }
+  }, [
+    asyncData,
+    infrastructureMutation,
+    interventionMutation,
+    reportMutation,
+    signageMutation,
+  ])
 
   if (!asyncData) {
     return null // todo loading
@@ -194,6 +238,15 @@ function RouteComponent() {
     .flat()
     .sort((a, b) => dateCompare(b.date_update, a.date_update))
 
+  const mutationResultArray = [
+    signageMutation.data,
+    interventionMutation.data,
+    infrastructureMutation.data,
+    reportMutation.data,
+  ]
+    .flat()
+    .filter((item) => item !== undefined)
+
   return (
     <div>
       <Header title="Éléments non synchronisés" withBackbutton />
@@ -202,56 +255,85 @@ function RouteComponent() {
           {elements.length === 0 && (
             <p className="py-4 text-center">Aucun élément à afficher.</p>
           )}
-          {elements.map((item) => (
-            <li key={`${item.reference}-${item.id}`} className="my-4">
-              <Item
-                variant="outline"
-                className="bg-accent"
-                render={
-                  <Link
-                    to={`/{-$locale}/data/$type/$id`}
-                    params={{
-                      id: item.id.toString(),
-                      type: item.reference,
-                    }}
-                  >
-                    {item.pictogram && (
-                      <ItemMedia>
-                        <img loading="lazy" src={item.pictogram.url} alt="" />
-                      </ItemMedia>
-                    )}
-                    <ItemContent>
-                      <ItemTitle className="text-accent-foreground">
-                        {/* @ts-expect-error report name */}
-                        {item.name}
-                      </ItemTitle>
-                      <ItemDescription>
-                        {item.reference} -{" "}
-                        <time
-                          dateTime={item.date_update}
-                          className="text-xs text-muted-foreground"
-                        >
-                          {dateCompare(item.date_insert, syncData?.lastSync) >
-                          -1
-                            ? "Crée "
-                            : "Modifié "}
-                          il y a{" "}
-                          {getDurationLabel(
-                            new Date().getTime() -
-                              new Date(item.date_update).getTime(),
-                            getLocale()
-                          )}
-                        </time>
-                      </ItemDescription>
-                    </ItemContent>
-                    <ItemActions>
-                      <ChevronRight aria-hidden />
-                    </ItemActions>
-                  </Link>
-                }
-              />
-            </li>
-          ))}
+          {elements.map((item, index) => {
+            const result = getStatusFromResult(mutationResultArray[index])
+            return (
+              <li key={`${item.reference}-${item.id}`} className="my-4">
+                <Item
+                  variant="outline"
+                  render={
+                    <Link
+                      to={`/{-$locale}/data/$type/$id`}
+                      params={{
+                        id: item.id.toString(),
+                        type: item.reference,
+                      }}
+                      className={cn(
+                        "bg-accent",
+                        result.isError &&
+                          "border-destructive bg-destructive/10 [a]:hover:bg-destructive/10!",
+                        result.isSuccess &&
+                          "border-green-600 [a]:hover:bg-green-600/10!"
+                      )}
+                    >
+                      {item.pictogram && (
+                        <ItemMedia>
+                          <img loading="lazy" src={item.pictogram.url} alt="" />
+                        </ItemMedia>
+                      )}
+                      <ItemContent>
+                        <ItemTitle className="text-accent-foreground">
+                          {/* @ts-expect-error report name */}
+                          {item.name}
+                        </ItemTitle>
+                        <ItemDescription className="line-clamp-none">
+                          {item.reference} -{" "}
+                          <time
+                            dateTime={item.date_update}
+                            className="text-xs text-muted-foreground"
+                          >
+                            {item.appNewItem === true ? "Crée " : "Modifié "}
+                            il y a{" "}
+                            {getDurationLabel(
+                              new Date().getTime() -
+                                new Date(item.date_update).getTime(),
+                              getLocale()
+                            )}
+                          </time>
+                        </ItemDescription>
+                        {result.isError && (
+                          <div className="mt-3 text-accent-foreground">
+                            <span className="flex items-center gap-2 font-bold">
+                              <X className="size-4" aria-hiden /> Erreur de
+                              synchronisation
+                            </span>
+                            <div className="ms-6">
+                              {result.data.map((item) => (
+                                <p key={item} className="my-1 text-sm">
+                                  {item}
+                                </p>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {result.isSuccess && (
+                          <div className="mt-3 text-accent-foreground">
+                            <span className="flex items-center gap-2 font-bold">
+                              <Check className="size-4" aria-hiden />
+                              Synchronisation réussie
+                            </span>
+                          </div>
+                        )}
+                      </ItemContent>
+                      <ItemActions>
+                        <ChevronRight aria-hidden />
+                      </ItemActions>
+                    </Link>
+                  }
+                />
+              </li>
+            )
+          })}
         </ul>
         <Button className="w-full" onClick={handleSubmit}>
           Envoyer mes données

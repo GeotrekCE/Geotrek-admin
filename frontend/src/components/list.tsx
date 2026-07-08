@@ -8,15 +8,12 @@ import {
   ItemDescription,
   ItemMedia,
   ItemTitle,
-} from "./ui/item"
+} from "@/components/ui/item"
 import { Link } from "@tanstack/react-router"
 import { cn } from "@/lib/utils"
 import { useList, type SnapPoint } from "@/lib/list"
 import { getLocale } from "@/paraglide/runtime"
-import { useLiveQuery } from "dexie-react-hooks"
-import { db } from "@/lib/db"
 import { Skeleton } from "@/components/ui/skeleton"
-import { dateCompare } from "@/lib/date"
 
 const TOP_MARGIN_REM = 1
 
@@ -28,7 +25,6 @@ export default function List() {
     setSnapPoint,
     snapPoints,
   } = useList()
-  const syncData = useLiveQuery(() => db.appSync.get("data"))
 
   return (
     <Drawer.Root
@@ -127,10 +123,7 @@ export default function List() {
                                 </time>
                               </ItemContent>
                               <ItemActions>
-                                {dateCompare(
-                                  item.date_update,
-                                  syncData?.lastSync
-                                ) > -1 && (
+                                {item.appSynced === false && (
                                   <CircleAlert
                                     className="size-4 text-destructive"
                                     role="img"

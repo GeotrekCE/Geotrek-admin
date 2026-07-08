@@ -10,7 +10,6 @@ import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
 import { cn } from "@/lib/utils"
 import { toast } from "sonner"
-import { dateCompare } from "@/lib/date"
 import NotFound from "@/components/not-found"
 import type { ReportDataSchemaProps } from "@/schemas/data"
 
@@ -23,11 +22,10 @@ export default function ReportDetail(params: { id: string; type: string }) {
     [],
     []
   )
-  const syncData = useLiveQuery(() => db.appSync.get("data"))
   const rawDataItem = useLiveQuery(() =>
     db.rawData
       .where({
-        reference: "signage",
+        reference: "report",
         id: params.id ? Number(params.id) : undefined,
       })
       .first()
@@ -58,7 +56,7 @@ export default function ReportDetail(params: { id: string; type: string }) {
     getLocale()
   )
 
-  const isAsyncItem = dateCompare(detail.date_update, syncData?.lastSync) > -1
+  const isAsyncItem = detail.appSynced === false
 
   return (
     <div>
@@ -181,7 +179,7 @@ export default function ReportDetail(params: { id: string; type: string }) {
             >
               Modifier le signalement
             </Link>
-            {dateCompare(detail.date_insert, syncData?.lastSync) > -1 && (
+            {detail.appNewItem === true && (
               <Button
                 variant="destructive"
                 className="w-full"
