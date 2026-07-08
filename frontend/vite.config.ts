@@ -54,16 +54,6 @@ export default defineConfig(({ mode }) => {
         rollupFormat: "iife",
       }),
     ],
-    server: {
-      allowedHosts: true,
-      proxy: {
-        "/api": {
-          target: env.HOST_URL || "http://localhost:8000",
-          changeOrigin: true,
-          secure: false,
-        },
-      },
-    },
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
