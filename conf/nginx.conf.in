@@ -61,20 +61,20 @@ server {
         alias /opt/geotrek-admin/var/media;
     }
 
-    location ~ ^/offline/(?<remaining_path>.*)$ {
+    location ~ ^/m/(?<remaining_path>.*)$ {
         root /;
         try_files /opt/geotrek-admin/var/frontend/dist/${DOLLAR}remaining_path /opt/geotrek-admin/var/frontend/dist/index.html =404;
     }
 
-    location ^~ /offline/sw.js {
+    location ^~ /m/sw.js {
         alias /opt/geotrek-admin/var/frontend/dist/sw.js;
         add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
         expires off;
         access_log off;
     }
 
-    location = /offline {
-        return 307 /offline/;
+    location = /m {
+        return 307 /m/;
     }
 
     location / {
