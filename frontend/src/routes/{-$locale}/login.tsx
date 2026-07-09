@@ -15,7 +15,7 @@ export const Route = createFileRoute("/{-$locale}/login")({
 })
 
 function LoginComponent() {
-  if (!__HOST_URL__) {
+  if (import.meta.env.DEV && !__HOST_URL__) {
     return <InvalidConfiguration />
   }
   return <Login />
