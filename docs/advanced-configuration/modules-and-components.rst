@@ -507,7 +507,7 @@ Treks
 Trek signage intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which signage is considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``).
+This setting defines the maximum distance (in meters) within which signage is considered related to treks. Works only on objects that are not coupled to the path network.
 
 .. md-tab-set::
     :name: trek-signage-intersection-margin-tabs
@@ -527,7 +527,7 @@ This setting defines the maximum distance (in meters) within which signage is co
 Trek infrastructure intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which infrastructure is considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``).
+This setting defines the maximum distance (in meters) within which infrastructure is considered related to treks. Works only on objects that are not coupled to the path network.
 
 .. md-tab-set::
     :name: trek-infrastructure-intersection-margin-tabs
@@ -551,7 +551,7 @@ Interventions
 Intervention intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, tourism content, etc. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``).
+This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, tourism content, etc. Works only on objects that are not coupled to the path network.
 
 .. md-tab-set::
     :name: intervention-intersection-margin-tabs

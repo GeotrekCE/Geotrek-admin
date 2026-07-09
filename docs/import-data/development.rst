@@ -294,9 +294,6 @@ Cirkwi
 
     .. md-tab-item:: Treks
 
-        .. warning::
-            This parser is compatible with instances operating in :ref:`Non-Dynamic Segmentation <configuration-dynamic-segmentation>` (NDS) mode only.
-
         To import treks from Cirkwi, define a subclass of ``geotrek.trekking.parsers.CirkwiTrekParser`` in your ``var/conf/parsers.py`` file with the following content:
 
         ::
