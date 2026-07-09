@@ -27,6 +27,7 @@ from geotrek.zoning.models import City
 from ...authent.tests.factories import UserProfileFactory
 from ...common.tests import CommonTest
 from ..models import (
+    Report,
     ReportActivity,
     ReportCategory,
     ReportProblemMagnitude,
@@ -674,6 +675,11 @@ class ReportGTAMTest(TestCase):
     def setUpTestData(cls):
         cls.report = ReportFactory.create()
 
+        cls.activity = ReportActivityFactory.create()
+        cls.category = ReportCategoryFactory.create()
+        cls.problem_magnitude = ReportProblemMagnitudeFactory.create()
+        cls.status = ReportStatusFactory.create()
+
         cls.user = SuperUserFactory.create(password="password")
         UserProfileFactory(user=cls.user)
 
@@ -685,7 +691,7 @@ class ReportGTAMTest(TestCase):
         data = r.json()
         return f"Bearer {data['access']}"
 
-    def test_data(self):
+    def test_get(self):
         token = self.authenticate(self.user)
         list_url = "/api/report/drf/reports?format=gtam"
         response = self.client.get(list_url, headers={"Authorization": token})
@@ -723,3 +729,62 @@ class ReportGTAMTest(TestCase):
         ]
 
         self.assertEqual(data, reports)
+
+    def _get_data(self):
+        data = {
+            "email": "toto@mail.com",
+            "comment": "test comment",
+            "geom": {"type": "Point", "coordinates": [4.0, 48.5]},
+            "activity_id": self.activity.id,
+            "category_id": self.category.id,
+            "problem_magnitude_id": self.problem_magnitude.id,
+            "status_id": self.status.id,
+        }
+
+        return json.dumps(data)
+
+    def _check_data(self, report_id):
+        report = Report.objects.get(pk=report_id)
+        self.assertEqual(report.email, "toto@mail.com")
+        self.assertEqual(report.comment, "test comment")
+        self.assertEqual(report.activity, self.activity)
+        self.assertEqual(report.category, self.category)
+        self.assertEqual(report.problem_magnitude, self.problem_magnitude)
+        self.assertEqual(report.status, self.status)
+        geom = report.geom
+        geom.transform(4326)
+        self.assertAlmostEqual(report.geom.x, 4.0, 2)
+        self.assertAlmostEqual(report.geom.y, 48.5, 2)
+
+    def test_post(self):
+        token = self.authenticate(self.user)
+        list_url = "/api/report/drf/reports?format=gtam"
+
+        response = self.client.post(
+            list_url,
+            self._get_data(),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 201)
+
+        report_id = response_data["id"]
+        self._check_data(report_id)
+
+    def test_patch(self):
+        token = self.authenticate(self.user)
+
+        report_id = self.report.id
+        list_url = f"/api/report/drf/reports/{report_id}?format=gtam"
+
+        response = self.client.patch(
+            list_url,
+            self._get_data(),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self._check_data(report_id)
