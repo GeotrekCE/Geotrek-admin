@@ -47,25 +47,25 @@ function RouteComponent() {
         {
           label: "Intervention",
           type: "intervention",
-          description: "Ceci est un exemple d'élément à créer.",
+          description: "",
           pictogram: intervention?.pictogram,
         },
         {
           label: "Signalétique",
           type: "signage",
-          description: "Ceci est un exemple d'élément à créer.",
+          description: "",
           pictogram: signage?.pictogram,
         },
         {
           label: "Signalement",
           type: "report",
-          description: "Ceci est un exemple d'élément à créer.",
+          description: "",
           pictogram: report?.pictogram,
         },
         {
           label: "Aménagement",
           type: "infrastructure",
-          description: "Ceci est un exemple d'élément à créer.",
+          description: "",
           pictogram: infrastructure?.pictogram,
         },
       ]
@@ -95,7 +95,9 @@ function RouteComponent() {
                     <ItemTitle className="text-accent-foreground">
                       {item.label}
                     </ItemTitle>
-                    <ItemDescription>{item.description}</ItemDescription>
+                    {item.description && (
+                      <ItemDescription>{item.description}</ItemDescription>
+                    )}
                   </ItemContent>
                   <ItemActions>
                     <ChevronRight aria-hidden />
