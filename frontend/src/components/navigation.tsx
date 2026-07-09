@@ -42,7 +42,11 @@ export function Navigation() {
           </Link>
         </li>
         <li>
-          <Link className="group relative block" to="/{-$locale}/sync">
+          <Link
+            className="group relative block"
+            to="/{-$locale}/sync"
+            hash={hasAsyncData ? "sync-up" : ""}
+          >
             <ArrowDownUp
               className="m-auto mb-1 size-6 group-hover:text-primary group-data-[status=active]:text-primary"
               aria-hidden

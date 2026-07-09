@@ -63,7 +63,7 @@ function Message({
 export default function SyncUp({ data }: { data?: Data }) {
   const hasAsyncData = data && (data?.flat().length ?? 0) > 0
   return (
-    <section className="my-4">
+    <section className="my-4" id="sync-up">
       <h2 className="flex items-center gap-2 text-xl font-bold text-accent-foreground">
         <Upload aria-hidden /> Mes relevés de terrain
       </h2>
