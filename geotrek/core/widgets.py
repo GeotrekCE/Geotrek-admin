@@ -13,23 +13,16 @@ from .models import Topology
 
 
 class BaseTopologyWidget(BaseGeometryWidget):
-    """
-    Widget de base pour les topologies, complètement indépendant de MapWidget.
-    Utilise uniquement le template linear_topology_widget.html.
-    """
-
-    template_name = "core/linear_topology_widget.html"
+    template_name = "core/line_topology_widget.html"
     display_raw = False
     modifiable = True
     is_line_topology = False
     is_point_topology = False
 
     def serialize(self, value):
-        """Sérialise une topologie en JSON."""
         return value.serialize() if hasattr(value, "serialize") else ""
 
     def deserialize(self, value):
-        """Désérialise une valeur en objet Topology."""
         if isinstance(value, int):
             return Topology.objects.get(pk=value)
         try:
@@ -38,10 +31,6 @@ class BaseTopologyWidget(BaseGeometryWidget):
             return None
 
     def _get_topology_attrs(self, name, attrs=None):
-        """
-        Prépare les attributs nécessaires pour le rendu du template de topologie.
-        Reprend la logique de MapWidget mais pour les topologies.
-        """
         attrs = attrs or {}
 
         # Génération des IDs pour les éléments HTML et JavaScript
@@ -64,9 +53,6 @@ class BaseTopologyWidget(BaseGeometryWidget):
         return attrs
 
     def get_context(self, name, value, attrs):
-        """
-        Prépare le contexte pour le rendu du template linear_topology_widget.html.
-        """
         # Gestion des valeurs vides
         value = None if value in validators.EMPTY_VALUES else value
 
@@ -83,10 +69,6 @@ class BaseTopologyWidget(BaseGeometryWidget):
         return context
 
     def render(self, name, value, attrs=None, renderer=None):
-        """
-        Rendu du widget de topologie.
-        Gère la conversion des valeurs entières en objets Topology.
-        """
         if isinstance(value, int):
             try:
                 value = Topology.objects.get(pk=value)
@@ -105,22 +87,25 @@ class BaseTopologyWidget(BaseGeometryWidget):
         return super().render(name, value, attrs, renderer)
 
 
-# TODO: rename BaseTopologyWidget to LineTopologyWidget?
 class LineTopologyWidget(BaseTopologyWidget):
     is_line_topology = True
 
 
-# TODO: remove ?
 class PointLineTopologyWidget(BaseTopologyWidget):
     is_line_topology = True
     is_point_topology = True
 
 
-class LinearTopologyMapWidget(MapWidget):
-    def __init__(self, attrs=None, geom_type=None):
+class GeotrekMapWidget(MapWidget):
+    """
+    MapWidget with features specific to Geotrek:
+      - Set geom_changed to True when geom is modified.
+    """
+
+    def __init__(self, attrs=None, *args, **kwargs):
         attrs = attrs or {}
         self.modifiable = attrs.pop("modifiable", True)
-        super().__init__(attrs=attrs, geom_type=geom_type)
+        super().__init__(attrs=attrs, *args, **kwargs)
 
     @property
     def media(self):

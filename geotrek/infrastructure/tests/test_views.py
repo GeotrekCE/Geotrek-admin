@@ -61,6 +61,7 @@ class InfrastructureViewsTest(CommonTest):
         }
         path = PathFactory.create()
         good_data["topology"] = f'{{"paths": [{path.pk}]}}'
+        good_data["topology_changed"] = "true"
 
         return good_data
 
@@ -113,8 +114,9 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
             ).pk,
             "conditions": [InfrastructureConditionFactory.create().pk],
         }
-        path = PathFactory.create()
-        good_data["topology"] = f'{{"paths": [{path.pk}]}}'
+        PathFactory.create()
+        good_data["topology"] = '{"type":"Point","coordinates":[3.0,46.5]}'
+        good_data["topology_changed"] = "true"
 
         return good_data
 

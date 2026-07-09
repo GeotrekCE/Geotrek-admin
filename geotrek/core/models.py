@@ -666,9 +666,9 @@ class Topology(
         """
         Take all attributes of the other topology specified and save them into this one.
         """
+        PathAggregation.objects.filter(topo_object=self).delete()
         self.offset = other.offset
         self.save(update_fields=["offset"])
-        PathAggregation.objects.filter(topo_object=self).delete()
         self.geom = other.geom
         self.save(update_fields=["geom"])
 

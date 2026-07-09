@@ -10,7 +10,7 @@ from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
-from geotrek.infrastructure.forms import BaseInfrastructureForm
+from geotrek.core.mixins.forms import PointTopologyFormMixin
 from geotrek.signage.models import Blade, Line, LinePictogram, Signage
 
 
@@ -171,10 +171,26 @@ class BladeForm(CommonForm):
         fields = ["id", "number", "direction", "type", "conditions", "color"]
 
 
-class SignageForm(BaseInfrastructureForm):
-    # TODO: if not settings.SIGNAGE_LINE_ENABLED, make it a point topology form
-    # make a BaseInfrastructureFormMixin which does not define a widget
-    # then define widgets in SignageForm and InfrastructureForm
+class SignageForm(PointTopologyFormMixin):
+    implantation_year = forms.IntegerField(label=_("Implantation year"), required=False)
+
+    class Meta(PointTopologyFormMixin.Meta):
+        model = Signage
+        fields = [
+            *PointTopologyFormMixin.Meta.fields,
+            "structure",
+            "name",
+            "type",
+            "description",
+            "access",
+            "implantation_year",
+            "published",
+            "code",
+            "conditions",
+            "printed_elevation",
+            "manager",
+            "sealing",
+        ]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -196,15 +212,3 @@ class SignageForm(BaseInfrastructureForm):
             "access",
         )
     ]
-
-    class Meta(BaseInfrastructureForm.Meta):
-        model = Signage
-        fields = [
-            *BaseInfrastructureForm.Meta.fields,
-            "code",
-            "conditions",
-            "printed_elevation",
-            "manager",
-            "sealing",
-            "access",
-        ]

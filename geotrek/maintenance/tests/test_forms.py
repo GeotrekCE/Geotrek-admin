@@ -85,6 +85,7 @@ class InterventionFormTest(TestCase):
             "data": {
                 "name": "abc",
                 "topology": self.topology,
+                "topology_changed": "true",
                 "target": target,
                 "begin_date": "10/02/2024",
                 "status": status,

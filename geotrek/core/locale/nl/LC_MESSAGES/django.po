@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-23 09:09+0000\n"
+"POT-Creation-Date: 2026-07-07 12:12+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/core/nl/>\n"
@@ -32,6 +32,18 @@ msgstr ""
 
 #, python-format
 msgid "Topology %s does not exist."
+msgstr ""
+
+msgid "A geometry must be provided."
+msgstr ""
+
+msgid "The geometry should either be a point or a line."
+msgstr ""
+
+msgid "Point geometry is incorrect (missing coordinates)."
+msgstr ""
+
+msgid "User input error"
 msgstr ""
 
 msgid "Valid topology"
@@ -73,7 +85,7 @@ msgstr ""
 msgid "The geometry can only be drawn on or off the path network, not both."
 msgstr ""
 
-msgid "A geometry must be provided."
+msgid "You are not allowed to draw off the path network."
 msgstr ""
 
 #, python-format

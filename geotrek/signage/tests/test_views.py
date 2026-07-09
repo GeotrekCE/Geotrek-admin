@@ -390,8 +390,9 @@ class SignageViewsTest(CommonTest):
             "type": SignageTypeFactory.create().pk,
             "conditions": SignageConditionFactory.create().pk,
         }
-        path = PathFactory.create()
-        good_data["topology"] = f'{{"paths": [{path.pk}]}}'
+        PathFactory.create()
+        good_data["topology"] = '{"type":"Point","coordinates":[3.0,46.5]}'
+        good_data["topology_changed"] = "true"
 
         return good_data
 

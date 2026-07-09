@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-23 09:09+0000\n"
+"POT-Creation-Date: 2026-07-07 12:12+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
@@ -33,6 +33,18 @@ msgstr "La topologie n'est pas valide."
 #, python-format
 msgid "Topology %s does not exist."
 msgstr "La topologie %s n'existe pas."
+
+msgid "A geometry must be provided."
+msgstr "Une géométrie doit être renseignée."
+
+msgid "The geometry should either be a point or a line."
+msgstr "La géométrie doit être un point ou une ligne."
+
+msgid "Point geometry is incorrect (missing coordinates)."
+msgstr "La géométrie ponctuelle est incorrecte (coordonnées manquantes)."
+
+msgid "User input error"
+msgstr "Erreur de saisie utilisateur"
 
 msgid "Valid topology"
 msgstr "Topologie valide"
@@ -73,8 +85,8 @@ msgstr "tronçon"
 msgid "The geometry can only be drawn on or off the path network, not both."
 msgstr "La géométrie ne peut être dessinée que sur ou hors réseau de tronçons, pas les deux."
 
-msgid "A geometry must be provided."
-msgstr "Une géométrie doit être renseignée."
+msgid "You are not allowed to draw off the path network."
+msgstr "Vous n'êtes pas autorisé(e) à dessiner des géométries hors réseau de tronçons."
 
 #, python-format
 msgid "Invalid geometry type: should be 'Point', not '%(geom_type)s'"

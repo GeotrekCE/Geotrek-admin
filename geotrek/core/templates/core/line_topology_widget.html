@@ -35,7 +35,12 @@
         let routingControlFirstUpdate = false;
 
         function getInitialFeatureCollection() {
-            if (topologyElem.value === "")
+            const raw_topology = topologyElem.value
+            // If topology is empty or is a point, don't fetch
+            if (raw_topology === "")
+                return null
+            const topology_obj = JSON.parse(raw_topology)
+            if (!Array.isArray(topology_obj) && 'lat' in topology_obj && 'lng' in topology_obj)
                 return null
             return fetch(
                 window.SETTINGS.urls['topology_to_feature_collection'],
@@ -45,7 +50,7 @@
                         "Content-Type": "application/json; charset=UTF-8",
                         "X-CSRFToken": getCookie('csrftoken'),
                     },
-                    body: `{"topology": ${topologyElem.value}}`,
+                    body: `{"topology": ${raw_topology}}`,
                 }
             ).then(response => {
                 if (response.status === 200) {
