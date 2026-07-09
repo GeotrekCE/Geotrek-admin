@@ -5,8 +5,8 @@
   "dir": "auto",
   "display": "standalone",
   "orientation": "any",
-  "start_url": "/offline/",
-  "scope": "/offline/",
+  "start_url": "/m/",
+  "scope": "/m/",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
   "icons": [

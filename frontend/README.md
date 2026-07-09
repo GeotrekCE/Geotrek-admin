@@ -45,13 +45,26 @@ TODO
 npm run build
 ```
 
-Créer une règle serveur pour pointer la route `/offline` vers le dossier
+Créer une règle serveur pour pointer la route `/m` vers le dossier
 `/frontend/dist`.
 
 Exemple de règle avec `nginx`
 
 ```sh
-location /offline {
-  alias /opt/geotrek-admin/frontend/dist;
+location /m/ {
+  alias /opt/geotrek-admin/frontend/dist/;
+  index index.html;
+  try_files $uri $uri/ /index.html index.html;
+}
+
+location /m/sw.js {
+  alias /opt/geotrek-admin/frontend/dist/sw.js;
+  add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
+  expires off;
+  access_log off;
+}
+
+location /m {
+  return 307 /m/;
 }
 ```
