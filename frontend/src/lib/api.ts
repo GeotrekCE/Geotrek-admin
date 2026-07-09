@@ -7,8 +7,9 @@ import {
   type QueryFunction,
   type UseQueryOptions,
 } from "@tanstack/react-query"
+import { getLocale } from "@/paraglide/runtime"
 import * as z from "zod"
-import { db } from "./db"
+import { db } from "@/lib/db"
 import { useLiveQuery } from "dexie-react-hooks"
 import { AUTH_TOKENS_KEY } from "@/hook/useTokens"
 import type {
@@ -43,6 +44,7 @@ export async function queryFn<T extends z.ZodObject | z.ZodArray>(
     method: "GET",
     ...options,
     headers: {
+      "Accept-Language": getLocale(),
       "Content-Type": "application/json",
       ...(options?.headers ?? {}),
     },
