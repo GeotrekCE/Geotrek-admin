@@ -58,6 +58,11 @@ class PhysicalEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.PhysicalEdge
 
     def get_form_class(self):
+        # TODO: use form_class = PhysicalEdgeForm instead, which currently causes the geom do be saved incorrectly.
+        # To reproduce:
+        # 1. replace this method with form_class = ...
+        # 2. create an object with a geometry off the path network
+        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
         return PhysicalEdgeForm
 
 
@@ -65,6 +70,11 @@ class PhysicalEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.PhysicalEdge.objects.existing()
 
     def get_form_class(self):
+        # TODO: use form_class = PhysicalEdgeForm instead, which currently causes the geom do be saved incorrectly.
+        # To reproduce:
+        # 1. replace this method with form_class = ...
+        # 2. update an object with a geometry off the path network
+        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
         return PhysicalEdgeForm
 
 
@@ -135,6 +145,11 @@ class LandEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.LandEdge
 
     def get_form_class(self):
+        # TODO: use form_class = LandEdgeForm instead, which currently causes the geom do be saved incorrectly.
+        # To reproduce:
+        # 1. replace this method with form_class = ...
+        # 2. create an object with a geometry off the path network
+        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
         return LandEdgeForm
 
 
@@ -142,6 +157,11 @@ class LandEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.LandEdge.objects.existing()
 
     def get_form_class(self):
+        # TODO: use form_class = LandEdgeForm instead, which currently causes the geom do be saved incorrectly.
+        # To reproduce:
+        # 1. replace this method with form_class = ...
+        # 2. update an object with a geometry off the path network
+        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
         return LandEdgeForm
 
 
@@ -209,6 +229,11 @@ class CirculationEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.CirculationEdge
 
     def get_form_class(self):
+        # TODO: use form_class = CirculationEdgeForm instead, which currently causes the geom do be saved incorrectly.
+        # To reproduce:
+        # 1. replace this method with form_class = ...
+        # 2. create an object with a geometry off the path network
+        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
         return CirculationEdgeForm
 
 
@@ -216,6 +241,11 @@ class CirculationEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.CirculationEdge.objects.existing()
 
     def get_form_class(self):
+        # TODO: use form_class = CirculationEdgeForm instead, which currently causes the geom do be saved incorrectly.
+        # To reproduce:
+        # 1. replace this method with form_class = ...
+        # 2. update an object with a geometry off the path network
+        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
         return CirculationEdgeForm
 
 
@@ -281,6 +311,11 @@ class CompetenceEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate):
     model = models.CompetenceEdge
 
     def get_form_class(self):
+        # TODO: use form_class = CompetenceEdgeForm instead, which currently causes the geom do be saved incorrectly.
+        # To reproduce:
+        # 1. replace this method with form_class = ...
+        # 2. create an object with a geometry off the path network
+        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
         return CompetenceEdgeForm
 
 
@@ -288,6 +323,11 @@ class CompetenceEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.CompetenceEdge.objects.existing()
 
     def get_form_class(self):
+        # TODO: use form_class = CompetenceEdgeForm instead, which currently causes the geom do be saved incorrectly.
+        # To reproduce:
+        # 1. replace this method with form_class = ...
+        # 2. update an object with a geometry off the path network
+        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
         return CompetenceEdgeForm
 
 
@@ -353,6 +393,11 @@ class WorkManagementEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCreate
     model = models.WorkManagementEdge
 
     def get_form_class(self):
+        # TODO: use form_class = WorkManagementEdgeForm instead, which currently causes the geom do be saved incorrectly.
+        # To reproduce:
+        # 1. replace this method with form_class = ...
+        # 2. create an object with a geometry off the path network
+        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
         return WorkManagementEdgeForm
 
 
@@ -360,6 +405,11 @@ class WorkManagementEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.WorkManagementEdge.objects.existing()
 
     def get_form_class(self):
+        # TODO: use form_class = WorkManagementEdgeForm instead, which currently causes the geom do be saved incorrectly.
+        # To reproduce:
+        # 1. replace this method with form_class = ...
+        # 2. update an object with a geometry off the path network
+        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
         return WorkManagementEdgeForm
 
 
@@ -427,6 +477,11 @@ class SignageManagementEdgeCreate(CreateFromTopologyMixin, me_views.MapEntityCre
     model = models.SignageManagementEdge
 
     def get_form_class(self):
+        # TODO: use form_class = SignageManagementEdgeForm instead, which currently causes the geom do be saved incorrectly.
+        # To reproduce:
+        # 1. replace this method with form_class = ...
+        # 2. create an object with a geometry off the path network
+        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
         return SignageManagementEdgeForm
 
 
@@ -434,6 +489,11 @@ class SignageManagementEdgeUpdate(me_views.MapEntityUpdate):
     queryset = models.SignageManagementEdge.objects.existing()
 
     def get_form_class(self):
+        # TODO: use form_class = SignageManagementEdgeForm instead, which currently causes the geom do be saved incorrectly.
+        # To reproduce:
+        # 1. replace this method with form_class = ...
+        # 2. update an object with a geometry off the path network
+        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
         return SignageManagementEdgeForm
 
 
