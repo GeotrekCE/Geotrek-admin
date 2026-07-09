@@ -188,7 +188,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Altitude affichée
+            Altitude affichée (en mètres)
           </h3>
           {detail.printed_elevation ? (
             <p>{detail.printed_elevation}</p>
