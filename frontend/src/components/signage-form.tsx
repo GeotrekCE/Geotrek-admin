@@ -157,6 +157,7 @@ export default function SignageForm({
             label="Altitude affichée"
             type="number"
             min="0"
+            description="Exprimée en mètres"
           />
 
           <FormSelectField
