@@ -7,9 +7,9 @@ export default function useSyncInterventionMutation() {
     mutationKey: ["upSync", "intervention"],
     mutationFn: (data: InterventionDataSchemaProps[]) =>
       Promise.all(
-        data.map((body) => {
+        data.map(async (body) => {
           const isPOST = body.appNewItem === true
-          return queryFnWithAuth(
+          const promise = await queryFnWithAuth(
             `/intervention/drf/interventions${!isPOST ? "/" + body.id : ""}`,
             {
               method: isPOST ? "POST" : "PATCH",
@@ -17,6 +17,7 @@ export default function useSyncInterventionMutation() {
               body: JSON.stringify(getBodyForMutation(body)),
             }
           ).catch((error) => error)
+          return { [body.id]: promise }
         })
       ),
   })

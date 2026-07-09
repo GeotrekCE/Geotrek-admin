@@ -32,15 +32,15 @@ import type {
   SignageDataSchemaProps,
 } from "@/schemas/data"
 
-function getStatusFromResult(
-  result?:
-    | string
-    | SignageDataSchemaProps
-    | InfrastructureDataSchemaProps
-    | InterventionDataSchemaProps
-    | ReportDataSchemaProps
-    | FetchError
-) {
+type ResultPromise =
+  | string
+  | SignageDataSchemaProps
+  | InfrastructureDataSchemaProps
+  | InterventionDataSchemaProps
+  | ReportDataSchemaProps
+  | FetchError
+
+function getStatusFromResult(result?: ResultPromise) {
   if (result === undefined) {
     return {
       isError: null,
@@ -106,40 +106,47 @@ function RouteComponent() {
     if (signageData && signageData.length) {
       signageMutation.mutate(signageData, {
         onSuccess(result, variables) {
-          result.map(getStatusFromResult).map(({ data, isSuccess }, index) => {
-            if (isSuccess) {
-              db.signageData.where({ id: variables[index].id }).delete()
-              if (variables[index].appNewItem) {
-                db.rawData
-                  .where({
-                    reference: "signage",
-                    id: variables[index].id,
-                  })
-                  .delete()
+          result
+            .flatMap((item) => Object.values(item))
+            .map(getStatusFromResult)
+            .map(({ data, isSuccess }, index) => {
+              console.log(data, isSuccess)
+              if (isSuccess) {
+                db.signageData.where({ id: variables[index].id }).delete()
+                if (!variables[index].appNewItem) {
+                  db.rawData
+                    .where({
+                      reference: "signage",
+                      id: variables[index].id,
+                    })
+                    .delete()
+                }
+                db.signageData.put(data[0] as SignageDataSchemaProps)
               }
-              db.signageData.put(data[0] as SignageDataSchemaProps)
-            }
-          })
+            })
         },
       })
     }
     if (interventionData && interventionData.length) {
       interventionMutation.mutate(interventionData, {
         onSuccess(result, variables) {
-          result.map(getStatusFromResult).map(({ data, isSuccess }, index) => {
-            if (isSuccess) {
-              db.interventionData.where({ id: variables[index].id }).delete()
-              if (variables[index].appNewItem) {
-                db.rawData
-                  .where({
-                    reference: "intervention",
-                    id: variables[index].id,
-                  })
-                  .delete()
+          result
+            .flatMap((item) => Object.values(item))
+            .map(getStatusFromResult)
+            .map(({ data, isSuccess }, index) => {
+              if (isSuccess) {
+                db.interventionData.where({ id: variables[index].id }).delete()
+                if (!variables[index].appNewItem) {
+                  db.rawData
+                    .where({
+                      reference: "intervention",
+                      id: variables[index].id,
+                    })
+                    .delete()
+                }
+                db.interventionData.put(data[0] as InterventionDataSchemaProps)
               }
-              db.interventionData.put(data[0] as InterventionDataSchemaProps)
-            }
-          })
+            })
         },
       })
     }
@@ -147,22 +154,27 @@ function RouteComponent() {
     if (infrastructureData && infrastructureData.length) {
       infrastructureMutation.mutate(infrastructureData, {
         onSuccess(result, variables) {
-          result.map(getStatusFromResult).map(({ data, isSuccess }, index) => {
-            if (isSuccess) {
-              db.infrastructureData.where({ id: variables[index].id }).delete()
-              if (variables[index].appNewItem) {
-                db.rawData
-                  .where({
-                    reference: "infrastructure",
-                    id: variables[index].id,
-                  })
+          result
+            .flatMap((item) => Object.values(item))
+            .map(getStatusFromResult)
+            .map(({ data, isSuccess }, index) => {
+              if (isSuccess) {
+                db.infrastructureData
+                  .where({ id: variables[index].id })
                   .delete()
+                if (!variables[index].appNewItem) {
+                  db.rawData
+                    .where({
+                      reference: "infrastructure",
+                      id: variables[index].id,
+                    })
+                    .delete()
+                }
+                db.infrastructureData.put(
+                  data[0] as InfrastructureDataSchemaProps
+                )
               }
-              db.infrastructureData.put(
-                data[0] as InfrastructureDataSchemaProps
-              )
-            }
-          })
+            })
         },
       })
     }
@@ -170,20 +182,23 @@ function RouteComponent() {
     if (reportData && reportData.length) {
       reportMutation.mutate(reportData, {
         onSuccess(result, variables) {
-          result.map(getStatusFromResult).map(({ data, isSuccess }, index) => {
-            if (isSuccess) {
-              db.reportData.where({ id: variables[index].id }).delete()
-              if (variables[index].appNewItem) {
-                db.rawData
-                  .where({
-                    reference: "report",
-                    id: variables[index].id,
-                  })
-                  .delete()
+          result
+            .flatMap((item) => Object.values(item))
+            .map(getStatusFromResult)
+            .map(({ data, isSuccess }, index) => {
+              if (isSuccess) {
+                db.reportData.where({ id: variables[index].id }).delete()
+                if (!variables[index].appNewItem) {
+                  db.rawData
+                    .where({
+                      reference: "report",
+                      id: variables[index].id,
+                    })
+                    .delete()
+                }
+                db.reportData.put(data[0] as ReportDataSchemaProps)
               }
-              db.reportData.put(data[0] as ReportDataSchemaProps)
-            }
-          })
+            })
         },
       })
     }
@@ -238,14 +253,12 @@ function RouteComponent() {
     .flat()
     .sort((a, b) => dateCompare(b.date_update, a.date_update))
 
-  const mutationResultArray = [
-    signageMutation.data,
-    interventionMutation.data,
-    infrastructureMutation.data,
-    reportMutation.data,
-  ]
-    .flat()
-    .filter((item) => item !== undefined)
+  const mutationList = {
+    signage: signageMutation,
+    intervention: interventionMutation,
+    infrastructure: infrastructureMutation,
+    report: reportMutation,
+  }
 
   return (
     <div>
@@ -255,8 +268,15 @@ function RouteComponent() {
           {elements.length === 0 && (
             <p className="py-4 text-center">Aucun élément à afficher.</p>
           )}
-          {elements.map((item, index) => {
-            const result = getStatusFromResult(mutationResultArray[index])
+          {elements.map((item) => {
+            const mutationItem =
+              mutationList[item.reference as keyof typeof mutationList]
+
+            const result = getStatusFromResult(
+              mutationItem.data?.find(
+                (mutationData) => !!mutationData?.[item.id]
+              )?.[item.id]
+            )
             return (
               <li key={`${item.reference}-${item.id}`} className="my-4">
                 <Item
@@ -304,7 +324,7 @@ function RouteComponent() {
                         {result.isError && (
                           <div className="mt-3 text-accent-foreground">
                             <span className="flex items-center gap-2 font-bold">
-                              <X className="size-4" aria-hiden /> Erreur de
+                              <X className="size-4" aria-hidden /> Erreur de
                               synchronisation
                             </span>
                             <div className="ms-6">
@@ -319,7 +339,7 @@ function RouteComponent() {
                         {result.isSuccess && (
                           <div className="mt-3 text-accent-foreground">
                             <span className="flex items-center gap-2 font-bold">
-                              <Check className="size-4" aria-hiden />
+                              <Check className="size-4" aria-hidden />
                               Synchronisation réussie
                             </span>
                           </div>

@@ -7,9 +7,9 @@ export default function useSyncInfrastructureMutation() {
     mutationKey: ["upSync", "infrastructures"],
     mutationFn: (data: InfrastructureDataSchemaProps[]) =>
       Promise.all(
-        data.map((body) => {
+        data.map(async (body) => {
           const isPOST = body.appNewItem === true
-          return queryFnWithAuth(
+          const promise = await queryFnWithAuth(
             `/infrastructure/drf/infrastructures${!isPOST ? "/" + body.id : ""}`,
             {
               method: isPOST ? "POST" : "PATCH",
@@ -17,6 +17,7 @@ export default function useSyncInfrastructureMutation() {
               body: JSON.stringify(getBodyForMutation(body)),
             }
           ).catch((error) => error)
+          return { [body.id]: promise }
         })
       ),
   })
