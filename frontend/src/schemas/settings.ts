@@ -12,7 +12,7 @@ export const settingsSchema = z.object({
     maps: z.object({
       layers: z.array(
         z.object({
-          id:  z.number().int().positive(),
+          id: z.number().int().positive(),
           pmtiles_url: z.string(),
           json_style_url: z.string(),
           name: z.string().min(1),
