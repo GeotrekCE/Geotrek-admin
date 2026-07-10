@@ -5,6 +5,7 @@ import { getUpdatedStatus } from "@/lib/date"
 import { useIntervalSync } from "@/hook/useSettingsQuery"
 import { Button } from "@/components/ui/button"
 import { db } from "@/lib/db"
+import { m } from "@/paraglide/messages"
 
 export default function SyncReferences() {
   const { refetch } = useReferencesQuery()
@@ -15,14 +16,14 @@ export default function SyncReferences() {
   return (
     <CardSync
       className="my-4"
-      title="Référentiel de saisie"
-      description="Fichiers de configuration du référentiel de saisie"
-      noData="Fichier de configuration manquant"
+      title={m["common.sync-reference-title"]()}
+      description={m["common.sync-reference-description"]()}
+      noData={m["common.sync-reference-none"]()}
       lastSync={lastSync}
       updatedStatus={getUpdatedStatus(lastSync, updateLimitation)}
       actions={
         <Button className="w-full" onClick={refetch}>
-          Mettre à jour
+          {m["common.update-needed"]()}
         </Button>
       }
     />

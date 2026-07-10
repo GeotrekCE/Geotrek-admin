@@ -12,6 +12,7 @@ import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { usePermission } from "@/hook/useSettingsQuery"
 import { useLiveQuery } from "dexie-react-hooks"
+import { m } from "@/paraglide/messages"
 
 export default function SignageForm({
   defaultValues,
@@ -92,8 +93,12 @@ export default function SignageForm({
 
       toast.success(
         isEdit
-          ? `La signalétique "${value.name}" a bien été modifiée`
-          : `La signalétique "${value.name}" a bien été créée`,
+          ? m["common.edit-success"]({
+              item: `${m["content.signage"]()} "${value.name}"`,
+            })
+          : m["common.create-success"]({
+              item: `${m["content.signage"]()} "${value.name}"`,
+            }),
         {
           position: "top-center",
         }
@@ -109,11 +114,11 @@ export default function SignageForm({
     <form.AppForm>
       <form.Form>
         <FieldGroup className="mb-4">
-          <FormTextField name="name" label="Nom" required />
+          <FormTextField name="name" label={m["form.name"]()} required />
 
           <FormSelectField
             name="type"
-            label="Type"
+            label={m["form.type"]()}
             list={signagetype}
             required
           />
@@ -121,61 +126,69 @@ export default function SignageForm({
           {can_bypass_structure && is_superuser && (
             <FormSelectField
               name="structure"
-              label="Structure liée"
+              label={m["form.structure"]()}
               list={structure}
               required
             />
           )}
 
-          <FormTextareaField name="description" label="Description" isRTE />
+          <FormTextareaField
+            name="description"
+            label={m["form.description"]()}
+            isRTE
+          />
 
           <FormGeomField
             name="geom.coordinates"
-            label="Localisation"
+            label={m["form.location"]()}
             icon={pictogram}
             required
           />
 
           <FormSelectField
             name="conditions"
-            label="État"
+            label={m["form.state"]()}
             list={signagecondition}
             multiple
           />
 
           <FormTextField
             name="implantation_year"
-            label="Année d'implantation"
+            label={m["form.implantation-year"]()}
             type="number"
             min="0"
           />
 
-          <FormTextField name="code" label="Code" />
+          <FormTextField name="code" label={m["content.code"]()} />
 
           <FormTextField
             name="printed_elevation"
-            label="Altitude affichée"
+            label={m["content.displayed-elevation"]()}
             type="number"
             min="0"
-            description="Exprimée en mètres"
           />
 
           <FormSelectField
             name="manager"
-            label="Gestionnaire"
+            label={m["content.manager"]()}
             list={organism}
           />
 
-          <FormSelectField name="sealing" label="Scellement" list={sealing} />
+          <FormSelectField
+            name="sealing"
+            label={m["content.sealing"]()}
+            list={sealing}
+          />
 
           <FormSelectField
             name="access"
-            label="Moyen d'accès"
+            label={m["form.access"]()}
             list={accessmean}
           />
 
           <Button type="submit">
-            {isEdit ? "Modifier" : "Créer"} la signalétique
+            {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
+            {m["content.signage"]().toLowerCase()}
           </Button>
           {rawDataItem && (
             <Button
@@ -187,12 +200,15 @@ export default function SignageForm({
                   .delete()
                 const { reference: _reference, ...restoredData } = rawDataItem
                 await db.signageData.put(restoredData as SignageDataSchemaProps)
-                toast.success("Restoration de la signalétique terminée", {
-                  position: "top-center",
-                })
+                toast.success(
+                  m["common.restore-success"]({ item: m["content.signage"]() }),
+                  {
+                    position: "top-center",
+                  }
+                )
               }}
             >
-              Annuler les modifications en attente
+              {m["content.restore-pending"]()}
             </Button>
           )}
         </FieldGroup>

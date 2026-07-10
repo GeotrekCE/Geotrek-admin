@@ -11,6 +11,7 @@ import {
 import { cn } from "@/lib/utils"
 import LastSync from "@/components/last-sync"
 import useOnline from "@/hook/useOnline"
+import { m } from "@/paraglide/messages"
 
 type CardSyncProps = React.ComponentProps<"div"> & {
   title: string
@@ -38,9 +39,9 @@ export default function CardSync({
       return noData
     }
     if (updatedStatus === "WARNING") {
-      return "Une mise à jour est recommandée"
+      return m["common.update-recommended"]()
     }
-    return "Une mise à jour est nécessaire"
+    return m["common.update-needed"]()
   }
 
   return (
@@ -74,11 +75,7 @@ export default function CardSync({
         {!!lastSync && <LastSync date={lastSync} />}
       </CardContent>
       <CardFooter className="flex-col gap-4">
-        {online ? (
-          actions
-        ) : (
-          <p>Vous êtes hors ligne et ne pouvez pas télécharger les données</p>
-        )}
+        {online ? actions : <p>{m["common.offline-cannot-download"]()}</p>}
       </CardFooter>
     </Card>
   )

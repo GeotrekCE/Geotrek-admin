@@ -17,6 +17,7 @@ import { FormCheckboxField } from "./forms"
 import { Trash } from "lucide-react"
 import { usePermission } from "@/hook/useSettingsQuery"
 import { useLiveQuery } from "dexie-react-hooks"
+import { m } from "@/paraglide/messages"
 
 export default function InterventionForm({
   defaultValues,
@@ -103,8 +104,12 @@ export default function InterventionForm({
 
       toast.success(
         isEdit
-          ? `L'aménagement "${value.name}" a bien été modifié`
-          : `L'aménagement "${value.name}" a bien été créé`,
+          ? m["common.edit-success"]({
+              item: `${m["content.intervention"]()} "${value.name}"`,
+            })
+          : m["common.create-success"]({
+              item: `${m["content.intervention"]()} "${value.name}"`,
+            }),
         {
           position: "top-center",
         }
@@ -120,16 +125,23 @@ export default function InterventionForm({
     <form.AppForm>
       <form.Form>
         <FieldGroup className="mb-4">
-          <FormTextField name="name" label="Nom" required />
+          <FormTextField name="name" label={m["form.name"]()} required />
 
-          <FormSelectField name="type" label="Type" list={interventiontype} />
+          <FormSelectField
+            name="type"
+            label={m["form.type"]()}
+            list={interventiontype}
+          />
 
-          <FormCheckboxField name="subcontracting" label="Sous-traitance" />
+          <FormCheckboxField
+            name="subcontracting"
+            label={m["form.outsourcing"]()}
+          />
 
           {can_bypass_structure && is_superuser && (
             <FormSelectField
               name="structure"
-              label="Structure liée"
+              label={m["form.structure"]()}
               list={structure}
               required
             />
@@ -137,14 +149,14 @@ export default function InterventionForm({
 
           <FormTextField
             name="begin_date"
-            label="Date de début"
+            label={m["form.begin-date"]()}
             type="date"
             required
           />
 
           <FormTextField
             name="end_date"
-            label="Date de fin"
+            label={m["form.end-date"]()}
             type="date"
             validators={{
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -166,24 +178,28 @@ export default function InterventionForm({
 
           <FormSelectField
             name="status"
-            label="Statut"
+            label={m["form.status"]()}
             list={interventionstatus}
             required
           />
 
-          <FormTextareaField name="description" label="Description" isRTE />
+          <FormTextareaField
+            name="description"
+            label={m["form.description"]()}
+            isRTE
+          />
 
           <FormGeomField
             name="geom.coordinates"
-            label="Localisation"
+            label={m["form.location"]()}
             icon={pictogram}
             required
-            description="Les interventions de type linéaire ne sont pas encore pris en charge."
+            description={m["form.geom-description"]()}
           />
 
           <FormSelectField
             name="disorders"
-            label="État"
+            label={m["form.state"]()}
             list={interventiondisorder}
             multiple
           />
@@ -197,27 +213,41 @@ export default function InterventionForm({
             description="Valeur calculée automatiquement"
           /> */}
 
-          <FormTextField name="width" label="Largeur" type="number" min="0" />
+          <FormTextField
+            name="width"
+            label={m["form.width"]()}
+            type="number"
+            min="0"
+          />
 
-          <FormTextField name="height" label="Hauteur" type="number" min="0" />
+          <FormTextField
+            name="height"
+            label={m["form.height"]()}
+            type="number"
+            min="0"
+          />
 
-          <FormSelectField name="stake" label="Enjeu" list={stake} />
+          <FormSelectField
+            name="stake"
+            label={m["form.stake"]()}
+            list={stake}
+          />
 
           <FormSelectField
             name="access"
-            label="Moyen d'accès"
+            label={m["form.access"]()}
             list={accessmean}
           />
 
           <form.Field name="man_day" mode="array">
             {(field) => (
               <fieldset className="flex flex-col flex-wrap items-start">
-                <legend className="mt-3">Jours-Hommes</legend>
+                <legend className="mt-3">{m["form.man-days"]()}</legend>
                 {field.state.value?.map((_item, index: number) => (
                   <div key={index} className="items-starts my-3 flex gap-5">
                     <FormTextField
                       name={`man_day[${index}].nb_days`}
-                      label="Temps en jours"
+                      label={m["form.time-in-days"]()}
                       type="number"
                       className="w-40"
                       step="0.01"
@@ -225,7 +255,7 @@ export default function InterventionForm({
 
                     <FormSelectField
                       name={`man_day[${index}].job`}
-                      label="Fonction"
+                      label={m["form.job"]()}
                       list={interventionjob}
                       className="w-full"
                       required
@@ -242,7 +272,7 @@ export default function InterventionForm({
                     >
                       <Trash aria-hidden />
 
-                      <span className="sr-only">Enlever</span>
+                      <span className="sr-only">{m["form.remove"]()}</span>
                     </Button>
                   </div>
                 ))}
@@ -256,14 +286,15 @@ export default function InterventionForm({
                     })
                   }}
                 >
-                  Ajouter
+                  {m["form.add"]()}
                 </Button>
               </fieldset>
             )}
           </form.Field>
 
           <Button type="submit">
-            {isEdit ? "Modifier" : "Créer"} l'intervention
+            {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
+            {m["content.intervention"]().toLowerCase()}
           </Button>
 
           {rawDataItem && (
@@ -278,12 +309,17 @@ export default function InterventionForm({
                 await db.interventionData.put(
                   restoredData as InterventionDataSchemaProps
                 )
-                toast.success("Restoration de l'intervention terminée", {
-                  position: "top-center",
-                })
+                toast.success(
+                  m["common.restore-success"]({
+                    item: m["content.intervention"](),
+                  }),
+                  {
+                    position: "top-center",
+                  }
+                )
               }}
             >
-              Annuler les modifications en attente
+              {m["content.restore-pending"]()}
             </Button>
           )}
         </FieldGroup>

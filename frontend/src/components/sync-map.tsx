@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils"
 import { useAppSettings } from "@/hook/useAppSettings"
 import CardSync from "@/components/card-sync"
 import { buttonVariants } from "@/components/ui/button"
+import { m } from "@/paraglide/messages"
 
 export default function SyncMap() {
   const {
@@ -15,20 +16,19 @@ export default function SyncMap() {
   return (
     <CardSync
       className="my-4"
-      title="Fonds cartographiques"
-      noData="Fichiers cartographiques manquants"
+      title={m["common.sync-map-title"]()}
+      noData={m["common.sync-map-none"]()}
       updatedStatus={hasData ? "UPDATED" : "EXPIRED"}
       lastSync={maps?.lastSync}
       description={
         <>
-          <p>
-            Fichiers tuiles cartographiques et choix des fonds de cartes
-            embarqués en hors ligne (téléchargés en local)
-          </p>
+          <p>{m["common.sync-map-description"]()} </p>
           {hasData && (
             <p className="mt-4 flex items-center gap-2 text-sm text-primary">
-              <Check className="size-4" aria-hidden /> {maps?.layers?.length}{" "}
-              fond(s) cartographique(s) embarqué(s)
+              <Check className="size-4" aria-hidden />
+              {m["common.map-layers-count"]({
+                count: maps?.layers?.length ?? 0,
+              })}
             </p>
           )}
         </>
@@ -38,7 +38,7 @@ export default function SyncMap() {
           className={cn("w-full", buttonVariants())}
           to="/{-$locale}/sync/map"
         >
-          {hasData ? "Modifier" : "Choisir"}
+          {hasData ? m["common.edit"] : m["common.pick"]}
         </Link>
       }
     />

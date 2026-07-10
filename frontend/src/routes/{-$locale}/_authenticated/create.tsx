@@ -17,6 +17,7 @@ import type {
   SignageReferencesSchemaProps,
 } from "@/schemas/references"
 import { UpdateDataWarning } from "@/components/update-data-warning"
+import { m } from "@/paraglide/messages"
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/create")({
   beforeLoad: UpdateDataWarning,
@@ -45,25 +46,25 @@ function RouteComponent() {
   const elements = references?.length
     ? [
         {
-          label: "Intervention",
+          label: m["content.intervention"](),
           type: "intervention",
           description: "",
           pictogram: intervention?.pictogram,
         },
         {
-          label: "Signalétique",
+          label: m["content.signage"](),
           type: "signage",
           description: "",
           pictogram: signage?.pictogram,
         },
         {
-          label: "Signalement",
+          label: m["content.report"](),
           type: "report",
           description: "",
           pictogram: report?.pictogram,
         },
         {
-          label: "Aménagement",
+          label: m["content.infrastructure"](),
           type: "infrastructure",
           description: "",
           pictogram: infrastructure?.pictogram,
@@ -72,7 +73,9 @@ function RouteComponent() {
     : []
   return (
     <div className="flex grow flex-col p-4">
-      <h1 className="font-bold text-accent-foreground">Nouvel élément</h1>
+      <h1 className="font-bold text-accent-foreground">
+        {m["common.new-item"]()}
+      </h1>
       <ul className="flex grow flex-col justify-center gap-4">
         {elements.map((item) => (
           <li key={item.type}>

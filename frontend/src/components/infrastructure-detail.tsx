@@ -14,6 +14,7 @@ import { toast } from "sonner"
 import NotFound from "@/components/not-found"
 import { usePermission } from "@/hook/useSettingsQuery"
 import type { InfrastructureDataSchemaProps } from "@/schemas/data"
+import { m } from "@/paraglide/messages"
 
 export default function InfrastructureDetail(params: {
   id: string
@@ -71,7 +72,7 @@ export default function InfrastructureDetail(params: {
   return (
     <div>
       <Header
-        title="Details aménagement"
+        title={m["content.details.infrastructure"]()}
         withBackbutton
         afterTitle={
           <Link
@@ -79,7 +80,7 @@ export default function InfrastructureDetail(params: {
             to="/{-$locale}/data/$type/$id/edit"
             params={params}
           >
-            Modifier
+            {m["common.edit"]()}
           </Link>
         }
       />
@@ -91,12 +92,15 @@ export default function InfrastructureDetail(params: {
             </span>
             {isAsyncItem && (
               <span className="flex items-center gap-2 text-sm text-destructive">
-                <CircleAlert className="size-4" aria-hidden /> Non synchronisé
+                <CircleAlert className="size-4" aria-hidden />
+                {m["content.not-synced"]()}
               </span>
             )}
           </h2>
           <p>
-            <span className="text-primary">Aménagement</span>
+            <span className="text-primary">
+              {m["content.infrastructure"]()}
+            </span>
             {detail.type && ` - ${detail.type.name}`}
           </p>
           {detail.conditions.length > 0 && (
@@ -109,9 +113,13 @@ export default function InfrastructureDetail(params: {
             </p>
           )}
           <div className="mt-4">
-            <p>Créé le {createDate}</p>
+            <p>
+              {m["content.created-on"]()} {createDate}
+            </p>
             {createDate !== updateDate && (
-              <p>Dernière modification le {updateDate}</p>
+              <p>
+                {m["content.updated-on"]()} {updateDate}
+              </p>
             )}
           </div>
         </section>
@@ -119,30 +127,30 @@ export default function InfrastructureDetail(params: {
         {can_bypass_structure && is_superuser && (
           <section className="my-8">
             <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-              Structure liée
+              {m["content.linked-structure"]()}
             </h3>
             {detail.structure ? (
               <p>{detail.structure.name}</p>
             ) : (
-              <p className="italic">Aucune structure liée.</p>
+              <p className="italic">{m["content.no-linked-structure"]()}</p>
             )}
           </section>
         )}
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Description
+            {m["content.description"]()}
           </h3>
           {detail.description ? (
             <div dangerouslySetInnerHTML={{ __html: detail.description }} />
           ) : (
-            <p className="italic">Aucune description disponible.</p>
+            <p className="italic">{m["content.no-description"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Localisation
+            {m["content.location"]()}
           </h3>
           {detail.geom && (
             <Map
@@ -161,56 +169,56 @@ export default function InfrastructureDetail(params: {
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Année d'implantation
+            {m["content.implantation-year"]()}
           </h3>
           {detail.implantation_year ? (
             <p>{detail.implantation_year}</p>
           ) : (
-            <p className="italic">Aucune date indiquée.</p>
+            <p className="italic">{m["content.no-implantation-year"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Accessibilité
+            {m["content.accessibility"]()}
           </h3>
           {detail.accessibility ? (
             <div dangerouslySetInnerHTML={{ __html: detail.accessibility }} />
           ) : (
-            <p className="italic">Aucune accessibilité indiquée.</p>
+            <p className="italic">{m["content.no-accessibility"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Niveau des usagers
+            {m["content.usage-level"]()}
           </h3>
           {detail.usage_difficulty ? (
             <p>{detail.usage_difficulty.name}</p>
           ) : (
-            <p className="italic">Aucun niveau indiqué.</p>
+            <p className="italic">{m["content.no-usage-level"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Niveau des interventions
+            {m["content.maintenance-level"]()}
           </h3>
           {detail.maintenance_difficulty ? (
             <p>{detail.maintenance_difficulty.name}</p>
           ) : (
-            <p className="italic">Aucun niveau indiqué.</p>
+            <p className="italic">{m["content.no-maintenance-level"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Moyen d'accès
+            {m["content.access"]()}
           </h3>
           {detail.access ? (
             <p>{detail.access.name}</p>
           ) : (
-            <p className="italic">Aucun moyen d'accès indiqué.</p>
+            <p className="italic">{m["content.no-access"]()}</p>
           )}
         </section>
 
@@ -221,7 +229,7 @@ export default function InfrastructureDetail(params: {
               to="/{-$locale}/data/$type/$id/edit"
               params={params}
             >
-              Modifier l'aménagement
+              {m["common.edit-item"]({ item: m["content.infrastructure"]() })}
             </Link>
             {detail.appNewItem === true && (
               <Button
@@ -229,7 +237,9 @@ export default function InfrastructureDetail(params: {
                 className="w-full"
                 onClick={handleDelete}
               >
-                Supprimer l'aménagement
+                {m["common.delete-item"]({
+                  item: m["content.infrastructure"](),
+                })}
               </Button>
             )}
             {rawDataItem && (
@@ -244,12 +254,12 @@ export default function InfrastructureDetail(params: {
                   await db.infrastructureData.put(
                     restoredData as InfrastructureDataSchemaProps
                   )
-                  toast.success("Restoration de l'aménagement terminée", {
+                  toast.success(m["content.restore-complete"](), {
                     position: "top-center",
                   })
                 }}
               >
-                Annuler les modifications en attente
+                {m["content.restore-pending"]()}
               </Button>
             )}
           </div>

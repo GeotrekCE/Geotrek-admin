@@ -20,6 +20,7 @@ import { ListFilter, Search } from "lucide-react"
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import type { ListSearchParams } from "../routes/{-$locale}/_authenticated/index"
 import { Badge } from "@/components/ui/badge"
+import { m } from "@/paraglide/messages"
 
 export default function ListFilters({
   filters = {},
@@ -60,13 +61,13 @@ export default function ListFilters({
         <InputGroupInput
           defaultValue={filters.q}
           type="search"
-          placeholder="Rechercher"
+          placeholder={m["common.search"]()}
           onChange={(event) => debounced(event.target.value.toString())}
         />
         <InputGroupAddon>
           <Search
             type="search"
-            aria-label="Rechercher"
+            aria-label={m["common.search"]()}
             className="text-accent-foreground"
           />
         </InputGroupAddon>
@@ -76,7 +77,7 @@ export default function ListFilters({
           render={
             <Button variant="outline">
               <ListFilter aria-hidden />
-              Filtres
+              {m["common.filters"]()}
               {hasTypeFilter && (
                 <Badge className="size-5 text-xs">{filters.type?.length}</Badge>
               )}
@@ -94,7 +95,11 @@ export default function ListFilters({
             <Header
               title="Filtres"
               beforeTitle={
-                <SheetClose render={<Button variant="link">Annuler</Button>} />
+                <SheetClose
+                  render={
+                    <Button variant="link">{m["common.cancel"]()}</Button>
+                  }
+                />
               }
               afterTitle={
                 hasTypeFilter && (
@@ -109,14 +114,14 @@ export default function ListFilters({
                       setOpen(false)
                     }}
                   >
-                    Effacer tout
+                    {m["common.clear-all"]()}
                   </Button>
                 )
               }
             />
             <div className="p-4">
               <div className="flex items-center justify-between">
-                <h2 className="my-3 font-bold">Type(s) d'objets</h2>
+                <h2 className="my-3 font-bold">{m["common.object-types"]()}</h2>
                 {hasTypeFilter && (
                   <Badge className="size-6">{filters.type?.length}</Badge>
                 )}
@@ -138,25 +143,25 @@ export default function ListFilters({
                       className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground data-pressed:bg-primary data-pressed:text-primary-foreground"
                       value="signage"
                     >
-                      Signalétiques
+                      {m["content.signage"]()}
                     </ToggleGroupItem>
                     <ToggleGroupItem
                       className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground data-pressed:bg-primary data-pressed:text-primary-foreground"
                       value="intervention"
                     >
-                      Interventions
+                      {m["content.intervention"]()}
                     </ToggleGroupItem>
                     <ToggleGroupItem
                       className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground data-pressed:bg-primary data-pressed:text-primary-foreground"
                       value="report"
                     >
-                      Signalement
+                      {m["content.report"]()}
                     </ToggleGroupItem>
                     <ToggleGroupItem
                       className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground data-pressed:bg-primary data-pressed:text-primary-foreground"
                       value="infrastructure"
                     >
-                      Aménagement
+                      {m["content.infrastructure"]()}
                     </ToggleGroupItem>
                   </ToggleGroup>
                 )}
@@ -164,7 +169,7 @@ export default function ListFilters({
             </div>
             <SheetFooter className="pb-27">
               <Button type="submit" className="w-full">
-                Appliquer les filtres
+                {m["common.apply"]()} {m["common.filters"]().toLowerCase()}
               </Button>
             </SheetFooter>
           </form>

@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { redirect } from "@tanstack/react-router"
 import { toast } from "sonner"
+import { m } from "@/paraglide/messages"
 
 export async function UpdateDataWarning() {
   const hasReferencesSettings = await db.appSync.get("references")
@@ -8,11 +9,8 @@ export async function UpdateDataWarning() {
   if (!hasReferencesSettings || !hasDataSettings) {
     toast.info(
       <div>
-        <p className="font-bold">Une mise à jour est nécessaire</p>
-        <p>
-          Veuillez mettre à jour les données de référentiel de saisie avant
-          votre sortie de terrain.
-        </p>
+        <p className="font-bold">{m["common.update-needed"]()}</p>
+        <p>{m["common.update-needed-description"]()}</p>
       </div>,
       {
         position: "top-center",

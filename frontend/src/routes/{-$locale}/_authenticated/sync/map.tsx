@@ -18,6 +18,7 @@ import {
 import { Button } from "@/components/ui/button"
 import { Checkbox } from "@/components/ui/checkbox"
 import MapDownloadProgress from "@/components/map-download-progress"
+import { m } from "@/paraglide/messages"
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/sync/map")({
   component: RouteComponent,
@@ -54,12 +55,12 @@ function RouteComponent() {
       onSubmit: z.object({
         layers: z
           .array(z.string())
-          .min(1, "Veuillez sélectionner au moins un fond cartographique")
+          .min(1, m["common.sync-map-form-error"]())
           .refine(
             (value) =>
-              value.every((task) => layers.some((t) => t.name === task)),
+              value.every((layer) => layers.some((l) => l.name === layer)),
             {
-              message: "Fond cartographique non valide.",
+              message: m["common.sync-map-form-error-valid"](),
             }
           ),
       }),
@@ -83,7 +84,7 @@ function RouteComponent() {
 
   return (
     <div>
-      <Header title="Fonds de cartes et tuiles" withBackbutton />
+      <Header title={m["common.sync-map-content-title"]()} withBackbutton />
 
       <MapDownloadProgress
         layers={layers}
@@ -96,7 +97,7 @@ function RouteComponent() {
       {mapsAlreadyDownloaded.length > 0 && (
         <div className="m-4">
           <h2 className="mb-2 text-xl font-bold text-accent-foreground">
-            Fonds cartographiques déjà téléchargés
+            {m["common.sync-map-content-title-downloaded"]()}
           </h2>
           <ul>
             {mapsAlreadyDownloaded.map(
@@ -112,17 +113,17 @@ function RouteComponent() {
                     size="sm"
                     onClick={() => {
                       toast.promise(() => deleteZone(id), {
-                        loading: "Suppression en cours...",
+                        loading: m["common.deleting"](),
                         success: () => {
                           removeMapLayer(id)
-                          return "Suppression terminée"
+                          return m["common.deletion-complete"]()
                         },
                         error: ({ message }) => message,
                         position: "top-center",
                       })
                     }}
                   >
-                    Supprimer
+                    {m["common.delete"]()}
                   </Button>
                 </li>
               )
@@ -139,7 +140,7 @@ function RouteComponent() {
         >
           <fieldset className="m-4">
             <legend className="my-4 text-xl font-bold text-accent-foreground">
-              Sélectionnez les fonds cartographiques à télécharger
+              {m["common.sync-map-form-title"]()}
             </legend>
             <form.Field
               name="layers"
@@ -203,7 +204,7 @@ function RouteComponent() {
           <Field className="p-4">
             {layersName.length > 0 && (
               <Button type="submit" aria-describedby="submit-helptext">
-                Télécharger
+                {m["common.download"]()}
               </Button>
             )}
             {layersName.length > 0 && (
@@ -211,7 +212,8 @@ function RouteComponent() {
                 id="submit-helptext"
                 className="text-center text-sm text-muted-foreground"
               >
-                Taille estimée : {formatSize(getTotalSize(layersName))}
+                {m["common.sync-map-form-estimated-size"]()}{" "}
+                {formatSize(getTotalSize(layersName))}
               </p>
             )}
           </Field>

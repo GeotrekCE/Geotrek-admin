@@ -7,6 +7,7 @@ import SyncMap from "@/components/sync-map"
 import SyncData from "@/components/sync-data"
 import SyncUp from "@/components/sync-up"
 import { useAsyncStoredData } from "@/hook/useStoredData"
+import { m } from "@/paraglide/messages"
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/sync/")({
   component: Sync,
@@ -18,12 +19,12 @@ function Sync() {
 
   return (
     <div>
-      <Header title="Synchronisation" />
+      <Header title={m["menu.sync"]()} />
       <ConnectionStatus className="p-4" />
 
       <section className="m-4" id="sync-down">
         <h2 className="flex items-center gap-2 text-xl font-bold text-accent-foreground">
-          <Download aria-hidden /> Synchronisation avant terrain
+          <Download aria-hidden /> {m["menu.sync"]()} avant terrain
         </h2>
 
         <SyncReferences />

@@ -15,6 +15,7 @@ import InterventionForm from "@/components/intervention-form"
 import { UpdateDataWarning } from "@/components/update-data-warning"
 import ReportForm from "@/components/report-form"
 import NotFound from "@/components/not-found"
+import { m } from "@/paraglide/messages"
 
 export const Route = createFileRoute(
   "/{-$locale}/_authenticated/data/$type/create"
@@ -24,18 +25,17 @@ export const Route = createFileRoute(
 })
 
 function getTitle(type: string) {
-  switch (type) {
-    case "infrastructure":
-      return "Créer un aménagement"
-    case "signage":
-      return "Créer une signalétique"
-    case "intervention":
-      return "Créer une intervention"
-    case "report":
-      return "Créer un signalement"
-    default:
-      return "Créer un élément"
+  if (
+    type === "signage" ||
+    type === "infrastructure" ||
+    type === "intervention" ||
+    type === "report"
+  ) {
+    return m["common.create-item"]({
+      item: m[`content.${type}`]().toLowerCase(),
+    })
   }
+  return m["common.create"]()
 }
 
 function RouteComponent() {

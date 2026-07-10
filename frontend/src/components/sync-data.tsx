@@ -12,6 +12,7 @@ import { db } from "@/lib/db"
 import { useLiveQuery } from "dexie-react-hooks"
 import { Alert, AlertTitle } from "./ui/alert"
 import { CircleAlert } from "lucide-react"
+import { m } from "@/paraglide/messages"
 
 export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
   const updateLimitation = useIntervalSync("data")
@@ -29,17 +30,14 @@ export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
 
   return (
     <CardSync
-      title="Données embarquées"
+      title={m["common.sync-data-title"]()}
       description={
         <>
-          <p>
-            Fiches métiers (signalétiques, signalements, interventions,
-            aménagements) de la zone géographique sélectionnée
-          </p>
+          <p>{m["common.sync-data-description"]()}</p>
           {lastSync && bounds && (
             <div>
               <h4 className="my-4 font-bold text-accent-foreground">
-                Zone géographique
+                {m["common.sync-data-aera"]()}
               </h4>
               <Map
                 className="pointer-none aspect-square max-h-80 touch-none"
@@ -47,21 +45,25 @@ export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
                 initialViewState={{ bounds: bounds as LngLatBoundsLike }}
               />
               <h4 className="my-4 font-bold text-accent-foreground">
-                Structure(s) gestionnaire(s)
+                {m["common.managing-structures"]()}
               </h4>
-              {structure === null ? "Toutes les structures" : "Ma structure"}
+              {structure === null
+                ? m["common.all-structures"]()
+                : m["common.my-structure"]()}
             </div>
           )}
         </>
       }
-      noData="Aucune zone / structure n'a été définie"
+      noData={m["common.sync-data-none"]()}
       lastSync={lastSync}
       updatedStatus={getUpdatedStatus(lastSync, updateLimitation)}
       actions={
         hasAsyncData ? (
           <>
             <Button className="w-full" disabled>
-              {lastSync && bounds ? "Changer de zone" : "Choisir"}
+              {lastSync && bounds
+                ? m["common.sync-data-edit-aera"]()
+                : m["common.pick"]()}
             </Button>
             {lastSync && bounds && (
               <Button
@@ -70,7 +72,7 @@ export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
                 type="button"
                 disabled
               >
-                Re-télécharger les données
+                {m["common.sync-data-download"]()}
               </Button>
             )}
             <Alert
@@ -78,10 +80,7 @@ export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
               className="m-0 w-full border-0 bg-transparent p-0"
             >
               <CircleAlert aria-hidden />
-              <AlertTitle>
-                Synchronisez vos relevés de terrain avant de pouvoir choisir de
-                nouvelles données à télécharger
-              </AlertTitle>
+              <AlertTitle>{m["common.update-needed-description"]()}</AlertTitle>
             </Alert>
           </>
         ) : (
@@ -90,7 +89,9 @@ export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
               className={cn("w-full", buttonVariants())}
               to="/{-$locale}/sync/data"
             >
-              {lastSync && bounds ? "Changer de zone" : "Choisir"}
+              {lastSync && bounds
+                ? m["common.sync-data-edit-aera"]()
+                : m["common.pick"]()}
             </Link>
             {lastSync && bounds && (
               <Button

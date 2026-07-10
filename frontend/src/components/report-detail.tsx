@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import { toast } from "sonner"
 import NotFound from "@/components/not-found"
 import type { ReportDataSchemaProps } from "@/schemas/data"
+import { m } from "@/paraglide/messages"
 
 export default function ReportDetail(params: { id: string; type: string }) {
   const navigate = useNavigate()
@@ -61,7 +62,7 @@ export default function ReportDetail(params: { id: string; type: string }) {
   return (
     <div>
       <Header
-        title="Details signalétique"
+        title={m["content.details.report"]()}
         withBackbutton
         afterTitle={
           <Link
@@ -69,7 +70,7 @@ export default function ReportDetail(params: { id: string; type: string }) {
             to="/{-$locale}/data/$type/$id/edit"
             params={params}
           >
-            Modifier
+            {m["common.edit"]()}
           </Link>
         }
       />
@@ -81,36 +82,41 @@ export default function ReportDetail(params: { id: string; type: string }) {
             </span>
             {isAsyncItem && (
               <span className="flex items-center gap-2 text-sm text-destructive">
-                <CircleAlert className="size-4" aria-hidden /> Non synchronisé
+                <CircleAlert className="size-4" aria-hidden />{" "}
+                {m["content.not-synced"]()}
               </span>
             )}
           </h2>
           <p>
-            <span className="text-primary">Signalement</span>
+            <span className="text-primary">{m["content.report"]()}</span>
           </p>
           <div className="mt-4">
-            <p>Créé le {createDate}</p>
+            <p>
+              {m["content.created-on"]()} {createDate}
+            </p>
             {createDate !== updateDate && (
-              <p>Dernière modification le {updateDate}</p>
+              <p>
+                {m["content.updated-on"]()} {updateDate}
+              </p>
             )}
           </div>
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Commentaire
+            {m["content.comment"]()}
           </h3>
           {detail.comment ? (
             <div dangerouslySetInnerHTML={{ __html: detail.comment }} />
           ) : (
-            <p className="italic">Aucun commentaire.</p>
+            <p className="italic">{m["content.no-comment"]()}</p>
           )}
         </section>
 
         {detail.geom && (
           <section className="my-8">
             <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-              Localisation
+              {m["content.location"]()}
             </h3>
             <Map
               className="pointer-none aspect-square touch-none"
@@ -128,45 +134,45 @@ export default function ReportDetail(params: { id: string; type: string }) {
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Activité
+            {m["content.activity"]()}
           </h3>
           {detail.activity ? (
             <p>{detail.activity.name}</p>
           ) : (
-            <p className="italic">Aucune activité .</p>
+            <p className="italic">{m["content.no-activity"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Catégorie
+            {m["content.category"]()}
           </h3>
           {detail.category ? (
             <p>{detail.category.name}</p>
           ) : (
-            <p className="italic">Aucune catégorie.</p>
+            <p className="italic">{m["content.no-category"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Amplitude du problème
+            {m["content.problem-magnitude"]()}
           </h3>
           {detail.problem_magnitude ? (
             <p>{detail.problem_magnitude.name}</p>
           ) : (
-            <p className="italic">Aucune amplitude du problème.</p>
+            <p className="italic">{m["content.no-problem-magnitude"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Statut
+            {m["content.status"]()}
           </h3>
           {detail.status ? (
             <p>{detail.status.name}</p>
           ) : (
-            <p className="italic">Aucun statut.</p>
+            <p className="italic">{m["content.no-status"]()}</p>
           )}
         </section>
 
@@ -177,7 +183,7 @@ export default function ReportDetail(params: { id: string; type: string }) {
               to="/{-$locale}/data/$type/$id/edit"
               params={params}
             >
-              Modifier le signalement
+              {m["common.edit-item"]({ item: m["content.report"]() })}
             </Link>
             {detail.appNewItem === true && (
               <Button
@@ -185,7 +191,7 @@ export default function ReportDetail(params: { id: string; type: string }) {
                 className="w-full"
                 onClick={handleDelete}
               >
-                Supprimer le signalement
+                {m["common.delete-item"]({ item: m["content.report"]() })}
               </Button>
             )}
             {rawDataItem && (
@@ -198,12 +204,12 @@ export default function ReportDetail(params: { id: string; type: string }) {
                     .delete()
                   const { reference: _reference, ...restoredData } = rawDataItem
                   await db.reportData.put(restoredData as ReportDataSchemaProps)
-                  toast.success("Restoration du signalement terminée", {
+                  toast.success(m["content.restore-complete"](), {
                     position: "top-center",
                   })
                 }}
               >
-                Annuler les modifications en attente
+                {m["content.restore-pending"]()}
               </Button>
             )}
           </div>

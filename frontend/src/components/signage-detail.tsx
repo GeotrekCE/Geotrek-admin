@@ -22,6 +22,7 @@ import { toast } from "sonner"
 import NotFound from "@/components/not-found"
 import { usePermission } from "@/hook/useSettingsQuery"
 import type { SignageDataSchemaProps } from "@/schemas/data"
+import { m } from "@/paraglide/messages"
 
 export default function SignageDetail(params: { id: string; type: string }) {
   const navigate = useNavigate()
@@ -76,7 +77,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
   return (
     <div>
       <Header
-        title="Details signalétique"
+        title={m["content.details.signage"]()}
         withBackbutton
         afterTitle={
           <Link
@@ -84,7 +85,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
             to="/{-$locale}/data/$type/$id/edit"
             params={params}
           >
-            Modifier
+            {m["common.edit"]()}
           </Link>
         }
       />
@@ -96,12 +97,13 @@ export default function SignageDetail(params: { id: string; type: string }) {
             </span>
             {isAsyncItem && (
               <span className="flex items-center gap-2 text-sm text-destructive">
-                <CircleAlert className="size-4" aria-hidden /> Non synchronisé
+                <CircleAlert className="size-4" aria-hidden />{" "}
+                {m["content.not-synced"]()}
               </span>
             )}
           </h2>
           <p>
-            <span className="text-primary">Signalétique</span>
+            <span className="text-primary">{m["content.signage"]()}</span>
             {detail.type && ` - ${detail.type.name}`}
           </p>
           {detail.conditions.length > 0 && (
@@ -114,9 +116,13 @@ export default function SignageDetail(params: { id: string; type: string }) {
             </p>
           )}
           <div className="mt-4">
-            <p>Créé le {createDate}</p>
+            <p>
+              {m["content.created-on"]()} {createDate}
+            </p>
             {createDate !== updateDate && (
-              <p>Dernière modification le {updateDate}</p>
+              <p>
+                {m["content.updated-on"]()} {updateDate}
+              </p>
             )}
           </div>
         </section>
@@ -124,30 +130,30 @@ export default function SignageDetail(params: { id: string; type: string }) {
         {can_bypass_structure && is_superuser && (
           <section className="my-8">
             <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-              Structure liée
+              {m["content.linked-structure"]()}
             </h3>
             {detail.structure ? (
               <p>{detail.structure.name}</p>
             ) : (
-              <p className="italic">Aucune structure liée.</p>
+              <p className="italic">{m["content.no-linked-structure"]()}</p>
             )}
           </section>
         )}
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Description
+            {m["content.description"]()}
           </h3>
           {detail.description ? (
             <div dangerouslySetInnerHTML={{ __html: detail.description }} />
           ) : (
-            <p className="italic">Aucune description disponible.</p>
+            <p className="italic">{m["content.no-description"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Localisation
+            {m["content.location"]()}
           </h3>
           {detail.geom && (
             <Map
@@ -166,73 +172,74 @@ export default function SignageDetail(params: { id: string; type: string }) {
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Année d'implantation
+            {m["content.implantation-year"]()}
           </h3>
           {detail.implantation_year ? (
             <p>{detail.implantation_year}</p>
           ) : (
-            <p className="italic">Aucune date indiquée.</p>
+            <p className="italic">{m["content.no-implantation-year"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Code
+            {m["content.code"]()}
           </h3>
           {detail.code ? (
             <p>{detail.code}</p>
           ) : (
-            <p className="italic">Aucun code indiqué.</p>
+            <p className="italic">{m["content.no-code"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Altitude affichée (en mètres)
+            {m["content.displayed-elevation"]()}
           </h3>
           {detail.printed_elevation ? (
             <p>{detail.printed_elevation}</p>
           ) : (
-            <p className="italic">Aucune altitude indiquée.</p>
+            <p className="italic">{m["content.no-displayed-elevation"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Gestionnaire
+            {m["content.manager"]()}
           </h3>
           {detail.manager ? (
             <p>{detail.manager.name}</p>
           ) : (
-            <p className="italic">Aucun gestionnaire indiqué.</p>
+            <p className="italic">{m["content.no-manager"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Scellement
+            {m["content.sealing"]()}
           </h3>
           {detail.sealing ? (
             <p>{detail.sealing.name}</p>
           ) : (
-            <p className="italic">Aucun scellement indiqué.</p>
+            <p className="italic">{m["content.no-sealing"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Moyen d'accès
+            {m["content.access"]()}
           </h3>
           {detail.access ? (
             <p>{detail.access.name}</p>
           ) : (
-            <p className="italic">Aucun moyen d'accès indiqué.</p>
+            <p className="italic">{m["content.no-access"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 flex items-center gap-2 text-xl font-bold text-accent-foreground">
-            Lames <Badge className="size-6">{detail.blades.length}</Badge>
+            {m["content.blades"]()}{" "}
+            <Badge className="size-6">{detail.blades.length}</Badge>
           </h3>
           {detail.blades && detail.blades.length > 0 ? (
             <ul>
@@ -287,7 +294,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
               ))}
             </ul>
           ) : (
-            <p className="italic">Aucune lame.</p>
+            <p className="italic">{m["content.no-blades"]()}</p>
           )}
         </section>
 
@@ -298,7 +305,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
               to="/{-$locale}/data/$type/$id/edit"
               params={params}
             >
-              Modifier la signalétique
+              {m["common.edit-item"]({ item: m["content.signage"]() })}
             </Link>
             {detail.appNewItem === true && (
               <Button
@@ -306,7 +313,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
                 className="w-full"
                 onClick={handleDelete}
               >
-                Supprimer la signalétique
+                {m["common.delete-item"]({ item: m["content.signage"]() })}
               </Button>
             )}
             {rawDataItem && (
@@ -321,12 +328,12 @@ export default function SignageDetail(params: { id: string; type: string }) {
                   await db.signageData.put(
                     restoredData as SignageDataSchemaProps
                   )
-                  toast.success("Restoration de la signalétique terminée", {
+                  toast.success(m["content.restore-complete"](), {
                     position: "top-center",
                   })
                 }}
               >
-                Annuler les modifications en attente
+                {m["content.restore-pending"]()}
               </Button>
             )}
           </div>

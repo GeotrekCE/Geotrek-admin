@@ -1,6 +1,7 @@
 import { useRouter } from "@tanstack/react-router"
 import { ChevronLeft } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { m } from "@/paraglide/messages"
 
 export default function Header({
   title,
@@ -25,7 +26,7 @@ export default function Header({
             size="icon"
           >
             <ChevronLeft className="size-6" aria-hidden />
-            <span className="sr-only">Retour page précédente</span>
+            <span className="sr-only">{m["common.back"]()}</span>
           </Button>
         </div>
       )}

@@ -15,6 +15,7 @@ import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { usePermission } from "@/hook/useSettingsQuery"
 import { useLiveQuery } from "dexie-react-hooks"
+import { m } from "@/paraglide/messages"
 
 export default function InfrastructureForm({
   defaultValues,
@@ -100,8 +101,12 @@ export default function InfrastructureForm({
 
       toast.success(
         isEdit
-          ? `L'aménagement "${value.name}" a bien été modifié`
-          : `L'aménagement "${value.name}" a bien été créé`,
+          ? m["common.edit-success"]({
+              item: `${m["content.infrastructure"]()} "${value.name}"`,
+            })
+          : m["common.create-success"]({
+              item: `${m["content.infrastructure"]()} "${value.name}"`,
+            }),
         {
           position: "top-center",
         }
@@ -117,11 +122,11 @@ export default function InfrastructureForm({
     <form.AppForm>
       <form.Form>
         <FieldGroup className="mb-4">
-          <FormTextField name="name" label="Nom" required />
+          <FormTextField name="name" label={m["form.name"]()} required />
 
           <FormSelectField
             name="type"
-            label="Type"
+            label={m["form.type"]()}
             list={infrastructuretype}
             required
           />
@@ -129,59 +134,68 @@ export default function InfrastructureForm({
           {can_bypass_structure && is_superuser && (
             <FormSelectField
               name="structure"
-              label="Structure liée"
+              label={m["form.structure"]()}
               list={structure}
               required
             />
           )}
 
-          <FormTextareaField name="description" label="Description" isRTE />
+          <FormTextareaField
+            name="description"
+            label={m["form.description"]()}
+            isRTE
+          />
 
           <FormGeomField
             name="geom.coordinates"
-            label="Localisation"
+            label={m["form.location"]()}
             icon={pictogram}
             required
           />
 
-          <FormTextareaField name="accessibility" label="Accessibilité" isRTE />
+          <FormTextareaField
+            name="accessibility"
+            label={m["form.accessibility"]()}
+            isRTE
+          />
 
           <FormSelectField
             name="conditions"
-            label="État"
+            label={m["form.state"]()}
             list={infrastructurecondition}
             multiple
           />
 
           <FormSelectField
             name="access"
-            label="Moyen d'accès"
+            label={m["form.access"]()}
             list={accessmean}
           />
 
           <FormTextField
             name="implantation_year"
-            label="Année d'implantation"
+            label={m["form.implantation-year"]()}
             type="number"
             min="0"
           />
 
           <FormSelectField
             name="usage_difficulty"
-            label="Niveau des usagers"
+            label={m["form.user-level"]()}
             list={infrastructureusagedifficultylevel}
-            description="Niveau de dangerosité de l'aménagement pour les usagers"
+            description={m["form.user-level-description"]()}
           />
 
           <FormSelectField
             name="maintenance_difficulty"
-            label="Niveau des interventions"
+            label={m["form.maintenance-level"]()}
             list={infrastructuremaintenancedifficultylevel}
-            description="Niveau de dangerosité des interventions d'entretien"
+            description={m["form.maintenance-level-description"]()}
           />
 
           <Button type="submit">
-            {isEdit ? "Modifier" : "Créer"} l'aménagement
+            {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
+            {m["content.infrastructure"]().toLowerCase()}
           </Button>
           {rawDataItem && (
             <Button
@@ -195,12 +209,17 @@ export default function InfrastructureForm({
                 await db.infrastructureData.put(
                   restoredData as InfrastructureDataSchemaProps
                 )
-                toast.success("Restoration de l'infrastructure terminée", {
-                  position: "top-center",
-                })
+                toast.success(
+                  m["common.restore-success"]({
+                    item: m["content.infrastructure"](),
+                  }),
+                  {
+                    position: "top-center",
+                  }
+                )
               }}
             >
-              Annuler les modifications en attente
+              {m["content.restore-pending"]()}
             </Button>
           )}
         </FieldGroup>

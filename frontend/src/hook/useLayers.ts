@@ -1,6 +1,7 @@
 import React from "react"
 import { useAppSettings } from "./useAppSettings"
 import type { StyleItem } from "map-gl-style-switcher/react-map-gl"
+import { m } from "@/paraglide/messages"
 
 export default function useLayers(): StyleItem[] {
   const {
@@ -20,7 +21,7 @@ export default function useLayers(): StyleItem[] {
       defaultStyle,
       ...maps.layers.map((layer: { id: string; name: string }) => ({
         id: layer.id,
-        name: `${layer.name} (hors ligne)`,
+        name: `${layer.name} (${m["common.offline"]()})`,
         styleUrl: `offline-pmtiles://${layer.id}`,
       })),
     ]

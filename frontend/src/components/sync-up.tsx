@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
 import { Link } from "@tanstack/react-router"
+import { m } from "@/paraglide/messages"
 
 type Data = [
   SignageDataSchemaProps[],
@@ -34,26 +35,38 @@ function Message({
         <CardTitle>
           <h3 className="flex gap-3">
             <CircleAlert aria-hidden className="text-destructive" />
-            {totalCount} élément(s) non synchronisé(s)
+            {m["common.items-count"]({ count: totalCount })}{" "}
+            {m["content.not-synced"]().toLowerCase()}
           </h3>
         </CardTitle>
       </CardHeader>
       <CardContent>
         <ul className="mb-4 flex flex-col gap-3">
-          {signageCount > 0 && <li>{signageCount} signalétique(s)</li>}
+          {signageCount > 0 && (
+            <li>{m["common.signage-count"]({ count: signageCount })}</li>
+          )}
           {interventionCount > 0 && (
-            <li>{interventionCount} intervention(s)</li>
+            <li>
+              {m["common.intervention-count"](
+                { count: interventionCount },
+                { locale: "fr" }
+              )}
+            </li>
           )}
           {infrastructureCount > 0 && (
-            <li>{infrastructureCount} aménagement(s)</li>
+            <li>
+              {m["common.infrastructure-count"]({ count: infrastructureCount })}
+            </li>
           )}
-          {reportCount > 0 && <li>{reportCount} signalement(s)</li>}
+          {reportCount > 0 && (
+            <li>{m["common.report-count"]({ count: reportCount })}</li>
+          )}
         </ul>
         <Link
           className={cn("w-full", buttonVariants())}
           to="/{-$locale}/sync/upload"
         >
-          Envoyer mes données
+          {m["common.send-data"]()}
         </Link>
       </CardContent>
     </Card>

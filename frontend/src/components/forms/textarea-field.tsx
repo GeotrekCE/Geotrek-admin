@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form-context"
 import Required from "./required"
 import { RichTextEditor } from "../rich-text-editor"
+import { m } from "@/paraglide/messages"
 
 interface TextareaFieldProps extends Omit<
   React.ComponentProps<"textarea">,
@@ -75,8 +76,7 @@ export function TextareaField({
         {description ||
           (isRTE && (
             <FieldDescription>
-              {isRTE &&
-                "L'ajout d'images et d'intégrations vidéos ne sont pas pris en charge."}
+              {isRTE && m["form.description-RTE"]()}
               {description && ` ${description}`}
             </FieldDescription>
           ))}

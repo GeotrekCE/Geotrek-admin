@@ -2,6 +2,7 @@ import * as React from "react"
 import { Badge } from "@/components/ui/badge"
 import { cn } from "@/lib/utils"
 import useOnline from "@/hook/useOnline"
+import { m } from "@/paraglide/messages"
 
 export function ConnectionStatus({
   className,
@@ -14,7 +15,7 @@ export function ConnectionStatus({
       className={cn("flex items-center justify-between", className)}
       {...props}
     >
-      <h2 className="text-xs uppercase">État de la connexion</h2>
+      <h2 className="text-xs uppercase">{m["common.connection-status"]()}</h2>
       <Badge className="h-6 border-accent-foreground/10" variant="secondary">
         <span
           className={cn(
@@ -25,7 +26,7 @@ export function ConnectionStatus({
         >
           •
         </span>
-        <span>{online ? "En ligne" : "Hors ligne"}</span>
+        <span>{online ? m["common.online"]() : m["common.offline"]()}</span>
       </Badge>
     </div>
   )

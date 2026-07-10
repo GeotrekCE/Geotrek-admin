@@ -1,6 +1,7 @@
 import * as React from "react"
 import { getDurationLabel, isValidDate, SECOND } from "@/lib/date"
 import { getLocale } from "@/paraglide/runtime"
+import { m } from "@/paraglide/messages"
 
 export default function LastSync({ date }: { date: string }) {
   const [dynamicDate, setDate] = React.useState(
@@ -32,7 +33,9 @@ export default function LastSync({ date }: { date: string }) {
   }
   return (
     <p className="mt-1 font-mono text-xs italic">
-      Dernière synchronisation il y a {dynamicDate}
+      {m["common.last-synced"]({
+        date: dynamicDate,
+      })}
     </p>
   )
 }

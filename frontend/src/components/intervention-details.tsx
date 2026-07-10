@@ -14,6 +14,7 @@ import { toast } from "sonner"
 import NotFound from "@/components/not-found"
 import { usePermission } from "@/hook/useSettingsQuery"
 import type { InterventionDataSchemaProps } from "@/schemas/data"
+import { m } from "@/paraglide/messages"
 
 export default function InterventionDetail(params: {
   id: string
@@ -71,7 +72,7 @@ export default function InterventionDetail(params: {
   return (
     <div>
       <Header
-        title="Details intervention"
+        title={m["content.details.intervention"]()}
         withBackbutton
         afterTitle={
           <Link
@@ -79,7 +80,7 @@ export default function InterventionDetail(params: {
             to="/{-$locale}/data/$type/$id/edit"
             params={params}
           >
-            Modifier
+            {m["common.edit"]()}
           </Link>
         }
       />
@@ -91,12 +92,13 @@ export default function InterventionDetail(params: {
             </span>
             {isAsyncItem && (
               <span className="flex items-center gap-2 text-sm text-destructive">
-                <CircleAlert className="size-4" aria-hidden /> Non synchronisé
+                <CircleAlert className="size-4" aria-hidden />{" "}
+                {m["content.not-synced"]()}
               </span>
             )}
           </h2>
           <p>
-            <span className="text-primary">Intervention</span>
+            <span className="text-primary">{m["content.intervention"]()}</span>
             {detail.type && ` - ${detail.type.name}`}
           </p>
           {detail.disorders.length > 0 && (
@@ -110,9 +112,13 @@ export default function InterventionDetail(params: {
           )}
 
           <div className="mt-4">
-            <p>Créé le {createDate}</p>
+            <p>
+              {m["content.created-on"]()} {createDate}
+            </p>
             {createDate !== updateDate && (
-              <p>Dernière modification le {updateDate}</p>
+              <p>
+                {m["content.updated-on"]()} {updateDate}
+              </p>
             )}
           </div>
         </section>
@@ -120,30 +126,30 @@ export default function InterventionDetail(params: {
         {can_bypass_structure && is_superuser && (
           <section className="my-8">
             <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-              Structure liée
+              {m["content.linked-structure"]()}
             </h3>
             {detail.structure ? (
               <p>{detail.structure.name}</p>
             ) : (
-              <p className="italic">Aucune structure liée.</p>
+              <p className="italic">{m["content.no-linked-structure"]()}</p>
             )}
           </section>
         )}
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Description
+            {m["content.description"]()}
           </h3>
           {detail.description ? (
             <div dangerouslySetInnerHTML={{ __html: detail.description }} />
           ) : (
-            <p className="italic">Aucune description disponible.</p>
+            <p className="italic">{m["content.no-description"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Localisation
+            {m["content.location"]()}
           </h3>
           {detail.geom && (
             <Map
@@ -162,87 +168,87 @@ export default function InterventionDetail(params: {
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Date de début
+            {m["content.begin-date"]()}
           </h3>
           <p>{detail.begin_date}</p>
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Date de fin
+            {m["content.end-date"]()}
           </h3>
           {detail.end_date ? (
             <p>{detail.end_date}</p>
           ) : (
-            <p className="italic">Aucune date de fin indiquée.</p>
+            <p className="italic">{m["content.no-end-date"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Statut
+            {m["content.status"]()}
           </h3>
           <p>{detail.status.name}</p>
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Longueur
+            {m["content.length"]()}
           </h3>
           {detail.length ? (
             <p>{detail.length}</p>
           ) : (
-            <p className="italic">Aucune longueur indiquée.</p>
+            <p className="italic">{m["content.no-length"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Largeur
+            {m["content.width"]()}
           </h3>
           {detail.width ? (
             <p>{detail.width}</p>
           ) : (
-            <p className="italic">Aucune largeur indiquée.</p>
+            <p className="italic">{m["content.no-width"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Hauteur
+            {m["content.height"]()}
           </h3>
           {detail.height ? (
             <p>{detail.height}</p>
           ) : (
-            <p className="italic">Aucune hauteur indiquée.</p>
+            <p className="italic">{m["content.no-height"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Enjeu
+            {m["content.stake"]()}
           </h3>
           {detail.stake ? (
             <p>{detail.stake.name}</p>
           ) : (
-            <p className="italic">Aucun enjeu indiqué.</p>
+            <p className="italic">{m["content.no-stake"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            Moyen d'accès
+            {m["content.access"]()}
           </h3>
           {detail.access ? (
             <p>{detail.access.name}</p>
           ) : (
-            <p className="italic">Aucun moyen d'accès indiqué.</p>
+            <p className="italic">{m["content.no-access"]()}</p>
           )}
         </section>
 
         <section className="my-8">
           <h3 className="mb-2 flex items-center gap-2 text-xl font-bold text-accent-foreground">
-            Jours hommes{" "}
+            {m["content.man-days"]()}{" "}
             <Badge className="size-6">{detail.man_day.length}</Badge>
           </h3>
           {detail.man_day.length > 0 ? (
@@ -250,19 +256,21 @@ export default function InterventionDetail(params: {
               {detail.man_day.map((row, index) => (
                 <li key={index} className="my-2 rounded-lg border px-4 py-2">
                   <div className="my-2 flex gap-3">
-                    <h4 className="font-semibold">Nombre de jour :</h4>
+                    <h4 className="font-semibold">
+                      {m["content.number-of-days"]()}
+                    </h4>
                     <p>{row.nb_days}</p>
                   </div>
 
                   <div className="my-2 flex gap-3">
-                    <h4 className="font-semibold">Fonction :</h4>
+                    <h4 className="font-semibold">{m["content.function"]()}</h4>
                     <p>{row.job.name}</p>
                   </div>
                 </li>
               ))}
             </ul>
           ) : (
-            <p className="italic">Aucune affectation.</p>
+            <p className="italic">{m["content.no-man-days"]()}</p>
           )}
         </section>
 
@@ -273,7 +281,7 @@ export default function InterventionDetail(params: {
               to="/{-$locale}/data/$type/$id/edit"
               params={params}
             >
-              Modifier l'intervention
+              {m["common.edit-item"]({ item: m["content.intervention"]() })}
             </Link>
             {detail.appNewItem === true && (
               <Button
@@ -281,7 +289,7 @@ export default function InterventionDetail(params: {
                 className="w-full"
                 onClick={handleDelete}
               >
-                Supprimer l'intervention
+                {m["common.delete-item"]({ item: m["content.intervention"]() })}
               </Button>
             )}
             {rawDataItem && (
@@ -296,12 +304,12 @@ export default function InterventionDetail(params: {
                   await db.interventionData.put(
                     restoredData as InterventionDataSchemaProps
                   )
-                  toast.success("Restoration de l'intervention terminée", {
+                  toast.success(m["content.restore-complete"](), {
                     position: "top-center",
                   })
                 }}
               >
-                Annuler les modifications en attente
+                {m["content.restore-pending"]()}
               </Button>
             )}
           </div>

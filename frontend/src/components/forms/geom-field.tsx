@@ -17,6 +17,7 @@ import { cn } from "@/lib/utils"
 import { MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { db } from "@/lib/db"
+import { m } from "@/paraglide/messages"
 
 type GeomFieldProps = {
   label: string
@@ -93,7 +94,9 @@ export function GeomField({
           type="button"
           onClick={() => setEditing((bool) => !bool)}
         >
-          {isEditing ? "Revenir en consultation" : "Placer sur la carte"}
+          {isEditing
+            ? m["form.geom-action-cancel"]()
+            : m["form.geom-action-select"]()}
         </Button>
         {description && <FieldDescription>{description}</FieldDescription>}
       </FormField>

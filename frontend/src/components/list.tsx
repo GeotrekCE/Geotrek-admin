@@ -14,6 +14,7 @@ import { cn } from "@/lib/utils"
 import { useList, type SnapPoint } from "@/lib/list"
 import { getLocale } from "@/paraglide/runtime"
 import { Skeleton } from "@/components/ui/skeleton"
+import { m } from "@/paraglide/messages"
 
 const TOP_MARGIN_REM = 1
 
@@ -53,7 +54,9 @@ export default function List() {
             <div className="shrink-0 touch-none border-b px-6 py-3.5">
               <div className="mx-auto mb-2 h-2 w-20 shrink-0 rounded-full bg-accent" />
               <Drawer.Title className="text-l text-center font-bold">
-                {!isPending ? `${elements.length} éléments` : "Chargement"}
+                {!isPending
+                  ? m["common.items-count"]({ count: elements.length })
+                  : m["common.loading"]()}
               </Drawer.Title>
             </div>
             <Drawer.Content className="min-h-0 flex-1 touch-auto overflow-y-auto overscroll-contain pt-2">
@@ -73,7 +76,7 @@ export default function List() {
                     ))}
                   {!isPending && elements.length === 0 && (
                     <p className="py-4 text-center">
-                      Aucun élément à afficher.
+                      {m["common.empty-state"]()}
                     </p>
                   )}
                   {!isPending &&
@@ -112,7 +115,7 @@ export default function List() {
                                   dateTime={item.date_update}
                                   className="text-xs text-muted-foreground"
                                 >
-                                  Modifié le{" "}
+                                  {m["common.modified-on"]()}{" "}
                                   {new Date(
                                     item.date_update
                                   ).toLocaleDateString(getLocale(), {
@@ -127,7 +130,7 @@ export default function List() {
                                   <CircleAlert
                                     className="size-4 text-destructive"
                                     role="img"
-                                    aria-label="Non synchronisé"
+                                    aria-label={m["content.not-synced"]()}
                                   />
                                 )}
                                 <ChevronRight aria-hidden />

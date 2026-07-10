@@ -29,6 +29,7 @@ import {
 import Required from "./required"
 import { cn, itemToOption, listToOptions } from "@/lib/utils"
 import { ChevronDown } from "lucide-react"
+import { m } from "@/paraglide/messages"
 
 type List = { name: string; id: number }
 
@@ -47,7 +48,7 @@ export function SelectField({
   description,
   required,
   list,
-  placeholder = "Sélectionnez",
+  placeholder = m["common.select"](),
   multiple = false,
   className,
 }: SelectFieldProps) {
@@ -111,7 +112,7 @@ export function SelectField({
               </ComboboxValue>
             </ComboboxChips>
             <ComboboxContent>
-              <ComboboxEmpty>Aucun état trouvé</ComboboxEmpty>
+              <ComboboxEmpty>{m["common.none-found"]()}</ComboboxEmpty>
               <ComboboxList>
                 {(item) => (
                   <ComboboxItem key={item.value} value={item}>

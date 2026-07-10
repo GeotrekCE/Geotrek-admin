@@ -1,3 +1,4 @@
+import { ParaglideMessage } from "@inlang/paraglide-js-react"
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -7,23 +8,26 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
+import { m } from "@/paraglide/messages"
 
 export default function InvalidConfiguration() {
   return (
     <div className="grid h-screen place-items-center">
       <Card className="w-full sm:max-w-md">
         <CardHeader>
-          <CardTitle>Configuration requise</CardTitle>
+          <CardTitle>{m["common.required-config"]()}</CardTitle>
           <CardDescription>
-            Veuillez configurer l'URL de votre instance Geotrek-Admin dans le
-            fichier de configuration pour utiliser l'application.
+            {m["common.required-config-description"]()}
           </CardDescription>
         </CardHeader>
         <CardContent>
           <p>
-            La clé <Badge variant="outline">HOST_URL</Badge> doit être définie
-            en tant que variable d'environnement pour permettre la connexion et
-            la synchronisation des données.{" "}
+            <ParaglideMessage
+              message={m["common.required-config-host"]}
+              markup={{
+                strong: ({ children }) => <Badge>{children}</Badge>,
+              }}
+            />
             <Button
               variant="link"
               className="p-0"
@@ -32,7 +36,7 @@ export default function InvalidConfiguration() {
                   target="_blank"
                   href="https://github.com/GeotrekCE/geotrek-admin-mobile"
                 >
-                  Voir la documentation
+                  {m["common.documentation"]()}
                 </a>
               }
             />

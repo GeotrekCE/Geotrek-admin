@@ -14,6 +14,7 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
+import { m } from "@/paraglide/messages"
 
 function ListDetailContent({
   element,
@@ -30,9 +31,9 @@ function ListDetailContent({
     return (
       <SheetContent side="bottom" className="pb-22">
         <SheetHeader>
-          <SheetTitle>Élément non trouvé</SheetTitle>
+          <SheetTitle>{m["common.not-found"]()}</SheetTitle>
           <SheetDescription>
-            L'élément demandé n'existe pas ou plus.
+            {m["common.not-found-description"]()}
           </SheetDescription>
         </SheetHeader>
       </SheetContent>
@@ -65,7 +66,7 @@ function ListDetailContent({
             )}
             <div className="mt-2 text-xs">
               <p>
-                Modifié le{" "}
+                {m["content.updated-on"]()}{" "}
                 {new Date(detail.date_update).toLocaleDateString(getLocale())}
               </p>
             </div>
@@ -84,7 +85,7 @@ function ListDetailContent({
           to="/{-$locale}/data/$type/$id"
           params={{ type: element.reference, id: String(element.id) }}
         >
-          Voir le détail
+          {m["common.view-details"]()}
         </Link>
       </SheetFooter>
     </SheetContent>

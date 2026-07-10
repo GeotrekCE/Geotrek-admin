@@ -1,3 +1,4 @@
+import { m } from "@/paraglide/messages"
 import * as z from "zod"
 
 export type InfrastructureDataSchemaProps = z.infer<
@@ -26,11 +27,9 @@ export const infrastructureDataSchema = z.object({
   date_update: z.string(),
   geom: z.object({
     type: z.string().min(1),
-    coordinates: z
-      .array(z.number())
-      .length(2, "Les coordonnées sont obligatoires"),
+    coordinates: z.array(z.number()).length(2, m["form.location-required"]()),
   }),
-  name: z.string().min(1, "Le nom est obligatoire"),
+  name: z.string().min(1, m["form.name-required"]()),
   description: z.string(),
   implantation_year: z.union([z.number(), z.null()]),
   accessibility: z.string(),
@@ -39,7 +38,7 @@ export const infrastructureDataSchema = z.object({
       id: z.number().int(),
       name: z.string(),
     })
-    .refine((data) => !!data.name, "La structure est obligatoire"),
+    .refine((data) => !!data.name, m["form.structure-required"]()),
   access: z.union([
     z.null(),
     z.object({
@@ -48,7 +47,7 @@ export const infrastructureDataSchema = z.object({
     }),
   ]),
   type: z.object({
-    id: z.number().int().positive({ message: "Le type est obligatoire" }),
+    id: z.number().int().positive({ message: m["form.type-required"]() }),
     name: z.string().min(1),
   }),
   maintenance_difficulty: z.union([
@@ -79,20 +78,18 @@ export const signageDataSchema = z.object({
   id: z.number().int().positive(),
   geom: z.object({
     type: z.string().min(1),
-    coordinates: z
-      .array(z.number())
-      .length(2, "Les coordonnées sont obligatoires"),
+    coordinates: z.array(z.number()).length(2, m["form.location-required"]()),
   }),
   structure: z
     .object({
       id: z.number().int(),
       name: z.string(),
     })
-    .refine((data) => !!data.name, "La structure est obligatoire"),
+    .refine((data) => !!data.name, m["form.structure-required"]()),
 
   date_insert: z.string(),
   date_update: z.string(),
-  name: z.string().min(1, "Le nom est obligatoire"),
+  name: z.string().min(1, m["form.name-required"]()),
   description: z.string(),
   implantation_year: z.union([z.number(), z.null()]),
   code: z.string(),
@@ -123,7 +120,7 @@ export const signageDataSchema = z.object({
       id: z.number().int(),
       name: z.string().min(1),
     })
-    .refine((data) => !!data.name, "Le type est obligatoire"),
+    .refine((data) => !!data.name, m["form.type-required"]()),
   conditions: z.array(
     z.object({
       id: z.number().int().positive(),
@@ -171,20 +168,18 @@ export const interventionDataSchema = z.object({
   id: z.number().int().positive(),
   geom: z.object({
     type: z.string().min(1),
-    coordinates: z
-      .array(z.number())
-      .length(2, "Les coordonnées sont obligatoires"),
+    coordinates: z.array(z.number()).length(2, m["form.location-required"]()),
   }),
   structure: z
     .object({
       id: z.number().int(),
       name: z.string(),
     })
-    .refine((data) => !!data.name, "La structure est obligatoire"),
-  name: z.string().min(1, "Le nom est obligatoire"),
+    .refine((data) => !!data.name, m["form.structure-required"]()),
+  name: z.string().min(1, m["form.name-required"]()),
   date_insert: z.string(),
   date_update: z.string(),
-  begin_date: z.string().min(1, "La date de début est obligatoire"),
+  begin_date: z.string().min(1, m["form.begin-date-required"]()),
   end_date: z.union([z.null(), z.string()]),
   subcontracting: z.boolean(),
   width: z.number(),
@@ -211,7 +206,7 @@ export const interventionDataSchema = z.object({
       id: z.number().int().positive(),
       name: z.string().min(1),
     })
-    .refine((data) => !!data.name, "Le statut est obligatoire"),
+    .refine((data) => !!data.name, m["form.status-required"]()),
   type: z.union([
     z.null(),
     z.object({
@@ -254,9 +249,7 @@ export const reportDataSchema = z.object({
   comment: z.string(),
   geom: z.object({
     type: z.string().min(1),
-    coordinates: z
-      .array(z.number())
-      .length(2, "Les coordonnées sont obligatoires"),
+    coordinates: z.array(z.number()).length(2, m["form.location-required"]()),
   }),
   activity: z.union([
     z.null(),

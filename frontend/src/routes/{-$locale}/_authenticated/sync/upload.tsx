@@ -13,6 +13,7 @@ import {
 import { Check, ChevronRight, X } from "lucide-react"
 import { getLocale } from "@/paraglide/runtime"
 import { dateCompare, getDurationLabel } from "@/lib/date"
+import { m } from "@/paraglide/messages"
 import type {
   InfrastructureReferencesSchemaProps,
   InterventionReferencesSchemaProps,
@@ -266,7 +267,7 @@ function RouteComponent() {
       <section className="m-4">
         <ul>
           {elements.length === 0 && (
-            <p className="py-4 text-center">Aucun élément à afficher.</p>
+            <p className="py-4 text-center">{m["common.empty-state"]()}</p>
           )}
           {elements.map((item) => {
             const mutationItem =
@@ -312,20 +313,28 @@ function RouteComponent() {
                             dateTime={item.date_update}
                             className="text-xs text-muted-foreground"
                           >
-                            {item.appNewItem === true ? "Crée " : "Modifié "}
-                            il y a{" "}
-                            {getDurationLabel(
-                              new Date().getTime() -
-                                new Date(item.date_update).getTime(),
-                              getLocale()
-                            )}
+                            {item.appNewItem === true
+                              ? m["common.last-creation"]({
+                                  date: getDurationLabel(
+                                    new Date().getTime() -
+                                      new Date(item.date_update).getTime(),
+                                    getLocale()
+                                  ),
+                                })
+                              : m["common.last-updated"]({
+                                  date: getDurationLabel(
+                                    new Date().getTime() -
+                                      new Date(item.date_update).getTime(),
+                                    getLocale()
+                                  ),
+                                })}
                           </time>
                         </ItemDescription>
                         {result.isError && (
                           <div className="mt-3 text-accent-foreground">
                             <span className="flex items-center gap-2 font-bold">
-                              <X className="size-4" aria-hidden /> Erreur de
-                              synchronisation
+                              <X className="size-4" aria-hidden />
+                              {m["common.sync-error"]()}
                             </span>
                             <div className="ms-6">
                               {result.data.map((item) => (
@@ -340,7 +349,7 @@ function RouteComponent() {
                           <div className="mt-3 text-accent-foreground">
                             <span className="flex items-center gap-2 font-bold">
                               <Check className="size-4" aria-hidden />
-                              Synchronisation réussie
+                              {m["common.sync-success"]()}
                             </span>
                           </div>
                         )}
@@ -356,7 +365,7 @@ function RouteComponent() {
           })}
         </ul>
         <Button className="w-full" onClick={handleSubmit}>
-          Envoyer mes données
+          {m["common.send-data"]()}
         </Button>
       </section>
     </div>

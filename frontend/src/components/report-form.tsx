@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { useLiveQuery } from "dexie-react-hooks"
+import { m } from "@/paraglide/messages"
 
 export default function ReportForm({
   defaultValues,
@@ -86,8 +87,8 @@ export default function ReportForm({
 
       toast.success(
         isEdit
-          ? "Le signalement a bien été modifié"
-          : "Le signalement a bien été créé",
+          ? m["common.edit-success"]({ item: m["content.report"]() })
+          : m["common.create-success"]({ item: m["content.report"]() }),
         {
           position: "top-center",
         }
@@ -101,37 +102,42 @@ export default function ReportForm({
     <form.AppForm>
       <form.Form>
         <FieldGroup className="mb-4">
-          <FormTextField name="email" label="Courriel" type="email" />
+          <FormTextField name="email" label={m["form.email"]()} type="email" />
 
-          <FormTextareaField name="comment" label="Description" isRTE />
+          <FormTextareaField
+            name="comment"
+            label={m["form.description"]()}
+            isRTE
+          />
 
           <FormGeomField
             name="geom.coordinates"
-            label="Localisation"
+            label={m["form.location"]()}
             icon={pictogram}
             required
           />
 
           <FormSelectField
             name="activity"
-            label="Activité"
+            label={m["form.activity"]()}
             list={reportactivity}
           />
 
           <FormSelectField
             name="category"
-            label="Catégorie"
+            label={m["form.category"]()}
             list={reportcategory}
           />
 
           <FormSelectField
             name="problem_magnitude"
-            label="Amplitude du problème"
+            label={m["form.problem-magnitude"]()}
             list={reportproblemmagnitude}
           />
 
           <Button type="submit">
-            {isEdit ? "Modifier" : "Créer"} le signalement
+            {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
+            {m["content.report"]().toLowerCase()}
           </Button>
 
           {rawDataItem && (
@@ -144,12 +150,15 @@ export default function ReportForm({
                   .delete()
                 const { reference: _reference, ...restoredData } = rawDataItem
                 await db.reportData.put(restoredData as ReportDataSchemaProps)
-                toast.success("Restoration du signalement terminée", {
-                  position: "top-center",
-                })
+                toast.success(
+                  m["common.restore-success"]({ item: m["content.report"]() }),
+                  {
+                    position: "top-center",
+                  }
+                )
               }}
             >
-              Annuler les modifications en attente
+              {m["content.restore-pending"]()}
             </Button>
           )}
         </FieldGroup>
