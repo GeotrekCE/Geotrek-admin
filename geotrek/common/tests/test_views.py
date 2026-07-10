@@ -689,11 +689,20 @@ class ConfigViewTest(TestCase):
 class CommonReferencesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.user_structure = StructureFactory.create()
         cls.structure = StructureFactory.create()
+        cls.user_structure_organism = OrganismFactory.create(
+            structure=cls.user_structure
+        )
+        cls.other_structure_organism = OrganismFactory.create(structure=cls.structure)
         cls.organism = OrganismFactory.create()
         cls.access_mean = AccessMeanFactory.create()
-        cls.user = SuperUserFactory.create(password="password")
-        UserProfileFactory(user=cls.user)
+
+        cls.superuser = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.superuser, structure=cls.user_structure)
+
+        cls.user = UserFactory.create(password="password")
+        UserProfileFactory(user=cls.user, structure=cls.user_structure)
 
     def authenticate(self, user):
         r = self.client.post(
@@ -703,8 +712,37 @@ class CommonReferencesTest(TestCase):
         data = r.json()
         return f"Bearer {data['access']}"
 
-    def test_data(self):
+    def test_data_as_user(self):
         token = self.authenticate(self.user)
+        r = self.client.get(
+            reverse("common:common_references"), headers={"Authorization": token}
+        )
+        data = r.json()
+
+        self.assertEqual(len(data["structure"]), Structure.objects.all().count() - 1)
+        self.assertEqual(len(data["organism"]), Organism.objects.all().count() - 1)
+        self.assertEqual(len(data["accessmean"]), AccessMean.objects.all().count())
+        self.assertEqual(
+            data["structure"],
+            [{"id": self.user_structure.id, "name": self.user_structure.name}],
+        )
+        self.assertCountEqual(
+            data["organism"],
+            [
+                {
+                    "id": self.user_structure_organism.id,
+                    "name": self.user_structure_organism.organism,
+                },
+                {"id": self.organism.id, "name": self.organism.organism},
+            ],
+        )
+        self.assertEqual(
+            data["accessmean"],
+            [{"id": self.access_mean.id, "name": self.access_mean.label}],
+        )
+
+    def test_data_as_superuser(self):
+        token = self.authenticate(self.superuser)
         r = self.client.get(
             reverse("common:common_references"), headers={"Authorization": token}
         )
@@ -713,12 +751,26 @@ class CommonReferencesTest(TestCase):
         self.assertEqual(len(data["structure"]), Structure.objects.all().count())
         self.assertEqual(len(data["organism"]), Organism.objects.all().count())
         self.assertEqual(len(data["accessmean"]), AccessMean.objects.all().count())
-        self.assertEqual(
-            data["structure"][0], {"id": self.structure.id, "name": self.structure.name}
+        self.assertCountEqual(
+            data["structure"],
+            [
+                {"id": self.user_structure.id, "name": self.user_structure.name},
+                {"id": self.structure.id, "name": self.structure.name},
+            ],
         )
-        self.assertEqual(
-            data["organism"][0],
-            {"id": self.organism.id, "name": self.organism.organism},
+        self.assertCountEqual(
+            data["organism"],
+            [
+                {"id": self.organism.id, "name": self.organism.organism},
+                {
+                    "id": self.user_structure_organism.id,
+                    "name": self.user_structure_organism.organism,
+                },
+                {
+                    "id": self.other_structure_organism.id,
+                    "name": self.other_structure_organism.organism,
+                },
+            ],
         )
         self.assertEqual(
             data["accessmean"][0],

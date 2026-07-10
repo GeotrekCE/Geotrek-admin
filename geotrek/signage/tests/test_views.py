@@ -104,6 +104,9 @@ class SignageTemplatesTest(TestCase):
 class SignageReferencesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.user_structure = StructureFactory.create()
+        cls.other_structure = StructureFactory.create()
+
         cls.signage_conditions = SignageConditionFactory.create()
         cls.signage_type = SignageTypeFactory.create()
         cls.signage_sealing = SealingFactory.create()
@@ -111,8 +114,44 @@ class SignageReferencesTest(TestCase):
         cls.blade_type = BladeTypeFactory.create()
         cls.blade_color = BladeColorFactory.create()
         cls.blade_conditions = BladeConditionFactory.create()
-        cls.user = SuperUserFactory.create(password="password")
-        UserProfileFactory(user=cls.user)
+
+        cls.user_structure_signage_conditions = SignageConditionFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_signage_type = SignageTypeFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_signage_sealing = SealingFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_blade_type = BladeTypeFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_blade_conditions = BladeConditionFactory.create(
+            structure=cls.user_structure
+        )
+
+        cls.other_structure_signage_conditions = SignageConditionFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_signage_type = SignageTypeFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_signage_sealing = SealingFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_blade_type = BladeTypeFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_blade_conditions = BladeConditionFactory.create(
+            structure=cls.other_structure
+        )
+
+        cls.superuser = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.superuser, structure=cls.user_structure)
+
+        cls.user = UserFactory.create(password="password")
+        UserProfileFactory(user=cls.user, structure=cls.user_structure)
 
     def authenticate(self, user):
         r = self.client.post(
@@ -122,8 +161,97 @@ class SignageReferencesTest(TestCase):
         data = r.json()
         return f"Bearer {data['access']}"
 
-    def test_data(self):
+    def test_data_as_user(self):
         token = self.authenticate(self.user)
+        r = self.client.get(
+            reverse("signage:signage_references"), headers={"Authorization": token}
+        )
+        data = r.json()
+
+        self.assertEqual(
+            len(data["signagecondition"]), SignageCondition.objects.all().count() - 1
+        )
+        self.assertEqual(
+            len(data["signagetype"]), SignageType.objects.all().count() - 1
+        )
+        self.assertEqual(len(data["sealing"]), Sealing.objects.all().count() - 1)
+        self.assertEqual(len(data["direction"]), Direction.objects.all().count())
+        self.assertEqual(len(data["bladetype"]), BladeType.objects.all().count() - 1)
+        self.assertEqual(len(data["color"]), Color.objects.all().count())
+        self.assertEqual(
+            len(data["bladecondition"]), BladeCondition.objects.all().count() - 1
+        )
+        self.assertCountEqual(
+            data["signagecondition"],
+            [
+                {
+                    "id": self.signage_conditions.id,
+                    "name": self.signage_conditions.label,
+                },
+                {
+                    "id": self.user_structure_signage_conditions.id,
+                    "name": self.user_structure_signage_conditions.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["signagetype"],
+            [
+                {"id": self.signage_type.id, "name": self.signage_type.label},
+                {
+                    "id": self.user_structure_signage_type.id,
+                    "name": self.user_structure_signage_type.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["sealing"],
+            [
+                {"id": self.signage_sealing.id, "name": self.signage_sealing.label},
+                {
+                    "id": self.user_structure_signage_sealing.id,
+                    "name": self.user_structure_signage_sealing.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["direction"],
+            [
+                {"id": self.blade_direction.id, "name": self.blade_direction.label},
+            ],
+        )
+        self.assertCountEqual(
+            data["bladetype"],
+            [
+                {"id": self.blade_type.id, "name": self.blade_type.label},
+                {
+                    "id": self.user_structure_blade_type.id,
+                    "name": self.user_structure_blade_type.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["color"],
+            [
+                {"id": self.blade_color.id, "name": self.blade_color.label},
+            ],
+        )
+        self.assertCountEqual(
+            data["bladecondition"],
+            [
+                {"id": self.blade_conditions.id, "name": self.blade_conditions.label},
+                {
+                    "id": self.user_structure_blade_conditions.id,
+                    "name": self.user_structure_blade_conditions.label,
+                },
+            ],
+        )
+        self.assertEqual(
+            data["pictogram"], {"url": "http://testserver/static/images/signage.png"}
+        )
+
+    def test_data_as_superuser(self):
+        token = self.authenticate(self.superuser)
         r = self.client.get(
             reverse("signage:signage_references"), headers={"Authorization": token}
         )
@@ -140,33 +268,90 @@ class SignageReferencesTest(TestCase):
         self.assertEqual(
             len(data["bladecondition"]), BladeCondition.objects.all().count()
         )
-        self.assertEqual(
-            data["signagecondition"][0],
-            {"id": self.signage_conditions.id, "name": self.signage_conditions.label},
+        self.assertCountEqual(
+            data["signagecondition"],
+            [
+                {
+                    "id": self.signage_conditions.id,
+                    "name": self.signage_conditions.label,
+                },
+                {
+                    "id": self.user_structure_signage_conditions.id,
+                    "name": self.user_structure_signage_conditions.label,
+                },
+                {
+                    "id": self.other_structure_signage_conditions.id,
+                    "name": self.other_structure_signage_conditions.label,
+                },
+            ],
         )
-        self.assertEqual(
-            data["signagetype"][0],
-            {"id": self.signage_type.id, "name": self.signage_type.label},
+        self.assertCountEqual(
+            data["signagetype"],
+            [
+                {"id": self.signage_type.id, "name": self.signage_type.label},
+                {
+                    "id": self.user_structure_signage_type.id,
+                    "name": self.user_structure_signage_type.label,
+                },
+                {
+                    "id": self.other_structure_signage_type.id,
+                    "name": self.other_structure_signage_type.label,
+                },
+            ],
         )
-        self.assertEqual(
-            data["sealing"][0],
-            {"id": self.signage_sealing.id, "name": self.signage_sealing.label},
+        self.assertCountEqual(
+            data["sealing"],
+            [
+                {"id": self.signage_sealing.id, "name": self.signage_sealing.label},
+                {
+                    "id": self.user_structure_signage_sealing.id,
+                    "name": self.user_structure_signage_sealing.label,
+                },
+                {
+                    "id": self.other_structure_signage_sealing.id,
+                    "name": self.other_structure_signage_sealing.label,
+                },
+            ],
         )
-        self.assertEqual(
-            data["direction"][0],
-            {"id": self.blade_direction.id, "name": self.blade_direction.label},
+        self.assertCountEqual(
+            data["direction"],
+            [
+                {"id": self.blade_direction.id, "name": self.blade_direction.label},
+            ],
         )
-        self.assertEqual(
-            data["bladetype"][0],
-            {"id": self.blade_type.id, "name": self.blade_type.label},
+        self.assertCountEqual(
+            data["bladetype"],
+            [
+                {"id": self.blade_type.id, "name": self.blade_type.label},
+                {
+                    "id": self.user_structure_blade_type.id,
+                    "name": self.user_structure_blade_type.label,
+                },
+                {
+                    "id": self.other_structure_blade_type.id,
+                    "name": self.other_structure_blade_type.label,
+                },
+            ],
         )
-        self.assertEqual(
-            data["color"][0],
-            {"id": self.blade_color.id, "name": self.blade_color.label},
+        self.assertCountEqual(
+            data["color"],
+            [
+                {"id": self.blade_color.id, "name": self.blade_color.label},
+            ],
         )
-        self.assertEqual(
-            data["bladecondition"][0],
-            {"id": self.blade_conditions.id, "name": self.blade_conditions.label},
+        self.assertCountEqual(
+            data["bladecondition"],
+            [
+                {"id": self.blade_conditions.id, "name": self.blade_conditions.label},
+                {
+                    "id": self.user_structure_blade_conditions.id,
+                    "name": self.user_structure_blade_conditions.label,
+                },
+                {
+                    "id": self.other_structure_blade_conditions.id,
+                    "name": self.other_structure_blade_conditions.label,
+                },
+            ],
         )
         self.assertEqual(
             data["pictogram"], {"url": "http://testserver/static/images/signage.png"}
@@ -231,8 +416,8 @@ class SignageGTAMTest(TestCase):
         data = r.json()
         return f"Bearer {data['access']}"
 
-    def test_data(self):
-        token = self.authenticate(self.user)
+    def test_get(self):
+        token = self.authenticate(self.superuser)
         list_url = "/api/signage/drf/signages?format=gtam"
         response = self.client.get(list_url, headers={"Authorization": token})
         data = response.json()
@@ -349,8 +534,8 @@ class SignageGTAMTest(TestCase):
         self.assertEqual(list(signage.conditions.all()), [self.signage_conditions])
         geom = signage.geom
         geom.transform(4326)
-        self.assertAlmostEqual(signage.geom.x, 3.0, 2)
-        self.assertAlmostEqual(signage.geom.y, 46.5, 2)
+        self.assertAlmostEqual(geom.x, 3.0, 2)
+        self.assertAlmostEqual(geom.y, 46.5, 2)
 
     def test_post(self):
         token = self.authenticate(self.superuser)
@@ -596,7 +781,7 @@ class SignageGTAMTest(TestCase):
 
         many_to_many_data = {}
         for attribute, _ in self.signage_many_to_many:
-            foreign_keys_data[attribute] = getattr(self.signage, attribute)
+            many_to_many_data[attribute] = list(getattr(self.signage, attribute).all())
 
         fk_data, m2m_data, response_data = self._test_foreign_key_structure_patch(
             self.user, status_code=400

@@ -21,6 +21,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import Permission
 from django.contrib.gis.db.models import Extent, GeometryField
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.db.models.functions import Cast
 from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
@@ -667,6 +668,23 @@ class CommonReferences(ReferencesMixin):
         common_serializers.OrganismGTAMSerializer,
         common_serializers.AccessMeanGTAMSerializer,
     ]
+
+    def get_reference(self, model, serializer):
+        user = self.request.user
+        if user.is_superuser or user.has_perm("authent.can_bypass_structure"):
+            qs = model.objects.all().order_by("id")
+        elif serializer == common_serializers.StructureGTAMSerializer:
+            qs = model.objects.filter(pk=user.profile.structure.id)
+        elif not hasattr(model, "structure"):
+            qs = model.objects.all().order_by("id")
+        else:
+            structure = user.profile.structure
+            qs = model.objects.filter(
+                Q(structure=structure) | Q(structure__isnull=True)
+            ).order_by("id")
+
+        data = serializer(qs, many=True).data
+        return data
 
 
 home = last_list

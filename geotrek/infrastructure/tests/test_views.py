@@ -174,14 +174,55 @@ class InfrastructureMultiActionsViewTest(
 class InfrastructureReferencesTest(TestCase):
     @classmethod
     def setUpTestData(cls):
+        cls.user_structure = StructureFactory.create()
+        cls.other_structure = StructureFactory.create()
+
         cls.type = InfrastructureTypeFactory.create()
         cls.maintenance_difficulty_level = (
             InfrastructureMaintenanceDifficultyLevelFactory.create()
         )
         cls.usage_difficulty_level = InfrastructureUsageDifficultyLevelFactory.create()
         cls.conditions = InfrastructureConditionFactory.create()
-        cls.user = SuperUserFactory.create(password="password")
-        UserProfileFactory(user=cls.user)
+
+        cls.user_structure_type = InfrastructureTypeFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_maintenance_difficulty_level = (
+            InfrastructureMaintenanceDifficultyLevelFactory.create(
+                structure=cls.user_structure
+            )
+        )
+        cls.user_structure_usage_difficulty_level = (
+            InfrastructureUsageDifficultyLevelFactory.create(
+                structure=cls.user_structure
+            )
+        )
+        cls.user_structure_conditions = InfrastructureConditionFactory.create(
+            structure=cls.user_structure
+        )
+
+        cls.other_structure_type = InfrastructureTypeFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_maintenance_difficulty_level = (
+            InfrastructureMaintenanceDifficultyLevelFactory.create(
+                structure=cls.other_structure
+            )
+        )
+        cls.other_structure_usage_difficulty_level = (
+            InfrastructureUsageDifficultyLevelFactory.create(
+                structure=cls.other_structure
+            )
+        )
+        cls.other_structure_conditions = InfrastructureConditionFactory.create(
+            structure=cls.other_structure
+        )
+
+        cls.superuser = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.superuser, structure=cls.user_structure)
+
+        cls.user = UserFactory.create(password="password")
+        UserProfileFactory(user=cls.user, structure=cls.user_structure)
 
     def authenticate(self, user):
         r = self.client.post(
@@ -191,7 +232,7 @@ class InfrastructureReferencesTest(TestCase):
         data = r.json()
         return f"Bearer {data['access']}"
 
-    def test_data(self):
+    def test_data_as_user(self):
         token = self.authenticate(self.user)
         r = self.client.get(
             reverse("infrastructure:infrastructure_references"),
@@ -200,7 +241,83 @@ class InfrastructureReferencesTest(TestCase):
         data = r.json()
 
         self.assertEqual(
-            len(data["infrastructuretype"]), InfrastructureType.objects.all().count()
+            len(data["infrastructuretype"]),
+            InfrastructureType.objects.all().count() - 1,
+        )
+        self.assertEqual(
+            len(data["infrastructuremaintenancedifficultylevel"]),
+            InfrastructureMaintenanceDifficultyLevel.objects.all().count() - 1,
+        )
+        self.assertEqual(
+            len(data["infrastructureusagedifficultylevel"]),
+            InfrastructureUsageDifficultyLevel.objects.all().count() - 1,
+        )
+        self.assertEqual(
+            len(data["infrastructurecondition"]),
+            InfrastructureCondition.objects.all().count() - 1,
+        )
+        self.assertCountEqual(
+            data["infrastructuretype"],
+            [
+                {"id": self.type.id, "name": self.type.label},
+                {
+                    "id": self.user_structure_type.id,
+                    "name": self.user_structure_type.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["infrastructuremaintenancedifficultylevel"],
+            [
+                {
+                    "id": self.maintenance_difficulty_level.id,
+                    "name": self.maintenance_difficulty_level.label,
+                },
+                {
+                    "id": self.user_structure_maintenance_difficulty_level.id,
+                    "name": self.user_structure_maintenance_difficulty_level.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["infrastructureusagedifficultylevel"],
+            [
+                {
+                    "id": self.usage_difficulty_level.id,
+                    "name": self.usage_difficulty_level.label,
+                },
+                {
+                    "id": self.user_structure_usage_difficulty_level.id,
+                    "name": self.user_structure_usage_difficulty_level.label,
+                },
+            ],
+        )
+        self.assertEqual(
+            data["infrastructurecondition"],
+            [
+                {"id": self.conditions.id, "name": self.conditions.label},
+                {
+                    "id": self.user_structure_conditions.id,
+                    "name": self.user_structure_conditions.label,
+                },
+            ],
+        )
+        self.assertEqual(
+            data["pictogram"],
+            {"url": "http://testserver/static/images/infrastructure.png"},
+        )
+
+    def test_data_as_superuser(self):
+        token = self.authenticate(self.superuser)
+        r = self.client.get(
+            reverse("infrastructure:infrastructure_references"),
+            headers={"Authorization": token},
+        )
+        data = r.json()
+
+        self.assertEqual(
+            len(data["infrastructuretype"]),
+            InfrastructureType.objects.all().count(),
         )
         self.assertEqual(
             len(data["infrastructuremaintenancedifficultylevel"]),
@@ -214,26 +331,67 @@ class InfrastructureReferencesTest(TestCase):
             len(data["infrastructurecondition"]),
             InfrastructureCondition.objects.all().count(),
         )
-        self.assertEqual(
-            data["infrastructuretype"][0], {"id": self.type.id, "name": self.type.label}
+        self.assertCountEqual(
+            data["infrastructuretype"],
+            [
+                {"id": self.type.id, "name": self.type.label},
+                {
+                    "id": self.user_structure_type.id,
+                    "name": self.user_structure_type.label,
+                },
+                {
+                    "id": self.other_structure_type.id,
+                    "name": self.other_structure_type.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["infrastructuremaintenancedifficultylevel"],
+            [
+                {
+                    "id": self.maintenance_difficulty_level.id,
+                    "name": self.maintenance_difficulty_level.label,
+                },
+                {
+                    "id": self.user_structure_maintenance_difficulty_level.id,
+                    "name": self.user_structure_maintenance_difficulty_level.label,
+                },
+                {
+                    "id": self.other_structure_maintenance_difficulty_level.id,
+                    "name": self.other_structure_maintenance_difficulty_level.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["infrastructureusagedifficultylevel"],
+            [
+                {
+                    "id": self.usage_difficulty_level.id,
+                    "name": self.usage_difficulty_level.label,
+                },
+                {
+                    "id": self.user_structure_usage_difficulty_level.id,
+                    "name": self.user_structure_usage_difficulty_level.label,
+                },
+                {
+                    "id": self.other_structure_usage_difficulty_level.id,
+                    "name": self.other_structure_usage_difficulty_level.label,
+                },
+            ],
         )
         self.assertEqual(
-            data["infrastructuremaintenancedifficultylevel"][0],
-            {
-                "id": self.maintenance_difficulty_level.id,
-                "name": self.maintenance_difficulty_level.label,
-            },
-        )
-        self.assertEqual(
-            data["infrastructureusagedifficultylevel"][0],
-            {
-                "id": self.usage_difficulty_level.id,
-                "name": self.usage_difficulty_level.label,
-            },
-        )
-        self.assertEqual(
-            data["infrastructurecondition"][0],
-            {"id": self.conditions.id, "name": self.conditions.label},
+            data["infrastructurecondition"],
+            [
+                {"id": self.conditions.id, "name": self.conditions.label},
+                {
+                    "id": self.user_structure_conditions.id,
+                    "name": self.user_structure_conditions.label,
+                },
+                {
+                    "id": self.other_structure_conditions.id,
+                    "name": self.other_structure_conditions.label,
+                },
+            ],
         )
         self.assertEqual(
             data["pictogram"],
@@ -291,7 +449,7 @@ class InfrastructureGTAMTest(TestCase):
         data = r.json()
         return f"Bearer {data['access']}"
 
-    def test_data(self):
+    def test_get(self):
         token = self.authenticate(self.superuser)
         response = self.client.get(self.list_url, headers={"Authorization": token})
         data = response.json()
@@ -380,8 +538,8 @@ class InfrastructureGTAMTest(TestCase):
         )
         geom = infrastructure.geom
         geom.transform(4326)
-        self.assertAlmostEqual(infrastructure.geom.x, 6.0, 2)
-        self.assertAlmostEqual(infrastructure.geom.y, 49.5, 2)
+        self.assertAlmostEqual(geom.x, 6.0, 2)
+        self.assertAlmostEqual(geom.y, 49.5, 2)
 
     def test_post(self):
         token = self.authenticate(self.superuser)
@@ -559,7 +717,7 @@ class InfrastructureGTAMTest(TestCase):
             self.assertEqual(getattr(infrastructure, attribute), value)
 
         for attribute, value in many_to_many_data.items():
-            self.assertEqual(list(getattr(infrastructure, attribute).all()), value)
+            self.assertCountEqual(list(getattr(infrastructure, attribute).all()), value)
 
     def test_foreign_key_structure_as_superuser_patch(self):
         foreign_keys_data, many_to_many_data, _ = (
@@ -571,7 +729,9 @@ class InfrastructureGTAMTest(TestCase):
             self.assertEqual(getattr(self.infrastructure, attribute), value)
 
         for attribute, value in many_to_many_data.items():
-            self.assertEqual(list(getattr(self.infrastructure, attribute).all()), value)
+            self.assertCountEqual(
+                list(getattr(self.infrastructure, attribute).all()), value
+            )
 
     def test_foreign_key_structure_as_user_with_correspondant_structure_post(self):
         """
@@ -585,7 +745,7 @@ class InfrastructureGTAMTest(TestCase):
             self.assertEqual(getattr(infrastructure, attribute), value)
 
         for attribute, value in many_to_many_data.items():
-            self.assertEqual(list(getattr(infrastructure, attribute).all()), value)
+            self.assertCountEqual(list(getattr(infrastructure, attribute).all()), value)
 
     def test_foreign_key_structure_as_user_with_correspondant_structure_patch(self):
         """
@@ -600,7 +760,9 @@ class InfrastructureGTAMTest(TestCase):
             self.assertEqual(getattr(self.infrastructure, attribute), value)
 
         for attribute, value in many_to_many_data.items():
-            self.assertEqual(list(getattr(self.infrastructure, attribute).all()), value)
+            self.assertCountEqual(
+                list(getattr(self.infrastructure, attribute).all()), value
+            )
 
     def test_foreign_key_structure_as_user_without_correspondant_structure_post(self):
         """
@@ -634,7 +796,9 @@ class InfrastructureGTAMTest(TestCase):
 
         many_to_many_data = {}
         for attribute, _ in self.many_to_many:
-            foreign_keys_data[attribute] = getattr(self.infrastructure, attribute)
+            many_to_many_data[attribute] = list(
+                getattr(self.infrastructure, attribute).all()
+            )
 
         fk_data, m2m_data, response_data = self._test_foreign_key_structure_patch(
             self.user, status_code=400
@@ -659,4 +823,6 @@ class InfrastructureGTAMTest(TestCase):
             self.assertEqual(getattr(self.infrastructure, attribute), value)
 
         for attribute, value in many_to_many_data.items():
-            self.assertEqual(list(getattr(self.infrastructure, attribute).all()), value)
+            self.assertCountEqual(
+                list(getattr(self.infrastructure, attribute).all()), value
+            )
