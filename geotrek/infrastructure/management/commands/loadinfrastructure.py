@@ -2,7 +2,6 @@ import os.path
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import Point
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -425,23 +424,15 @@ class Command(BaseCommand):
                 infra = Infrastructure.objects.create(**fields_without_eid)
                 if condition_type:
                     infra.conditions.add(condition_type)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            try:
-                geometry.coord_dim = 2
-                geometry = geometry.transform(settings.API_SRID, clone=True)
-                serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
-                topology = Topology.deserialize(serialized)
-                infra.mutate(topology)
-            except IndexError:
-                msg = "Invalid Geometry type. You need 1 path"
-                raise GEOSException(msg)
-        else:
-            if geometry.geom_type != "Point":
-                msg = "Invalid Geometry type."
-                raise GEOSException(msg)
-            geometry = geometry.transform(settings.SRID, clone=True)
-            infra.geom = Point(geometry.x, geometry.y)
-            infra.save()
+        try:
+            geometry.coord_dim = 2
+            geometry = geometry.transform(settings.API_SRID, clone=True)
+            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
+            topology = Topology.deserialize(serialized)
+            infra.mutate(topology)
+        except:
+            msg = "Invalid geometry"
+            raise GEOSException(msg)
         self.counter += 1
 
         return infra
