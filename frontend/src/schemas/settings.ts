@@ -12,13 +12,14 @@ export const settingsSchema = z.object({
     maps: z.object({
       layers: z.array(
         z.object({
+          id:  z.number().int().positive(),
           pmtiles_url: z.string(),
           json_style_url: z.string(),
           name: z.string().min(1),
           "content-length": z.number().int().positive(),
           options: z.object({
             attribution: z.string(),
-            center: z.array(z.number().positive()),
+            center: z.array(z.number()),
             maxBounds: z.array(z.array(z.number())),
             maxZoom: z.number().int().positive(),
             minZoom: z.number().int(),
