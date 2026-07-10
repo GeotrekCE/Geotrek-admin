@@ -54,6 +54,7 @@ export function TextareaField({
             onChange={field.handleChange}
             aria-invalid={isTouched && !isValid}
             className={className}
+            data-testid={`field-${field.name}`}
           />
         ) : (
           <Textarea
@@ -64,6 +65,8 @@ export function TextareaField({
             maxLength={maxLength}
             aria-invalid={isTouched && !isValid}
             className={className}
+            data-testid={`field-${field.name}`}
+            name={field.name}
             {...textareaProps}
           />
         )}

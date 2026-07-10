@@ -59,6 +59,8 @@ export function TextField({
             }}
             aria-invalid={isTouched && !isValid}
             className={className}
+            data-testid={`field-${field.name}`}
+            name={field.name}
             {...inputProps}
           />
           {isValidating && (

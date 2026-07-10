@@ -102,7 +102,10 @@ export function SelectField({
                         {value.label}
                       </ComboboxChip>
                     ))}
-                    <ComboboxChipsInput />
+                    <ComboboxChipsInput
+                      data-testid={`field-${field.name}`}
+                      name={field.name}
+                    />
                     <ChevronDown
                       className="pointer-events-none absolute inset-e-2 bottom-2 size-4 shrink-0 cursor-pointer"
                       aria-hidden
@@ -140,6 +143,8 @@ export function SelectField({
               id={id}
               aria-invalid={isTouched && !isValid}
               className={className}
+              data-testid={`field-${field.name}`}
+              name={field.name}
             >
               <SelectValue placeholder={placeholder} />
             </SelectTrigger>

@@ -18,7 +18,6 @@ interface MinimalTiptapProps {
   placeholder?: string
   editable?: boolean
   className?: string
-  isFullPage?: boolean
 }
 
 function Controls({ editor }: { editor: Editor }) {
@@ -54,7 +53,7 @@ function RichTextEditor({
   placeholder = "",
   editable = true,
   className,
-  isFullPage = false,
+  ...rest
 }: MinimalTiptapProps) {
   const editor = useEditor({
     extensions: [
@@ -101,11 +100,8 @@ function RichTextEditor({
     },
     editorProps: {
       attributes: {
-        class: cn(
-          "prose prose-sm focus:outline-none",
-          "min-h-[200px] border-0 p-4",
-          isFullPage && "mx-auto sm:prose-base lg:prose-lg xl:prose-2xl"
-        ),
+        class: "prose prose-sm min-h-[200px] border-0 p-4 focus:outline-none",
+        ...rest,
       },
     },
   })

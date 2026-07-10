@@ -93,6 +93,7 @@ export function GeomField({
           variant="outline"
           type="button"
           onClick={() => setEditing((bool) => !bool)}
+          data-testid={`field-${field.name}`}
         >
           {isEditing
             ? m["form.geom-action-cancel"]()

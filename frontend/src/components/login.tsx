@@ -64,7 +64,7 @@ export default function Login() {
         </CardHeader>
         <CardContent>
           <form.AppForm>
-            <form.Form id="login-form" className="p-0">
+            <form.Form id="login-form" className="p-0" data-testid="login-form">
               <FieldGroup className="mb-4">
                 <FieldSet>
                   <FieldLegend className="mb-4">

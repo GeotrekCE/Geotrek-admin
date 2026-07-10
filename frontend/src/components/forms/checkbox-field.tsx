@@ -33,6 +33,8 @@ export function CheckboxField({ label, description }: CheckboxFieldProps) {
             field.handleBlur()
           }}
           aria-invalid={isTouched && !isValid}
+          data-testid={`field-${field.name}`}
+          name={field.name}
         />
         <div className="flex flex-1 flex-col gap-1.5 leading-snug">
           <FieldLabel htmlFor={field.id ?? id} className="leading-none">

@@ -62,6 +62,7 @@ function Form({
   ...props
 }: Omit<React.ComponentPropsWithoutRef<"form">, "onSubmit" | "noValidate"> & {
   children?: React.ReactNode
+  "data-test-id"?: string
 }) {
   const form = useFormContext()
   const handleSubmit = React.useCallback(
