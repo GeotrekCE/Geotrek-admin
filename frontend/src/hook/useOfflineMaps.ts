@@ -39,7 +39,7 @@ export function useOfflineMaps() {
     setLoadingZoneId(zone.name)
     setCurrentProgress(0)
     abortControllerRef.current = new AbortController()
-    const id = zone.name.replaceAll(" ", "-")
+    const id = zone.id.toString()
     try {
       // Use the library to download the map with native AbortSignal support
       await offlineManager.downloadMap(
