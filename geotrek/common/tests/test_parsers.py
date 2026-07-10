@@ -1739,7 +1739,6 @@ class GeotrekAggregatorTestParser(GeotrekAggregatorParser):
     pass
 
 
-@override_settings(TREKKING_TOPOLOGY_ENABLED=False)
 class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
     def setUp(self, *args, **kwargs):
         self.filetype = FileType.objects.create(type="Photographie")
@@ -1863,7 +1862,6 @@ class GeotrekParserTest(GeotrekParserTestMixin, TestCase):
         self.assertEqual([t.pk], list(Trek.objects.values_list("pk", flat=True)))
 
 
-@override_settings(TREKKING_TOPOLOGY_ENABLED=False)
 class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
     def setUp(self, *args, **kwargs):
         self.filetype = FileType.objects.create(type="Photographie")
@@ -1918,31 +1916,6 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
         self.assertIn("(URL_1) (100%)", stdout_parser)
         # Trek, POI, Service, InformationDesk, TouristicContent, TouristicEvent, Signage, Infrastructure
         self.assertEqual(10, mocked_import_module.call_count)
-
-    @override_settings(TREKKING_TOPOLOGY_ENABLED=True)
-    def test_geotrek_aggregator_parser_model_dynamic_segmentation(self):
-        output = StringIO()
-        filename = os.path.join(
-            os.path.dirname(__file__),
-            "data",
-            "geotrek_parser_v2",
-            "config_aggregator_ds.json",
-        )
-        call_command(
-            "import",
-            "geotrek.common.parsers.GeotrekAggregatorParser",
-            filename=filename,
-            verbosity=2,
-            stdout=output,
-        )
-        string_parser = output.getvalue()
-        self.assertIn(
-            "Services can't be imported with dynamic segmentation", string_parser
-        )
-        self.assertIn("POIs can't be imported with dynamic segmentation", string_parser)
-        self.assertIn(
-            "Treks can't be imported with dynamic segmentation", string_parser
-        )
 
     @mock.patch(
         "geotrek.common.parsers.importlib.import_module", return_value=mock.MagicMock()
@@ -2010,7 +1983,6 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
     @override_settings(
         MODELTRANSLATION_DEFAULT_LANGUAGE="fr",
         LANGUAGE_CODE="fr",
-        TREKKING_TOPOLOGY_ENABLED=False,
     )
     def test_geotrek_aggregator_parser(self, mocked_head, mocked_get):
         self.mock_time = 0
