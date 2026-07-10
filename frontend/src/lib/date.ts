@@ -28,11 +28,11 @@ export function getUpdatedStatus(date: string | undefined, timeInMS: number) {
   if (!date || !isValidDate(date)) {
     return "EXPIRED"
   }
-  if (isOutDated(date, timeInMS / 2)) {
-    return "WARNING"
-  }
   if (isOutDated(date, timeInMS)) {
     return "EXPIRED"
+  }
+  if (isOutDated(date, timeInMS / 2)) {
+    return "WARNING"
   }
   return "UPDATED"
 }
