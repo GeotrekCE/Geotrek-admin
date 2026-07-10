@@ -31,7 +31,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const login = async (username: string, password: string) => {
     const response = await fetch(`${API_URL}/auth/token/`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Accept-Language": getLocale(),
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify({ username, password }),
     })
 
