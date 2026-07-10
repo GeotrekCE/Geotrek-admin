@@ -430,8 +430,8 @@ class Command(BaseCommand):
             serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
             topology = Topology.deserialize(serialized)
             infra.mutate(topology)
-        except:
-            msg = "Invalid geometry"
+        except Exception as e:
+            msg = f"Invalid geometry ({e})"
             raise GEOSException(msg)
         self.counter += 1
 
