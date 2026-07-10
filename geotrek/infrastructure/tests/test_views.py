@@ -2,12 +2,15 @@ import json
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
-from django.db.models import Model
 from django.test import TestCase
 from django.urls import reverse
 from mapentity.tests import SuperUserFactory, UserFactory
 
-from geotrek.authent.tests.factories import PathManagerFactory, UserProfileFactory, StructureFactory
+from geotrek.authent.tests.factories import (
+    PathManagerFactory,
+    StructureFactory,
+    UserProfileFactory,
+)
 from geotrek.common.tests import (
     CommonMultiActionsViewsPublishedMixin,
     CommonMultiActionViewsMixin,
@@ -248,7 +251,9 @@ class InfrastructureGTAMTest(TestCase):
         cls.structure = StructureFactory.create()
         cls.type = InfrastructureTypeFactory.create()
         cls.access = AccessMeanFactory.create()
-        cls.maintenance_difficulty = InfrastructureMaintenanceDifficultyLevelFactory.create()
+        cls.maintenance_difficulty = (
+            InfrastructureMaintenanceDifficultyLevelFactory.create()
+        )
         cls.usage_difficulty = InfrastructureUsageDifficultyLevelFactory.create()
         cls.condition_1 = InfrastructureConditionFactory.create()
         cls.condition_2 = InfrastructureConditionFactory.create()
@@ -258,8 +263,12 @@ class InfrastructureGTAMTest(TestCase):
 
         cls.user = UserFactory.create(password="password")
         UserProfileFactory(user=cls.user, structure=cls.structure)
-        cls.user.user_permissions.add(Permission.objects.get(codename="add_infrastructure"))
-        cls.user.user_permissions.add(Permission.objects.get(codename="change_infrastructure"))
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="add_infrastructure")
+        )
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="change_infrastructure")
+        )
 
         cls.list_url = "/api/infrastructure/drf/infrastructures?format=gtam"
         cls.detail_url = f"/api/infrastructure/drf/infrastructures/{cls.infrastructure.id}?format=gtam"
@@ -333,22 +342,22 @@ class InfrastructureGTAMTest(TestCase):
 
     def _get_data(self):
         data = {
-                "geom": {
-                    "type": "Point",
-                    "coordinates": [6.0, 49.5],
-                },
-                "published": False,
-                "name": "toto",
-                "description": "description",
-                "implantation_year": 1964,
-                "accessibility": "accessible",
-                "structure_id": self.structure.id,
-                "access_id": self.access.id,
-                "type_id": self.type.id,
-                "maintenance_difficulty_id": self.maintenance_difficulty.id,
-                "usage_difficulty_id": self.usage_difficulty.id,
-                "conditions_id": [self.condition_1.id, self.condition_2.id],
-            }
+            "geom": {
+                "type": "Point",
+                "coordinates": [6.0, 49.5],
+            },
+            "published": False,
+            "name": "toto",
+            "description": "description",
+            "implantation_year": 1964,
+            "accessibility": "accessible",
+            "structure_id": self.structure.id,
+            "access_id": self.access.id,
+            "type_id": self.type.id,
+            "maintenance_difficulty_id": self.maintenance_difficulty.id,
+            "usage_difficulty_id": self.usage_difficulty.id,
+            "conditions_id": [self.condition_1.id, self.condition_2.id],
+        }
 
         return data
 
@@ -362,9 +371,13 @@ class InfrastructureGTAMTest(TestCase):
         self.assertEqual(infrastructure.structure, self.structure)
         self.assertEqual(infrastructure.access, self.access)
         self.assertEqual(infrastructure.type, self.type)
-        self.assertEqual(infrastructure.maintenance_difficulty, self.maintenance_difficulty)
+        self.assertEqual(
+            infrastructure.maintenance_difficulty, self.maintenance_difficulty
+        )
         self.assertEqual(infrastructure.usage_difficulty, self.usage_difficulty)
-        self.assertEqual(list(infrastructure.conditions.all()), [self.condition_1, self.condition_2])
+        self.assertEqual(
+            list(infrastructure.conditions.all()), [self.condition_1, self.condition_2]
+        )
         geom = infrastructure.geom
         geom.transform(4326)
         self.assertAlmostEqual(infrastructure.geom.x, 6.0, 2)
@@ -456,10 +469,14 @@ class InfrastructureGTAMTest(TestCase):
         self.infrastructure.refresh_from_db()
         self.assertEqual(self.infrastructure.structure, self.user.profile.structure)
 
-    def _test_foreign_key_structure_post(self, user, new_structure=True, status_code=201):
+    def _test_foreign_key_structure_post(
+        self, user, new_structure=True, status_code=201
+    ):
         token = self.authenticate(user)
 
-        structure = StructureFactory.create() if new_structure else user.profile.structure
+        structure = (
+            StructureFactory.create() if new_structure else user.profile.structure
+        )
 
         data = self._get_data()
 
@@ -470,8 +487,13 @@ class InfrastructureGTAMTest(TestCase):
 
         many_to_many_data = {}
         for attribute, factory in self.many_to_many:
-            many_to_many_data[attribute] = [factory.create(structure=structure), factory.create(structure=structure)]
-            data[f"{attribute}_id"] = [instance.id for instance in many_to_many_data[attribute]]
+            many_to_many_data[attribute] = [
+                factory.create(structure=structure),
+                factory.create(structure=structure),
+            ]
+            data[f"{attribute}_id"] = [
+                instance.id for instance in many_to_many_data[attribute]
+            ]
 
         response = self.client.post(
             self.list_url,
@@ -484,14 +506,22 @@ class InfrastructureGTAMTest(TestCase):
         self.assertEqual(response.status_code, status_code)
 
         infrastructure_id = response_data.get("id", None)
-        infrastructure = Infrastructure.objects.get(pk=infrastructure_id) if infrastructure_id else None
+        infrastructure = (
+            Infrastructure.objects.get(pk=infrastructure_id)
+            if infrastructure_id
+            else None
+        )
 
         return infrastructure, foreign_keys_data, many_to_many_data, response.json()
 
-    def _test_foreign_key_structure_patch(self, user, new_structure=True, status_code=200):
+    def _test_foreign_key_structure_patch(
+        self, user, new_structure=True, status_code=200
+    ):
         token = self.authenticate(user)
 
-        structure = StructureFactory.create() if new_structure else user.profile.structure
+        structure = (
+            StructureFactory.create() if new_structure else user.profile.structure
+        )
 
         data = {}
 
@@ -502,8 +532,13 @@ class InfrastructureGTAMTest(TestCase):
 
         many_to_many_data = {}
         for attribute, factory in self.many_to_many:
-            many_to_many_data[attribute] = [factory.create(structure=structure), factory.create(structure=structure)]
-            data[f"{attribute}_id"] = [instance.id for instance in many_to_many_data[attribute]]
+            many_to_many_data[attribute] = [
+                factory.create(structure=structure),
+                factory.create(structure=structure),
+            ]
+            data[f"{attribute}_id"] = [
+                instance.id for instance in many_to_many_data[attribute]
+            ]
 
         response = self.client.patch(
             self.detail_url,
@@ -515,9 +550,10 @@ class InfrastructureGTAMTest(TestCase):
 
         return foreign_keys_data, many_to_many_data, response.json()
 
-
     def test_foreign_key_structure_as_superuser_post(self):
-        infrastructure, foreign_keys_data, many_to_many_data, _ = self._test_foreign_key_structure_post(self.superuser)
+        infrastructure, foreign_keys_data, many_to_many_data, _ = (
+            self._test_foreign_key_structure_post(self.superuser)
+        )
 
         for attribute, value in foreign_keys_data.items():
             self.assertEqual(getattr(infrastructure, attribute), value)
@@ -526,7 +562,9 @@ class InfrastructureGTAMTest(TestCase):
             self.assertEqual(list(getattr(infrastructure, attribute).all()), value)
 
     def test_foreign_key_structure_as_superuser_patch(self):
-        foreign_keys_data, many_to_many_data, _ = self._test_foreign_key_structure_patch(self.superuser)
+        foreign_keys_data, many_to_many_data, _ = (
+            self._test_foreign_key_structure_patch(self.superuser)
+        )
 
         self.infrastructure.refresh_from_db()
         for attribute, value in foreign_keys_data.items():
@@ -537,9 +575,11 @@ class InfrastructureGTAMTest(TestCase):
 
     def test_foreign_key_structure_as_user_with_correspondant_structure_post(self):
         """
-            User can assign foreign key values if the selected values are related to the user structure
+        User can assign foreign key values if the selected values are related to the user structure
         """
-        infrastructure, foreign_keys_data, many_to_many_data, _ = self._test_foreign_key_structure_post(self.user, new_structure=False)
+        infrastructure, foreign_keys_data, many_to_many_data, _ = (
+            self._test_foreign_key_structure_post(self.user, new_structure=False)
+        )
 
         for attribute, value in foreign_keys_data.items():
             self.assertEqual(getattr(infrastructure, attribute), value)
@@ -549,9 +589,11 @@ class InfrastructureGTAMTest(TestCase):
 
     def test_foreign_key_structure_as_user_with_correspondant_structure_patch(self):
         """
-            User can change foreign key values if the selected values are related to the user structure
+        User can change foreign key values if the selected values are related to the user structure
         """
-        foreign_keys_data, many_to_many_data, _ = self._test_foreign_key_structure_patch(self.user, new_structure=False)
+        foreign_keys_data, many_to_many_data, _ = (
+            self._test_foreign_key_structure_patch(self.user, new_structure=False)
+        )
 
         self.infrastructure.refresh_from_db()
         for attribute, value in foreign_keys_data.items():
@@ -562,22 +604,29 @@ class InfrastructureGTAMTest(TestCase):
 
     def test_foreign_key_structure_as_user_without_correspondant_structure_post(self):
         """
-            User cannot assign foreign key values if the selected values are not related to the user structure or not related to a structure
+        User cannot assign foreign key values if the selected values are not related to the user structure or not related to a structure
         """
-        _, fk_data, m2m_data, response_data = self._test_foreign_key_structure_post(self.user, status_code=400)
+        _, fk_data, m2m_data, response_data = self._test_foreign_key_structure_post(
+            self.user, status_code=400
+        )
 
         error_msg = {
-            'type_id': [f'Invalid pk "{fk_data["type"].id}" - object does not exist.'],
-            'maintenance_difficulty_id': [
-                f'Invalid pk "{fk_data["maintenance_difficulty"].id}" - object does not exist.'],
-            'usage_difficulty_id': [f'Invalid pk "{fk_data["usage_difficulty"].id}" - object does not exist.'],
-            'conditions_id': [f'Invalid pk "{m2m_data["conditions"][0].id}" - object does not exist.']
+            "type_id": [f'Invalid pk "{fk_data["type"].id}" - object does not exist.'],
+            "maintenance_difficulty_id": [
+                f'Invalid pk "{fk_data["maintenance_difficulty"].id}" - object does not exist.'
+            ],
+            "usage_difficulty_id": [
+                f'Invalid pk "{fk_data["usage_difficulty"].id}" - object does not exist.'
+            ],
+            "conditions_id": [
+                f'Invalid pk "{m2m_data["conditions"][0].id}" - object does not exist.'
+            ],
         }
         self.assertEqual(response_data, error_msg)
 
     def test_foreign_key_structure_as_user_without_correspondant_structure_patch(self):
         """
-            User cannot change foreign key values if the selected values are not related to the user structure or not related to a structure
+        User cannot change foreign key values if the selected values are not related to the user structure or not related to a structure
         """
         foreign_keys_data = {}
         for attribute, _ in self.foreign_keys:
@@ -587,13 +636,21 @@ class InfrastructureGTAMTest(TestCase):
         for attribute, _ in self.many_to_many:
             foreign_keys_data[attribute] = getattr(self.infrastructure, attribute)
 
-        fk_data, m2m_data, response_data = self._test_foreign_key_structure_patch(self.user, status_code=400)
+        fk_data, m2m_data, response_data = self._test_foreign_key_structure_patch(
+            self.user, status_code=400
+        )
 
         error_msg = {
-            'type_id': [f'Invalid pk "{fk_data["type"].id}" - object does not exist.'],
-            'maintenance_difficulty_id': [f'Invalid pk "{fk_data["maintenance_difficulty"].id}" - object does not exist.'],
-            'usage_difficulty_id': [f'Invalid pk "{fk_data["usage_difficulty"].id}" - object does not exist.'],
-            'conditions_id': [f'Invalid pk "{m2m_data["conditions"][0].id}" - object does not exist.']
+            "type_id": [f'Invalid pk "{fk_data["type"].id}" - object does not exist.'],
+            "maintenance_difficulty_id": [
+                f'Invalid pk "{fk_data["maintenance_difficulty"].id}" - object does not exist.'
+            ],
+            "usage_difficulty_id": [
+                f'Invalid pk "{fk_data["usage_difficulty"].id}" - object does not exist.'
+            ],
+            "conditions_id": [
+                f'Invalid pk "{m2m_data["conditions"][0].id}" - object does not exist.'
+            ],
         }
         self.assertEqual(response_data, error_msg)
 

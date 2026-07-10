@@ -9,7 +9,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils.translation import gettext
-from mapentity.tests import SuperUserFactory
+from mapentity.tests import SuperUserFactory, UserFactory
 
 from geotrek.authent.tests.factories import (
     PathManagerFactory,
@@ -22,6 +22,7 @@ from geotrek.common.tests import (
     CommonMultiActionViewsStructureMixin,
     CommonTest,
 )
+from geotrek.common.tests.factories import AccessMeanFactory, OrganismFactory
 from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.models import (
     Blade,
@@ -177,9 +178,50 @@ class SignageGTAMTest(TestCase):
     def setUpTestData(cls):
         cls.blade = BladeFactory.create()
         cls.signage = cls.blade.signage
+        cls.signage.access = AccessMeanFactory.create()
+        cls.signage.save()
 
-        cls.user = SuperUserFactory.create(password="password")
-        UserProfileFactory(user=cls.user)
+        cls.structure = StructureFactory.create()
+        cls.access = AccessMeanFactory.create()
+        cls.manager = OrganismFactory.create()
+        cls.signage_conditions = SignageConditionFactory.create()
+        cls.signage_type = SignageTypeFactory.create()
+        cls.signage_sealing = SealingFactory.create()
+        cls.blade_direction = BladeDirectionFactory.create()
+        cls.blade_type = BladeTypeFactory.create()
+        cls.blade_color = BladeColorFactory.create()
+        cls.blade_conditions = BladeConditionFactory.create()
+
+        cls.superuser = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.superuser, structure=cls.structure)
+
+        cls.user = UserFactory.create(password="password")
+        UserProfileFactory(user=cls.user, structure=cls.structure)
+        cls.user.user_permissions.add(Permission.objects.get(codename="add_signage"))
+        cls.user.user_permissions.add(Permission.objects.get(codename="change_signage"))
+
+        cls.list_url = "/api/signage/drf/signages?format=gtam"
+        cls.detail_url = f"/api/signage/drf/signages/{cls.signage.id}?format=gtam"
+
+        cls.signage_foreign_keys = [
+            ("manager", OrganismFactory),
+            ("sealing", SealingFactory),
+            ("type", SignageTypeFactory),
+        ]
+
+        cls.signage_many_to_many = [
+            ("conditions", SignageConditionFactory),
+        ]
+
+        cls.blade_foreign_keys = [
+            ("direction", BladeDirectionFactory),
+            ("type", BladeTypeFactory),
+            ("color", BladeColorFactory),
+        ]
+
+        cls.blade_many_to_many = [
+            ("conditions", BladeConditionFactory),
+        ]
 
     def authenticate(self, user):
         r = self.client.post(
@@ -248,7 +290,10 @@ class SignageGTAMTest(TestCase):
                     "id": self.signage.structure.id,
                     "name": self.signage.structure.name,
                 },
-                "access": self.signage.access,
+                "access": {
+                    "id": self.signage.access.id,
+                    "name": self.signage.access.label,
+                },
                 "manager": {
                     "id": self.signage.manager.id,
                     "name": self.signage.manager.organism,
@@ -267,6 +312,313 @@ class SignageGTAMTest(TestCase):
             }
         ]
         self.assertEqual(data, signages)
+
+    def _get_data(self):
+        data = {
+            "geom": {"type": "Point", "coordinates": [3.0, 46.5]},
+            "published": False,
+            "name": "toto",
+            "description": "description",
+            "implantation_year": 497,
+            "code": "AAAA",
+            "printed_elevation": "790",
+            "blades": [],
+            "structure_id": self.structure.id,
+            "access_id": self.access.id,
+            "manager_id": self.manager.id,
+            "sealing_id": self.signage_sealing.id,
+            "type_id": self.signage_type.id,
+            "conditions_id": [self.signage_conditions.id],
+        }
+
+        return data
+
+    def _check_data(self, signage_id):
+        signage = Signage.objects.get(pk=signage_id)
+        self.assertEqual(signage.published, False)
+        self.assertEqual(signage.name, "toto")
+        self.assertEqual(signage.description, "description")
+        self.assertEqual(signage.implantation_year, 497)
+        self.assertEqual(signage.code, "AAAA")
+        self.assertEqual(signage.printed_elevation, 790)
+        self.assertEqual(signage.structure, self.structure)
+        self.assertEqual(signage.access, self.access)
+        self.assertEqual(signage.manager, self.manager)
+        self.assertEqual(signage.sealing, self.signage_sealing)
+        self.assertEqual(signage.type, self.signage_type)
+        self.assertEqual(list(signage.conditions.all()), [self.signage_conditions])
+        geom = signage.geom
+        geom.transform(4326)
+        self.assertAlmostEqual(signage.geom.x, 3.0, 2)
+        self.assertAlmostEqual(signage.geom.y, 46.5, 2)
+
+    def test_post(self):
+        token = self.authenticate(self.superuser)
+
+        response = self.client.post(
+            self.list_url,
+            json.dumps(self._get_data()),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 201)
+
+        signage_id = response_data["id"]
+        self._check_data(signage_id)
+
+    def test_patch(self):
+        token = self.authenticate(self.superuser)
+
+        response = self.client.patch(
+            self.detail_url,
+            json.dumps(self._get_data()),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self._check_data(self.signage.id)
+
+    def _test_structure_post(self, user):
+        token = self.authenticate(user)
+        structure = StructureFactory.create()
+
+        data = self._get_data()
+        data["structure_id"] = structure.id
+
+        response = self.client.post(
+            self.list_url,
+            json.dumps(data),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 201)
+
+        signage_id = response_data["id"]
+        signage = Signage.objects.get(pk=signage_id)
+
+        return signage, structure
+
+    def _test_structure_patch(self, user):
+        token = self.authenticate(user)
+
+        structure = StructureFactory.create()
+
+        response = self.client.patch(
+            self.detail_url,
+            {"structure_id": structure.id},
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        self.assertEqual(response.status_code, 200)
+
+        return structure
+
+    def test_structure_as_superuser_post(self):
+        signage, structure = self._test_structure_post(self.superuser)
+        self.assertEqual(signage.structure, structure)
+
+    def test_structure_as_superuser_patch(self):
+        structure = self._test_structure_patch(self.superuser)
+
+        self.signage.refresh_from_db()
+        self.assertEqual(self.signage.structure, structure)
+
+    def test_structure_as_user_post(self):
+        signage, _ = self._test_structure_post(self.user)
+        self.assertEqual(signage.structure, self.user.profile.structure)
+
+    def test_structure_as_user_patch(self):
+        self._test_structure_patch(self.user)
+
+        self.signage.refresh_from_db()
+        self.assertEqual(self.signage.structure, self.user.profile.structure)
+
+    def _test_foreign_key_structure_post(
+        self, user, new_structure=True, status_code=201
+    ):
+        token = self.authenticate(user)
+
+        structure = (
+            StructureFactory.create() if new_structure else user.profile.structure
+        )
+
+        data = self._get_data()
+
+        foreign_keys_data = {}
+        for attribute, factory in self.signage_foreign_keys:
+            foreign_keys_data[attribute] = factory.create(structure=structure)
+            data[f"{attribute}_id"] = foreign_keys_data[attribute].id
+
+        many_to_many_data = {}
+        for attribute, factory in self.signage_many_to_many:
+            many_to_many_data[attribute] = [
+                factory.create(structure=structure),
+                factory.create(structure=structure),
+            ]
+            data[f"{attribute}_id"] = [
+                instance.id for instance in many_to_many_data[attribute]
+            ]
+
+        response = self.client.post(
+            self.list_url,
+            json.dumps(data),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, status_code)
+
+        signage_id = response_data.get("id", None)
+        signage = Signage.objects.get(pk=signage_id) if signage_id else None
+
+        return signage, foreign_keys_data, many_to_many_data, response.json()
+
+    def _test_foreign_key_structure_patch(
+        self, user, new_structure=True, status_code=200
+    ):
+        token = self.authenticate(user)
+
+        structure = (
+            StructureFactory.create() if new_structure else user.profile.structure
+        )
+
+        data = {}
+
+        foreign_keys_data = {}
+        for attribute, factory in self.signage_foreign_keys:
+            foreign_keys_data[attribute] = factory.create(structure=structure)
+            data[f"{attribute}_id"] = foreign_keys_data[attribute].id
+
+        many_to_many_data = {}
+        for attribute, factory in self.signage_many_to_many:
+            many_to_many_data[attribute] = [
+                factory.create(structure=structure),
+                factory.create(structure=structure),
+            ]
+            data[f"{attribute}_id"] = [
+                instance.id for instance in many_to_many_data[attribute]
+            ]
+
+        response = self.client.patch(
+            self.detail_url,
+            json.dumps(data),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        self.assertEqual(response.status_code, status_code)
+
+        return foreign_keys_data, many_to_many_data, response.json()
+
+    def test_foreign_key_structure_as_superuser_post(self):
+        signage, foreign_keys_data, many_to_many_data, _ = (
+            self._test_foreign_key_structure_post(self.superuser)
+        )
+
+        for attribute, value in foreign_keys_data.items():
+            self.assertEqual(getattr(signage, attribute), value)
+
+        for attribute, value in many_to_many_data.items():
+            self.assertEqual(list(getattr(signage, attribute).all()), value)
+
+    def test_foreign_key_structure_as_superuser_patch(self):
+        foreign_keys_data, many_to_many_data, _ = (
+            self._test_foreign_key_structure_patch(self.superuser)
+        )
+
+        self.signage.refresh_from_db()
+        for attribute, value in foreign_keys_data.items():
+            self.assertEqual(getattr(self.signage, attribute), value)
+
+        for attribute, value in many_to_many_data.items():
+            self.assertEqual(list(getattr(self.signage, attribute).all()), value)
+
+    def test_foreign_key_structure_as_user_with_correspondant_structure_post(self):
+        """
+        User can assign foreign key values if the selected values are related to the user structure
+        """
+        signage, foreign_keys_data, many_to_many_data, _ = (
+            self._test_foreign_key_structure_post(self.user, new_structure=False)
+        )
+
+        for attribute, value in foreign_keys_data.items():
+            self.assertEqual(getattr(signage, attribute), value)
+
+        for attribute, value in many_to_many_data.items():
+            self.assertEqual(list(getattr(signage, attribute).all()), value)
+
+    def test_foreign_key_structure_as_user_with_correspondant_structure_patch(self):
+        """
+        User can change foreign key values if the selected values are related to the user structure
+        """
+        foreign_keys_data, many_to_many_data, _ = (
+            self._test_foreign_key_structure_patch(self.user, new_structure=False)
+        )
+
+        self.signage.refresh_from_db()
+        for attribute, value in foreign_keys_data.items():
+            self.assertEqual(getattr(self.signage, attribute), value)
+
+        for attribute, value in many_to_many_data.items():
+            self.assertEqual(list(getattr(self.signage, attribute).all()), value)
+
+    def test_foreign_key_structure_as_user_without_correspondant_structure_post(self):
+        """
+        User cannot assign foreign key values if the selected values are not related to the user structure or not related to a structure
+        """
+        _, fk_data, m2m_data, response_data = self._test_foreign_key_structure_post(
+            self.user, status_code=400
+        )
+
+        error_msg = {
+            "sealing_id": [
+                f'Invalid pk "{fk_data["sealing"].id}" - object does not exist.'
+            ],
+            "type_id": [f'Invalid pk "{fk_data["type"].id}" - object does not exist.'],
+            "conditions_id": [
+                f'Invalid pk "{m2m_data["conditions"][0].id}" - object does not exist.'
+            ],
+        }
+        self.assertEqual(response_data, error_msg)
+
+    def test_foreign_key_structure_as_user_without_correspondant_structure_patch(self):
+        """
+        User cannot change foreign key values if the selected values are not related to the user structure or not related to a structure
+        """
+        foreign_keys_data = {}
+        for attribute, _ in self.signage_foreign_keys:
+            foreign_keys_data[attribute] = getattr(self.signage, attribute)
+
+        many_to_many_data = {}
+        for attribute, _ in self.signage_many_to_many:
+            foreign_keys_data[attribute] = getattr(self.signage, attribute)
+
+        fk_data, m2m_data, response_data = self._test_foreign_key_structure_patch(
+            self.user, status_code=400
+        )
+
+        error_msg = {
+            "sealing_id": [
+                f'Invalid pk "{fk_data["sealing"].id}" - object does not exist.'
+            ],
+            "type_id": [f'Invalid pk "{fk_data["type"].id}" - object does not exist.'],
+            "conditions_id": [
+                f'Invalid pk "{m2m_data["conditions"][0].id}" - object does not exist.'
+            ],
+        }
+        self.assertEqual(response_data, error_msg)
+
+        self.signage.refresh_from_db()
+        for attribute, value in foreign_keys_data.items():
+            self.assertEqual(getattr(self.signage, attribute), value)
+
+        for attribute, value in many_to_many_data.items():
+            self.assertEqual(list(getattr(self.signage, attribute).all()), value)
 
 
 class BladeViewsTest(CommonTest):
