@@ -119,9 +119,6 @@ Below is the list of these scripts for each touristic information system:
 | Outdoor site             |          |              |          |      |               | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
 
-\* Geometry is only available without dynamic segmentation.  
-It is not possible to import geometries for treks in a database using dynamic segmentation.
-
 
 .. _apidae-parsers:
 

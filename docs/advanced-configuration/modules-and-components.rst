@@ -792,7 +792,7 @@ POI
 Trek POI intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can define a buffer around treks to intersect POIs (works only without dynamic segmentation).
+You can define a buffer around treks to intersect POIs (works only on objects that are not coupled to the path network).
 
 .. md-tab-set::
     :name: trek-poi-intersection-marging-tabs
