@@ -1,18 +1,9 @@
 import { useLocation, useNavigate } from "@tanstack/react-router"
-import { useForm } from "@tanstack/react-form"
 import * as z from "zod"
 import { toast } from "sonner"
 import { LogIn } from "lucide-react"
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-  FieldLegend,
-  FieldSet,
-} from "@/components/ui/field"
+import { Field, FieldGroup, FieldLegend, FieldSet } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import {
   Card,
   CardContent,
@@ -23,13 +14,14 @@ import {
 } from "@/components/ui/card"
 import { useAuth } from "@/lib/auth"
 import { m } from "@/paraglide/messages"
+import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 
 export default function Login() {
   const { login } = useAuth()
   const { search } = useLocation()
   const navigate = useNavigate()
 
-  const form = useForm({
+  const form = useAppForm({
     defaultValues: {
       username: "",
       password: "",
@@ -58,6 +50,11 @@ export default function Login() {
     },
   })
 
+  const { FormTextField } = useFormFields<{
+    username: string
+    password: string
+  }>()
+
   return (
     <section className="grid h-screen place-items-center">
       <Card className="w-full sm:max-w-md">
@@ -66,76 +63,30 @@ export default function Login() {
           <CardDescription>{m["login.description"]()}</CardDescription>
         </CardHeader>
         <CardContent>
-          <form
-            id="login-form"
-            className="my-4"
-            onSubmit={(event) => {
-              event.preventDefault()
-              form.handleSubmit()
-            }}
-          >
-            <FieldGroup className="mb-4">
-              <FieldSet>
-                <FieldLegend className="mb-4">
-                  {m["login.form.title"]()}
-                </FieldLegend>
-                <form.Field
-                  name="username"
-                  children={(field) => {
-                    const isInvalid =
-                      field.state.meta.isTouched && !field.state.meta.isValid
-                    return (
-                      <Field data-invalid={isInvalid}>
-                        <FieldLabel htmlFor="username" className="font-normal">
-                          {m["login.form.user-name.label"]()}
-                        </FieldLabel>
-                        <Input
-                          name={field.name}
-                          value={field.state.value}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                          placeholder={m["login.form.user-name.placeholder"]()}
-                          aria-invalid={isInvalid}
-                          aria-required
-                        />
-                        {isInvalid && (
-                          <FieldError errors={field.state.meta.errors} />
-                        )}
-                      </Field>
-                    )
-                  }}
-                />
-                <form.Field
-                  name="password"
-                  children={(field) => {
-                    const isInvalid =
-                      field.state.meta.isTouched && !field.state.meta.isValid
-                    return (
-                      <Field data-invalid={isInvalid}>
-                        <FieldLabel htmlFor="password" className="font-normal">
-                          {m["login.form.password.label"]()}
-                        </FieldLabel>
-                        <Input
-                          id="password"
-                          name={field.name}
-                          value={field.state.value}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => field.handleChange(e.target.value)}
-                          placeholder={m["login.form.password.placeholder"]()}
-                          aria-invalid={isInvalid}
-                          aria-required
-                          type="password"
-                        />
-                        {isInvalid && (
-                          <FieldError errors={field.state.meta.errors} />
-                        )}
-                      </Field>
-                    )
-                  }}
-                />
-              </FieldSet>
-            </FieldGroup>
-          </form>
+          <form.AppForm>
+            <form.Form id="login-form" className="p-0">
+              <FieldGroup className="mb-4">
+                <FieldSet>
+                  <FieldLegend className="mb-4">
+                    {m["login.form.title"]()}
+                  </FieldLegend>
+
+                  <FormTextField
+                    name="username"
+                    label={m["login.form.user-name.label"]()}
+                    placeholder={m["login.form.user-name.placeholder"]()}
+                  />
+
+                  <FormTextField
+                    name="password"
+                    label={m["login.form.password.label"]()}
+                    placeholder={m["login.form.password.placeholder"]()}
+                    type="password"
+                  />
+                </FieldSet>
+              </FieldGroup>
+            </form.Form>
+          </form.AppForm>
         </CardContent>
         <CardFooter>
           <Field orientation="horizontal">
