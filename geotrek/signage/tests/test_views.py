@@ -709,7 +709,7 @@ class SignageGTAMTest(TestCase):
             self.assertEqual(getattr(signage, attribute), value)
 
         for attribute, value in many_to_many_data.items():
-            self.assertEqual(list(getattr(signage, attribute).all()), value)
+            self.assertCountEqual(list(getattr(signage, attribute).all()), value)
 
     def test_foreign_key_structure_as_superuser_patch(self):
         foreign_keys_data, many_to_many_data, _ = (
@@ -721,7 +721,7 @@ class SignageGTAMTest(TestCase):
             self.assertEqual(getattr(self.signage, attribute), value)
 
         for attribute, value in many_to_many_data.items():
-            self.assertEqual(list(getattr(self.signage, attribute).all()), value)
+            self.assertCountEqual(list(getattr(self.signage, attribute).all()), value)
 
     def test_foreign_key_structure_as_user_with_correspondant_structure_post(self):
         """
@@ -735,7 +735,7 @@ class SignageGTAMTest(TestCase):
             self.assertEqual(getattr(signage, attribute), value)
 
         for attribute, value in many_to_many_data.items():
-            self.assertEqual(list(getattr(signage, attribute).all()), value)
+            self.assertCountEqual(list(getattr(signage, attribute).all()), value)
 
     def test_foreign_key_structure_as_user_with_correspondant_structure_patch(self):
         """
@@ -750,7 +750,7 @@ class SignageGTAMTest(TestCase):
             self.assertEqual(getattr(self.signage, attribute), value)
 
         for attribute, value in many_to_many_data.items():
-            self.assertEqual(list(getattr(self.signage, attribute).all()), value)
+            self.assertCountEqual(list(getattr(self.signage, attribute).all()), value)
 
     def test_foreign_key_structure_as_user_without_correspondant_structure_post(self):
         """
@@ -803,7 +803,7 @@ class SignageGTAMTest(TestCase):
             self.assertEqual(getattr(self.signage, attribute), value)
 
         for attribute, value in many_to_many_data.items():
-            self.assertEqual(list(getattr(self.signage, attribute).all()), value)
+            self.assertCountEqual(list(getattr(self.signage, attribute).all()), value)
 
 
 class BladeViewsTest(CommonTest):
