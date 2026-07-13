@@ -755,6 +755,8 @@ class ReportGTAMTest(TestCase):
         geom.transform(4326)
         self.assertAlmostEqual(report.geom.x, 4.0, 2)
         self.assertAlmostEqual(report.geom.y, 48.5, 2)
+        self.assertEqual(report.last_author, self.user)
+        return report
 
     def test_post(self):
         token = self.authenticate(self.user)
@@ -771,7 +773,8 @@ class ReportGTAMTest(TestCase):
         self.assertEqual(response.status_code, 201)
 
         report_id = response_data["id"]
-        self._check_data(report_id)
+        report = self._check_data(report_id)
+        self.assertEqual(report.creator, self.user)
 
     def test_patch(self):
         token = self.authenticate(self.user)

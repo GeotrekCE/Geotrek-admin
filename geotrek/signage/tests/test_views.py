@@ -536,6 +536,8 @@ class SignageGTAMTest(TestCase):
         geom.transform(4326)
         self.assertAlmostEqual(geom.x, 3.0, 2)
         self.assertAlmostEqual(geom.y, 46.5, 2)
+        self.assertEqual(signage.last_author, self.superuser)
+        return signage
 
     def test_post(self):
         token = self.authenticate(self.superuser)
@@ -551,7 +553,8 @@ class SignageGTAMTest(TestCase):
         self.assertEqual(response.status_code, 201)
 
         signage_id = response_data["id"]
-        self._check_data(signage_id)
+        signage = self._check_data(signage_id)
+        self.assertEqual(signage.creator, self.superuser)
 
     def test_post_with_linear_geom(self):
         token = self.authenticate(self.superuser)

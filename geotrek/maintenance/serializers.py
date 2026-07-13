@@ -1,8 +1,10 @@
 from django.conf import settings
+from django.contrib.admin.models import ADDITION, CHANGE
 from django.contrib.gis.geos import Point
 from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
+from mapentity.views.generic import log_action
 from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 
@@ -266,6 +268,9 @@ class InterventionGTAMSerializer(LimitStructurePermission, serializers.ModelSeri
 
         self._sync_manday(intervention, mandays_data)
         self._sync_target(intervention, geom)
+
+        log_action(self.context["request"], intervention, ADDITION)
+
         return intervention
 
     def update(self, instance, validated_data):
@@ -280,6 +285,8 @@ class InterventionGTAMSerializer(LimitStructurePermission, serializers.ModelSeri
 
         if isinstance(target, Topology) and geom:
             self._sync_target(intervention, geom)
+
+        log_action(self.context["request"], intervention, CHANGE)
 
         return intervention
 

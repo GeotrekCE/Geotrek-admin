@@ -1,6 +1,7 @@
 import csv
 
 from django.conf import settings
+from django.contrib.admin.models import ADDITION, CHANGE
 from django.contrib.gis.geos import Point
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
@@ -8,6 +9,7 @@ from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from mapentity.serializers.commasv import CSVSerializer
 from mapentity.serializers.shapefile import ZipShapeSerializer
+from mapentity.views.generic import log_action
 from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.fields import GeometryField, GeometrySerializerMethodField
@@ -301,6 +303,9 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
 
             self._sync_topology(signage, geom)
             # self._sync_blades(signage, blades_data)
+
+        log_action(self.context["request"], signage, ADDITION)
+
         return signage
 
     def update(self, instance, validated_data):
@@ -315,6 +320,9 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
                 self._sync_topology(signage, geom)
 
             # self._sync_blades(signage, blades_data)
+
+        log_action(self.context["request"], signage, CHANGE)
+
         return signage
 
     def _sync_topology(self, obj, geom):

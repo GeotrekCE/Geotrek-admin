@@ -3,7 +3,9 @@ from django.contrib.gis.geos import Point
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.models import ADDITION, CHANGE
 from mapentity.serializers import MapentityGeojsonModelSerializer
+from mapentity.views.generic import log_action
 from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.fields import GeometryField
@@ -203,6 +205,8 @@ class InfrastructureGTAMSerializer(
             infrastructure = super().create(validated_data)
             self._sync_topology(infrastructure, geom)
 
+        log_action(self.context["request"], infrastructure, ADDITION)
+
         return infrastructure
 
     def update(self, instance, validated_data):
@@ -213,6 +217,8 @@ class InfrastructureGTAMSerializer(
             infrastructure = super().update(instance, validated_data)
             if geom:
                 self._sync_topology(infrastructure, geom)
+
+        log_action(self.context["request"], infrastructure, CHANGE)
 
         return infrastructure
 

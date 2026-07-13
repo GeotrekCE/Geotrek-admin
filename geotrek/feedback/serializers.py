@@ -1,6 +1,8 @@
 from django.conf import settings
+from django.contrib.admin.models import ADDITION, CHANGE
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
+from mapentity.views.generic import log_action
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis.fields import GeometryField
 
@@ -122,6 +124,16 @@ class ReportGTAMSerializer(rest_serializers.ModelSerializer):
             "status_id",
         ]
         geo_field = "geom"
+
+    def create(self, validated_data):
+        report = super().create(validated_data)
+        log_action(self.context["request"], report, ADDITION)
+        return report
+
+    def update(self, instance, validated_data):
+        report = super().update(instance, validated_data)
+        log_action(self.context["request"], report, CHANGE)
+        return report
 
 
 class ReportActivitySerializer(rest_serializers.ModelSerializer):

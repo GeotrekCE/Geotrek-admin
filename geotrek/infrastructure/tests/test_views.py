@@ -540,6 +540,8 @@ class InfrastructureGTAMTest(TestCase):
         geom.transform(4326)
         self.assertAlmostEqual(geom.x, 6.0, 2)
         self.assertAlmostEqual(geom.y, 49.5, 2)
+        self.assertEqual(infrastructure.last_author, self.superuser)
+        return infrastructure
 
     def test_post(self):
         token = self.authenticate(self.superuser)
@@ -555,7 +557,8 @@ class InfrastructureGTAMTest(TestCase):
         self.assertEqual(response.status_code, 201)
 
         infrastructure_id = response_data["id"]
-        self._check_data(infrastructure_id)
+        infrastructure = self._check_data(infrastructure_id)
+        self.assertEqual(infrastructure.creator, self.superuser)
 
     def test_post_with_linear_geom(self):
         token = self.authenticate(self.superuser)

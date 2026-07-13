@@ -1018,6 +1018,8 @@ class InterventionGTAMTest(TestCase):
         self.assertEqual(intervention.access, self.access)
         self.assertAlmostEqual(intervention.api_geom.x, 3.0, 2)
         self.assertAlmostEqual(intervention.api_geom.y, 46.5, 2)
+        self.assertEqual(intervention.last_author, self.superuser)
+        return intervention
 
     def test_post(self):
         token = self.authenticate(self.superuser)
@@ -1033,7 +1035,8 @@ class InterventionGTAMTest(TestCase):
         self.assertEqual(response.status_code, 201)
 
         intervention_id = response_data["id"]
-        self._check_data(intervention_id)
+        intervention = self._check_data(intervention_id)
+        self.assertEqual(intervention.creator, self.superuser)
 
     def test_post_with_wrong_dates(self):
         token = self.authenticate(self.superuser)
