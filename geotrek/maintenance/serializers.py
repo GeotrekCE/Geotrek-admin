@@ -287,8 +287,14 @@ class InterventionGTAMSerializer(LimitStructurePermission, serializers.ModelSeri
             msg = {"geom": "New intervention geometry must be points"}
             raise exceptions.ValidationError(msg)
 
-        serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
-        topology = Topology.deserialize(serialized)
+        topology = Topology()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
+            topology = Topology.deserialize(serialized)
+        else:
+            geom.transform(settings.SRID)
+            topology.geom = geom
+
         topology.save()
         intervention.target = topology
         intervention.save()

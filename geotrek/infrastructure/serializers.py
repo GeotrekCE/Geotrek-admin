@@ -193,7 +193,7 @@ class InfrastructureGTAMSerializer(
 
         with transaction.atomic():
             infrastructure = super().create(validated_data)
-            infrastructure = self._sync_topology(infrastructure, geom)
+            self._sync_topology(infrastructure, geom)
 
         return infrastructure
 
@@ -204,15 +204,19 @@ class InfrastructureGTAMSerializer(
         with transaction.atomic():
             infrastructure = super().update(instance, validated_data)
             if geom:
-                infrastructure = self._sync_topology(infrastructure, geom)
+                self._sync_topology(infrastructure, geom)
 
         return infrastructure
 
     def _sync_topology(self, obj, geom):
-        serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
-        topology = Topology.deserialize(serialized)
-        obj.topo_object.mutate(topology)
-        return obj
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
+            topology = Topology.deserialize(serialized)
+            obj.topo_object.mutate(topology)
+        else:
+            geom.transform(settings.SRID)
+            obj.geom = geom
+            obj.save()
 
 
 class InfrastructureAPISerializer(BasePublishableSerializerMixin):

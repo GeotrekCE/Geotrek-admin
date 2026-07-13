@@ -315,34 +315,38 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
         return signage
 
     def _sync_topology(self, obj, geom):
-        serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
-        topology = Topology.deserialize(serialized)
-        obj.topo_object.mutate(topology)
-        return obj
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
+            topology = Topology.deserialize(serialized)
+            obj.topo_object.mutate(topology)
+        else:
+            geom.transform(settings.SRID)
+            obj.geom = geom
+            obj.save()
 
-    def _sync_blades(self, signage, blades_data):
-        qs = signage.blades.all()
-        qs.delete()
-
-        for blade_data in blades_data:
-            self._create_blade(signage, blade_data)
-
-    def _create_blade(self, signage, blade_data):
-        lines_data = blade_data.pop("lines", [])
-        conditions = blade_data.pop("conditions", [])
-
-        blade = signage_models.Blade.objects.create(signage=signage, **blade_data)
-        blade.conditions.set(conditions)
-
-        self._sync_lines(blade, lines_data)
-
-        return blade
-
-    def _sync_lines(self, blade, lines_data):
-        blade.lines.all().delete()
-
-        for line_data in lines_data:
-            signage_models.Line.objects.create(blade=blade, **line_data)
+    # def _sync_blades(self, signage, blades_data):
+    #     qs = signage.blades.all()
+    #     qs.delete()
+    #
+    #     for blade_data in blades_data:
+    #         self._create_blade(signage, blade_data)
+    #
+    # def _create_blade(self, signage, blade_data):
+    #     lines_data = blade_data.pop("lines", [])
+    #     conditions = blade_data.pop("conditions", [])
+    #
+    #     blade = signage_models.Blade.objects.create(signage=signage, **blade_data)
+    #     blade.conditions.set(conditions)
+    #
+    #     self._sync_lines(blade, lines_data)
+    #
+    #     return blade
+    #
+    # def _sync_lines(self, blade, lines_data):
+    #     blade.lines.all().delete()
+    #
+    #     for line_data in lines_data:
+    #         signage_models.Line.objects.create(blade=blade, **line_data)
 
 
 class SignageAPISerializer(BasePublishableSerializerMixin):
