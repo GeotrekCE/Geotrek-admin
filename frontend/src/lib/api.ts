@@ -12,12 +12,6 @@ import * as z from "zod"
 import { db } from "@/lib/db"
 import { useLiveQuery } from "dexie-react-hooks"
 import { AUTH_TOKENS_KEY } from "@/hook/useTokens"
-import type {
-  InfrastructureDataSchemaProps,
-  InterventionDataSchemaProps,
-  ReportDataSchemaProps,
-  SignageDataSchemaProps,
-} from "@/schemas/data"
 
 export const API_URL = "/api"
 export class FetchError extends Error {
@@ -123,12 +117,17 @@ export function useAppQuery<T>({
   return query
 }
 
+export type BodyForMutation = Record<
+  string,
+  | null
+  | string
+  | number
+  | { id: string; name: string }
+  | { id: string; name: string }[]
+>
+
 export function getBodyForMutation(
-  body:
-    | InfrastructureDataSchemaProps
-    | SignageDataSchemaProps
-    | InterventionDataSchemaProps
-    | ReportDataSchemaProps
+  body: BodyForMutation
 ): Record<
   string,
   null | string | number | string[] | number[] | { id: string; name: string }[]
@@ -151,19 +150,7 @@ export function getBodyForMutation(
         if (Array.isArray(value)) {
           // This API is a mess for POST/PATCH
           if (["blades", "man_day"].includes(key)) {
-            return [
-              key,
-              value.map((item) =>
-                Object.fromEntries(
-                  Object.entries(item).map(([subKey, subValue]) => {
-                    if (typeof subValue === "object" && "id" in subValue) {
-                      return [`${subKey}_id`, subValue.id]
-                    }
-                    return [key, value]
-                  })
-                )
-              ),
-            ]
+            return [key, value.map((item) => getBodyForMutation(item))]
           }
           return [`${key}_id`, value.map((item) => item.id)]
         }

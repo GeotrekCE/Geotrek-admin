@@ -111,7 +111,6 @@ function RouteComponent() {
             .flatMap((item) => Object.values(item))
             .map(getStatusFromResult)
             .map(({ data, isSuccess }, index) => {
-              console.log(data, isSuccess)
               if (isSuccess) {
                 db.signageData.where({ id: variables[index].id }).delete()
                 if (!variables[index].appNewItem) {
