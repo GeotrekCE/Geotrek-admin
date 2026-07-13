@@ -23,7 +23,7 @@ export default function SyncReferences() {
       updatedStatus={getUpdatedStatus(lastSync, updateLimitation)}
       actions={
         <Button className="w-full" onClick={refetch}>
-          {m["common.update-needed"]()}
+          {m["common.update"]()}
         </Button>
       }
     />

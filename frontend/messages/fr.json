@@ -33,6 +33,7 @@
     "required-config-host": "La clé {#strong}HOST_URL{/strong} doit être définie comme variable d'environnement pour permettre la connexion et la synchronisation des données.",
     "documentation": "Voir la documentation",
     "loading": "Chargement",
+    "less-than-a-minute": "moins d'une minute",
     "items-count": [{
       "declarations": ["input count", "local countPlural = count: plural"],
       "selectors": ["countPlural"],
@@ -102,6 +103,7 @@
     "restore-success": "Restauration de {item} terminée",
     "sync-error": "Erreur de synchronisation",
     "sync-success": "Synchronisation réussie",
+    "update": "Mettre à jour",
     "update-needed": "Une mise à jour est nécessaire",
     "update-needed-description": "Veuillez mettre à jour les données de référentiel de saisie avant votre sortie de terrain.",
     "update-recommended": "Une mise à jour est recommandée",

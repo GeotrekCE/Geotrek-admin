@@ -33,6 +33,7 @@
     "required-config-host": "The <#strong>HOST_URL</strong> key must be defined as an environment variable to allow connection and data synchronization.",
     "documentation": "See documentation",
     "loading": "Loading",
+    "less-than-a-minute": "less than a minute",
     "items-count": [{
       "declarations": ["input count", "local countPlural = count: plural"],
       "selectors": ["countPlural"],
@@ -102,6 +103,7 @@
     "restore-success": "Restoration of {item} completed",
     "sync-error": "Synchronization error",
     "sync-success": "Synchronization successful",
+    "update": "Update",
     "update-needed": "An update is necessary",
     "update-needed-description": "Please update the input reference data before your field trip.",
     "update-recommended": "An update is recommended",

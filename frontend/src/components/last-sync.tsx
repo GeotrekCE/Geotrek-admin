@@ -4,7 +4,7 @@ import { getLocale } from "@/paraglide/runtime"
 import { m } from "@/paraglide/messages"
 
 export default function LastSync({ date }: { date: string }) {
-  const [dynamicDate, setDate] = React.useState(
+  const [dynamicDate, setDynamicDate] = React.useState(() =>
     getDurationLabel(
       new Date().getTime() - new Date(date).getTime(),
       getLocale()
@@ -15,14 +15,16 @@ export default function LastSync({ date }: { date: string }) {
     if (!isValidDate(date)) {
       return
     }
-    const id = setInterval(() => {
-      setDate(
+    const updateDateLabel = () => {
+      setDynamicDate(
         getDurationLabel(
           new Date().getTime() - new Date(date).getTime(),
           getLocale()
         )
       )
-    }, 60 * SECOND)
+    }
+    updateDateLabel()
+    const id = setInterval(updateDateLabel, 60 * SECOND)
     return () => {
       clearInterval(id)
     }

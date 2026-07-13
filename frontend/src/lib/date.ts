@@ -1,3 +1,5 @@
+import { m } from "@/paraglide/messages"
+
 export const SECOND = 1000
 export const MINUTE = 60 * SECOND
 export const HOUR = 60 * MINUTE
@@ -83,5 +85,5 @@ export function getDurationLabel(timeInMs: number, locale: string) {
     diff -= result.minutes * MINUTE
   }
 
-  return durationFormatter.format(result) || "moins d'une minute"
+  return durationFormatter.format(result) || m["common.less-than-a-minute"]()
 }
