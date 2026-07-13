@@ -1261,9 +1261,7 @@ class InterventionGTAMTest(TestCase):
             self.assertEqual(getattr(intervention, attribute), value)
 
         for attribute, value in manday_foreign_keys_data.items():
-            self.assertCountEqual(
-                getattr(intervention.manday_set.first(), attribute), value
-            )
+            self.assertEqual(getattr(intervention.manday_set.first(), attribute), value)
 
         for attribute, value in many_to_many_data.items():
             self.assertCountEqual(list(getattr(intervention, attribute).all()), value)
@@ -1309,7 +1307,7 @@ class InterventionGTAMTest(TestCase):
             self.assertEqual(getattr(intervention.manday_set.first(), attribute), value)
 
         for attribute, value in many_to_many_data.items():
-            self.assertCountqual(list(getattr(intervention, attribute).all()), value)
+            self.assertCountEqual(list(getattr(intervention, attribute).all()), value)
 
     def test_foreign_key_structure_as_user_with_correspondant_structure_patch(self):
         """

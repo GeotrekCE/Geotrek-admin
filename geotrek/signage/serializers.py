@@ -315,7 +315,7 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
         return signage
 
     def _sync_topology(self, obj, geom):
-        serialized = f'{{"lng": {geom.x}, "lat": {geom.y}, "kind": "SIGNAGE"}}'
+        serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
         topology = Topology.deserialize(serialized)
         obj.topo_object.mutate(topology)
         return obj
