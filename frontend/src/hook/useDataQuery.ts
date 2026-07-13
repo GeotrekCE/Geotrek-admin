@@ -16,6 +16,7 @@ import { usePermission } from "@/hook/useSettingsQuery"
 import { db } from "@/lib/db"
 import { toast } from "sonner"
 import { getBoundsFromPolygon } from "@/lib/map"
+import { m } from "@/paraglide/messages"
 
 export const INFRASTRUCTURE_DATA_QUERY_KEY = ["data", "infrastructure"]
 export const SIGNAGE_DATA_QUERY_KEY = ["data", "signage"]
@@ -73,11 +74,11 @@ export function useDataQuery(
                 bounds,
                 structure: params.structure || null,
               })
-              return "Données embarquées dans l'application"
+              return m["common.sync-data-saved"]()
             },
             error: (error) => {
               console.log(error)
-              return "Erreur lors de l'ajout des données aménagements"
+              return m["common.sync-data-failed"]()
             },
             position: "top-center",
           })
@@ -111,11 +112,11 @@ export function useDataQuery(
                 bounds,
                 structure: params.structure || null,
               })
-              return "Données embarquées dans l'application"
+              return m["common.sync-data-saved"]()
             },
             error: (error) => {
               console.log(error)
-              return "Erreur lors de l'ajout des données signalétiques"
+              return m["common.sync-data-failed"]()
             },
             position: "top-center",
           })
@@ -147,11 +148,11 @@ export function useDataQuery(
                 bounds,
                 structure: params.structure || null,
               })
-              return "Données embarquées dans l'application"
+              return m["common.sync-data-saved"]()
             },
             error: (error) => {
               console.log(error)
-              return "Erreur lors de l'ajout des données intervention"
+              return m["common.sync-data-failed"]()
             },
             position: "top-center",
           })
@@ -183,11 +184,11 @@ export function useDataQuery(
                 bounds,
                 structure: params.structure || null,
               })
-              return "Données embarquées dans l'application"
+              return m["common.sync-data-saved"]()
             },
             error: (error) => {
               console.log(error)
-              return "Erreur lors de l'ajout des données signalement"
+              return m["common.sync-data-failed"]()
             },
             position: "top-center",
           })

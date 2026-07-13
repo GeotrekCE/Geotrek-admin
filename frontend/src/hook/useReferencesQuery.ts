@@ -16,6 +16,7 @@ import {
 import { usePermission } from "@/hook/useSettingsQuery"
 import { db } from "@/lib/db"
 import { toast } from "sonner"
+import { m } from "@/paraglide/messages"
 
 export type StoredReferences = {
   references: {
@@ -58,13 +59,12 @@ export function useReferencesQuery() {
             id: "sync-ref",
             loading: "Chargement",
             success: (data) => {
-              console.log(data, "data")
               db.references.put({ id: "common", ...data })
-              return "Références enregistrées"
+              return m["common.sync-reference-saved"]()
             },
             error: (error) => {
               console.log(error)
-              return "Erreur lors de l'ajout des références communes"
+              return m["common.sync-reference-failed"]()
             },
             position: "top-center",
           })
@@ -85,17 +85,16 @@ export function useReferencesQuery() {
             id: "sync-ref",
             loading: "Chargement",
             success: (data) => {
-              console.log(data, "data")
               db.references.put({ id: "infrastructure", ...data })
               db.appSync.put({
                 id: "references",
                 lastSync: new Date().toISOString(),
               })
-              return "Références enregistrées"
+              return m["common.sync-reference-saved"]()
             },
             error: (error) => {
               console.log(error)
-              return "Erreur lors de l'ajout des références aménagements"
+              return m["common.sync-reference-failed"]()
             },
             position: "top-center",
           })
@@ -116,17 +115,16 @@ export function useReferencesQuery() {
             id: "sync-ref",
             loading: "Chargement",
             success: (data) => {
-              console.log(data, "data")
               db.references.put({ id: "signage", ...data })
               db.appSync.put({
                 id: "references",
                 lastSync: new Date().toISOString(),
               })
-              return "Références enregistrées"
+              return m["common.sync-reference-saved"]()
             },
             error: (error) => {
               console.log(error)
-              return "Erreur lors de l'ajout des références signalétiques"
+              return m["common.sync-reference-failed"]()
             },
             position: "top-center",
           })
@@ -147,17 +145,16 @@ export function useReferencesQuery() {
             id: "sync-ref",
             loading: "Chargement",
             success: (data) => {
-              console.log(data, "data")
               db.references.put({ id: "intervention", ...data })
               db.appSync.put({
                 id: "references",
                 lastSync: new Date().toISOString(),
               })
-              return "Références enregistrées"
+              return m["common.sync-reference-saved"]()
             },
             error: (error) => {
               console.log(error, "error")
-              return "Erreur lors de l'ajout des références signalétiques"
+              return m["common.sync-reference-failed"]()
             },
             position: "top-center",
           })
@@ -178,7 +175,6 @@ export function useReferencesQuery() {
             id: "sync-ref",
             loading: "Chargement",
             success: (data) => {
-              console.log(data, "data")
               db.references.put({
                 id: "report",
                 ...data,
@@ -187,11 +183,11 @@ export function useReferencesQuery() {
                 id: "references",
                 lastSync: new Date().toISOString(),
               })
-              return "Références enregistrées"
+              return m["common.sync-reference-saved"]()
             },
             error: (error) => {
               console.log(error)
-              return "Erreur lors de l'ajout des références signalements"
+              return m["common.sync-reference-failed"]()
             },
             position: "top-center",
           })

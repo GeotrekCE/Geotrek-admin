@@ -78,13 +78,12 @@ export default function SyncUp({ data }: { data?: Data }) {
   return (
     <section className="my-4" id="sync-up">
       <h2 className="flex items-center gap-2 text-xl font-bold text-accent-foreground">
-        <Upload aria-hidden /> Mes relevés de terrain
+        <Upload aria-hidden /> {m["common.sync-up-title"]()}
       </h2>
       {hasAsyncData && <Message data={data} />}
       {!hasAsyncData && (
         <p className="my-4 text-sm text-muted-foreground">
-          Aucun relevé de terrain n'a été crée ou modifié depuis la dernière
-          synchronisation.
+          {m["common.sync-up-no-data"]()}
         </p>
       )}
     </section>

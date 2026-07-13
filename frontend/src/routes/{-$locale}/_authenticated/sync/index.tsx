@@ -24,7 +24,7 @@ function Sync() {
 
       <section className="m-4" id="sync-down">
         <h2 className="flex items-center gap-2 text-xl font-bold text-accent-foreground">
-          <Download aria-hidden /> {m["menu.sync"]()} avant terrain
+          <Download aria-hidden /> {m["common.sync-down-title"]()}
         </h2>
 
         <SyncReferences />
