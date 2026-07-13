@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-13 13:24+0000\n"
+"POT-Creation-Date: 2026-07-13 13:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,28 +34,4 @@ msgid "Geotrek-admin is under maintenance..."
 msgstr ""
 
 msgid "Please come back later."
-msgstr ""
-
-#, python-brace-format
-msgid "Missing id field '{eid_src}'"
-msgstr ""
-
-#, python-brace-format
-msgid "FileType '{name}' does not exists in Geotrek-Admin. Please add it"
-msgstr ""
-
-#, python-brace-format
-msgid "{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is too large"
-msgstr ""
-
-#, python-brace-format
-msgid "{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not wide enough"
-msgstr ""
-
-#, python-brace-format
-msgid "{self.obj.__class__.__name__} #{self.obj.pk} - {url} : downloaded file is not tall enough"
-msgstr ""
-
-#, python-brace-format
-msgid "Failed to download '{url}'"
 msgstr ""
