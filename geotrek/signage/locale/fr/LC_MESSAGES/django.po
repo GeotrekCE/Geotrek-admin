@@ -167,7 +167,7 @@ msgid "Line"
 msgstr "Ligne"
 
 msgid "New signage geometry must be points"
-msgstr ""
+msgstr "Les nouvelles signalétique doivent être des points"
 
 msgid "None"
 msgstr "Aucun(e)"

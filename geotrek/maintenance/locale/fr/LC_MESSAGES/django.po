@@ -331,8 +331,6 @@ msgstr "Financement"
 msgid "New intervention geometry must be points"
 msgstr ""
 
-#, fuzzy
-#| msgid "Begin date is after end date"
 msgid "End date must occur after start date"
 msgstr "La date de début est après la date de fin"
 

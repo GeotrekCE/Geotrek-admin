@@ -118,7 +118,7 @@ msgid "An infrastructure type must be specified in the parser configuration."
 msgstr "Un type d'infrastructure doit être spécifié dans la configuration du parseur."
 
 msgid "New infrastructure geometry must be points"
-msgstr ""
+msgstr "Les nouvelles infrastructures doivent être des points"
 
 msgid "None"
 msgstr "Aucun(e)"
