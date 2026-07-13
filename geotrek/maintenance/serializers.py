@@ -1,8 +1,9 @@
 from django.conf import settings
 from django.contrib.gis.geos import Point
+from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
-from rest_framework import exceptions, serializers
+from rest_framework import serializers
 from rest_framework_gis.fields import GeometryField
 
 from ..authent.models import Structure
@@ -216,14 +217,6 @@ class InterventionGTAMSerializer(LimitStructurePermission, serializers.ModelSeri
         ]
         geo_field = "geom"
 
-    def validate(self, data):
-        begin_date = data.get("begin_date", None)
-        end_date = data.get("end_date", None)
-        if begin_date and end_date and data["begin_date"] > data["end_date"]:
-            msg = {"end_date": "End date must occur after start date"}
-            raise serializers.ValidationError(msg)
-        return data
-
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
@@ -249,6 +242,20 @@ class InterventionGTAMSerializer(LimitStructurePermission, serializers.ModelSeri
             self._apply_structure_limitation(
                 self.fields["man_day"].child.fields, manday_limitated_fields, structure
             )
+
+    def validate_geom(self, value):
+        if not isinstance(value, Point):
+            msg = _("New intervention geometry must be points")
+            raise serializers.ValidationError(msg)
+        return value
+
+    def validate(self, data):
+        begin_date = data.get("begin_date", None)
+        end_date = data.get("end_date", None)
+        if begin_date and end_date and data["begin_date"] > data["end_date"]:
+            msg = {"end_date": _("End date must occur after start date")}
+            raise serializers.ValidationError(msg)
+        return data
 
     def create(self, validated_data):
         validated_data = self._check_assigned_structure(validated_data)
@@ -283,10 +290,6 @@ class InterventionGTAMSerializer(LimitStructurePermission, serializers.ModelSeri
             ManDay.objects.create(intervention=intervention, **manday)
 
     def _sync_target(self, intervention, geom):
-        if not isinstance(geom, Point):
-            msg = {"geom": "New intervention geometry must be points"}
-            raise exceptions.ValidationError(msg)
-
         topology = Topology()
         if settings.TREKKING_TOPOLOGY_ENABLED:
             serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'

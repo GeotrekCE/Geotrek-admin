@@ -553,6 +553,23 @@ class SignageGTAMTest(TestCase):
         signage_id = response_data["id"]
         self._check_data(signage_id)
 
+    def test_post_with_linear_geom(self):
+        token = self.authenticate(self.superuser)
+
+        data = self._get_data()
+        data["geom"] = {"type": "LineString", "coordinates": [[3.0, 46.5], [4.0, 47.5]]}
+
+        response = self.client.post(
+            self.list_url,
+            data,
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response_data["geom"], ["New signage geometry must be points"])
+
     def test_patch(self):
         token = self.authenticate(self.superuser)
 
@@ -565,6 +582,24 @@ class SignageGTAMTest(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self._check_data(self.signage.id)
+
+    def test_patch_with_linear_geom(self):
+        token = self.authenticate(self.superuser)
+
+        data = {
+            "geom": {"type": "LineString", "coordinates": [[3.0, 46.5], [4.0, 47.5]]}
+        }
+
+        response = self.client.patch(
+            self.detail_url,
+            data,
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response_data["geom"], ["New signage geometry must be points"])
 
     def _test_structure_post(self, user):
         token = self.authenticate(user)

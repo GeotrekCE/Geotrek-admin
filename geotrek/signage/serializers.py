@@ -1,8 +1,9 @@
 import csv
 
 from django.conf import settings
-from django.core.exceptions import ValidationError
+from django.contrib.gis.geos import Point
 from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from mapentity.serializers.commasv import CSVSerializer
@@ -284,14 +285,16 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
                 self.fields["blades"].child.fields, blade_limitated_fields, structure
             )
 
+    def validate_geom(self, value):
+        if not isinstance(value, Point):
+            msg = _("New signage geometry must be points")
+            raise serializers.ValidationError(msg)
+        return value
+
     def create(self, validated_data):
         validated_data = self._check_assigned_structure(validated_data)
         # blades_data = validated_data.pop("blades", [])
         geom = validated_data.pop("geom", None)
-
-        if not geom:
-            msg = "Geom must be defined"
-            raise ValidationError(msg)
 
         with transaction.atomic():
             signage = super().create(validated_data)

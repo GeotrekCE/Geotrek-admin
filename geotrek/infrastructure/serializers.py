@@ -1,5 +1,7 @@
 from django.conf import settings
+from django.contrib.gis.geos import Point
 from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from rest_framework import serializers
@@ -186,6 +188,12 @@ class InfrastructureGTAMSerializer(
 
         if not (user.is_superuser or user.has_perm("authent.can_bypass_structure")):
             self._apply_structure_limitation(self.fields, limitated_fields, structure)
+
+    def validate_geom(self, value):
+        if not isinstance(value, Point):
+            msg = _("New infrastructure geometry must be points")
+            raise serializers.ValidationError(msg)
+        return value
 
     def create(self, validated_data):
         validated_data = self._check_assigned_structure(validated_data)
