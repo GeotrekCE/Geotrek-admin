@@ -82,6 +82,7 @@
       }
     }],
     "managing-structures": "Managing structures",
+    "structure": "Structure",
     "all-structures": "All structures",
     "my-structure": "My structure",
     "modified-on": "Modified on",
@@ -130,9 +131,12 @@
     "sync-data-none": "No zone or structure has been defined",
     "sync-data-description": "Business records (identifying information, alerts, interventions, developments) for the selected geographic zone",
     "sync-data-aera": "Geographic area",
+    "sync-data-area-too-large": "Area too large - Zoom in on the map to download the data",
     "sync-data-edit-aera": "Change area",
-    "sync-data-download": "Redownload data",
-    "sync-no-rights": "You do not have sufficient permissions to sync. Contact an administrator."
+    "sync-data-download": "Download data",
+    "sync-data-redownload": "Redownload data",
+    "sync-no-rights": "You do not have sufficient permissions to sync. Contact an administrator.",
+    "sync-too-large-data": "The selected data volume is too large"
   },
   "form": {
     "name": "Name",

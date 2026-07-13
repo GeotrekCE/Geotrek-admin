@@ -82,6 +82,7 @@
       }
     }],
     "managing-structures": "Structures gestionnaires",
+    "structure": "Structure",
     "all-structures": "Toutes les structures",
     "my-structure": "Ma structure",
     "modified-on": "Modifié le",
@@ -130,11 +131,14 @@
     "sync-data-none": "Aucune zone / structure n'a été définie",
     "sync-data-description": "Fiches métiers (signalétiques, signalements, interventions,aménagements) de la zone géographique sélectionnée",
     "sync-data-aera": "Zone géographique",
+    "sync-data-aera-too-lage": "Zone trop large - Zoomez sur la carte pour accéder au téléchargement des données",
     "sync-data-edit-aera": "Changer de zone",
-    "sync-data-download": "Re-télécharger les données",
+    "sync-data-download": "Télécharger les données",
+    "sync-data-redownload": "Re-télécharger les données",
     "sync-data-saved": "Données embarquées dans l'application",
     "sync-data-failed": "Erreur lors de l'enregistrement des données",
-    "sync-no-rights": "Vous n'avez pas de droits suffisants pour synchroniser. Contactez un administrateur."
+    "sync-no-rights": "Vous n'avez pas de droits suffisants pour synchroniser. Contactez un administrateur.",
+    "sync-too-large-data": "Le volume de données sélectionné est trop important"
     
   },
   "form": {

@@ -14,6 +14,7 @@ import { useDataQuery } from "@/hook/useDataQuery"
 import { getPolygonFromBounds } from "@/lib/map"
 import { db } from "@/lib/db"
 import { useLiveQuery } from "dexie-react-hooks"
+import { m } from "@/paraglide/messages"
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/sync/data")({
   component: RouteComponent,
@@ -84,7 +85,7 @@ function RouteComponent() {
 
   return (
     <div>
-      <Header title="Données embarquées" withBackbutton />
+      <Header title={m["common.sync-data-title"]()} withBackbutton />
 
       <form
         onSubmit={(event) => {
@@ -96,7 +97,7 @@ function RouteComponent() {
       >
         <fieldset>
           <legend className="m-4 font-bold text-accent-foreground uppercase">
-            Zone géographique
+            {m["common.sync-data-aera"]()}
           </legend>
           <div className="max-h-screen/2 bg-accent">
             <Map
@@ -107,8 +108,7 @@ function RouteComponent() {
             >
               {isNotEnoughtZoomed && (
                 <div className="absolute inset-x-3 top-2 z-10 rounded-xl bg-background px-4 py-2 text-xs">
-                  Zone trop large - Zoomez sur la carte pour accéder au
-                  téléchargement des données
+                  {m["common.sync-data-aera-too-lage"]()}
                 </div>
               )}
             </Map>
@@ -128,7 +128,7 @@ function RouteComponent() {
         </fieldset>
         <fieldset className="m-4">
           <legend className="my-4 font-bold text-accent-foreground uppercase">
-            Structure
+            {m["common.structure"]()}
           </legend>
           <form.Field
             name="structure"
@@ -143,13 +143,13 @@ function RouteComponent() {
                   <Field orientation="horizontal">
                     <RadioGroupItem value="own" id="own-structure" />
                     <FieldLabel htmlFor="own-structure" className="font-normal">
-                      Ma structure
+                      {m["common.my-structure"]()}
                     </FieldLabel>
                   </Field>
                   <Field orientation="horizontal">
                     <RadioGroupItem value="all" id="all-structure" />
                     <FieldLabel htmlFor="all-structure" className="font-normal">
-                      Toutes les structures
+                      {m["common.all-structures"]()}
                     </FieldLabel>
                   </Field>
                 </RadioGroup>
@@ -166,7 +166,7 @@ function RouteComponent() {
             className={cn(isNotEnoughtZoomed && "bg-accent")}
             aria-describedby="submit-helptext"
           >
-            Télécharger les données
+            {m["common.sync-data-download"]()}
           </Button>
           <p
             id="submit-helptext"
@@ -175,7 +175,7 @@ function RouteComponent() {
               !isNotEnoughtZoomed && "hidden"
             )}
           >
-            Le volume de données sélectionné est trop important
+            {m["common.sync-too-large-data"]()}
           </p>
         </Field>
       </form>

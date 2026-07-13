@@ -72,7 +72,7 @@ export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
                 type="button"
                 disabled
               >
-                {m["common.sync-data-download"]()}
+                {m["common.sync-data-redownload"]()}
               </Button>
             )}
             <Alert
