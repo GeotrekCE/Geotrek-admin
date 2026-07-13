@@ -133,7 +133,9 @@
     "sync-data-edit-aera": "Changer de zone",
     "sync-data-download": "Re-télécharger les données",
     "sync-data-saved": "Données embarquées dans l'application",
-    "sync-data-failed": "Erreur lors de l'enregistrement des données"
+    "sync-data-failed": "Erreur lors de l'enregistrement des données",
+    "sync-no-rights": "Vous n'avez pas de droits suffisants pour synchroniser. Contactez un administrateur."
+    
   },
   "form": {
     "name": "Nom",

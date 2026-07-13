@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
 import { Link } from "@tanstack/react-router"
 import { m } from "@/paraglide/messages"
+import { usePermission } from "@/hook/useSettingsQuery"
 
 type Data = [
   SignageDataSchemaProps[],
@@ -29,6 +30,15 @@ function Message({
   const reportCount = ReportData.length
   const totalCount =
     signageCount + interventionCount + infrastructureCount + reportCount
+
+  const permissions = usePermission()
+
+  const hasPermissionsToCreate =
+    permissions.infrastructure.create ||
+    permissions.signage.create ||
+    permissions.intervention.create ||
+    permissions.report.create
+
   return (
     <Card className="my-4 border border-destructive bg-destructive/20 text-accent-foreground">
       <CardHeader>
@@ -62,12 +72,15 @@ function Message({
             <li>{m["common.report-count"]({ count: reportCount })}</li>
           )}
         </ul>
-        <Link
-          className={cn("w-full", buttonVariants())}
-          to="/{-$locale}/sync/upload"
-        >
-          {m["common.send-data"]()}
-        </Link>
+        {hasPermissionsToCreate && (
+          <Link
+            className={cn("w-full", buttonVariants())}
+            to="/{-$locale}/sync/upload"
+          >
+            {m["common.send-data"]()}
+          </Link>
+        )}
+        {!hasPermissionsToCreate && <p>{m["common.sync-no-rights"]()}</p>}
       </CardContent>
     </Card>
   )

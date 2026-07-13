@@ -131,7 +131,8 @@
     "sync-data-description": "Business records (identifying information, alerts, interventions, developments) for the selected geographic zone",
     "sync-data-aera": "Geographic area",
     "sync-data-edit-aera": "Change area",
-    "sync-data-download": "Redownload data"
+    "sync-data-download": "Redownload data",
+    "sync-no-rights": "You do not have sufficient permissions to sync. Contact an administrator."
   },
   "form": {
     "name": "Name",

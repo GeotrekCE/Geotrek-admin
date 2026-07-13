@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import LastSync from "@/components/last-sync"
 import useOnline from "@/hook/useOnline"
 import { m } from "@/paraglide/messages"
+import { usePermission } from "@/hook/useSettingsQuery"
 
 type CardSyncProps = React.ComponentProps<"div"> & {
   title: string
@@ -33,6 +34,13 @@ export default function CardSync({
 }: CardSyncProps) {
   const warning = updatedStatus !== "UPDATED" || lastSync === undefined
   const online = useOnline()
+  const permissions = usePermission()
+
+  const hasPermissionsToRead =
+    permissions.infrastructure.read ||
+    permissions.signage.read ||
+    permissions.intervention.read ||
+    permissions.report.read
 
   function getAlertTitle() {
     if (!lastSync) {
@@ -75,7 +83,11 @@ export default function CardSync({
         {!!lastSync && <LastSync date={lastSync} />}
       </CardContent>
       <CardFooter className="flex-col gap-4">
-        {online ? actions : <p>{m["common.offline-cannot-download"]()}</p>}
+        {hasPermissionsToRead && online && actions}
+        {hasPermissionsToRead && !online && (
+          <p>{m["common.offline-cannot-download"]()}</p>
+        )}
+        {!hasPermissionsToRead && <p>{m["common.sync-no-rights"]()}</p>}
       </CardFooter>
     </Card>
   )
