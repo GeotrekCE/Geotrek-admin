@@ -58,7 +58,6 @@ export default function ReportForm({
         await db.rawData.add({
           ...defaultValues,
           reference: "report",
-          appSynced: false,
         })
       }
       const nextId = isEdit
@@ -67,6 +66,7 @@ export default function ReportForm({
             id,
             date_insert,
             date_update: new Date().toISOString(),
+            appSynced: false,
           })
         : // @ts-expect-error "id" is auto-incremented in indexedDB
           await db.reportData.add({
