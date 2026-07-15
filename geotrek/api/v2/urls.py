@@ -2,11 +2,6 @@ from django.conf import settings
 from django.urls import include, path
 from django.views.generic import RedirectView
 from rest_framework import routers
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
 
 from geotrek.api.v2 import views as api_views
 
