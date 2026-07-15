@@ -100,7 +100,8 @@ function RichTextEditor({
     },
     editorProps: {
       attributes: {
-        class: "prose prose-sm min-h-[200px] border-0 p-4 focus:outline-none",
+        class:
+          "prose prose-sm min-h-[200px] border-0 p-4 focus:outline-none text-base text-foreground",
         ...rest,
       },
     },
