@@ -34,6 +34,7 @@ import type {
 } from "@/schemas/data"
 import { Spinner } from "@/components/ui/spinner"
 import { toast } from "sonner"
+import useOnline from "@/hook/useOnline"
 
 type ResultPromise =
   | string
@@ -76,6 +77,7 @@ export const Route = createFileRoute("/{-$locale}/_authenticated/sync/upload")({
 
 function RouteComponent() {
   const asyncData = useAsyncStoredData()
+  const online = useOnline()
 
   const {
     signageMutation,
@@ -390,9 +392,15 @@ function RouteComponent() {
             )
           })}
         </ul>
-        <Button className="w-full" onClick={handleSubmit}>
-          {m["common.send-data"]()}
-        </Button>
+        {online ? (
+          <Button className="w-full" onClick={handleSubmit}>
+            {m["common.send-data"]()}
+          </Button>
+        ) : (
+          <p className="text-center text-accent-foreground">
+            {m["common.offline-cannot-sync"]()}
+          </p>
+        )}
       </section>
     </div>
   )

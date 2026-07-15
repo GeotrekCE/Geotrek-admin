@@ -109,7 +109,7 @@
     "update-needed-description": "Please update the input reference data before your field trip.",
     "update-recommended": "An update is recommended",
     "update-recommended-description": "It is recommended to update the data before your field trip.",
-    "offline-cannot-download": "You are offline and cannot download data",
+    "offline-cannot-sync": "You are offline and cannot synchronise data",
     "items-to-sync": "Items are waiting to be synchronized",
     "select": "Select",
     "none-found": "No state found",

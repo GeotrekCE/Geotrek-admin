@@ -109,7 +109,7 @@
     "update-needed-description": "Veuillez mettre à jour les données de référentiel de saisie avant votre sortie de terrain.",
     "update-recommended": "Une mise à jour est recommandée",
     "update-recommended-description": "Il est recommandé de mettre à jour les données avant votre sortie de terrain.",
-    "offline-cannot-download": "Vous êtes hors ligne et ne pouvez pas télécharger les données",
+    "offline-cannot-sync": "Vous êtes hors ligne et ne pouvez pas synchroniser les données",
     "items-to-sync": "Des éléments sont à synchroniser",
     "select": "Sélectionnez",
     "none-found": "Aucun état trouvé",

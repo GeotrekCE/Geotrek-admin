@@ -85,7 +85,7 @@ export default function CardSync({
       <CardFooter className="flex-col gap-4">
         {hasPermissionsToRead && online && actions}
         {hasPermissionsToRead && !online && (
-          <p>{m["common.offline-cannot-download"]()}</p>
+          <p>{m["common.offline-cannot-sync"]()}</p>
         )}
         {!hasPermissionsToRead && <p>{m["common.sync-no-rights"]()}</p>}
       </CardFooter>

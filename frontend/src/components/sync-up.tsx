@@ -11,6 +11,7 @@ import { buttonVariants } from "@/components/ui/button"
 import { Link } from "@tanstack/react-router"
 import { m } from "@/paraglide/messages"
 import { usePermission } from "@/hook/useSettingsQuery"
+import useOnline from "@/hook/useOnline"
 
 type Data = [
   SignageDataSchemaProps[],
@@ -24,6 +25,7 @@ function Message({
 }: {
   data: Data
 }) {
+  const online = useOnline()
   const signageCount = signageData.length
   const interventionCount = interventionData.length
   const infrastructureCount = InfrastructureData.length
@@ -72,13 +74,16 @@ function Message({
             <li>{m["common.report-count"]({ count: reportCount })}</li>
           )}
         </ul>
-        {hasPermissionsToCreate && (
+        {hasPermissionsToCreate && online && (
           <Link
             className={cn("w-full", buttonVariants())}
             to="/{-$locale}/sync/upload"
           >
             {m["common.send-data"]()}
           </Link>
+        )}
+        {hasPermissionsToCreate && !online && (
+          <p>{m["common.offline-cannot-sync"]()}</p>
         )}
         {!hasPermissionsToCreate && <p>{m["common.sync-no-rights"]()}</p>}
       </CardContent>
