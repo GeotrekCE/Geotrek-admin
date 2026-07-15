@@ -99,7 +99,7 @@ Configuring and generating offline maps
   - With command line, you can add a new map base layer with the following command:
 
 .. md-tab-set::
-    :name: generate-pmtiles-command-tabs
+    :name: install-layer-command-tabs
 
     .. md-tab-item:: With Debian
 
