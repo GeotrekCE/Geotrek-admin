@@ -75,6 +75,7 @@ export default function Login() {
                     name="username"
                     label={m["login.form.user-name.label"]()}
                     placeholder={m["login.form.user-name.placeholder"]()}
+                    autoCapitalize="none"
                   />
 
                   <FormTextField
