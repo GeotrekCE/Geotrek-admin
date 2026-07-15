@@ -122,7 +122,7 @@
     "sync-reference-failed": "Error saving references",
     "sync-map-title": "Base maps",
     "sync-map-none": "Missing Map Files",
-    "sync-map-description": "Map tile files and selection of base maps available offline (downloaded locally)",
+    "sync-map-description": "Offline embedded map backgrounds",
     "sync-map-content-title": "Base maps and tiles",
     "sync-map-content-title-downloaded": "Base maps already downloaded",
     "sync-map-form-title": "Select the base maps to download",
