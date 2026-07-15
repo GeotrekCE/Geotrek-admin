@@ -61,3 +61,71 @@ Example::
 
    - ``ACCESS_TOKEN_LIFETIME`` defines how long an access token remains valid before it expires.
    - ``REFRESH_TOKEN_LIFETIME`` defines how long a refresh token remains valid. Once it expires, the user must authenticate again to obtain new tokens.
+
+
+Nginx configuration for docker
+------------------------------
+
+* This new version require the following configuration in your Nginx server to allow the mobile application to access the API:
+
+Example::
+
+    location ~ ^/m/(?<remaining_path>.*)$ {
+        root /;
+        try_files /opt/geotrek-admin/var/frontend/dist/$remaining_path /opt/geotrek-admin/var/frontend/dist/index.html =404;
+    }
+
+    location ^~ /m/sw.js {
+        alias /opt/geotrek-admin/var/frontend/dist/sw.js;
+        add_header Cache-Control "no-store, no-cache, must-revalidate, proxy-revalidate, max-age=0";
+        expires off;
+        access_log off;
+    }
+
+    location = /m {
+        return 307 /m/;
+    }
+
+This snippet is defined in new default Nginx configuration for Docker. https://github.com/GeotrekCE/Geotrek-admin/blob/master/docker/install/conf/nginx.conf
+
+Configuring and generating offline maps
+---------------------------------------
+
+- Add map base layers
+
+  - With admin interface (/admin/mapbox_baselayer/mapbaselayer/)
+    This support raster and vector tiles layers. For vector tiles, you need to set style url.
+
+  - With command line, you can add a new map base layer with the following command:
+
+.. md-tab-set::
+    :name: generate-pmtiles-command-tabs
+
+    .. md-tab-item:: With Debian
+
+         .. code-block:: python
+
+          sudo geotrek install_layer osm (or ign or other provider).
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+
+          docker compose run --rm web ./manage.py install_layer osm (or ign or other provider).
+
+- generate offline map with following command:
+
+.. md-tab-set::
+    :name: generate-pmtiles-command-tabs
+
+    .. md-tab-item:: With Debian
+
+         .. code-block:: python
+
+          sudo geotrek generate_pmtiles <id> (id of the map base layer)
+
+    .. md-tab-item:: With Docker
+
+         .. code-block:: python
+
+          docker compose run --rm web ./manage.py generate_pmtiles <id> (id of the map base layer)

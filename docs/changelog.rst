@@ -5,13 +5,16 @@ CHANGELOG
 2.124.6+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Features**
+
+* Add "GTAM v0", a new offline compatible mobile interface for Geotrek-admin
+  * See configuration and offline maps configuration here : https://geotrek.readthedocs.io/fr/latest/advanced-configuration/settings-for-geotrek-admin-mobile.html
+  * WARNING: docker user should update their nginx configuration to serve the new mobile interface. See documentation
+
 **Bug fixes**
 
 * Revert filters behavior as before select2 migration
 
-**Features**
-
-* Add "GTAM v0", a new offline compatible mobile interface for Geotrek-admin
 
 
 2.124.6         (2026-06-29)
