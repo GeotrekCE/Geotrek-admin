@@ -115,6 +115,7 @@
     "sync-down-title": "Synchronization before fieldwork",
     "sync-up-title": "My Field Data",
     "sync-up-no-data": "No field data has been created or modified since the last synchronization.",
+    "sync-up-success": "Synchronization successful",
     "sync-reference-title": "Data Entry Repository",
     "sync-reference-none": "Missing configuration file",
     "sync-reference-description": "Data Entry Repository configuration files",
