@@ -1,4 +1,7 @@
 ARG DISTRO=ubuntu:noble
+ARG FRONTEND_IMAGE=scratch
+
+FROM ${FRONTEND_IMAGE} AS frontend
 
 FROM ${DISTRO} AS base
 
@@ -31,6 +34,7 @@ COPY requirements.txt ./requirements.txt
 COPY VERSION ./VERSION
 COPY manage.py ./manage.py
 COPY MANIFEST.in ./MANIFEST.in
+COPY --from=frontend /frontend/dist ./frontend/dist
 
 RUN if test "$(lsb_release -cs)" = 'noble' ; then \
       sed -i 's/python3.10/python3.12/g' debian/rules; \

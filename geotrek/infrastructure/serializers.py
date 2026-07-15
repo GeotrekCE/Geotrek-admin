@@ -1,22 +1,73 @@
+from django.conf import settings
+from django.contrib.gis.geos import Point
+from django.db import transaction
+from django.utils.translation import gettext_lazy as _
 from drf_dynamic_fields import DynamicFieldsMixin
+from mapentity.models import ADDITION, CHANGE
 from mapentity.serializers import MapentityGeojsonModelSerializer
+from mapentity.views.generic import log_action
 from rest_framework import serializers
 from rest_framework_gis import fields as rest_gis_fields
+from rest_framework_gis.fields import GeometryField
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
 from geotrek.common.serializers import (
+    AccessMeanGTAMSerializer,
     BasePublishableSerializerMixin,
     PictogramSerializerMixin,
+    StructureGTAMSerializer,
 )
 
+from ..authent.models import Structure
+from ..common.mixins.serializers import LimitStructurePermission
+from ..common.models import AccessMean
+from ..core.models import Topology
 from . import models as infrastructure_models
+from .models import (
+    InfrastructureCondition,
+    InfrastructureMaintenanceDifficultyLevel,
+    InfrastructureType,
+    InfrastructureUsageDifficultyLevel,
+)
 
 
 class InfrastructureTypeSerializer(PictogramSerializerMixin):
     class Meta:
         model = infrastructure_models.InfrastructureType
         fields = ("id", "pictogram", "label")
+
+
+class InfrastructureTypeGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="label")
+
+    class Meta:
+        model = InfrastructureType
+        fields = ("id", "name")
+
+
+class InfrastructureMaintenanceDifficultyGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="label")
+
+    class Meta:
+        model = InfrastructureMaintenanceDifficultyLevel
+        fields = ("id", "name")
+
+
+class InfrastructureUsageDifficultyGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="label")
+
+    class Meta:
+        model = InfrastructureUsageDifficultyLevel
+        fields = ("id", "name")
+
+
+class InfrastructureConditionsGTAMSerializer(serializers.ModelSerializer):
+    name = serializers.CharField(source="label")
+
+    class Meta:
+        model = InfrastructureCondition
+        fields = ("id", "name")
 
 
 class InfrastructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
@@ -37,6 +88,149 @@ class InfrastructureGeojsonSerializer(MapentityGeojsonModelSerializer):
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = infrastructure_models.Infrastructure
         fields = ["id", "name", "published"]
+
+
+class InfrastructureGTAMSerializer(
+    LimitStructurePermission, serializers.ModelSerializer
+):
+    geom = GeometryField(precision=7, transform=settings.API_SRID)
+
+    # read-only
+    structure = StructureGTAMSerializer(read_only=True)
+    access = AccessMeanGTAMSerializer(read_only=True)
+    type = InfrastructureTypeGTAMSerializer(read_only=True)
+    maintenance_difficulty = InfrastructureMaintenanceDifficultyGTAMSerializer(
+        read_only=True
+    )
+    usage_difficulty = InfrastructureUsageDifficultyGTAMSerializer(read_only=True)
+    conditions = InfrastructureConditionsGTAMSerializer(many=True, read_only=True)
+
+    # write-only
+    structure_id = serializers.PrimaryKeyRelatedField(
+        source="structure", write_only=True, queryset=Structure.objects.all()
+    )
+    access_id = serializers.PrimaryKeyRelatedField(
+        source="access",
+        write_only=True,
+        allow_null=True,
+        required=False,
+        queryset=AccessMean.objects.all(),
+    )
+    type_id = serializers.PrimaryKeyRelatedField(
+        source="type", write_only=True, queryset=InfrastructureType.objects.all()
+    )
+    maintenance_difficulty_id = serializers.PrimaryKeyRelatedField(
+        source="maintenance_difficulty",
+        write_only=True,
+        allow_null=True,
+        required=False,
+        queryset=InfrastructureMaintenanceDifficultyLevel.objects.all(),
+    )
+    usage_difficulty_id = serializers.PrimaryKeyRelatedField(
+        source="usage_difficulty",
+        write_only=True,
+        allow_null=True,
+        required=False,
+        queryset=InfrastructureUsageDifficultyLevel.objects.all(),
+    )
+    conditions_id = serializers.PrimaryKeyRelatedField(
+        source="conditions",
+        many=True,
+        write_only=True,
+        allow_null=True,
+        required=False,
+        queryset=InfrastructureCondition.objects.all(),
+    )
+
+    class Meta:
+        model = infrastructure_models.Infrastructure
+        fields = [
+            "id",
+            "date_insert",
+            "date_update",
+            "geom",
+            "published",
+            "name",
+            "description",
+            "implantation_year",
+            "accessibility",
+            # read-only
+            "structure",
+            "access",
+            "type",
+            "maintenance_difficulty",
+            "usage_difficulty",
+            "conditions",
+            # write-only
+            "structure_id",
+            "access_id",
+            "type_id",
+            "maintenance_difficulty_id",
+            "usage_difficulty_id",
+            "conditions_id",
+        ]
+        geom = "geom"
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        user = self.context["request"].user
+        structure = user.profile.structure
+
+        limitated_fields = [
+            ("type_id", InfrastructureType, False),
+            (
+                "maintenance_difficulty_id",
+                InfrastructureMaintenanceDifficultyLevel,
+                False,
+            ),
+            ("usage_difficulty_id", InfrastructureUsageDifficultyLevel, False),
+            ("conditions_id", InfrastructureCondition, True),
+        ]
+
+        if not (user.is_superuser or user.has_perm("authent.can_bypass_structure")):
+            self._apply_structure_limitation(self.fields, limitated_fields, structure)
+
+    def validate_geom(self, value):
+        if not isinstance(value, Point):
+            msg = _("New infrastructure geometry must be points")
+            raise serializers.ValidationError(msg)
+        return value
+
+    def create(self, validated_data):
+        validated_data = self._check_assigned_structure(validated_data)
+        geom = validated_data.pop("geom", None)
+
+        with transaction.atomic():
+            infrastructure = super().create(validated_data)
+            self._sync_topology(infrastructure, geom)
+
+        log_action(self.context["request"], infrastructure, ADDITION)
+
+        return infrastructure
+
+    def update(self, instance, validated_data):
+        validated_data = self._check_assigned_structure(validated_data)
+        geom = validated_data.pop("geom", None)
+
+        with transaction.atomic():
+            infrastructure = super().update(instance, validated_data)
+            if geom:
+                self._sync_topology(infrastructure, geom)
+
+        log_action(self.context["request"], infrastructure, CHANGE)
+
+        return infrastructure
+
+    def _sync_topology(self, obj, geom):
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
+            topology = Topology.deserialize(serialized)
+            obj.topo_object.mutate(topology)
+        else:
+            geom.transform(settings.SRID)
+            obj.geom = geom
+            obj.save()
 
 
 class InfrastructureAPISerializer(BasePublishableSerializerMixin):

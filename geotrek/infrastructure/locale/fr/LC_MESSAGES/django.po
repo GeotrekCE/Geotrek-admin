@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-02 09:42+0000\n"
+"POT-Creation-Date: 2026-07-13 13:27+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/infrastructure/fr/>\n"
@@ -116,6 +116,9 @@ msgstr "Aménagements publiés"
 
 msgid "An infrastructure type must be specified in the parser configuration."
 msgstr "Un type d'infrastructure doit être spécifié dans la configuration du parseur."
+
+msgid "New infrastructure geometry must be points"
+msgstr "Les nouvelles infrastructures doivent être des points"
 
 msgid "None"
 msgstr "Aucun(e)"

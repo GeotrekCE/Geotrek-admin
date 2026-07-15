@@ -3,6 +3,7 @@ from io import BytesIO
 
 from django.conf import settings
 from django.contrib import messages
+from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
 from django.utils.functional import classproperty
@@ -12,6 +13,10 @@ from mapentity import views as mapentity_views
 from mapentity.helpers import suffix_for, user_has_perm
 from pdfimpose.schema.saddle import impose
 from pymupdf import Document
+from rest_framework import permissions
+from rest_framework.response import Response
+from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.utils import logger
@@ -302,3 +307,46 @@ class PublishedFieldMixin:
             ]
 
         return editable_fields
+
+
+class ReferencesMixin(APIView):
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    serializers = None
+    pictogram_filename = None
+
+    def get_reference(self, model, serializer):
+        user = self.request.user
+        if (
+            user.is_superuser
+            or user.has_perm("authent.can_bypass_structure")
+            or not hasattr(model, "structure")
+        ):
+            qs = model.objects.all().order_by("id")
+        else:
+            structure = user.profile.structure
+            qs = model.objects.filter(
+                Q(structure=structure) | Q(structure__isnull=True)
+            ).order_by("id")
+        data = serializer(qs, many=True).data
+        return data
+
+    def get_all_references(self):
+        data = {}
+        for serializer in self.serializers:
+            model = serializer.Meta.model
+            model_name = model._meta.model_name
+            data[model_name] = self.get_reference(model, serializer)
+        return data
+
+    def get_pictogram_url(self, request):
+        endpoint = os.path.join(settings.STATIC_URL, "images", self.pictogram_filename)
+        url = request.build_absolute_uri(endpoint)
+        return url
+
+    def get(self, request, *args, **kwargs):
+        data = self.get_all_references()
+        if self.pictogram_filename:
+            data["pictogram"] = {"url": self.get_pictogram_url(request)}
+        return Response(data)

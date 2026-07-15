@@ -3,6 +3,7 @@ import logging
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.gis.db.models.functions import Transform
+from django.db.models import Prefetch
 from django.http import HttpResponse, HttpResponseRedirect
 from django.utils.functional import classproperty
 from django.utils.translation import gettext_lazy as _
@@ -18,6 +19,7 @@ from mapentity.views import (
     MapEntityMultiUpdate,
     MapEntityUpdate,
 )
+from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
@@ -25,19 +27,32 @@ from geotrek.common.mixins.views import (
     BelongStructureMixin,
     CustomColumnsMixin,
     PublishedFieldMixin,
+    ReferencesMixin,
 )
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 
 from .filters import BladeFilterSet, SignageFilterSet
 from .forms import BladeForm, LineFormset, SignageForm
-from .models import Blade, Signage
+from .models import (
+    Blade,
+    Line,
+    Signage,
+)
 from .serializers import (
+    BladeColorGTAMSerializer,
+    BladeConditionGTAMSerializer,
     BladeGeojsonSerializer,
     BladeSerializer,
+    BladeTypeGTAMSerializer,
     CSVBladeSerializer,
+    DirectionGTAMSerializer,
+    SignageConditionGTAMSerializer,
     SignageGeojsonSerializer,
+    SignageGTAMSerializer,
+    SignageSealingGTAMSerializer,
     SignageSerializer,
+    SignageTypeGTAMSerializer,
     ZipBladeShapeSerializer,
 )
 
@@ -128,14 +143,39 @@ class SignageViewSet(GeotrekMapentityViewSet):
     model = Signage
     serializer_class = SignageSerializer
     geojson_serializer_class = SignageGeojsonSerializer
+    gtam_serializer_class = SignageGTAMSerializer
     filterset_class = SignageFilterSet
     mapentity_list_class = SignageList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        if self.format_kwarg == "geojson":
+        renderer, media_type = self.perform_content_negotiation(self.request)
+        if getattr(renderer, "format") == "geojson":
             qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
             qs = qs.only("id", "name", "published")
+        elif getattr(renderer, "format") == "gtam":
+            qs = qs.select_related(
+                "structure",
+                "access",
+                "type",
+                "sealing",
+                "manager",
+            ).prefetch_related(
+                "conditions",
+                Prefetch(
+                    "blades",
+                    queryset=Blade.objects.existing()
+                    .select_related(
+                        "direction",
+                        "type",
+                        "color",
+                    )
+                    .prefetch_related(
+                        "conditions",
+                        Prefetch("lines", queryset=Line.objects.all()),
+                    ),
+                ),
+            )
         else:
             qs = qs.select_related(
                 "structure", "manager", "sealing", "access", "type"
@@ -151,6 +191,19 @@ class SignageMultiUpdate(
     PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
 ):
     model = Signage
+
+
+class SignageReferences(ReferencesMixin, APIView):
+    serializers = [
+        SignageConditionGTAMSerializer,
+        SignageTypeGTAMSerializer,
+        SignageSealingGTAMSerializer,
+        DirectionGTAMSerializer,
+        BladeTypeGTAMSerializer,
+        BladeColorGTAMSerializer,
+        BladeConditionGTAMSerializer,
+    ]
+    pictogram_filename = "signage.png"
 
 
 class BladeDetail(MapEntityDetail):

@@ -40,6 +40,7 @@ celery==5.6.3
     #   django-celery-results
 certifi==2026.6.17
     # via
+    #   django-mapbox-baselayer
     #   fiona
     #   requests
     #   sentry-sdk
@@ -63,6 +64,7 @@ click==8.4.2
     #   click-repl
     #   cligj
     #   fiona
+    #   mercantile
 click-didyoumean==0.3.1
     # via celery
 click-plugins==1.1.1.2
@@ -110,6 +112,7 @@ django==5.2.15
     #   django-js-asset
     #   django-large-image
     #   django-leaflet
+    #   django-mapbox-baselayer
     #   django-modelcluster
     #   django-modeltranslation
     #   django-tinymce
@@ -117,6 +120,7 @@ django==5.2.15
     #   django-weasyprint
     #   djangorestframework
     #   djangorestframework-gis
+    #   djangorestframework-simplejwt
     #   drf-extensions
     #   drf-spectacular
     #   drf-yasg
@@ -162,6 +166,8 @@ django-leaflet==0.19.post11
     # via mapentity
 django-maintenance-mode==0.22.0
     # via geotrek (setup.py)
+django-mapbox-baselayer==1.5.1
+    # via geotrek (setup.py)
 django-modelcluster==6.5
     # via geotrek (setup.py)
 django-modeltranslation==0.20.3
@@ -181,6 +187,7 @@ djangorestframework==3.16.1
     #   django-large-image
     #   djangorestframework-datatables
     #   djangorestframework-gis
+    #   djangorestframework-simplejwt
     #   drf-extensions
     #   drf-spectacular
     #   drf-yasg
@@ -189,6 +196,8 @@ djangorestframework-datatables==0.7.2
     # via mapentity
 djangorestframework-gis==1.2.1
     # via mapentity
+djangorestframework-simplejwt==5.5.1
+    # via geotrek (setup.py)
 drf-dynamic-fields==0.4.0
     # via geotrek (setup.py)
 drf-extensions==0.8.0
@@ -262,6 +271,8 @@ markupsafe==3.0.3
     # via jinja2
 mbutil==0.3.0
     # via landez
+mercantile==1.2.1
+    # via django-mapbox-baselayer
 numpy==2.2.6
     # via
     #   large-image
@@ -298,6 +309,8 @@ pillow==12.3.0
     #   paperclip
     #   reportlab
     #   weasyprint
+pmtiles==3.7.0
+    # via django-mapbox-baselayer
 prompt-toolkit==3.0.52
     # via click-repl
 psycopg2==2.9.12
@@ -308,6 +321,8 @@ pydyf==0.12.1
     # via weasyprint
 pygal==3.1.3
     # via geotrek (setup.py)
+pyjwt==2.12.1
+    # via djangorestframework-simplejwt
 pymemcache==4.0.0
     # via geotrek (setup.py)
 pymupdf==1.28.0
@@ -350,6 +365,7 @@ requests==2.34.2
     # via
     #   coreapi
     #   django-embed-video
+    #   django-mapbox-baselayer
     #   landez
     #   mapentity
 rjsmin==1.2.5
@@ -388,6 +404,8 @@ tinycss2==1.5.1
     #   weasyprint
 tinyhtml5==2.1.0
     # via weasyprint
+tqdm==4.68.4
+    # via django-mapbox-baselayer
 transaction==5.1
     # via zodb
 typing-extensions==4.16.0
@@ -397,6 +415,7 @@ typing-extensions==4.16.0
     #   django-modeltranslation
     #   exceptiongroup
     #   large-image
+    #   pyjwt
     #   referencing
 tzdata==2026.3
     # via

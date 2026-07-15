@@ -11,7 +11,12 @@ mkdir -p /opt/geotrek-admin/var/static \
          /opt/geotrek-admin/var/log \
          /opt/geotrek-admin/var/conf/extra_templates \
          /opt/geotrek-admin/var/conf/extra_locale \
+         /opt/geotrek-admin/var/frontend \
          /opt/geotrek-admin/var/tmp
+
+if [ -d /opt/geotrek-admin/frontend/dist ]; then
+    cp -r /opt/geotrek-admin/frontend/dist/. /opt/geotrek-admin/var/frontend/dist/
+fi
 
 # if not custom.py present, create it
 if [ ! -f /opt/geotrek-admin/var/conf/custom.py ]; then

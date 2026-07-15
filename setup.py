@@ -18,6 +18,7 @@ setup(
     install_requires=[
         "Django==5.2.*",
         "mapentity",
+        "django-mapbox-baselayer",
         "chardet",
         "cairosvg",
         "cairocffi",
@@ -55,6 +56,7 @@ setup(
         "pyopenair",
         "django-treebeard",
         "easy-thumbnails[svg]",
+        "djangorestframework-simplejwt",
         "django-maintenance-mode",
         "django-flask-authent-backend@git+https://github.com/PnX-SI/django-flask-authent-backend@1.0.0#egg=django-flask-authent-backend",
         # prod,
