@@ -42,7 +42,7 @@ export default function InterventionDetail(params: {
   const handleDelete = React.useCallback(() => {
     // @ts-expect-error not never
     db.interventionData.delete(Number(params.id))
-    toast.success(`"${detail?.name}" supprimé avec succès`, {
+    toast.success(m["common.delete-success"]({ item: detail?.name ?? "" }), {
       position: "top-center",
     })
     navigate({

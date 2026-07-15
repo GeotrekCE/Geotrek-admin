@@ -9,6 +9,7 @@
   "common": {
     "back": "Back to previous page",
     "cancel": "Cancel",
+    "error": "An error occured",
     "clear-all": "Clear all",
     "apply": "Apply",
     "edit": "Edit",
@@ -99,7 +100,7 @@
     "edit-item": "Edit {item}",
     "edit-success": "{item} was edited successfully",
     "delete-item": "Delete {item}",
-    "delete-success": "{item} was deleted successfully",
+    "delete-success": "\"{item}\" was deleted successfully",
     "restore-success": "Restoration of {item} completed",
     "sync-error": "Synchronization error",
     "sync-success": "Synchronization successful",

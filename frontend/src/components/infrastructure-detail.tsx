@@ -43,7 +43,7 @@ export default function InfrastructureDetail(params: {
   const handleDelete = React.useCallback(() => {
     // @ts-expect-error not never
     db.infrastructureData.delete(Number(params.id))
-    toast.success(`"${detail?.name}" supprimé avec succès`, {
+    toast.success(m["common.delete-success"]({ item: detail?.name ?? "" }), {
       position: "top-center",
     })
     navigate({

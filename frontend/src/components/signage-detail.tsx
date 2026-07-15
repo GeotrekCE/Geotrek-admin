@@ -47,7 +47,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
   const handleDelete = React.useCallback(() => {
     // @ts-expect-error not never
     db.signageData.delete(Number(params.id))
-    toast.success(`"${detail?.name}" supprimé avec succès`, {
+    toast.success(m["common.delete-success"]({ item: detail?.name ?? "" }), {
       position: "top-center",
     })
     navigate({

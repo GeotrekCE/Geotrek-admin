@@ -37,7 +37,9 @@ export default function ReportDetail(params: { id: string; type: string }) {
   const handleDelete = React.useCallback(() => {
     // @ts-expect-error not never
     db.reportData.delete(Number(params.id))
-    toast.success(`"${name}" supprimé avec succès`, { position: "top-center" })
+    toast.success(m["common.delete-success"]({ item: name }), {
+      position: "top-center",
+    })
     navigate({
       to: "/{-$locale}",
     })
