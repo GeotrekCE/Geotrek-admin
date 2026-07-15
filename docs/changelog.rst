@@ -9,7 +9,7 @@ CHANGELOG
 
 * Revert filters behavior as before select2 migration
 
-**Improvements**
+**Features**
 
 * Add GTAM v0
 
