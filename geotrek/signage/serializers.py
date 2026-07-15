@@ -178,7 +178,7 @@ class SignageGeojsonSerializer(MapentityGeojsonModelSerializer):
 
 class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerializer):
     geom = GeometryField(precision=7, transform=settings.API_SRID)
-    blades = BladesGTAMSerializer(many=True, read_only=True)
+    blades = BladesGTAMSerializer(many=True)
 
     # read-only
     structure = StructureGTAMSerializer(read_only=True)
@@ -293,12 +293,14 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
 
     def create(self, validated_data):
         validated_data = self._check_assigned_structure(validated_data)
+        blades_data = validated_data.pop("blades")
         geom = validated_data.pop("geom", None)
 
         with transaction.atomic():
             signage = super().create(validated_data)
 
             self._sync_topology(signage, geom)
+            self._sync_blades(signage, blades_data)
 
         log_action(self.context["request"], signage, ADDITION)
 
@@ -306,6 +308,7 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
 
     def update(self, instance, validated_data):
         validated_data = self._check_assigned_structure(validated_data)
+        blades_data = validated_data.pop("blades")
         geom = validated_data.pop("geom", None)
 
         with transaction.atomic():
@@ -313,6 +316,7 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
 
             if geom:
                 self._sync_topology(signage, geom)
+            self._sync_blades(signage, blades_data)
 
         log_action(self.context["request"], signage, CHANGE)
 
@@ -327,6 +331,30 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
             geom.transform(settings.SRID)
             obj.geom = geom
             obj.save()
+
+    def _sync_blades(self, signage, blades_data):
+        qs = signage.blades.all()
+        qs.delete()
+
+        for blade_data in blades_data:
+            self._create_blade(signage, blade_data)
+
+    def _create_blade(self, signage, blade_data):
+        lines_data = blade_data.pop("lines", [])
+        conditions = blade_data.pop("conditions", [])
+
+        blade = signage_models.Blade.objects.create(signage=signage, **blade_data)
+        blade.conditions.set(conditions)
+
+        self._sync_lines(blade, lines_data)
+
+        return blade
+
+    def _sync_lines(self, blade, lines_data):
+        blade.lines.all().delete()
+
+        for line_data in lines_data:
+            signage_models.Line.objects.create(blade=blade, **line_data)
 
 
 class SignageAPISerializer(BasePublishableSerializerMixin):
