@@ -5,6 +5,10 @@ CHANGELOG
 2.125.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Fix GTAM read permission for non-superuser
+
 
 2.125.0         (2026-07-15)
 ----------------------------

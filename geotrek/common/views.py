@@ -599,7 +599,7 @@ class ConfigView(APIView):
         "change": "update",
         "change_geom": "update_geom",
         "delete": "delete",
-        "view": "read",
+        "read": "read",
     }
 
     pmtiles_folder = pathlib.Path(os.path.join(settings.MEDIA_ROOT, "pmtiles"))
