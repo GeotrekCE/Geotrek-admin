@@ -11,7 +11,7 @@ CHANGELOG
 
 **Features**
 
-* Add GTAM v0
+* Add "GTAM v0", a new offline compatible mobile interface for Geotrek-admin
 
 
 2.124.6         (2026-06-29)
