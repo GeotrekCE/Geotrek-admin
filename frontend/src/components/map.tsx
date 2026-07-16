@@ -33,6 +33,8 @@ export default function Map({
   const classNameWrapper = "grid grow place-items-center bg-accent"
   const { bounds } = settings?.settings.map.localOptions || {}
 
+  const [lng1, lat1, lng2, lat2] = bounds || []
+
   const layers = useLayers()
 
   const {
@@ -61,9 +63,16 @@ export default function Map({
       }
     >
       <MapLibre
+        maxBounds={
+          bounds
+            ? [
+                [lng1, lat1],
+                [lng2, lat2],
+              ]
+            : undefined
+        }
         {...props}
         initialViewState={{
-          ...(bounds && { maxBounds: bounds }),
           ...props.initialViewState,
         }}
         scrollZoom={!noControls}

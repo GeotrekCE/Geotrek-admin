@@ -39,7 +39,7 @@ export const settingsSchema = z.object({
         ),
       }),
       localOptions: z.object({
-        bounds: z.array(z.number()),
+        bounds: z.array(z.number()).length(4),
       }),
     }),
     appOptions: z.object({
