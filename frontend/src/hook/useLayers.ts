@@ -21,6 +21,16 @@ export default function useLayers(): StyleItem[] {
       styleUrl: layer.url,
     }))
 
+    if (defaultLayers.length === 0) {
+      defaultLayers.push({
+        id: "default-no-map",
+        name: "Plan IGN",
+        image: "",
+        styleUrl:
+          "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json",
+      })
+    }
+
     if (!map || !map.layers || map.layers.length < 1) return defaultLayers
     return [
       ...defaultLayers,
