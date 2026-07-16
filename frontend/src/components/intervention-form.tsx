@@ -190,7 +190,7 @@ export default function InterventionForm({
           />
 
           <FormGeomField
-            name="geom.coordinates"
+            name="geom"
             label={m["form.location"]()}
             icon={pictogram}
             required

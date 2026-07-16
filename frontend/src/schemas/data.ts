@@ -21,10 +21,15 @@ export type DataSchemaPropsMixed = (
   | (ReportDataSchemaProps & { name: string })
 ) & { pictogram: { url?: string }; reference: string }
 
-const pointGeomSchema = z.object({
-  type: z.literal("Point"),
-  coordinates: z.array(z.number()).length(2, m["form.location-required"]()),
-})
+const pointGeomSchema = z
+  .object({
+    type: z.literal("Point"),
+    coordinates: z.array(z.number()),
+  })
+  .refine(
+    (data) => data.coordinates.length === 2,
+    m["form.location-required"]()
+  )
 
 const lineStringGeomSchema = z.object({
   type: z.literal("LineString"),
@@ -42,7 +47,7 @@ const multiLineStringGeomSchema = z.object({
     .min(2, m["form.location-required"]()),
 })
 
-const geometrySchema = z.discriminatedUnion("type", [
+export const geometrySchema = z.discriminatedUnion("type", [
   pointGeomSchema,
   lineStringGeomSchema,
   multiLineStringGeomSchema,
@@ -70,10 +75,12 @@ export const infrastructureDataSchema = z.object({
       name: z.string(),
     }),
   ]),
-  type: z.object({
-    id: z.number().int().positive({ message: m["form.type-required"]() }),
-    name: z.string().min(1),
-  }),
+  type: z
+    .object({
+      id: z.number().int(),
+      name: z.string(),
+    })
+    .refine((data) => !!data.name, m["form.type-required"]()),
   maintenance_difficulty: z.union([
     z.null(),
     z.object({
@@ -107,7 +114,6 @@ export const signageDataSchema = z.object({
       name: z.string(),
     })
     .refine((data) => !!data.name, m["form.structure-required"]()),
-
   date_insert: z.string(),
   date_update: z.string(),
   name: z.string().min(1, m["form.name-required"]()),
@@ -139,7 +145,7 @@ export const signageDataSchema = z.object({
   type: z
     .object({
       id: z.number().int(),
-      name: z.string().min(1),
+      name: z.string(),
     })
     .refine((data) => !!data.name, m["form.type-required"]()),
   conditions: z.array(
@@ -228,7 +234,7 @@ export const interventionDataSchema = z.object({
   status: z
     .object({
       id: z.number().int().positive(),
-      name: z.string().min(1),
+      name: z.string(),
     })
     .refine((data) => !!data.name, m["form.status-required"]()),
   type: z.union([
