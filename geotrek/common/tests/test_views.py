@@ -563,7 +563,7 @@ class ConfigViewTest(TestCase):
         perm_delete_intervention = Permission.objects.get(
             codename="delete_intervention"
         )
-        perm_view_report = Permission.objects.get(codename="view_report")
+        perm_view_report = Permission.objects.get(codename="read_report")
         cls.user.user_permissions.add(perm_add_signage)
         cls.user.user_permissions.add(perm_change_geom_infrastructure)
         cls.user.user_permissions.add(perm_delete_intervention)
@@ -665,7 +665,7 @@ class ConfigViewTest(TestCase):
             settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],
         )
 
-    def test_user(self):
+    def test_user_response(self):
         token = self.authenticate(self.user)
         r = self.client.get(
             reverse("common:gtam_config"), headers={"Authorization": token}
@@ -673,7 +673,7 @@ class ConfigViewTest(TestCase):
 
         data = r.json()
         self.assertEqual(
-            data["user"]["attachedStructure"]["id"], self.user.userprofile.structure.id
+            data["user"]["attachedStructure"]["id"], self.user.userprofile.structure_id
         )
         self.assertEqual(
             data["user"]["attachedStructure"]["label"],
