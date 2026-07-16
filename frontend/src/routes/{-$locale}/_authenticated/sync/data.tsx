@@ -23,7 +23,7 @@ export const Route = createFileRoute("/{-$locale}/_authenticated/sync/data")({
 function RouteComponent() {
   const settings = useLiveQuery(() => db.settings.get("settings"))
 
-  const minZoom = settings?.settings?.maps.localOptions.minZoom ?? 10
+  const minZoom = settings?.settings?.appOptions.minZoom ?? 10
   const attachedStructure = settings?.user.attachedStructure.id
 
   const appSync = useLiveQuery(() => db.appSync.get("data"))
@@ -128,7 +128,7 @@ function RouteComponent() {
         </fieldset>
         <fieldset className="m-4">
           <legend className="my-4 font-bold text-accent-foreground uppercase">
-            {m["common.structure"]()}
+            {m["common.data-scope"]()}
           </legend>
           <form.Field
             name="structure"
@@ -143,13 +143,13 @@ function RouteComponent() {
                   <Field orientation="horizontal">
                     <RadioGroupItem value="own" id="own-structure" />
                     <FieldLabel htmlFor="own-structure" className="font-normal">
-                      {m["common.my-structure"]()}
+                      {m["common.data-scope-own"]()}
                     </FieldLabel>
                   </Field>
                   <Field orientation="horizontal">
                     <RadioGroupItem value="all" id="all-structure" />
                     <FieldLabel htmlFor="all-structure" className="font-normal">
-                      {m["common.all-structures"]()}
+                      {m["common.data-scope-all"]()}
                     </FieldLabel>
                   </Field>
                 </RadioGroup>

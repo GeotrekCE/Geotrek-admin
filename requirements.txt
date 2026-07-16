@@ -166,7 +166,7 @@ django-leaflet==0.19.post11
     # via mapentity
 django-maintenance-mode==0.22.0
     # via geotrek (setup.py)
-django-mapbox-baselayer==1.5.1
+django-mapbox-baselayer==1.5.2
     # via geotrek (setup.py)
 django-modelcluster==6.5
     # via geotrek (setup.py)

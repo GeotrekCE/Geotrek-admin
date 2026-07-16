@@ -9,27 +9,41 @@ export const settingsSchema = z.object({
       data: z.number().int().positive(),
       references: z.number().int().positive(),
     }),
-    maps: z.object({
-      layers: z.array(
-        z.object({
-          id: z.number().int().positive(),
-          pmtiles_url: z.string(),
-          json_style_url: z.string(),
-          name: z.string().min(1),
-          "content-length": z.number().int().positive(),
-          options: z.object({
-            attribution: z.string(),
-            center: z.array(z.number()),
-            maxBounds: z.array(z.array(z.number())),
-            maxZoom: z.number().int().positive(),
-            minZoom: z.number().int(),
-            zoom: z.number().int(),
-          }),
-        })
-      ),
-      localOptions: z.object({
-        minZoom: z.number().int(),
+    map: z.object({
+      layers: z.object({
+        online: z.object({
+          base_layers: z.array(
+            z.object({
+              name: z.string().min(1),
+              slug: z.string().min(1),
+              url: z.string(),
+            })
+          ),
+        }),
+        offline: z.array(
+          z.object({
+            id: z.number().int().positive(),
+            pmtiles_url: z.string(),
+            json_style_url: z.string(),
+            name: z.string().min(1),
+            "content-length": z.number().int().positive(),
+            options: z.object({
+              attribution: z.string(),
+              center: z.array(z.number()),
+              maxBounds: z.array(z.array(z.number())),
+              maxZoom: z.number().int().positive(),
+              minZoom: z.number().int(),
+              zoom: z.number().int(),
+            }),
+          })
+        ),
       }),
+      localOptions: z.object({
+        bounds: z.array(z.number()).length(4),
+      }),
+    }),
+    appOptions: z.object({
+      minZoom: z.number().int(),
     }),
   }),
   user: z.object({
@@ -80,7 +94,7 @@ export const appSync = z.object({
   lastSync: z.string(),
   bounds: z.array(z.number()).length(4).optional(),
   structure: z.union([z.null(), z.number()]).optional(),
-  maps: z
+  map: z
     .object({
       layers: z.array(z.string()),
     })

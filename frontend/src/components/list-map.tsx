@@ -53,13 +53,21 @@ export default function ListMap() {
         } as React.CSSProperties
       }
     >
-      {elements
-        .filter((item) => !!item?.geom)
-        .map((item) => (
+      {elements.map((item) => {
+        if (!item.geom) {
+          return null
+        }
+
+        // We display the first point for LineString/MultiLineString
+        const [longitude, latitude] = item.geom.coordinates.flat(
+          Infinity
+        ) as number[]
+
+        return (
           <Marker
             key={`${item.reference}-${item.id}`}
-            longitude={item.geom.coordinates[0]}
-            latitude={item.geom.coordinates[1]}
+            longitude={longitude}
+            latitude={latitude}
             anchor="bottom"
             onClick={() => {
               navigate({
@@ -95,7 +103,8 @@ export default function ListMap() {
               />
             </div>
           </Marker>
-        ))}
+        )
+      })}
     </Map>
   )
 }

@@ -7,7 +7,14 @@ CHANGELOG
 
 **Bug fixes**
 
-* Fix GTAM read permission for non-superuser
+GTAM
+^^^^
+
+* Fix read permission for non-superuser
+* Update settings when switching users
+* Selective update: only the data affected by the user is sent
+* Handle non-correct geom
+* Manage general map bounds
 
 
 2.125.0         (2026-07-15)

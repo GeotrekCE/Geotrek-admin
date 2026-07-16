@@ -45,11 +45,11 @@ export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
                 initialViewState={{ bounds: bounds as LngLatBoundsLike }}
               />
               <h4 className="my-4 font-bold text-accent-foreground">
-                {m["common.managing-structures"]()}
+                {m["common.data-scope-synced"]()}
               </h4>
               {structure === null
-                ? m["common.all-structures"]()
-                : m["common.my-structure"]()}
+                ? m["common.data-scope-all"]()
+                : m["common.data-scope-own"]()}
             </div>
           )}
         </>

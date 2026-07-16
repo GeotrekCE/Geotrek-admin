@@ -14,6 +14,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { AuthProvider, useAuth } from "@/lib/auth"
 import { deLocalizeUrl, localizeUrl } from "@/paraglide/runtime"
 import { useAppInit } from "@/hook/useAppInit"
+import { m } from "@/paraglide/messages"
 
 const router = createRouter({
   basepath: import.meta.env.BASE_URL,
@@ -53,7 +54,7 @@ function InnerApp() {
         },
         mutationCache: new MutationCache({
           onError: (error) => {
-            toast.error("Une erreur s'est produite", {
+            toast.error(m["common.error"](), {
               position: "top-center",
               // @ts-expect-error - deal with API error shape
               description: error.res?.message,
@@ -74,7 +75,7 @@ function InnerApp() {
               return
             }
             if (error) {
-              toast.error("Une erreur s'est produite", {
+              toast.error(m["common.error"](), {
                 position: "top-center",
                 description: error.message,
               })

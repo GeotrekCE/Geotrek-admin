@@ -6,7 +6,8 @@ import {
 import type { SettingsSchemaProps } from "@/schemas/settings"
 import { useAppSettings } from "@/hook/useAppSettings"
 
-export type MapZone = SettingsSchemaProps["settings"]["maps"]["layers"][0]
+export type MapZone =
+  SettingsSchemaProps["settings"]["map"]["layers"]["offline"][0]
 
 export type OfflineZoneMetadata = {
   id: string

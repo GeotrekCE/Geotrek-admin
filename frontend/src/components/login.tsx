@@ -15,11 +15,13 @@ import {
 import { useAuth } from "@/lib/auth"
 import { m } from "@/paraglide/messages"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
+import { useSettingsQuery } from "@/hook/useSettingsQuery"
 
 export default function Login() {
   const { login } = useAuth()
   const { search } = useLocation()
   const navigate = useNavigate()
+  const { refetch } = useSettingsQuery(false)
 
   const form = useAppForm({
     defaultValues: {
@@ -42,6 +44,7 @@ export default function Login() {
         loading: m["login.loading"](),
         success: () => {
           navigate({ to: search.redirect || "/" })
+          refetch()
           return m["login.success"]()
         },
         error: ({ message }) => message,
@@ -75,6 +78,7 @@ export default function Login() {
                     name="username"
                     label={m["login.form.user-name.label"]()}
                     placeholder={m["login.form.user-name.placeholder"]()}
+                    autoCapitalize="none"
                   />
 
                   <FormTextField

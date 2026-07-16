@@ -23,6 +23,7 @@ import NotFound from "@/components/not-found"
 import { usePermission } from "@/hook/useSettingsQuery"
 import type { SignageDataSchemaProps } from "@/schemas/data"
 import { m } from "@/paraglide/messages"
+import { Alert, AlertTitle } from "@/components/ui/alert"
 
 export default function SignageDetail(params: { id: string; type: string }) {
   const navigate = useNavigate()
@@ -47,7 +48,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
   const handleDelete = React.useCallback(() => {
     // @ts-expect-error not never
     db.signageData.delete(Number(params.id))
-    toast.success(`"${detail?.name}" supprimé avec succès`, {
+    toast.success(m["common.delete-success"]({ item: detail?.name ?? "" }), {
       position: "top-center",
     })
     navigate({
@@ -156,17 +157,24 @@ export default function SignageDetail(params: { id: string; type: string }) {
             {m["content.location"]()}
           </h3>
           {detail.geom && (
-            <Map
-              className="pointer-none aspect-square touch-none"
-              longitude={detail.geom.coordinates[0]}
-              latitude={detail.geom.coordinates[1]}
-            >
-              <Marker
-                longitude={detail.geom.coordinates[0]}
-                latitude={detail.geom.coordinates[1]}
-                anchor="bottom"
-              />
-            </Map>
+            <>
+              <Map className="pointer-none aspect-square touch-none">
+                {detail.geom.type === "Point" && (
+                  <Marker
+                    longitude={detail.geom.coordinates[0]}
+                    latitude={detail.geom.coordinates[1]}
+                    anchor="bottom"
+                  />
+                )}
+              </Map>
+              {detail.geom.type !== "Point" && (
+                <Alert className="mt-4" variant="warning">
+                  <AlertTitle>
+                    {m["form.geom-linear-not-supported"]()}
+                  </AlertTitle>
+                </Alert>
+              )}
+            </>
           )}
         </section>
 
@@ -253,11 +261,19 @@ export default function SignageDetail(params: { id: string; type: string }) {
                   <h5 className="my-2 font-semibold">Conditions</h5>
                   <p>{blade.conditions.map((c) => c.name).join(", ")}</p>
 
-                  <h5 className="my-2 font-semibold">Couleur</h5>
-                  <p>{blade.color.name}</p>
+                  {blade.color && (
+                    <>
+                      <h5 className="my-2 font-semibold">Couleur</h5>
+                      <p>{blade.color.name}</p>
+                    </>
+                  )}
 
-                  <h5 className="my-2 font-semibold">Direction</h5>
-                  <p>{blade.direction.name}</p>
+                  {blade.direction && (
+                    <>
+                      <h5 className="my-2 font-semibold">Direction</h5>
+                      <p>{blade.direction.name}</p>
+                    </>
+                  )}
 
                   <h5 className="my-2 font-semibold">Lignes</h5>
                   <ul>

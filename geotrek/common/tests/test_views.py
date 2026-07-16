@@ -8,12 +8,13 @@ from unittest import mock, skipIf
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.gis.geos import Point, Polygon
+from django.contrib.gis.geos import Point
 from django.core.files import File
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
+from mapentity.helpers import api_bbox
 from mapentity.tests import SuperUserFactory
 from mapentity.tests.factories import UserFactory
 from mapentity.views.generic import MapEntityList
@@ -578,30 +579,6 @@ class ConfigViewTest(AuthentFixturesMixin, TestCase):
         data = r.json()
         return f"Bearer {data['access']}"
 
-    def get_good_layers_data(self):
-        bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
-        bbox.srid = settings.SRID
-        bbox.transform(settings.API_SRID)
-        west, south, east, north = bbox.extent
-
-        max_bounds = [[west, south], [east, north]]
-        center = [(west + east) / 2, (south + north) / 2]
-
-        data = {
-            "pmtiles_url": "http://testserver/media/pmtiles/opentopomap-34.pmtiles",
-            "json_style_url": "http://testserver/media/pmtiles/opentopomap-34.json",
-            "name": "opentopomap",
-            "content-length": 537456,
-            "options": {
-                "center": center,
-                "maxBounds": max_bounds,
-                "maxZoom": 15,
-                "minZoom": 0,
-                "zoom": 0,
-            },
-        }
-        return data
-
     def get_permissions(self):
         data = {
             "signage": {
@@ -667,8 +644,38 @@ class ConfigViewTest(AuthentFixturesMixin, TestCase):
             settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],
         )
 
+    def test_map(self):
+        token = self.authenticate(self.superuser)
+        r = self.client.get(
+            reverse("common:gtam_config"), headers={"Authorization": token}
+        )
+
+        data = r.json()
+        self.assertEqual(
+            list(data["settings"]["map"]["layers"].keys()), ["online", "offline"]
+        )
+        self.assertEqual(
+            data["settings"]["map"]["localOptions"]["bounds"],
+            list(
+                api_bbox(
+                    settings.SPATIAL_EXTENT, settings.SRID, settings.VIEWPORT_MARGIN
+                )
+            ),
+        )
+
+    def test_appOptions(self):
+        token = self.authenticate(self.superuser)
+        r = self.client.get(
+            reverse("common:gtam_config"), headers={"Authorization": token}
+        )
+
+        data = r.json()
+        self.assertEqual(
+            data["settings"]["appOptions"]["minZoom"],
+            settings.GTAM_CONFIG["SYNC_MAP_MIN_ZOOM"],
+        )
+
     def test_user_response(self):
-        self.maxDiff = None
         token = self.authenticate(self.user)
         r = self.client.get(
             reverse("common:gtam_config"), headers={"Authorization": token}

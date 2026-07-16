@@ -37,7 +37,7 @@ from django.views.generic import TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
 from django_large_image.rest import LargeImageFileDetailMixin
 from large_image import config
-from mapbox_baselayer.utils import get_pmtiles
+from mapbox_baselayer.utils import get_map_base_layers, get_pmtiles
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
@@ -640,11 +640,21 @@ class ConfigView(APIView):
                     "data": settings.GTAM_CONFIG["DATA_INTERVAL_SYNC"],
                     "references": settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],
                 },
-                "maps": {
-                    "layers": get_pmtiles(request),
-                    "localOptions": {
-                        "minZoom": settings.GTAM_CONFIG["SYNC_MAP_MIN_ZOOM"],
+                "map": {
+                    "layers": {
+                        "online": get_map_base_layers(request),
+                        "offline": get_pmtiles(request),
                     },
+                    "localOptions": {
+                        "bounds": api_bbox(
+                            settings.SPATIAL_EXTENT,
+                            settings.SRID,
+                            settings.VIEWPORT_MARGIN,
+                        ),
+                    },
+                },
+                "appOptions": {
+                    "minZoom": settings.GTAM_CONFIG["SYNC_MAP_MIN_ZOOM"],
                 },
             },
             "user": {

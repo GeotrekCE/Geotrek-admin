@@ -17,25 +17,25 @@ export function useAppSettings() {
 
   function addMapLayer(key: string, mapData: Record<string, unknown>) {
     const data = getStorageElement(APP_SETTINGS_KEY)
-    if (data.maps && data.maps.layers) {
+    if (data.map && data.map.layers) {
       let updatedLayers = []
-      if (data.maps.layers.some((layer: { id: string }) => layer.id === key)) {
-        updatedLayers = data.maps.layers.map((layer: { id: string }) =>
+      if (data.map.layers.some((layer: { id: string }) => layer.id === key)) {
+        updatedLayers = data.map.layers.map((layer: { id: string }) =>
           layer.id === key ? { ...layer, ...mapData } : layer
         )
       } else {
-        updatedLayers = [...data.maps.layers, { ...mapData, id: key }]
+        updatedLayers = [...data.map.layers, { ...mapData, id: key }]
       }
       setData({
-        maps: {
-          ...data.maps,
+        map: {
+          ...data.map,
           layers: updatedLayers,
           lastSync: new Date().toISOString(),
         },
       })
     } else {
       setData({
-        maps: {
+        map: {
           layers: [{ ...mapData, id: key }],
           lastSync: new Date().toISOString(),
         },
@@ -45,11 +45,11 @@ export function useAppSettings() {
 
   function removeMapLayer(key: string) {
     const data = getStorageElement(APP_SETTINGS_KEY)
-    if (data.maps && data.maps.layers) {
+    if (data.map && data.map.layers) {
       setData({
-        maps: {
-          ...data.maps,
-          layers: data.maps.layers.filter(
+        map: {
+          ...data.map,
+          layers: data.map.layers.filter(
             (layer: { id: string }) => layer.id !== key
           ),
         },

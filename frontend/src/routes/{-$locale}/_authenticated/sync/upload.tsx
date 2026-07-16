@@ -32,6 +32,9 @@ import type {
   ReportDataSchemaProps,
   SignageDataSchemaProps,
 } from "@/schemas/data"
+import { Spinner } from "@/components/ui/spinner"
+import { toast } from "sonner"
+import useOnline from "@/hook/useOnline"
 
 type ResultPromise =
   | string
@@ -48,7 +51,7 @@ function getStatusFromResult(result?: ResultPromise) {
       isSuccess: null,
     }
   }
-  if (result instanceof FetchError) {
+  if (result instanceof Error) {
     const message =
       typeof result.res?.message === "string" ? result.res.message : "{}"
 
@@ -74,6 +77,7 @@ export const Route = createFileRoute("/{-$locale}/_authenticated/sync/upload")({
 
 function RouteComponent() {
   const asyncData = useAsyncStoredData()
+  const online = useOnline()
 
   const {
     signageMutation,
@@ -122,6 +126,10 @@ function RouteComponent() {
                     .delete()
                 }
                 db.signageData.put(data[0] as SignageDataSchemaProps)
+                toast.success(m["common.sync-up-success"](), {
+                  id: "upload-success",
+                  position: "top-center",
+                })
               }
             })
         },
@@ -145,6 +153,10 @@ function RouteComponent() {
                     .delete()
                 }
                 db.interventionData.put(data[0] as InterventionDataSchemaProps)
+                toast.success(m["common.sync-up-success"](), {
+                  id: "upload-success",
+                  position: "top-center",
+                })
               }
             })
         },
@@ -173,6 +185,10 @@ function RouteComponent() {
                 db.infrastructureData.put(
                   data[0] as InfrastructureDataSchemaProps
                 )
+                toast.success(m["common.sync-up-success"](), {
+                  id: "upload-success",
+                  position: "top-center",
+                })
               }
             })
         },
@@ -197,6 +213,10 @@ function RouteComponent() {
                     .delete()
                 }
                 db.reportData.put(data[0] as ReportDataSchemaProps)
+                toast.success(m["common.sync-up-success"](), {
+                  id: "upload-success",
+                  position: "top-center",
+                })
               }
             })
         },
@@ -296,7 +316,16 @@ function RouteComponent() {
                           "border-green-600 [a]:hover:bg-green-600/10!"
                       )}
                     >
-                      {item.pictogram && (
+                      {mutationItem.isPending && (
+                        <ItemMedia>
+                          <Spinner
+                            role="img"
+                            className="m-3 size-6"
+                            aria-label={m["common.loading"]()}
+                          />
+                        </ItemMedia>
+                      )}
+                      {item.pictogram && !mutationItem.isPending && (
                         <ItemMedia>
                           <img loading="lazy" src={item.pictogram.url} alt="" />
                         </ItemMedia>
@@ -363,9 +392,15 @@ function RouteComponent() {
             )
           })}
         </ul>
-        <Button className="w-full" onClick={handleSubmit}>
-          {m["common.send-data"]()}
-        </Button>
+        {online ? (
+          <Button className="w-full" onClick={handleSubmit}>
+            {m["common.send-data"]()}
+          </Button>
+        ) : (
+          <p className="text-center text-accent-foreground">
+            {m["common.offline-cannot-sync"]()}
+          </p>
+        )}
       </section>
     </div>
   )

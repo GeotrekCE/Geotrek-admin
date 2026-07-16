@@ -27,13 +27,13 @@ export const Route = createFileRoute("/{-$locale}/_authenticated/sync/map")({
 function RouteComponent() {
   const settings = useLiveQuery(() => db.settings.get("settings"))
   const {
-    data: { maps },
+    data: { map },
     removeMapLayer,
   } = useAppSettings()
 
-  const layers = settings?.settings?.maps.layers ?? []
+  const layers = settings?.settings?.map.layers.offline ?? []
 
-  const mapsAlreadyDownloaded = maps?.layers ?? []
+  const mapsAlreadyDownloaded = map?.layers ?? []
 
   const mapsToDownload = layers.filter(
     (layer: { name: string }) =>

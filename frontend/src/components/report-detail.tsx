@@ -13,6 +13,7 @@ import { toast } from "sonner"
 import NotFound from "@/components/not-found"
 import type { ReportDataSchemaProps } from "@/schemas/data"
 import { m } from "@/paraglide/messages"
+import { Alert, AlertTitle } from "@/components/ui/alert"
 
 export default function ReportDetail(params: { id: string; type: string }) {
   const navigate = useNavigate()
@@ -37,7 +38,9 @@ export default function ReportDetail(params: { id: string; type: string }) {
   const handleDelete = React.useCallback(() => {
     // @ts-expect-error not never
     db.reportData.delete(Number(params.id))
-    toast.success(`"${name}" supprimé avec succès`, { position: "top-center" })
+    toast.success(m["common.delete-success"]({ item: name }), {
+      position: "top-center",
+    })
     navigate({
       to: "/{-$locale}",
     })
@@ -118,17 +121,26 @@ export default function ReportDetail(params: { id: string; type: string }) {
             <h3 className="mb-2 text-xl font-bold text-accent-foreground">
               {m["content.location"]()}
             </h3>
-            <Map
-              className="pointer-none aspect-square touch-none"
-              longitude={detail.geom.coordinates[0]}
-              latitude={detail.geom.coordinates[1]}
-            >
-              <Marker
-                longitude={detail.geom.coordinates[0]}
-                latitude={detail.geom.coordinates[1]}
-                anchor="bottom"
-              />
-            </Map>
+            {detail.geom && (
+              <>
+                <Map className="pointer-none aspect-square touch-none">
+                  {detail.geom.type === "Point" && (
+                    <Marker
+                      longitude={detail.geom.coordinates[0]}
+                      latitude={detail.geom.coordinates[1]}
+                      anchor="bottom"
+                    />
+                  )}
+                </Map>
+                {detail.geom.type !== "Point" && (
+                  <Alert className="mt-4" variant="warning">
+                    <AlertTitle>
+                      {m["form.geom-linear-not-supported"]()}
+                    </AlertTitle>
+                  </Alert>
+                )}
+              </>
+            )}
           </section>
         )}
 

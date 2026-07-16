@@ -18,6 +18,9 @@ import { MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { db } from "@/lib/db"
 import { m } from "@/paraglide/messages"
+import { Alert, AlertTitle } from "@/components/ui/alert"
+import * as z from "zod"
+import type { geometrySchema } from "@/schemas/data"
 
 type GeomFieldProps = {
   label: string
@@ -34,13 +37,16 @@ export function GeomField({
 }: GeomFieldProps) {
   const id = React.useId()
   const field = useFieldContext()
-  const value = useStore(field.store, (s) => s.value) as [number, number]
-  const [lng, lat] = value || []
+  const value = useStore(field.store, (s) => s.value) as z.infer<
+    typeof geometrySchema
+  >
+  const [lng, lat] = value.coordinates || []
   const appSync = useLiveQuery(() => db.appSync.get("data"))
   const { bounds } = appSync || {}
 
   const [isEditing, setEditing] = React.useState(false)
 
+  const isPoint = value.type === "Point"
   return (
     <FormFieldSet>
       <FormField>
@@ -55,12 +61,15 @@ export function GeomField({
           maxBounds={bounds as LngLatBoundsLike}
           onClick={({ lngLat }) => {
             if (isEditing) {
-              field.handleChange([lngLat.lng, lngLat.lat])
+              field.handleChange({
+                type: "Point",
+                coordinates: [lngLat.lng, lngLat.lat],
+              })
               field.handleBlur()
             }
           }}
         >
-          {!!lng && !!lat && (
+          {isPoint && typeof lng === "number" && typeof lat === "number" && (
             <Marker longitude={lng} latitude={lat} anchor="bottom">
               <div className="grid items-center justify-center">
                 <MapPin
@@ -84,22 +93,31 @@ export function GeomField({
             </Marker>
           )}
         </Map>
-        {!!lng && !!lat && (
+        {isPoint && typeof lng === "number" && typeof lat === "number" && (
           <FieldDescription className="text-end text-xs">
             Longitude : {lng.toFixed(5)}, Lattitude : {lat.toFixed(5)}
           </FieldDescription>
         )}
-        <Button
-          variant="outline"
-          type="button"
-          onClick={() => setEditing((bool) => !bool)}
-          data-testid={`field-${field.name}`}
-        >
-          {isEditing
-            ? m["form.geom-action-cancel"]()
-            : m["form.geom-action-select"]()}
-        </Button>
-        {description && <FieldDescription>{description}</FieldDescription>}
+        {isPoint && (
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => setEditing((bool) => !bool)}
+            data-testid={`field-${field.name}`}
+          >
+            {isEditing
+              ? m["form.geom-action-cancel"]()
+              : m["form.geom-action-select"]()}
+          </Button>
+        )}
+        {!isPoint && (
+          <Alert className="mt-4" variant="warning">
+            <AlertTitle>{m["form.geom-linear-not-supported"]()}</AlertTitle>
+          </Alert>
+        )}
+        {!isPoint && description && (
+          <FieldDescription>{description}</FieldDescription>
+        )}
       </FormField>
       <FormFieldError />
     </FormFieldSet>
