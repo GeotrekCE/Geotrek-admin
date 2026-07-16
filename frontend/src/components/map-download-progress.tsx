@@ -17,7 +17,7 @@ export default function MapDownloadProgress({
   setOpen,
   size,
 }: {
-  layers: SettingsSchemaProps["settings"]["maps"]["layers"]
+  layers: SettingsSchemaProps["settings"]["map"]["layers"]["offline"]
   layersName: string[]
   open: boolean
   setOpen: Dispatch<SetStateAction<boolean>>

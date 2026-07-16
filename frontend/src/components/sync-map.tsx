@@ -8,10 +8,10 @@ import { m } from "@/paraglide/messages"
 
 export default function SyncMap() {
   const {
-    data: { maps },
+    data: { map },
   } = useAppSettings()
 
-  const hasData = maps?.layers?.length
+  const hasData = map?.layers?.length
 
   return (
     <CardSync
@@ -19,7 +19,7 @@ export default function SyncMap() {
       title={m["common.sync-map-title"]()}
       noData={m["common.sync-map-none"]()}
       updatedStatus={hasData ? "UPDATED" : "EXPIRED"}
-      lastSync={maps?.lastSync}
+      lastSync={map?.lastSync}
       description={
         <>
           <p>{m["common.sync-map-description"]()} </p>
@@ -27,7 +27,7 @@ export default function SyncMap() {
             <p className="mt-4 flex items-center gap-2 text-sm text-primary">
               <Check className="size-4" aria-hidden />
               {m["common.map-layers-count"]({
-                count: maps?.layers?.length ?? 0,
+                count: map?.layers?.length ?? 0,
               })}
             </p>
           )}

@@ -23,7 +23,7 @@ export const Route = createFileRoute("/{-$locale}/_authenticated/sync/data")({
 function RouteComponent() {
   const settings = useLiveQuery(() => db.settings.get("settings"))
 
-  const minZoom = settings?.settings?.maps.localOptions.minZoom ?? 10
+  const minZoom = settings?.settings?.appOptions.minZoom ?? 10
   const attachedStructure = settings?.user.attachedStructure.id
 
   const appSync = useLiveQuery(() => db.appSync.get("data"))

@@ -23,7 +23,7 @@ export default function MapLayerControl({
 
   const { theme } = useTheme()
   const [activeStyleId, setActiveStyleId] = React.useState(
-    layers.find((l) => l.id === currentLayer)?.id || layers[0].id
+    layers.find((l) => l.id === currentLayer)?.id || layers[0]?.id
   )
 
   const map = useMap()

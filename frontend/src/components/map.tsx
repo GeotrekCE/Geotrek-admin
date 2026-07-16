@@ -31,7 +31,7 @@ export default function Map({
 }) {
   const settings = useLiveQuery(() => db.settings.get("settings"))
   const classNameWrapper = "grid grow place-items-center bg-accent"
-  const mapSettings = settings?.settings.maps.layers[0]
+  const { bounds } = settings?.settings.map.localOptions || {}
 
   const layers = useLayers()
 
@@ -49,9 +49,6 @@ export default function Map({
       </div>
     )
   }
-  if (!mapSettings) {
-    return null
-  }
 
   return (
     <div
@@ -65,7 +62,10 @@ export default function Map({
     >
       <MapLibre
         {...props}
-        initialViewState={{ ...mapSettings.options, ...props.initialViewState }}
+        initialViewState={{
+          ...(bounds && { maxBounds: bounds }),
+          ...props.initialViewState,
+        }}
         scrollZoom={!noControls}
         touchPitch={!noControls}
         dragPan={!noControls}
