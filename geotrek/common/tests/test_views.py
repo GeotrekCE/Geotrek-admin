@@ -5,7 +5,6 @@ from copy import deepcopy
 from io import StringIO
 from unittest import mock, skipIf
 
-from authent.tests.base import AuthentFixturesMixin
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -21,6 +20,7 @@ from mapentity.views.generic import MapEntityList
 
 import geotrek.trekking.parsers  # noqa  # noqa
 from geotrek.authent.models import Structure
+from geotrek.authent.tests.base import AuthentFixturesMixin
 from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory
 from geotrek.common.forms import HDViewPointAnnotationForm
 from geotrek.common.mixins.views import CustomColumnsMixin
