@@ -635,6 +635,7 @@ class ConfigViewTest(TestCase):
                 "create": False,
                 "update": False,
                 "delete": False,
+                "read": False,
             },
             "is_superuser": False,
             "can_bypass_structure": False,
@@ -666,6 +667,7 @@ class ConfigViewTest(TestCase):
         )
 
     def test_user_response(self):
+        self.maxDiff = None
         token = self.authenticate(self.user)
         r = self.client.get(
             reverse("common:gtam_config"), headers={"Authorization": token}
