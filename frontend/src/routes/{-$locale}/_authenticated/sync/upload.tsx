@@ -11,7 +11,6 @@ import {
   ItemTitle,
 } from "@/components/ui/item"
 import { Check, ChevronRight, X } from "lucide-react"
-import { getLocale } from "@/paraglide/runtime"
 import { dateCompare, getDurationLabel } from "@/lib/date"
 import { m } from "@/paraglide/messages"
 import type {
@@ -342,20 +341,8 @@ function RouteComponent() {
                             className="text-xs text-muted-foreground"
                           >
                             {item.appNewItem === true
-                              ? m["common.last-creation"]({
-                                  date: getDurationLabel(
-                                    new Date().getTime() -
-                                      new Date(item.date_update).getTime(),
-                                    getLocale()
-                                  ),
-                                })
-                              : m["common.last-updated"]({
-                                  date: getDurationLabel(
-                                    new Date().getTime() -
-                                      new Date(item.date_update).getTime(),
-                                    getLocale()
-                                  ),
-                                })}
+                              ? getDurationLabel(item.date_update, "created")
+                              : getDurationLabel(item.date_update, "updated")}
                           </time>
                         </ItemDescription>
                         {result.isError && (

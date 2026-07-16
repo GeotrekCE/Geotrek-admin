@@ -5,6 +5,9 @@ CHANGELOG
 2.125.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+* GTAM: Add support for dates in older browser versions
 
 2.125.1         (2026-07-16)
 ----------------------------

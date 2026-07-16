@@ -1,27 +1,14 @@
 import * as React from "react"
 import { getDurationLabel, isValidDate, SECOND } from "@/lib/date"
-import { getLocale } from "@/paraglide/runtime"
-import { m } from "@/paraglide/messages"
 
 export default function LastSync({ date }: { date: string }) {
   const [dynamicDate, setDynamicDate] = React.useState(() =>
-    getDurationLabel(
-      new Date().getTime() - new Date(date).getTime(),
-      getLocale()
-    )
+    getDurationLabel(date, "sync")
   )
 
   React.useEffect(() => {
-    if (!isValidDate(date)) {
-      return
-    }
     const updateDateLabel = () => {
-      setDynamicDate(
-        getDurationLabel(
-          new Date().getTime() - new Date(date).getTime(),
-          getLocale()
-        )
-      )
+      setDynamicDate(getDurationLabel(date, "sync"))
     }
     updateDateLabel()
     const id = setInterval(updateDateLabel, 60 * SECOND)
@@ -33,11 +20,5 @@ export default function LastSync({ date }: { date: string }) {
   if (!isValidDate(date) && !dynamicDate) {
     return null
   }
-  return (
-    <p className="mt-1 font-mono text-xs italic">
-      {m["common.last-synced"]({
-        date: dynamicDate,
-      })}
-    </p>
-  )
+  return <p className="mt-1 font-mono text-xs italic">{dynamicDate}</p>
 }
