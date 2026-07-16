@@ -640,11 +640,21 @@ class ConfigView(APIView):
                     "data": settings.GTAM_CONFIG["DATA_INTERVAL_SYNC"],
                     "references": settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],
                 },
-                "maps": {
-                    "layers": get_pmtiles(request),
-                    "localOptions": {
-                        "minZoom": settings.GTAM_CONFIG["SYNC_MAP_MIN_ZOOM"],
+                "map": {
+                    "layers": {
+                        "online": [],
+                        "offline": get_pmtiles(request),
                     },
+                    "localOptions": {
+                        "bounds": api_bbox(
+                            settings.SPATIAL_EXTENT,
+                            settings.SRID,
+                            settings.VIEWPORT_MARGIN,
+                        ),
+                    },
+                },
+                "appOptions": {
+                    "minZoom": settings.GTAM_CONFIG["SYNC_MAP_MIN_ZOOM"],
                 },
             },
             "user": {
