@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-16 10:14+0000\n"
+"POT-Creation-Date: 2026-07-10 15:18+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Spanish <https://weblate.makina-corpus.net/projects/geotrek-admin/common/es/>\n"
@@ -449,10 +449,6 @@ msgstr ""
 
 #, python-format
 msgid "File does not exists at: %(filename)s"
-msgstr ""
-
-#, python-format
-msgid "Model %(model)s"
 msgstr ""
 
 msgid "Geotrek-admin"

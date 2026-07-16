@@ -2,7 +2,7 @@ import os
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import Point
+from django.contrib.gis.geos import GEOSException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
 
@@ -147,20 +147,18 @@ class Command(BaseCommand):
     def create_poi(self, geometry, name, poitype, description):
         poitype, created = POIType.objects.get_or_create(label=poitype)
         poi = POI.objects.create(name=name, type=poitype, description=description)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
+        try:
             # Use existing topology helpers to transform a Point(x, y)
-            # to a path aggregation (topology)
+            # into a topology
             geometry = geometry.transform(settings.API_SRID, clone=True)
             geometry.coord_dim = 2
             serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
             topology = Topology.deserialize(serialized)
             # Move deserialization aggregations to the POI
             poi.mutate(topology)
-        else:
-            if geometry.geom_type != "Point":
-                raise TypeError
-            poi.geom = Point(geometry.x, geometry.y, srid=settings.SRID)
-            poi.save()
+        except Exception as e:
+            msg = f"Invalid geometry ({e})"
+            raise GEOSException(msg)
         self.counter += 1
 
         return poi

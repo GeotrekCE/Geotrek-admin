@@ -8,6 +8,7 @@ from django.test import TestCase
 from geotrek import settings
 from geotrek.common.tests.test_parsers import JSONParser
 from geotrek.core.mixins.parsers import PointTopologyParserMixin
+from geotrek.core.models import Path, PathAggregation
 from geotrek.core.tests.factories import PathFactory
 from geotrek.core.tests.models import PointTopologyTestModel
 
@@ -65,7 +66,7 @@ class PointTopologyParserMixinTest(TestCase):
         self.assertEqual(len(PointTopologyTestModel.objects.all()), 1)
         PointTopologyTestModel.objects.get(name="Correct object")
 
-    def test_object_parsing_succeeds_when_geom_is_a_point_several_objects(self):
+    def test_object_parsing_succeeds_when_a_path_exists(self):
         filename = self.get_test_data_file_path(
             "point_topology_test_model_objects.json"
         )
@@ -82,6 +83,7 @@ class PointTopologyParserMixinTest(TestCase):
 
         obj_1_path = obj_1.topo_object.paths.get()
         self.assertEqual(obj_1_path, self.path)
+        self.assertEqual(len(PathAggregation.objects.filter(topo_object=obj_1)), 1)
         self.assertEqual(obj_1.topo_object.kind, "POINTTOPOLOGYTESTMODEL")
         self.assertAlmostEqual(obj_1.topo_object.offset, -55184.442, places=2)
         self.assertEqual(obj_1.geom.geom_type, "Point")
@@ -91,8 +93,39 @@ class PointTopologyParserMixinTest(TestCase):
 
         obj_2_path = obj_2.topo_object.paths.get()
         self.assertEqual(obj_2_path, self.path)
+        self.assertEqual(len(PathAggregation.objects.filter(topo_object=obj_2)), 1)
         self.assertEqual(obj_2.topo_object.kind, "POINTTOPOLOGYTESTMODEL")
         self.assertAlmostEqual(obj_2.topo_object.offset, -28914.952, places=2)
+        self.assertEqual(obj_2.geom.geom_type, "Point")
+        self.assertEqual(obj_2.geom.srid, settings.SRID)
+        self.assertAlmostEqual(obj_2.geom.x, 777390.880, places=2)
+        self.assertAlmostEqual(obj_2.geom.y, 6544963.910, places=2)
+
+    def test_object_parsing_succeeds_when_there_is_no_path(self):
+        Path.objects.all().delete()
+        filename = self.get_test_data_file_path(
+            "point_topology_test_model_objects.json"
+        )
+        call_command(
+            "import",
+            "geotrek.core.tests.test_mixins.PointTopologyTestModelParser",
+            filename,
+            verbosity=0,
+        )
+        test_objects = PointTopologyTestModel.objects.all()
+        self.assertEqual(len(test_objects), 2)
+        obj_1 = test_objects.get(name="test1")
+        obj_2 = test_objects.get(name="test2")
+
+        self.assertEqual(obj_1.topo_object.kind, "POINTTOPOLOGYTESTMODEL")
+        self.assertEqual(obj_1.topo_object.offset, 0)
+        self.assertEqual(obj_1.geom.geom_type, "Point")
+        self.assertEqual(obj_1.geom.srid, settings.SRID)
+        self.assertAlmostEqual(obj_1.geom.x, 700000.000, places=2)
+        self.assertAlmostEqual(obj_1.geom.y, 6433418.985, places=2)
+
+        self.assertEqual(obj_2.topo_object.kind, "POINTTOPOLOGYTESTMODEL")
+        self.assertEqual(obj_2.topo_object.offset, 0)
         self.assertEqual(obj_2.geom.geom_type, "Point")
         self.assertEqual(obj_2.geom.srid, settings.SRID)
         self.assertAlmostEqual(obj_2.geom.x, 777390.880, places=2)

@@ -700,18 +700,18 @@ FLATPAGES_ENABLED = True
 TOURISM_ENABLED = True
 
 TREK_SIGNAGE_INTERSECTION_MARGIN = (
-    500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+    500  # meters (used only on objects that are not coupled to the path network)
 )
 TREK_INFRASTRUCTURE_INTERSECTION_MARGIN = (
-    500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+    500  # meters (used only on objects that are not coupled to the path network)
 )
 TREK_POI_INTERSECTION_MARGIN = (
-    500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+    500  # meters (used only on objects that are not coupled to the path network)
 )
 TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 DIVING_INTERSECTION_MARGIN = 500  # meters (always used)
 INTERVENTION_INTERSECTION_MARGIN = (
-    500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+    500  # meters (used only on objects that are not coupled to the path network)
 )
 OUTDOOR_INTERSECTION_MARGIN = 500  # meters (always used)
 MAINTENANCE_INTERSECTION_MARGIN = 500  # meters (used for intersections with outdoor)

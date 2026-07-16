@@ -278,8 +278,6 @@ To load minimal fixtures, run this command **only once during setup**:
 
   - You only need to run this command if you are opting for a Docker installation. When using the Debian package, the script will run automatically.
 
-  - Do not run this command if your Geotrek instance does not use **dynamic segmentation**, as it will try to create segmentation-dependent data that may not be relevant or usable
-
   - Once your Geotrek instance is installed, you should import your own :ref:`initial data <minimal-initial-data>` to begin working with the application.
 
 .. seealso::

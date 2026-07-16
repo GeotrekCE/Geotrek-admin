@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-16 10:14+0000\n"
+"POT-Creation-Date: 2026-07-10 15:18+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/common/fr/>\n"
@@ -449,10 +449,6 @@ msgstr "Fichier joint invalide %(url)s pour %(class)s #%(pk)s : Le type mime du 
 #, python-format
 msgid "File does not exists at: %(filename)s"
 msgstr "Le fichier à l'emplacement %(filename)s n'existe pas"
-
-#, python-format
-msgid "Model %(model)s"
-msgstr "Modèle %(model)s"
 
 msgid "Geotrek-admin"
 msgstr "Geotrek-admin"

@@ -15,10 +15,6 @@ Import data from other Geotrek-admin instances
 Importing from a Geotrek-admin instance works the same way as from SIT.
 A use case for this is to aggregate data from several Geotrek-admin instances.
 
-.. important::
-
-  Some objects (such as Treks) cannot be imported from a remote Geotrek-admin instance if the destination instance has :ref:`dynamic segmentation enabled <configuration-dynamic-segmentation>`.
-
 .. seealso::
 
   If you want to implement your own aggregator, refer to :ref:`the parsers developer documentation <development-parser-import>` for details and examples.
