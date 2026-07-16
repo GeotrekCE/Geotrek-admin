@@ -40,30 +40,39 @@ export async function getRequestForSync(
   }
 
   // For PATCH: only send changed keys compared to rawData
-  const rawBody = await db.rawData.get({
-    reference,
-    id: body.id,
-  })
+  if (body.id == null) {
+    return { method: "NONE" }
+  }
 
-  const data = Object.fromEntries(
-    Object.entries(body).filter(([key, value]) => {
-      const rawValue = (rawBody as Record<string, unknown>)[key]
-      try {
-        return JSON.stringify(rawValue) !== JSON.stringify(value)
-      } catch {
-        return rawValue !== value
-      }
-    })
-  )
+  const rawBody = await db.rawData
+    .where("reference")
+    .equals(reference)
+    .and((item) => item.id === body.id)
+    .first()
 
-  if (Object.keys(data).length === 0) {
+  const data =
+    rawBody === undefined
+      ? body
+      : Object.fromEntries(
+          Object.entries(body).filter(([key, value]) => {
+            const rawValue = (rawBody as Record<string, unknown>)[key]
+            try {
+              return JSON.stringify(rawValue) !== JSON.stringify(value)
+            } catch {
+              return rawValue !== value
+            }
+          })
+        )
+
+  const payload = getBodyForMutation(data as unknown as BodyForMutation)
+  if (Object.keys(payload).length === 0) {
     return { method: "NONE" }
   }
 
   return {
     method: "PATCH",
     url: `${endpoint}/${body.id}`,
-    payload: getBodyForMutation(data as unknown as BodyForMutation),
+    payload,
   }
 }
 
