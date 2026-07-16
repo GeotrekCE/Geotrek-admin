@@ -187,7 +187,8 @@
     "description-RTE": "L'ajout d'images et d'intégrations vidéos n'est pas pris en charge.",
     "geom-action-select": "Placer sur la carte",
     "geom-action-cancel": "Revenir en consultation",
-    "geom-description": "Les interventions de type linéaire ne sont pas encore pris en charge."
+    "geom-description": "Les interventions de type linéaire ne sont pas encore pris en charge.",
+    "geom-linear-not-supported": "La géométrie de cet objet n'est pas un point et les linéaires ne sont pas encore pris en charge."
   },
   "content": {
     "infrastructure": "Aménagement",

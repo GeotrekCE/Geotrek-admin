@@ -21,7 +21,7 @@ export default function Login() {
   const { login } = useAuth()
   const { search } = useLocation()
   const navigate = useNavigate()
-  const { refetch } = useSettingsQuery()
+  const { refetch } = useSettingsQuery(false)
 
   const form = useAppForm({
     defaultValues: {

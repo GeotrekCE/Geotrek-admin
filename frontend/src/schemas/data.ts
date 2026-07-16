@@ -21,14 +21,38 @@ export type DataSchemaPropsMixed = (
   | (ReportDataSchemaProps & { name: string })
 ) & { pictogram: { url?: string }; reference: string }
 
+const pointGeomSchema = z.object({
+  type: z.literal("Point"),
+  coordinates: z.array(z.number()).length(2, m["form.location-required"]()),
+})
+
+const lineStringGeomSchema = z.object({
+  type: z.literal("LineString"),
+  coordinates: z
+    .array(z.array(z.number()).length(2, m["form.location-required"]()))
+    .min(2, m["form.location-required"]()),
+})
+
+const multiLineStringGeomSchema = z.object({
+  type: z.literal("MultiLineString"),
+  coordinates: z
+    .array(
+      z.array(z.array(z.number()).length(2, m["form.location-required"]()))
+    )
+    .min(2, m["form.location-required"]()),
+})
+
+const geometrySchema = z.discriminatedUnion("type", [
+  pointGeomSchema,
+  lineStringGeomSchema,
+  multiLineStringGeomSchema,
+])
+
 export const infrastructureDataSchema = z.object({
   id: z.number().int().positive(),
   date_insert: z.string(),
   date_update: z.string(),
-  geom: z.object({
-    type: z.string().min(1),
-    coordinates: z.array(z.number()).length(2, m["form.location-required"]()),
-  }),
+  geom: z.union([z.null(), geometrySchema]),
   name: z.string().min(1, m["form.name-required"]()),
   description: z.string(),
   implantation_year: z.union([z.number(), z.null()]),
@@ -76,10 +100,7 @@ export const infrastructureDataSchema = z.object({
 
 export const signageDataSchema = z.object({
   id: z.number().int().positive(),
-  geom: z.object({
-    type: z.string().min(1),
-    coordinates: z.array(z.number()).length(2, m["form.location-required"]()),
-  }),
+  geom: z.union([z.null(), geometrySchema]),
   structure: z
     .object({
       id: z.number().int(),
@@ -131,18 +152,24 @@ export const signageDataSchema = z.object({
     z.object({
       id: z.number().int().positive(),
       number: z.string().min(1),
-      direction: z.object({
-        id: z.number().int().positive(),
-        name: z.string().min(1),
-      }),
+      direction: z.union([
+        z.null(),
+        z.object({
+          id: z.number().int().positive(),
+          name: z.string().min(1),
+        }),
+      ]),
       type: z.object({
         id: z.number().int().positive(),
         name: z.string().min(1),
       }),
-      color: z.object({
-        id: z.number().int().positive(),
-        name: z.string().min(1),
-      }),
+      color: z.union([
+        z.null(),
+        z.object({
+          id: z.number().int().positive(),
+          name: z.string().min(1),
+        }),
+      ]),
       conditions: z.array(
         z.object({
           id: z.number().int().positive(),
@@ -153,7 +180,7 @@ export const signageDataSchema = z.object({
         z.object({
           id: z.number().int().positive(),
           number: z.number().int().positive(),
-          text: z.string().min(1),
+          text: z.string(),
           distance: z.union([z.null(), z.string().min(1)]),
           time: z.union([z.null(), z.string().min(1)]),
         })
@@ -166,10 +193,7 @@ export const signageDataSchema = z.object({
 
 export const interventionDataSchema = z.object({
   id: z.number().int().positive(),
-  geom: z.object({
-    type: z.string().min(1),
-    coordinates: z.array(z.number()).length(2, m["form.location-required"]()),
-  }),
+  geom: z.union([z.null(), geometrySchema]),
   structure: z
     .object({
       id: z.number().int(),
@@ -247,10 +271,7 @@ export const reportDataSchema = z.object({
   date_update: z.string(),
   email: z.string(),
   comment: z.string(),
-  geom: z.object({
-    type: z.string().min(1),
-    coordinates: z.array(z.number()).length(2, m["form.location-required"]()),
-  }),
+  geom: z.union([z.null(), geometrySchema]),
   activity: z.union([
     z.null(),
     z.object({

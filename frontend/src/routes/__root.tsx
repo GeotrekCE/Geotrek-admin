@@ -38,7 +38,7 @@ export const Route = createRootRouteWithContext<RouterContext>()({
 
 function RootComponent() {
   const { pathname } = useLocation()
-  useSettingsQuery(pathname !== "/login")
+  useSettingsQuery(!pathname.startsWith("/login"))
   return (
     <div className="flex min-h-dvh flex-col">
       <main className="flex grow flex-col">

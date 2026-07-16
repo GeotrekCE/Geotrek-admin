@@ -18,6 +18,7 @@ import { MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { db } from "@/lib/db"
 import { m } from "@/paraglide/messages"
+import { Alert, AlertTitle } from "@/components/ui/alert"
 
 type GeomFieldProps = {
   label: string
@@ -41,6 +42,8 @@ export function GeomField({
 
   const [isEditing, setEditing] = React.useState(false)
 
+  const isPoint = typeof lng === "number"
+
   return (
     <FormFieldSet>
       <FormField>
@@ -60,7 +63,7 @@ export function GeomField({
             }
           }}
         >
-          {!!lng && !!lat && (
+          {isPoint && !!lng && !!lat && (
             <Marker longitude={lng} latitude={lat} anchor="bottom">
               <div className="grid items-center justify-center">
                 <MapPin
@@ -84,22 +87,34 @@ export function GeomField({
             </Marker>
           )}
         </Map>
-        {!!lng && !!lat && (
+        {isPoint && !!lng && !!lat && (
           <FieldDescription className="text-end text-xs">
             Longitude : {lng.toFixed(5)}, Lattitude : {lat.toFixed(5)}
           </FieldDescription>
         )}
-        <Button
-          variant="outline"
-          type="button"
-          onClick={() => setEditing((bool) => !bool)}
-          data-testid={`field-${field.name}`}
-        >
-          {isEditing
-            ? m["form.geom-action-cancel"]()
-            : m["form.geom-action-select"]()}
-        </Button>
-        {description && <FieldDescription>{description}</FieldDescription>}
+        {isPoint && (
+          <Button
+            variant="outline"
+            type="button"
+            onClick={() => setEditing((bool) => !bool)}
+            data-testid={`field-${field.name}`}
+          >
+            {isEditing
+              ? m["form.geom-action-cancel"]()
+              : m["form.geom-action-select"]()}
+          </Button>
+        )}
+        {(!isPoint || description) && (
+          <FieldDescription>
+            {!isPoint ? (
+              <Alert className="mt-4" variant="warning">
+                <AlertTitle>{m["form.geom-linear-not-supported"]()}</AlertTitle>
+              </Alert>
+            ) : (
+              description
+            )}
+          </FieldDescription>
+        )}
       </FormField>
       <FormFieldError />
     </FormFieldSet>
