@@ -24,6 +24,12 @@ urlpatterns += [
     path("", include("geotrek.altimetry.urls", namespace="altimetry")),
     path("", include(("mapentity.urls", "mapentity"), namespace="mapentity")),
     path(
+        "",
+        include(
+            ("mapbox_baselayer.urls", "mapbox_baselayer"), namespace="mapbox_baselayer"
+        ),
+    ),
+    path(
         "paperclip/add-for/<str:app_label>/<str:model_name>/<int:pk>/",
         paperclip_views.add_attachment,
         kwargs={"attachment_form": AttachmentForm},

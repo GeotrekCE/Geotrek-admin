@@ -37,7 +37,7 @@ from django.views.generic import TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
 from django_large_image.rest import LargeImageFileDetailMixin
 from large_image import config
-from mapbox_baselayer.utils import get_pmtiles
+from mapbox_baselayer.utils import get_map_base_layers, get_pmtiles
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
@@ -642,7 +642,7 @@ class ConfigView(APIView):
                 },
                 "map": {
                     "layers": {
-                        "online": [],
+                        "online": get_map_base_layers(request),
                         "offline": get_pmtiles(request),
                     },
                     "localOptions": {
