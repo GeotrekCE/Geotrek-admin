@@ -9,7 +9,7 @@
   "common": {
     "back": "Back to previous page",
     "cancel": "Cancel",
-    "error": "An error occured",
+    "error": "An error occurred",
     "clear-all": "Clear all",
     "apply": "Apply",
     "edit": "Edit",
@@ -83,10 +83,10 @@
         "countPlural=other": "{count} offline map layers"
       }
     }],
-    "data-scope": "Portée des données",
-    "data-scope-all": "Les données de ma structure",
-    "data-scope-own": "Les données de toutes les structures",
-    "data-scope-synced": "Portée des données synchronisées",
+    "data-scope": "Data scope",
+    "data-scope-all": "Data from all structures",
+    "data-scope-own": "Data from my structure",
+    "data-scope-synced": "Synced data scope",
     "modified-on": "Modified on",
     "created": "Created",
     "updated": "Modified",
@@ -113,7 +113,7 @@
     "items-to-sync": "Items are waiting to be synchronized",
     "select": "Select",
     "none-found": "No state found",
-    "sync-down-title": "Configuration file, permissions, drop-down list values…",
+    "sync-down-title": "Synchronization before data entry",
     "sync-up-title": "My entries",
     "sync-up-no-data": "No object has been created or modified since the last synchronization.",
     "sync-up-success": "Synchronization successful",

@@ -42,9 +42,11 @@ const multiLineStringGeomSchema = z.object({
   type: z.literal("MultiLineString"),
   coordinates: z
     .array(
-      z.array(z.array(z.number()).length(2, m["form.location-required"]()))
+      z
+        .array(z.array(z.number()).length(2, m["form.location-required"]()))
+        .min(2, m["form.location-required"]())
     )
-    .min(2, m["form.location-required"]()),
+    .min(1, m["form.location-required"]()),
 })
 
 export const geometrySchema = z.discriminatedUnion("type", [
