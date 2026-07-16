@@ -233,7 +233,7 @@ export const interventionDataSchema = z.object({
   ]),
   status: z
     .object({
-      id: z.number().int().positive(),
+      id: z.number().int(),
       name: z.string(),
     })
     .refine((data) => !!data.name, m["form.status-required"]()),
