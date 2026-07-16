@@ -675,7 +675,6 @@ class ConfigViewTest(AuthentFixturesMixin, TestCase):
             settings.GTAM_CONFIG["SYNC_MAP_MIN_ZOOM"],
         )
 
-
     def test_user_response(self):
         token = self.authenticate(self.user)
         r = self.client.get(
