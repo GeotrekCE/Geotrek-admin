@@ -21,6 +21,7 @@ from mapentity.views.generic import MapEntityList
 
 import geotrek.trekking.parsers  # noqa  # noqa
 from geotrek.authent.models import Structure
+from geotrek.authent.tests.base import AuthentFixturesMixin
 from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory
 from geotrek.common.forms import HDViewPointAnnotationForm
 from geotrek.common.mixins.views import CustomColumnsMixin
@@ -536,7 +537,7 @@ class HDViewPointViewTest(TestCase):
         self.assertIn("title", response.json().get("properties"))
 
 
-class ConfigViewTest(TestCase):
+class ConfigViewTest(AuthentFixturesMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.superuser = SuperUserFactory.create(password="password")
@@ -564,7 +565,7 @@ class ConfigViewTest(TestCase):
         perm_delete_intervention = Permission.objects.get(
             codename="delete_intervention"
         )
-        perm_view_report = Permission.objects.get(codename="view_report")
+        perm_view_report = Permission.objects.get(codename="read_report")
         cls.user.user_permissions.add(perm_add_signage)
         cls.user.user_permissions.add(perm_change_geom_infrastructure)
         cls.user.user_permissions.add(perm_delete_intervention)
@@ -612,6 +613,7 @@ class ConfigViewTest(TestCase):
                 "create": False,
                 "update": False,
                 "delete": False,
+                "read": False,
             },
             "is_superuser": False,
             "can_bypass_structure": False,
@@ -673,7 +675,8 @@ class ConfigViewTest(TestCase):
             settings.GTAM_CONFIG["SYNC_MAP_MIN_ZOOM"],
         )
 
-    def test_user(self):
+
+    def test_user_response(self):
         token = self.authenticate(self.user)
         r = self.client.get(
             reverse("common:gtam_config"), headers={"Authorization": token}
@@ -681,7 +684,7 @@ class ConfigViewTest(TestCase):
 
         data = r.json()
         self.assertEqual(
-            data["user"]["attachedStructure"]["id"], self.user.userprofile.structure.id
+            data["user"]["attachedStructure"]["id"], self.user.userprofile.structure_id
         )
         self.assertEqual(
             data["user"]["attachedStructure"]["label"],
