@@ -33,10 +33,12 @@ def _rewrite_f(self, q):
         rewritten.rhs = self._rewrite_f(q.rhs)
     return rewritten
 
-# treebeard 5 updates tree paths with Django expressions that modeltranslation 0.20
-# rewrites via mutable lhs/rhs attributes. Patching the queryset method at startup keeps
-# translated tree models working until the upstream incompatibility is resolved.
-with _PATCH_LOCK:
-    if not getattr(MultilingualQuerySet, "_geotrek_treebeard_compat", False):
-        MultilingualQuerySet._rewrite_f = _rewrite_f
-        MultilingualQuerySet._geotrek_treebeard_compat = True
+def apply_treebeard_compat_patch():
+    # treebeard 5 updates tree paths with Django expressions that modeltranslation 0.20
+    # rewrites via mutable lhs/rhs attributes. Shallow copies are sufficient here because
+    # Django expressions expose nested state through child/source expressions, which we
+    # rewrite recursively before returning the copied expression tree.
+    with _PATCH_LOCK:
+        if not getattr(MultilingualQuerySet, "_geotrek_treebeard_compat", False):
+            MultilingualQuerySet._rewrite_f = _rewrite_f
+            MultilingualQuerySet._geotrek_treebeard_compat = True

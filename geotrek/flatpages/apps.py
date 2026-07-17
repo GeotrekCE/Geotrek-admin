@@ -7,5 +7,6 @@ class FlatpagesConfig(AppConfig):
     verbose_name = _("Flatpages")
 
     def ready(self):
-        # Apply the treebeard 5/modeltranslation compatibility patch during app startup.
-        import geotrek.flatpages.compat  # NOQA
+        from geotrek.flatpages.compat import apply_treebeard_compat_patch
+
+        apply_treebeard_compat_patch()
