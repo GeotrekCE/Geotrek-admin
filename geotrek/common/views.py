@@ -70,17 +70,13 @@ from geotrek.common.mixins.views import (
     ReferencesMixin,
 )
 from geotrek.common.permissions import PublicOrReadPermMixin, RelatedPublishedPermission
-from geotrek.common.tasks import import_datas, import_datas_from_web
-from geotrek.common.utils.import_celery import (
-    create_tmp_destination,
-    discover_available_parsers,
-)
+from geotrek.core.models import Path
+from geotrek.feedback.parsers import SuricateParser
+
 from .tasks import import_datas, import_datas_from_web
 from .utils import maplibre_bounds
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 from .viewsets import GeotrekMapentityViewSet
-from geotrek.core.models import Path
-from geotrek.feedback.parsers import SuricateParser
 
 
 def handler404(request, exception, template_name="404.html"):

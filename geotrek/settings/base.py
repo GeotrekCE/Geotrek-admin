@@ -326,7 +326,6 @@ PROJECT_APPS += (
     "mptt",
     "treebeard",
     "maintenance_mode",
-    "mapbox_baselayer",
 )
 
 INSTALLED_APPS = (

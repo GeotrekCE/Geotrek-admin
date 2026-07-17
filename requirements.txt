@@ -165,9 +165,9 @@ django-large-image==0.10.3
 django-maintenance-mode==0.22.0
     # via geotrek (setup.py)
 django-mapbox-baselayer==1.5.2
-    # via geotrek (setup.py)
-django-mapbox-baselayer==1.2.2
-    # via mapentity
+    # via
+    #   geotrek (setup.py)
+    #   mapentity
 django-modelcluster==6.5
     # via geotrek (setup.py)
 django-modeltranslation==0.20.3
@@ -265,7 +265,7 @@ lxml==6.1.1
     # via
     #   mapentity
     #   svglib
-mapentity==9.0.0
+mapentity==9.0.1
     # via geotrek (setup.py)
 markdown==3.10.2
     # via geotrek (setup.py)
@@ -275,6 +275,7 @@ mbutil==0.3.0
     # via landez
 mercantile==1.2.1
     # via
+    #   django-mapbox-baselayer
     #   django-vectortiles
     #   mapentity
 numpy==2.2.6

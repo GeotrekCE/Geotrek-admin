@@ -6,7 +6,6 @@ from geotrek.common.urls import LangConverter
 
 from . import entities, models, views
 
-
 register_converter(LangConverter, "lang")
 
 app_name = "feedback"
