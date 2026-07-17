@@ -2,10 +2,7 @@ from dal import autocomplete
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-from django_filters import (
-    ModelMultipleChoiceFilter,
-    MultipleChoiceFilter,
-)
+from django_filters import filters
 from mapentity.filters import MapEntityFilterSet, PolygonFilter
 
 from geotrek.altimetry.filters import AltimetryPointFilterSet
@@ -34,11 +31,14 @@ class SignageFilterSet(
     ZoningFilterSet,
     StructureRelatedFilterSet,
 ):
-    implantation_year = MultipleChoiceFilter(
+    name = filters.CharFilter(label=_("Name"), lookup_expr="icontains")
+    code = filters.CharFilter(label=_("Code"), lookup_expr="icontains")
+    description = filters.CharFilter(label=_("Description"), lookup_expr="icontains")
+    implantation_year = filters.MultipleChoiceFilter(
         choices=lambda: Signage.objects.implantation_year_choices(),
         widget=autocomplete.Select2Multiple(),
     )
-    intervention_year = MultipleChoiceFilter(
+    intervention_year = filters.MultipleChoiceFilter(
         label=_("Intervention year"),
         method="filter_intervention_year",
         choices=lambda: Intervention.objects.year_choices(),
@@ -49,7 +49,7 @@ class SignageFilterSet(
         required=False,
         widget=autocomplete.Select2Multiple(),
     )
-    provider = ModelMultipleChoiceFilter(
+    provider = filters.ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(signage__isnull=False).distinct(),
         widget=autocomplete.Select2Multiple(),
@@ -93,13 +93,13 @@ class SignageFilterSet(
 
 class BladeFilterSet(MapEntityFilterSet):
     bbox = PolygonFilter(field_name="signage__geom", lookup_expr="intersects")
-    structure = ModelMultipleChoiceFilter(
+    structure = filters.ModelMultipleChoiceFilter(
         field_name="signage__structure",
         queryset=Structure.objects.all(),
         help_text=_("Filter by one or more structure."),
         widget=autocomplete.Select2Multiple(),
     )
-    manager = ModelMultipleChoiceFilter(
+    manager = filters.ModelMultipleChoiceFilter(
         field_name="signage__manager",
         queryset=Organism.objects.all(),
         help_text=_("Filter by one or more manager."),

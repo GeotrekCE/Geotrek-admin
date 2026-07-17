@@ -6,17 +6,34 @@ from io import StringIO
 from django.contrib.auth.models import Permission, User
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
 from django.utils.translation import gettext
+from mapentity.tests import SuperUserFactory, UserFactory
 
-from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
+from geotrek.authent.tests.factories import (
+    PathManagerFactory,
+    StructureFactory,
+    UserProfileFactory,
+)
 from geotrek.common.tests import (
     CommonMultiActionsViewsPublishedMixin,
     CommonMultiActionViewsMixin,
     CommonMultiActionViewsStructureMixin,
     CommonTest,
 )
+from geotrek.common.tests.factories import AccessMeanFactory, OrganismFactory
 from geotrek.core.tests.factories import PathFactory
-from geotrek.signage.models import Blade, Signage
+from geotrek.signage.models import (
+    Blade,
+    BladeCondition,
+    BladeType,
+    Color,
+    Direction,
+    Sealing,
+    Signage,
+    SignageCondition,
+    SignageType,
+)
 from geotrek.signage.tests.factories import (
     BladeColorFactory,
     BladeConditionFactory,
@@ -25,6 +42,7 @@ from geotrek.signage.tests.factories import (
     BladeTypeFactory,
     LineDirectionFactory,
     LineFactory,
+    SealingFactory,
     SignageConditionFactory,
     SignageFactory,
     SignageTypeFactory,
@@ -75,6 +93,749 @@ class SignageTemplatesTest(TestCase):
         self.assertContains(response, gettext("Direction"))
         self.assertContains(response, "A direction on the line 1")
         self.assertContains(response, "A direction on the line 2")
+
+
+class SignageReferencesTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user_structure = StructureFactory.create()
+        cls.other_structure = StructureFactory.create()
+
+        cls.signage_conditions = SignageConditionFactory.create()
+        cls.signage_type = SignageTypeFactory.create()
+        cls.signage_sealing = SealingFactory.create()
+        cls.blade_direction = BladeDirectionFactory.create()
+        cls.blade_type = BladeTypeFactory.create()
+        cls.blade_color = BladeColorFactory.create()
+        cls.blade_conditions = BladeConditionFactory.create()
+
+        cls.user_structure_signage_conditions = SignageConditionFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_signage_type = SignageTypeFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_signage_sealing = SealingFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_blade_type = BladeTypeFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_blade_conditions = BladeConditionFactory.create(
+            structure=cls.user_structure
+        )
+
+        cls.other_structure_signage_conditions = SignageConditionFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_signage_type = SignageTypeFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_signage_sealing = SealingFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_blade_type = BladeTypeFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_blade_conditions = BladeConditionFactory.create(
+            structure=cls.other_structure
+        )
+
+        cls.superuser = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.superuser, structure=cls.user_structure)
+
+        cls.user = UserFactory.create(password="password")
+        UserProfileFactory(user=cls.user, structure=cls.user_structure)
+
+    def authenticate(self, user):
+        r = self.client.post(
+            reverse("common:token_obtain_pair"),
+            data={"username": user.username, "password": "password"},
+        )
+        data = r.json()
+        return f"Bearer {data['access']}"
+
+    def test_data_as_user(self):
+        token = self.authenticate(self.user)
+        r = self.client.get(
+            reverse("signage:signage_references"), headers={"Authorization": token}
+        )
+        data = r.json()
+
+        self.assertEqual(
+            len(data["signagecondition"]), SignageCondition.objects.all().count() - 1
+        )
+        self.assertEqual(
+            len(data["signagetype"]), SignageType.objects.all().count() - 1
+        )
+        self.assertEqual(len(data["sealing"]), Sealing.objects.all().count() - 1)
+        self.assertEqual(len(data["direction"]), Direction.objects.all().count())
+        self.assertEqual(len(data["bladetype"]), BladeType.objects.all().count() - 1)
+        self.assertEqual(len(data["color"]), Color.objects.all().count())
+        self.assertEqual(
+            len(data["bladecondition"]), BladeCondition.objects.all().count() - 1
+        )
+        self.assertCountEqual(
+            data["signagecondition"],
+            [
+                {
+                    "id": self.signage_conditions.id,
+                    "name": self.signage_conditions.label,
+                },
+                {
+                    "id": self.user_structure_signage_conditions.id,
+                    "name": self.user_structure_signage_conditions.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["signagetype"],
+            [
+                {"id": self.signage_type.id, "name": self.signage_type.label},
+                {
+                    "id": self.user_structure_signage_type.id,
+                    "name": self.user_structure_signage_type.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["sealing"],
+            [
+                {"id": self.signage_sealing.id, "name": self.signage_sealing.label},
+                {
+                    "id": self.user_structure_signage_sealing.id,
+                    "name": self.user_structure_signage_sealing.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["direction"],
+            [
+                {"id": self.blade_direction.id, "name": self.blade_direction.label},
+            ],
+        )
+        self.assertCountEqual(
+            data["bladetype"],
+            [
+                {"id": self.blade_type.id, "name": self.blade_type.label},
+                {
+                    "id": self.user_structure_blade_type.id,
+                    "name": self.user_structure_blade_type.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["color"],
+            [
+                {"id": self.blade_color.id, "name": self.blade_color.label},
+            ],
+        )
+        self.assertCountEqual(
+            data["bladecondition"],
+            [
+                {"id": self.blade_conditions.id, "name": self.blade_conditions.label},
+                {
+                    "id": self.user_structure_blade_conditions.id,
+                    "name": self.user_structure_blade_conditions.label,
+                },
+            ],
+        )
+        self.assertEqual(
+            data["pictogram"], {"url": "http://testserver/static/images/signage.png"}
+        )
+
+    def test_data_as_superuser(self):
+        token = self.authenticate(self.superuser)
+        r = self.client.get(
+            reverse("signage:signage_references"), headers={"Authorization": token}
+        )
+        data = r.json()
+
+        self.assertEqual(
+            len(data["signagecondition"]), SignageCondition.objects.all().count()
+        )
+        self.assertEqual(len(data["signagetype"]), SignageType.objects.all().count())
+        self.assertEqual(len(data["sealing"]), Sealing.objects.all().count())
+        self.assertEqual(len(data["direction"]), Direction.objects.all().count())
+        self.assertEqual(len(data["bladetype"]), BladeType.objects.all().count())
+        self.assertEqual(len(data["color"]), Color.objects.all().count())
+        self.assertEqual(
+            len(data["bladecondition"]), BladeCondition.objects.all().count()
+        )
+        self.assertCountEqual(
+            data["signagecondition"],
+            [
+                {
+                    "id": self.signage_conditions.id,
+                    "name": self.signage_conditions.label,
+                },
+                {
+                    "id": self.user_structure_signage_conditions.id,
+                    "name": self.user_structure_signage_conditions.label,
+                },
+                {
+                    "id": self.other_structure_signage_conditions.id,
+                    "name": self.other_structure_signage_conditions.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["signagetype"],
+            [
+                {"id": self.signage_type.id, "name": self.signage_type.label},
+                {
+                    "id": self.user_structure_signage_type.id,
+                    "name": self.user_structure_signage_type.label,
+                },
+                {
+                    "id": self.other_structure_signage_type.id,
+                    "name": self.other_structure_signage_type.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["sealing"],
+            [
+                {"id": self.signage_sealing.id, "name": self.signage_sealing.label},
+                {
+                    "id": self.user_structure_signage_sealing.id,
+                    "name": self.user_structure_signage_sealing.label,
+                },
+                {
+                    "id": self.other_structure_signage_sealing.id,
+                    "name": self.other_structure_signage_sealing.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["direction"],
+            [
+                {"id": self.blade_direction.id, "name": self.blade_direction.label},
+            ],
+        )
+        self.assertCountEqual(
+            data["bladetype"],
+            [
+                {"id": self.blade_type.id, "name": self.blade_type.label},
+                {
+                    "id": self.user_structure_blade_type.id,
+                    "name": self.user_structure_blade_type.label,
+                },
+                {
+                    "id": self.other_structure_blade_type.id,
+                    "name": self.other_structure_blade_type.label,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["color"],
+            [
+                {"id": self.blade_color.id, "name": self.blade_color.label},
+            ],
+        )
+        self.assertCountEqual(
+            data["bladecondition"],
+            [
+                {"id": self.blade_conditions.id, "name": self.blade_conditions.label},
+                {
+                    "id": self.user_structure_blade_conditions.id,
+                    "name": self.user_structure_blade_conditions.label,
+                },
+                {
+                    "id": self.other_structure_blade_conditions.id,
+                    "name": self.other_structure_blade_conditions.label,
+                },
+            ],
+        )
+        self.assertEqual(
+            data["pictogram"], {"url": "http://testserver/static/images/signage.png"}
+        )
+
+
+class SignageGTAMTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.blade = BladeFactory.create()
+        cls.signage = cls.blade.signage
+        cls.signage.access = AccessMeanFactory.create()
+        cls.signage.save()
+
+        cls.structure = StructureFactory.create()
+        cls.access = AccessMeanFactory.create()
+        cls.manager = OrganismFactory.create()
+        cls.signage_conditions = SignageConditionFactory.create()
+        cls.signage_type = SignageTypeFactory.create()
+        cls.signage_sealing = SealingFactory.create()
+        cls.blade_direction = BladeDirectionFactory.create()
+        cls.blade_type = BladeTypeFactory.create()
+        cls.blade_color = BladeColorFactory.create()
+        cls.blade_conditions = BladeConditionFactory.create()
+
+        cls.superuser = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.superuser, structure=cls.structure)
+
+        cls.user = UserFactory.create(password="password")
+        UserProfileFactory(user=cls.user, structure=cls.structure)
+        cls.user.user_permissions.add(Permission.objects.get(codename="add_signage"))
+        cls.user.user_permissions.add(Permission.objects.get(codename="change_signage"))
+
+        cls.list_url = "/api/signage/drf/signages?format=gtam"
+        cls.detail_url = f"/api/signage/drf/signages/{cls.signage.id}?format=gtam"
+
+        cls.signage_foreign_keys = [
+            ("manager", OrganismFactory),
+            ("sealing", SealingFactory),
+            ("type", SignageTypeFactory),
+        ]
+
+        cls.signage_many_to_many = [
+            ("conditions", SignageConditionFactory),
+        ]
+
+        cls.blade_foreign_keys = [
+            ("direction", BladeDirectionFactory),
+            ("type", BladeTypeFactory),
+            ("color", BladeColorFactory),
+        ]
+
+        cls.blade_many_to_many = [
+            ("conditions", BladeConditionFactory),
+        ]
+
+    def authenticate(self, user):
+        r = self.client.post(
+            reverse("common:token_obtain_pair"),
+            data={"username": user.username, "password": "password"},
+        )
+        data = r.json()
+        return f"Bearer {data['access']}"
+
+    def test_get(self):
+        token = self.authenticate(self.superuser)
+        list_url = "/api/signage/drf/signages?format=gtam"
+        response = self.client.get(list_url, headers={"Authorization": token})
+        data = response.json()
+
+        signages = [
+            {
+                "id": self.signage.id,
+                "geom": {"type": "Point", "coordinates": [3.0, 46.5]},
+                "date_insert": self.signage.date_insert.isoformat().replace(
+                    "+00:00", "Z"
+                ),
+                "date_update": self.signage.date_update.isoformat().replace(
+                    "+00:00", "Z"
+                ),
+                "published": self.signage.published,
+                "name": self.signage.name,
+                "description": self.signage.description,
+                "implantation_year": self.signage.implantation_year,
+                "code": self.signage.code,
+                "printed_elevation": self.signage.printed_elevation,
+                "blades": [
+                    {
+                        "id": self.blade.id,
+                        "number": self.blade.number,
+                        "direction": {
+                            "id": self.blade.direction.id,
+                            "name": self.blade.direction.label,
+                        },
+                        "type": {
+                            "id": self.blade.type.id,
+                            "name": self.blade.type.label,
+                        },
+                        "color": {
+                            "id": self.blade.color.id,
+                            "name": self.blade.color.label,
+                        },
+                        "conditions": [
+                            {
+                                "id": self.blade.conditions.first().id,
+                                "name": self.blade.conditions.first().label,
+                            }
+                        ],
+                        "lines": [
+                            {
+                                "id": self.blade.lines.first().id,
+                                "number": self.blade.lines.first().number,
+                                "text": self.blade.lines.first().text,
+                                "distance": str(self.blade.lines.first().distance),
+                                "time": "00:42:30",
+                            }
+                        ],
+                    }
+                ],
+                "structure": {
+                    "id": self.signage.structure.id,
+                    "name": self.signage.structure.name,
+                },
+                "access": {
+                    "id": self.signage.access.id,
+                    "name": self.signage.access.label,
+                },
+                "manager": {
+                    "id": self.signage.manager.id,
+                    "name": self.signage.manager.organism,
+                },
+                "sealing": {
+                    "id": self.signage.sealing.id,
+                    "name": self.signage.sealing.label,
+                },
+                "type": {"id": self.signage.type.id, "name": self.signage.type.label},
+                "conditions": [
+                    {
+                        "id": self.signage.conditions.first().id,
+                        "name": self.signage.conditions.first().label,
+                    }
+                ],
+            }
+        ]
+        self.assertEqual(data, signages)
+
+    def _get_data(self):
+        data = {
+            "geom": {"type": "Point", "coordinates": [3.0, 46.5]},
+            "published": False,
+            "name": "toto",
+            "description": "description",
+            "implantation_year": 497,
+            "code": "AAAA",
+            "printed_elevation": "790",
+            "blades": [],
+            "structure_id": self.structure.id,
+            "access_id": self.access.id,
+            "manager_id": self.manager.id,
+            "sealing_id": self.signage_sealing.id,
+            "type_id": self.signage_type.id,
+            "conditions_id": [self.signage_conditions.id],
+        }
+
+        return data
+
+    def _check_data(self, signage_id):
+        signage = Signage.objects.get(pk=signage_id)
+        self.assertEqual(signage.published, False)
+        self.assertEqual(signage.name, "toto")
+        self.assertEqual(signage.description, "description")
+        self.assertEqual(signage.implantation_year, 497)
+        self.assertEqual(signage.code, "AAAA")
+        self.assertEqual(signage.printed_elevation, 790)
+        self.assertEqual(signage.structure, self.structure)
+        self.assertEqual(signage.access, self.access)
+        self.assertEqual(signage.manager, self.manager)
+        self.assertEqual(signage.sealing, self.signage_sealing)
+        self.assertEqual(signage.type, self.signage_type)
+        self.assertEqual(list(signage.conditions.all()), [self.signage_conditions])
+        geom = signage.geom
+        geom.transform(4326)
+        self.assertAlmostEqual(geom.x, 3.0, 2)
+        self.assertAlmostEqual(geom.y, 46.5, 2)
+        self.assertEqual(signage.last_author, self.superuser)
+        return signage
+
+    def test_post(self):
+        token = self.authenticate(self.superuser)
+
+        response = self.client.post(
+            self.list_url,
+            json.dumps(self._get_data()),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 201)
+
+        signage_id = response_data["id"]
+        signage = self._check_data(signage_id)
+        self.assertEqual(signage.creator, self.superuser)
+
+    def test_post_with_linear_geom(self):
+        token = self.authenticate(self.superuser)
+
+        data = self._get_data()
+        data["geom"] = {"type": "LineString", "coordinates": [[3.0, 46.5], [4.0, 47.5]]}
+
+        response = self.client.post(
+            self.list_url,
+            data,
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response_data["geom"], ["New signage geometry must be points"])
+
+    def test_patch(self):
+        token = self.authenticate(self.superuser)
+
+        response = self.client.patch(
+            self.detail_url,
+            json.dumps(self._get_data()),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self._check_data(self.signage.id)
+
+    def test_patch_with_linear_geom(self):
+        token = self.authenticate(self.superuser)
+
+        data = {
+            "geom": {"type": "LineString", "coordinates": [[3.0, 46.5], [4.0, 47.5]]}
+        }
+
+        response = self.client.patch(
+            self.detail_url,
+            data,
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(response_data["geom"], ["New signage geometry must be points"])
+
+    def _test_structure_post(self, user):
+        token = self.authenticate(user)
+        structure = StructureFactory.create()
+
+        data = self._get_data()
+        data["structure_id"] = structure.id
+
+        response = self.client.post(
+            self.list_url,
+            json.dumps(data),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 201)
+
+        signage_id = response_data["id"]
+        signage = Signage.objects.get(pk=signage_id)
+
+        return signage, structure
+
+    def _test_structure_patch(self, user):
+        token = self.authenticate(user)
+
+        structure = StructureFactory.create()
+
+        response = self.client.patch(
+            self.detail_url,
+            {"structure_id": structure.id},
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        self.assertEqual(response.status_code, 200)
+
+        return structure
+
+    def test_structure_as_superuser_post(self):
+        signage, structure = self._test_structure_post(self.superuser)
+        self.assertEqual(signage.structure, structure)
+
+    def test_structure_as_superuser_patch(self):
+        structure = self._test_structure_patch(self.superuser)
+
+        self.signage.refresh_from_db()
+        self.assertEqual(self.signage.structure, structure)
+
+    def test_structure_as_user_post(self):
+        signage, _ = self._test_structure_post(self.user)
+        self.assertEqual(signage.structure, self.user.profile.structure)
+
+    def test_structure_as_user_patch(self):
+        self._test_structure_patch(self.user)
+
+        self.signage.refresh_from_db()
+        self.assertEqual(self.signage.structure, self.user.profile.structure)
+
+    def _test_foreign_key_structure_post(
+        self, user, new_structure=True, status_code=201
+    ):
+        token = self.authenticate(user)
+
+        structure = (
+            StructureFactory.create() if new_structure else user.profile.structure
+        )
+
+        data = self._get_data()
+
+        foreign_keys_data = {}
+        for attribute, factory in self.signage_foreign_keys:
+            foreign_keys_data[attribute] = factory.create(structure=structure)
+            data[f"{attribute}_id"] = foreign_keys_data[attribute].id
+
+        many_to_many_data = {}
+        for attribute, factory in self.signage_many_to_many:
+            many_to_many_data[attribute] = [
+                factory.create(structure=structure),
+                factory.create(structure=structure),
+            ]
+            data[f"{attribute}_id"] = [
+                instance.id for instance in many_to_many_data[attribute]
+            ]
+
+        response = self.client.post(
+            self.list_url,
+            json.dumps(data),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, status_code)
+
+        signage_id = response_data.get("id", None)
+        signage = Signage.objects.get(pk=signage_id) if signage_id else None
+
+        return signage, foreign_keys_data, many_to_many_data, response.json()
+
+    def _test_foreign_key_structure_patch(
+        self, user, new_structure=True, status_code=200
+    ):
+        token = self.authenticate(user)
+
+        structure = (
+            StructureFactory.create() if new_structure else user.profile.structure
+        )
+
+        data = {}
+
+        foreign_keys_data = {}
+        for attribute, factory in self.signage_foreign_keys:
+            foreign_keys_data[attribute] = factory.create(structure=structure)
+            data[f"{attribute}_id"] = foreign_keys_data[attribute].id
+
+        many_to_many_data = {}
+        for attribute, factory in self.signage_many_to_many:
+            many_to_many_data[attribute] = [
+                factory.create(structure=structure),
+                factory.create(structure=structure),
+            ]
+            data[f"{attribute}_id"] = [
+                instance.id for instance in many_to_many_data[attribute]
+            ]
+
+        response = self.client.patch(
+            self.detail_url,
+            json.dumps(data),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        self.assertEqual(response.status_code, status_code)
+
+        return foreign_keys_data, many_to_many_data, response.json()
+
+    def test_foreign_key_structure_as_superuser_post(self):
+        signage, foreign_keys_data, many_to_many_data, _ = (
+            self._test_foreign_key_structure_post(self.superuser)
+        )
+
+        for attribute, value in foreign_keys_data.items():
+            self.assertEqual(getattr(signage, attribute), value)
+
+        for attribute, value in many_to_many_data.items():
+            self.assertCountEqual(list(getattr(signage, attribute).all()), value)
+
+    def test_foreign_key_structure_as_superuser_patch(self):
+        foreign_keys_data, many_to_many_data, _ = (
+            self._test_foreign_key_structure_patch(self.superuser)
+        )
+
+        self.signage.refresh_from_db()
+        for attribute, value in foreign_keys_data.items():
+            self.assertEqual(getattr(self.signage, attribute), value)
+
+        for attribute, value in many_to_many_data.items():
+            self.assertCountEqual(list(getattr(self.signage, attribute).all()), value)
+
+    def test_foreign_key_structure_as_user_with_correspondant_structure_post(self):
+        """
+        User can assign foreign key values if the selected values are related to the user structure
+        """
+        signage, foreign_keys_data, many_to_many_data, _ = (
+            self._test_foreign_key_structure_post(self.user, new_structure=False)
+        )
+
+        for attribute, value in foreign_keys_data.items():
+            self.assertEqual(getattr(signage, attribute), value)
+
+        for attribute, value in many_to_many_data.items():
+            self.assertCountEqual(list(getattr(signage, attribute).all()), value)
+
+    def test_foreign_key_structure_as_user_with_correspondant_structure_patch(self):
+        """
+        User can change foreign key values if the selected values are related to the user structure
+        """
+        foreign_keys_data, many_to_many_data, _ = (
+            self._test_foreign_key_structure_patch(self.user, new_structure=False)
+        )
+
+        self.signage.refresh_from_db()
+        for attribute, value in foreign_keys_data.items():
+            self.assertEqual(getattr(self.signage, attribute), value)
+
+        for attribute, value in many_to_many_data.items():
+            self.assertCountEqual(list(getattr(self.signage, attribute).all()), value)
+
+    def test_foreign_key_structure_as_user_without_correspondant_structure_post(self):
+        """
+        User cannot assign foreign key values if the selected values are not related to the user structure or not related to a structure
+        """
+        _, fk_data, m2m_data, response_data = self._test_foreign_key_structure_post(
+            self.user, status_code=400
+        )
+
+        error_msg = {
+            "sealing_id": [
+                f'Invalid pk "{fk_data["sealing"].id}" - object does not exist.'
+            ],
+            "type_id": [f'Invalid pk "{fk_data["type"].id}" - object does not exist.'],
+            "conditions_id": [
+                f'Invalid pk "{m2m_data["conditions"][0].id}" - object does not exist.'
+            ],
+        }
+        self.assertEqual(response_data, error_msg)
+
+    def test_foreign_key_structure_as_user_without_correspondant_structure_patch(self):
+        """
+        User cannot change foreign key values if the selected values are not related to the user structure or not related to a structure
+        """
+        foreign_keys_data = {}
+        for attribute, _ in self.signage_foreign_keys:
+            foreign_keys_data[attribute] = getattr(self.signage, attribute)
+
+        many_to_many_data = {}
+        for attribute, _ in self.signage_many_to_many:
+            many_to_many_data[attribute] = list(getattr(self.signage, attribute).all())
+
+        fk_data, m2m_data, response_data = self._test_foreign_key_structure_patch(
+            self.user, status_code=400
+        )
+
+        error_msg = {
+            "sealing_id": [
+                f'Invalid pk "{fk_data["sealing"].id}" - object does not exist.'
+            ],
+            "type_id": [f'Invalid pk "{fk_data["type"].id}" - object does not exist.'],
+            "conditions_id": [
+                f'Invalid pk "{m2m_data["conditions"][0].id}" - object does not exist.'
+            ],
+        }
+        self.assertEqual(response_data, error_msg)
+
+        self.signage.refresh_from_db()
+        for attribute, value in foreign_keys_data.items():
+            self.assertEqual(getattr(self.signage, attribute), value)
+
+        for attribute, value in many_to_many_data.items():
+            self.assertCountEqual(list(getattr(self.signage, attribute).all()), value)
 
 
 class BladeViewsTest(CommonTest):

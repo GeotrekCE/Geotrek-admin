@@ -1,5 +1,6 @@
 ARG BASE_IMAGE=ubuntu:noble
 ARG PYTHON_VERSION=3.12
+ARG FRONTEND_IMAGE=scratch
 
 FROM ${BASE_IMAGE} AS base
 
@@ -108,12 +109,14 @@ RUN --mount=type=bind,src=./requirements-dev.txt,dst=/requirements-dev.txt \
 
 CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
 
+FROM ${FRONTEND_IMAGE} AS frontend
 FROM base AS prod
 
 ENV GUNICORN_CMD_ARGS="--workers=1"
 
 COPY --chown=geotrek:geotrek --from=build /opt/venv /opt/venv
 COPY --chown=geotrek:geotrek geotrek/ geotrek/
+COPY --chown=geotrek:geotrek --from=frontend /frontend/dist frontend/dist
 COPY --chown=geotrek:geotrek manage.py manage.py
 COPY --chown=geotrek:geotrek VERSION VERSION
 COPY --chown=geotrek:geotrek setup.cfg setup.cfg

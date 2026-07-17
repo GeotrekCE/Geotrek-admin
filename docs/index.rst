@@ -212,6 +212,7 @@ You can explore **Geotrek-admin** in action through the demonstration website:
     advanced-configuration/interface
     advanced-configuration/edition
     advanced-configuration/settings-for-geotrek-mobile
+    advanced-configuration/settings-for-geotrek-admin-mobile
 
 .. toctree::
     :caption: 🗃️ Import data

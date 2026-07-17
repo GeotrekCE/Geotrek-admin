@@ -1,4 +1,5 @@
 import csv
+import json
 import os
 from collections import OrderedDict
 from decimal import Decimal
@@ -7,22 +8,29 @@ from tempfile import TemporaryDirectory
 from zipfile import ZipFile
 
 from django.conf import settings
+from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis import gdal
 from django.contrib.gis.geos import GeometryCollection, LineString, Point
 from django.test import TestCase
 from django.test.utils import override_settings
+from django.urls import reverse
 from mapentity.serializers.shapefile import ZipShapeSerializer
+from mapentity.tests import UserFactory
 from mapentity.tests.factories import SuperUserFactory
 
-from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
+from geotrek.authent.tests.factories import (
+    PathManagerFactory,
+    StructureFactory,
+    UserProfileFactory,
+)
 from geotrek.common.tests import (
     CommonMultiActionViewsMixin,
     CommonMultiActionViewsStructureMixin,
     CommonTest,
 )
 from geotrek.common.tests.factories import AccessMeanFactory, OrganismFactory
-from geotrek.core.models import PathAggregation
+from geotrek.core.models import PathAggregation, Stake
 from geotrek.core.tests.factories import PathFactory, StakeFactory, TopologyFactory
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
@@ -34,9 +42,13 @@ from geotrek.land.tests.factories import (
     WorkManagementEdgeFactory,
 )
 from geotrek.maintenance.models import (
+    Contractor,
     Funding,
     Intervention,
+    InterventionDisorder,
+    InterventionJob,
     InterventionStatus,
+    InterventionType,
     ManDay,
     Project,
 )
@@ -47,6 +59,7 @@ from geotrek.maintenance.tests.factories import (
     InterventionFactory,
     InterventionJobFactory,
     InterventionStatusFactory,
+    InterventionTypeFactory,
     ManDayFactory,
     ProjectFactory,
     ProjectWithInterventionFactory,
@@ -499,6 +512,904 @@ class InterventionViewsTest(CommonTest):
     def test_duplicate(self):
         super().test_duplicate()
         self.assertEqual(ManDay.objects.count(), 2)
+
+
+class InterventionReferencesTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user_structure = StructureFactory.create()
+        cls.other_structure = StructureFactory.create()
+
+        cls.contrator = ContractorFactory.create()
+        cls.disorder = InterventionDisorderFactory.create()
+        cls.stake = StakeFactory.create()
+        cls.status = InterventionStatusFactory.create()
+        cls.type = InterventionTypeFactory.create()
+        cls.job = InterventionJobFactory.create()
+
+        cls.user_structure_contrator = ContractorFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_disorder = InterventionDisorderFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_stake = StakeFactory.create(structure=cls.user_structure)
+        cls.user_structure_status = InterventionStatusFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_type = InterventionTypeFactory.create(
+            structure=cls.user_structure
+        )
+        cls.user_structure_job = InterventionJobFactory.create(
+            structure=cls.user_structure
+        )
+
+        cls.other_structure_contrator = ContractorFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_disorder = InterventionDisorderFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_stake = StakeFactory.create(structure=cls.other_structure)
+        cls.other_structure_status = InterventionStatusFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_type = InterventionTypeFactory.create(
+            structure=cls.other_structure
+        )
+        cls.other_structure_job = InterventionJobFactory.create(
+            structure=cls.other_structure
+        )
+
+        cls.superuser = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.superuser, structure=cls.user_structure)
+
+        cls.user = UserFactory.create(password="password")
+        UserProfileFactory(user=cls.user, structure=cls.user_structure)
+
+    def authenticate(self, user):
+        r = self.client.post(
+            reverse("common:token_obtain_pair"),
+            data={"username": user.username, "password": "password"},
+        )
+        data = r.json()
+        return f"Bearer {data['access']}"
+
+    def test_data_as_user(self):
+        token = self.authenticate(self.user)
+        r = self.client.get(
+            reverse("maintenance:intervention_references"),
+            headers={"Authorization": token},
+        )
+        data = r.json()
+
+        self.assertEqual(len(data["contractor"]), Contractor.objects.all().count() - 1)
+        self.assertEqual(
+            len(data["interventiondisorder"]),
+            InterventionDisorder.objects.all().count() - 1,
+        )
+        self.assertEqual(len(data["stake"]), Stake.objects.all().count() - 1)
+        self.assertEqual(
+            len(data["interventionstatus"]),
+            InterventionStatus.objects.all().count() - 1,
+        )
+        self.assertEqual(
+            len(data["interventiontype"]), InterventionType.objects.all().count() - 1
+        )
+        self.assertEqual(
+            len(data["interventionjob"]), InterventionJob.objects.all().count() - 1
+        )
+        self.assertCountEqual(
+            data["contractor"],
+            [
+                {"id": self.contrator.id, "name": self.contrator.contractor},
+                {
+                    "id": self.user_structure_contrator.id,
+                    "name": self.user_structure_contrator.contractor,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["interventiondisorder"],
+            [
+                {"id": self.disorder.id, "name": self.disorder.disorder},
+                {
+                    "id": self.user_structure_disorder.id,
+                    "name": self.user_structure_disorder.disorder,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["stake"],
+            [
+                {"id": self.stake.id, "name": self.stake.stake},
+                {
+                    "id": self.user_structure_stake.id,
+                    "name": self.user_structure_stake.stake,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["interventionstatus"],
+            [
+                {"id": self.status.id, "name": self.status.status},
+                {
+                    "id": self.user_structure_status.id,
+                    "name": self.user_structure_status.status,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["interventiontype"],
+            [
+                {"id": self.type.id, "name": self.type.type},
+                {
+                    "id": self.user_structure_type.id,
+                    "name": self.user_structure_type.type,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["interventionjob"],
+            [
+                {"id": self.job.id, "name": self.job.job},
+                {"id": self.user_structure_job.id, "name": self.user_structure_job.job},
+            ],
+        )
+        self.assertEqual(
+            data["pictogram"],
+            {"url": "http://testserver/static/images/intervention.png"},
+        )
+
+    def test_data_as_superuser(self):
+        token = self.authenticate(self.superuser)
+        r = self.client.get(
+            reverse("maintenance:intervention_references"),
+            headers={"Authorization": token},
+        )
+        data = r.json()
+        self.assertEqual(len(data["contractor"]), Contractor.objects.all().count())
+        self.assertEqual(
+            len(data["interventiondisorder"]),
+            InterventionDisorder.objects.all().count(),
+        )
+        self.assertEqual(len(data["stake"]), Stake.objects.all().count())
+        self.assertEqual(
+            len(data["interventionstatus"]), InterventionStatus.objects.all().count()
+        )
+        self.assertEqual(
+            len(data["interventiontype"]), InterventionType.objects.all().count()
+        )
+        self.assertEqual(
+            len(data["interventionjob"]), InterventionJob.objects.all().count()
+        )
+        self.assertCountEqual(
+            data["contractor"],
+            [
+                {"id": self.contrator.id, "name": self.contrator.contractor},
+                {
+                    "id": self.user_structure_contrator.id,
+                    "name": self.user_structure_contrator.contractor,
+                },
+                {
+                    "id": self.other_structure_contrator.id,
+                    "name": self.other_structure_contrator.contractor,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["interventiondisorder"],
+            [
+                {"id": self.disorder.id, "name": self.disorder.disorder},
+                {
+                    "id": self.user_structure_disorder.id,
+                    "name": self.user_structure_disorder.disorder,
+                },
+                {
+                    "id": self.other_structure_disorder.id,
+                    "name": self.other_structure_disorder.disorder,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["stake"],
+            [
+                {"id": self.stake.id, "name": self.stake.stake},
+                {
+                    "id": self.user_structure_stake.id,
+                    "name": self.user_structure_stake.stake,
+                },
+                {
+                    "id": self.other_structure_stake.id,
+                    "name": self.other_structure_stake.stake,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["interventionstatus"],
+            [
+                {"id": self.status.id, "name": self.status.status},
+                {
+                    "id": self.user_structure_status.id,
+                    "name": self.user_structure_status.status,
+                },
+                {
+                    "id": self.other_structure_status.id,
+                    "name": self.other_structure_status.status,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["interventiontype"],
+            [
+                {"id": self.type.id, "name": self.type.type},
+                {
+                    "id": self.user_structure_type.id,
+                    "name": self.user_structure_type.type,
+                },
+                {
+                    "id": self.other_structure_type.id,
+                    "name": self.other_structure_type.type,
+                },
+            ],
+        )
+        self.assertCountEqual(
+            data["interventionjob"],
+            [
+                {"id": self.job.id, "name": self.job.job},
+                {"id": self.user_structure_job.id, "name": self.user_structure_job.job},
+                {
+                    "id": self.other_structure_job.id,
+                    "name": self.other_structure_job.job,
+                },
+            ],
+        )
+        self.assertEqual(
+            data["pictogram"],
+            {"url": "http://testserver/static/images/intervention.png"},
+        )
+
+
+class InterventionGTAMTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.intervention = InterventionFactory.create()
+        cls.intervention.access = AccessMeanFactory.create()
+        cls.intervention.save()
+
+        cls.structure = StructureFactory.create()
+        cls.contractor = ContractorFactory.create()
+        cls.stake = StakeFactory.create()
+        cls.status = InterventionStatusFactory.create()
+        cls.type = InterventionTypeFactory.create()
+        cls.disorder = InterventionDisorderFactory.create()
+        cls.access = AccessMeanFactory.create()
+        cls.job = InterventionJobFactory.create()
+
+        cls.superuser = SuperUserFactory.create(password="password")
+        UserProfileFactory(user=cls.superuser, structure=cls.structure)
+
+        cls.user = UserFactory.create(password="password")
+        UserProfileFactory(user=cls.user, structure=cls.structure)
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="add_intervention")
+        )
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="change_intervention")
+        )
+
+        cls.list_url = "/api/intervention/drf/interventions?format=gtam"
+        cls.detail_url = (
+            f"/api/intervention/drf/interventions/{cls.intervention.id}?format=gtam"
+        )
+
+        cls.intervention_foreign_keys = [
+            ("stake", StakeFactory),
+            ("status", InterventionStatusFactory),
+            ("type", InterventionTypeFactory),
+        ]
+
+        cls.intervention_many_to_many = [
+            ("contractors", ContractorFactory),
+            ("disorders", InterventionDisorderFactory),
+        ]
+
+        cls.manday_foreign_keys = [
+            ("job", InterventionJobFactory),
+        ]
+
+    def authenticate(self, user):
+        r = self.client.post(
+            reverse("common:token_obtain_pair"),
+            data={"username": user.username, "password": "password"},
+        )
+        data = r.json()
+        return f"Bearer {data['access']}"
+
+    def test_get(self):
+        token = self.authenticate(self.user)
+        response = self.client.get(self.list_url, headers={"Authorization": token})
+        data = response.json()
+
+        interventions = [
+            {
+                "id": self.intervention.id,
+                "geom": {
+                    "type": "LineString",
+                    "coordinates": [[3.0, 46.5], [3.001304, 46.5009004]],
+                },
+                "name": self.intervention.name,
+                "date_insert": self.intervention.date_insert.isoformat().replace(
+                    "+00:00", "Z"
+                ),
+                "date_update": self.intervention.date_update.isoformat().replace(
+                    "+00:00", "Z"
+                ),
+                "begin_date": str(self.intervention.begin_date)
+                if self.intervention.begin_date
+                else None,
+                "end_date": str(self.intervention.end_date)
+                if self.intervention.end_date
+                else None,
+                "subcontracting": self.intervention.subcontracting,
+                "width": self.intervention.width,
+                "height": self.intervention.height,
+                "material_cost": self.intervention.material_cost,
+                "heliport_cost": self.intervention.heliport_cost,
+                "contractor_cost": self.intervention.contractor_cost,
+                "length": self.intervention.length,
+                "target": {"model": "topology", "id": self.intervention.target.id},
+                "description": self.intervention.description,
+                "man_day": [
+                    {
+                        "id": self.intervention.manday_set.first().id,
+                        "nb_days": self.intervention.manday_set.first().nb_days,
+                        "job": {
+                            "id": self.intervention.manday_set.first().job.id,
+                            "name": self.intervention.manday_set.first().job.job,
+                        },
+                    }
+                ],
+                "contractors": [],
+                "stake": {
+                    "id": self.intervention.stake.id,
+                    "name": self.intervention.stake.stake,
+                },
+                "status": {
+                    "id": self.intervention.status.id,
+                    "name": self.intervention.status.status,
+                },
+                "type": {
+                    "id": self.intervention.type.id,
+                    "name": self.intervention.type.type,
+                },
+                "disorders": [
+                    {
+                        "id": self.intervention.disorders.first().id,
+                        "name": self.intervention.disorders.first().disorder,
+                    }
+                ],
+                "structure": {
+                    "id": self.intervention.structure.id,
+                    "name": self.intervention.structure.name,
+                },
+                "access": {
+                    "id": self.intervention.access.id,
+                    "name": self.intervention.access.label,
+                },
+            }
+        ]
+        self.assertEqual(data, interventions)
+
+    def _get_data(self):
+        data = {
+            "geom": {
+                "type": "Point",
+                "coordinates": [3.0, 46.5],
+            },
+            "name": "toto",
+            "begin_date": "2014-06-10",
+            "end_date": "2014-06-15",
+            "subcontracting": True,
+            "width": 45,
+            "height": 78,
+            "material_cost": 9,
+            "heliport_cost": 2,
+            "contractor_cost": 5,
+            "description": "description",
+            "man_day": [{"nb_days": 5.0, "job_id": self.job.id}],
+            "contractors_id": [self.contractor.id],
+            "stake_id": self.stake.id,
+            "status_id": self.status.id,
+            "type_id": self.type.id,
+            "disorders_id": [self.disorder.id],
+            "structure_id": self.structure.id,
+            "access_id": self.access.id,
+        }
+
+        return data
+
+    def _check_data(self, intervention_id):
+        intervention = Intervention.objects.get(pk=intervention_id)
+        self.assertEqual(intervention.name, "toto")
+        self.assertEqual(str(intervention.begin_date), "2014-06-10")
+        self.assertEqual(str(intervention.end_date), "2014-06-15")
+        self.assertEqual(intervention.subcontracting, True)
+        self.assertEqual(intervention.width, 45)
+        self.assertEqual(intervention.height, 78)
+        self.assertEqual(intervention.material_cost, 9)
+        self.assertEqual(intervention.heliport_cost, 2)
+        self.assertEqual(intervention.contractor_cost, 5)
+        self.assertEqual(intervention.description, "description")
+        self.assertEqual(intervention.manday_set.first().nb_days, 5.0)
+        self.assertEqual(intervention.manday_set.first().job, self.job)
+        self.assertEqual(list(intervention.contractors.all()), [self.contractor])
+        self.assertEqual(intervention.stake, self.stake)
+        self.assertEqual(intervention.status, self.status)
+        self.assertEqual(intervention.type, self.type)
+        self.assertEqual(list(intervention.disorders.all()), [self.disorder])
+        self.assertEqual(intervention.structure, self.structure)
+        self.assertEqual(intervention.access, self.access)
+        self.assertAlmostEqual(intervention.api_geom.x, 3.0, 2)
+        self.assertAlmostEqual(intervention.api_geom.y, 46.5, 2)
+        self.assertEqual(intervention.last_author, self.superuser)
+        return intervention
+
+    def test_post(self):
+        token = self.authenticate(self.superuser)
+
+        response = self.client.post(
+            self.list_url,
+            json.dumps(self._get_data()),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 201)
+
+        intervention_id = response_data["id"]
+        intervention = self._check_data(intervention_id)
+        self.assertEqual(intervention.creator, self.superuser)
+
+    def test_post_with_wrong_dates(self):
+        token = self.authenticate(self.superuser)
+
+        data = self._get_data()
+        data["end_date"] = "2014-06-01"
+
+        response = self.client.post(
+            self.list_url,
+            data,
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 400)
+
+        self.assertEqual(
+            response_data["end_date"], ["End date must occur after start date"]
+        )
+
+    def test_post_with_linear_geom(self):
+        token = self.authenticate(self.superuser)
+
+        data = self._get_data()
+        data["geom"] = {"type": "LineString", "coordinates": [[3.0, 46.5], [4.0, 47.5]]}
+
+        response = self.client.post(
+            self.list_url,
+            data,
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response_data["geom"], ["New intervention geometry must be points"]
+        )
+
+    def test_patch_with_intervention_based_on_topology(self):
+        token = self.authenticate(self.superuser)
+
+        response = self.client.patch(
+            self.detail_url,
+            json.dumps(self._get_data()),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self._check_data(self.intervention.id)
+
+    def test_patch_with_intervention_based_on_infrastructure(self):
+        infrastructure = InfrastructureFactory.create()
+        intervention = InterventionFactory.create(target=infrastructure)
+        token = self.authenticate(self.superuser)
+
+        response = self.client.patch(
+            f"/api/intervention/drf/interventions/{intervention.id}?format=gtam",
+            json.dumps(self._get_data()),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(intervention.target, infrastructure)
+
+    def test_patch_with_linear_geom(self):
+        token = self.authenticate(self.superuser)
+
+        data = {
+            "geom": {"type": "LineString", "coordinates": [[3.0, 46.5], [4.0, 47.5]]}
+        }
+
+        response = self.client.patch(
+            self.detail_url,
+            data,
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response_data["geom"], ["New intervention geometry must be points"]
+        )
+
+    def _test_structure_post(self, user):
+        token = self.authenticate(user)
+        structure = StructureFactory.create()
+
+        data = self._get_data()
+        data["structure_id"] = structure.id
+
+        response = self.client.post(
+            self.list_url,
+            json.dumps(data),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, 201)
+
+        intervention_id = response_data["id"]
+        intervention = Intervention.objects.get(pk=intervention_id)
+
+        return intervention, structure
+
+    def _test_structure_patch(self, user):
+        token = self.authenticate(user)
+
+        structure = StructureFactory.create()
+
+        response = self.client.patch(
+            self.detail_url,
+            {"structure_id": structure.id},
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        self.assertEqual(response.status_code, 200)
+
+        return structure
+
+    def test_structure_as_superuser_post(self):
+        intervention, structure = self._test_structure_post(self.superuser)
+        self.assertEqual(intervention.structure, structure)
+
+    def test_structure_as_superuser_patch(self):
+        structure = self._test_structure_patch(self.superuser)
+
+        self.intervention.refresh_from_db()
+        self.assertEqual(self.intervention.structure, structure)
+
+    def test_structure_as_user_post(self):
+        intervention, _ = self._test_structure_post(self.user)
+        self.assertEqual(intervention.structure, self.user.profile.structure)
+
+    def test_structure_as_user_patch(self):
+        self._test_structure_patch(self.user)
+
+        self.intervention.refresh_from_db()
+        self.assertEqual(self.intervention.structure, self.user.profile.structure)
+
+    def _test_foreign_key_structure_post(
+        self, user, new_structure=True, status_code=201
+    ):
+        token = self.authenticate(user)
+
+        structure = (
+            StructureFactory.create() if new_structure else user.profile.structure
+        )
+
+        data = self._get_data()
+
+        intervention_foreign_keys_data = {}
+        for attribute, factory in self.intervention_foreign_keys:
+            intervention_foreign_keys_data[attribute] = factory.create(
+                structure=structure
+            )
+            data[f"{attribute}_id"] = intervention_foreign_keys_data[attribute].id
+
+        manday_foreign_keys_data = {}
+        manday = {"nb_days": 3.0}
+        for attribute, factory in self.manday_foreign_keys:
+            manday_foreign_keys_data[attribute] = factory.create(structure=structure)
+            manday[f"{attribute}_id"] = manday_foreign_keys_data[attribute].id
+        data["man_day"] = [manday]
+
+        many_to_many_data = {}
+        for attribute, factory in self.intervention_many_to_many:
+            many_to_many_data[attribute] = [
+                factory.create(structure=structure),
+                factory.create(structure=structure),
+            ]
+            data[f"{attribute}_id"] = [
+                instance.id for instance in many_to_many_data[attribute]
+            ]
+
+        response = self.client.post(
+            self.list_url,
+            json.dumps(data),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        response_data = response.json()
+
+        self.assertEqual(response.status_code, status_code)
+
+        intervention_id = response_data.get("id", None)
+        intervention = (
+            Intervention.objects.get(pk=intervention_id) if intervention_id else None
+        )
+
+        return (
+            intervention,
+            intervention_foreign_keys_data,
+            manday_foreign_keys_data,
+            many_to_many_data,
+            response.json(),
+        )
+
+    def _test_foreign_key_structure_patch(
+        self, user, new_structure=True, status_code=200
+    ):
+        token = self.authenticate(user)
+
+        structure = (
+            StructureFactory.create() if new_structure else user.profile.structure
+        )
+
+        data = {}
+
+        intervention_foreign_keys_data = {}
+        for attribute, factory in self.intervention_foreign_keys:
+            intervention_foreign_keys_data[attribute] = factory.create(
+                structure=structure
+            )
+            data[f"{attribute}_id"] = intervention_foreign_keys_data[attribute].id
+
+        manday_foreign_keys_data = {}
+        manday = {"nb_days": 3.0}
+        for attribute, factory in self.manday_foreign_keys:
+            manday_foreign_keys_data[attribute] = factory.create(structure=structure)
+            manday[f"{attribute}_id"] = manday_foreign_keys_data[attribute].id
+        data["man_day"] = [manday]
+
+        many_to_many_data = {}
+        for attribute, factory in self.intervention_many_to_many:
+            many_to_many_data[attribute] = [
+                factory.create(structure=structure),
+                factory.create(structure=structure),
+            ]
+            data[f"{attribute}_id"] = [
+                instance.id for instance in many_to_many_data[attribute]
+            ]
+
+        response = self.client.patch(
+            self.detail_url,
+            json.dumps(data),
+            content_type="application/json",
+            headers={"Authorization": token},
+        )
+        self.assertEqual(response.status_code, status_code)
+
+        return (
+            intervention_foreign_keys_data,
+            manday_foreign_keys_data,
+            many_to_many_data,
+            response.json(),
+        )
+
+    def test_foreign_key_structure_as_superuser_post(self):
+        (
+            intervention,
+            intervention_foreign_keys_data,
+            manday_foreign_keys_data,
+            many_to_many_data,
+            _,
+        ) = self._test_foreign_key_structure_post(self.superuser)
+
+        for attribute, value in intervention_foreign_keys_data.items():
+            self.assertEqual(getattr(intervention, attribute), value)
+
+        for attribute, value in manday_foreign_keys_data.items():
+            self.assertEqual(getattr(intervention.manday_set.first(), attribute), value)
+
+        for attribute, value in many_to_many_data.items():
+            self.assertCountEqual(list(getattr(intervention, attribute).all()), value)
+
+    def test_foreign_key_structure_as_superuser_patch(self):
+        (
+            intervention_foreign_keys_data,
+            manday_foreign_keys_data,
+            many_to_many_data,
+            _,
+        ) = self._test_foreign_key_structure_patch(self.superuser)
+
+        self.intervention.refresh_from_db()
+        for attribute, value in intervention_foreign_keys_data.items():
+            self.assertEqual(getattr(self.intervention, attribute), value)
+
+        for attribute, value in manday_foreign_keys_data.items():
+            self.assertEqual(
+                getattr(self.intervention.manday_set.first(), attribute), value
+            )
+
+        for attribute, value in many_to_many_data.items():
+            self.assertCountEqual(
+                list(getattr(self.intervention, attribute).all()), value
+            )
+
+    def test_foreign_key_structure_as_user_with_correspondant_structure_post(self):
+        """
+        User can assign foreign key values if the selected values are related to the user structure
+        """
+        (
+            intervention,
+            intervention_foreign_keys_data,
+            manday_foreign_keys_data,
+            many_to_many_data,
+            _,
+        ) = self._test_foreign_key_structure_post(self.user, new_structure=False)
+
+        for attribute, value in intervention_foreign_keys_data.items():
+            self.assertEqual(getattr(intervention, attribute), value)
+
+        for attribute, value in manday_foreign_keys_data.items():
+            self.assertEqual(getattr(intervention.manday_set.first(), attribute), value)
+
+        for attribute, value in many_to_many_data.items():
+            self.assertCountEqual(list(getattr(intervention, attribute).all()), value)
+
+    def test_foreign_key_structure_as_user_with_correspondant_structure_patch(self):
+        """
+        User can change foreign key values if the selected values are related to the user structure
+        """
+        (
+            intervention_foreign_keys_data,
+            manday_foreign_keys_data,
+            many_to_many_data,
+            _,
+        ) = self._test_foreign_key_structure_patch(self.user, new_structure=False)
+
+        self.intervention.refresh_from_db()
+        for attribute, value in intervention_foreign_keys_data.items():
+            self.assertEqual(getattr(self.intervention, attribute), value)
+
+        for attribute, value in manday_foreign_keys_data.items():
+            self.assertEqual(
+                getattr(self.intervention.manday_set.first(), attribute), value
+            )
+
+        for attribute, value in many_to_many_data.items():
+            self.assertCountEqual(
+                list(getattr(self.intervention, attribute).all()), value
+            )
+
+    def test_foreign_key_structure_as_user_without_correspondant_structure_post(self):
+        """
+        User cannot assign foreign key values if the selected values are not related to the user structure or not related to a structure
+        """
+        _, intervention_fk_data, manday_fk_data, m2m_data, response_data = (
+            self._test_foreign_key_structure_post(self.user, status_code=400)
+        )
+
+        error_msg = {
+            "man_day": [
+                {
+                    "job_id": [
+                        f'Invalid pk "{manday_fk_data["job"].id}" - object does not exist.'
+                    ]
+                }
+            ],
+            "contractors_id": [
+                f'Invalid pk "{m2m_data["contractors"][0].id}" - object does not exist.'
+            ],
+            "stake_id": [
+                f'Invalid pk "{intervention_fk_data["stake"].id}" - object does not exist.'
+            ],
+            "status_id": [
+                f'Invalid pk "{intervention_fk_data["status"].id}" - object does not exist.'
+            ],
+            "type_id": [
+                f'Invalid pk "{intervention_fk_data["type"].id}" - object does not exist.'
+            ],
+            "disorders_id": [
+                f'Invalid pk "{m2m_data["disorders"][0].id}" - object does not exist.'
+            ],
+        }
+        self.assertEqual(response_data, error_msg)
+
+    def test_foreign_key_structure_as_user_without_correspondant_structure_patch(self):
+        """
+        User cannot change foreign key values if the selected values are not related to the user structure or not related to a structure
+        """
+        intervention_foreign_keys_data = {}
+        for attribute, _ in self.intervention_foreign_keys:
+            intervention_foreign_keys_data[attribute] = getattr(
+                self.intervention, attribute
+            )
+
+        manday_foreign_keys_data = {}
+        for attribute, _ in self.manday_foreign_keys:
+            manday_foreign_keys_data[attribute] = getattr(
+                self.intervention.manday_set.first(), attribute
+            )
+
+        many_to_many_data = {}
+        for attribute, _ in self.intervention_many_to_many:
+            many_to_many_data[attribute] = list(
+                getattr(self.intervention, attribute).all()
+            )
+
+        intervention_fk_data, manday_fk_data, m2m_data, response_data = (
+            self._test_foreign_key_structure_patch(self.user, status_code=400)
+        )
+
+        error_msg = {
+            "man_day": [
+                {
+                    "job_id": [
+                        f'Invalid pk "{manday_fk_data["job"].id}" - object does not exist.'
+                    ]
+                }
+            ],
+            "contractors_id": [
+                f'Invalid pk "{m2m_data["contractors"][0].id}" - object does not exist.'
+            ],
+            "stake_id": [
+                f'Invalid pk "{intervention_fk_data["stake"].id}" - object does not exist.'
+            ],
+            "status_id": [
+                f'Invalid pk "{intervention_fk_data["status"].id}" - object does not exist.'
+            ],
+            "type_id": [
+                f'Invalid pk "{intervention_fk_data["type"].id}" - object does not exist.'
+            ],
+            "disorders_id": [
+                f'Invalid pk "{m2m_data["disorders"][0].id}" - object does not exist.'
+            ],
+        }
+
+        self.assertEqual(response_data, error_msg)
+
+        self.intervention.refresh_from_db()
+        for attribute, value in intervention_foreign_keys_data.items():
+            self.assertEqual(getattr(self.intervention, attribute), value)
+
+        for attribute, value in manday_foreign_keys_data.items():
+            self.assertEqual(
+                getattr(self.intervention.manday_set.first(), attribute), value
+            )
+
+        for attribute, value in many_to_many_data.items():
+            self.assertCountEqual(
+                list(getattr(self.intervention, attribute).all()), value
+            )
 
 
 class ProjectViewsTest(CommonTest):

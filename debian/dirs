@@ -7,3 +7,4 @@
 /opt/geotrek-admin/var/pid
 /opt/geotrek-admin/var/mobile
 /opt/geotrek-admin/var/tmp
+/opt/geotrek-admin/var/frontend

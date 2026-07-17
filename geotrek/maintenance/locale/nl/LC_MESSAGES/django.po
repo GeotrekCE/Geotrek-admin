@@ -327,6 +327,12 @@ msgstr ""
 msgid "Funding"
 msgstr ""
 
+msgid "New intervention geometry must be points"
+msgstr ""
+
+msgid "End date must occur after start date"
+msgstr ""
+
 msgid "None"
 msgstr ""
 

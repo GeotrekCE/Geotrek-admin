@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-07 12:12+0000\n"
+"POT-Creation-Date: 2026-07-02 09:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -49,7 +49,19 @@ msgstr ""
 msgid "Valid topology"
 msgstr ""
 
+msgid "Name"
+msgstr ""
+
+msgid "Comments"
+msgstr ""
+
 msgid "Provider"
+msgstr ""
+
+msgid "Departure"
+msgstr ""
+
+msgid "Arrival"
 msgstr ""
 
 msgid "Certification labels"
@@ -114,25 +126,13 @@ msgstr ""
 msgid "Shown in lists and maps"
 msgstr ""
 
-msgid "Name"
-msgstr ""
-
 msgid "Official name"
-msgstr ""
-
-msgid "Comments"
 msgstr ""
 
 msgid "Remarks"
 msgstr ""
 
-msgid "Departure"
-msgstr ""
-
 msgid "Departure place"
-msgstr ""
-
-msgid "Arrival"
 msgstr ""
 
 msgid "Arrival place"

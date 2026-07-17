@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-07 09:00+0000\n"
+"POT-Creation-Date: 2026-07-13 13:27+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/maintenance/fr/>\n"
@@ -326,6 +326,12 @@ msgstr "Organisme"
 
 msgid "Funding"
 msgstr "Financement"
+
+msgid "New intervention geometry must be points"
+msgstr "Les nouvelles interventions doivent être des points"
+
+msgid "End date must occur after start date"
+msgstr "La date de début est après la date de fin"
 
 msgid "None"
 msgstr "Aucun(e)"

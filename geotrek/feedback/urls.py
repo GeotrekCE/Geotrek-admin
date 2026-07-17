@@ -4,7 +4,8 @@ from mapentity.registry import registry
 from geotrek.api.v2.views.feedback import ReportViewSet
 from geotrek.common.urls import LangConverter
 
-from . import entities, models
+from . import entities, models, views
+
 
 register_converter(LangConverter, "lang")
 
@@ -16,6 +17,11 @@ urlpatterns = [
         "api/<lang:lang>/reports/report",
         ReportViewSet.as_view({"post": "create"}),
         name="report",
+    ),
+    path(
+        "api/report/references/",
+        views.ReportReferences.as_view(),
+        name="report_references",
     ),
 ]
 

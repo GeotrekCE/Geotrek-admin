@@ -4,7 +4,7 @@ from mapentity.registry import registry
 from geotrek.common.urls import LangConverter
 from geotrek.trekking.views import TrekSignageViewSet
 
-from . import entities, models
+from . import entities, models, views
 
 register_converter(LangConverter, "lang")
 
@@ -17,5 +17,10 @@ urlpatterns += [
         "api/<lang:lang>/treks/<int:pk>/signages.geojson",
         TrekSignageViewSet.as_view({"get": "list"}),
         name="trek_signage_geojson",
+    ),
+    path(
+        "api/signage/references/",
+        views.SignageReferences.as_view(),
+        name="signage_references",
     ),
 ]

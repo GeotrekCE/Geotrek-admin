@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-02 11:11+0000\n"
+"POT-Creation-Date: 2026-07-13 13:27+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/signage/fr/>\n"
@@ -20,6 +20,15 @@ msgstr ""
 
 msgid "Signage"
 msgstr "Signalétique"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Code"
+msgstr "Code"
+
+msgid "Description"
+msgstr "Description"
 
 msgid "Intervention year"
 msgstr "Année d'intervention"
@@ -65,12 +74,6 @@ msgstr "Types de signalétique"
 
 msgid "Label"
 msgstr "Libellé"
-
-msgid "Code"
-msgstr "Code"
-
-msgid "Description"
-msgstr "Description"
 
 msgid "Complete description"
 msgstr "Description complète"
@@ -168,6 +171,9 @@ msgstr "Temps"
 
 msgid "Line"
 msgstr "Ligne"
+
+msgid "New signage geometry must be points"
+msgstr "Les nouvelles signalétiques doivent être des points"
 
 msgid "None"
 msgstr "Aucun(e)"

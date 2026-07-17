@@ -13,12 +13,14 @@ from mapentity.views import (
     MapEntityMultiUpdate,
     MapEntityUpdate,
 )
+from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import (
     BelongStructureMixin,
     CustomColumnsMixin,
     PublishedFieldMixin,
+    ReferencesMixin,
 )
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
@@ -26,8 +28,19 @@ from geotrek.core.views import CreateFromTopologyMixin
 
 from .filters import InfrastructureFilterSet
 from .forms import InfrastructureForm
-from .models import Infrastructure, InfrastructureCondition
-from .serializers import InfrastructureGeojsonSerializer, InfrastructureSerializer
+from .models import (
+    Infrastructure,
+    InfrastructureCondition,
+)
+from .serializers import (
+    InfrastructureConditionsGTAMSerializer,
+    InfrastructureGeojsonSerializer,
+    InfrastructureGTAMSerializer,
+    InfrastructureMaintenanceDifficultyGTAMSerializer,
+    InfrastructureSerializer,
+    InfrastructureTypeGTAMSerializer,
+    InfrastructureUsageDifficultyGTAMSerializer,
+)
 
 
 class InfrastructureList(CustomColumnsMixin, MapEntityList):
@@ -123,14 +136,17 @@ class InfrastructureViewSet(GeotrekMapentityViewSet):
     model = Infrastructure
     serializer_class = InfrastructureSerializer
     geojson_serializer_class = InfrastructureGeojsonSerializer
+    gtam_serializer_class = InfrastructureGTAMSerializer
     filterset_class = InfrastructureFilterSet
     mapentity_list_class = InfrastructureList
 
     def get_queryset(self):
         qs = self.model.objects.existing()
-        if self.format_kwarg == "geojson":
-            qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
-            qs = qs.only("id", "name", "published")
+        renderer, media_type = self.perform_content_negotiation(self.request)
+        if getattr(renderer, "format") == "geojson":
+            qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID)).only(
+                "id", "name", "published"
+            )
         else:
             qs = qs.select_related(
                 "type", "maintenance_difficulty", "access", "usage_difficulty"
@@ -154,3 +170,13 @@ class InfrastructureMultiUpdate(
     PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
 ):
     model = Infrastructure
+
+
+class InfrastructureReferences(ReferencesMixin, APIView):
+    serializers = [
+        InfrastructureTypeGTAMSerializer,
+        InfrastructureMaintenanceDifficultyGTAMSerializer,
+        InfrastructureUsageDifficultyGTAMSerializer,
+        InfrastructureConditionsGTAMSerializer,
+    ]
+    pictogram_filename = "infrastructure.png"

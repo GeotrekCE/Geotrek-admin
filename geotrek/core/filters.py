@@ -2,11 +2,7 @@ from dal import autocomplete
 from django.conf import settings
 from django.forms import widgets
 from django.utils.translation import gettext_lazy as _
-from django_filters import (
-    BooleanFilter,
-    FilterSet,
-    ModelMultipleChoiceFilter,
-)
+from django_filters import FilterSet, filters
 
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -25,7 +21,7 @@ class ValidTopologyFilterSet(FilterSet):
         model = Topology
         fields = ["coupled", "is_valid_topology"]
 
-    is_valid_topology = BooleanFilter(
+    is_valid_topology = filters.BooleanFilter(
         label=_("Valid topology"),
         method="filter_valid_topology",
         widget=widgets.NullBooleanSelect(
@@ -99,20 +95,22 @@ class TopologyFilter(RightFilter):
 class PathFilterSet(
     AltimetryAllGeometriesFilterSet, ZoningFilterSet, StructureRelatedFilterSet
 ):
-    provider = ModelMultipleChoiceFilter(
+    name = filters.CharFilter(label=_("Name"), lookup_expr="icontains")
+    comments = filters.CharFilter(label=_("Comments"), lookup_expr="icontains")
+    provider = filters.ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(path__isnull=False).distinct(),
         widget=autocomplete.Select2Multiple(),
     )
-    networks = ModelMultipleChoiceFilter(
+    networks = filters.ModelMultipleChoiceFilter(
         queryset=Network.objects.all().select_related("structure"),
         widget=autocomplete.Select2Multiple(),
     )
-    usages = ModelMultipleChoiceFilter(
+    usages = filters.ModelMultipleChoiceFilter(
         queryset=Usage.objects.all().select_related("structure"),
         widget=autocomplete.Select2Multiple(),
     )
-    comfort = ModelMultipleChoiceFilter(
+    comfort = filters.ModelMultipleChoiceFilter(
         queryset=Comfort.objects.all().select_related("structure"),
         widget=autocomplete.Select2Multiple(),
     )
@@ -139,13 +137,17 @@ class TrailFilterSet(
     ZoningFilterSet,
     StructureRelatedFilterSet,
 ):
-    certification_labels = ModelMultipleChoiceFilter(
+    name = filters.CharFilter(label=_("Name"), lookup_expr="icontains")
+    departure = filters.CharFilter(label=_("Departure"), lookup_expr="icontains")
+    arrival = filters.CharFilter(label=_("Arrival"), lookup_expr="icontains")
+    comments = filters.CharFilter(label=_("Comments"), lookup_expr="icontains")
+    certification_labels = filters.ModelMultipleChoiceFilter(
         field_name="certifications__certification_label",
         label=_("Certification labels"),
         queryset=CertificationLabel.objects.all(),
         widget=autocomplete.Select2Multiple(),
     )
-    provider = ModelMultipleChoiceFilter(
+    provider = filters.ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(trail__isnull=False).distinct(),
         widget=autocomplete.Select2Multiple(),

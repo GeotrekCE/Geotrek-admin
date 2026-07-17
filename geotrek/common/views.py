@@ -2,6 +2,7 @@ import ast
 import json
 import mimetypes
 import os
+import pathlib
 import re
 from datetime import timedelta
 from zipfile import ZipFile, is_zipfile
@@ -17,8 +18,10 @@ from django.contrib.auth.decorators import (
     user_passes_test,
 )
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.models import Permission
 from django.contrib.gis.db.models import Extent, GeometryField
 from django.core.exceptions import PermissionDenied
+from django.db.models import Q
 from django.db.models.functions import Cast
 from django.http import Http404, HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import get_object_or_404, redirect
@@ -34,22 +37,24 @@ from django.views.generic import FormView, TemplateView, UpdateView, View
 from django_celery_results.models import TaskResult
 from django_large_image.rest import LargeImageFileDetailMixin
 from large_image import config
+from mapbox_baselayer.utils import get_map_base_layers, get_pmtiles
 from mapentity import views as mapentity_views
 from mapentity.helpers import api_bbox
 from mapentity.registry import app_settings, registry
 from mapentity.views import MapEntityFilter, MapEntityList
 from paperclip import settings as settings_paperclip
 from paperclip.views import _handle_attachment_form
-from rest_framework import mixins, viewsets
+from rest_framework import mixins, permissions, response, viewsets
+from rest_framework.views import APIView
+from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from geotrek import __version__
 from geotrek.altimetry.models import Dem
 from geotrek.celery import app as celery_app
-from geotrek.core.models import Path
-from geotrek.feedback.parsers import SuricateParser
-
-from .filters import HDViewPointFilterSet
-from .forms import (
+from geotrek.common import models as common_models
+from geotrek.common import serializers as common_serializers
+from geotrek.common.filters import HDViewPointFilterSet
+from geotrek.common.forms import (
     AttachmentAccessibilityForm,
     HDViewPointAnnotationForm,
     HDViewPointForm,
@@ -57,23 +62,25 @@ from .forms import (
     ImportDatasetFormWithFile,
     ImportSuricateForm,
 )
-from .mixins.views import (
+from geotrek.common.mixins.views import (
     BookletMixin,
     CompletenessMixin,
     DocumentPortalMixin,
     DocumentPublicMixin,
+    ReferencesMixin,
 )
-from .models import AccessibilityAttachment, HDViewPoint
-from .permissions import PublicOrReadPermMixin, RelatedPublishedPermission
-from .serializers import (
-    HDViewPointAPISerializer,
-    HDViewPointGeoJSONSerializer,
-    HDViewPointSerializer,
+from geotrek.common.permissions import PublicOrReadPermMixin, RelatedPublishedPermission
+from geotrek.common.tasks import import_datas, import_datas_from_web
+from geotrek.common.utils.import_celery import (
+    create_tmp_destination,
+    discover_available_parsers,
 )
 from .tasks import import_datas, import_datas_from_web
 from .utils import maplibre_bounds
 from .utils.import_celery import create_tmp_destination, discover_available_parsers
 from .viewsets import GeotrekMapentityViewSet
+from geotrek.core.models import Path
+from geotrek.feedback.parsers import SuricateParser
 
 
 def handler404(request, exception, template_name="404.html"):
@@ -356,19 +363,19 @@ def import_update_json(request):
 
 
 class HDViewPointList(MapEntityList):
-    queryset = HDViewPoint.objects.all()
+    queryset = common_models.HDViewPoint.objects.all()
     columns = ["id", "title"]
 
 
 class HDViewPointFilter(MapEntityFilter):
-    model = HDViewPoint
+    model = common_models.HDViewPoint
     filterset_class = HDViewPointFilterSet
 
 
 class HDViewPointViewSet(GeotrekMapentityViewSet):
-    model = HDViewPoint
-    serializer_class = HDViewPointSerializer
-    geojson_serializer_class = HDViewPointGeoJSONSerializer
+    model = common_models.HDViewPoint
+    serializer_class = common_serializers.HDViewPointSerializer
+    geojson_serializer_class = common_serializers.HDViewPointGeoJSONSerializer
     filterset_class = HDViewPointFilterSet
     mapentity_list_class = HDViewPointList
 
@@ -382,8 +389,10 @@ class HDViewPointViewSet(GeotrekMapentityViewSet):
 class HDViewPointDetail(
     CompletenessMixin, mapentity_views.MapEntityDetail, LoginRequiredMixin
 ):
-    model = HDViewPoint
-    queryset = HDViewPoint.objects.all().select_related("content_type", "license")
+    model = common_models.HDViewPoint
+    queryset = common_models.HDViewPoint.objects.all().select_related(
+        "content_type", "license"
+    )
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
@@ -394,7 +403,7 @@ class HDViewPointDetail(
 
 
 class HDViewPointCreate(mapentity_views.MapEntityCreate, LoginRequiredMixin):
-    model = HDViewPoint
+    model = common_models.HDViewPoint
     form_class = HDViewPointForm
 
     def get_form_kwargs(self):
@@ -405,19 +414,19 @@ class HDViewPointCreate(mapentity_views.MapEntityCreate, LoginRequiredMixin):
 
 
 class HDViewPointUpdate(mapentity_views.MapEntityUpdate, LoginRequiredMixin):
-    queryset = HDViewPoint.objects.all()
+    queryset = common_models.HDViewPoint.objects.all()
     form_class = HDViewPointForm
 
 
 class HDViewPointDelete(mapentity_views.MapEntityDelete, LoginRequiredMixin):
-    model = HDViewPoint
+    model = common_models.HDViewPoint
 
     def get_success_url(self):
         return self.get_object().content_object.get_detail_url()
 
 
 class HDViewPointAnnotate(UpdateView, LoginRequiredMixin):
-    model = HDViewPoint
+    model = common_models.HDViewPoint
     form_class = HDViewPointAnnotationForm
     template_name_suffix = "_annotation_form"
 
@@ -432,8 +441,8 @@ class TiledHDViewPointViewSet(
         )
         super().__init__(**kwargs)
 
-    queryset = HDViewPoint.objects.all()
-    serializer_class = HDViewPointAPISerializer
+    queryset = common_models.HDViewPoint.objects.all()
+    serializer_class = common_serializers.HDViewPointAPISerializer
     permission_classes = [RelatedPublishedPermission]
     # for `django-large-image`: the name of the image FileField on your model
     FILE_FIELD_NAME = "picture"
@@ -469,13 +478,13 @@ class ServeAttachmentAccessibility(View):
             count=1,
             flags=re.IGNORECASE,
         )
-        if not AccessibilityAttachment.objects.filter(
+        if not common_models.AccessibilityAttachment.objects.filter(
             attachment_accessibility_file=original_path
         ):
             msg = "No attachments for accessibility matches the given query."
             raise Http404(msg)
 
-        attachments = AccessibilityAttachment.objects.filter(
+        attachments = common_models.AccessibilityAttachment.objects.filter(
             attachment_accessibility_file=original_path
         )
         obj = attachments.first().content_object
@@ -553,7 +562,9 @@ def update_attachment_accessibility(
     attachment_form=AttachmentAccessibilityForm,
     extra_context=None,
 ):
-    attachment = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
+    attachment = get_object_or_404(
+        common_models.AccessibilityAttachment, pk=attachment_pk
+    )
     obj = attachment.content_object
     if obj.same_structure(request.user):
         if request.method == "POST":
@@ -583,7 +594,7 @@ def update_attachment_accessibility(
     raise_exception=True,
 )
 def delete_attachment_accessibility(request, attachment_pk):
-    g = get_object_or_404(AccessibilityAttachment, pk=attachment_pk)
+    g = get_object_or_404(common_models.AccessibilityAttachment, pk=attachment_pk)
     obj = g.content_object
     can_delete = (
         request.user.has_perm(
@@ -607,6 +618,123 @@ def delete_attachment_accessibility(request, attachment_pk):
         error_msg = _("You are not allowed to delete this attachment.")
         messages.error(request, error_msg)
     return HttpResponseRedirect(f"{obj.get_detail_url()}?tab=attachments")
+
+
+class ConfigView(APIView):
+    """GTAM Configuration endpoint that gives information on: the user, default language, map, ..."""
+
+    authentication_classes = [JWTAuthentication]
+    permission_classes = [permissions.IsAuthenticated]
+
+    models = [
+        ("signage", "signage"),
+        ("infrastructure", "infrastructure"),
+        ("maintenance", "intervention"),
+        ("feedback", "report"),
+        ("common", "attachment"),
+    ]
+
+    map_permissions = {
+        "add": "create",
+        "change": "update",
+        "change_geom": "update_geom",
+        "delete": "delete",
+        "read": "read",
+    }
+
+    pmtiles_folder = pathlib.Path(os.path.join(settings.MEDIA_ROOT, "pmtiles"))
+
+    def get_model_permissions(self, user, model):
+        app_label, model_name = model
+
+        permissions = Permission.objects.filter(
+            content_type__app_label=app_label,
+            content_type__model=model_name,
+        )
+
+        result = {}
+        for perm in permissions:
+            action = perm.codename.replace(f"_{model_name}", "")
+            if action in self.map_permissions:
+                mapped_action = self.map_permissions[action]
+                result[mapped_action] = user.has_perm(f"{app_label}.{perm.codename}")
+
+        return result
+
+    def get_all_permissions(self, user):
+        permissions = {}
+        for model in self.models:
+            permissions[model[1]] = self.get_model_permissions(user, model)
+        permissions["is_superuser"] = user.is_superuser
+        permissions["can_bypass_structure"] = user.has_perm(
+            "authent.can_bypass_structure"
+        )
+        return permissions
+
+    def get(self, request, *args, **kwargs):
+        user = request.user
+
+        data = {
+            "settings": {
+                "intervalSyncInHours": {
+                    "data": settings.GTAM_CONFIG["DATA_INTERVAL_SYNC"],
+                    "references": settings.GTAM_CONFIG["REFERENCES_INTERVAL_SYNC"],
+                },
+                "map": {
+                    "layers": {
+                        "online": get_map_base_layers(request),
+                        "offline": get_pmtiles(request),
+                    },
+                    "localOptions": {
+                        "bounds": api_bbox(
+                            settings.SPATIAL_EXTENT,
+                            settings.SRID,
+                            settings.VIEWPORT_MARGIN,
+                        ),
+                    },
+                },
+                "appOptions": {
+                    "minZoom": settings.GTAM_CONFIG["SYNC_MAP_MIN_ZOOM"],
+                },
+            },
+            "user": {
+                "attachedStructure": {
+                    "id": user.profile.structure_id,
+                    "label": user.profile.structure.name,
+                },
+                "email": user.email,
+                "firstName": user.first_name,
+                "lastName": user.last_name,
+                "permissions": self.get_all_permissions(user),
+                "userName": user.username,
+            },
+        }
+        return response.Response(data)
+
+
+class CommonReferences(ReferencesMixin):
+    serializers = [
+        common_serializers.StructureGTAMSerializer,
+        common_serializers.OrganismGTAMSerializer,
+        common_serializers.AccessMeanGTAMSerializer,
+    ]
+
+    def get_reference(self, model, serializer):
+        user = self.request.user
+        if user.is_superuser or user.has_perm("authent.can_bypass_structure"):
+            qs = model.objects.all().order_by("id")
+        elif serializer == common_serializers.StructureGTAMSerializer:
+            qs = model.objects.filter(pk=user.profile.structure.id)
+        elif not hasattr(model, "structure"):
+            qs = model.objects.all().order_by("id")
+        else:
+            structure = user.profile.structure
+            qs = model.objects.filter(
+                Q(structure=structure) | Q(structure__isnull=True)
+            ).order_by("id")
+
+        data = serializer(qs, many=True).data
+        return data
 
 
 home = last_list

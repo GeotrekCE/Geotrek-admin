@@ -29,6 +29,35 @@ CHANGELOG
 * Remove the "invalid geometry" filter
 
 
+2.125.1         (2026-07-16)
+----------------------------
+
+**Bug fixes**
+
+GTAM
+^^^^
+
+* Fix read permission for non-superuser
+* Update settings when switching users
+* Selective update: only the data affected by the user is sent
+* Handle non-correct geom
+* Manage general map bounds
+
+
+2.125.0         (2026-07-15)
+----------------------------
+
+**Features**
+
+* Add "GTAM v0", a new offline compatible mobile interface for Geotrek-admin
+  * See configuration and offline maps configuration here : https://geotrek.readthedocs.io/fr/latest/advanced-configuration/settings-for-geotrek-admin-mobile.html
+  * WARNING: docker user should update their nginx configuration to serve the new mobile interface. See documentation
+
+**Bug fixes**
+
+* Revert filters behavior as before select2 migration
+
+
 2.124.6         (2026-06-29)
 ----------------------------
 
