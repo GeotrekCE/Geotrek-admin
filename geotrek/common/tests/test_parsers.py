@@ -270,9 +270,7 @@ class ParserTests(TestCase):
     def test_missing_custom_parser_file(self):
         with self.assertRaisesRegex(
             CommandError,
-            "Failed to import parser file '"
-            + os.path.join(os.path.dirname(__file__), "missing", "conf/parsers.py")
-            + "'",
+            f"Failed to import parser file '{os.path.join(os.path.dirname(__file__), 'missing', 'conf/parsers.py')}'",
         ):
             call_command("import", "DoesNotExist", "", verbosity=0)
 
