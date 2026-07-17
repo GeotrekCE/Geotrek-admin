@@ -259,9 +259,17 @@ class ParserTests(TestCase):
                 verbosity=0,
             )
 
+    @override_settings(VAR_DIR=os.path.join(os.path.dirname(__file__), "data"))
     def test_bad_parser_file(self):
         with self.assertRaisesRegex(
             CommandError, "Failed to import parser class 'DoesNotExist'"
+        ):
+            call_command("import", "DoesNotExist", "", verbosity=0)
+
+    def test_missing_custom_parser_file(self):
+        with self.assertRaisesRegex(
+            CommandError,
+            "Failed to import parser file '/opt/geotrek-admin/var/conf/parsers.py'",
         ):
             call_command("import", "DoesNotExist", "", verbosity=0)
 
