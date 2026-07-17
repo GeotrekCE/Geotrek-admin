@@ -96,8 +96,8 @@ force_lint:
 quality: lint format
 
 messages:
-	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete --no-wrap --ignore var/cache
-	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete --no-wrap -d djangojs --ignore var/cache
+	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete --no-wrap --ignore var/cache --ignore var/frontend  --ignore frontend
+	$(docker_compose) run --rm web ./manage.py makemessages -a --no-location --no-obsolete --no-wrap -d djangojs --ignore var/cache --ignore var/frontend --ignore frontend
 
 compilemessages:
 	$(docker_compose) run --rm web ./manage.py compilemessages

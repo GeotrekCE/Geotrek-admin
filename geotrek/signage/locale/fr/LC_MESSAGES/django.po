@@ -57,9 +57,6 @@ msgstr "Position de la lame sur la signalétique (haut = 1). Si vous attribuez u
 msgid "Implantation year"
 msgstr "Année d'implantation"
 
-msgid "Name"
-msgstr "Nom"
-
 msgid "Sealing"
 msgstr "Scellement"
 
