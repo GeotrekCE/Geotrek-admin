@@ -266,10 +266,13 @@ class ParserTests(TestCase):
         ):
             call_command("import", "DoesNotExist", "", verbosity=0)
 
+    @override_settings(VAR_DIR=os.path.join(os.path.dirname(__file__), "missing"))
     def test_missing_custom_parser_file(self):
         with self.assertRaisesRegex(
             CommandError,
-            "Failed to import parser file '/opt/geotrek-admin/var/conf/parsers.py'",
+            "Failed to import parser file '"
+            + os.path.join(os.path.dirname(__file__), "missing", "conf/parsers.py")
+            + "'",
         ):
             call_command("import", "DoesNotExist", "", verbosity=0)
 
