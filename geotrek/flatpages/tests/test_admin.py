@@ -90,7 +90,7 @@ class FlatPageAdminFormViewsTestCase(TestCase):
     def test_save_without_cover_image(self):
         data = {
             "title_en": "Title",
-            "_position": "first-child",
+            "treebeard_position": "first-child",
         }
 
         url = reverse("admin:flatpages_flatpage_add")
@@ -104,7 +104,7 @@ class FlatPageAdminFormViewsTestCase(TestCase):
     def test_save_with_cover_image(self):
         data = {
             "title_en": "Title",
-            "_position": "first-child",
+            "treebeard_position": "first-child",
             "cover_image_author": "Someone",
             "cover_image": get_dummy_uploaded_image("flatpage_cover.png"),
         }
@@ -135,7 +135,7 @@ class FlatPageAdminFormViewsTestCase(TestCase):
             "title_en": "Title",
             "cover_image_author": "",
             "cover_image-clear": "on",
-            "_position": "first-child",
+            "treebeard_position": "first-child",
         }
         url = reverse("admin:flatpages_flatpage_change", args=[page.pk])
         response = self.client.post(url, data=data)
@@ -197,7 +197,7 @@ class MenuItemAdminFormViewsTestCase(TestCase):
         add_data = {
             "title_en": "Hello World!",
             "platform": "all",
-            "_position": "first-child",
+            "treebeard_position": "first-child",
         }
 
         response = self.client.post(
@@ -216,7 +216,7 @@ class MenuItemAdminFormViewsTestCase(TestCase):
         change_data = {
             "title_en": "Already exists and changed",
             "platform": "mobile",
-            "_position": "first-child",
+            "treebeard_position": "first-child",
         }
 
         response = self.client.post(
@@ -234,7 +234,7 @@ class MenuItemAdminFormViewsTestCase(TestCase):
         add_data = {
             "title_en": "Hello World!",
             "platform": "all",
-            "_position": "first-child",
+            "treebeard_position": "first-child",
             "target_type": "page",
             "page": "",
         }
@@ -255,7 +255,7 @@ class MenuItemAdminFormViewsTestCase(TestCase):
         add_data = {
             "title_en": "Hello World!",
             "platform": "all",
-            "_position": "first-child",
+            "treebeard_position": "first-child",
             "target_type": "link",
             link_url_loc_fieldname: "",
         }
@@ -305,7 +305,7 @@ class MenuItemAdminFormViewsTestCase(TestCase):
         change_data = {
             "title_en": "I have a new thumbnail",
             "platform": "all",
-            "_position": "first-child",
+            "treebeard_position": "first-child",
             "thumbnail": img,
         }
 
@@ -339,7 +339,7 @@ class MenuItemAdminFormViewsTestCase(TestCase):
         change_data = {
             "title_en": "I have a new thumbnail",
             "platform": "all",
-            "_position": "first-child",
+            "treebeard_position": "first-child",
             "thumbnail-clear": "on",
         }
 
