@@ -24,12 +24,6 @@ urlpatterns += [
     path("", include("geotrek.altimetry.urls", namespace="altimetry")),
     path("", include(("mapentity.urls", "mapentity"), namespace="mapentity")),
     path(
-        "",
-        include(
-            ("mapbox_baselayer.urls", "mapbox_baselayer"), namespace="mapbox_baselayer"
-        ),
-    ),
-    path(
         "paperclip/add-for/<str:app_label>/<str:model_name>/<int:pk>/",
         paperclip_views.add_attachment,
         kwargs={"attachment_form": AttachmentForm},
@@ -47,7 +41,7 @@ urlpatterns += [
     path("admin/", admin.site.urls),
     path("i18n/", include("django.conf.urls.i18n")),
     path("maintenance-mode/", include("maintenance_mode.urls")),
-    path("mapbox/", include("mapbox_baselayer.urls")),
+    path("maplibre/", include("mapbox_baselayer.urls")),
 ]
 
 urlpatterns.append(path("", include("geotrek.core.urls")))
