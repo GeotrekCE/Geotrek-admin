@@ -52,7 +52,7 @@ cffi==2.0.0
     #   weasyprint
 chardet==7.4.3
     # via geotrek (setup.py)
-charset-normalizer==3.4.7
+charset-normalizer==3.4.9
     # via
     #   reportlab
     #   requests
