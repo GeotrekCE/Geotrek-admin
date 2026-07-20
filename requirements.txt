@@ -112,6 +112,7 @@ django==5.2.15
     #   django-js-asset
     #   django-large-image
     #   django-leaflet
+    #   django-maintenance-mode
     #   django-mapbox-baselayer
     #   django-modelcluster
     #   django-modeltranslation
