@@ -812,7 +812,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             if self.trek_1.coupled:
                 self.assertEqual(len(trek_geojson["features"]), 2)
             else:
-                # Without dynamic segmentation it used a buffer so we get all the pois normally linked
+                # When not coupled, a buffer is used, so we get all the pois normally linked
                 # with the other treks.
                 self.assertEqual(len(trek_geojson["features"]), 6)
         self.assertIn(f"en/{self.trek_1.pk!s}/pois.geojson", output.getvalue())
