@@ -563,6 +563,8 @@ MAPLIBRE_CONFIG_OVERRIDES = {
     "BOUNDS": BOUNDS,
 }
 
+
+LEAFLET_CONFIG = {}  # DEPRECATED. Used to detect and migrate config in database.
 # define forced layers from LEAFLET_CONFIG when map center in polygon
 # [('Scan', [(lat1, lng1), (lat2, lng2), (lat3, lng3), (lat4, lng4), (lat1, lng1)]),]
 FORCED_LAYERS = []

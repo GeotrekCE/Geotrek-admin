@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-3.0.0a1         (XXXX-XX-XX)
+3.0.0-rc1       (XXXX-XX-XX)
 ----------------------------
 
 **Breaking changes**
