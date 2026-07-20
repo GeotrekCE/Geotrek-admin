@@ -11,7 +11,7 @@ jobs:
     name: Frontend quality
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - name: Get frontend git cache key
         run: |
           echo "FRONTEND_CACHE_KEY=$(git --no-pager log -1 --format="%H" -- frontend/)" >> $GITHUB_ENV
