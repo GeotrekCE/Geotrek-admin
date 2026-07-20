@@ -319,14 +319,9 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
         return signage
 
     def _sync_topology(self, obj, geom):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
-            topology = Topology.deserialize(serialized)
-            obj.topo_object.mutate(topology)
-        else:
-            geom.transform(settings.SRID)
-            obj.geom = geom
-            obj.save()
+        serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
+        topology = Topology.deserialize(serialized)
+        obj.topo_object.mutate(topology)
 
 
 class SignageAPISerializer(BasePublishableSerializerMixin):
