@@ -11,7 +11,7 @@ django==5.2.16
     #   -c requirements.txt
     #   django-debug-toolbar
     #   django-extensions
-django-debug-toolbar==6.3.0
+django-debug-toolbar==7.0.0
     # via -r requirements-dev.in
 django-extensions==4.1
     # via -r requirements-dev.in
