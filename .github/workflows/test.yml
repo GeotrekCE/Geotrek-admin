@@ -59,14 +59,14 @@ jobs:
 
       - name: Cache frontend
         id: cache-frontend
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ./frontend/dist
           key: frontend-${{ steps.get-key.outputs.FRONTEND_CACHE_KEY }}
 
       - name: Setup node for frontend
         if: steps.cache-frontend.outputs.cache-hit != 'true'
-        uses: actions/setup-node@v6
+        uses: actions/setup-node@v7
         with:
           node-version-file: './frontend/.nvmrc'
           cache: 'npm'
@@ -237,7 +237,7 @@ jobs:
           echo "FRONTEND_CACHE_KEY=$(git --no-pager log -1 --format="%H" -- frontend/)" >> $GITHUB_OUTPUT
 
       - name: Cache frontend
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ./frontend/dist
           key: frontend-${{ steps.get-key.outputs.FRONTEND_CACHE_KEY }}
@@ -297,7 +297,7 @@ jobs:
               echo "FRONTEND_CACHE_KEY=$(git --no-pager log -1 --format="%H" -- frontend/)" >> $GITHUB_OUTPUT
 
           - name: Cache frontend
-            uses: actions/cache@v5
+            uses: actions/cache@v6
             with:
               path: ./frontend/dist
               key: frontend-${{ steps.get-key.outputs.FRONTEND_CACHE_KEY }}
@@ -504,7 +504,7 @@ jobs:
           echo "FRONTEND_CACHE_KEY=$(git --no-pager log -1 --format="%H" -- frontend/)" >> $GITHUB_OUTPUT
 
       - name: Cache frontend
-        uses: actions/cache@v5
+        uses: actions/cache@v6
         with:
           path: ./frontend/dist
           key: frontend-${{ steps.get-key.outputs.FRONTEND_CACHE_KEY }}

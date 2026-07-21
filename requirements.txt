@@ -6,7 +6,7 @@ appy==1.0.21
     # via django-appypod
 argdispatch==1.5.0
     # via pdfimpose
-asgiref==3.11.1
+asgiref==3.12.1
     # via django
 async-timeout==5.0.1
     # via redis
@@ -44,7 +44,7 @@ certifi==2026.6.17
     #   fiona
     #   requests
     #   sentry-sdk
-cffi==2.0.0
+cffi==2.1.0
     # via
     #   cairocffi
     #   persistent
@@ -52,7 +52,7 @@ cffi==2.0.0
     #   weasyprint
 chardet==7.4.3
     # via geotrek (setup.py)
-charset-normalizer==3.4.7
+charset-normalizer==3.4.9
     # via
     #   reportlab
     #   requests
@@ -95,7 +95,7 @@ datetime==6.0
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==5.2.15
+django==5.2.16
     # via
     #   geotrek (setup.py)
     #   crispy-bootstrap4
@@ -111,6 +111,7 @@ django==5.2.15
     #   django-flask-authent-backend
     #   django-js-asset
     #   django-large-image
+    #   django-maintenance-mode
     #   django-mapbox-baselayer
     #   django-modelcluster
     #   django-modeltranslation
@@ -162,7 +163,7 @@ django-js-asset==3.1.2
     # via django-mptt
 django-large-image==0.10.3
     # via geotrek (setup.py)
-django-maintenance-mode==0.22.0
+django-maintenance-mode==0.23.0
     # via geotrek (setup.py)
 django-mapbox-baselayer==1.5.2
     # via

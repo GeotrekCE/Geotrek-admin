@@ -29,6 +29,18 @@ CHANGELOG
 * Remove the "invalid geometry" filter
 
 
+2.125.2         (2026-07-21)
+----------------------------
+
+**Improvements**
+
+* GTAM: Add support for dates in older browser versions
+
+**Bug fixes**
+
+* GTAM: Fix geometry projection in reponse after creation
+
+
 2.125.1         (2026-07-16)
 ----------------------------
 

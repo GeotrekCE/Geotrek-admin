@@ -264,14 +264,15 @@ class InterventionGTAMSerializer(LimitStructurePermission, serializers.ModelSeri
         mandays_data = validated_data.pop("manday_set", [])
         geom = validated_data.pop("geom", None)
 
-        intervention = super().create(validated_data)
+        instance = super().create(validated_data)
 
-        self._sync_manday(intervention, mandays_data)
-        self._sync_target(intervention, geom)
+        self._sync_manday(instance, mandays_data)
+        self._sync_target(instance, geom)
 
-        log_action(self.context["request"], intervention, ADDITION)
+        log_action(self.context["request"], instance, ADDITION)
 
-        return intervention
+        instance.refresh_from_db()  # force refresh geom from db to get internal value and not already transformed geom
+        return instance
 
     def update(self, instance, validated_data):
         validated_data = self._check_assigned_structure(validated_data)

@@ -115,13 +115,14 @@ export default function List() {
                                   dateTime={item.date_update}
                                   className="text-xs text-muted-foreground"
                                 >
-                                  {m["common.modified-on"]()}{" "}
-                                  {new Date(
-                                    item.date_update
-                                  ).toLocaleDateString(getLocale(), {
-                                    year: "numeric",
-                                    month: "long",
-                                    day: "numeric",
+                                  {m["common.modified-on"]({
+                                    date: new Date(
+                                      item.date_update
+                                    ).toLocaleDateString(getLocale(), {
+                                      year: "numeric",
+                                      month: "long",
+                                      day: "numeric",
+                                    }),
                                   })}
                                 </time>
                               </ItemContent>
