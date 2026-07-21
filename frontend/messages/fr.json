@@ -126,6 +126,7 @@
     "sync-reference-failed": "Erreur lors de l'enregistrement des références",
     "sync-map-title": "Fonds cartographiques",
     "sync-map-none": "Fichiers cartographiques manquants",
+    "sync-no-configured-map": "Aucune carte configurée pour le téléchargement. Contactez un administrateur.",
     "sync-map-description": "Fonds de cartes embarqués en hors ligne",
     "sync-map-content-title": "Fonds de cartes et tuiles",
     "sync-map-content-title-downloaded": "Fonds cartographiques déjà téléchargés",
