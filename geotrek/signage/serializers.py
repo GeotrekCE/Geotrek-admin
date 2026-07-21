@@ -301,7 +301,7 @@ class SignageGTAMSerializer(LimitStructurePermission, serializers.ModelSerialize
             self._sync_topology(signage, geom)
 
         log_action(self.context["request"], signage, ADDITION)
-
+        signage.refresh_from_db()  # force refresh geom from db to get internal value and not already transformed geom
         return signage
 
     def update(self, instance, validated_data):
