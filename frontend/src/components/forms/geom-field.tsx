@@ -40,7 +40,7 @@ export function GeomField({
   const value = useStore(field.store, (s) => s.value) as z.infer<
     typeof geometrySchema
   >
-  const [lng, lat] = value.coordinates || []
+  const [lng, lat] = (value.type === "Point" && value.coordinates) || []
   const appSync = useLiveQuery(() => db.appSync.get("data"))
   const { bounds } = appSync || {}
 
