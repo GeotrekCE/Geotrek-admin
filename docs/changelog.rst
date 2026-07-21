@@ -5,6 +5,14 @@ CHANGELOG
 2.125.1+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+* GTAM: Add support for dates in older browser versions
+
+**Bug fixes**
+
+* GTAM: Fix geometry projection in reponse after creation
+
 
 2.125.1         (2026-07-16)
 ----------------------------

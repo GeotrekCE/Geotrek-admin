@@ -1,4 +1,5 @@
 import { m } from "@/paraglide/messages"
+import { getLocale } from "@/paraglide/runtime"
 
 export const SECOND = 1000
 export const MINUTE = 60 * SECOND
@@ -39,8 +40,41 @@ export function getUpdatedStatus(date: string | undefined, timeInMS: number) {
   return "UPDATED"
 }
 
-export function getDurationLabel(timeInMs: number, locale: string) {
-  let diff = timeInMs
+export function getDurationLabel(
+  dateString: string,
+  type: "sync" | "created" | "updated"
+) {
+  const date = new Date(dateString)
+  const locale = getLocale()
+
+  const localeMessage =
+    type === "sync"
+      ? "common.last-synced"
+      : type === "created"
+        ? "common.last-creation"
+        : "common.last-updated"
+
+  const localeMessageFallback =
+    type === "sync"
+      ? "common.synced-on"
+      : type === "created"
+        ? "common.created-on"
+        : "common.modified-on"
+
+  if (!("DurationFormat" in Intl)) {
+    return m[localeMessageFallback]({
+      date: Intl.DateTimeFormat(locale, {
+        year: "numeric",
+        month: "numeric",
+        day: "numeric",
+        hour: "numeric",
+        minute: "numeric",
+        second: "numeric",
+      }).format(date),
+    })
+  }
+
+  let diff = new Date().getTime() - date.getTime()
 
   const durationFormatter = new Intl.DurationFormat(locale, {
     style: "narrow",
@@ -85,5 +119,7 @@ export function getDurationLabel(timeInMs: number, locale: string) {
     diff -= result.minutes * MINUTE
   }
 
-  return durationFormatter.format(result) || m["common.less-than-a-minute"]()
+  return m[localeMessage]({
+    date: durationFormatter.format(result) || m["common.less-than-a-minute"](),
+  })
 }

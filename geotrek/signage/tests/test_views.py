@@ -416,7 +416,7 @@ class SignageGTAMTest(TestCase):
         data = r.json()
         return f"Bearer {data['access']}"
 
-    def test_get(self):
+    def test_list_signages(self):
         token = self.authenticate(self.superuser)
         list_url = "/api/signage/drf/signages?format=gtam"
         response = self.client.get(list_url, headers={"Authorization": token})
@@ -539,7 +539,7 @@ class SignageGTAMTest(TestCase):
         self.assertEqual(signage.last_author, self.superuser)
         return signage
 
-    def test_post(self):
+    def test_create_signage(self):
         token = self.authenticate(self.superuser)
 
         response = self.client.post(
@@ -555,6 +555,7 @@ class SignageGTAMTest(TestCase):
         signage_id = response_data["id"]
         signage = self._check_data(signage_id)
         self.assertEqual(signage.creator, self.superuser)
+        self.assertEqual(response_data["geom"], self._get_data()["geom"])
 
     def test_post_with_linear_geom(self):
         token = self.authenticate(self.superuser)

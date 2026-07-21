@@ -126,9 +126,10 @@ class ReportGTAMSerializer(rest_serializers.ModelSerializer):
         geo_field = "geom"
 
     def create(self, validated_data):
-        report = super().create(validated_data)
-        log_action(self.context["request"], report, ADDITION)
-        return report
+        instance = super().create(validated_data)
+        instance.refresh_from_db()
+        log_action(self.context["request"], instance, ADDITION)
+        return instance
 
     def update(self, instance, validated_data):
         report = super().update(instance, validated_data)
