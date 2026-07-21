@@ -126,6 +126,7 @@
     "sync-reference-failed": "Error saving references",
     "sync-map-title": "Base maps",
     "sync-map-none": "Missing Map Files",
+    "sync-no-configured-map": "No maps have been configured for download. Contact an administrator.",
     "sync-map-description": "Offline embedded map backgrounds",
     "sync-map-content-title": "Base maps and tiles",
     "sync-map-content-title-downloaded": "Base maps already downloaded",

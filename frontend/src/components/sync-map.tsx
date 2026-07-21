@@ -5,11 +5,17 @@ import { useAppSettings } from "@/hook/useAppSettings"
 import CardSync from "@/components/card-sync"
 import { buttonVariants } from "@/components/ui/button"
 import { m } from "@/paraglide/messages"
+import { useLiveQuery } from "dexie-react-hooks"
+import { db } from "@/lib/db"
 
 export default function SyncMap() {
   const {
     data: { map },
   } = useAppSettings()
+
+  const settings = useLiveQuery(() => db.settings.get("settings"))
+
+  const offlineLayers = settings?.settings?.map.layers.offline ?? []
 
   const hasData = map?.layers?.length
 
@@ -17,8 +23,14 @@ export default function SyncMap() {
     <CardSync
       className="my-4"
       title={m["common.sync-map-title"]()}
-      noData={m["common.sync-map-none"]()}
-      updatedStatus={hasData ? "UPDATED" : "EXPIRED"}
+      noData={
+        offlineLayers.length > 0
+          ? m["common.sync-map-none"]()
+          : m["common.sync-no-configured-map"]()
+      }
+      updatedStatus={
+        hasData || offlineLayers.length === 0 ? "UPDATED" : "EXPIRED"
+      }
       lastSync={map?.lastSync}
       description={
         <>
@@ -34,12 +46,14 @@ export default function SyncMap() {
         </>
       }
       actions={
-        <Link
-          className={cn("w-full", buttonVariants())}
-          to="/{-$locale}/sync/map"
-        >
-          {hasData ? m["common.edit"] : m["common.pick"]}
-        </Link>
+        offlineLayers.length > 0 ? (
+          <Link
+            className={cn("w-full", buttonVariants())}
+            to="/{-$locale}/sync/map"
+          >
+            {hasData ? m["common.edit"] : m["common.pick"]}
+          </Link>
+        ) : null
       }
     />
   )
