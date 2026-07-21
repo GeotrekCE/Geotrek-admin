@@ -5,6 +5,14 @@ CHANGELOG
 2.125.2+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+* GTAM: Display a message if the API does not provide offline maps
+
+**Bug fixes**
+
+* GTAM: Add support for GeometryCollection
+
 
 2.125.2         (2026-07-21)
 ----------------------------
