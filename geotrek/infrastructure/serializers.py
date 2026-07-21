@@ -202,12 +202,12 @@ class InfrastructureGTAMSerializer(
         geom = validated_data.pop("geom", None)
 
         with transaction.atomic():
-            infrastructure = super().create(validated_data)
-            self._sync_topology(infrastructure, geom)
+            instance = super().create(validated_data)
+            self._sync_topology(instance, geom)
 
-        log_action(self.context["request"], infrastructure, ADDITION)
-
-        return infrastructure
+        log_action(self.context["request"], instance, ADDITION)
+        instance.refresh_from_db()  # force refresh geom from db to get internal value and not already transformed geom
+        return instance
 
     def update(self, instance, validated_data):
         validated_data = self._check_assigned_structure(validated_data)
