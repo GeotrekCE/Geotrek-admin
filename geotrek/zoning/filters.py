@@ -1,10 +1,18 @@
 from dal import autocomplete
 from django.db.models import Exists, OuterRef, Q
 from django.utils.translation import gettext_lazy as _
-from django_filters import FilterSet
+from django_filters import FilterSet, ModelMultipleChoiceFilter, filters
 
+from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import RightFilter
-from geotrek.zoning.models import City, District, RestrictedArea, RestrictedAreaType
+from geotrek.common.models import Provider
+from geotrek.zoning.models import (
+    City,
+    District,
+    RestrictedArea,
+    RestrictedAreaType,
+    VigilanceArea,
+)
 
 
 class IntersectionFilter(RightFilter):
@@ -86,3 +94,28 @@ class ZoningFilterSet(FilterSet):
             },
         ),
     )
+
+
+class VigilanceAreaFilterSet(
+    ZoningFilterSet,
+    StructureRelatedFilterSet,
+):
+    name = filters.CharFilter(label=_("Name"), lookup_expr="icontains")
+    provider = ModelMultipleChoiceFilter(
+        label=_("Provider"),
+        queryset=Provider.objects.filter(trek__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple(),
+    )
+
+    class Meta(StructureRelatedFilterSet.Meta):
+        model = VigilanceArea
+        fields = [
+            *StructureRelatedFilterSet.Meta.fields,
+            "name",
+            "published",
+            "practicability",
+            "vigilance_area_type",
+            "sources",
+            "portals",
+            "provider",
+        ]
