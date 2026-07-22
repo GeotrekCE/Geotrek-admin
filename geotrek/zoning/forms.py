@@ -1,9 +1,11 @@
+from crispy_forms.layout import Div
 from dal import autocomplete
 from django import forms
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-from geotrek.zoning.models import City, District, RestrictedArea
+from geotrek.common.forms import CommonForm
+from geotrek.zoning.models import City, District, RestrictedArea, VigilanceArea
 
 
 class MapFilterForm(forms.Form):
@@ -44,3 +46,42 @@ class MapFilterForm(forms.Form):
                 ),
                 required=False,
             )
+
+
+class VigilanceAreaForm(CommonForm):
+    geomfields = ["geom"]
+    fieldslayout = [
+        Div(
+            "structure",
+            "name",
+            "vigilance_area_type",
+            "practicability",
+            "published",
+            "description",
+            "practical_info",
+            "external_info_url",
+            "sources",
+            "portals",
+            "provider",
+            "eid",
+        )
+    ]
+
+    class Meta(CommonForm.Meta):
+        model = VigilanceArea
+        fields = [
+            *CommonForm.Meta.fields,
+            "name",
+            "structure",
+            "description",
+            "provider",
+            "eid",
+            "vigilance_area_type",
+            "external_info_url",
+            "practicability",
+            "practical_info",
+            "sources",
+            "portals",
+            "published",
+            "geom",
+        ]

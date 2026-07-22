@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 10:08+0000\n"
+"POT-Creation-Date: 2026-07-22 10:38+0200\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/fr/>\n"
@@ -27,6 +27,15 @@ msgstr "Dépublier (caché sur Geotrek-rando)"
 msgid "Zoning"
 msgstr "Zonage"
 
+msgid "Practicable"
+msgstr "Pratiquable"
+
+msgid "Possibly practicable"
+msgstr "Possiblement praticable"
+
+msgid "Not practicable"
+msgstr "Non praticable"
+
 msgid "City"
 msgstr "Commune"
 
@@ -39,11 +48,14 @@ msgstr "Type de zonage"
 msgid "Restricted area"
 msgstr "Zone réglementaire"
 
-msgid "Restricted areas"
-msgstr "Zones réglementaires"
-
 msgid "Name"
 msgstr "Nom"
+
+msgid "Provider"
+msgstr "Fournisseur"
+
+msgid "Restricted areas"
+msgstr "Zones réglementaires"
 
 msgid "Published"
 msgstr "Publié"
@@ -60,6 +72,48 @@ msgstr "Communes"
 msgid "Districts"
 msgstr "Secteurs"
 
+msgid "Vigilance area type"
+msgstr "Type de zone de vigilance"
+
+msgid "Vigilance area types"
+msgstr "Types de zone de vigilance"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Start date"
+msgstr "Date de début"
+
+msgid "End date"
+msgstr "Date de fin"
+
+msgid "Practicability"
+msgstr "Pratiquabilité"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Practical information"
+msgstr "Informations pratiques"
+
+msgid "External information URL"
+msgstr "URL d'information externe"
+
+msgid "Portals"
+msgstr "Portails"
+
+msgid "Sources"
+msgstr "Sources"
+
+msgid "Start date is after end date"
+msgstr "La date de début est après la date de fin"
+
+msgid "Vigilance area"
+msgstr "Zone de vigilance"
+
+msgid "Vigilance areas"
+msgstr "Zones de vigilance"
+
 #, python-brace-format
 msgid "Invalid geometry for field '{src}'"
 msgstr "La géométrie du champ '{src}' est invalide"
@@ -67,3 +121,12 @@ msgstr "La géométrie du champ '{src}' est invalide"
 #, python-brace-format
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
 msgstr "Le type de géométrie du champ '{src}' est invalide. Il devrait être (Multi)Polygon, pas {geom_type}"
+
+msgid "None"
+msgstr "Aucun(e)"
+
+msgid "External id"
+msgstr "ID externe"
+
+msgid "Thumbnail"
+msgstr "Miniature"
