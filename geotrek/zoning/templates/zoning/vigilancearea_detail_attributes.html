@@ -1,0 +1,88 @@
+{% extends "mapentity/mapentity_detail_attributes.html" %}
+{% load i18n geotrek_tags mapentity_tags %}
+
+{% block attributes %}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"vigilance_area_type" }}</th>
+            <td>{{ object.vigilance_area_type }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"practicability" }}</th>
+            <td>{{ object.get_practicability_display }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"sources" }}</th>
+            <td>
+                {% for source in object.sources.all %}
+                    <span class="badge badge-primary">{{ source.name }}</span>
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"portals" }}</th>
+            <td>
+                {% for portal in object.portals.all %}
+                    <span class="badge badge-primary">{{ portal.name }}</span>
+                {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{% if object.description %}{{ object.description|safe|linebreaks }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"practical_info" }}</th>
+            <td>{% if object.practical_info %}{{ object.practical_info|safe|linebreaks }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"external_info_url" }}</th>
+            <td>{% if object.external_info_url %}
+                <a class="btn btn-primary" href="{{ object.external_info_url }}" target="_blank" rel="noopener noreferrer">{{ object.external_info_url }}</a>
+                {% else %}
+                <span class="none">{% trans "None" %}</span>
+            {% endif %}
+            </td>
+        </tr>
+
+        <tr>
+            <th>{% trans "External id" %}</th>
+            <td>{{ object.get_eid }}</td>
+        </tr>
+        <tr>
+            <th>{% trans "Provider" %}</th>
+            <td>{% if object.provider %}
+                {{ object.provider.name|safe }}
+                {% else %}
+                <span class="none">{% trans "None" %}</span>
+            {% endif %}
+            </td>
+        </tr>
+
+        <tr>
+            <th>{% trans "Thumbnail" %}</th>
+            <td><img src="{{ object.thumbnail.url }}"></td>
+        </tr>
+
+        {% include "common/publication_info_fragment.html" %}
+        {% include "mapentity/trackinfo_fragment.html" %}
+    </table>
+
+    {{ block.super }}
+{% endblock attributes %}

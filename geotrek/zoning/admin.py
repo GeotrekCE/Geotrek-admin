@@ -43,7 +43,13 @@ class DistrictAdmin(LeafletGeoAdmin):
     actions = (publish, unpublish)
 
 
+class VigilanceAreaTypeAdmin(admin.ModelAdmin):
+    search_fields = ("name", "description")
+    list_display = ("name", "pictogram_img")
+
+
 admin.site.register(zoning_models.RestrictedAreaType, RestrictedAreaTypeAdmin)
 admin.site.register(zoning_models.RestrictedArea, RestrictedAreaAdmin)
 admin.site.register(zoning_models.City, CityAdmin)
 admin.site.register(zoning_models.District, DistrictAdmin)
+admin.site.register(zoning_models.VigilanceAreaType, VigilanceAreaTypeAdmin)

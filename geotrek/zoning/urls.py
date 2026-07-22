@@ -1,6 +1,8 @@
+from django.conf import settings
+from mapentity.registry import registry
 from rest_framework.routers import DefaultRouter
 
-from . import views
+from . import models, views
 
 app_name = "zoning"
 
@@ -21,3 +23,6 @@ router.register(
 urlpatterns = []
 
 urlpatterns += router.urls
+urlpatterns += registry.register(
+    models.VigilanceArea, menu=settings.VIGILANCE_AREA_MODEL_ENABLED
+)
