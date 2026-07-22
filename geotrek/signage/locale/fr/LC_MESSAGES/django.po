@@ -54,6 +54,9 @@ msgstr "Lignes"
 msgid "Position of the blade on the signage (top=1). Assigning a position that has already been used will shift the positions of the other blades"
 msgstr "Position de la lame sur la signalétique (haut = 1). Si vous attribuez une position déjà utilisée, cela déplacera les positions des autres lames"
 
+msgid "Implantation year"
+msgstr "Année d'implantation"
+
 msgid "Sealing"
 msgstr "Scellement"
 

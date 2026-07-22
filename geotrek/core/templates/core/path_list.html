@@ -22,7 +22,7 @@
 
         $(function () {
             $('#btn-merge').click(function () {
-                const table = $('#objects-list').DataTable();
+                const table = window.MapEntity.dt;
                 if (table.rows( { selected: true } )[0].length != 2) {
                     $('#btn-confirm').hide();
                     $('#confirm-merge .modal-body h4').html("{% trans 'Select two paths to merge them' %}");
@@ -36,7 +36,7 @@
                 $('#confirm-merge .modal-body h4').html($('#wait_lightbox').html());
                 $('#btn-confirm').hide();
 
-                const table = $('#objects-list').DataTable();
+                const table = window.MapEntity.dt;
                 const params = {
                     path: table.rows( { selected: true } ).data().pluck('id').toArray(),
                     csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val(),

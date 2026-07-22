@@ -1,11 +1,10 @@
 import json
 import os
-from unittest import mock, skipIf
+from unittest import mock
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString
 from django.core.management import call_command
-from django.core.management.base import CommandError
 from django.test import TestCase
 from django.test.utils import override_settings
 
@@ -37,39 +36,8 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
 
     @classmethod
     def setUpTestData(cls):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = PathFactory.create()
+        cls.path = PathFactory.create()
         cls.filetype = FileType.objects.create(type="Photographie")
-
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    @mock.patch("requests.get")
-    @mock.patch("requests.head")
-    def test_import_cmd_raises_error_when_no_path(self, mocked_head, mocked_get):
-        self.mock_time = 0
-        self.mock_json_order = [
-            ("signage", "structure.json"),
-            ("signage", "signage_sealing.json"),
-            ("signage", "signage_conditions.json"),
-            ("signage", "signage_type.json"),
-        ]
-        # Mock GET
-        mocked_get.return_value.status_code = 200
-        mocked_get.return_value.json = self.mock_json
-        mocked_get.return_value.content = b""
-        mocked_head.return_value.status_code = 200
-
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'Signage' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.signage.tests.test_parsers.TestGeotrekSignageParser",
-                verbosity=0,
-            )
 
     @mock.patch("requests.get")
     @mock.patch("requests.head")
@@ -104,11 +72,10 @@ class SignageGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         conditions = [str(c.label) for c in signage.conditions.all()]
         self.assertEqual(conditions, ["Dégradé"])
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            signage_path = signage.topo_object.paths.get()
-            self.assertEqual(signage_path, self.path)
-            self.assertEqual(signage.topo_object.kind, "SIGNAGE")
-            self.assertAlmostEqual(signage.topo_object.offset, 430191.617, places=2)
+        signage_path = signage.topo_object.paths.get()
+        self.assertEqual(signage_path, self.path)
+        self.assertEqual(signage.topo_object.kind, "SIGNAGE")
+        self.assertAlmostEqual(signage.topo_object.offset, 430191.617, places=2)
 
         self.assertEqual(signage.geom.geom_type, "Point")
         self.assertEqual(signage.geom.srid, settings.SRID)
@@ -152,21 +119,6 @@ class OpenStreetMapSignageParserTests(TestCase):
         cls.import_signage()
         cls.objects = Signage.objects.all()
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_import_cmd_raises_error_when_no_path(self):
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'Signage' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.signage.tests.test_parsers.TestSignageOpenStreetMapParser",
-                verbosity=0,
-            )
-
     def test_create_signage_osm(self):
         self.assertEqual(self.objects.count(), 1)
 
@@ -175,9 +127,6 @@ class OpenStreetMapSignageParserTests(TestCase):
         self.assertListEqual(list(signage_eids), ["N7872800265"])
         self.assertNotEqual(signage_eids, ["7872800265"])
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_topology_is_correct(self):
         signage = self.objects.get(eid="N7872800265")
         self.assertAlmostEqual(signage.topo_object.offset, 0.0)

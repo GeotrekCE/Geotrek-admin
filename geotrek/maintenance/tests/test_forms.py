@@ -1,6 +1,3 @@
-from unittest import skipIf
-
-from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase, override_settings
 
@@ -88,6 +85,7 @@ class InterventionFormTest(TestCase):
             "data": {
                 "name": "abc",
                 "topology": self.topology,
+                "topology_changed": "true",
                 "target": target,
                 "begin_date": "10/02/2024",
                 "status": status,
@@ -131,9 +129,6 @@ class InterventionFormTest(TestCase):
         self.assertFalse(form.is_valid())
         self.assertIn("Begin date is after end date", str(form.errors))
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     def test_create_intervention_if_target_is_not_report(self):
         form = self.create_intervention_form(
@@ -141,9 +136,6 @@ class InterventionFormTest(TestCase):
         )
         self.assertTrue(form.is_valid())
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     def test_create_intervention_with_10_or_20_status_for_report(self):
         test_cases = [
@@ -169,9 +161,6 @@ class InterventionFormTest(TestCase):
                 form.save()
                 self._assert_report_status_and_timers("programmed", 1)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     def test_create_intervention_with_30_status_for_report(self):
         # report reset
@@ -187,9 +176,6 @@ class InterventionFormTest(TestCase):
         form.save()
         self._assert_report_status_and_timers("solved_intervention", 0)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     def test_update_intervention_to_30_status_for_report(self):
         # report reset
@@ -209,9 +195,6 @@ class InterventionFormTest(TestCase):
         form.save()
         self._assert_report_status_and_timers("solved_intervention", 0)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     def test_update_intervention_from_10_to_20_status_for_report(self):
         """

@@ -6,9 +6,7 @@ The Load commands
 
 You can use some of Geotrek commands to import data from a vector or a raster file handled by `GDAL <https://gdal.org/drivers/vector/index.html>`_ (e.g.: ESRI Shapefile, GeoJSON, GeoPackage, GeoTIFF, etc.)
 
-Possible data are : DEM, paths, cities, districts, restricted areas, POIs, infrastructures, signages.
-
-You must use these commands to import spatial data because of the :ref:`dynamic segmentation <configuration-dynamic-segmentation>`, which will not be computed if you enter the data manually.
+Possible data are : DEM, paths, cities, districts, restricted areas, POIs, infrastructures, signage.
 
 Here are the Geotrek commands available to import data from file:
 

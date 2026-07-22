@@ -1,14 +1,12 @@
-import os
 from datetime import datetime
 
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.db import models
-from django.contrib.gis.geos import GeometryCollection
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.postgres.indexes import GistIndex
-from django.db.models import Q
+from django.db.models import F, Q
 from django.db.models.signals import pre_delete
 from django.dispatch import receiver
 from django.utils.translation import gettext_lazy as _
@@ -59,14 +57,13 @@ class Intervention(
     )
 
     # Technical information
-    width = models.FloatField(
-        default=0.0, blank=True, null=True, verbose_name=_("Width")
-    )
-    height = models.FloatField(
-        default=0.0, blank=True, null=True, verbose_name=_("Height")
-    )
-    area = models.FloatField(
-        editable=False, default=0, blank=True, null=True, verbose_name=_("Area")
+    width = models.FloatField(default=0.0, blank=True, verbose_name=_("Width"))
+    height = models.FloatField(default=0.0, blank=True, verbose_name=_("Height"))
+    area = models.GeneratedField(
+        verbose_name=_("Area"),
+        expression=F("width") * F("length"),
+        db_persist=True,
+        output_field=models.FloatField(),
     )
 
     # Costs
@@ -131,6 +128,12 @@ class Intervention(
         on_delete=models.SET_NULL,
         verbose_name=_("Project"),
     )
+    geom = models.GeometryField(
+        srid=settings.SRID,
+        editable=False,
+        null=True,
+        spatial_index=True,
+    )
     description = models.TextField(
         blank=True, verbose_name=_("Description"), help_text=_("Remarks and notes")
     )
@@ -159,10 +162,6 @@ class Intervention(
             GistIndex(name="intervention_geom_3d_gist_idx", fields=["geom_3d"]),
         ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._geom = None
-
     def default_stake(self):
         stake = None
         if self.target and isinstance(self.target, Topology):
@@ -174,7 +173,11 @@ class Intervention(
     def reload(self):
         if self.pk:
             fromdb = self.__class__.objects.get(pk=self.pk)
+            # Area is computed by DB trigger and might not be reloaded by super reload()
             self.area = fromdb.area
+            self.geom = fromdb.geom
+            # Length is also computed by DB trigger for lines
+            self.length = fromdb.length
             AltimetryMixin.reload(self, fromdb)
             TimeStampedModelMixin.reload(self, fromdb)
             NoDeleteMixin.reload(self, fromdb)
@@ -186,15 +189,11 @@ class Intervention(
         if self.stake is None:
             self.stake = self.default_stake()
 
+        # if not self.pk and self.target and self.target.geom:
+        if not self.pk and self.target:
+            self.geom = self.target.geom
+
         super().save(*args, **kwargs)
-
-        # Invalidate project map
-        if self.project:
-            try:
-                os.remove(self.project.get_map_image_path())
-            except OSError:
-                pass
-
         self.reload()
 
     @classproperty
@@ -302,18 +301,7 @@ class Intervention(
 
     @classproperty
     def geomfield(cls):
-        return Topology._meta.get_field("geom")
-
-    @property
-    def geom(self):
-        if self._geom is None:
-            if self.target:
-                self._geom = self.target.geom
-        return self._geom
-
-    @geom.setter
-    def geom(self, value):
-        self._geom = value
+        return cls._meta.get_field("geom")
 
     @property
     def api_geom(self):
@@ -341,7 +329,7 @@ class Intervention(
                 ContentType.objects.get_by_natural_key("outdoor", "site"),
                 ContentType.objects.get_by_natural_key("outdoor", "course"),
             ]
-        if settings.TREKKING_TOPOLOGY_ENABLED:
+        if obj.coupled:
             topologies = list(Topology.overlapping(obj).values_list("pk", flat=True))
         else:
             area = obj.geom.buffer(settings.INTERVENTION_INTERSECTION_MARGIN)
@@ -594,6 +582,12 @@ class Project(
     eid = models.CharField(
         verbose_name=_("External id"), max_length=1024, blank=True, null=True
     )
+    geom = models.GeometryField(
+        srid=settings.SRID,
+        editable=False,
+        null=True,
+        spatial_index=True,
+    )
 
     objects = ProjectManager()
 
@@ -606,7 +600,6 @@ class Project(
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self._geom = None
 
     @property
     def paths(self):
@@ -651,40 +644,13 @@ class Project(
 
     @classproperty
     def geomfield(cls):
-        from django.contrib.gis.geos import LineString
-
-        # Fake field, TODO: still better than overkill code in views, but can do neater.
-        c = GeometryCollection([LineString((0, 0), (1, 1))], srid=settings.SRID)
-        c.name = "geom"
-        return c
-
-    @property
-    def geom(self):
-        """Merge all interventions geometry into a collection"""
-        if self._geom is None:
-            interventions = Intervention.objects.existing().filter(project=self)
-            geoms = []
-            for i in interventions:
-                geom = i.geom
-                if geom is not None:
-                    if isinstance(geom, GeometryCollection):
-                        for sub_geom in geom:
-                            geoms.append(sub_geom)
-                    else:
-                        geoms.append(geom)
-            if geoms:
-                self._geom = GeometryCollection(*geoms, srid=settings.SRID)
-        return self._geom
+        return cls._meta.get_field("geom")
 
     @property
     def api_geom(self):
         if not self.geom:
             return None
         return self.geom.transform(settings.API_SRID, clone=True)
-
-    @geom.setter
-    def geom(self, value):
-        self._geom = value
 
     @property
     def name_display(self):

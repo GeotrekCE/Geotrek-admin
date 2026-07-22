@@ -68,6 +68,7 @@ class InfrastructureFilterSet(
         model = Infrastructure
         fields = [
             *StructureRelatedFilterSet.Meta.fields,
+            *ValidTopologyFilterSet.Meta.fields,
             "name",
             "description",
             "category",

@@ -29,6 +29,13 @@ def api_bbox(bbox, buffer):
     return tuple(native.extent)
 
 
+def get_maplibre_config(bbox, buffer):
+    xmin, ymin, xmax, ymax = api_bbox(bbox, buffer)
+    center = [(xmin + xmax) / 2, (ymin + ymax) / 2]
+    bounds = [[xmin, ymin], [xmax, ymax]]
+    return bounds, center
+
+
 ROOT_URL = ""
 PROJECT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 VAR_DIR = os.getenv("VAR_DIR", "/opt/geotrek-admin/var")
@@ -96,6 +103,7 @@ DATABASES = {
                 ",".join(("public", *tuple(set(DATABASE_SCHEMAS.values()))))
             )
         },
+        "CONN_MAX_AGE": 60,
     }
 }
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"
@@ -308,7 +316,6 @@ PROJECT_APPS += (
     "mapentity",
     "mapbox_baselayer",
     "paperclip",  # paperclip should be load after mapentity for templates
-    "leaflet",  # After mapentity to allow it to patch settings
     "rest_framework_simplejwt",
     "rest_framework",
     "rest_framework_gis",
@@ -338,6 +345,9 @@ INSTALLED_APPS = (
     "geotrek.flatpages",
     "geotrek.feedback",
     "geotrek.api",
+    "geotrek.diving",
+    "geotrek.sensitivity",
+    "geotrek.outdoor",
 )
 
 CACHES = {
@@ -447,12 +457,42 @@ MAPENTITY_CONFIG = {
             "opacity": 0.5,
             "fillOpacity": 0.5,
         },
-        "land": {"weight": 4, "color": "red", "opacity": 1.0},
-        "physical": {"weight": 6, "color": "red", "opacity": 1.0},
-        "circulation": {"weight": 6, "color": "red", "opacity": 1.0},
-        "competence": {"weight": 4, "color": "red", "opacity": 1.0},
-        "workmanagement": {"weight": 4, "color": "red", "opacity": 1.0},
-        "signagemanagement": {"weight": 5, "color": "red", "opacity": 1.0},
+        "landedge": {
+            "weight": 4,
+            "color": ["get", "color"],
+            "default_color": "red",
+            "opacity": 1.0,
+        },
+        "physicaledge": {
+            "weight": 6,
+            "color": ["get", "color"],
+            "default_color": "red",
+            "opacity": 1.0,
+        },
+        "circulationedge": {
+            "weight": 6,
+            "color": ["get", "color"],
+            "default_color": "red",
+            "opacity": 1.0,
+        },
+        "competenceedge": {
+            "weight": 4,
+            "color": ["get", "color"],
+            "default_color": "red",
+            "opacity": 1.0,
+        },
+        "workmanagementedge": {
+            "weight": 4,
+            "color": ["get", "color"],
+            "default_color": "red",
+            "opacity": 1.0,
+        },
+        "signagemanagementedge": {
+            "weight": 5,
+            "color": ["get", "color"],
+            "default_color": "red",
+            "opacity": 1.0,
+        },
         "filelayer": {
             "color": "blue",
             "opacity": 1.0,
@@ -460,7 +500,16 @@ MAPENTITY_CONFIG = {
             "weight": 3,
             "radius": 5,
         },
-        "detail": {"color": "#ffff00"},
+        "detail": {
+            "weight": 4,
+            "opacity": 1,
+            "line-cap": "round",
+            "color": "#FFFF00",
+            "arrowColor": "#0000FF",
+            "arrowSize": 0.5,
+            "arrowOpacity": 0.5,
+            "arrowSpacing": 20,
+        },
         "others": {"color": "#ffff00"},
         "print": {
             "path": {"weight": 1},
@@ -505,52 +554,17 @@ ALTIMETRIC_PROFILE_MIN_YSCALE = 1200  # Minimum y scale (in meters)
 ALTIMETRIC_AREA_MAX_RESOLUTION = 150  # Maximum number of points (by width/height)
 ALTIMETRIC_AREA_MARGIN = 0.15
 
-# Let this be defined at instance-level
-LEAFLET_CONFIG = {
-    "SRID": 3857,
-    "TILES": [
-        (
-            "OpenTopoMap",
-            "https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png",
-            {
-                "attribution": 'map data: © <a href="https://openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="http://viewfinderpanoramas.org">SRTM</a> | map style: © <a href="https://opentopomap.org">OpenTopoMap</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)',
-                "maxNativeZoom": 17,
-                "maxZoom": 22,
-            },
-        ),
-        (
-            "OpenStreetMap",
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            {
-                "attribution": '&copy; <a href="https://www.openstreetmap.org/copyright">Contributeurs d\'OpenStreetMap</a>',
-                "maxNativeZoom": 19,
-                "maxZoom": 22,
-            },
-        ),
-    ],
-    "TILES_EXTENT": SPATIAL_EXTENT,
-    # Extent in API projection (Leaflet view default extent)
-    "SPATIAL_EXTENT": api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN),
-    "NO_GLOBALS": False,
-    "PLUGINS": {
-        "geotrek": {
-            "js": [
-                "vendor/leaflet.lineextremities.v0.1.1.js",
-                "vendor/leaflet.textpath.v1.1.0.js",
-                "common/points_reference.js",
-                "trekking/parking_location.js",
-            ]
-        },
-        "topofields": {
-            "js": [
-                "core/geotrek.forms.snap.js",
-                "core/geotrek.forms.topology.js",
-                "core/multipath.js",
-            ]
-        },
-    },
+
+BOUNDS, CENTER = get_maplibre_config(SPATIAL_EXTENT, VIEWPORT_MARGIN)
+MAPLIBRE_CONFIG_OVERRIDES = {
+    "DEFAULT_CENTER": CENTER,
+    "DEFAULT_ZOOM": 5,
+    "SCALE": "metric",
+    "BOUNDS": BOUNDS,
 }
 
+
+LEAFLET_CONFIG = {}  # DEPRECATED. Used to detect and migrate config in database.
 # define forced layers from LEAFLET_CONFIG when map center in polygon
 # [('Scan', [(lat1, lng1), (lat2, lng2), (lat3, lng3), (lat4, lng4), (lat1, lng1)]),]
 FORCED_LAYERS = []
@@ -558,7 +572,7 @@ FORCED_LAYERS = []
 """ This *pool* of colors is used to colorized lands records.
 """
 COLORS_POOL = {
-    "land": [
+    "landedge": [
         "#f37e79",
         "#7998f3",
         "#bbf379",
@@ -567,7 +581,7 @@ COLORS_POOL = {
         "#9c79f3",
         "#7af379",
     ],
-    "physical": [
+    "physicaledge": [
         "#f3799d",
         "#79c1f3",
         "#e4f379",
@@ -576,7 +590,7 @@ COLORS_POOL = {
         "#f39779",
         "#797ff3",
     ],
-    "circulation": [
+    "circulationedge": [
         "#f37e79",
         "#7998f3",
         "#bbf379",
@@ -585,7 +599,7 @@ COLORS_POOL = {
         "#9c79f3",
         "#7af379",
     ],
-    "competence": [
+    "competenceedge": [
         "#a2f379",
         "#f379c6",
         "#79e9f3",
@@ -594,8 +608,8 @@ COLORS_POOL = {
         "#79f392",
         "#f37984",
     ],
-    "signagemanagement": ["#79a8f3", "#cbf379", "#f379ee", "#79f3e3", "#79f3d3"],
-    "workmanagement": ["#79a8f3", "#cbf379", "#f379ee", "#79f3e3", "#79f3d3"],
+    "signagemanagementedge": ["#79a8f3", "#cbf379", "#f379ee", "#79f3e3", "#79f3d3"],
+    "workmanagementedge": ["#79a8f3", "#cbf379", "#f379ee", "#79f3e3", "#79f3d3"],
     "restrictedarea": [
         "plum",
         "violet",
@@ -682,31 +696,28 @@ SITE_MODEL_ENABLED = True
 COURSE_MODEL_ENABLED = True
 # This model is necessary for most of the other. Can be add in case if the paths will not be change by anyone.
 PATH_MODEL_ENABLED = True
+SENSITIVE_AREA_MODEL_ENABLED = True
 
-
-TREKKING_TOPOLOGY_ENABLED = True
 FLATPAGES_ENABLED = True
 TOURISM_ENABLED = True
 
 TREK_SIGNAGE_INTERSECTION_MARGIN = (
-    500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+    500  # meters (used only on objects that are not coupled to the path network)
 )
 TREK_INFRASTRUCTURE_INTERSECTION_MARGIN = (
-    500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+    500  # meters (used only on objects that are not coupled to the path network)
 )
 TREK_POI_INTERSECTION_MARGIN = (
-    500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+    500  # meters (used only on objects that are not coupled to the path network)
 )
 TOURISM_INTERSECTION_MARGIN = 500  # meters (always used)
 DIVING_INTERSECTION_MARGIN = 500  # meters (always used)
 INTERVENTION_INTERSECTION_MARGIN = (
-    500  # meters (used only if TREKKING_TOPOLOGY_ENABLED = False)
+    500  # meters (used only on objects that are not coupled to the path network)
 )
 OUTDOOR_INTERSECTION_MARGIN = 500  # meters (always used)
 MAINTENANCE_INTERSECTION_MARGIN = 500  # meters (used for intersections with outdoor)
 REPORT_INTERSECTION_MARGIN = 500  # meters (always used)
-
-SIGNAGE_LINE_ENABLED = False
 
 TREK_POINTS_OF_REFERENCE_ENABLED = True
 OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED = True
@@ -1042,9 +1053,8 @@ POPUP_CONTENT = {
     "service": [],
 }
 
-# Override with prod/dev/tests/tests_nds settings
 ENV = os.getenv("ENV", "prod")
-assert ENV in ("prod", "dev", "tests", "tests_nds")
+assert ENV in ("prod", "dev", "tests")
 env_settings_file = os.path.join(os.path.dirname(__file__), f"env_{ENV}.py")
 with open(env_settings_file) as f:
     logger.info("Read env configuration from %s", env_settings_file)
@@ -1068,8 +1078,10 @@ MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 MAPENTITY_CONFIG["TRANSLATED_LANGUAGES"] = [
     language for language in LANGUAGES_LIST if language[0] in MODELTRANSLATION_LANGUAGES
 ]
-LEAFLET_CONFIG["TILES_EXTENT"] = SPATIAL_EXTENT
-LEAFLET_CONFIG["SPATIAL_EXTENT"] = api_bbox(SPATIAL_EXTENT, VIEWPORT_MARGIN)
+
+BOUNDS, CENTER = get_maplibre_config(SPATIAL_EXTENT, VIEWPORT_MARGIN)
+MAPLIBRE_CONFIG_OVERRIDES["BOUNDS"] = BOUNDS
+MAPLIBRE_CONFIG_OVERRIDES["DEFAULT_CENTER"] = CENTER
 
 if (
     SURICATE_WORKFLOW_ENABLED

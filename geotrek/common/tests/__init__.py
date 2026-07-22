@@ -1,7 +1,6 @@
 import os
 from unittest import mock
 
-from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Permission, User
 from django.core.files.storage import default_storage
@@ -24,10 +23,7 @@ from .factories import AttachmentAccessibilityFactory, AttachmentImageFactory
 
 class CommonTest(AuthentFixturesTest, MapEntityTest):
     def get_bad_data(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            return {"topology": "doh!"}, _("Topology is not valid.")
-        else:
-            return {"geom": "doh!"}, _("Invalid geometry value.")
+        return {"topology": "doh!"}, _("Topology is not valid.")
 
     @mock.patch("mapentity.helpers.requests")
     def test_document_public_booklet_export(self, mock_requests):

@@ -3,56 +3,14 @@ from crispy_forms.layout import Div, Fieldset, Layout
 from django import forms
 from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
+from mapentity.widgets import MapWidget
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.fields import SnappedLineStringField, TopologyField
+from geotrek.core.mixins.forms import LineTopologyFormMixin
 from geotrek.core.models import CertificationTrail, Path, Trail
-from geotrek.core.widgets import LineTopologyWidget
-
-
-class TopologyForm(CommonForm):
-    """
-    This form is a bit specific :
-
-        We use an extra field (topology) in order to edit the whole model instance.
-        The whole instance, because we use concrete inheritance for topology models.
-        Thus, at init, we load the instance into field, and at save, we
-        save the field into the instance.
-
-    The geom field is fully ignored, since we edit a topology.
-    """
-
-    topology = TopologyField(label="")
-
-    geomfields = ["topology"]
-
-    class Meta(CommonForm.Meta):
-        fields = [*CommonForm.Meta.fields, "topology"]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk:
-            self.fields["topology"].initial = self.instance
-
-    def clean(self, *args, **kwargs):
-        data = super().clean()
-        # geom is computed at db-level and never edited
-        if "geom" in self.errors:
-            del self.errors["geom"]
-        return data
-
-    def save(self, *args, **kwargs):
-        topology = self.cleaned_data.pop("topology")
-        instance = super().save(*args, **kwargs)
-        was_edited = instance.pk != topology.pk
-        if was_edited:
-            instance.mutate(topology)
-        return instance
 
 
 class PathForm(CommonForm):
-    geom = SnappedLineStringField()
-
     reverse_geom = forms.BooleanField(
         required=False,
         label=_("Reverse path"),
@@ -63,6 +21,18 @@ class PathForm(CommonForm):
 
     class Meta(CommonForm.Meta):
         model = Path
+        widgets = {
+            "geom": MapWidget(
+                geom_type="LINESTRING",
+                attrs={
+                    "snapping_config": {
+                        "enabled": True,
+                        "layers": ["core.Path"],
+                        "snap_distance": 20,
+                    },
+                },
+            ),
+        }
         fields = [
             *CommonForm.Meta.fields,
             "structure",
@@ -131,7 +101,7 @@ class PathForm(CommonForm):
         return path
 
 
-class TrailForm(TopologyForm):
+class TrailForm(LineTopologyFormMixin):
     fieldslayout = [
         Div(
             "structure",
@@ -144,10 +114,10 @@ class TrailForm(TopologyForm):
         )
     ]
 
-    class Meta(CommonForm.Meta):
+    class Meta(LineTopologyFormMixin.Meta):
         model = Trail
         fields = [
-            *CommonForm.Meta.fields,
+            *LineTopologyFormMixin.Meta.fields,
             "structure",
             "name",
             "category",
@@ -155,12 +125,6 @@ class TrailForm(TopologyForm):
             "arrival",
             "comments",
         ]
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        modifiable = self.fields["topology"].widget.modifiable
-        self.fields["topology"].widget = LineTopologyWidget()
-        self.fields["topology"].widget.modifiable = modifiable
 
 
 class CertificationTrailForm(forms.ModelForm):

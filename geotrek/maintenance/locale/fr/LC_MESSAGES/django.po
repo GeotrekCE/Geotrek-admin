@@ -123,18 +123,14 @@ msgstr "Date de fin"
 msgid "Mandays"
 msgstr "Jours-Hommes"
 
-#, python-format
-msgid "On: %(target)s"
-msgstr "Sur : %(target)s"
-
-msgid "Paths"
-msgstr "Tronçons"
-
 msgid "Begin date is after end date"
 msgstr "La date de début est après la date de fin"
 
 msgid "End date is required."
 msgstr "La date de fin est obligatoire."
+
+msgid "A geometry must be provided."
+msgstr "Une géométrie doit être renseignée."
 
 msgid "Fundings"
 msgstr "Financements"
@@ -207,6 +203,9 @@ msgstr "Intervention"
 
 msgid "Interventions"
 msgstr "Interventions"
+
+msgid "Paths"
+msgstr "Tronçons"
 
 msgid "Deleted"
 msgstr "Supprimé"

@@ -450,10 +450,6 @@ msgstr ""
 msgid "File does not exists at: %(filename)s"
 msgstr ""
 
-#, python-format
-msgid "Model %(model)s"
-msgstr ""
-
 msgid "Geotrek-admin"
 msgstr ""
 
@@ -669,9 +665,6 @@ msgid "%s min"
 msgstr ""
 
 msgid "Topology is not valid."
-msgstr ""
-
-msgid "Invalid geometry value."
 msgstr ""
 
 msgctxt "North"

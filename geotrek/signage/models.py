@@ -151,15 +151,11 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 
     @classmethod
     def path_signages(cls, path):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            return cls.objects.existing().filter(aggregations__path=path).distinct("pk")
-        else:
-            area = path.geom.buffer(settings.TREK_SIGNAGE_INTERSECTION_MARGIN)
-            return cls.objects.existing().filter(geom__intersects=area)
+        return cls.objects.existing().filter(aggregations__path=path).distinct("pk")
 
     @classmethod
     def topology_signages(cls, topology, queryset=None):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
+        if topology.coupled:
             qs = cls.overlapping(topology, all_objects=queryset)
         else:
             area = topology.geom.buffer(settings.TREK_SIGNAGE_INTERSECTION_MARGIN)

@@ -54,6 +54,9 @@ msgstr ""
 msgid "Position of the blade on the signage (top=1). Assigning a position that has already been used will shift the positions of the other blades"
 msgstr ""
 
+msgid "Implantation year"
+msgstr ""
+
 msgid "Sealing"
 msgstr ""
 

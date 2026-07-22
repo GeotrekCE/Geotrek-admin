@@ -2,23 +2,21 @@ import json
 import logging
 
 from django import forms
-from django.conf import settings
-from django.contrib.gis.forms.fields import LineStringField
-from django.contrib.gis.geos import LineString, Point, fromstr
+from django.contrib.gis.forms import GeometryField
+from django.contrib.gis.geos import LineString, Point
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
+from mapentity.widgets import MapWidget
 
-from .models import Path, Topology
-from .widgets import PointLineTopologyWidget, SnappedLineStringWidget
+from .models import Topology
+from .widgets import GeotrekMapWidget, LineTopologyWidget, PointLineTopologyWidget
 
 logger = logging.getLogger(__name__)
 
 
 class TopologyField(forms.CharField):
-    """
-    Instead of building a Point geometry, this field builds a Topology.
-    """
+    """Instead of building a geometry, this field builds a Topology."""
 
     widget = PointLineTopologyWidget
 
@@ -42,58 +40,94 @@ class TopologyField(forms.CharField):
             raise ValidationError(self.error_messages["invalid_topology"])
 
 
-class SnappedLineStringField(LineStringField):
+class PointTopoGeomField(TopologyField):
+    """This field builds a point topology or geometry from a point geometry, drawn using MapWidget."""
+
+    widget = MapWidget(
+        geom_type="POINT",
+        attrs={
+            "snapping_config": {
+                "enabled": True,
+                "layers": ["core.Path"],
+                "snap_distance": 20,
+            }
+        },
+    )
+
+    def clean(self, value):
+        if value in validators.EMPTY_VALUES:
+            if self.required:
+                raise ValidationError(self.error_messages["empty_topology"])
+            return None
+        try:
+            objdict = json.loads(value)
+            coords = objdict.get("coordinates")
+            if coords is None:
+                raise ValidationError(self.error_messages["invalid_topology"])
+            return Topology.deserialize(f'{{"lat": {coords[1]}, "lng": {coords[0]}}}')
+        except Topology.DoesNotExist:
+            raise ValidationError(self.error_messages["unknown_topology"] % value)
+        except ValueError as e:
+            logger.warning("User input error: %s", e)
+            raise ValidationError(self.error_messages["invalid_topology"])
+
+
+class LineTopologyField(TopologyField):
+    """This fields builds a line topology."""
+
+    widget = LineTopologyWidget()
+
+
+class PointLineTopoGeomField(GeometryField):
     """
-    It's a LineString field, with additional information about snapped vertices.
+    This fields builds either:
+      - a point geometry or point topology (depending on whether paths exist);
+      - a line geometry.
     """
 
-    widget = SnappedLineStringWidget
+    geom_type = "GEOMETRY"
+    widget = GeotrekMapWidget(
+        attrs={
+            "allowed_types": ["POINT", "LINESTRING"],
+            "geom_type": "GEOMETRY",
+            "snapping_config": {
+                "enabled": True,
+                "layers": ["core.Path"],
+                "snap_distance": 20,
+            },
+        }
+    )
 
-    default_error_messages = {
-        "invalid_snap_line": _("Linestring invalid snapping."),
-    }
+    def __init__(self, target_map=None, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.widget.attrs["target_map"] = target_map
 
     def clean(self, value):
         """
-        A serialized dict is received, with ``geom`` and ``snaplist``.
-        We use ``snaplist`` to snap geometry vertices.
+        If the geometry is a line, return it as a geometry.
+        If it is a point, return either a topology or a geometry.
         """
         if value in validators.EMPTY_VALUES:
-            return super().clean(value)
+            if self.required:
+                raise ValidationError(_("A geometry must be provided."))
+            return None
         try:
-            value = json.loads(value)
-            geom = value.get("geom")
-            if geom is None:
-                msg = "No geom found in JSON"
-                raise ValueError(msg)
-
-            if geom in validators.EMPTY_VALUES:
-                return super().clean(value)
-
-            # Geometry is like usual
-            geom = fromstr(geom)
-            if geom is None:
-                msg = "Invalid geometry in JSON"
-                raise ValueError(msg)
-            geom.srid = settings.API_SRID
-            geom.transform(settings.SRID)
-
-            # We have the list of snapped paths, we use them to modify the
-            # geometry vertices
-            snaplist = value.get("snap", [])
-            if geom.num_coords != len(snaplist):
-                msg = f"Snap list length != {geom.num_coords} ({snaplist})"
-                raise ValueError(msg)
-            paths = [
-                Path.objects.get(pk=pk) if pk is not None else None for pk in snaplist
-            ]
-            coords = list(geom.coords)
-            for i, (vertex, path) in enumerate(zip(coords, paths)):
-                if path:
-                    # Snap vertex on path
-                    snap = path.snap(Point(*vertex, srid=geom.srid))
-                    coords[i] = snap.coords
-            return LineString(*coords, srid=settings.SRID)
-        except (TypeError, Path.DoesNotExist, ValueError) as e:
+            raw_geom = json.loads(value)
+            geom = super().clean(value)
+            if isinstance(geom, LineString):
+                return geom
+            if not isinstance(geom, Point):
+                raise ValidationError(
+                    _("The geometry should either be a point or a line.")
+                )
+            coords = raw_geom.get("coordinates")
+            if coords is None:
+                raise ValidationError(
+                    _("Point geometry is incorrect (missing coordinates).")
+                )
+            return Topology.deserialize(f'{{"lat": {coords[1]}, "lng": {coords[0]}}}')
+        except Topology.DoesNotExist:
+            raise ValidationError(_("Topology %s does not exist.") % value)
+        except ValueError as e:
             logger.warning("User input error: %s", e)
-            raise ValidationError(self.error_messages["invalid_snap_line"])
+            raise ValidationError(_("User input error"))
