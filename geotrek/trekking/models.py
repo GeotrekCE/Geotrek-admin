@@ -530,7 +530,7 @@ class Trek(
 
     @classmethod
     def topology_treks(cls, topology, queryset=None):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
+        if topology.coupled:
             qs = cls.overlapping(topology, all_objects=queryset)
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)
@@ -1128,7 +1128,7 @@ class Service(StructureRelated, GeotrekMapEntityMixin, ExternalSourceMixin, Topo
 
     @classmethod
     def topology_services(cls, topology, queryset=None):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
+        if topology.coupled:
             qs = cls.overlapping(topology, all_objects=queryset)
         else:
             area = topology.geom.buffer(settings.TREK_POI_INTERSECTION_MARGIN)

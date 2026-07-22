@@ -329,7 +329,7 @@ class Intervention(
                 ContentType.objects.get_by_natural_key("outdoor", "site"),
                 ContentType.objects.get_by_natural_key("outdoor", "course"),
             ]
-        if settings.TREKKING_TOPOLOGY_ENABLED:
+        if obj.coupled:
             topologies = list(Topology.overlapping(obj).values_list("pk", flat=True))
         else:
             area = obj.geom.buffer(settings.INTERVENTION_INTERSECTION_MARGIN)

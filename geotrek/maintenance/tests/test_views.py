@@ -425,9 +425,6 @@ class InterventionViewsTest(CommonTest):
         self.assertEqual(intervention.target.implantation_year, target_year)
 
     def test_form_default_stake(self):
-        """
-        Without segmentation dynamic we do not have paths so we can't put any stake by default coming from paths
-        """
         good_data = self.get_good_data()
         good_data["stake"] = ""
         good_data["topology"] = f"""

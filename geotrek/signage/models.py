@@ -151,12 +151,7 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
 
     @classmethod
     def path_signages(cls, path):
-        coupled_qs = cls.objects.existing().filter(aggregations__path=path)
-        area = path.geom.buffer(settings.TREK_SIGNAGE_INTERSECTION_MARGIN)
-        decoupled_qs = cls.objects.existing().filter(
-            coupled=False, geom__intersects=area
-        )
-        return (coupled_qs | decoupled_qs).distinct()
+        return cls.objects.existing().filter(aggregations__path=path).distinct("pk")
 
     @classmethod
     def topology_signages(cls, topology, queryset=None):
