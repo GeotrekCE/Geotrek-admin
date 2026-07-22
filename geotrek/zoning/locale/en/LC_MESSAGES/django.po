@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 10:08+0000\n"
+"POT-Creation-Date: 2026-07-22 10:38+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,6 +27,15 @@ msgstr ""
 msgid "Zoning"
 msgstr ""
 
+msgid "Practicable"
+msgstr ""
+
+msgid "Possibly practicable"
+msgstr ""
+
+msgid "Not practicable"
+msgstr ""
+
 msgid "City"
 msgstr ""
 
@@ -39,10 +48,13 @@ msgstr ""
 msgid "Restricted area"
 msgstr ""
 
-msgid "Restricted areas"
+msgid "Name"
 msgstr ""
 
-msgid "Name"
+msgid "Provider"
+msgstr ""
+
+msgid "Restricted areas"
 msgstr ""
 
 msgid "Published"
@@ -60,10 +72,61 @@ msgstr ""
 msgid "Districts"
 msgstr ""
 
+msgid "Vigilance area type"
+msgstr ""
+
+msgid "Vigilance area types"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Start date"
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
+msgid "Practicability"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Practical information"
+msgstr ""
+
+msgid "External information URL"
+msgstr ""
+
+msgid "Portals"
+msgstr ""
+
+msgid "Sources"
+msgstr ""
+
+msgid "Start date is after end date"
+msgstr ""
+
+msgid "Vigilance area"
+msgstr ""
+
+msgid "Vigilance areas"
+msgstr ""
+
 #, python-brace-format
 msgid "Invalid geometry for field '{src}'"
 msgstr ""
 
 #, python-brace-format
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "External id"
+msgstr ""
+
+msgid "Thumbnail"
 msgstr ""
