@@ -54,9 +54,6 @@ msgstr "Type de zone de vigilance"
 msgid "Vigilance area Practicability"
 msgstr "Praticabilité de la zone de vigilance"
 
-msgid "Vigilance area"
-msgstr "Zone de vigilance"
-
 msgid "Name"
 msgstr "Nom"
 
@@ -156,6 +153,9 @@ msgstr " - jours %s "
 #, python-format
 msgid " - months %s"
 msgstr " - mois %s"
+
+msgid "Vigilance area"
+msgstr "Zone de vigilance"
 
 msgid "Vigilance areas"
 msgstr "Zones de vigilance"
