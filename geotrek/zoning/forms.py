@@ -115,3 +115,7 @@ class VigilanceAreaForm(CommonForm):
             "active_months",
             "geom",
         ]
+        widgets = {
+            "start_date": forms.TextInput(attrs={"type": "date"}),
+            "end_date": forms.TextInput(attrs={"type": "date"}),
+        }
