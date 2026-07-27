@@ -1,4 +1,5 @@
 from dal import autocomplete
+from django import forms
 from django.db.models import Exists, OuterRef, Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import FilterSet, ModelMultipleChoiceFilter, filters
@@ -106,6 +107,20 @@ class VigilanceAreaFilterSet(
         queryset=Provider.objects.filter(trek__isnull=False).distinct(),
         widget=autocomplete.Select2Multiple(),
     )
+    after = filters.DateFilter(
+        label=_("After"),
+        lookup_expr="gte",
+        field_name="end_date",
+        widget=forms.TextInput(attrs={"class": "form-control form-control-sm"}),
+    )
+    before = filters.DateFilter(
+        label=_("Before"),
+        lookup_expr="lte",
+        field_name="start_date",
+        widget=forms.TextInput(attrs={"class": "form-control form-control-sm"}),
+    )
+    period_active = filters.BooleanFilter(label=_("Period active"))
+    active_today = filters.BooleanFilter(label=_("Active today"))
 
     class Meta(StructureRelatedFilterSet.Meta):
         model = VigilanceArea
@@ -118,4 +133,6 @@ class VigilanceAreaFilterSet(
             "sources",
             "portals",
             "provider",
+            "period_active",
+            "active_today",
         ]

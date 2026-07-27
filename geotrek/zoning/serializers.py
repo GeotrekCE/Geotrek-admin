@@ -1,6 +1,7 @@
 from django.conf import settings
 from drf_dynamic_fields import DynamicFieldsMixin
 from mapentity.serializers import MapentityGeojsonModelSerializer
+from mapentity.serializers.fields import MapentityDatatableBooleanField
 from rest_framework import serializers
 from rest_framework_gis import serializers as geo_serializers
 
@@ -96,6 +97,7 @@ class VigilanceAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source="name_display")
     thumbnail = serializers.CharField(source="thumbnail_display")
     practicability = serializers.SerializerMethodField()
+    period_active = MapentityDatatableBooleanField()
 
     def get_practicability(self, obj):
         return obj.get_practicability_display()
