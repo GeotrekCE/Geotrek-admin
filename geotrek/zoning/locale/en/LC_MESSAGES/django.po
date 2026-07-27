@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-22 10:38+0200\n"
+"POT-Creation-Date: 2026-07-27 10:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,6 +52,33 @@ msgid "Name"
 msgstr ""
 
 msgid "Provider"
+msgstr ""
+
+msgid "After"
+msgstr ""
+
+msgid "Before"
+msgstr ""
+
+msgid "Period active"
+msgstr ""
+
+msgid "Active today"
+msgstr ""
+
+msgid "Active days"
+msgstr ""
+
+msgid "Days of the week when the vigilance area is active. Empty equals all week."
+msgstr ""
+
+msgid "Active months"
+msgstr ""
+
+msgid "Months of the year when the vigilance area is active. Empty equals all year."
+msgstr ""
+
+msgid "Period"
 msgstr ""
 
 msgid "Restricted areas"
@@ -108,6 +135,22 @@ msgstr ""
 msgid "Start date is after end date"
 msgstr ""
 
+#, python-format
+msgid "From %s to %s"
+msgstr ""
+
+#, python-format
+msgid "From %s"
+msgstr ""
+
+#, python-format
+msgid " - days %s"
+msgstr ""
+
+#, python-format
+msgid " - months %s"
+msgstr ""
+
 msgid "Vigilance area"
 msgstr ""
 
@@ -125,8 +168,11 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-msgid "External id"
+msgid "Thumbnail"
 msgstr ""
 
-msgid "Thumbnail"
+msgid "All week"
+msgstr ""
+
+msgid "All year"
 msgstr ""
