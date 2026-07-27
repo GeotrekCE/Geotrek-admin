@@ -107,7 +107,7 @@ class VigilanceAreaFormTest(TestCase):
         """
         area = VigilanceAreaFactory()
         data = {
-            "name_fr": "Area test",
+            "name_en": "Area test",
             "structure": area.structure.pk,
             "vigilance_area_type": area.vigilance_area_type.pk,
             "practicability": area.practicability,
