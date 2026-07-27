@@ -1,11 +1,13 @@
+import uuid
+
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields.array import ArrayField
 from django.contrib.postgres.indexes import GistIndex
 from django.core.exceptions import ValidationError
 from django.db.models import Index
-from django.utils.timezone import now
 from django.utils.translation import gettext_lazy as _
+from django.views.generic.dates import timezone_today
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
@@ -18,6 +20,7 @@ from geotrek.common.mixins.models import (
     TimeStampedModelMixin,
 )
 
+from ..common.functions import GenRandomUUID
 from .choices import MonthChoices, Practicability, WeekdayChoices
 from .managers import VigilanceAreaManager
 
@@ -157,7 +160,7 @@ class VigilanceArea(
 ):
     name = models.CharField(max_length=250, verbose_name=_("Name"), db_index=True)
     description = models.TextField(verbose_name=_("Description"), blank=True)
-    start_date = models.DateField(verbose_name=_("Start date"), default=now)
+    start_date = models.DateField(verbose_name=_("Start date"), default=timezone_today)
     end_date = models.DateField(verbose_name=_("End date"), blank=True, null=True)
     practicability = models.CharField(
         verbose_name=_("Practicability"),
@@ -212,6 +215,9 @@ class VigilanceArea(
         blank=True,
     )
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
+    uuid = models.UUIDField(
+        default=uuid.uuid4, editable=False, unique=True, db_default=GenRandomUUID()
+    )
 
     def __str__(self):
         return self.name
