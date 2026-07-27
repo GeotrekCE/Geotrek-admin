@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from crispy_forms.layout import HTML, Div, Fieldset
+from django.forms.widgets import TextInput
 from django.utils.translation import gettext_lazy as _
 from mapentity.widgets import SelectMultipleWithPop
 
@@ -191,7 +192,11 @@ class TouristicEventForm(CommonForm):
             "price",
         ]
         model = TouristicEvent
-        widgets = {"geom": AutoLocateMapWidget()}
+        widgets = {
+            "geom": AutoLocateMapWidget(),
+            "begin_date": TextInput(attrs={"type": "date"}),
+            "end_date": TextInput(attrs={"type": "date"}),
+        }
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
