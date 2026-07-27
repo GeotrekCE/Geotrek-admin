@@ -10,9 +10,9 @@ class VigilanceAreaManager(models.Manager):
         qs = qs.filter(period_active=True)
         return qs
 
-    def not_finished(self):
+    def finished(self):
         qs = self.get_queryset()
-        qs = qs.filter(Q(end_date__isnull=True) | Q(end_date__gte=timezone_today()))
+        qs = qs.filter(end_date__isnull=False, end_date__lt=timezone_today())
         return qs
 
     def active_by_date(self, start_date=None, end_date=None):
