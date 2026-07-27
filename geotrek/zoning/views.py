@@ -219,10 +219,7 @@ class CityViewSet(
 
 class VigilanceAreaList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = VigilanceArea.objects.all()
-    mandatory_columns = [
-        "id",
-        "name",
-    ]
+    mandatory_columns = ["id", "name", "period_active"]
     default_extra_columns = [
         "vigilance_area_type",
         "practicability",
@@ -237,7 +234,10 @@ class VigilanceAreaFilter(MapEntityFilter):
 
 class VigilanceAreaFormatList(MapEntityFormat, VigilanceAreaList):
     filterset_class = VigilanceAreaFilterSet
-    mandatory_columns = ["id", "name"]
+    mandatory_columns = [
+        "id",
+        "name",
+    ]
     default_extra_columns = [
         "vigilance_area_type",
         "practicability",

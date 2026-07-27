@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.db import models
+from django.contrib.postgres.fields.array import ArrayField
 from django.contrib.postgres.indexes import GistIndex
 from django.core.exceptions import ValidationError
 from django.db.models import Index
@@ -17,7 +18,8 @@ from geotrek.common.mixins.models import (
     TimeStampedModelMixin,
 )
 
-from .choices import Practicability
+from .choices import MonthChoices, Practicability, WeekdayChoices
+from .managers import VigilanceAreaManager
 
 
 class RestrictedAreaType(models.Model):
@@ -187,6 +189,28 @@ class VigilanceArea(
         related_name="vigilance_areas",
         verbose_name=_("Sources"),
     )
+    active_days = ArrayField(
+        models.IntegerField(
+            choices=WeekdayChoices.choices,
+        ),
+        verbose_name=_("Active days"),
+        help_text=_(
+            "Days of the week when the vigilance area is active. Empty equals all week."
+        ),
+        default=list,
+        blank=True,
+    )
+    active_months = ArrayField(
+        models.IntegerField(
+            choices=MonthChoices.choices,
+        ),
+        verbose_name=_("Active months"),
+        default=list,
+        help_text=_(
+            "Months of the year when the vigilance area is active. Empty equals all year."
+        ),
+        blank=True,
+    )
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
 
     def __str__(self):
@@ -196,6 +220,40 @@ class VigilanceArea(
         if self.start_date and self.end_date:
             if self.start_date > self.end_date:
                 raise ValidationError({"start_date": _("Start date is after end date")})
+
+    @property
+    def active_days_labels(self):
+        # Mapping des entiers vers les labels textuels
+        choices_map = dict(WeekdayChoices.choices)
+        return [choices_map.get(day) for day in self.active_days]
+
+    @property
+    def active_months_labels(self):
+        choices_map = dict(MonthChoices.choices)
+        return [choices_map.get(month) for month in self.active_months]
+
+    @property
+    def period_active_verbose_name(self):
+        return _("Period active")
+
+    @property
+    def active_today_verbose_name(self):
+        return _("Active today")
+
+    @property
+    def period_resume(self):
+        if self.end_date:
+            result = _("From %s to %s") % (self.start_date, self.end_date)
+        else:
+            result = _("From %s") % self.start_date
+
+        if self.active_days:
+            result += _(" - days %s") % (",".join(self.active_days_labels))
+        if self.active_months:
+            result += _(" - months %s") % (",".join(self.active_months_labels))
+        return result
+
+    objects = VigilanceAreaManager()
 
     class Meta:
         verbose_name = _("Vigilance area")
