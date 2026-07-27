@@ -54,9 +54,6 @@ msgstr ""
 msgid "Vigilance area Practicability"
 msgstr ""
 
-msgid "Vigilance area"
-msgstr ""
-
 msgid "Name"
 msgstr ""
 
@@ -155,6 +152,9 @@ msgstr ""
 
 #, python-format
 msgid " - months %s"
+msgstr ""
+
+msgid "Vigilance area"
 msgstr ""
 
 msgid "Vigilance areas"
