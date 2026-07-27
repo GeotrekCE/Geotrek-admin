@@ -294,6 +294,7 @@ PROJECT_APPS += (
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
     "dal",
     "dal_select2",
     "clearcache",

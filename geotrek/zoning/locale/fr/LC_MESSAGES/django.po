@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-22 10:38+0200\n"
+"POT-Creation-Date: 2026-07-27 10:37+0200\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/fr/>\n"
@@ -31,10 +31,10 @@ msgid "Practicable"
 msgstr "Pratiquable"
 
 msgid "Possibly practicable"
-msgstr "Possiblement praticable"
+msgstr "Possiblement pratiquable"
 
 msgid "Not practicable"
-msgstr "Non praticable"
+msgstr "Non pratiquable"
 
 msgid "City"
 msgstr "Commune"
@@ -53,6 +53,33 @@ msgstr "Nom"
 
 msgid "Provider"
 msgstr "Fournisseur"
+
+msgid "After"
+msgstr "Après"
+
+msgid "Before"
+msgstr "Avant"
+
+msgid "Period active"
+msgstr "Période active"
+
+msgid "Active today"
+msgstr "Actif aujourd'hui"
+
+msgid "Active days"
+msgstr "Jours actifs"
+
+msgid "Days of the week when the vigilance area is active. Empty equals all week."
+msgstr "Jours de la semaine pendant lesquels la zone de vigilance est active. Vide signifie toute la semaine."
+
+msgid "Active months"
+msgstr "Mois actifs"
+
+msgid "Months of the year when the vigilance area is active. Empty equals all year."
+msgstr "Mois de l'année pendant lesquels la zone de vigilance est active. Vide signifie toute l'année."
+
+msgid "Period"
+msgstr "Période"
 
 msgid "Restricted areas"
 msgstr "Zones réglementaires"
@@ -108,6 +135,22 @@ msgstr "Sources"
 msgid "Start date is after end date"
 msgstr "La date de début est après la date de fin"
 
+#, python-format
+msgid "From %s to %s"
+msgstr "Du %s au %s"
+
+#, python-format
+msgid "From %s"
+msgstr "À partir du %s"
+
+#, python-format
+msgid " - days %s"
+msgstr " - jours %s "
+
+#, python-format
+msgid " - months %s"
+msgstr " - mois %s"
+
 msgid "Vigilance area"
 msgstr "Zone de vigilance"
 
@@ -125,8 +168,11 @@ msgstr "Le type de géométrie du champ '{src}' est invalide. Il devrait être (
 msgid "None"
 msgstr "Aucun(e)"
 
-msgid "External id"
-msgstr "ID externe"
-
 msgid "Thumbnail"
 msgstr "Miniature"
+
+msgid "All week"
+msgstr "Toute la semaine"
+
+msgid "All year"
+msgstr "Toute l'année"

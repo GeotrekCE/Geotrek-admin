@@ -1,14 +1,20 @@
 import json
 
 from django.urls import reverse
+from mapentity.tests import MapEntityTest, SuperUserFactory
 from mapentity.tests.factories import UserFactory
 from rest_framework.test import APITestCase
 
+from geotrek.authent.tests.factories import StructureFactory
+from geotrek.zoning.choices import Practicability
+from geotrek.zoning.models import VigilanceArea
 from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
     RestrictedAreaFactory,
     RestrictedAreaTypeFactory,
+    VigilanceAreaFactory,
+    VigilanceAreaTypeFactory,
 )
 
 
@@ -265,4 +271,65 @@ class RestrictedAreaViewTest(AutocompleteTestMixin, LandLayersViewsTest, APITest
         self.assertEqual(
             {area["id"] for area in response.json()["results"]},
             {area.pk for area in type_1_areas},
+        )
+
+
+class VigilanceAreaTestCase(MapEntityTest):
+    model = VigilanceArea
+    modelfactory = VigilanceAreaFactory
+    userfactory = SuperUserFactory
+    maxDiff = None
+
+    def get_good_data(self):
+        area_type = VigilanceAreaTypeFactory()
+        structure = StructureFactory.create()
+        return {
+            "id": 1,
+            "name_en": "my area",
+            "practicability": Practicability.PRACTICABLE.value,
+            "vigilance_area_type": area_type.pk,
+            "structure": structure.pk,
+            "start_date": "2026-07-06",
+            "geom": "MULTIPOLYGON(((-0.3142392 -1.0870745, -0.4442674 1.9698002, 2.6553568 2.0446445, 2.6683833 -1.0177449, -0.3142392 -1.0870745)))",
+        }
+
+    extra_column_list = ["eid"]
+    expected_column_list_extra = ["id", "physical_type", "eid"]
+    expected_column_formatlist_extra = ["id", "physical_type", "eid"]
+    expected_json_geom = {
+        "coordinates": [
+            [
+                [
+                    [-0.3142392, -1.0870745],
+                    [-0.4442674, 1.9698002],
+                    [2.6553568, 2.0446445],
+                    [2.6683833, -1.0177449],
+                    [-0.3142392, -1.0870745],
+                ]
+            ]
+        ],
+        "type": "MultiPolygon",
+    }
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {"id": self.obj.pk, "name": self.obj.name, "published": False}
+
+    def get_expected_datatables_attrs(self):
+        return {
+            "id": self.obj.pk,
+            "name": f'<a data-pk="{self.obj.pk}" href="/vigilancearea/{self.obj.pk}/" title="{self.obj.name}">{self.obj.name}</a>',
+            "period_active": '<i class="bi bi-check-circle text-success"></i>',
+            "practicability": Practicability.PRACTICABLE.label,
+            "vigilance_area_type": self.obj.vigilance_area_type.name,
+        }
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <a id="detail-btn" href="/vigilancearea/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
+            f"</div>"
         )

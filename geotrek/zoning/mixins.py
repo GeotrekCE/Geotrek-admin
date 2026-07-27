@@ -6,7 +6,7 @@ from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.utils import intersecting, uniquify
 
-from .models import City, District, RestrictedArea
+from .models import City, District, RestrictedArea, VigilanceArea
 
 
 class ZoningPropertiesMixin:
@@ -103,3 +103,18 @@ class ZoningPropertiesMixin:
         if not hasattr(self, "published"):
             return self.cities
         return [city for city in self.cities if city.published]
+
+    def get_vigilance_areas(self):
+        qs = VigilanceArea.objects.active()
+        qs = qs.filter(geom__intersects=self.geom)
+        return qs
+
+    @cached_property
+    def vigilance_areas(self):
+        return self.get_vigilance_areas()
+
+    @cached_property
+    def published_vigilance_areas(self):
+        if not hasattr(self, "published"):
+            return self.vigilance_areas
+        return [area for area in self.vigilance_areas if area.published]
