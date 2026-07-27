@@ -105,8 +105,11 @@ class ZoningPropertiesMixin:
         return [city for city in self.cities if city.published]
 
     def get_vigilance_areas(self):
-        qs = VigilanceArea.objects.active()
-        qs = qs.filter(geom__intersects=self.geom)
+        if self.geom:
+            qs = VigilanceArea.objects.active()
+            qs = qs.filter(geom__intersects=self.geom)
+        else:
+            qs = VigilanceArea.objects.none()
         return qs
 
     @cached_property
