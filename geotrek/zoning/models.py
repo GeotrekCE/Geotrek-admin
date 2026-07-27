@@ -6,6 +6,7 @@ from django.contrib.postgres.fields.array import ArrayField
 from django.contrib.postgres.indexes import GistIndex
 from django.core.exceptions import ValidationError
 from django.db.models import Index
+from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.dates import timezone_today
 
@@ -160,7 +161,9 @@ class VigilanceArea(
 ):
     name = models.CharField(max_length=250, verbose_name=_("Name"), db_index=True)
     description = models.TextField(verbose_name=_("Description"), blank=True)
-    start_date = models.DateField(verbose_name=_("Start date"), default=timezone_today)
+    start_date = models.DateField(
+        verbose_name=_("Start date"), default=timezone_today, db_default=Now()
+    )
     end_date = models.DateField(verbose_name=_("End date"), blank=True, null=True)
     practicability = models.CharField(
         verbose_name=_("Practicability"),
