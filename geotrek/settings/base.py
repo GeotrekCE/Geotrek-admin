@@ -133,7 +133,6 @@ LANGUAGES = (
     ("it", _("Italian")),
     ("es", _("Spanish")),
 )
-LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "fr")
 
 MODELTRANSLATION_LANGUAGES = tuple(os.getenv("LANGUAGES", "fr en").split(" "))
 
@@ -279,8 +278,11 @@ WSGI_APPLICATION = "geotrek.wsgi.application"
 # modeltranslation should be kept before django.contrib.admin
 if "makemigrations" in sys.argv:
     PROJECT_APPS = ()
+    LANGUAGE_CODE = "en"
 else:
     PROJECT_APPS = ("modeltranslation",)
+    LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "fr")
+
 
 #
 # /!\ Application names (last levels) must be unique
