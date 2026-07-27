@@ -1,10 +1,12 @@
-from crispy_forms.layout import Div
+from crispy_forms.layout import Div, Fieldset
 from dal import autocomplete
+from dal_select2.widgets import Select2Multiple
 from django import forms
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
+from geotrek.zoning.choices import MonthChoices, WeekdayChoices
 from geotrek.zoning.models import City, District, RestrictedArea, VigilanceArea
 
 
@@ -49,6 +51,27 @@ class MapFilterForm(forms.Form):
 
 
 class VigilanceAreaForm(CommonForm):
+    active_days = forms.TypedMultipleChoiceField(
+        choices=WeekdayChoices.choices,
+        coerce=int,
+        required=False,
+        widget=Select2Multiple(choices=WeekdayChoices.choices),
+        label=_("Active days"),
+        help_text=_(
+            "Days of the week when the vigilance area is active. Empty equals all week."
+        ),
+    )
+    active_months = forms.TypedMultipleChoiceField(
+        choices=MonthChoices.choices,
+        coerce=int,
+        required=False,
+        widget=Select2Multiple(choices=MonthChoices.choices),
+        label=_("Active months"),
+        help_text=_(
+            "Months of the year when the vigilance area is active. Empty equals all year."
+        ),
+    )
+
     geomfields = ["geom"]
     fieldslayout = [
         Div(
@@ -64,6 +87,9 @@ class VigilanceAreaForm(CommonForm):
             "portals",
             "provider",
             "eid",
+            Fieldset(
+                _("Period"), "start_date", "end_date", "active_days", "active_months"
+            ),
         )
     ]
 
@@ -83,5 +109,9 @@ class VigilanceAreaForm(CommonForm):
             "sources",
             "portals",
             "published",
+            "start_date",
+            "end_date",
+            "active_days",
+            "active_months",
             "geom",
         ]
