@@ -12,7 +12,7 @@ class VigilanceAreaManager(models.Manager):
 
     def finished(self):
         qs = self.get_queryset()
-        qs = qs.filter(end_date__isnull=False, end_date__lt=timezone_today())
+        qs = qs.filter(finished=True)
         return qs
 
     def active_by_date(self, start_date=None, end_date=None):
@@ -24,7 +24,7 @@ class VigilanceAreaManager(models.Manager):
         today_number = timezone_today().weekday()
         current_month_number = timezone_today().month
 
-        # add boolean to define if period is active
+        # add boolean to define if period is active (today in active period)
         qs = qs.annotate(
             period_active=Case(
                 When(start_date__lte=today, end_date__isnull=True, then=True),
@@ -33,7 +33,15 @@ class VigilanceAreaManager(models.Manager):
                 output_field=models.BooleanField(),
             )
         )
-        # add boolean to define if active today
+        # add boolean to define if period is finished (today after end date)
+        qs = qs.annotate(
+            finished=Case(
+                When(end_date__isnull=False, end_date__lt=today, then=True),
+                default=False,
+                output_field=models.BooleanField(),
+            )
+        )
+        # add boolean to define if active today (active and day and/or month match)
         qs = qs.annotate(
             active_today=Case(
                 When(
