@@ -16,7 +16,7 @@ class VigilanceAreaManager(models.Manager):
         return qs
 
     def active_by_date(self, start_date=None, end_date=None):
-        qs = self.active()
+        qs = self.get_queryset()
         qs = (
             qs.filter(Q(end_date__isnull=True) | Q(end_date__gte=start_date))
             if start_date
