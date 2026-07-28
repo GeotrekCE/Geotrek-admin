@@ -118,6 +118,4 @@ class ZoningPropertiesMixin:
 
     @cached_property
     def published_vigilance_areas(self):
-        if not hasattr(self, "published"):
-            return self.vigilance_areas
         return [area for area in self.vigilance_areas if area.published]
