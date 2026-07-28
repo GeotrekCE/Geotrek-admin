@@ -64,11 +64,11 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
     )
 if "geotrek.zoning" in settings.INSTALLED_APPS:
     from .zoning import (
-        CityViewSet,
-        DistrictViewSet,
-        VigilanceAreaTypeViewSet,
-        VigilanceAreaViewSet,
-    )  # noqa
+        CityViewSet,  # noqa
+        DistrictViewSet,  # noqa
+        VigilanceAreaTypeViewSet,  # noqa
+        VigilanceAreaViewSet,  # noqa
+    )
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
     from .outdoor import (
         CourseTypeViewSet,  # noqa
