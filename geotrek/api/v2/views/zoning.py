@@ -1,3 +1,8 @@
+from datetime import datetime
+
+from django.db.models import Q
+
+from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.zoning import models as zoning_models
@@ -11,3 +16,23 @@ class CityViewSet(api_viewsets.GeotrekGeometricViewset):
 class DistrictViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.DistrictsSerializer
     queryset = zoning_models.District.objects.all()
+
+
+class VigilanceAreaViewSet(api_viewsets.GeotrekGeometricViewset):
+    serializer_class = api_serializers.VigilanceAreaSerializer
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
+        api_filters.UpdateOrCreateDateFilter,
+        api_filters.GeotrekVigilanceAreaFilter,
+    )
+
+    def get_queryset(self):
+        qs = zoning_models.VigilanceArea.objects.filter(published=True).filter(
+            Q(end_date__isnull=True) | Q(end_date__gte=datetime.now())
+        )
+        return qs
+
+
+class VigilanceAreaTypeViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.VigilanceAreaTypeSerializer
+    queryset = zoning_models.VigilanceAreaType.objects.all()

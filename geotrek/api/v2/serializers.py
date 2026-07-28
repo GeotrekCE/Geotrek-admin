@@ -1439,6 +1439,59 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
             model = zoning_models.District
             fields = ("id", "geometry", "name", "published")
 
+    class VigilanceAreaTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField()
+
+        def get_name(self, obj):
+            return get_translation_or_dict("name", self, obj)
+
+        class Meta:
+            model = trekking_models.Theme
+            fields = ("id", "name")
+
+    class VigilanceAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        geometry = geo_serializers.GeometryField(
+            read_only=True, source="geom", precision=7
+        )
+        name = serializers.SerializerMethodField()
+        description = serializers.SerializerMethodField()
+        practical_info = serializers.SerializerMethodField()
+        active_months = serializers.SerializerMethodField()
+        active_days = serializers.SerializerMethodField()
+
+        def get_name(self, obj):
+            return get_translation_or_dict("name", self, obj)
+
+        def get_description(self, obj):
+            return get_translation_or_dict("description", self, obj)
+
+        def get_practical_info(self, obj):
+            return get_translation_or_dict("practical_info", self, obj)
+
+        def get_active_months(self, obj):
+            return obj.active_months_labels
+
+        def get_active_days(self, obj):
+            return obj.active_days_labels
+
+        class Meta:
+            model = zoning_models.VigilanceArea
+            fields = (
+                "id",
+                "geometry",
+                "name",
+                "description",
+                "practicability",
+                "vigilance_area_type",
+                "start_date",
+                "end_date",
+                "active_days",
+                "active_months",
+                "practical_info",
+                "external_info_url",
+                "sources",
+            )
+
 
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
 
