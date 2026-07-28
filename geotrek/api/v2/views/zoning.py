@@ -27,8 +27,11 @@ class VigilanceAreaViewSet(api_viewsets.GeotrekGeometricViewset):
     )
 
     def get_queryset(self):
-        qs = zoning_models.VigilanceArea.objects.filter(published=True).filter(
-            Q(end_date__isnull=True) | Q(end_date__gte=datetime.now())
+        qs = (
+            zoning_models.VigilanceArea.objects.filter(published=True)
+            .filter(Q(end_date__isnull=True) | Q(end_date__gte=datetime.now()))
+            .select_related("vigilance_area_type")
+            .prefetch_related("portals", "sources")
         )
         return qs
 
