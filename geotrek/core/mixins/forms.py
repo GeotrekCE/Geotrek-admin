@@ -29,8 +29,9 @@ class PointTopologyFormMixin(CommonForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance.pk:
+        if self.instance and self.instance.pk:
             self.fields["topology"].required = False
+            self.fields["topology"].initial = self.instance.geom
 
     def save(self, *args, **kwargs):
         topology = self.cleaned_data.pop("topology")
