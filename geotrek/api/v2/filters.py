@@ -25,6 +25,7 @@ from geotrek.tourism.models import (
     TouristicEventType,
 )
 from geotrek.trekking.models import POI, ServiceType, Trek
+from geotrek.zoning.choices import Practicability
 from geotrek.zoning.models import City, District
 
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
@@ -290,6 +291,117 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                     title=_("Trek"),
                     description=_("(deprecated) replaced by '%(field)s'.")
                     % {"field": "near_trek"},
+                ),
+            ),
+        )
+
+
+class GeotrekVigilanceAreaFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        structures = request.GET.get("structures")
+        if structures:
+            qs = qs.filter(structure__in=structures.split(","))
+        portals = request.GET.get("portals")
+        if portals:
+            qs = qs.filter(portals__in=portals.split(","))
+        practicabilities = request.GET.get("practicabilities")
+        if practicabilities:
+            practicabilities = [
+                getattr(Practicability, practicability.upper())
+                for practicability in practicabilities.split(",")
+            ]
+            qs = qs.filter(practicability__in=practicabilities)
+        types = request.GET.get("types")
+        if types:
+            qs = qs.filter(vigilance_area_type__in=types.split(","))
+        types_exclude = request.GET.get("types_exclude")
+        if types_exclude:
+            qs = qs.exclude(vigilance_area_type__in=types_exclude.split(","))
+        start_date = request.GET.get("start_date")
+        end_date = request.GET.get("end_date")
+        if start_date and end_date:
+            start_date = datetime.strptime(start_date, "%d-%m-%Y").date()
+            end_date = datetime.strptime(end_date, "%d-%m-%Y").date()
+            # limitate the number of areas to evaluate with python method
+            overlapping = qs.filter(
+                Q(end_date__isnull=True) | Q(end_date__gte=start_date),
+                start_date__lte=end_date,
+            )
+            active_ids = [
+                area.pk for area in overlapping if area.is_active(start_date, end_date)
+            ]
+
+            qs = qs.filter(id__in=active_ids)
+        return qs.distinct()
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name="structures",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Structures"),
+                    description=_(
+                        "Filter by one or more structure id, comma-separated."
+                    ),
+                ),
+            ),
+            Field(
+                name="portals",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Portals"),
+                    description=_("Filter by one or more portal id, comma-separated."),
+                ),
+            ),
+            Field(
+                name="practicabilities",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Practicalities"),
+                    description=_(
+                        "Filter by one or more practicabilities between 'practicable', 'possibly_practicable' and 'not practicable', comma-separated."
+                    ),
+                ),
+            ),
+            Field(
+                name="types",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Types"),
+                    description=_("Filter by one or more types id, comma-separated."),
+                ),
+            ),
+            Field(
+                name="types_exclude",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Types exclusion"),
+                    description=_("Exclude one or more type id, comma-separated."),
+                ),
+            ),
+            Field(
+                name="start_date",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Start date"),
+                    description=_("..."),
+                ),
+            ),
+            Field(
+                name="end_date",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("End date"),
+                    description=_("..."),
                 ),
             ),
         )
