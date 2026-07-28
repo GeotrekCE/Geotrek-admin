@@ -11,7 +11,7 @@ import {
   FormFieldError,
   createFormField,
 } from "@/components/ui/form-context"
-import Required from "./required"
+import Required from "@/components/forms/required"
 import { Marker } from "react-map-gl/maplibre"
 import { cn } from "@/lib/utils"
 import { MapPin } from "lucide-react"
@@ -55,6 +55,18 @@ export function GeomField({
           {required && <Required />}
         </FieldLabel>
 
+        {isPoint && (
+          <Button
+            type="button"
+            onClick={() => setEditing((bool) => !bool)}
+            data-testid={`field-${field.name}`}
+          >
+            {isEditing
+              ? m["form.geom-action-cancel"]()
+              : m["form.geom-action-select"]()}
+          </Button>
+        )}
+
         <Map
           className="aspect-square"
           initialViewState={{ bounds: bounds as LngLatBoundsLike }}
@@ -97,18 +109,6 @@ export function GeomField({
           <FieldDescription className="text-end text-xs">
             Longitude : {lng.toFixed(5)}, Lattitude : {lat.toFixed(5)}
           </FieldDescription>
-        )}
-        {isPoint && (
-          <Button
-            variant="outline"
-            type="button"
-            onClick={() => setEditing((bool) => !bool)}
-            data-testid={`field-${field.name}`}
-          >
-            {isEditing
-              ? m["form.geom-action-cancel"]()
-              : m["form.geom-action-select"]()}
-          </Button>
         )}
         {!isPoint && (
           <Alert className="mt-4" variant="warning">
