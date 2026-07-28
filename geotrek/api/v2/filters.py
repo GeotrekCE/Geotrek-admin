@@ -383,7 +383,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
                 location="query",
                 schema=coreschema.String(
                     title=_("Types exclusion"),
-                    description=_("Exclude one or more type id, comma-separated."),
+                    description=_("Exclude one or more types id, comma-separated."),
                 ),
             ),
             Field(
@@ -392,7 +392,9 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
                 location="query",
                 schema=coreschema.String(
                     title=_("Start date"),
-                    description=_("..."),
+                    description=_(
+                        "Filter by activity during a period. Must be setup with end_date."
+                    ),
                 ),
             ),
             Field(
@@ -401,7 +403,9 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
                 location="query",
                 schema=coreschema.String(
                     title=_("End date"),
-                    description=_("..."),
+                    description=_(
+                        "Filter by activity during a period. Must be setup with start_date."
+                    ),
                 ),
             ),
         )
