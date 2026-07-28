@@ -62,9 +62,12 @@ class PointTopoGeomField(TopologyField):
         try:
             objdict = json.loads(value)
             coords = objdict.get("coordinates")
+            snap_target = objdict.get("snapFeature")
+            if snap_target is None:
+                snap_target = "null"
             if coords is None:
                 raise ValidationError(self.error_messages["invalid_topology"])
-            return Topology.deserialize(f'{{"lat": {coords[1]}, "lng": {coords[0]}}}')
+            return Topology.deserialize(f'{{"lat": {coords[1]}, "lng": {coords[0]}, "snap": {snap_target}}}')
         except Topology.DoesNotExist:
             raise ValidationError(self.error_messages["unknown_topology"] % value)
         except ValueError as e:
@@ -121,11 +124,14 @@ class PointLineTopoGeomField(GeometryField):
                     _("The geometry should either be a point or a line.")
                 )
             coords = raw_geom.get("coordinates")
+            snap_target = raw_geom.get("snapFeature")
+            if snap_target is None:
+                snap_target = "null"
             if coords is None:
                 raise ValidationError(
                     _("Point geometry is incorrect (missing coordinates).")
                 )
-            return Topology.deserialize(f'{{"lat": {coords[1]}, "lng": {coords[0]}}}')
+            return Topology.deserialize(f'{{"lat": {coords[1]}, "lng": {coords[0]}, "snap": {snap_target}}}')
         except Topology.DoesNotExist:
             raise ValidationError(_("Topology %s does not exist.") % value)
         except ValueError as e:
