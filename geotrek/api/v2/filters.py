@@ -27,6 +27,7 @@ from geotrek.tourism.models import (
 from geotrek.trekking.models import POI, ServiceType, Trek
 from geotrek.zoning.choices import Practicability
 from geotrek.zoning.models import City, District
+from geotrek.zoning.utils import month_between, weekday_between
 
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
@@ -321,18 +322,23 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
         start_date = request.GET.get("start_date")
         end_date = request.GET.get("end_date")
         if start_date and end_date:
-            start_date = datetime.strptime(start_date, "%d-%m-%Y").date()
-            end_date = datetime.strptime(end_date, "%d-%m-%Y").date()
-            # limitate the number of areas to evaluate with python method
-            overlapping = qs.filter(
-                Q(end_date__isnull=True) | Q(end_date__gte=start_date),
-                start_date__lte=end_date,
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+            qs = (
+                qs.filter(
+                    Q(end_date__isnull=True) | Q(end_date__gte=start_date),
+                    start_date__lte=end_date,
+                )
+                .filter(
+                    Q(active_months__len=0)
+                    | Q(active_months__overlap=month_between(start_date, end_date))
+                )
+                .filter(
+                    Q(active_days__len=0)
+                    | Q(active_days__overlap=weekday_between(start_date, end_date))
+                )
             )
-            active_ids = [
-                area.pk for area in overlapping if area.is_active(start_date, end_date)
-            ]
 
-            qs = qs.filter(id__in=active_ids)
         return qs.distinct()
 
     def get_schema_fields(self, view):
@@ -393,7 +399,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
                 schema=coreschema.String(
                     title=_("Start date"),
                     description=_(
-                        "Filter by activity during a period. Must be setup with end_date."
+                        "Filter active vigilance areas fora period. Must be setup with end_date. Format is YYYY-MM-JJ."
                     ),
                 ),
             ),
@@ -404,7 +410,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
                 schema=coreschema.String(
                     title=_("End date"),
                     description=_(
-                        "Filter by activity during a period. Must be setup with start_date."
+                        "Filter active vigilance areas fora period. Must be setup with start_date. Format is YYYY-MM-JJ."
                     ),
                 ),
             ),
