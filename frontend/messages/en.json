@@ -111,6 +111,7 @@
     "update-needed-description": "Please update the data entry repository before your next data entry.",
     "update-recommended": "An update is recommended",
     "update-recommended-description": "It is recommended that you update the data before your next data entry.",
+    "sync-needed-description":"Synchronize your entries before you can select new data to download.",
     "offline-cannot-sync": "You are offline and cannot synchronise data",
     "items-to-sync": "Items are waiting to be synchronized",
     "select": "Select",

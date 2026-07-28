@@ -111,6 +111,7 @@
     "update-needed-description": "Veuillez mettre à jour les données de référentiel de saisie avant votre prochaine saisie.",
     "update-recommended": "Une mise à jour est recommandée",
     "update-recommended-description": "Il est recommandé de mettre à jour les données avant votre prochaine saisie.",
+    "sync-needed-description": "Synchronisez vos saisies avant de pouvoir choisir de nouvelles données à télécharger.",
     "offline-cannot-sync": "Vous êtes hors ligne et ne pouvez pas synchroniser les données",
     "items-to-sync": "Des éléments sont à synchroniser",
     "select": "Sélectionnez",

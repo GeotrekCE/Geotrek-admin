@@ -80,7 +80,7 @@ export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
               className="m-0 w-full border-0 bg-transparent p-0"
             >
               <CircleAlert aria-hidden />
-              <AlertTitle>{m["common.update-needed-description"]()}</AlertTitle>
+              <AlertTitle>{m["common.sync-needed-description"]()}</AlertTitle>
             </Alert>
           </>
         ) : (
