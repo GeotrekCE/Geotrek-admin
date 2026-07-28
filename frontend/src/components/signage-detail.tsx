@@ -7,13 +7,12 @@ import { Marker } from "react-map-gl/maplibre"
 import { Badge } from "@/components/ui/badge"
 import {
   Item,
-  ItemActions,
   ItemContent,
   ItemDescription,
   ItemMedia,
   ItemTitle,
 } from "@/components/ui/item"
-import { ChevronRight, CircleAlert, Info } from "lucide-react"
+import { CircleAlert, Info } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
@@ -298,9 +297,10 @@ export default function SignageDetail(params: { id: string; type: string }) {
                                 {line.distance} km - {line.time} h
                               </ItemDescription>
                             </ItemContent>
+                            {/* TODO: blade feature 
                             <ItemActions>
                               <ChevronRight aria-hidden />
-                            </ItemActions>
+                            </ItemActions> */}
                           </button>
                         }
                       />
