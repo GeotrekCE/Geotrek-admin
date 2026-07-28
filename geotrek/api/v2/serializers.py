@@ -1447,7 +1447,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
 
         class Meta:
             model = trekking_models.Theme
-            fields = ("id", "name")
+            fields = ("id", "name", "pictogram")
 
     class VigilanceAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(
