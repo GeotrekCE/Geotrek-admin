@@ -20,7 +20,7 @@
 import {
   createFormHookContexts,
   revalidateLogic,
-  useStore,
+  useSelector,
 } from "@tanstack/react-form"
 import type { AnyFieldApi, DeepKeys } from "@tanstack/form-core"
 import type { VariantProps } from "class-variance-authority"
@@ -65,7 +65,7 @@ const useFieldContext = () => {
   }
 
   const { name, store, ...rest } = fieldCtx
-  const errors = useStore(store, (state) => state.meta.errors)
+  const errors = useSelector(store, (state) => state.meta.errors)
 
   return {
     id,
@@ -106,9 +106,9 @@ function Field({
   const { errors, formItemId, formDescriptionId, formMessageId, store } =
     useFieldContext()
   const form = useFormContext()
-  const isTouched = useStore(store, (state) => state.meta.isTouched)
+  const isTouched = useSelector(store, (state) => state.meta.isTouched)
   // Show errors after user interaction OR after first submit attempt
-  const hasSubmitted = useStore(form.store, (s) => s.submissionAttempts > 0)
+  const hasSubmitted = useSelector(form.store, (s) => s.submissionAttempts > 0)
   const hasVisibleErrors = !!errors.length && (isTouched || hasSubmitted)
 
   return (
@@ -131,8 +131,8 @@ function Field({
 function FieldError({ className, ...props }: React.ComponentProps<"p">) {
   const { errors, formMessageId, store } = useFieldContext()
   const form = useFormContext()
-  const isTouched = useStore(store, (state) => state.meta.isTouched)
-  const hasSubmitted = useStore(form.store, (s) => s.submissionAttempts > 0)
+  const isTouched = useSelector(store, (state) => state.meta.isTouched)
+  const hasSubmitted = useSelector(form.store, (s) => s.submissionAttempts > 0)
   if (!errors.length || (!isTouched && !hasSubmitted)) return null
   return (
     <DefaultFieldError

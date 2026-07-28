@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useStore } from "@tanstack/react-form"
+import { useSelector } from "@tanstack/react-form"
 import { Textarea } from "@/components/ui/textarea"
 import { FieldDescription, FieldLabel } from "@/components/ui/field"
 import {
@@ -37,9 +37,9 @@ export function TextareaField({
 }: TextareaFieldProps) {
   const id = React.useId()
   const field = useFieldContext()
-  const isTouched = useStore(field.store, (s) => s.meta.isTouched)
-  const isValid = useStore(field.store, (s) => s.meta.isValid)
-  const value = (useStore(field.store, (s) => s.value) as string) ?? ""
+  const isTouched = useSelector(field.store, (s) => s.meta.isTouched)
+  const isValid = useSelector(field.store, (s) => s.meta.isValid)
+  const value = (useSelector(field.store, (s) => s.value) as string) ?? ""
 
   return (
     <FormFieldSet>

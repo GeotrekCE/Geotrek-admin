@@ -1,6 +1,6 @@
 import * as React from "react"
 import { useLiveQuery } from "dexie-react-hooks"
-import { useStore } from "@tanstack/react-form"
+import { useSelector } from "@tanstack/react-form"
 import Map from "@/components/map"
 import type { LngLatBoundsLike } from "maplibre-gl"
 import { FieldDescription, FieldLabel } from "@/components/ui/field"
@@ -37,7 +37,7 @@ export function GeomField({
 }: GeomFieldProps) {
   const id = React.useId()
   const field = useFieldContext()
-  const value = useStore(field.store, (s) => s.value) as z.infer<
+  const value = useSelector(field.store, (s) => s.value) as z.infer<
     typeof geometrySchema
   >
   const [lng, lat] = (value.type === "Point" && value.coordinates) || []
