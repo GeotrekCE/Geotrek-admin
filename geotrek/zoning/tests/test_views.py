@@ -1,13 +1,17 @@
 import json
 
+from django.contrib.auth.models import Group, Permission
+from django.test import TestCase
 from django.urls import reverse
 from mapentity.tests import MapEntityTest, SuperUserFactory
 from mapentity.tests.factories import UserFactory
 from rest_framework.test import APITestCase
 
-from geotrek.authent.tests.factories import StructureFactory
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory
 from geotrek.zoning.choices import Practicability
 from geotrek.zoning.models import VigilanceArea
+from geotrek.zoning.serializers import VigilanceAreaSerializer
 from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
@@ -333,3 +337,52 @@ class VigilanceAreaTestCase(MapEntityTest):
             f'    <a id="detail-btn" href="/vigilancearea/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+
+class VigilanceAreaDetailViewTest(AuthentFixturesTest):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        profile = UserProfileFactory.create(
+            user__username="testuser", user__password="password"
+        )
+        cls.user = profile.user
+        cls.user.groups.add(Group.objects.get(name="Référents communication"))
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="read_vigilancearea")
+        )
+        cls.area_same_struct = VigilanceAreaFactory(
+            structure=cls.user.profile.structure
+        )
+        cls.other_struct = StructureFactory()
+        cls.area_other_struct = VigilanceAreaFactory(structure=cls.other_struct)
+
+    def setUp(self):
+        super().setUp()
+        self.client.force_login(self.user)
+
+    def test_can_edit_context_flag(self):
+        url_same = reverse(
+            "zoning:vigilancearea_detail", kwargs={"pk": self.area_same_struct.pk}
+        )
+        response_same = self.client.get(url_same)
+        self.assertEqual(response_same.status_code, 200)
+        self.assertTrue(response_same.context["can_edit"])
+
+        url_other = reverse(
+            "zoning:vigilancearea_detail", kwargs={"pk": self.area_other_struct.pk}
+        )
+        response_other = self.client.get(url_other)
+        self.assertEqual(response_other.status_code, 200)
+        self.assertFalse(response_other.context["can_edit"])
+
+
+class VigilanceAreaSerializerTest(TestCase):
+    def test_serializer_output(self):
+        area = VigilanceAreaFactory(practicability=Practicability.PRACTICABLE)
+        qs = VigilanceArea.objects.all()
+        serializer = VigilanceAreaSerializer(qs.get(pk=area.pk))
+        data = serializer.data
+        self.assertIn(area.name, data["name"])
+        self.assertEqual(data["practicability"], Practicability.PRACTICABLE.label)
+        self.assertIn("period_active", data)

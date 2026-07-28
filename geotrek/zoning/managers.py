@@ -16,13 +16,20 @@ class VigilanceAreaManager(models.Manager):
         return qs
 
     def active_by_date(self, start_date=None, end_date=None):
-        return self.active(start_date=start_date, end_date=end_date)
+        qs = self.active()
+        qs = (
+            qs.filter(Q(end_date__isnull=True) | Q(end_date__gte=start_date))
+            if start_date
+            else qs
+        )
+        qs = qs.filter(Q(start_date__lte=end_date)) if end_date else qs
+        return qs
 
     def get_queryset(self):
         qs = super().get_queryset()
         today = timezone_today()
-        today_number = timezone_today().weekday()
-        current_month_number = timezone_today().month
+        today_number = today.weekday()
+        current_month_number = today.month
 
         # add boolean to define if period is active (today in active period)
         qs = qs.annotate(
