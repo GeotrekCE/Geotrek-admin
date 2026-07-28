@@ -98,9 +98,13 @@ class POIViewsTest(CommonTest):
             "type": POITypeFactory.create().pk,
         }
         PathFactory.create()
-        good_data["topology"] = '{"type":"Point","coordinates":[6.6,5.1]}'
+        good_data["geom"] = '{"type":"Point","coordinates":[6.6,5.1]}'
+        good_data["geom_changed"] = "true"
 
         return good_data
+
+    def get_bad_data(self):
+        return {"geom": "doh!"}, translation.gettext("Topology is not valid.")
 
     def get_expected_popup_content(self):
         return (
@@ -154,14 +158,14 @@ class POIViewsTest(CommonTest):
         element_not_published.save()
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_empty_topology(self):
+    def test_empty_geom(self):
         data = self.get_good_data()
-        data["topology"] = ""
+        data["geom"] = ""
 
         response = self.client.post(self.model.get_add_url(), data)
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
-        self.assertEqual(form.errors, {"topology": ["Topology is empty."]})
+        self.assertEqual(form.errors, {"geom": ["Topology is empty."]})
 
     def test_listing_number_queries(self):
         # Create many instances
@@ -967,8 +971,12 @@ class ServiceViewsTest(CommonTest):
         PathFactory.create()
         return {
             "type": ServiceTypeFactory.create().pk,
-            "topology": '{"type":"Point","coordinates":[6.6,5.1]}',
+            "geom": '{"type":"Point","coordinates":[6.6,5.1]}',
+            "geom_changed": "true",
         }
+
+    def get_bad_data(self):
+        return {"geom": "doh!"}, translation.gettext("Topology is not valid.")
 
     def get_expected_popup_content(self):
         return (
@@ -981,13 +989,13 @@ class ServiceViewsTest(CommonTest):
     def _check_update_geom_permission(self, response):
         pass
 
-    def test_empty_topology(self):
+    def test_empty_geom(self):
         data = self.get_good_data()
-        data["topology"] = ""
+        data["geom"] = ""
         response = self.client.post(self.model.get_add_url(), data)
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
-        self.assertEqual(form.errors, {"topology": ["Topology is empty."]})
+        self.assertEqual(form.errors, {"geom": ["Topology is empty."]})
 
     def test_listing_number_queries(self):
         # Create many instances
