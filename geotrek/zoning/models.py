@@ -24,7 +24,6 @@ from geotrek.common.mixins.models import (
 from ..common.functions import GenRandomUUID
 from .choices import MonthChoices, Practicability, WeekdayChoices
 from .managers import VigilanceAreaManager
-from .utils import month_between, weekday_between
 
 
 class RestrictedAreaType(models.Model):
@@ -268,22 +267,6 @@ class VigilanceArea(
         if self.active_months:
             result += _(" - months %s") % (",".join(self.active_months_labels))
         return result
-
-    def is_active(self, start_date, end_date):
-        starts_before_end = end_date >= self.start_date
-        ends_after_start = self.end_date is None or start_date <= self.end_date
-        if not (starts_before_end and ends_after_start):
-            return False
-
-        active_months = self.active_months if self.active_months else list(range(1, 13))
-        if not set(month_between(start_date, end_date)) & set(active_months):
-            return False
-
-        active_days = self.active_days if self.active_days else list(range(0, 7))
-        if not set(weekday_between(start_date, end_date)) & set(active_days):
-            return False
-
-        return True
 
     objects = VigilanceAreaManager()
 
