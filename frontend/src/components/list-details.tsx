@@ -19,7 +19,10 @@ import { m } from "@/paraglide/messages"
 function ListDetailContent({
   element,
 }: {
-  element: { id: number; reference: string }
+  element: {
+    id: number
+    reference: "signage" | "report" | "intervention" | "infrastructure"
+  }
 }) {
   const detail = useStoredDataElement(element.reference, element.id)
   const reference = useLiveQuery(
@@ -52,7 +55,9 @@ function ListDetailContent({
           <div>
             <h2 className="text-xl text-accent-foreground">{name}</h2>
             <p>
-              <span className="text-primary">{element.reference}</span>
+              <span className="text-primary">
+                {m[`content.${element.reference}`]()}
+              </span>
               {"type" in detail && detail.type && ` - ${detail.type.name}`}
             </p>
             {"conditions" in detail && detail.conditions.length > 0 && (

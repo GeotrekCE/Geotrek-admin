@@ -3,7 +3,6 @@ import * as z from "zod"
 import { toast } from "sonner"
 import { LogIn } from "lucide-react"
 import { Field, FieldGroup, FieldLegend, FieldSet } from "@/components/ui/field"
-import { Button } from "@/components/ui/button"
 import {
   Card,
   CardContent,
@@ -59,52 +58,49 @@ export default function Login() {
   }>()
 
   return (
-    <section className="grid h-screen place-items-center">
-      <Card className="w-full sm:max-w-md">
-        <CardHeader>
-          <CardTitle>{m["login.title"]()}</CardTitle>
-          <CardDescription>{m["login.description"]()}</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form.AppForm>
-            <form.Form id="login-form" className="p-0" data-testid="login-form">
-              <FieldGroup className="mb-4">
-                <FieldSet>
-                  <FieldLegend className="mb-4">
-                    {m["login.form.title"]()}
-                  </FieldLegend>
+    <form.AppForm>
+      <form.Form
+        id="login-form"
+        className="grid h-screen place-items-center"
+        data-testid="login-form"
+      >
+        <Card className="w-full sm:max-w-md">
+          <CardHeader>
+            <CardTitle>{m["login.title"]()}</CardTitle>
+            <CardDescription>{m["login.description"]()}</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <FieldGroup className="mb-4">
+              <FieldSet>
+                <FieldLegend className="mb-4">
+                  {m["login.form.title"]()}
+                </FieldLegend>
 
-                  <FormTextField
-                    name="username"
-                    label={m["login.form.user-name.label"]()}
-                    placeholder={m["login.form.user-name.placeholder"]()}
-                    autoCapitalize="none"
-                  />
+                <FormTextField
+                  name="username"
+                  label={m["login.form.user-name.label"]()}
+                  placeholder={m["login.form.user-name.placeholder"]()}
+                  autoCapitalize="none"
+                />
 
-                  <FormTextField
-                    name="password"
-                    label={m["login.form.password.label"]()}
-                    placeholder={m["login.form.password.placeholder"]()}
-                    type="password"
-                  />
-                </FieldSet>
-              </FieldGroup>
-            </form.Form>
-          </form.AppForm>
-        </CardContent>
-        <CardFooter>
-          <Field orientation="horizontal">
-            <Button
-              type="submit"
-              className="w-full"
-              size="lg"
-              form="login-form"
-            >
-              <LogIn aria-hidden /> {m["login.form.submit"]()}
-            </Button>
-          </Field>
-        </CardFooter>
-      </Card>
-    </section>
+                <FormTextField
+                  name="password"
+                  label={m["login.form.password.label"]()}
+                  placeholder={m["login.form.password.placeholder"]()}
+                  type="password"
+                />
+              </FieldSet>
+            </FieldGroup>
+          </CardContent>
+          <CardFooter>
+            <Field orientation="horizontal">
+              <form.SubmitButton type="submit" className="w-full" size="lg">
+                <LogIn aria-hidden /> {m["login.form.submit"]()}
+              </form.SubmitButton>
+            </Field>
+          </CardFooter>
+        </Card>
+      </form.Form>
+    </form.AppForm>
   )
 }

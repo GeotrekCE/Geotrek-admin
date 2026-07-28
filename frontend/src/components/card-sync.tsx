@@ -19,7 +19,7 @@ type CardSyncProps = React.ComponentProps<"div"> & {
   description: string | React.ReactElement
   updatedStatus: "UPDATED" | "WARNING" | "EXPIRED"
   lastSync?: string
-  actions: React.ReactElement
+  actions: React.ReactElement | null
   noData: string
 }
 

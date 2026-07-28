@@ -17,7 +17,12 @@ const schemaSearchParams = z
     focusOn: z
       .object({
         id: z.number(),
-        reference: z.string(),
+        reference: z.enum([
+          "infrastructure",
+          "intervention",
+          "signage",
+          "report",
+        ]),
       })
       .optional(),
   })
