@@ -5,6 +5,19 @@ CHANGELOG
 2.125.2+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+* GTAM: Display a message if the API does not provide offline maps
+* GTAM: Move "place on map" button above the map
+* GTAM: Add "status" field for report form
+* GTAM: Add support for GeometryCollection
+* GTAM: Improve form ux
+
+**Bug fixes**
+
+* GTAM: incorrect wording and translations
+* GTAM: fix some wording/translations
+
 
 2.125.2         (2026-07-21)
 ----------------------------
