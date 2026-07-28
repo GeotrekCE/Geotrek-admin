@@ -7,7 +7,6 @@ from django.contrib.gis.geos import LineString, Point
 from django.core import validators
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
-from mapentity.widgets import MapWidget
 
 from .models import Topology
 from .widgets import GeotrekMapWidget, LineTopologyWidget, PointLineTopologyWidget
@@ -67,7 +66,9 @@ class PointTopoGeomField(TopologyField):
                 snap_target = "null"
             if coords is None:
                 raise ValidationError(self.error_messages["invalid_topology"])
-            return Topology.deserialize(f'{{"lat": {coords[1]}, "lng": {coords[0]}, "snap": {snap_target}}}')
+            return Topology.deserialize(
+                f'{{"lat": {coords[1]}, "lng": {coords[0]}, "snap": {snap_target}}}'
+            )
         except Topology.DoesNotExist:
             raise ValidationError(self.error_messages["unknown_topology"] % value)
         except ValueError as e:
@@ -131,7 +132,9 @@ class PointLineTopoGeomField(GeometryField):
                 raise ValidationError(
                     _("Point geometry is incorrect (missing coordinates).")
                 )
-            return Topology.deserialize(f'{{"lat": {coords[1]}, "lng": {coords[0]}, "snap": {snap_target}}}')
+            return Topology.deserialize(
+                f'{{"lat": {coords[1]}, "lng": {coords[0]}, "snap": {snap_target}}}'
+            )
         except Topology.DoesNotExist:
             raise ValidationError(_("Topology %s does not exist.") % value)
         except ValueError as e:
