@@ -1,6 +1,8 @@
 from datetime import datetime
 
-from django.db.models import Q
+from django.conf import settings
+from django.contrib.gis.db.models.functions import Transform
+from django.db.models import F, Q
 
 from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
@@ -29,6 +31,7 @@ class VigilanceAreaViewSet(api_viewsets.GeotrekGeometricViewset):
     def get_queryset(self):
         qs = (
             zoning_models.VigilanceArea.objects.filter(published=True)
+            .annotate(geom_transformed=Transform(F("geom"), settings.API_SRID))
             .filter(Q(end_date__isnull=True) | Q(end_date__gte=datetime.now()))
             .select_related("vigilance_area_type")
             .prefetch_related("portals", "sources")

@@ -1451,7 +1451,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
 
     class VigilanceAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom", precision=7
+            read_only=True, source="geom_transformed", precision=7
         )
         name = serializers.SerializerMethodField()
         description = serializers.SerializerMethodField()
@@ -1482,6 +1482,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
                 "name",
                 "description",
                 "practicability",
+                "published",
                 "vigilance_area_type",
                 "start_date",
                 "end_date",
