@@ -19,7 +19,10 @@ export type DataSchemaPropsMixed = (
   | SignageDataSchemaProps
   | InterventionDataSchemaProps
   | (ReportDataSchemaProps & { name: string })
-) & { pictogram: { url?: string }; reference: string }
+) & {
+  pictogram: { url?: string }
+  reference: "signage" | "report" | "intervention" | "infrastructure"
+}
 
 const pointGeomSchema = z
   .object({
