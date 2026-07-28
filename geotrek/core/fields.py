@@ -43,7 +43,7 @@ class TopologyField(forms.CharField):
 class PointTopoGeomField(TopologyField):
     """This field builds a point topology or geometry from a point geometry, drawn using MapWidget."""
 
-    widget = MapWidget(
+    widget = GeotrekMapWidget(
         geom_type="POINT",
         attrs={
             "snapping_config": {
