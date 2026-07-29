@@ -205,6 +205,48 @@ msgstr "Filtrer par un ou plusieurs id de structure, séparés par des virgules.
 msgid "(deprecated) replaced by '%(field)s'."
 msgstr "(déprécié) remplacé par '%(field)s'."
 
+msgid "Portals"
+msgstr "Portails"
+
+msgid "Filter by one or more portal id, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de portails, séparés par des virgules."
+
+msgid "Practicalities"
+msgstr "Praticabilité"
+
+msgid "Filter by one or more practicabilities between 'practicable', 'possibly_practicable' and 'not practicable', comma-separated."
+msgstr "Filtrer par un ou plusieurs niveau de praticabilité entre 'practicable', 'possibly_practicable' et 'not practicable', séparés par des virgules."
+
+msgid "Types"
+msgstr "Types"
+
+#, fuzzy
+#| msgid "Filter by one or more type id, comma-separated."
+msgid "Filter by one or more types id, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de type, séparés par des virgules."
+
+#, fuzzy
+#| msgid "Labels exclusion"
+msgid "Types exclusion"
+msgstr "Exclusion d'étiquette"
+
+#, fuzzy
+#| msgid "Exclude one or more label id, comma-separated."
+msgid "Exclude one or more types id, comma-separated."
+msgstr "Exclure un ou plusieurs id d'étiquette, séparés par des virgules."
+
+msgid "Start date"
+msgstr ""
+
+msgid "Filter active vigilance areas fora period. Must be setup with end_date. Format is YYYY-MM-JJ."
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
+msgid "Filter active vigilance areas fora period. Must be setup with start_date. Format is YYYY-MM-JJ."
+msgstr ""
+
 msgid "Filter by one or more type id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de type, séparés par des virgules."
 
@@ -240,6 +282,9 @@ msgstr "Filtrer par un ou plusieurs id de thème, séparés par des virgules."
 
 msgid "Filter by one or more portal id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de portails, séparés par des virgules."
+
+msgid "Query string"
+msgstr "Recherche"
 
 msgid "Filter by some case-insensitive text contained in name, description teaser or description."
 msgstr "Filtrer par du texte insensible à la casse contenu dans le nom, le chapeau, ou la description"
@@ -327,6 +372,21 @@ msgstr "Filtrer par un ou plusieurs id d'étiquette, séparés par des virgules.
 
 msgid "Exclude one or more label id, comma-separated."
 msgstr "Exclure un ou plusieurs id d'étiquette, séparés par des virgules."
+
+msgid "Opened"
+msgstr ""
+
+msgid "Filter by open status, false=close, true=open."
+msgstr ""
+
+msgid "Opened from"
+msgstr ""
+
+msgid "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+msgstr ""
+
+msgid "Opened to"
+msgstr ""
 
 msgid "Filter by some case-insensitive text contained in name, description, description teaser or ambiance."
 msgstr "Filtrer par du texte insensible à la casse contenu dans le nom, la description, le chapeau ou l'ambiance."
