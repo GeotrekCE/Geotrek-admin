@@ -852,6 +852,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         advice = serializers.SerializerMethodField()
         advised_parking = serializers.SerializerMethodField()
         parking_location = serializers.SerializerMethodField()
+        published_vigilance_areas = serializers.SerializerMethodField()
         ratings_description = serializers.SerializerMethodField()
         children = serializers.ReadOnlyField(source="children_id")
         parents = serializers.ReadOnlyField(source="parents_id")
@@ -879,6 +880,9 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
 
         def get_published(self, obj):
             return get_translation_or_dict("published", self, obj)
+
+        def get_published_vigilance_areas(self, obj):
+            return [area.id for area in obj.published_vigilance_areas]
 
         def get_name(self, obj):
             return get_translation_or_dict("name", self, obj)
@@ -1103,6 +1107,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 "previous",
                 "public_transport",
                 "published",
+                "published_vigilance_areas",
                 "reservation_system",
                 "reservation_id",
                 "route",
