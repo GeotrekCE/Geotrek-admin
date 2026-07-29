@@ -1111,6 +1111,10 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
         practices = request.GET.get("practices")
         if practices:
             qs = qs.filter(practice__in=practices.split(","))
+        opened = request.GET.get("opened")
+        if opened is not None:
+            closed = not (opened == "1")
+            qs = qs.filter(closed=closed)
         q = request.GET.get("q")
         if q:
             qs = qs.filter(
@@ -1301,6 +1305,17 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                     title=_("Practices"),
                     description=_(
                         "Filter by one or more practice id, comma-separated."
+                    ),
+                ),
+            ),
+            Field(
+                name="open",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Open"),
+                    description=_(
+                        "Filter by open status, 0=close, 1=open. By default, it return the open status for the current day"
                     ),
                 ),
             ),
