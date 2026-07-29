@@ -832,6 +832,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         accessibility_slope = serializers.SerializerMethodField()
         accessibility_width = serializers.SerializerMethodField()
         ambiance = serializers.SerializerMethodField()
+        closed = serializers.BooleanField()
         description = serializers.SerializerMethodField()
         description_teaser = serializers.SerializerMethodField()
         departure = serializers.SerializerMethodField()
@@ -1061,6 +1062,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 "children",
                 "cities",
                 "city_codes",
+                "closed",
                 "create_datetime",
                 "departure",
                 "departure_city",

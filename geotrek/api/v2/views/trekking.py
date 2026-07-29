@@ -1,6 +1,8 @@
+from datetime import datetime
+
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import F, Prefetch, Q
+from django.db.models import Exists, F, OuterRef, Prefetch, Q
 from django.db.models.aggregates import Count
 from django.utils import translation
 from modeltranslation.utils import build_localized_fieldname
@@ -15,6 +17,9 @@ from geotrek.api.v2.decorators import cache_response_detail
 from geotrek.api.v2.renderers import SVGProfileRenderer
 from geotrek.common.models import AccessibilityAttachment, Attachment, HDViewPoint
 from geotrek.trekking import models as trekking_models
+from geotrek.zoning.choices import Practicability
+from geotrek.zoning.models import VigilanceArea
+from geotrek.zoning.utils import month_between, weekday_between
 
 
 class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
@@ -33,7 +38,18 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     )
     serializer_class = api_serializers.TrekSerializer
 
+    def parse_date(self, value, default):
+        if value is None:
+            return default
+        try:
+            return datetime.strptime(value, "%Y-%m-%d").date()
+        except ValueError:
+            return default
+
     def get_queryset(self):
+        today = datetime.now().date()
+        start_date = self.parse_date(self.request.GET.get("start_date"), today)
+        end_date = self.parse_date(self.request.GET.get("end_date"), today)
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
                 trekking_models.Trek.objects.existing()
@@ -70,6 +86,27 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                 )
                 .annotate(
                     geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
+                    closed=Exists(
+                        VigilanceArea.objects.filter(
+                            Q(active_months__len=0)
+                            | Q(
+                                active_months__contains=month_between(
+                                    start_date, end_date
+                                )
+                            ),
+                            Q(active_days__len=0)
+                            | Q(
+                                active_days__contains=weekday_between(
+                                    start_date, end_date
+                                )
+                            ),
+                            Q(end_date__isnull=True) | Q(end_date__gte=end_date),
+                            start_date__lte=start_date,
+                            published=True,
+                            practicability=Practicability.NOT_PRACTICABLE,
+                            geom__intersects=OuterRef("geom"),
+                        )
+                    ),
                 )
                 .order_by("name")
             )  # Required for reliable pagination
