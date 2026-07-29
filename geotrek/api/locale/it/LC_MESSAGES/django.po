@@ -205,6 +205,42 @@ msgstr ""
 msgid "(deprecated) replaced by '%(field)s'."
 msgstr ""
 
+msgid "Portals"
+msgstr ""
+
+msgid "Filter by one or more portal id, comma-separated."
+msgstr ""
+
+msgid "Practicalities"
+msgstr ""
+
+msgid "Filter by one or more practicabilities between 'practicable', 'possibly_practicable' and 'not practicable', comma-separated."
+msgstr ""
+
+msgid "Types"
+msgstr ""
+
+msgid "Filter by one or more types id, comma-separated."
+msgstr ""
+
+msgid "Types exclusion"
+msgstr ""
+
+msgid "Exclude one or more types id, comma-separated."
+msgstr ""
+
+msgid "Start date"
+msgstr ""
+
+msgid "Filter active vigilance areas fora period. Must be setup with end_date. Format is YYYY-MM-JJ."
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
+msgid "Filter active vigilance areas fora period. Must be setup with start_date. Format is YYYY-MM-JJ."
+msgstr ""
+
 msgid "Filter by one or more type id, comma-separated."
 msgstr ""
 
@@ -239,6 +275,10 @@ msgid "Filter by one or more themes id, comma-separated."
 msgstr ""
 
 msgid "Filter by one or more portal id, comma-separated."
+msgstr ""
+
+
+msgid "Query string"
 msgstr ""
 
 msgid "Filter by some case-insensitive text contained in name, description teaser or description."
@@ -326,6 +366,21 @@ msgid "Filter by one or more label id, comma-separated."
 msgstr ""
 
 msgid "Exclude one or more label id, comma-separated."
+msgstr ""
+
+msgid "Opened"
+msgstr ""
+
+msgid "Filter by open status, false=close, true=open."
+msgstr ""
+
+msgid "Opened from"
+msgstr ""
+
+msgid "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+msgstr ""
+
+msgid "Opened to"
 msgstr ""
 
 msgid "Filter by some case-insensitive text contained in name, description, description teaser or ambiance."
