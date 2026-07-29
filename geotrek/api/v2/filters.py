@@ -26,7 +26,7 @@ from geotrek.tourism.models import (
 )
 from geotrek.trekking.models import POI, ServiceType, Trek
 from geotrek.zoning.choices import Practicability
-from geotrek.zoning.models import City, District
+from geotrek.zoning.models import City, District, VigilanceArea
 from geotrek.zoning.utils import month_between, weekday_between
 
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
@@ -1113,7 +1113,7 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             qs = qs.filter(practice__in=practices.split(","))
         opened = request.GET.get("opened")
         if opened is not None:
-            closed = not (opened == "1")
+            closed = opened == "false"
             qs = qs.filter(closed=closed)
         q = request.GET.get("q")
         if q:
@@ -1309,13 +1309,35 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                 ),
             ),
             Field(
-                name="open",
+                name="opened",
                 required=False,
                 location="query",
                 schema=coreschema.String(
-                    title=_("Open"),
+                    title=_("Opened"),
                     description=_(
-                        "Filter by open status, 0=close, 1=open. By default, it return the open status for the current day"
+                        "Filter by open status, false=close, true=open."
+                    ),
+                ),
+            ),
+            Field(
+                name="opened_from",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Opened from"),
+                    description=_(
+                        "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+                    ),
+                ),
+            ),
+            Field(
+                name="opened_to",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Opened to"),
+                    description=_(
+                        "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
                     ),
                 ),
             ),
