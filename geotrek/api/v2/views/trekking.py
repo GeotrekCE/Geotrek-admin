@@ -48,8 +48,8 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         today = datetime.now().date()
-        start_date = self.parse_date(self.request.GET.get("start_date"), today)
-        end_date = self.parse_date(self.request.GET.get("end_date"), today)
+        start_date = self.parse_date(self.request.GET.get("opened_from"), today)
+        end_date = self.parse_date(self.request.GET.get("opened_to"), today)
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
                 trekking_models.Trek.objects.existing()
