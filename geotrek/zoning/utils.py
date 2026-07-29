@@ -17,4 +17,4 @@ def weekday_between(start_date, end_date):
         return list(range(0, 7))
 
     start_weekday = start_date.weekday()
-    return [(start_weekday - 1 + i) % 7 + 1 for i in range(nb_days)]
+    return [(start_weekday + i) % 7 for i in range(nb_days)]
