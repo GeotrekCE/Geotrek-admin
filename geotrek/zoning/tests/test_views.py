@@ -22,7 +22,7 @@ from geotrek.zoning.tests.factories import (
 )
 
 
-class AutocompleteTestMixin:
+class AutoCompleteBBoxTestMixin:
     factory_class = None
 
     def test_autocomplete_bbox_is_limit_by_10(self):
@@ -114,6 +114,10 @@ class AutocompleteTestMixin:
         self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(len(response.json()["results"]), 10)
         self.assertTrue(response.json()["pagination"]["more"])
+
+
+class AutocompleteTestMixin:
+    factory_class = None
 
     def test_autocomplete_custom_page_size(self):
         self.factory_class.create_batch(20, name="Test")
@@ -230,17 +234,23 @@ class LandLayersViewsTest:
         self.assertEqual(response.status_code, 200, response.json())
 
 
-class CityViewSetTestCase(AutocompleteTestMixin, LandLayersViewsTest, APITestCase):
+class CityViewSetTestCase(
+    AutoCompleteBBoxTestMixin, AutocompleteTestMixin, LandLayersViewsTest, APITestCase
+):
     layer = "city"
     factory_class = CityFactory
 
 
-class DistrictViewSetTestCase(AutocompleteTestMixin, LandLayersViewsTest, APITestCase):
+class DistrictViewSetTestCase(
+    AutoCompleteBBoxTestMixin, AutocompleteTestMixin, LandLayersViewsTest, APITestCase
+):
     layer = "district"
     factory_class = DistrictFactory
 
 
-class RestrictedAreaViewTest(AutocompleteTestMixin, LandLayersViewsTest, APITestCase):
+class RestrictedAreaViewTest(
+    AutoCompleteBBoxTestMixin, AutocompleteTestMixin, LandLayersViewsTest, APITestCase
+):
     layer = "restrictedarea"
     factory_class = RestrictedAreaFactory
 
@@ -336,6 +346,29 @@ class VigilanceAreaTestCase(MapEntityTest):
             f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
             f'    <a id="detail-btn" href="/vigilancearea/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
+        )
+
+
+class VigilanceAreaAutocompleteTest(AutocompleteTestMixin, APITestCase):
+    layer = "vigilancearea-drf"
+    factory_class = VigilanceAreaFactory
+
+    def test_autocomplete_forward(self):
+        area_type_1 = VigilanceAreaTypeFactory()
+        area_type_1_areas = VigilanceAreaFactory.create_batch(
+            2, vigilance_area_type=area_type_1
+        )
+        area_type_2 = VigilanceAreaTypeFactory()
+        VigilanceAreaFactory.create_batch(2, vigilance_area_type=area_type_2)
+        url = reverse(f"zoning:{self.layer}-autocomplete")
+        response = self.client.get(
+            url, data={"forward": json.dumps({"vigilance_area_type": [area_type_1.pk]})}
+        )
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 2)
+        self.assertEqual(
+            {area["id"] for area in response.json()["results"]},
+            {area.pk for area in area_type_1_areas},
         )
 
 

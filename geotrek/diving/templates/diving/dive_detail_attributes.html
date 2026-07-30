@@ -76,10 +76,6 @@
             </td>
         </tr>
         <tr>
-            <th>{% trans "External id" %}</th>
-            <td>{{ object.eid|default:"" }}</td>
-        </tr>
-        <tr>
             <th>{% trans "Thumbnail" %}</th>
             <td>
             	{% if object.thumbnail.url %}
@@ -87,9 +83,11 @@
             	{% endif %}
             </td>
         </tr>
-        {% include "common/publication_info_fragment.html" %}
-        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
+    {% include "common/fragments/publication_info.html" %}
+    {% include "common/fragments/provider_eid.html" %}
+    {% include "common/fragments/trackinfo.html" %}
 
     {{ block.super }}
+
 {% endblock attributes %}

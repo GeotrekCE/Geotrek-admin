@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-10-23 11:11+0200\n"
+"POT-Creation-Date: 2026-07-28 17:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,6 +70,9 @@ msgid "Toggle altimetric profile"
 msgstr ""
 
 msgid "Altitude profile"
+msgstr ""
+
+msgid "Elevation infos"
 msgstr ""
 
 msgid "Length"
