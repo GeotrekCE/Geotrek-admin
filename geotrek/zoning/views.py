@@ -21,6 +21,7 @@ from mapentity.views import (
 )
 from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
 from geotrek.authent.decorators import same_structure_required
@@ -48,6 +49,7 @@ from .serializers import (
     RestrictedAreaAutoCompleteBBoxSerializer,
     RestrictedAreaAutoCompleteSerializer,
     RestrictedAreaSerializer,
+    VigilanceAreaAutoCompleteSerializer,
     VigilanceAreaGeojsonSerializer,
     VigilanceAreaSerializer,
 )
@@ -100,7 +102,7 @@ class AutocompleteMixin:
             parsed_dict[f"{key}__in"] = [int(x) for x in value]
         return parsed_dict
 
-    @action(detail=False)
+    @action(detail=False, renderer_classes=[JSONRenderer])
     def autocomplete(self, request, *args, **kwargs):
         qs = self.get_queryset_autocomplete()
         identifier = self.request.query_params.get(
@@ -280,12 +282,22 @@ class VigilanceAreaDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class VigilanceAreaViewSet(GeotrekMapentityViewSet):
+class VigilanceAreaViewSet(AutocompleteMixin, GeotrekMapentityViewSet):
     model = VigilanceArea
     serializer_class = VigilanceAreaSerializer
+    serializer_autocomplete_class = VigilanceAreaAutoCompleteSerializer
     geojson_serializer_class = VigilanceAreaGeojsonSerializer
     filterset_class = VigilanceAreaFilterSet
     mapentity_list_class = VigilanceAreaList
+    autocomplete_search_fields = [
+        "name",
+    ]
+
+    def get_queryset_autocomplete(self):
+        return self.model.objects.only("name", "id")
+
+    def get_queryset_autocomplete_bbox(self):
+        return self.model.objects.only("name", "id")
 
     def get_queryset(self):
         qs = self.model.objects.all()
@@ -293,7 +305,9 @@ class VigilanceAreaViewSet(GeotrekMapentityViewSet):
             qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
             qs = qs.only("id", "name", "published")
         else:
-            qs = qs.prefetch_related("attachments")
+            qs = qs.select_related("vigilance_area_type").prefetch_related(
+                "attachments"
+            )
         return qs
 
 

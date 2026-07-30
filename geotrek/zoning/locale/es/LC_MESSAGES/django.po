@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-28 15:18+0200\n"
+"POT-Creation-Date: 2026-07-30 14:29+0200\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Spanish <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/es/>\n"
@@ -30,7 +30,7 @@ msgstr ""
 msgid "Practicable"
 msgstr ""
 
-msgid "Partially practicable"
+msgid "Under condition practicable"
 msgstr ""
 
 msgid "Not practicable"
@@ -46,6 +46,15 @@ msgid "Restricted area type"
 msgstr ""
 
 msgid "Restricted area"
+msgstr ""
+
+msgid "Vigilance area type"
+msgstr ""
+
+msgid "Vigilance area Practicability"
+msgstr ""
+
+msgid "Vigilance area"
 msgstr ""
 
 msgid "Name"
@@ -99,9 +108,6 @@ msgstr ""
 msgid "Districts"
 msgstr ""
 
-msgid "Vigilance area type"
-msgstr ""
-
 msgid "Vigilance area types"
 msgstr ""
 
@@ -149,9 +155,6 @@ msgstr ""
 
 #, python-format
 msgid " - months %s"
-msgstr ""
-
-msgid "Vigilance area"
 msgstr ""
 
 msgid "Vigilance areas"
