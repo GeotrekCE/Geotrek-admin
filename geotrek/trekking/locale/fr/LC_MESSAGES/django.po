@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-23 08:20+0000\n"
+"POT-Creation-Date: 2026-07-29 09:43+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/trekking/fr/>\n"
@@ -603,6 +603,9 @@ msgstr "Ajouter un service"
 
 msgid "Add Web link"
 msgstr "Ajouter un lien web"
+
+msgid "Topology is not valid."
+msgstr "La topologie est invalide."
 
 msgid "Geographical location"
 msgstr "Situation géographique"

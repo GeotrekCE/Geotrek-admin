@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-23 08:20+0000\n"
+"POT-Creation-Date: 2026-07-29 09:43+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -599,6 +599,9 @@ msgid "Add a new service"
 msgstr ""
 
 msgid "Add Web link"
+msgstr ""
+
+msgid "Topology is not valid."
 msgstr ""
 
 msgid "Geographical location"

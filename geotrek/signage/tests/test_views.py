@@ -1153,10 +1153,13 @@ class SignageViewsTest(CommonTest):
             "conditions": SignageConditionFactory.create().pk,
         }
         PathFactory.create()
-        good_data["topology"] = '{"type":"Point","coordinates":[3.0,46.5]}'
-        good_data["topology_changed"] = "true"
+        good_data["geom"] = '{"type":"Point","coordinates":[3.0,46.5]}'
+        good_data["geom_changed"] = "true"
 
         return good_data
+
+    def get_bad_data(self):
+        return {"geom": "doh!"}, gettext("Topology is not valid.")
 
     def get_expected_popup_content(self):
         return (

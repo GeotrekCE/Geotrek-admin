@@ -21,22 +21,33 @@ class PointTopologyFormMixin(CommonForm):
     Form mixin for drawing points, on or off the path network depending on whether paths exist.
     """
 
-    geomfields = ["topology"]
-    topology = PointTopoGeomField(label="")
+    # The field is named geom (not topology) to allow GeotrekMapWidget to set geom_changed to True when needed.
+    geomfields = ["geom"]
+    geom = PointTopoGeomField(label="")
+    geom_changed = BooleanField(required=False, widget=HiddenInput())
 
     class Meta(CommonForm.Meta):
-        fields = [*CommonForm.Meta.fields, "topology"]
+        # Don't include geom because its cleaned value will be a topology object which has to be
+        # handled manually in the save method
+        fields = [*CommonForm.Meta.fields]
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        if self.instance.pk:
-            self.fields["topology"].required = False
+        if self.instance and self.instance.pk:
+            self.fields["geom"].required = False
+            self.fields["geom"].initial = self.instance.geom
+
+        # Add geom_changed to the fields layout
+        if self.fieldslayout is not None:
+            self.fieldslayout = deepcopy(self.fieldslayout)
+            self.fieldslayout.append("geom_changed")
+            self._init_layout()
 
     def save(self, *args, **kwargs):
-        topology = self.cleaned_data.pop("topology")
+        geom = self.cleaned_data.pop("geom")
         instance = super().save(*args, **kwargs)
-        if topology is not None:
-            instance.mutate(topology)
+        if geom is not None:
+            instance.mutate(geom)
         return instance
 
 
