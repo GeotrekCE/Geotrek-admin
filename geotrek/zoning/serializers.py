@@ -111,3 +111,12 @@ class VigilanceAreaGeojsonSerializer(MapentityGeojsonModelSerializer):
     class Meta(MapentityGeojsonModelSerializer.Meta):
         model = zoning_models.VigilanceArea
         fields = ("id", "name", "published")
+
+
+class VigilanceAreaAutoCompleteSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(source="pk")
+    text = serializers.CharField(source="name")
+
+    class Meta:
+        model = zoning_models.VigilanceArea
+        fields = ["id", "text"]

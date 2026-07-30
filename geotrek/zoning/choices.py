@@ -5,7 +5,10 @@ from django.utils.translation import gettext_lazy as _
 
 class Practicability(TextChoices):
     PRACTICABLE = "practicable", _("Practicable")
-    POSSIBLY_PRACTICABLE = "partially_practicable", _("Partially practicable")
+    UNDER_CONDITION_PRACTICABLE = (
+        "under_condition_practicable",
+        _("Under condition practicable"),
+    )
     NOT_PRACTICABLE = "not_practicable", _("Not practicable")
 
 

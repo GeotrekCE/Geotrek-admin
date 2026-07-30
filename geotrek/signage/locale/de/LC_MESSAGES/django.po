@@ -184,9 +184,6 @@ msgstr ""
 msgid "Remove"
 msgstr ""
 
-msgid "External id"
-msgstr ""
-
 msgid "Conditions"
 msgstr ""
 

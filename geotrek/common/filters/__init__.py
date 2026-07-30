@@ -27,17 +27,22 @@ class OptionalRangeFilter(RangeFilter):
         )
 
 
-class RightFilter(ModelMultipleChoiceFilter):
+class BaseRightFilter:
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.field.widget.attrs["class"] = (
+            self.field.widget.attrs.get("class", "") + "right-filter"
+        )
+        self.field.widget.renderer = None
+
+
+class RightFilter(BaseRightFilter, ModelMultipleChoiceFilter):
     model = None
     queryset = None
 
     def __init__(self, *args, **kwargs):
         kwargs.setdefault("queryset", self.get_queryset())
         super().__init__(*args, **kwargs)
-        self.field.widget.attrs["class"] = (
-            self.field.widget.attrs.get("class", "") + "right-filter"
-        )
-        self.field.widget.renderer = None
 
     def get_queryset(self, request=None):
         if self.queryset is not None:

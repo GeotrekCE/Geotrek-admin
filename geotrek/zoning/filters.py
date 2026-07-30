@@ -2,17 +2,24 @@ from dal import autocomplete
 from django import forms
 from django.db.models import Exists, OuterRef, Q
 from django.utils.translation import gettext_lazy as _
-from django_filters import FilterSet, ModelMultipleChoiceFilter, filters
+from django_filters import (
+    FilterSet,
+    ModelMultipleChoiceFilter,
+    MultipleChoiceFilter,
+    filters,
+)
 
 from geotrek.authent.filters import StructureRelatedFilterSet
-from geotrek.common.filters import RightFilter
+from geotrek.common.filters import BaseRightFilter, RightFilter
 from geotrek.common.models import Provider
+from geotrek.zoning.choices import Practicability
 from geotrek.zoning.models import (
     City,
     District,
     RestrictedArea,
     RestrictedAreaType,
     VigilanceArea,
+    VigilanceAreaType,
 )
 
 
@@ -54,6 +61,50 @@ class IntersectionFilterRestrictedAreaType(RightFilter):
         return super().get_queryset().order_by("name")
 
 
+class IntersectionFilterVigilanceAreaType(RightFilter):
+    model = VigilanceAreaType
+
+    def filter(self, qs, value):
+        if not value:
+            return qs
+
+        return qs.filter(
+            Exists(
+                VigilanceArea.objects.filter(
+                    vigilance_area_type__in=value, geom__intersects=OuterRef("geom")
+                )
+            )
+        )
+
+
+class IntersectionFilterVigilanceAreaPracticability(
+    BaseRightFilter, MultipleChoiceFilter
+):
+    def filter(self, qs, value):
+        if not value:
+            return qs
+
+        return qs.filter(
+            Exists(
+                VigilanceArea.objects.filter(
+                    practicability__in=value, geom__intersects=OuterRef("geom")
+                )
+            )
+        )
+
+
+class IntersectionFilterVigilanceArea(RightFilter):
+    model = VigilanceArea
+
+    def filter(self, qs, value):
+        if not value:
+            return qs
+
+        return qs.filter(
+            Exists(VigilanceArea.objects.filter(geom__intersects=OuterRef("geom")))
+        )
+
+
 class IntersectionFilterRestrictedArea(IntersectionFilter):
     queryset = RestrictedArea.objects.all().select_related("area_type")
 
@@ -92,6 +143,28 @@ class ZoningFilterSet(FilterSet):
             forward=["area_type"],
             attrs={
                 "data-placeholder": _("Restricted area"),
+            },
+        ),
+    )
+    vigilance_area_type = IntersectionFilterVigilanceAreaType(
+        label=_("Vigilance area type"),
+        required=False,
+        widget=autocomplete.Select2Multiple(),
+    )
+    vigilance_area_practicability = IntersectionFilterVigilanceAreaPracticability(
+        label=_("Vigilance area Practicability"),
+        required=False,
+        widget=autocomplete.Select2Multiple(),
+        choices=Practicability.choices,
+    )
+    vigilance_area = IntersectionFilterVigilanceArea(
+        label=_("Vigilance area"),
+        required=False,
+        widget=autocomplete.ModelSelect2Multiple(
+            url="zoning:vigilancearea-drf-autocomplete",
+            forward=["vigilance_area_type", "vigilance_area_practicability"],
+            attrs={
+                "data-placeholder": _("Vigilance area"),
             },
         ),
     )

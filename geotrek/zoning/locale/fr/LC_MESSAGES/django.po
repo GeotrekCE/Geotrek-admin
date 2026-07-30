@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-28 15:18+0200\n"
+"POT-Creation-Date: 2026-07-30 14:29+0200\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/fr/>\n"
@@ -30,8 +30,8 @@ msgstr "Zonage"
 msgid "Practicable"
 msgstr "Praticable"
 
-msgid "Partially practicable"
-msgstr "Partiellement praticable"
+msgid "Under condition practicable"
+msgstr "Praticable sous conditions"
 
 msgid "Not practicable"
 msgstr "Non praticable"
@@ -48,6 +48,15 @@ msgstr "Type de zonage"
 msgid "Restricted area"
 msgstr "Zone réglementaire"
 
+msgid "Vigilance area type"
+msgstr "Type de zone de vigilance"
+
+msgid "Vigilance area Practicability"
+msgstr "Praticabilité de la zone de vigilance"
+
+msgid "Vigilance area"
+msgstr "Zone de vigilance"
+
 msgid "Name"
 msgstr "Nom"
 
@@ -61,7 +70,7 @@ msgid "Before"
 msgstr "Avant"
 
 msgid "Period active"
-msgstr "Période active"
+msgstr "En cours"
 
 msgid "Active today"
 msgstr "Actif aujourd'hui"
@@ -98,9 +107,6 @@ msgstr "Communes"
 
 msgid "Districts"
 msgstr "Secteurs"
-
-msgid "Vigilance area type"
-msgstr "Type de zone de vigilance"
 
 msgid "Vigilance area types"
 msgstr "Types de zone de vigilance"
@@ -150,9 +156,6 @@ msgstr " - jours %s "
 #, python-format
 msgid " - months %s"
 msgstr " - mois %s"
-
-msgid "Vigilance area"
-msgstr "Zone de vigilance"
 
 msgid "Vigilance areas"
 msgstr "Zones de vigilance"
