@@ -17,10 +17,8 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"practicability" }}</th>
-            <td>
-                <div class="alert alert-{% if object.practicability == 'practicable' %}info{% elif object.practicability == 'possibly_practicable' %}warning{% else %}danger{% endif %}">
-                <i class="bi bi-{% if object.practicability == 'practicable' %}check-circle{% elif object.practicability == 'possibly_practicable' %}exclamation-circle{% else %}x-circle{% endif %}"></i> {{ object.get_practicability_display }}
-                </div>
+            <td class="text-white bg-{% if object.practicability == 'practicable' %}success{% elif object.practicability == 'under_condition_practicable' %}warning{% else %}danger{% endif %}">
+                <i class="bi bi-{% if object.practicability == 'practicable' %}check-circle{% elif object.practicability == 'under_condition_practicable' %}exclamation-circle{% else %}x-circle{% endif %}"></i> {{ object.get_practicability_display }}
             </td>
         </tr>
         <tr>
@@ -65,45 +63,32 @@
             {% endif %}
             </td>
         </tr>
-
-        <tr>
-            <th>{{ object|verbose:"eid" }}</th>
-            <td>{{ object.get_eid }}</td>
-        </tr>
-        <tr>
-            <th>{{ object|verbose:"provider" }}</th>
-            <td>{% if object.provider %}
-                {{ object.provider.name|safe }}
-            {% else %}
-                <span class="none">{% trans "None" %}</span>
-            {% endif %}
-            </td>
-        </tr>
-
         <tr>
             <th>{% trans "Thumbnail" %}</th>
             <td><img src="{{ object.thumbnail.url }}"></td>
         </tr>
-
-        {% include "common/publication_info_fragment.html" %}
-        {% include "mapentity/trackinfo_fragment.html" %}
-        <tr>
-            <th colspan="2" class="text-center">{% trans "Period" %}</th>
+    </table>
+    <table class="table table-bordered">
+        <thead>
+        <tr class="table-active">
+            <th colspan="2" class="text-center"><i class="bi bi-calendar-range text-danger"></i> {% trans "Period" %}</th>
         </tr>
+        </thead>
+        <tbody>
         <tr>
-            <th>{{ object|verbose:"period_active" }}</th>
+            <th class="table-active">{{ object|verbose:"period_active" }}</th>
             <td>
                 <i class="bi {% if object.period_active %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i>
             </td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"active_today" }}</th>
+            <th class="table-active">{{ object|verbose:"active_today" }}</th>
             <td>
                 <i class="bi {% if object.active_today %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i>
             </td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"start_date" }}</th>
+            <th class="table-active">{{ object|verbose:"start_date" }}</th>
             <td>{% if object.start_date %}
                 {{ object.start_date|date:"SHORT_DATE_FORMAT" }}
             {% else %}
@@ -112,7 +97,7 @@
             </td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"end_date" }}</th>
+            <th class="table-active">{{ object|verbose:"end_date" }}</th>
             <td>{% if object.end_date %}
                 {{ object.end_date|date:"SHORT_DATE_FORMAT" }}
             {% else %}
@@ -121,7 +106,7 @@
             </td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"active_days" }}</th>
+            <th class="table-active">{{ object|verbose:"active_days" }}</th>
             <td>
                 {% if object.active_days|length == 0 %}
                     <span class="none">{% trans "All week" %}</span>
@@ -133,7 +118,7 @@
             </td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"active_months" }}</th>
+            <th class="table-active">{{ object|verbose:"active_months" }}</th>
             <td>
                 {% if object.active_months|length == 0 %}
                     <span class="none">{% trans "All year" %}</span>
@@ -144,7 +129,12 @@
                 {% endif %}
             </td>
         </tr>
+        </tbody>
     </table>
+
+    {% include "common/fragments/publication_info.html" %}
+    {% include "common/fragments/provider_eid.html" %}
+    {% include "common/fragments/trackinfo.html" %}
 
     {{ block.super }}
 {% endblock attributes %}
