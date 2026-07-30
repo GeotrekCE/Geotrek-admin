@@ -157,9 +157,6 @@ msgstr ""
 msgid " - months %s"
 msgstr ""
 
-msgid "Vigilance area"
-msgstr ""
-
 msgid "Vigilance areas"
 msgstr ""
 
