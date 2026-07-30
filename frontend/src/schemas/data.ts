@@ -19,7 +19,10 @@ export type DataSchemaPropsMixed = (
   | SignageDataSchemaProps
   | InterventionDataSchemaProps
   | (ReportDataSchemaProps & { name: string })
-) & { pictogram: { url?: string }; reference: string }
+) & {
+  pictogram: { url?: string }
+  reference: "signage" | "report" | "intervention" | "infrastructure"
+}
 
 const pointGeomSchema = z
   .object({
@@ -49,10 +52,34 @@ const multiLineStringGeomSchema = z.object({
     .min(1, m["form.location-required"]()),
 })
 
+const polygonGeomSchema = z.object({
+  type: z.literal("Polygon"),
+  coordinates: z
+    .array(
+      z
+        .array(z.array(z.number()).length(2, m["form.location-required"]()))
+        .min(2, m["form.location-required"]())
+    )
+    .min(1, m["form.location-required"]()),
+})
+
+const geometryCollectionGeomSchema = z.object({
+  type: z.literal("GeometryCollection"),
+  geometries: z.array(
+    z.union([
+      pointGeomSchema,
+      lineStringGeomSchema,
+      multiLineStringGeomSchema,
+      polygonGeomSchema,
+    ])
+  ),
+})
+
 export const geometrySchema = z.discriminatedUnion("type", [
   pointGeomSchema,
   lineStringGeomSchema,
   multiLineStringGeomSchema,
+  geometryCollectionGeomSchema,
 ])
 
 export const infrastructureDataSchema = z.object({
@@ -187,7 +214,7 @@ export const signageDataSchema = z.object({
       lines: z.array(
         z.object({
           id: z.number().int().positive(),
-          number: z.number().int().positive(),
+          number: z.number().int(),
           text: z.string(),
           distance: z.union([z.null(), z.string().min(1)]),
           time: z.union([z.null(), z.string().min(1)]),

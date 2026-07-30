@@ -1,5 +1,5 @@
 import * as React from "react"
-import { useStore } from "@tanstack/react-form"
+import { useSelector } from "@tanstack/react-form"
 import { Checkbox } from "@/components/ui/checkbox"
 import { FieldDescription, FieldLabel } from "@/components/ui/field"
 import {
@@ -17,9 +17,9 @@ interface CheckboxFieldProps {
 
 export function CheckboxField({ label, description }: CheckboxFieldProps) {
   const field = useFieldContext()
-  const isTouched = useStore(field.store, (s) => s.meta.isTouched)
-  const isValid = useStore(field.store, (s) => s.meta.isValid)
-  const value = useStore(field.store, (s) => s.value) as boolean
+  const isTouched = useSelector(field.store, (s) => s.meta.isTouched)
+  const isValid = useSelector(field.store, (s) => s.meta.isValid)
+  const value = useSelector(field.store, (s) => s.value) as boolean
   const id = React.useId()
 
   return (

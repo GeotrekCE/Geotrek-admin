@@ -181,7 +181,12 @@ export const reportReferencesSchema = z.object({
       name: z.string().min(1),
     })
   ),
-  reportstatus: z.array(z.unknown()),
+  reportstatus: z.array(
+    z.object({
+      id: z.number().int().positive(),
+      name: z.string().min(1),
+    })
+  ),
   pictogram: z.object({
     url: z.string(),
   }),

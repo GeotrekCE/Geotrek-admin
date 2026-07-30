@@ -32,8 +32,9 @@ export default function ReportForm({
       .first()
   )
 
-  const [{ reportactivity, reportcategory, reportproblemmagnitude }] =
-    references
+  const [
+    { reportactivity, reportcategory, reportproblemmagnitude, reportstatus },
+  ] = references
 
   const {
     id,
@@ -133,6 +134,12 @@ export default function ReportForm({
             name="problem_magnitude"
             label={m["form.problem-magnitude"]()}
             list={reportproblemmagnitude}
+          />
+
+          <FormSelectField
+            name="status"
+            label={m["form.status"]()}
+            list={reportstatus}
           />
 
           <Button type="submit">

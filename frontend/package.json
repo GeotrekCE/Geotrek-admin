@@ -21,7 +21,7 @@
     "@makina-corpus/maplibre-offline-pmtiles": "^2.1.1",
     "@tailwindcss/typography": "^0.5.20",
     "@tailwindcss/vite": "^4.2.1",
-    "@tanstack/react-form": "^1.33.0",
+    "@tanstack/react-form": "^1.33.2",
     "@tanstack/react-query": "^5.100.10",
     "@tanstack/react-router": "^1.169.2",
     "@tiptap/core": "^3.27.1",

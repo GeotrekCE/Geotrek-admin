@@ -4,7 +4,7 @@ import { toast } from "sonner"
 import { Check } from "lucide-react"
 import { useLiveQuery } from "dexie-react-hooks"
 import { createFileRoute } from "@tanstack/react-router"
-import { useForm, useStore } from "@tanstack/react-form"
+import { useForm, useSelector } from "@tanstack/react-form"
 import { db } from "@/lib/db"
 import { useAppSettings } from "@/hook/useAppSettings"
 import { useOfflineMaps } from "@/hook/useOfflineMaps"
@@ -80,7 +80,7 @@ function RouteComponent() {
     )
     return totalSize
   }
-  const layersName = useStore(form.store, (state) => state.values.layers)
+  const layersName = useSelector(form.store, (state) => state.values.layers)
 
   return (
     <div>

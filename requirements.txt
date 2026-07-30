@@ -382,7 +382,7 @@ rpds-py==0.30.0
     #   referencing
 ruamel-yaml==0.19.1
     # via drf-yasg
-sentry-sdk==2.64.0
+sentry-sdk==2.66.1
     # via geotrek (setup.py)
 setuptools==80.10.2
     # via
@@ -410,7 +410,7 @@ tinycss2==1.5.1
     #   weasyprint
 tinyhtml5==2.1.0
     # via weasyprint
-tqdm==4.68.4
+tqdm==4.69.1
     # via django-mapbox-baselayer
 transaction==5.1
     # via zodb

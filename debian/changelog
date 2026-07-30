@@ -1,8 +1,15 @@
-geotrek-admin (3.0.0rc1) UNRELEASED; urgency=medium
+geotrek-admin (3.0.0rc2) UNRELEASED; urgency=medium
 
   * Merging improvements
 
- -- Geotrek Team <support.geotrek@makina-corpus.com>  Fri, 17 Jul 2026 15:00:29 +0000
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Tue, 28 Jul 2026 13:48:28 +0000
+
+geotrek-admin (2.125.3) RELEASED; urgency=medium
+
+  * Merging improvements
+  * New package release
+
+ -- Geotrek Team <support.geotrek@makina-corpus.com>  Tue, 28 Jul 2026 13:48:21 +0000
 
 geotrek-admin (2.125.2) RELEASED; urgency=medium
 

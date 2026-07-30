@@ -58,10 +58,13 @@ export default function ListMap() {
           return null
         }
 
+        const coordinates =
+          item.geom.type === "GeometryCollection"
+            ? item.geom.geometries[0].coordinates
+            : item.geom.coordinates
+
         // We display the first point for LineString/MultiLineString
-        const [longitude, latitude] = item.geom.coordinates.flat(
-          Infinity
-        ) as number[]
+        const [longitude, latitude] = coordinates.flat(Infinity) as number[]
 
         return (
           <Marker

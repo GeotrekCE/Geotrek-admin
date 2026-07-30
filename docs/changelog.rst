@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-3.0.0-rc1       (XXXX-XX-XX)
+3.0.0-rc2       (2026-07-30)
 ----------------------------
 
 **Breaking changes**
@@ -27,6 +27,23 @@ CHANGELOG
 * Don't break the geometry of a topology when it's decoupled from the path network
 * Strengthen the "invalid topology" filter criteria
 * Remove the "invalid geometry" filter
+
+
+2.125.3         (2026-07-28)
+----------------------------
+
+**Improvements**
+
+* GTAM: Display a message if the API does not provide offline maps
+* GTAM: Move "place on map" button above the map
+* GTAM: Add "status" field for report form
+* GTAM: Add support for GeometryCollection
+* GTAM: Improve form ux
+
+**Bug fixes**
+
+* GTAM: incorrect wording and translations
+* GTAM: fix some wording/translations
 
 
 2.125.2         (2026-07-21)
