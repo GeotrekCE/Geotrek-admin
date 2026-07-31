@@ -20,6 +20,7 @@ from geotrek.zoning.tests.factories import (
     VigilanceAreaFactory,
     VigilanceAreaTypeFactory,
 )
+from geotrek.zoning.views import VigilanceAreaViewSet
 
 
 class AutoCompleteBBoxTestMixin:
@@ -371,6 +372,11 @@ class VigilanceAreaAutocompleteTest(AutocompleteTestMixin, APITestCase):
             {area.pk for area in area_type_1_areas},
         )
 
+    def test_get_queryset_autocomplete_bbox(self):
+        view = VigilanceAreaViewSet()
+        qs = view.get_queryset_autocomplete_bbox()
+        self.assertIsNotNone(qs)
+
 
 class VigilanceAreaDetailViewTest(AuthentFixturesTest):
     @classmethod
@@ -419,3 +425,13 @@ class VigilanceAreaSerializerTest(TestCase):
         self.assertIn(area.name, data["name"])
         self.assertEqual(data["practicability"], Practicability.PRACTICABLE.label)
         self.assertIn("period_active", data)
+
+
+class ZoningTagsTest(TestCase):
+    def test_restricted_area_types_with_areas(self):
+        from geotrek.zoning.templatetags.zoning_tags import restricted_area_types
+
+        area = RestrictedAreaFactory()
+        result = json.loads(restricted_area_types())
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["name"], area.area_type.name)
