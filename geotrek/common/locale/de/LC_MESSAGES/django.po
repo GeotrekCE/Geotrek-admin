@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-05 16:37+0000\n"
+"POT-Creation-Date: 2026-07-29 12:09+0200\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/common/de/>\n"
@@ -66,6 +66,9 @@ msgid "File"
 msgstr ""
 
 msgid "Encoding"
+msgstr ""
+
+msgid "Try another encoding if special caracters are malformed. (ex: CP1252)"
 msgstr ""
 
 msgid "Data to import from local file"
@@ -521,6 +524,21 @@ msgid "Imports"
 msgstr ""
 
 msgid "Sync. GTM"
+msgstr ""
+
+msgid "External identifiers"
+msgstr ""
+
+msgid "Second external id"
+msgstr ""
+
+msgid "Publication Infos"
+msgstr ""
+
+msgid "Draft"
+msgstr ""
+
+msgid "Track infos"
 msgstr ""
 
 msgid "Rectangle"
