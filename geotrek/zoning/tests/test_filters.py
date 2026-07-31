@@ -186,3 +186,25 @@ class VigilanceAreaFilterTest(TestCase):
             data={"after": self.tomorrow + datetime.timedelta(days=5)}, queryset=qs
         )
         self.assertNotIn(self.va, f.qs)
+
+    def test_filter_by_vigilance_area_practicability(self):
+        from geotrek.zoning.filters import (
+            IntersectionFilterVigilanceAreaPracticability,
+        )
+
+        qs = VigilanceArea.objects.all()
+        fltr = IntersectionFilterVigilanceAreaPracticability()
+        self.assertEqual(fltr.filter(qs, None), qs)
+        self.assertEqual(fltr.filter(qs, []), qs)
+        self.assertEqual(len(fltr.filter(qs, [Practicability.PRACTICABLE])), 1)
+
+    def test_filter_by_vigilance_area(self):
+        from geotrek.zoning.filters import (
+            IntersectionFilterVigilanceArea,
+        )
+
+        qs = VigilanceArea.objects.all()
+        fltr = IntersectionFilterVigilanceArea()
+        self.assertEqual(fltr.filter(qs, None), qs)
+        self.assertEqual(fltr.filter(qs, []), qs)
+        self.assertEqual(len(fltr.filter(qs, [self.va])), 1)
