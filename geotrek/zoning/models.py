@@ -3,7 +3,7 @@ import uuid
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields.array import ArrayField
-from django.contrib.postgres.indexes import GistIndex
+from django.contrib.postgres.indexes import GinIndex, GistIndex
 from django.core.exceptions import ValidationError
 from django.db.models import Index
 from django.db.models.functions import Now
@@ -162,14 +162,20 @@ class VigilanceArea(
     name = models.CharField(max_length=250, verbose_name=_("Name"), db_index=True)
     description = models.TextField(verbose_name=_("Description"), blank=True)
     start_date = models.DateField(
-        verbose_name=_("Start date"), default=timezone_today, db_default=Now()
+        verbose_name=_("Start date"),
+        default=timezone_today,
+        db_default=Now(),
+        db_index=True,
     )
-    end_date = models.DateField(verbose_name=_("End date"), blank=True, null=True)
+    end_date = models.DateField(
+        verbose_name=_("End date"), blank=True, null=True, db_index=True
+    )
     practicability = models.CharField(
         verbose_name=_("Practicability"),
         choices=Practicability.choices,
         max_length=50,
         default=Practicability.PRACTICABLE,
+        db_index=True,
     )
     vigilance_area_type = models.ForeignKey(
         VigilanceAreaType,
@@ -270,10 +276,19 @@ class VigilanceArea(
         ordering = ["name"]
         indexes = [
             GistIndex(name="vigilance_area_geom_gist_idx", fields=["geom"]),
+            GinIndex(name="va_active_days_gin_idx", fields=["active_days"]),
+            GinIndex(
+                name="va_active_months_gin_idx",
+                fields=["active_months"],
+            ),
         ]
         constraints = [
             models.CheckConstraint(
                 check=models.Q(geom__isvalid=True),
                 name="%(app_label)s_%(class)s_geom_is_valid",
+            ),
+            models.CheckConstraint(
+                check=models.Q(practicability__in=Practicability.values),
+                name="%(app_label)s_%(class)s_practicability_valid",
             ),
         ]

@@ -1,9 +1,3 @@
--- SportPractice
-----------------
--- name
-ALTER TABLE sensitivity_sportpractice ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE sensitivity_sportpractice ALTER COLUMN date_update SET DEFAULT now();
-
 -- Species
 ----------
 -- name
@@ -25,9 +19,6 @@ ALTER TABLE sensitivity_species ALTER COLUMN url SET DEFAULT '';
 ALTER TABLE sensitivity_species ALTER COLUMN category SET DEFAULT 1;
 -- eid
 -- pictogram
-ALTER TABLE sensitivity_species ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE sensitivity_species ALTER COLUMN date_update SET DEFAULT now();
-
 -- SensitiveArea
 ----------------
 -- geom
@@ -38,10 +29,6 @@ ALTER TABLE sensitivity_sensitivearea ALTER COLUMN description SET DEFAULT '';
 ALTER TABLE sensitivity_sensitivearea ALTER COLUMN contact SET DEFAULT '';
 -- eid
 -- structure
-ALTER TABLE maintenance_project ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE maintenance_project ALTER COLUMN date_update SET DEFAULT now();
 -- deleted
 
 -- rules
-ALTER TABLE sensitivity_rule ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE sensitivity_rule ALTER COLUMN date_update SET DEFAULT now();
