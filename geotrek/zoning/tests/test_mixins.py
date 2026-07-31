@@ -176,3 +176,7 @@ class ZoningPropertiesMixinTest(TestCase):
         self.assertNotIn(va_finished, published_va)
 
         self.assertEqual(len(self.path.get_vigilance_areas()), 2)
+
+    def test_vigilance_areas_no_geom(self):
+        self.path.geom = None
+        self.assertEqual(list(self.path.get_vigilance_areas()), [])
