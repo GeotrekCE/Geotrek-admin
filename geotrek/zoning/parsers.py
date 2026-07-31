@@ -14,7 +14,6 @@ from geotrek.zoning.models import (
     District,
     RestrictedArea,
     VigilanceArea,
-    VigilanceAreaType,
 )
 
 
@@ -147,7 +146,6 @@ class VigilanceAreaParser:
     m2m_fields = {}
     constant_fields = {
         "published": True,
-        "vigilance_area_type": VigilanceAreaType.objects.first(),
     }
     natural_keys = {"vigilance_area_type": "name"}
 
