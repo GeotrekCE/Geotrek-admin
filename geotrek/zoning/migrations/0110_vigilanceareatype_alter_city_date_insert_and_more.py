@@ -9,6 +9,7 @@ import django.db.models.deletion
 import django.db.models.functions.datetime
 import django.views.generic.dates
 import mapentity.models
+from django.conf import settings
 from django.db import migrations, models
 
 import geotrek.authent.models
@@ -272,7 +273,7 @@ class Migration(migrations.Migration):
                 (
                     "geom",
                     django.contrib.gis.db.models.fields.MultiPolygonField(
-                        spatial_index=False, srid=2154
+                        spatial_index=False, srid=settings.SRID
                     ),
                 ),
                 (
