@@ -68,6 +68,9 @@ msgstr "Fichier"
 msgid "Encoding"
 msgstr "Encodage"
 
+msgid "Try another encoding if special caracters are malformed. (ex: CP1252)"
+msgstr "Si les caractères spéciaux s'affichent mal, essayez un autre encodage. (par exemple : CP1252)"
+
 msgid "Data to import from local file"
 msgstr "Données à importer depuis un fichier local"
 
