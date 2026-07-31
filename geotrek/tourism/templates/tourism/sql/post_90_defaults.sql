@@ -1,17 +1,3 @@
--- InformationDeskType
-----------------------
--- label
--- pictogram
-ALTER TABLE tourism_informationdesktype ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE tourism_informationdesktype ALTER COLUMN date_update SET DEFAULT now();
-
--- LabelAccessibility
----------------------
--- label
--- pictogram
-ALTER TABLE tourism_labelaccessibility ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE tourism_labelaccessibility ALTER COLUMN date_update SET DEFAULT now();
-
 -- InformationDesk
 ------------------
 -- name
@@ -29,8 +15,6 @@ ALTER TABLE tourism_informationdesk ALTER COLUMN accessibility SET DEFAULT '';
 -- geom
 -- eid
 ALTER TABLE tourism_informationdesk ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
-ALTER TABLE tourism_informationdesk ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE tourism_informationdesk ALTER COLUMN date_update SET DEFAULT now();
 
 
 -- TouristicContentCategory
@@ -42,8 +26,6 @@ ALTER TABLE tourism_touristiccontentcategory ALTER COLUMN type2_label SET DEFAUL
 -- order
 ALTER TABLE tourism_touristiccontentcategory ALTER COLUMN color SET DEFAULT '#444444';
 -- pictogram
-ALTER TABLE tourism_touristiccontentcategory ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE tourism_touristiccontentcategory ALTER COLUMN date_update SET DEFAULT now();
 
 -- TouristicContentType
 -----------------------
@@ -80,8 +62,6 @@ ALTER TABLE tourism_touristiccontent ALTER COLUMN review SET DEFAULT FALSE;
 ALTER TABLE tourism_touristiccontent ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 -- structure
-ALTER TABLE tourism_touristiccontent ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE tourism_touristiccontent ALTER COLUMN date_update SET DEFAULT now();
 -- deleted
 
 
@@ -89,9 +69,6 @@ ALTER TABLE tourism_touristiccontent ALTER COLUMN date_update SET DEFAULT now();
 ---------------------
 -- type
 -- pictogram
-ALTER TABLE tourism_touristiceventtype ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE tourism_touristiceventtype ALTER COLUMN date_update SET DEFAULT now();
-
 -- TouristicEvent
 -----------------
 ALTER TABLE tourism_touristicevent ALTER COLUMN description_teaser SET DEFAULT '';
@@ -127,40 +104,7 @@ ALTER TABLE tourism_touristicevent ALTER COLUMN review SET DEFAULT FALSE;
 ALTER TABLE tourism_touristicevent ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 -- structure
-ALTER TABLE tourism_touristiccontent ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE tourism_touristiccontent ALTER COLUMN date_update SET DEFAULT now();
 -- deleted
 -- preparation_duration
 -- intervention_duration
 --price
-
-
--- TouristicEventParticipantCount
------------------
--- name
--- order
-ALTER TABLE tourism_touristiceventparticipantcount ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE tourism_touristiceventparticipantcount ALTER COLUMN date_update SET DEFAULT now();
-
-
--- TouristicEventParticipantCategory
------------------
--- label
--- order
-ALTER TABLE tourism_touristiceventparticipantcategory ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE tourism_touristiceventparticipantcategory ALTER COLUMN date_update SET DEFAULT now();
-
-
--- TouristicEventPlace
------------------
--- name 
--- geom
-ALTER TABLE tourism_touristiceventplace ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE tourism_touristiceventplace ALTER COLUMN date_update SET DEFAULT now();
-
-
--- TouristicEventCancellationReason
------------------
--- label
-ALTER TABLE tourism_cancellationreason ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE tourism_cancellationreason ALTER COLUMN date_update SET DEFAULT now();

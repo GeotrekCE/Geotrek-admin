@@ -9,8 +9,6 @@ ALTER TABLE common_accessibilityattachment ALTER COLUMN author SET DEFAULT '';
 ALTER TABLE common_accessibilityattachment ALTER COLUMN title SET DEFAULT '';
 ALTER TABLE common_accessibilityattachment ALTER COLUMN legend SET DEFAULT '';
 ALTER TABLE common_accessibilityattachment ALTER COLUMN random_suffix SET DEFAULT '';
-ALTER TABLE common_accessibilityattachment ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE common_accessibilityattachment ALTER COLUMN date_update SET DEFAULT now();
 
 
 -- Organism
@@ -40,8 +38,8 @@ ALTER TABLE common_attachment ALTER COLUMN legend SET DEFAULT '';
 ALTER TABLE common_attachment ALTER COLUMN random_suffix SET DEFAULT '';
 ALTER TABLE common_attachment ALTER COLUMN starred SET DEFAULT False;
 ALTER TABLE common_attachment ALTER COLUMN is_image SET DEFAULT False;
-ALTER TABLE common_attachment ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE common_attachment ALTER COLUMN date_update SET DEFAULT now();
+ALTER TABLE common_attachment ALTER COLUMN date_insert SET DEFAULT now();  -- paperclip
+ALTER TABLE common_attachment ALTER COLUMN date_update SET DEFAULT now();  -- paperclip
 
 -- Theme
 --------
@@ -75,13 +73,7 @@ ALTER TABLE common_targetportal ALTER COLUMN description SET DEFAULT '';
 ALTER TABLE common_label ALTER COLUMN filter SET DEFAULT False;
 ALTER TABLE common_label ALTER COLUMN published SET DEFAULT False;
 ALTER TABLE common_label ALTER COLUMN advice SET DEFAULT '';
-ALTER TABLE common_label ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE common_label ALTER COLUMN date_update SET DEFAULT now();
 
-
--- TargetPortal
-ALTER TABLE common_targetportal ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE common_targetportal ALTER COLUMN date_update SET DEFAULT now();
 
 -- HDViewPoint
 --------
@@ -97,11 +89,3 @@ ALTER TABLE common_hdviewpoint ALTER COLUMN author SET DEFAULT '';
 ALTER TABLE common_hdviewpoint ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
 ALTER TABLE common_hdviewpoint ALTER COLUMN annotations SET DEFAULT '{}'::jsonb;
 ALTER TABLE common_hdviewpoint ALTER COLUMN annotations_categories SET DEFAULT '{}'::jsonb;
-ALTER TABLE common_hdviewpoint ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE common_hdviewpoint ALTER COLUMN date_update SET DEFAULT now();
-
--- AccessMean
-----------
--- label
-ALTER TABLE common_accessmean ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE common_accessmean ALTER COLUMN date_update SET DEFAULT now();
