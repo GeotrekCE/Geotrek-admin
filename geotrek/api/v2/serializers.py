@@ -1,11 +1,12 @@
 import json
 import logging
+from datetime import datetime
 
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.contrib.gis.geos import GEOSGeometry
-from django.db.models import F
+from django.db.models import Exists, F, OuterRef, Q
 from django.urls import reverse
 from django.utils.html import escape
 from django.utils.translation import get_language
@@ -26,11 +27,19 @@ from geotrek.api.v2.mixins import (
     PDFSerializerMixin,
     PublishedRelatedObjectsSerializerMixin,
 )
-from geotrek.api.v2.utils import build_url, get_translation_or_dict, is_published
+from geotrek.api.v2.utils import (
+    build_url,
+    get_translation_or_dict,
+    is_published,
+    parse_date,
+)
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
 from geotrek.common.utils import simplify_coords
 from geotrek.flatpages.models import MenuItem
+from geotrek.zoning.choices import Practicability
+from geotrek.zoning.models import VigilanceArea
+from geotrek.zoning.utils import month_between, weekday_between
 
 if "geotrek.core" in settings.INSTALLED_APPS:
     from geotrek.core import models as core_models
@@ -1131,6 +1140,11 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             return obj.count_children
 
         def get_steps(self, obj):
+            today = datetime.now().date()
+            start_date = parse_date(
+                self.context["request"].GET.get("opened_from"), today
+            )
+            end_date = parse_date(self.context["request"].GET.get("opened_to"), today)
             qs = (
                 obj.children.select_related("topo_object", "difficulty")
                 .prefetch_related(
@@ -1138,6 +1152,27 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 )
                 .annotate(
                     geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
+                    closed=Exists(
+                        VigilanceArea.objects.filter(
+                            Q(active_months__len=0)
+                            | Q(
+                                active_months__contains=month_between(
+                                    start_date, end_date
+                                )
+                            ),
+                            Q(active_days__len=0)
+                            | Q(
+                                active_days__contains=weekday_between(
+                                    start_date, end_date
+                                )
+                            ),
+                            Q(end_date__isnull=True) | Q(end_date__gte=end_date),
+                            start_date__lte=start_date,
+                            published=True,
+                            practicability=Practicability.NOT_PRACTICABLE,
+                            geom__intersects=OuterRef("geom"),
+                        )
+                    ),
                 )
             )
             FinalClass = override_serializer(
@@ -1485,19 +1520,19 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
             model = zoning_models.VigilanceArea
             fields = (
                 "id",
-                "geometry",
-                "name",
-                "description",
-                "practicability",
-                "published",
-                "vigilance_area_type",
-                "start_date",
-                "end_date",
                 "active_days",
                 "active_months",
-                "practical_info",
+                "description",
+                "end_date",
                 "external_info_url",
+                "geometry",
+                "name",
+                "practicability",
+                "practical_info",
+                "published",
                 "sources",
+                "start_date",
+                "vigilance_area_type",
             )
 
 

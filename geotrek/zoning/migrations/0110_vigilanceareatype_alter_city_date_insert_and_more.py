@@ -47,6 +47,23 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("name", models.CharField(max_length=200, verbose_name="Name")),
+                (
+                    "date_insert",
+                    models.DateTimeField(
+                        auto_now_add=True,
+                        db_default=django.db.models.functions.datetime.Now(),
+                        verbose_name="Insertion date",
+                    ),
+                ),
+                (
+                    "date_update",
+                    models.DateTimeField(
+                        auto_now=True,
+                        db_default=django.db.models.functions.datetime.Now(),
+                        db_index=True,
+                        verbose_name="Update date",
+                    ),
+                ),
             ],
             options={
                 "verbose_name": "Vigilance area type",
