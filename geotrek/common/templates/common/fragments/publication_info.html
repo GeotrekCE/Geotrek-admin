@@ -26,6 +26,8 @@
             {% else %}
                 {% if object.review %}
                     {% trans "Waiting for publication" %}
+                {% elif object.published %}
+                    {% trans "Published" %}
                 {% else %}
                     {% trans "Draft" %}
                 {% endif %}
