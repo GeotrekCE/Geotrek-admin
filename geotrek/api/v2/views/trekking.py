@@ -15,6 +15,7 @@ from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
 from geotrek.api.v2.renderers import SVGProfileRenderer
+from geotrek.api.v2.utils import parse_date
 from geotrek.common.models import AccessibilityAttachment, Attachment, HDViewPoint
 from geotrek.trekking import models as trekking_models
 from geotrek.zoning.choices import Practicability
@@ -38,18 +39,10 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     )
     serializer_class = api_serializers.TrekSerializer
 
-    def parse_date(self, value, default):
-        if value is None:
-            return default
-        try:
-            return datetime.strptime(value, "%Y-%m-%d").date()
-        except ValueError:
-            return default
-
     def get_queryset(self):
         today = datetime.now().date()
-        start_date = self.parse_date(self.request.GET.get("opened_from"), today)
-        end_date = self.parse_date(self.request.GET.get("opened_to"), today)
+        start_date = parse_date(self.request.GET.get("opened_from"), today)
+        end_date = parse_date(self.request.GET.get("opened_to"), today)
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
                 trekking_models.Trek.objects.existing()
@@ -176,9 +169,33 @@ class TourViewSet(TrekViewSet):
     serializer_class = api_serializers.TourSerializer
 
     def get_queryset(self):
+        today = datetime.now().date()
+        start_date = parse_date(self.request.GET.get("opened_from"), today)
+        end_date = parse_date(self.request.GET.get("opened_to"), today)
         qs = super().get_queryset()
-        qs = qs.annotate(count_children=Count("trek_children")).filter(
-            count_children__gt=0
+        qs = (
+            qs.annotate(count_children=Count("trek_children"))
+            .filter(count_children__gt=0)
+            .annotate(
+                geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
+                trek_children__closed=Exists(
+                    VigilanceArea.objects.filter(
+                        Q(active_months__len=0)
+                        | Q(
+                            active_months__contains=month_between(start_date, end_date)
+                        ),
+                        Q(active_days__len=0)
+                        | Q(
+                            active_days__contains=weekday_between(start_date, end_date)
+                        ),
+                        Q(end_date__isnull=True) | Q(end_date__gte=end_date),
+                        start_date__lte=start_date,
+                        published=True,
+                        practicability=Practicability.NOT_PRACTICABLE,
+                        geom__intersects=OuterRef("geom"),
+                    )
+                ),
+            )
         )
         return qs
 
