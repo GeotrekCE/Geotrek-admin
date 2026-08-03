@@ -17,7 +17,7 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"practicability" }}</th>
-            <td class="text-white bg-{% if object.practicability == 'practicable' %}success{% elif object.practicability == 'under_condition_practicable' %}warning{% else %}danger{% endif %}">
+            <td class="text-{% if object.practicability == 'practicable' %}success-emphasis{% elif object.practicability == 'under_condition_practicable' %}warning{% else %}danger{% endif %}">
                 <i class="bi bi-{% if object.practicability == 'practicable' %}check-circle{% elif object.practicability == 'under_condition_practicable' %}exclamation-circle{% else %}x-circle{% endif %}"></i> {{ object.get_practicability_display }}
             </td>
         </tr>
@@ -78,13 +78,15 @@
         <tr>
             <th class="table-active">{{ object|verbose:"period_active" }}</th>
             <td>
-                <i class="bi {% if object.period_active %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i>
+                <p><i class="bi {% if object.period_active %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i>
+                {% if object.period_active %}{% trans "Active " %}{% else %}{% trans "Inactive " %}{% endif %}</p>
             </td>
         </tr>
         <tr>
             <th class="table-active">{{ object|verbose:"active_today" }}</th>
             <td>
-                <i class="bi {% if object.active_today %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i>
+                <p><i class="bi {% if object.active_today %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i>
+                {% if object.period_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</p>
             </td>
         </tr>
         <tr>
