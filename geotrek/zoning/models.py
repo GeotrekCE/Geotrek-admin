@@ -139,7 +139,7 @@ class District(TimeStampedModelMixin, BBoxMixin, models.Model):
         return self.name
 
 
-class VigilanceAreaType(PictogramMixin, models.Model):
+class VigilanceAreaType(PictogramMixin, TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=200, verbose_name=_("Name"))
 
     class Meta:
