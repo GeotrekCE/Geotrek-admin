@@ -115,6 +115,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "cities",
         "city_codes",
         "create_datetime",
+        "closed",
         "departure",
         "departure_geom",
         "descent",
@@ -151,6 +152,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "public_transport",
         "provider",
         "published",
+        "published_vigilance_areas",
         "ratings",
         "ratings_description",
         "reservation_system",
@@ -610,6 +612,25 @@ HDVIEWPOINT_DETAIL_JSON_STRUCTURE = sorted(
     ]
 )
 
+VIGILANCE_AREA_PROPERTIES_GEOJSON_STRUCTURE = sorted(
+    [
+        "id",
+        "active_days",
+        "active_months",
+        "description",
+        "end_date",
+        "external_info_url",
+        "geometry",
+        "name",
+        "practicability",
+        "practical_info",
+        "published",
+        "sources",
+        "start_date",
+        "vigilance_area_type",
+    ]
+)
+
 
 class BaseApiTest(TestCase):
     """Base TestCase for all API profiles"""
@@ -755,6 +776,27 @@ class BaseApiTest(TestCase):
         cls.sensitivearea = sensitivity_factory.SensitiveAreaFactory()
         cls.sensitivearea_practice = sensitivity_factory.SportPracticeFactory()
         cls.sensitivearea_species = sensitivity_factory.SpeciesFactory()
+
+        today = datetime.datetime.now().date()
+        cls.vigilance_area1 = zoning_factory.VigilanceAreaFactory(
+            structure=cls.structure,
+            published=True,
+            start_date=today - datetime.timedelta(days=3),
+            end_date=today + datetime.timedelta(days=40),
+        )
+        cls.vigilance_area2 = zoning_factory.VigilanceAreaFactory(
+            structure=cls.structure,
+            published=True,
+            start_date=today - datetime.timedelta(days=3),
+            end_date=today - datetime.timedelta(days=1),
+        )
+        cls.vigilance_area3 = zoning_factory.VigilanceAreaFactory(
+            structure=cls.structure,
+            published=False,
+            start_date=today - datetime.timedelta(days=3),
+            end_date=today + datetime.timedelta(days=40),
+        )
+        cls.vigilance_area_type = zoning_factory.VigilanceAreaTypeFactory()
         cls.parent = trek_factory.TrekFactory.create(
             published=True,
             name="Parent",
@@ -1182,6 +1224,23 @@ class BaseApiTest(TestCase):
     def get_sensitiveareaspecies_detail(self, id_sensitivearea_species, params=None):
         return self.client.get(
             reverse("apiv2:species-detail", args=(id_sensitivearea_species,)), params
+        )
+
+    def get_vigilancearea_list(self, params=None):
+        return self.client.get(reverse("apiv2:vigilancearea-list"), params)
+
+    def get_vigilancearea_detail(self, id_vigilancearea, params=None):
+        return self.client.get(
+            reverse("apiv2:vigilancearea-detail", args=(id_vigilancearea,)), params
+        )
+
+    def get_vigilanceareatype_list(self, params=None):
+        return self.client.get(reverse("apiv2:vigilancearea_type-list"), params)
+
+    def get_vigilanceareatype_detail(self, id_vigilanceareatype, params=None):
+        return self.client.get(
+            reverse("apiv2:vigilancearea_type-detail", args=(id_vigilanceareatype,)),
+            params,
         )
 
     def get_config(self, params=None):
@@ -3069,6 +3128,39 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_sensitiveareaspecies_detail(self.sensitivearea_species.pk),
             SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE,
+        )
+
+    def test_vigilancearea_list(self):
+        response = self.get_vigilancearea_list()
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+
+        nb_vigilancearea = zoning_models.VigilanceArea.objects.filter(
+            published=True, end_date__gte=datetime.datetime.now().date()
+        ).count()
+        self.assertEqual(len(json_response.get("results")), nb_vigilancearea)
+
+        self.assertEqual(
+            sorted(json_response.get("results")[0].keys()),
+            VIGILANCE_AREA_PROPERTIES_GEOJSON_STRUCTURE,
+        )
+
+    def test_vigilancearea_detail(self):
+        self.check_structure_response(
+            self.get_vigilancearea_detail(self.vigilance_area1.pk),
+            VIGILANCE_AREA_PROPERTIES_GEOJSON_STRUCTURE,
+        )
+
+    def test_vigilanceareatype_list(self):
+        self.check_number_elems_response(
+            self.get_vigilanceareatype_list(), zoning_models.VigilanceAreaType
+        )
+
+    def test_vigilanceareatype_detail(self):
+        self.check_structure_response(
+            self.get_vigilanceareatype_detail(self.vigilance_area_type.pk),
+            sorted(["id", "name", "pictogram"]),
         )
 
     def test_config(self):
