@@ -26,7 +26,7 @@ from geotrek.tourism.models import (
 )
 from geotrek.trekking.models import POI, ServiceType, Trek
 from geotrek.zoning.choices import Practicability
-from geotrek.zoning.models import City, District, VigilanceArea
+from geotrek.zoning.models import City, District
 from geotrek.zoning.utils import month_between, weekday_between
 
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
@@ -1314,9 +1314,7 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                 location="query",
                 schema=coreschema.String(
                     title=_("Opened"),
-                    description=_(
-                        "Filter by open status, false=close, true=open."
-                    ),
+                    description=_("Filter by open status, false=close, true=open."),
                 ),
             ),
             Field(
