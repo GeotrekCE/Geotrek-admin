@@ -184,6 +184,12 @@ Once installed, basemaps are managed from the administration interface:
 From this page, administrators can enable, disable or edit existing basemaps
 without modifying the application configuration.
 
+.. figure:: ../images/advanced-configuration/baselayer.png
+   :alt: Managing basemaps
+   :align: center
+
+   Managing basemaps
+
 .. important::
 
     If ``LEAFLET_CONFIG['TILES']`` is defined in ``custom.py``, it overrides the
@@ -191,12 +197,6 @@ without modifying the application configuration.
 
     To use the administration interface, comment out or remove the
     ``LEAFLET_CONFIG['TILES']`` setting before restarting Geotrek-admin.
-
-.. figure:: ../images/advanced-configuration/baselayer.png
-   :alt: Managing basemaps
-   :align: center
-
-   Managing basemaps
 
 Custom basemaps
 ^^^^^^^^^^^^^^^
@@ -208,7 +208,7 @@ you can create it manually from the administration interface:
 
     <your_geotrek_admin_url>/admin/mapbox_baselayer/mapbaselayer/add/
 
-Both raster and vector tile basemaps are supported.
+Both raster and vector tile basemaps are supported. However, vector tile basemaps are not yet available in the layer control.
 
 For vector tile basemaps, a valid **Style URL** must be provided.
 
@@ -217,7 +217,7 @@ For vector tile basemaps, a valid **Style URL** must be provided.
 Vector basemaps
 ^^^^^^^^^^^^^^^
 
-Vector basemaps (like ``plan_vt``or ``scan_25_vt``) are currently used :ref:`to generate PMTiles for Geotrek Admin Mobile (GTAM) offline maps <generating-offline-maps>`.
+Vector basemaps (like ``plan_vt`` or ``scan_25_vt``) are currently used :ref:`to generate PMTiles for Geotrek Admin Mobile (GTAM) offline maps <generating-offline-maps>`.
 
 They are **not yet displayed** in the Geotrek-admin layer selector. Support for
 displaying vector basemaps in the layer control is planned for Geotrek-admin v3.
