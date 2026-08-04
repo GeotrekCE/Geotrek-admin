@@ -5,6 +5,10 @@ CHANGELOG
 2.125.3+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Documentation**
+
+* Add details about configuring basemaps and generating offline maps (refs #5610)
+
 
 2.125.3         (2026-07-28)
 ----------------------------
