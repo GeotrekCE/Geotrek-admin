@@ -104,15 +104,36 @@ Basemaps can be added in two different ways:
 Installing predefined basemaps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The ``install_layer`` command allows you to list and install the predefined
-basemaps available for a given provider.
+The ``install_layer`` command allows you to install predefined basemaps from
+supported providers.
+
+The generic syntax is:
 
 .. md-tab-set::
     :name: install-layer-command-tabs
 
     .. md-tab-item:: With Debian
 
-        To list the available IGN basemaps:
+        .. code-block:: bash
+
+            sudo geotrek install_layer <provider> [layer]
+
+    .. md-tab-item:: With Docker
+
+        .. code-block:: bash
+
+            docker compose run --rm web ./manage.py install_layer <provider> [layer]
+
+The list of supported providers and their configuration options is available in
+the `django-mapbox-baselayer documentation <https://github.com/makinacorpus/django-mapbox-baselayer#unified-install_layer-command>`_.
+
+Some providers, such as ``ign``, include several predefined basemaps. You can
+list the available basemaps by specifying only the provider:
+
+.. md-tab-set::
+    :name: install-layer-ign-tabs
+
+    .. md-tab-item:: With Debian
 
         .. code-block:: bash
 
@@ -132,15 +153,13 @@ basemaps available for a given provider.
             - gris_vt: Gris IGN VT (mapbox style)
             - cadastre_vt: Cadastre IGN VT (mapbox style)
 
-        To install one of these basemaps, specify its identifier:
+        To install the IGN orthophoto:
 
         .. code-block:: bash
 
             sudo geotrek install_layer ign ortho
 
     .. md-tab-item:: With Docker
-
-        To list the available IGN basemaps:
 
         .. code-block:: bash
 
@@ -165,12 +184,6 @@ basemaps available for a given provider.
         .. code-block:: bash
 
             docker compose run --rm web ./manage.py install_layer ign ortho
-
-The same principle applies to the other supported providers (``osm``,
-``mapbox``, etc.).
-
-For additional options and supported providers, refer to the
-`django-mapbox-baselayer documentation <https://github.com/makinacorpus/django-mapbox-baselayer#unified-install_layer-command>`_.
 
 Managing basemaps
 ^^^^^^^^^^^^^^^^^
@@ -302,7 +315,7 @@ Generation time
     On a typical production server, generation can take around **five hours**, or
     even longer.
 
-By default, tiles are generated for zoom levels **0** to **18**.
+By default, PMTiles are generated for all zoom levels configured for the basemap layer in Geotrek-admin. For example, if the layer's maximum zoom level is 18, tiles will be generated from zoom level 0 to 18. This range may vary depending on the layer configuration.
 
 To reduce the generation time and the output file size, you can limit the
 maximum zoom level using the ``--maxzoom`` option. For example:
