@@ -299,7 +299,7 @@ Generation time
     depending on the server hardware, the selected basemap and the maximum zoom
     level.
 
-    On a typical production server, generation can take around **one hour**, or
+    On a typical production server, generation can take around **five hours**, or
     even longer.
 
 By default, tiles are generated for zoom levels **0** to **18**.
