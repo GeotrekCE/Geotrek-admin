@@ -1,3 +1,5 @@
+import datetime
+
 from django.db.models import BooleanField
 from django.test import SimpleTestCase
 
@@ -77,3 +79,34 @@ class IsPublishedTestCase(SimpleTestCase):
                     instance, language=params.get("language")
                 )
                 self.assertEqual(result, params["expected"])
+
+
+class ParseDateTestCase(SimpleTestCase):
+    default = datetime.datetime(2026, 8, 4).date()
+
+    def test_parser_date(self):
+        str_date = "2027-05-01"
+        date = api_utils.parse_date(str_date, self.default)
+
+        self.assertTrue(isinstance(date, datetime.date))
+        self.assertEqual(date.year, 2027)
+        self.assertEqual(date.month, 5)
+        self.assertEqual(date.day, 1)
+
+    def test_parse_none(self):
+        str_date = None
+        date = api_utils.parse_date(str_date, self.default)
+
+        self.assertTrue(isinstance(date, datetime.date))
+        self.assertEqual(date.year, 2026)
+        self.assertEqual(date.month, 8)
+        self.assertEqual(date.day, 4)
+
+    def test_parse_error(self):
+        str_date = "01-05-2027"
+        date = api_utils.parse_date(str_date, self.default)
+
+        self.assertTrue(isinstance(date, datetime.date))
+        self.assertEqual(date.year, 2026)
+        self.assertEqual(date.month, 8)
+        self.assertEqual(date.day, 4)

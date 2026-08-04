@@ -84,6 +84,20 @@ def is_published(instance, language=None):
 
 
 def parse_date(value, default):
+    """
+    Parse a date string in ``YYYY-MM-DD`` format.
+
+    Args:
+        value (str | None): The date string to parse, formatted as
+            ``YYYY-MM-DD``. If ``None`` or invalid, the default value is
+            returned.
+        default (datetime.date): The fallback date to return when ``value``
+            is ``None`` or cannot be parsed.
+
+    Returns:
+        datetime.date: The parsed date if ``value`` is valid; otherwise
+        ``default``.
+    """
     if value is None:
         return default
     try:
