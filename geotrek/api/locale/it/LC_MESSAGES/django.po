@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-05 09:13+0000\n"
+"POT-Creation-Date: 2026-08-05 15:23+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/api/it/>\n"
@@ -397,6 +397,21 @@ msgstr ""
 msgid "Filter objects created before or during date, format YYYY-MM-DD"
 msgstr ""
 
+msgid "Opened"
+msgstr ""
+
+msgid "Filter by open status, false=close, true=open."
+msgstr ""
+
+msgid "Opened from"
+msgstr ""
+
+msgid "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+msgstr ""
+
+msgid "Opened to"
+msgstr ""
+
 msgid "Duration min"
 msgstr ""
 
@@ -479,21 +494,6 @@ msgid "Labels exclusion"
 msgstr ""
 
 msgid "Exclude one or more label id, comma-separated."
-msgstr ""
-
-msgid "Opened"
-msgstr ""
-
-msgid "Filter by open status, false=close, true=open."
-msgstr ""
-
-msgid "Opened from"
-msgstr ""
-
-msgid "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
-msgstr ""
-
-msgid "Opened to"
 msgstr ""
 
 msgid "Filter by some case-insensitive text contained in name, description, description teaser or ambiance."
