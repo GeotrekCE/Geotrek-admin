@@ -51,15 +51,11 @@ msgstr "Eingeschränkter Bereichstyp"
 msgid "Restricted area"
 msgstr "Regulatorische Zonierung"
 
-#, fuzzy
-#| msgid "Restricted area type"
 msgid "Vigilance area type"
-msgstr "Eingeschränkter Bereichstyp"
+msgstr ""
 
-#, fuzzy
-#| msgid "Restricted area type"
 msgid "Vigilance area Practicability"
-msgstr "Eingeschränkter Bereichstyp"
+msgstr ""
 
 msgid "Vigilance area"
 msgstr ""
@@ -115,10 +111,8 @@ msgstr "Kommunen"
 msgid "Districts"
 msgstr "Distrikte"
 
-#, fuzzy
-#| msgid "Restricted area type"
 msgid "Vigilance area types"
-msgstr "Eingeschränkter Bereichstyp"
+msgstr ""
 
 msgid "Description"
 msgstr ""

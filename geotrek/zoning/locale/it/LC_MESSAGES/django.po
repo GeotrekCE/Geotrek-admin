@@ -51,15 +51,11 @@ msgstr "Tipo di zonizzazione regolatoria"
 msgid "Restricted area"
 msgstr "Zonizzazione normativa"
 
-#, fuzzy
-#| msgid "Restricted area type"
 msgid "Vigilance area type"
-msgstr "Tipo di zonizzazione regolatoria"
+msgstr ""
 
-#, fuzzy
-#| msgid "Restricted area type"
 msgid "Vigilance area Practicability"
-msgstr "Tipo di zonizzazione regolatoria"
+msgstr ""
 
 msgid "Vigilance area"
 msgstr ""
@@ -115,10 +111,8 @@ msgstr "Comuni"
 msgid "Districts"
 msgstr "Settori"
 
-#, fuzzy
-#| msgid "Restricted area type"
 msgid "Vigilance area types"
-msgstr "Tipo di zonizzazione regolatoria"
+msgstr ""
 
 msgid "Description"
 msgstr ""
