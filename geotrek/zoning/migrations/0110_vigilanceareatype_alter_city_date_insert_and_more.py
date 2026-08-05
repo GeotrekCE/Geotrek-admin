@@ -223,6 +223,7 @@ class Migration(migrations.Migration):
                                 "Under condition practicable",
                             ),
                             ("not_practicable", "Not practicable"),
+                            ("closed", "Closed"),
                         ],
                         db_index=True,
                         default="practicable",
@@ -377,6 +378,7 @@ class Migration(migrations.Migration):
                                     "practicable",
                                     "under_condition_practicable",
                                     "not_practicable",
+                                    "closed",
                                 ],
                             )
                         ),
