@@ -144,6 +144,10 @@ Modules de valorisation
      - | Module non activé par défaut permettant de saisir et de gérer  
        | des zones de sensibilité de la faune sauvage pour les afficher 
        | sur Geotrek-rando ou les diffuser avec l'API de Geotrek-admin).
+   * - .. figure:: ../images/user-manual/modules/vigilancearea.png
+     - :ref:`Zones de vigilance <zones-vigilance>`
+     - | Permet de gérer et diffuser des informations temporaires
+       | liées aux conflits d'usage en milieu naturel.
    * - .. figure:: ../images/user-manual/modules/sitesoutdoor.png
      - :ref:`Sites outdoor <pleinenature>`
      - | Permet de définir des sites d'activités de pleine nature 
