@@ -37,7 +37,7 @@ msgid "Not practicable"
 msgstr "Non praticable"
 
 msgid "Closed"
-msgstr ""
+msgstr "Fermé"
 
 msgid "City"
 msgstr "Commune"
