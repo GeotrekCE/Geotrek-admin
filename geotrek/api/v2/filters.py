@@ -948,6 +948,51 @@ class UpdateOrCreateDateFilter(BaseFilterBackend):
         ]
 
 
+class OpenedFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        opened = request.GET.get("opened")
+        if opened is not None:
+            closed = opened == "false"
+            qs = qs.filter(closed=closed)
+        return qs
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name="opened",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Opened"),
+                    description=_("Filter by open status, false=close, true=open."),
+                ),
+            ),
+            Field(
+                name="opened_from",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Opened from"),
+                    description=_(
+                        "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+                    ),
+                ),
+            ),
+            Field(
+                name="opened_to",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Opened to"),
+                    description=_(
+                        "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+                    ),
+                ),
+            ),
+        )
+
+
 class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         qs = queryset

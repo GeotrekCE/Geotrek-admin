@@ -229,6 +229,7 @@ TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted(
         "category",
         "cities",
         "city_codes",
+        "closed",
         "contact",
         "create_datetime",
         "description",
@@ -247,6 +248,7 @@ TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted(
         "practical_info",
         "provider",
         "published",
+        "published_vigilance_areas",
         "reservation_id",
         "reservation_system",
         "source",
@@ -2895,6 +2897,14 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             response.json()["results"][0]["pdf"],
             f"http://testserver/api/en/touristiccontents/{self.content.pk}/touristic-content.pdf",
         )
+
+    def test_touristiccontent_list_opened_filter(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.get_touristiccontent_list(
+            {"opened_from": start_date, "opened_to": end_date, "opened": "false"}
+        )
+        self.assertEqual(len(response.json()["results"]), 2)
 
     def test_labels_accessibility_detail(self):
         self.check_structure_response(
