@@ -214,7 +214,7 @@ msgstr "Filtrer par un ou plusieurs id de portails, séparés par des virgules."
 msgid "Practicalities"
 msgstr "Praticabilité"
 
-msgid "Filter by one or more practicabilities between 'practicable', 'possibly_practicable' and 'not practicable', comma-separated."
+msgid "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable', 'not practicable' and 'closed', comma-separated."
 msgstr "Filtrer par un ou plusieurs niveau de praticabilité entre 'practicable', 'possibly_practicable' et 'not practicable', séparés par des virgules."
 
 msgid "Types"
