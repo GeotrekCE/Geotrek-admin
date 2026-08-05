@@ -5,6 +5,14 @@ CHANGELOG
 2.125.3+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Warnings**
+
+* Due to the regeneration of pgRouting's network topology, the database migration to this version might take several minutes.
+
+**Maintenance**
+
+* Add support for pgRouting 4
+
 **Documentation**
 
 * Add details about configuring basemaps and generating offline maps (refs #5610)

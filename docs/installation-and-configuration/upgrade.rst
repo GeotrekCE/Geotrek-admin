@@ -2,16 +2,6 @@
 Upgrade
 =======
 
-.. warning::
-
-  Geotrek-admin does not support pgRouting 4.x yet.
-
-  Most installations on Ubuntu 22.04 or 24.04 using the default system repositories are not affected, as pgRouting is currently provided in a 3.x version.
-
-  However, if you are in one of the following cases, make sure pgRouting stays on a 3.x version and is not upgraded to 4.x:
-    - installations using the `PostgreSQL APT Repository <https://wiki.postgresql.org/wiki/Apt>`_
-    - installations using an external PostgreSQL database
-
 .. _upgrade-geotrek-admin:
 
 Upgrade Geotrek-Admin
@@ -147,9 +137,9 @@ PostgreSQL
 
 .. note::
 
-  Geotrek-admin supports **PostgreSQL >= 14**, **PostGIS >= 3.1** and **PgRouting = 3.x** for now.
+  Geotrek-admin supports **PostgreSQL >= 14**, **PostGIS >= 3.1** and **PgRouting >= 3** for now.
 
-  We recommend upgrading to **PostgreSQL 17**, **PostGIS 3.5.0** and **PgRouting 3.7.0**.
+  We recommend upgrading to **PostgreSQL 17**, **PostGIS 3.5.0** and **PgRouting 4.0**.
 
 You can check your versions with the following command:
 
@@ -178,6 +168,15 @@ for Ubuntu >= 20.04, or
    sudo apt-get install geotrek-admin=2.102.1.ubuntu18.04
 
 for Ubuntu bionic
+
+Upgrade pgRouting
+-----------------
+
+After upgrading pgRouting on your system or switching to a Docker image that includes a newer version, run the following command in your database:
+
+::
+
+    ALTER EXTENSION pgrouting UPDATE;
 
 .. _update_postgres:
 
