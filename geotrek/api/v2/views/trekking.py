@@ -1,4 +1,4 @@
-from datetime import datetime
+import datetime
 
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
@@ -36,11 +36,12 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.UpdateOrCreateDateFilter,
         api_filters.GeotrekRatingsFilter,
         api_filters.GeotrekNetworksFilter,
+        api_filters.OpenedFilter,
     )
     serializer_class = api_serializers.TrekSerializer
 
     def get_queryset(self):
-        today = datetime.now().date()
+        today = datetime.date.today()
         start_date = parse_date(self.request.GET.get("opened_from"), today)
         end_date = parse_date(self.request.GET.get("opened_to"), today)
         with translation.override(self.request.GET.get("language"), deactivate=True):
@@ -169,7 +170,7 @@ class TourViewSet(TrekViewSet):
     serializer_class = api_serializers.TourSerializer
 
     def get_queryset(self):
-        today = datetime.now().date()
+        today = datetime.date.today()
         start_date = parse_date(self.request.GET.get("opened_from"), today)
         end_date = parse_date(self.request.GET.get("opened_to"), today)
         qs = super().get_queryset()
