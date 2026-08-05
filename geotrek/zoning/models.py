@@ -15,8 +15,8 @@ from geotrek.common.mixins.models import (
     BBoxMixin,
     ExternalSourceMixin,
     GeotrekMapEntityMixin,
-    PictogramMixin,
     PicturesMixin,
+    OptionalPictogramMixin,
     PublishableMixin,
     TimeStampedModelMixin,
 )
@@ -139,7 +139,7 @@ class District(TimeStampedModelMixin, BBoxMixin, models.Model):
         return self.name
 
 
-class VigilanceAreaType(PictogramMixin, TimeStampedModelMixin, models.Model):
+class VigilanceAreaType(OptionalPictogramMixin, TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=200, verbose_name=_("Name"))
 
     class Meta:
