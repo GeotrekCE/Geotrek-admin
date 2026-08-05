@@ -15,8 +15,8 @@ from geotrek.common.mixins.models import (
     BBoxMixin,
     ExternalSourceMixin,
     GeotrekMapEntityMixin,
-    PicturesMixin,
     OptionalPictogramMixin,
+    PicturesMixin,
     PublishableMixin,
     TimeStampedModelMixin,
 )

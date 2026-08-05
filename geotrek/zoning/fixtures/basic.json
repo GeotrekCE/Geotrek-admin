@@ -90,5 +90,61 @@
         "fields": {
             "name": "R\u00e9serve int\u00e9grale"
         }
+    },
+    {
+        "pk": 1,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Pastoralisme"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Zone naturelle sensible"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Travaux"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Risque naturel"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Terrain accidenté"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Incident"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Événement"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Chasse"
+        }
     }
 ]
