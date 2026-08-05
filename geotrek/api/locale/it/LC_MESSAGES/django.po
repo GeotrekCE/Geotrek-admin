@@ -323,6 +323,24 @@ msgstr ""
 msgid "Filter objects created before or during date, format YYYY-MM-DD"
 msgstr ""
 
+msgid "Opened"
+msgstr ""
+
+msgid "Filter by open status, false=close, true=open."
+msgstr ""
+
+msgid "Opened from"
+msgstr ""
+
+msgid "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+msgstr ""
+
+msgid "Opened to"
+msgstr ""
+
+msgid "Duration min"
+msgstr ""
+
 msgid "Filter by minimum duration (hours)."
 msgstr ""
 
@@ -366,21 +384,6 @@ msgid "Filter by one or more label id, comma-separated."
 msgstr ""
 
 msgid "Exclude one or more label id, comma-separated."
-msgstr ""
-
-msgid "Opened"
-msgstr ""
-
-msgid "Filter by open status, false=close, true=open."
-msgstr ""
-
-msgid "Opened from"
-msgstr ""
-
-msgid "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
-msgstr ""
-
-msgid "Opened to"
 msgstr ""
 
 msgid "Filter by some case-insensitive text contained in name, description, description teaser or ambiance."
