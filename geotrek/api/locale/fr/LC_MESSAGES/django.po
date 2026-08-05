@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-29 16:15+0000\n"
+"POT-Creation-Date: 2026-08-05 09:13+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Camille Monchicourt <camille.monchicourt@ecrins-parcnational.fr>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/api/fr/>\n"
@@ -251,7 +251,7 @@ msgstr "Pratiques"
 
 #, fuzzy
 #| msgid "Filter by one or more labels accessibility id, comma-separated."
-msgid "Filter by one or more practicabilities between 'practicable', 'possibly_practicable' and 'not practicable', comma-separated."
+msgid "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable', 'not practicable' and 'closed', comma-separated."
 msgstr "Filtrer par un ou plusieurs id de label d'accessibilité, séparés par des virgules."
 
 msgid "Types"
