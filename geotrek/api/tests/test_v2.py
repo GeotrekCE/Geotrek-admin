@@ -66,6 +66,7 @@ from geotrek.trekking import models as trek_models
 from geotrek.trekking.tests import factories as trek_factory
 from geotrek.trekking.tests.base import TrekkingManagerTest
 from geotrek.trekking.tests.factories import PracticeFactory
+from geotrek.zoning import choices as zoning_choices
 from geotrek.zoning import models as zoning_models
 from geotrek.zoning.tests import factories as zoning_factory
 
@@ -777,24 +778,44 @@ class BaseApiTest(TestCase):
         cls.sensitivearea_practice = sensitivity_factory.SportPracticeFactory()
         cls.sensitivearea_species = sensitivity_factory.SpeciesFactory()
 
-        today = datetime.datetime.now().date()
+        cls.today = datetime.datetime.now().date()
+        geom = "SRID=4326;MULTIPOLYGON (((-2 -6, -2 -5, 0 -5, 0 -6, -2 -6)))"
         cls.vigilance_area1 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,
             published=True,
-            start_date=today - datetime.timedelta(days=3),
-            end_date=today + datetime.timedelta(days=40),
+            start_date=cls.today - datetime.timedelta(days=3),
+            end_date=cls.today + datetime.timedelta(days=145),
+            active_months=[],
+            active_days=[],
+            practicability=zoning_choices.Practicability.NOT_PRACTICABLE,
         )
         cls.vigilance_area2 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,
+            geom=geom,
             published=True,
-            start_date=today - datetime.timedelta(days=3),
-            end_date=today - datetime.timedelta(days=1),
+            start_date=cls.today - datetime.timedelta(days=3),
+            end_date=None,
+            active_months=[
+                (cls.today.month - 2) % 12 + 1,
+                cls.today.month,
+                (cls.today.month) % 12 + 1,
+            ],  # [Month-1, Month, Month+1]
+            active_days=[
+                (cls.today.weekday() - 1) % 7,
+                cls.today.weekday(),
+                (cls.today.weekday() + 1) % 7,
+            ],  # [Weekday-1, Weekday, Weekday+1]
+            practicability=zoning_choices.Practicability.NOT_PRACTICABLE,
         )
         cls.vigilance_area3 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,
+            published=True,
+            start_date=cls.today - datetime.timedelta(days=3),
+            end_date=cls.today - datetime.timedelta(days=1),
+        )
+        cls.vigilance_area4 = zoning_factory.VigilanceAreaFactory(
+            structure=cls.structure,
             published=False,
-            start_date=today - datetime.timedelta(days=3),
-            end_date=today + datetime.timedelta(days=40),
         )
         cls.vigilance_area_type = zoning_factory.VigilanceAreaTypeFactory()
         cls.parent = trek_factory.TrekFactory.create(
@@ -1978,6 +1999,38 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_trek_list({"fields": "id"})
         self.assertNotContains(response, str(self.child1.pk))
 
+    def test_trek_vigilancearea_filter_period(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.get_trek_list(
+            params={"opened_from": start_date, "opened_to": end_date, "opened": "false"}
+        )
+        self.assertEqual(response.json()["count"], 17)
+
+    def test_trek_vigilancearea_filter_out_of_period(self):
+        start_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+        end_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+        response = self.get_trek_list(
+            params={"opened_from": start_date, "opened_to": end_date, "opened": "false"}
+        )
+        self.assertEqual(response.json()["count"], 0)
+
+    def test_trek_vigilancearea_filter_invalid_month(self):
+        start_date = (self.today + datetime.timedelta(days=62)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=63)).strftime("%Y-%m-%d")
+        response = self.get_trek_list(
+            params={"opened_from": start_date, "opened_to": end_date, "opened": "false"}
+        )
+        self.assertEqual(response.json()["count"], 0)
+
+    def test_trek_vigilancearea_filter_invalid_weekday(self):
+        start_date = (self.today + datetime.timedelta(days=2)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=3)).strftime("%Y-%m-%d")
+        response = self.get_trek_list(
+            params={"opened_from": start_date, "opened_to": end_date, "opened": "false"}
+        )
+        self.assertEqual(response.json()["count"], 0)
+
     def test_tour_list(self):
         response = self.get_tour_list()
         #  test response code
@@ -3136,14 +3189,139 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
         json_response = response.json()
 
-        nb_vigilancearea = zoning_models.VigilanceArea.objects.filter(
-            published=True, end_date__gte=datetime.datetime.now().date()
-        ).count()
-        self.assertEqual(len(json_response.get("results")), nb_vigilancearea)
+        self.assertEqual(len(json_response.get("results")), 2)
 
         self.assertEqual(
             sorted(json_response.get("results")[0].keys()),
             VIGILANCE_AREA_PROPERTIES_GEOJSON_STRUCTURE,
+        )
+
+    def test_vigilancearea_filter_structure(self):
+        other_structure = StructureFactory.create(name="other")
+        vigilancearea_other_structure = zoning_factory.VigilanceAreaFactory.create(
+            structure=other_structure,
+            published=True,
+        )
+        response = self.get_vigilancearea_list(
+            params={"structures": other_structure.pk}
+        )
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            vigilancearea_other_structure.id,
+        )
+
+    def test_vigilancearea_filter_portal(self):
+        other_portal = common_factory.TargetPortalFactory.create(name="other")
+        vigilancearea_other_portal = zoning_factory.VigilanceAreaFactory.create(
+            published=True,
+        )
+        vigilancearea_other_portal.portals.set([other_portal])
+        response = self.get_vigilancearea_list(params={"portals": other_portal.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            vigilancearea_other_portal.id,
+        )
+
+    def test_vigilancearea_filter_practicability(self):
+        vigilancearea_other_practicability = zoning_factory.VigilanceAreaFactory.create(
+            published=True,
+            practicability=zoning_choices.Practicability.UNDER_CONDITION_PRACTICABLE,
+        )
+        response = self.get_vigilancearea_list(
+            params={"practicabilities": "under_condition_practicable"}
+        )
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            vigilancearea_other_practicability.id,
+        )
+
+    def test_vigilancearea_filter_type(self):
+        other_type = zoning_factory.VigilanceAreaTypeFactory.create(name="other")
+        vigilancearea_other_type = zoning_factory.VigilanceAreaFactory.create(
+            published=True,
+            vigilance_area_type=other_type,
+        )
+        response = self.get_vigilancearea_list(params={"types": other_type.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            vigilancearea_other_type.id,
+        )
+
+    def test_vigilancearea_filter_type_exclude(self):
+        other_type = zoning_factory.VigilanceAreaTypeFactory.create(name="other")
+        vigilancearea_other_type = zoning_factory.VigilanceAreaFactory.create(
+            published=True,
+            vigilance_area_type=other_type,
+        )
+        response = self.get_vigilancearea_list(params={"types_exclude": other_type.pk})
+        self.assertEqual(response.json()["count"], 2)
+        self.assertNotEqual(
+            response.json()["results"][0]["id"],
+            vigilancearea_other_type.id,
+        )
+
+    def test_vigilancearea_filter_period(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.get_vigilancearea_list(
+            params={"start_date": start_date, "end_date": end_date}
+        )
+        self.assertEqual(response.json()["count"], 2)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            self.vigilance_area1.pk,
+        )
+        self.assertEqual(
+            response.json()["results"][1]["id"],
+            self.vigilance_area2.pk,
+        )
+
+    def test_vigilancearea_filter_invalid_period(self):
+        start_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+        end_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
+        response = self.get_vigilancearea_list(
+            params={"start_date": start_date, "end_date": end_date}
+        )
+        self.assertEqual(response.json()["count"], 0)
+
+    def test_vigilancearea_filter_invalid_month(self):
+        start_date = (self.today + datetime.timedelta(days=62)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=63)).strftime("%Y-%m-%d")
+        response = self.get_vigilancearea_list(
+            params={"start_date": start_date, "end_date": end_date}
+        )
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            self.vigilance_area1.pk,
+        )
+
+    def test_vigilancearea_filter_invalid_weekday(self):
+        start_date = (self.today + datetime.timedelta(days=2)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=3)).strftime("%Y-%m-%d")
+        response = self.get_vigilancearea_list(
+            params={"start_date": start_date, "end_date": end_date}
+        )
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            self.vigilance_area1.pk,
+        )
+
+    def test_vigilancearea_filter_period_limit(self):
+        start_date = (self.today + datetime.timedelta(days=145)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=145)).strftime("%Y-%m-%d")
+        response = self.get_vigilancearea_list(
+            params={"start_date": start_date, "end_date": end_date}
+        )
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            self.vigilance_area1.pk,
         )
 
     def test_vigilancearea_detail(self):
