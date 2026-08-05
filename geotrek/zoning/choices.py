@@ -10,6 +10,7 @@ class Practicability(TextChoices):
         _("Under condition practicable"),
     )
     NOT_PRACTICABLE = "not_practicable", _("Not practicable")
+    CLOSED = "closed", _("Closed")
 
 
 class WeekdayChoices(IntegerChoices):
