@@ -553,11 +553,16 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
 
     class TouristicContentSerializer(TouristicModelSerializer):
         attachments = AttachmentSerializer(many=True, source="sorted_attachments")
+        closed = serializers.BooleanField()
         departure_city = serializers.SerializerMethodField()
         departure_city_code = serializers.SerializerMethodField()
+        published_vigilance_areas = serializers.SerializerMethodField()
         types = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name="apiv2:touristiccontent-detail")
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
+
+        def get_published_vigilance_areas(self, obj):
+            return [area.id for area in obj.published_vigilance_areas]
 
         class Meta(TimeStampedSerializer.Meta):
             model = tourism_models.TouristicContent
@@ -568,6 +573,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
                 "attachments",
                 "approved",
                 "category",
+                "closed",
                 "description",
                 "description_teaser",
                 "departure_city",
@@ -585,6 +591,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
                 "portal",
                 "provider",
                 "published",
+                "published_vigilance_areas",
                 "source",
                 "structure",
                 "themes",
