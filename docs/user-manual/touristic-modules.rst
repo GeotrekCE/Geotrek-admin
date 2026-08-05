@@ -491,7 +491,7 @@ Il est également possible d’importer directement les zonages depuis un format
 
 	Pour activer le module Zones sensibles, se référer à cette section :ref:`Sensitive areas <sensitivity>`
 
-.. _zones-sensibles:
+.. _zones-vigilance:
 
 Zones de vigilance
 ==================
