@@ -1,6 +1,8 @@
+import datetime
+
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import F
+from django.db.models import Exists, F, OuterRef, Q
 from django.db.models.query import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils import translation
@@ -8,10 +10,14 @@ from rest_framework.response import Response
 
 from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
+from geotrek.api.v2 import utils as api_utils
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
 from geotrek.common.models import Attachment
 from geotrek.tourism import models as tourism_models
+from geotrek.zoning.choices import Practicability
+from geotrek.zoning.models import VigilanceArea
+from geotrek.zoning.utils import month_between, weekday_between
 
 
 class LabelAccessibilityViewSet(api_viewsets.GeotrekViewSet):
@@ -47,10 +53,14 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.GeotrekTouristicContentFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
+        api_filters.OpenedFilter,
     )
     serializer_class = api_serializers.TouristicContentSerializer
 
     def get_queryset(self):
+        today = datetime.date.today()
+        start_date = api_utils.parse_date(self.request.GET.get("opened_from"), today)
+        end_date = api_utils.parse_date(self.request.GET.get("opened_to"), today)
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
                 tourism_models.TouristicContent.objects.existing()
@@ -67,7 +77,30 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
                         ).order_by("starred", "-date_insert"),
                     ),
                 )
-                .annotate(geom_transformed=Transform(F("geom"), settings.API_SRID))
+                .annotate(
+                    geom_transformed=Transform(F("geom"), settings.API_SRID),
+                    closed=Exists(
+                        VigilanceArea.objects.filter(
+                            Q(active_months__len=0)
+                            | Q(
+                                active_months__contains=month_between(
+                                    start_date, end_date
+                                )
+                            ),
+                            Q(active_days__len=0)
+                            | Q(
+                                active_days__contains=weekday_between(
+                                    start_date, end_date
+                                )
+                            ),
+                            Q(end_date__isnull=True) | Q(end_date__gte=end_date),
+                            start_date__lte=start_date,
+                            published=True,
+                            practicability=Practicability.CLOSED,
+                            geom__intersects=OuterRef("geom"),
+                        )
+                    ),
+                )
                 .order_by("name")
             )  # Required for reliable pagination
 

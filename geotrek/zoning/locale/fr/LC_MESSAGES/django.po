@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 14:29+0200\n"
+"POT-Creation-Date: 2026-08-05 14:05+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/fr/>\n"
@@ -35,6 +35,9 @@ msgstr "Praticable sous conditions"
 
 msgid "Not practicable"
 msgstr "Non praticable"
+
+msgid "Closed"
+msgstr "Fermé"
 
 msgid "City"
 msgstr "Commune"
@@ -173,6 +176,12 @@ msgstr "Aucun(e)"
 
 msgid "Thumbnail"
 msgstr "Miniature"
+
+msgid "Active"
+msgstr "Actif"
+
+msgid "Inactive"
+msgstr "Inactif"
 
 msgid "All week"
 msgstr "Toute la semaine"

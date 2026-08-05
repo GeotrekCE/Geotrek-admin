@@ -25,7 +25,9 @@ from geotrek.tourism.models import (
     TouristicEventType,
 )
 from geotrek.trekking.models import POI, ServiceType, Trek
+from geotrek.zoning.choices import Practicability
 from geotrek.zoning.models import City, District
+from geotrek.zoning.utils import month_between, weekday_between
 
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
@@ -290,6 +292,126 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                     title=_("Trek"),
                     description=_("(deprecated) replaced by '%(field)s'.")
                     % {"field": "near_trek"},
+                ),
+            ),
+        )
+
+
+class GeotrekVigilanceAreaFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        structures = request.GET.get("structures")
+        if structures:
+            qs = qs.filter(structure__in=structures.split(","))
+        portals = request.GET.get("portals")
+        if portals:
+            qs = qs.filter(portals__in=portals.split(","))
+        practicabilities = request.GET.get("practicabilities")
+        if practicabilities:
+            practicabilities = [
+                getattr(Practicability, practicability.upper())
+                for practicability in practicabilities.split(",")
+            ]
+            qs = qs.filter(practicability__in=practicabilities)
+        types = request.GET.get("types")
+        if types:
+            qs = qs.filter(vigilance_area_type__in=types.split(","))
+        types_exclude = request.GET.get("types_exclude")
+        if types_exclude:
+            qs = qs.exclude(vigilance_area_type__in=types_exclude.split(","))
+        start_date = request.GET.get("start_date")
+        end_date = request.GET.get("end_date")
+        if start_date and end_date:
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+            qs = (
+                qs.filter(
+                    Q(end_date__isnull=True) | Q(end_date__gte=start_date),
+                    start_date__lte=end_date,
+                )
+                .filter(
+                    Q(active_months__len=0)
+                    | Q(active_months__overlap=month_between(start_date, end_date))
+                )
+                .filter(
+                    Q(active_days__len=0)
+                    | Q(active_days__overlap=weekday_between(start_date, end_date))
+                )
+            )
+
+        return qs.distinct()
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name="structures",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Structures"),
+                    description=_(
+                        "Filter by one or more structure id, comma-separated."
+                    ),
+                ),
+            ),
+            Field(
+                name="portals",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Portals"),
+                    description=_("Filter by one or more portal id, comma-separated."),
+                ),
+            ),
+            Field(
+                name="practicabilities",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Practicalities"),
+                    description=_(
+                        "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable', 'not practicable' and 'closed', comma-separated."
+                    ),
+                ),
+            ),
+            Field(
+                name="types",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Types"),
+                    description=_("Filter by one or more types id, comma-separated."),
+                ),
+            ),
+            Field(
+                name="types_exclude",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Types exclusion"),
+                    description=_("Exclude one or more types id, comma-separated."),
+                ),
+            ),
+            Field(
+                name="start_date",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Start date"),
+                    description=_(
+                        "Filter active vigilance areas fora period. Must be setup with end_date. Format is YYYY-MM-JJ."
+                    ),
+                ),
+            ),
+            Field(
+                name="end_date",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("End date"),
+                    description=_(
+                        "Filter active vigilance areas fora period. Must be setup with start_date. Format is YYYY-MM-JJ."
+                    ),
                 ),
             ),
         )
@@ -911,6 +1033,51 @@ class UpdateOrCreateDateFilter(BaseFilterBackend):
                     title=_("Create date before"),
                     description=_(
                         "Filter objects created before or during date, format YYYY-MM-DD"
+                    ),
+                ),
+            ),
+        )
+
+
+class OpenedFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        opened = request.GET.get("opened")
+        if opened is not None:
+            closed = opened == "false"
+            qs = qs.filter(closed=closed)
+        return qs
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name="opened",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Opened"),
+                    description=_("Filter by open status, false=close, true=open."),
+                ),
+            ),
+            Field(
+                name="opened_from",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Opened from"),
+                    description=_(
+                        "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+                    ),
+                ),
+            ),
+            Field(
+                name="opened_to",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Opened to"),
+                    description=_(
+                        "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
                     ),
                 ),
             ),
