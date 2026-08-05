@@ -23,6 +23,9 @@ class Command(BaseCommand):
     parser.add_argument(
         "--obs-noise", type=float, default=50, help="Noise for matching in meters (default: 10)",
     )
+    parser.add_argument(
+        "--create", action="create_true", help="Add if you want to create Topology and Pathaggregation (default: False)"
+    )
 
   def handle(self, *args, **options):
     gpx_path = options["gpx_file"]
@@ -83,7 +86,7 @@ class Command(BaseCommand):
         obs_noise=obs_noise,
         obs_noise_ne=obs_noise,
         dist_noise=50,
-        non_emitting_states=True,
+        non_emitting_states=False,
         only_edges=False,
     )
 
