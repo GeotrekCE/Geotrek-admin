@@ -1,3 +1,4 @@
+import datetime
 import hashlib
 
 from django.core.cache import cache
@@ -106,7 +107,8 @@ class ZoningPropertiesMixin:
 
     def get_vigilance_areas(self):
         if self.geom:
-            qs = VigilanceArea.objects.active()
+            today = datetime.date.today()
+            qs = VigilanceArea.objects.filter(end_date__gte=today)
             qs = qs.filter(geom__intersects=self.geom)
         else:
             qs = VigilanceArea.objects.none()
