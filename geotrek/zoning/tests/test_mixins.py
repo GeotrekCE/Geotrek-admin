@@ -1,5 +1,8 @@
+import datetime
+
 from django.conf import settings
 from django.test import TestCase
+from django.views.generic.dates import timezone_today
 
 from geotrek.core.models import Path
 from geotrek.core.tests.factories import PathFactory
@@ -8,6 +11,7 @@ from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
     RestrictedAreaFactory,
+    VigilanceAreaFactory,
 )
 
 
@@ -139,3 +143,40 @@ class ZoningPropertiesMixinTest(TestCase):
             [a.pk for a in path.published_areas], [area.pk, self.area.pk]
         )
         self.assertEqual(len(path.published_areas), 2)
+
+    def test_vigilance_areas(self):
+        today = timezone_today()
+        va_active = VigilanceAreaFactory.create(
+            geom=self.geom_1_wkt,
+            start_date=today - datetime.timedelta(days=1),
+            end_date=None,
+            published=True,
+        )
+        va_unpublished = VigilanceAreaFactory.create(
+            geom=self.geom_1_wkt,
+            start_date=today - datetime.timedelta(days=1),
+            end_date=None,
+            published=False,
+        )
+        va_finished = VigilanceAreaFactory.create(
+            geom=self.geom_1_wkt,
+            start_date=today - datetime.timedelta(days=10),
+            end_date=today - datetime.timedelta(days=1),
+            published=True,
+        )
+
+        vigilance_areas = self.path.vigilance_areas
+        self.assertIn(va_active, vigilance_areas)
+        self.assertIn(va_unpublished, vigilance_areas)
+        self.assertNotIn(va_finished, vigilance_areas)
+
+        published_va = self.trek.published_vigilance_areas
+        self.assertIn(va_active, published_va)
+        self.assertNotIn(va_unpublished, published_va)
+        self.assertNotIn(va_finished, published_va)
+
+        self.assertEqual(len(self.path.get_vigilance_areas()), 2)
+
+    def test_vigilance_areas_no_geom(self):
+        self.path.geom = None
+        self.assertEqual(list(self.path.get_vigilance_areas()), [])
