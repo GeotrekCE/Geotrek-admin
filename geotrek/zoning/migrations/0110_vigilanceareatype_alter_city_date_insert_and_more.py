@@ -40,6 +40,7 @@ class Migration(migrations.Migration):
                 (
                     "pictogram",
                     models.FileField(
+                        blank=True,
                         max_length=512,
                         null=True,
                         upload_to="upload",
