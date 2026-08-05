@@ -244,33 +244,23 @@ msgstr "Portails"
 msgid "Filter by one or more portal id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de portails, séparés par des virgules."
 
-#, fuzzy
-#| msgid "Practices"
 msgid "Practicalities"
-msgstr "Pratiques"
+msgstr "Praticabilités"
 
-#, fuzzy
-#| msgid "Filter by one or more labels accessibility id, comma-separated."
 msgid "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable', 'not practicable' and 'closed', comma-separated."
-msgstr "Filtrer par un ou plusieurs id de label d'accessibilité, séparés par des virgules."
+msgstr "Filtrer par une ou plusieurs praticabilités entre 'practicable', 'under_condition_practicable', 'not practicable' et 'closed', séparés par des virgules."
 
 msgid "Types"
 msgstr "Types"
 
-#, fuzzy
-#| msgid "Filter by one or more type id, comma-separated."
 msgid "Filter by one or more types id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de type, séparés par des virgules."
 
-#, fuzzy
-#| msgid "Labels exclusion"
 msgid "Types exclusion"
-msgstr "Exclusion d'étiquette"
+msgstr "Exclusion de type"
 
-#, fuzzy
-#| msgid "Exclude one or more label id, comma-separated."
 msgid "Exclude one or more types id, comma-separated."
-msgstr "Exclure un ou plusieurs id d'étiquette, séparés par des virgules."
+msgstr "Exclure un ou plusieurs id de type, séparés par des virgules."
 
 msgid "Start date"
 msgstr ""
