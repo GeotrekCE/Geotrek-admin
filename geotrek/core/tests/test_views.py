@@ -2146,8 +2146,8 @@ class PathRouteViewTestCase(TestCase):
         path3 = PathFactory(geom=self.path_geometries["3"])
         steps1 = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path3.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path3.pk}, self.steps_coordinates["2"])),
             ]
         }
         response1 = self.get_route_geometry(steps1)
@@ -2161,8 +2161,8 @@ class PathRouteViewTestCase(TestCase):
         path2 = PathFactory(geom=self.path_geometries["2"])
         steps2 = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
         response2 = self.get_route_geometry(steps2)
@@ -2199,8 +2199,8 @@ class PathRouteViewTestCase(TestCase):
         path3 = PathFactory(geom=self.path_geometries["3"])
         steps1 = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
         response1 = self.get_route_geometry(steps1)
@@ -2214,8 +2214,8 @@ class PathRouteViewTestCase(TestCase):
         path2.delete()
         steps2 = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path3.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path3.pk}, self.steps_coordinates["2"])),
             ]
         }
         response2 = self.get_route_geometry(steps2)
@@ -2251,8 +2251,8 @@ class PathRouteViewTestCase(TestCase):
         path3 = PathFactory(geom=self.path_geometries["3"])
         steps1 = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
         response1 = self.get_route_geometry(steps1)
@@ -2272,8 +2272,8 @@ class PathRouteViewTestCase(TestCase):
         path2.save()
         steps2 = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path3.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path3.pk}, self.steps_coordinates["2"])),
             ]
         }
         response2 = self.get_route_geometry(steps2)
@@ -2313,8 +2313,8 @@ class PathRouteViewTestCase(TestCase):
         path3 = PathFactory(geom=self.path_geometries["3"])
         steps1 = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_coordinates["2"])),
             ]
         }
         response1 = self.get_route_geometry(steps1)
@@ -2334,8 +2334,8 @@ class PathRouteViewTestCase(TestCase):
         path2.save()
         steps2 = {
             "steps": [
-                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
-                dict(ChainMap({"path_id": path3.pk}, self.steps_positions["2"])),
+                dict(ChainMap({"path_id": path1.pk}, self.steps_coordinates["1"])),
+                dict(ChainMap({"path_id": path3.pk}, self.steps_coordinates["2"])),
             ]
         }
         response2 = self.get_route_geometry(steps2)
