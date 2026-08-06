@@ -7,6 +7,7 @@ CHANGELOG
 
 **Warnings**
 
+* This version adds support for pgRouting 4. If you choose to upgrade pgRouting, run the following command in your database after installing the new version of switching to a new Docker image: ``ALTER EXTENSION pgrouting UPDATE;``.
 * Due to the regeneration of pgRouting's network topology, the database migration to this version might take several minutes.
 
 **Maintenance**
