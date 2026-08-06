@@ -156,6 +156,7 @@ class Path(
         help_text="Internal field used by pgRouting",
         editable=False,
         db_column="source",
+        db_index=True,
     )
     target_pgr = models.IntegerField(
         null=True,
@@ -163,6 +164,7 @@ class Path(
         help_text="Internal field used by pgRouting",
         editable=False,
         db_column="target",
+        db_index=True,
     )
 
     objects = PathManager()
@@ -1071,6 +1073,20 @@ class Topology(
     @property
     def aggregations_optimized(self):
         return self.aggregations.all().select_related("path")
+
+
+class PgRoutingNode(models.Model):
+    """
+    This model is used to generate the pgRouting topology graph in the
+    create_pgrouting_topology PL/pgSQL function.
+    """
+
+    geom = models.PointField(
+        srid=settings.SRID,
+        null=True,
+        default=None,
+        spatial_index=True,
+    )
 
 
 class PathAggregation(models.Model):

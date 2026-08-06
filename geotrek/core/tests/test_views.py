@@ -7,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import LineString, MultiPolygon, Polygon
 from django.core.files.storage import default_storage
+from django.db import connection
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -740,7 +741,7 @@ class PathRouteViewTestCase(TestCase):
 
         cls.steps_coordinates = {
             "1": {"lat": 43.5689304, "lng": 1.3974995},  # Start of path1
-            "2": {"lat": 43.538244, "lng": 1.3964173},  # Start of path2
+            "2": {"lat": 43.538244, "lng": 1.3964173},  # Start of path2 or path3
         }
 
     def setUp(self):
@@ -2119,6 +2120,231 @@ class PathRouteViewTestCase(TestCase):
         self.assertEqual(
             response2.data.get("error"), "No path between the given points"
         )
+
+    def test_optimization_node_table_entries_are_reused(self):
+        """
+        Route once from path1 to path3 and check the node table entries.
+        Then add path2, reroute, and recheck the node table entries.
+        They should be the same except for one new node.
+        ─ : path
+        > : path direction
+        X : route step
+             start    path1
+               X───────>────
+               │
+               │
+        path3  ^
+               │
+               │
+               X──────>─────
+              end    path2 (added after 1st routing)
+        """
+        cursor = connection.cursor()
+
+        # 1st routing
+        path1 = PathFactory(geom=self.path_geometries["1"])
+        path3 = PathFactory(geom=self.path_geometries["3"])
+        steps1 = {
+            "steps": [
+                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
+                dict(ChainMap({"path_id": path3.pk}, self.steps_positions["2"])),
+            ]
+        }
+        response1 = self.get_route_geometry(steps1)
+        # This response data is already tested in test_route_geometry_steps_on_different_paths,
+        # so we only make sure that it succeeds:
+        self.assertEqual(response1.status_code, 200)
+        cursor.execute("SELECT id FROM core_pgroutingnode")
+        self.assertEqual(len(cursor.fetchall()), 3)
+
+        # 2nd routing: a new node should be created because of the new path
+        path2 = PathFactory(geom=self.path_geometries["2"])
+        steps2 = {
+            "steps": [
+                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+            ]
+        }
+        response2 = self.get_route_geometry(steps2)
+        # Again, no need to check the response data
+        self.assertEqual(response2.status_code, 200)
+        cursor.execute("SELECT id FROM core_pgroutingnode")
+        self.assertEqual(len(cursor.fetchall()), 4)
+
+    def test_optimization_node_table_orphaned_entries_are_removed_for_deleted_paths(
+        self,
+    ):
+        """
+        Route once from path1 to path2 and check the node table entries.
+        Then delete path2, reroute, and recheck the node table entries.
+        The node corresponding to the end of path2 should have been deleted.
+        ─ : path
+        > : path direction
+        X : route step
+             start    path1
+               X───────>────
+               │
+               │
+        path3  ^
+               │
+               │
+               X──────>─────
+              end    path2 (deleted after 1st routing)
+        """
+        cursor = connection.cursor()
+
+        # 1st routing
+        path1 = PathFactory(geom=self.path_geometries["1"])
+        path2 = PathFactory(geom=self.path_geometries["2"])
+        path3 = PathFactory(geom=self.path_geometries["3"])
+        steps1 = {
+            "steps": [
+                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+            ]
+        }
+        response1 = self.get_route_geometry(steps1)
+        # This response data is already tested in test_route_geometry_steps_on_different_paths,
+        # so we only make sure that it succeeds:
+        self.assertEqual(response1.status_code, 200)
+        cursor.execute("SELECT id FROM core_pgroutingnode")
+        self.assertEqual(len(cursor.fetchall()), 4)
+
+        # 2nd routing: a node should be deleted
+        path2.delete()
+        steps2 = {
+            "steps": [
+                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
+                dict(ChainMap({"path_id": path3.pk}, self.steps_positions["2"])),
+            ]
+        }
+        response2 = self.get_route_geometry(steps2)
+        # Again, no need to check the response data
+        self.assertEqual(response2.status_code, 200)
+        cursor.execute("SELECT id FROM core_pgroutingnode")
+        self.assertEqual(len(cursor.fetchall()), 3)
+
+    def test_optimization_node_table_orphaned_entries_are_removed_for_draft_paths(self):
+        """
+        Route once from path1 to path2 and check the node table entries.
+        Then set path2 to draft, reroute, and recheck the node table entries.
+        The node corresponding to the end of path2 should have been deleted, and
+        the source and target columns for this path should be null.
+        ─ : path
+        > : path direction
+        X : route step
+             start    path1
+               X───────>────
+               │
+               │
+        path3  ^
+               │
+               │
+               X──────>─────
+              end    path2 (set to draft after 1st routing)
+        """
+        cursor = connection.cursor()
+
+        # 1st routing
+        path1 = PathFactory(geom=self.path_geometries["1"])
+        path2 = PathFactory(geom=self.path_geometries["2"])
+        path3 = PathFactory(geom=self.path_geometries["3"])
+        steps1 = {
+            "steps": [
+                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+            ]
+        }
+        response1 = self.get_route_geometry(steps1)
+        # This response data is already tested in test_route_geometry_steps_on_different_paths,
+        # so we only make sure that it succeeds:
+        self.assertEqual(response1.status_code, 200)
+        cursor.execute("SELECT id FROM core_pgroutingnode")
+        self.assertEqual(len(cursor.fetchall()), 4)
+        cursor.execute("SELECT source, target FROM core_path")
+        for source, target in cursor.fetchall():
+            self.assertIsNotNone(source)
+            self.assertIsNotNone(target)
+
+        # 2nd routing: a node should be deleted and source and target columns
+        # should be null for path 2
+        path2.draft = True
+        path2.save()
+        steps2 = {
+            "steps": [
+                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
+                dict(ChainMap({"path_id": path3.pk}, self.steps_positions["2"])),
+            ]
+        }
+        response2 = self.get_route_geometry(steps2)
+        # Again, no need to check the response data
+        self.assertEqual(response2.status_code, 200)
+        cursor.execute("SELECT id FROM core_pgroutingnode")
+        self.assertEqual(len(cursor.fetchall()), 3)
+        cursor.execute("SELECT id, source, target FROM core_path")
+        self.assertIn((path2.pk, None, None), cursor.fetchall())
+
+    def test_optimization_node_table_orphaned_entries_are_removed_for_invisible_paths(
+        self,
+    ):
+        """
+        Route once from path1 to path2 and check the node table entries.
+        Then set path2 to invisible, reroute, and recheck the node table entries.
+        The node corresponding to the end of path2 should have been deleted, and
+        the source and target columns for this path should be null.
+        ─ : path
+        > : path direction
+        X : route step
+             start    path1
+               X───────>────
+               │
+               │
+        path3  ^
+               │
+               │
+               X──────>─────
+              end    path2 (set to invisible after 1st routing)
+        """
+        cursor = connection.cursor()
+
+        # 1st routing
+        path1 = PathFactory(geom=self.path_geometries["1"])
+        path2 = PathFactory(geom=self.path_geometries["2"])
+        path3 = PathFactory(geom=self.path_geometries["3"])
+        steps1 = {
+            "steps": [
+                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
+                dict(ChainMap({"path_id": path2.pk}, self.steps_positions["2"])),
+            ]
+        }
+        response1 = self.get_route_geometry(steps1)
+        # This response data is already tested in test_route_geometry_steps_on_different_paths,
+        # so we only make sure that it succeeds:
+        self.assertEqual(response1.status_code, 200)
+        cursor.execute("SELECT id FROM core_pgroutingnode")
+        self.assertEqual(len(cursor.fetchall()), 4)
+        cursor.execute("SELECT source, target FROM core_path")
+        for source, target in cursor.fetchall():
+            self.assertIsNotNone(source)
+            self.assertIsNotNone(target)
+
+        # 2nd routing: a node should be deleted and source and target columns
+        # should be null for path 2
+        path2.visible = False
+        path2.save()
+        steps2 = {
+            "steps": [
+                dict(ChainMap({"path_id": path1.pk}, self.steps_positions["1"])),
+                dict(ChainMap({"path_id": path3.pk}, self.steps_positions["2"])),
+            ]
+        }
+        response2 = self.get_route_geometry(steps2)
+        # Again, no need to check the response data
+        self.assertEqual(response2.status_code, 200)
+        cursor.execute("SELECT id FROM core_pgroutingnode")
+        self.assertEqual(len(cursor.fetchall()), 3)
+        cursor.execute("SELECT id, source, target FROM core_path")
+        self.assertIn((path2.pk, None, None), cursor.fetchall())
 
 
 class PathKmlGPXTest(TestCase):

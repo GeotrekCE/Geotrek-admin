@@ -21,17 +21,8 @@ class PathRouter:
     def set_path_network_topology(self):
         """Builds or updates the paths graph (pgRouting network topology)"""
         cursor = connection.cursor()
-        query = """
-                SELECT
-                    pgr_createTopology(
-                        'core_path',
-                        %s::float,
-                        'geom',
-                        'id'
-                    )
-                """
-        cursor.execute(query, [settings.PGROUTING_TOLERANCE])
-        return ("OK",) == cursor.fetchone()
+        query = "SELECT create_pgrouting_topology(%s::integer, %s::float)"
+        cursor.execute(query, [settings.SRID, settings.PGROUTING_TOLERANCE])
 
     def get_route(self, steps):
         """
@@ -237,7 +228,7 @@ class PathRouter:
                                 ST_X(ST_EndPoint(geom)) AS x2,
                                 ST_Y(ST_EndPoint(geom)) AS y2
                             FROM core_path
-                            WHERE draft = false AND visible = true
+                            WHERE source IS NOT NULL AND target IS NOT NULL
                             UNION ALL SELECT
                                 id, source, target, cost, reverse_cost, x1, y1, x2, y2
                             FROM temporary_edges_info
