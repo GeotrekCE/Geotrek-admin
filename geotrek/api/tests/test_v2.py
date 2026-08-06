@@ -620,6 +620,7 @@ VIGILANCE_AREA_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "id",
         "active_days",
         "active_months",
+        "attachments",
         "description",
         "end_date",
         "external_info_url",
@@ -630,6 +631,8 @@ VIGILANCE_AREA_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "published",
         "sources",
         "start_date",
+        "structure",
+        "uuid",
         "vigilance_area_type",
     ]
 )
