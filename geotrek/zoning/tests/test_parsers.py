@@ -3,14 +3,24 @@ import os
 from io import StringIO
 from unittest import mock
 
+from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiPolygon, Polygon, WKTWriter
 from django.core.management import call_command
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
+from geotrek.common.models import FileType
 from geotrek.common.parsers import GlobalImportError
-from geotrek.zoning.models import City, District, RestrictedArea, RestrictedAreaType
+from geotrek.common.tests.mixins import GeotrekParserTestMixin
+from geotrek.zoning.models import (
+    City,
+    District,
+    RestrictedArea,
+    RestrictedAreaType,
+    VigilanceArea,
+)
 from geotrek.zoning.parsers import (
     CityParser,
+    GeotrekVigilanceAreaParser,
     OpenStreetMapCityParser,
     OpenStreetMapDistrictParser,
     OpenStreetMapRestrictedAreaParser,
@@ -73,6 +83,114 @@ class FilterGeomTest(TestCase):
         geom = MultiPolygon(Polygon(((0, 0), (0, 1), (1, 1), (1, 0), (0, 0))))
         self.assertEqual(self.parser.filter_geom("geom", geom), geom)
         self.assertFalse(self.parser.warnings)
+
+
+class TestGeotrekVigilanceAreaParser(GeotrekVigilanceAreaParser):
+    url = "https://test.fr"
+
+    field_options = {
+        "vigilance_area_type": {
+            "create": True,
+        },
+        "structure": {
+            "create": True,
+        },
+        "sources": {
+            "create": True,
+        },
+        "geom": {"required": True},
+    }
+
+
+class VigilanceAreaGeotrekParserTests(GeotrekParserTestMixin, TestCase):
+    app_label = "zoning"
+
+    @classmethod
+    def setUpTestData(cls):
+        cls.filetype = FileType.objects.create(type="Photographie")
+
+    @mock.patch("requests.get")
+    @mock.patch("requests.head")
+    @override_settings(MODELTRANSLATION_DEFAULT_LANGUAGE="en")
+    def test_create(self, mocked_head, mocked_get):
+        self.mock_time = 0
+        self.mock_json_order = [
+            ("zoning", "structure.json"),
+            ("zoning", "sources.json"),
+            ("zoning", "vigilance_area_types.json"),
+            ("zoning", "vigilance_area_ids.json"),
+            ("zoning", "vigilance_area.json"),
+        ]
+
+        # Mock GET
+        mocked_get.return_value.status_code = 200
+        mocked_get.return_value.json = self.mock_json
+        mocked_get.return_value.content = b""
+        mocked_head.return_value.status_code = 200
+
+        call_command(
+            "import",
+            "geotrek.zoning.tests.test_parsers.TestGeotrekVigilanceAreaParser",
+            verbosity=0,
+        )
+        self.assertEqual(VigilanceArea.objects.count(), 2)
+        vigilance_area = VigilanceArea.objects.all().first()
+        self.assertEqual(vigilance_area.name, "area 1")
+        self.assertEqual(vigilance_area.name_fr, "zone 1")
+        self.assertEqual(vigilance_area.name_en, "area 1")
+        self.assertEqual(vigilance_area.name_es, "area 1")
+        self.assertEqual(vigilance_area.description, "<p>description 1</p>")
+        self.assertEqual(vigilance_area.description_fr, "<p>description 1</p>")
+        self.assertEqual(vigilance_area.description_en, "<p>description 1</p>")
+        self.assertEqual(vigilance_area.description_es, "<p>description 1</p>")
+        self.assertEqual(
+            vigilance_area.practical_info, "<p>practical information 1</p>"
+        )
+        self.assertEqual(vigilance_area.practical_info_fr, "<p>info pratique 1</p>")
+        self.assertEqual(
+            vigilance_area.practical_info_en, "<p>practical information 1</p>"
+        )
+        self.assertEqual(
+            vigilance_area.practical_info_es, "<p>practical information 1</p>"
+        )
+        self.assertEqual(vigilance_area.published, True)
+        self.assertEqual(str(vigilance_area.structure), "Structure 1")
+        self.assertEqual(str(vigilance_area.vigilance_area_type), "Pastoralism")
+        self.assertEqual(str(vigilance_area.practicability), "closed")
+        self.assertEqual(str(vigilance_area.sources.first()), "source 1")
+        self.assertEqual(vigilance_area.external_info_url, "https://test.fr")
+        self.assertEqual(str(vigilance_area.start_date), "2026-08-04")
+        self.assertEqual(str(vigilance_area.end_date), "2026-08-28")
+        self.assertEqual(vigilance_area.active_months, [8])
+        self.assertEqual(vigilance_area.active_days, [0, 1, 2])
+        self.assertEqual(vigilance_area.eid, "43ce926d-9236-4a62-ac7f-799d1c024b5a")
+
+        self.assertEqual(vigilance_area.geom.geom_type, "MultiPolygon")
+        self.assertEqual(vigilance_area.geom.srid, settings.SRID)
+        self.assertAlmostEqual(
+            vigilance_area.geom.coords[0][0][0][0], 568961.22561, places=5
+        )
+        self.assertAlmostEqual(
+            vigilance_area.geom.coords[0][0][0][1], 6285641.887099, places=5
+        )
+        self.assertAlmostEqual(
+            vigilance_area.geom.coords[0][0][1][0], 565156.525202, places=5
+        )
+        self.assertAlmostEqual(
+            vigilance_area.geom.coords[0][0][1][1], 6281302.045899, places=5
+        )
+        self.assertAlmostEqual(
+            vigilance_area.geom.coords[0][0][2][0], 570938.033360, places=5
+        )
+        self.assertAlmostEqual(
+            vigilance_area.geom.coords[0][0][2][1], 6275156.357207, places=5
+        )
+        self.assertAlmostEqual(
+            vigilance_area.geom.coords[0][0][3][0], 568961.22561, places=5
+        )
+        self.assertAlmostEqual(
+            vigilance_area.geom.coords[0][0][3][1], 6285641.887099, places=5
+        )
 
 
 class TestDistrictOpenStreetMapParser(OpenStreetMapDistrictParser):
