@@ -145,9 +145,11 @@ FOR EACH ROW EXECUTE PROCEDURE path_latest_updated_d();
 
 
 ----------------------------------------------------------------------------
--- Set pgRouting-related values to null after the geometry has been modified
+-- Set pgRouting-related values to null after a path has been modified
 ----------------------------------------------------------------------------
 
+-- After a path's geometry is modified, its source and target nodes are set to NULL
+-- so that they are updated next time the pgRouting topology is computed.
 CREATE FUNCTION {{ schema_geotrek }}.set_pgrouting_values_to_null() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
 BEGIN
@@ -156,6 +158,24 @@ BEGIN
 END;
 $$ LANGUAGE plpgsql;
 
-CREATE TRIGGER core_path_pgrouting_values_null_tgr
+CREATE TRIGGER core_path_pgrouting_values_null_geom_tgr
 AFTER UPDATE OF geom ON core_path
 FOR EACH ROW EXECUTE PROCEDURE set_pgrouting_values_to_null();
+
+
+-- After a path is set to draft or invisible, its source and target nodes must be set to NULL.
+-- This is because of the cleaning of the orphaned nodes after recomputing the pgRouting topology.
+-- For instance, a node linked to an invisible path (and no other) would be deleted from the node table.
+-- Once the path is visible again, for the node to be recreated, the path should have its source or target to NULL.
+CREATE FUNCTION {{ schema_geotrek }}.set_pgrouting_values_to_null_if_draft_or_invisible() RETURNS trigger SECURITY DEFINER AS $$
+DECLARE
+BEGIN
+    UPDATE core_path SET source = NULL, target = NULL
+    WHERE id = NEW.id AND (draft = true OR visible = false);
+    RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER core_path_pgrouting_values_null_draft_visible_tgr
+AFTER UPDATE OF draft, visible ON core_path
+FOR EACH ROW EXECUTE PROCEDURE set_pgrouting_values_to_null_if_draft_or_invisible();
