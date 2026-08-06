@@ -1505,8 +1505,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
         name = serializers.SerializerMethodField()
         description = serializers.SerializerMethodField()
         practical_info = serializers.SerializerMethodField()
-        active_months = serializers.SerializerMethodField()
-        active_days = serializers.SerializerMethodField()
+        attachments = AttachmentSerializer(many=True, source="sorted_attachments")
 
         def get_name(self, obj):
             return get_translation_or_dict("name", self, obj)
@@ -1517,29 +1516,26 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
         def get_practical_info(self, obj):
             return get_translation_or_dict("practical_info", self, obj)
 
-        def get_active_months(self, obj):
-            return obj.active_months_labels
-
-        def get_active_days(self, obj):
-            return obj.active_days_labels
-
         class Meta:
             model = zoning_models.VigilanceArea
             fields = (
                 "id",
-                "active_days",
-                "active_months",
-                "description",
-                "end_date",
-                "external_info_url",
-                "geometry",
                 "name",
+                "geometry",
+                "structure",
+                "vigilance_area_type",
                 "practicability",
+                "description",
                 "practical_info",
-                "published",
+                "external_info_url",
                 "sources",
                 "start_date",
-                "vigilance_area_type",
+                "end_date",
+                "active_days",
+                "active_months",
+                "published",
+                "uuid",
+                "attachments",
             )
 
 
