@@ -1589,6 +1589,7 @@ class GeotrekAggregatorParser:
         ),
         "Site": ("geotrek.outdoor.parsers", "GeotrekSiteParser"),
         "Course": ("geotrek.outdoor.parsers", "GeotrekCourseParser"),
+        "VigilanceArea": ("geotrek.zoning.parsers", "GeotrekVigilanceAreaParser"),
     }
 
     invalid_model_topology = ["Trek", "POI", "Service", "Signage", "Infrastructure"]

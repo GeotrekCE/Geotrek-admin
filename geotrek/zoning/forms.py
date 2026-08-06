@@ -85,7 +85,6 @@ class VigilanceAreaForm(CommonForm):
             "external_info_url",
             "sources",
             "portals",
-            "provider",
             "eid",
             Fieldset(
                 _("Period"), "start_date", "end_date", "active_days", "active_months"
@@ -100,7 +99,6 @@ class VigilanceAreaForm(CommonForm):
             "name",
             "structure",
             "description",
-            "provider",
             "eid",
             "vigilance_area_type",
             "external_info_url",

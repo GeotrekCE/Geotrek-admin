@@ -2,6 +2,7 @@ import datetime
 import hashlib
 
 from django.core.cache import cache
+from django.db.models import Q
 from django.utils.functional import cached_property
 from django.utils.translation import gettext_lazy as _
 
@@ -108,7 +109,9 @@ class ZoningPropertiesMixin:
     def get_vigilance_areas(self):
         if self.geom:
             today = datetime.date.today()
-            qs = VigilanceArea.objects.filter(end_date__gte=today)
+            qs = VigilanceArea.objects.filter(
+                Q(end_date__gte=today) | Q(end_date__isnull=True)
+            )
             qs = qs.filter(geom__intersects=self.geom)
         else:
             qs = VigilanceArea.objects.none()
