@@ -1,0 +1,23 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "name": {
+          "fr": "Pastoralisme",
+          "en": "Pastoralism"
+      },
+      "pictogram": null
+    },
+    {
+      "id": 2,
+      "name": {
+          "fr": "Risque naturel",
+          "en": "Natural risk"
+      },
+      "pictogram": null
+    }
+  ]
+}
