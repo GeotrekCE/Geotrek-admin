@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.gis.admin import GISModelAdmin
 from django.db import models
-from leaflet.admin import LeafletGeoAdmin
 from tinymce.widgets import TinyMCE
 
 from geotrek.common.admin.inlines import AttachmentInline
@@ -34,7 +34,7 @@ admin.site.register(tourism_models.InformationDeskType, InformationDeskTypeAdmin
 
 
 @admin.register(tourism_models.InformationDesk)
-class InformationDeskAdmin(LeafletGeoAdmin, TabbedTranslationAdmin):
+class InformationDeskAdmin(GISModelAdmin, TabbedTranslationAdmin):
     list_display = ("name", "website", "municipality")
     search_fields = ("name",)
     inlines = [AttachmentInline]
@@ -88,7 +88,7 @@ class CancellationReasonAdmin(MergeActionMixin, TabbedTranslationAdmin):
     merge_field = "label"
 
 
-class TouristicEventPlaceAdmin(LeafletGeoAdmin):
+class TouristicEventPlaceAdmin(GISModelAdmin):
     list_display = ("name",)
     list_filter = ("name",)
     search_fields = ("name",)

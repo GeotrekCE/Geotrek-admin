@@ -1,6 +1,6 @@
 import math
 import os
-from unittest import mock, skipIf
+from unittest import mock
 
 from django.apps import apps
 from django.conf import settings
@@ -30,7 +30,6 @@ from geotrek.core.tests.factories import (
 )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class StakeTest(TestCase):
     def test_comparison(self):
         low = StakeFactory.create()
@@ -48,7 +47,6 @@ class StakeTest(TestCase):
         self.assertFalse(low == high)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathTest(TestCase):
     def test_paths_bystructure(self):
         user = UserFactory()
@@ -132,9 +130,6 @@ class PathTest(TestCase):
         p1.save()
         self.assertEqual(len(mail.outbox), 0)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_delete_allow_path_trigger(self):
         p1 = PathFactory.create()
         p2 = PathFactory.create()
@@ -145,9 +140,6 @@ class PathTest(TestCase):
         cur.execute(f"DELETE FROM core_path WHERE id = {p2.pk}")
         self.assertEqual(Path.objects.count(), 0)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     @override_settings(ALLOW_PATH_DELETION_TOPOLOGY=False)
     def test_delete_protected_allow_path_trigger(self):
         p1 = PathFactory.create()
@@ -179,9 +171,6 @@ class PathTest(TestCase):
 
         self.assertEqual(Path.objects.count(), 1)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_delete_protected_allow_path(self):
         p1 = PathFactory.create()
         p2 = PathFactory.create()
@@ -208,7 +197,6 @@ class PathTest(TestCase):
         self.assertEqual(t.aggregations.count(), 1)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class InterpolateTest(TestCase):
     def test_interpolate_not_saved(self):
         p = Path()
@@ -222,7 +210,6 @@ class InterpolateTest(TestCase):
         self.assertEqual(p.interpolate(Point(3, 46.5, srid=4326)), (0, 0))
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SnapTest(TestCase):
     def test_snap_not_saved(self):
         p = Path()
@@ -236,7 +223,6 @@ class SnapTest(TestCase):
         self.assertEqual(snap.y, 6600000)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TrailTest(TestCase):
     def test_no_trail_csv(self):
         p1 = PathFactory.create()
@@ -280,7 +266,6 @@ class TrailTestDisplay(TestCase):
         self.assertEqual(entry.action_flag, DELETION)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathVisibilityTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -302,7 +287,6 @@ class PathVisibilityTest(TestCase):
         self.assertEqual(Path.objects.count(), 3)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathGeometryTest(TestCase):
     def test_self_intersection_raises_integrity_error(self):
         # Create path with self-intersection

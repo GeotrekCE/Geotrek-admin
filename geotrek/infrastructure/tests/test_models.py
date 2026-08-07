@@ -1,6 +1,3 @@
-from unittest import skipIf
-
-from django.conf import settings
 from django.test import TestCase
 
 from geotrek.core.tests.factories import PathFactory
@@ -29,26 +26,22 @@ class InfrastructureTest(TestCase):
         )
 
         cls.infra_cities1_2 = InfrastructureFactory.create()
+        cls.infra_cities1_2.aggregations.all().delete()
         cls.infra_cities1_2.geom = "SRID=2154;POINT(0 0)"
         cls.infra_cities1_2.save()
 
         cls.infra_cities3 = InfrastructureFactory.create()
+        cls.infra_cities3.aggregations.all().delete()
         cls.infra_cities3.geom = "SRID=2154;POINT(2 2)"
         cls.infra_cities3.save()
 
     def test_helpers(self):
         p = PathFactory.create()
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            infra = InfrastructureFactory.create(paths=[p])
-        else:
-            infra = InfrastructureFactory.create(geom=p.geom)
+        infra = InfrastructureFactory.create(paths=[p])
 
         self.assertCountEqual(p.infrastructures, [infra])
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     def test_display_cities(self):
         # Case : return 2 cities (not city3, is out of zone)
         self.assertEqual(self.infra_cities1_2.cities_display, "city1, city2")

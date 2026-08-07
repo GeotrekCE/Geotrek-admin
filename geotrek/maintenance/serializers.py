@@ -298,14 +298,8 @@ class InterventionGTAMSerializer(LimitStructurePermission, serializers.ModelSeri
             ManDay.objects.create(intervention=intervention, **manday)
 
     def _sync_target(self, intervention, geom):
-        topology = Topology()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
-            topology = Topology.deserialize(serialized)
-        else:
-            geom.transform(settings.SRID)
-            topology.geom = geom
-
+        serialized = f'{{"lng": {geom.x}, "lat": {geom.y}}}'
+        topology = Topology.deserialize(serialized)
         topology.save()
         intervention.target = topology
         intervention.save()

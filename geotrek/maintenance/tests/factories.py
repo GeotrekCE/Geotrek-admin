@@ -1,5 +1,4 @@
 import factory
-from django.conf import settings
 
 from geotrek.common.tests.factories import OrganismFactory
 from geotrek.core.tests.factories import PathFactory, StakeFactory, TopologyFactory
@@ -81,15 +80,7 @@ class InfrastructurePointInterventionFactory(InterventionFactory):
 
     @factory.post_generation
     def create_infrastructure_point_intervention(obj, create, extracted, **kwargs):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            infra = InfrastructureFactory.create(
-                paths=[(PathFactory.create(), 0.5, 0.5)]
-            )
-
-        else:
-            infra = InfrastructureFactory.create(
-                geom="SRID=2154;POINT (700040 6600040)"
-            )
+        infra = InfrastructureFactory.create(paths=[(PathFactory.create(), 0.5, 0.5)])
         obj.target = infra
         if create:
             obj.save()
@@ -141,6 +132,7 @@ class ProjectWithInterventionFactory(ProjectFactory):
             obj.contractors.add(ContractorFactory.create())
             FundingFactory.create(project=obj, amount=1000)
             InfrastructureInterventionFactory.create(project=obj)
+            obj.refresh_from_db()
 
 
 class FundingFactory(factory.django.DjangoModelFactory):

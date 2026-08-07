@@ -160,27 +160,6 @@ Name for your default structure.
    * *Change in the settings*
    * *Re-run the server.*
 
-.. _configuration-dynamic-segmentation:
-
-Dynamic segmentation
-----------------------
-
-.. code-block:: python
-
-    TREKKING_TOPOLOGY_ENABLED = True
-
-Use dynamic segmentation or not.
-
-:ref:`Dynamic segmentation <segmentation-dynamique>` is used by default when installing Geotrek-admin.
-
-With this mode, linear objects are built and stored related to paths.
-
-Without this mode, linear geometry of objects is built and stored as an independent geographic object without relation to paths.
-
-So if you want to use Geotrek-admin without dynamic segmentation, set TREKKING_TOPOLOGY_ENABLED to false after installation.
-
-Do not change it again to true after setting it to false.
-
 Translations
 -------------
 

@@ -1,18 +1,28 @@
-{% load i18n static trekking_tags %}
+{% load i18n static trekking_tags geotrek_tags %}
+
+{% settings_value "TREKKING_MODEL_ENABLED" as trek_enabled %}
+{% settings_value "POI_MODEL_ENABLED" as poi_enabled %}
+{% settings_value "SERVICE_MODEL_ENABLED" as service_enabled %}
 
 <script type="text/javascript">
-    MapEntity.i18n['Trekking'] = "{% trans "Trekking" %}";
-    MapEntity.i18n['Services'] = "{% trans "Services" %}";
-    MapEntity.i18n['POI'] = "{% trans "POI" %}";
-    MapEntity.i18n['POIs'] = "{% trans "POIs" %}";
-    MapEntity.i18n['Treks'] = "{% trans "Treks" %}";
-
+    {#MapEntity.i18n['Trekking'] = "{% trans "Trekking" %}";#}
+    {#MapEntity.i18n['Services'] = "{% trans "Services" %}";#}
+    {#MapEntity.i18n['POI'] = "{% trans "POI" %}";#}
+    {#MapEntity.i18n['POIs'] = "{% trans "POIs" %}";#}
+    {#MapEntity.i18n['Treks'] = "{% trans "Treks" %}";#}
+    {% if trek_enabled %}
     window.SETTINGS.urls['trek_layer'] = "{% url "trekking:trek-drf-list" format="geojson" %}";
+    {% endif %}
+    {% if poi_enabled %}
     window.SETTINGS.urls['poi_layer'] = "{% url "trekking:poi-drf-list" format="geojson" %}";
+    {% endif %}
+    {% if service_enabled %}
     window.SETTINGS.urls['service_layer'] = "{% url "trekking:service-drf-list" format="geojson" %}";
+    {% endif %}
 </script>
 {% if modelname == "trek" %}
-    <script type="text/javascript" src="{% static 'trekking/main.js' %}"></script>
+    <script type="text/javascript" src="{% static 'trekking/js/main.js' %}"></script>
+
     <script type="application/json" id="practices">
         {% trek_practices as practices %}
         {{ practices|safe }}

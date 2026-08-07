@@ -11,7 +11,9 @@
         <tr>
             <th>{{ trail|verbose:"name" }}</th>
             <td>{{ trail.name }}</td>
-        </tr><tr>
+        </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=trail %}
+        <tr>
             <th>{{ trail|verbose:"departure" }}</th>
             <td>{{ trail.departure }}</td>
         </tr><tr>

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-13 13:27+0000\n"
+"POT-Creation-Date: 2026-07-29 09:43+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/signage/nl/>\n"
@@ -52,6 +52,9 @@ msgid "Lines"
 msgstr ""
 
 msgid "Position of the blade on the signage (top=1). Assigning a position that has already been used will shift the positions of the other blades"
+msgstr ""
+
+msgid "Implantation year"
 msgstr ""
 
 msgid "Sealing"
@@ -200,6 +203,9 @@ msgid "Add"
 msgstr ""
 
 msgid "meters"
+msgstr ""
+
+msgid "Topology is not valid."
 msgstr ""
 
 msgid "Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."

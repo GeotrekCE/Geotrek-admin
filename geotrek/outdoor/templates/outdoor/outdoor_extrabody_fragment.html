@@ -1,15 +1,18 @@
-{% load i18n outdoor_tags %}
+{% load i18n outdoor_tags geotrek_tags %}
 
-{% is_outdoor_enabled as enabled %}
-{% if enabled %}
+{% settings_value "COURSE_MODEL_ENABLED" as course_enabled %}
+{% settings_value "SITE_MODEL_ENABLED" as site_enabled %}
 
 <script type="text/javascript">
-    MapEntity.i18n['Outdoor'] = "{% trans "Outdoor" %}";
-    MapEntity.i18n['site'] = "{% trans "Outdoor site" %}";
-    MapEntity.i18n['course'] = "{% trans "Outdoor course" %}";
-
+    {#MapEntity.i18n['Outdoor'] = "{% trans "Outdoor" %}";#}
+    {#MapEntity.i18n['site'] = "{% trans "Outdoor site" %}";#}
+    {#MapEntity.i18n['course'] = "{% trans "Outdoor course" %}";#}
+    {% if site_enabled %}
     window.SETTINGS.urls['site_layer'] = "{% url "outdoor:site-drf-list" format="geojson" %}";
+    {% endif %}
+    {% if course_enabled %}
     window.SETTINGS.urls['course_layer'] = "{% url "outdoor:course-drf-list" format="geojson" %}";
+    {% endif %}
 </script>
 
 {% if modelname == "site" %}
@@ -23,35 +26,73 @@
         {% course_sites as sites %}
         {{ sites|safe }}
     </script>
+
     <script type="text/javascript">
-        $(window).on('detailmap:ready', function (e, data) {
-            var map = data.map;
-            //
+        $(window).on('entity:map:detail', function (e) {
+            {#var map = data.map;#}
+            {#//#}
+            {#// Points of reference#}
+            {#(function (map) {#}
+            {#    var data = {{ object.points_reference_geojson|safe|default:"null" }};#}
+            {#    L.geoJson(data, {#}
+            {#        pointToLayer: (function () {#}
+            {#            var counter = 1;#}
+            {#            return function (featureData, latlng) {#}
+            {#                var icon = L.divIcon({html: counter++,#}
+            {#                                        className: 'point-reference'});#}
+            {#                return L.marker(latlng, {#}
+            {#                    clickable: false,#}
+            {#                    icon: icon,#}
+            {#                    zIndexOffset: 9999#}
+            {#                }).addTo(map);#}
+            {#            };#}
+            {#        })()#}
+            {#    }).addTo(map);#}
+            {#    $('.map-panel').addClass('ref_points_loaded');#}
+            {# })(map); #}
+
+            const map = e.detail.map.getMap(); // Instance MapLibre GL JS
+
             // Points of reference
             (function (map) {
-                var data = {{ object.points_reference_geojson|safe|default:"null" }};
-                L.geoJson(data, {
-                    pointToLayer: (function () {
-                        var counter = 1;
-                        return function (featureData, latlng) {
-                            var icon = L.divIcon({html: counter++,
-                                                    className: 'point-reference'});
-                            return L.marker(latlng, {
-                                clickable: false,
-                                icon: icon,
-                                zIndexOffset: 9999
-                            }).addTo(map);
-                        };
-                    })()
-                }).addTo(map);
+                const data = {{ object.points_reference.geojson|safe|default:'null' }};
+                if (data && data.features) {
+                    let counter = 1;
+                    data.features.forEach(feature => {
+                        const refPointEl = document.createElement('div');
+                        refPointEl.className = 'point-reference';
+                        refPointEl.textContent = counter++;
+                        refPointEl.style.width = '30px';
+                        refPointEl.style.height = '30px';
+                        refPointEl.style.backgroundColor = 'white';
+                        refPointEl.style.border = '2px solid #333';
+                        refPointEl.style.borderRadius = '50%';
+                        refPointEl.style.display = 'flex';
+                        refPointEl.style.alignItems = 'center';
+                        refPointEl.style.justifyContent = 'center';
+                        refPointEl.style.fontWeight = 'bold';
+                        refPointEl.style.fontSize = '12px';
+                        refPointEl.style.zIndex = '9999';
+
+                        new maplibregl.Marker({
+                            element: refPointEl,
+                            anchor: 'center'
+                        })
+                        .setLngLat(feature.geometry.coordinates)
+                        .addTo(map);
+                    });
+                }
                 $('.map-panel').addClass('ref_points_loaded');
             })(map);
 
         });
     </script>
+
 {% endif %}
-    <script type="application/json" id="all-ratings-scales">
-        {% all_ratings_scales as scales %}
-        {{ scales|safe }}
-    </script>
+
+{% if site_enabled or course_enabled %}
+<script type="application/json" id="all-ratings-scales">
+    {% all_ratings_scales as scales %}
+    {{ scales|safe }}
+</script>
 {% endif %}

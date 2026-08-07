@@ -10,7 +10,7 @@
         });
     });
 
-    $(window).on('detailmap:ready', function () {
+    $(window).on('entity:map:detail', function (e) {
         $('#altitudegraph').append('<img src="{% url profile_url LANGUAGE_CODE object.pk %}">');
     });
 </script>

@@ -1,5 +1,8 @@
 {% load i18n geotrek_tags mapentity_tags %}
-{% if modelname != "signage" and modelname != "blade" %}
+
+{% settings_value "SIGNAGE_MODEL_ENABLED" as signage_enabled %}
+
+{% if modelname != "signage" and modelname != "blade" and signage_enabled %}
 <h3>{% trans "Signage" %}</h3>
     <table class="table">
         <tr>

@@ -119,9 +119,6 @@ Below is the list of these scripts for each touristic information system:
 | Outdoor site             |          |              |          |      |               | x             |
 +--------------------------+----------+--------------+----------+------+---------------+---------------+
 
-\* Geometry is only available without dynamic segmentation.  
-It is not possible to import geometries for treks in a database using dynamic segmentation.
-
 
 .. _apidae-parsers:
 
@@ -293,9 +290,6 @@ Cirkwi
     :name: importdata-cirkwi-tabs
 
     .. md-tab-item:: Treks
-
-        .. warning::
-            This parser is compatible with instances operating in :ref:`Non-Dynamic Segmentation <configuration-dynamic-segmentation>` (NDS) mode only.
 
         To import treks from Cirkwi, define a subclass of ``geotrek.trekking.parsers.CirkwiTrekParser`` in your ``var/conf/parsers.py`` file with the following content:
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-11 09:16+0000\n"
+"POT-Creation-Date: 2026-07-29 09:43+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/trekking/nl/>\n"
@@ -495,18 +495,6 @@ msgstr ""
 msgid "KML"
 msgstr ""
 
-msgid "Trek's POIs"
-msgstr ""
-
-msgid "Trek's services"
-msgstr ""
-
-msgid "Trek's signages"
-msgstr ""
-
-msgid "Trek's infrastructures"
-msgstr ""
-
 msgid "Itinerancy"
 msgstr ""
 
@@ -517,24 +505,6 @@ msgid "Parent of:"
 msgstr ""
 
 msgid "Map"
-msgstr ""
-
-msgid "Add a point of reference"
-msgstr ""
-
-msgid "Move points of reference"
-msgstr ""
-
-msgid "Delete a point of reference"
-msgstr ""
-
-msgid "Set the parking location"
-msgstr ""
-
-msgid "Move the parking location"
-msgstr ""
-
-msgid "Delete the parking location"
 msgstr ""
 
 msgid "Add relation"
@@ -630,6 +600,9 @@ msgid "Add a new service"
 msgstr ""
 
 msgid "Add Web link"
+msgstr ""
+
+msgid "Topology is not valid."
 msgstr ""
 
 msgid "Geographical location"

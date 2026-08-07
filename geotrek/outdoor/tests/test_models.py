@@ -297,3 +297,58 @@ class CourseTestCase(TestCase):
         self.assertAlmostEqual(coordinates[0][1], 44.449222490604605)
         self.assertAlmostEqual(coordinates[1][0], 1.441955564370652)
         self.assertAlmostEqual(coordinates[1][1], 44.443339997352474)
+
+
+class SiteAndCourseExtraFieldsCoverageTest(TestCase):
+    def test_site_published_labels(self):
+        from geotrek.common.tests.factories import LabelFactory
+
+        site = SiteFactory.create()
+        label_pub = LabelFactory.create(published=True)
+        label_unpub = LabelFactory.create(published=False)
+        site.labels.add(label_pub, label_unpub)
+        self.assertEqual(len(site.published_labels), 1)
+        self.assertIn(label_pub, site.published_labels)
+
+    def test_site_topology_and_tourism_sites(self):
+        from geotrek.core.tests.factories import TopologyFactory
+        from geotrek.tourism.tests.factories import TouristicContentFactory
+
+        topo = TopologyFactory.create()
+        tour = TouristicContentFactory.create()
+
+        topo_qs = Site.topology_sites(topo)
+        tour_qs = Site.tourism_sites(tour)
+
+        self.assertIsNotNone(topo_qs)
+        self.assertIsNotNone(tour_qs)
+
+    def test_course_duration_pretty(self):
+        from geotrek.common.templatetags import geotrek_tags
+
+        course = CourseFactory.create(duration=2.5)
+        self.assertEqual(course.duration_pretty, geotrek_tags.duration(2.5))
+
+    def test_course_hierarchy_parents_and_children_ids(self):
+        from geotrek.outdoor.models import OrderedCourseChild
+
+        c1 = CourseFactory.create()
+        c2 = CourseFactory.create()
+        OrderedCourseChild.objects.create(parent=c1, child=c2, order=1)
+
+        self.assertIn(c2.pk, c1.children_id)
+        self.assertIn(c1.pk, c2.parents_id())
+
+    def test_course_topology_and_tourism_courses(self):
+        from geotrek.core.tests.factories import TopologyFactory
+        from geotrek.outdoor.models import Course
+        from geotrek.tourism.tests.factories import TouristicContentFactory
+
+        topo = TopologyFactory.create()
+        tour = TouristicContentFactory.create()
+
+        topo_qs = Course.topology_courses(topo)
+        tour_qs = Course.tourism_courses(tour)
+
+        self.assertIsNotNone(topo_qs)
+        self.assertIsNotNone(tour_qs)

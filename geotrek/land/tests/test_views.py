@@ -1,6 +1,3 @@
-from unittest import skipIf
-
-from django.conf import settings
 from django.test import TestCase
 
 from geotrek.authent.tests.factories import PathManagerFactory
@@ -29,7 +26,6 @@ from geotrek.land.tests.factories import (
 )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class EdgeHelperTest(TestCase):
     factory = None
     helper_name = None
@@ -43,43 +39,36 @@ class EdgeHelperTest(TestCase):
         self.assertEqual([o.pk for o in getattr(p, self.helper_name).all()], [e.pk])
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class LandEdgeTest(EdgeHelperTest):
     factory = LandEdgeFactory
     helper_name = "land_edges"
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PhysicalEdgeTest(EdgeHelperTest):
     factory = PhysicalEdgeFactory
     helper_name = "physical_edges"
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class CirculationEdgeTest(EdgeHelperTest):
     factory = CirculationEdgeFactory
     helper_name = "circulation_edges"
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class CompetenceEdgeTest(EdgeHelperTest):
     factory = CompetenceEdgeFactory
     helper_name = "competence_edges"
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class WorkManagementEdgeTest(EdgeHelperTest):
     factory = WorkManagementEdgeFactory
     helper_name = "work_edges"
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SignageManagementEdgeTest(EdgeHelperTest):
     factory = SignageManagementEdgeFactory
     helper_name = "signage_edges"
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PhysicalEdgeViewsTest(CommonTest):
     model = PhysicalEdge
     modelfactory = PhysicalEdgeFactory
@@ -107,6 +96,7 @@ class PhysicalEdgeViewsTest(CommonTest):
         return {
             "physical_type": PhysicalTypeFactory.create().pk,
             "topology": f'{{"paths": [{path.pk}]}}',
+            "topology_changed": "true",
         }
 
     def get_expected_datatables_attrs(self):
@@ -125,8 +115,10 @@ class PhysicalEdgeViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
+
 class LandEdgeViewsTest(CommonTest):
     model = LandEdge
     modelfactory = LandEdgeFactory
@@ -154,6 +146,7 @@ class LandEdgeViewsTest(CommonTest):
         return {
             "land_type": LandTypeFactory.create().pk,
             "topology": f'{{"paths": [{path.pk}]}}',
+            "topology_changed": "true",
         }
 
     def get_expected_datatables_attrs(self):
@@ -172,8 +165,10 @@ class LandEdgeViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
+
 class CirculationEdgeViewsTest(CommonTest):
     model = CirculationEdge
     modelfactory = CirculationEdgeFactory
@@ -202,6 +197,7 @@ class CirculationEdgeViewsTest(CommonTest):
             "circulation_type": CirculationTypeFactory.create().pk,
             "authorization_type": AuthorizationTypeFactory.create().pk,
             "topology": f'{{"paths": [{path.pk}]}}',
+            "topology_changed": "true",
         }
 
     def get_expected_datatables_attrs(self):
@@ -221,8 +217,10 @@ class CirculationEdgeViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
+
 class CompetenceEdgeViewsTest(CommonTest):
     model = CompetenceEdge
     modelfactory = CompetenceEdgeFactory
@@ -250,6 +248,7 @@ class CompetenceEdgeViewsTest(CommonTest):
         return {
             "organization": OrganismFactory.create().pk,
             "topology": f'{{"paths": [{path.pk}]}}',
+            "topology_changed": "true",
         }
 
     def get_expected_datatables_attrs(self):
@@ -268,8 +267,10 @@ class CompetenceEdgeViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
+
 class WorkManagementEdgeViewsTest(CommonTest):
     model = WorkManagementEdge
     modelfactory = WorkManagementEdgeFactory
@@ -297,6 +298,7 @@ class WorkManagementEdgeViewsTest(CommonTest):
         return {
             "organization": OrganismFactory.create().pk,
             "topology": f'{{"paths": [{path.pk}]}}',
+            "topology_changed": "true",
         }
 
     def get_expected_datatables_attrs(self):
@@ -315,8 +317,10 @@ class WorkManagementEdgeViewsTest(CommonTest):
             f"</div>"
         )
 
+    def _check_update_geom_permission(self, response):
+        pass
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
+
 class SignageManagementEdgeViewsTest(CommonTest):
     model = SignageManagementEdge
     modelfactory = SignageManagementEdgeFactory
@@ -344,6 +348,7 @@ class SignageManagementEdgeViewsTest(CommonTest):
         return {
             "organization": OrganismFactory.create().pk,
             "topology": f'{{"paths": [{path.pk}]}}',
+            "topology_changed": "true",
         }
 
     def get_expected_datatables_attrs(self):
@@ -361,6 +366,9 @@ class SignageManagementEdgeViewsTest(CommonTest):
             f'    <a id="detail-btn" href="/signagemanagementedge/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
 
 class LandEdgeMultiActionsViewTest(

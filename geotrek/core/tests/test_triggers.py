@@ -1,12 +1,8 @@
-from unittest import skipIf
-
-from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry, LineString
 from django.db import DEFAULT_DB_ALIAS, connections
 from django.test import TestCase
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SmartMakelineTest(TestCase):
     def smart_makeline(self, lines):
         assert lines

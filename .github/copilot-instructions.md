@@ -72,16 +72,13 @@ For full functionality when Docker is not suitable:
 ## Testing
 
 ### Django Tests
-**CRITICAL TIMING**: Django tests take 15-30+ minutes. **NEVER CANCEL.** Set timeout to 45+ minutes minimum.
+**CRITICAL TIMING**: Django tests take 20-30+ minutes. **NEVER CANCEL.** Set timeout to 45+ minutes minimum.
 
 ```bash
-# Full test suite with coverage (LONG RUNNING - 20-30 minutes)
+# Unit tests (LONG RUNNING - 20-30 minutes)
+make tests     # NEVER CANCEL: Takes 20-30 minutes. Set timeout to 45+ minutes
+# Unit tests with coverage (LONG RUNNING - 20-30 minutes)
 make coverage  # NEVER CANCEL: Takes 20-30 minutes. Set timeout to 45+ minutes
-
-# Specific test environments  
-make test      # NEVER CANCEL: Standard tests, ~15 minutes, set timeout to 30+ minutes
-make test_nds  # NEVER CANCEL: Non-dynamic segmentation tests, ~15 minutes, set timeout to 30+ minutes  
-make tests     # NEVER CANCEL: Both test and test_nds, ~30 minutes, set timeout to 60+ minutes
 ```
 
 **Note**: Tests work with the development target (`target: dev` in docker-compose.yml). They may not work with the production image workaround due to missing development dependencies.

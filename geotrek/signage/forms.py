@@ -10,8 +10,7 @@ from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.widgets import PointTopologyWidget
-from geotrek.infrastructure.forms import BaseInfrastructureForm
+from geotrek.core.mixins.forms import PointTopologyFormMixin
 from geotrek.signage.models import Blade, Line, LinePictogram, Signage
 
 
@@ -172,33 +171,37 @@ class BladeForm(CommonForm):
         fields = ["id", "number", "direction", "type", "conditions", "color"]
 
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
+class SignageForm(PointTopologyFormMixin):
+    implantation_year = forms.IntegerField(label=_("Implantation year"), required=False)
 
-    class BaseSignageForm(BaseInfrastructureForm):
-        geomfields = ["topology"]
+    class Meta(PointTopologyFormMixin.Meta):
+        model = Signage
+        fields = [
+            *PointTopologyFormMixin.Meta.fields,
+            "structure",
+            "name",
+            "type",
+            "description",
+            "access",
+            "implantation_year",
+            "published",
+            "code",
+            "conditions",
+            "printed_elevation",
+            "manager",
+            "sealing",
+        ]
 
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.helper.form_tag = False
 
-            if not settings.SIGNAGE_LINE_ENABLED and settings.TREKKING_TOPOLOGY_ENABLED:
-                modifiable = self.fields["topology"].widget.modifiable
-                self.fields["topology"].widget = PointTopologyWidget()
-                self.fields["topology"].widget.modifiable = modifiable
-            self.helper.form_tag = False
-
-else:
-
-    class BaseSignageForm(BaseInfrastructureForm):
-        geomfields = ["geom"]
-
-
-class SignageForm(BaseSignageForm):
     fieldslayout = [
         Div(
             "structure",
             "name",
-            "description",
             "type",
+            "description",
             "conditions",
             "implantation_year",
             "published",
@@ -209,15 +212,3 @@ class SignageForm(BaseSignageForm):
             "access",
         )
     ]
-
-    class Meta(BaseInfrastructureForm.Meta):
-        model = Signage
-        fields = [
-            *BaseInfrastructureForm.Meta.fields,
-            "code",
-            "conditions",
-            "printed_elevation",
-            "manager",
-            "sealing",
-            "access",
-        ]

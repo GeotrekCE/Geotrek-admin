@@ -1,5 +1,3 @@
-from django.conf import settings
-from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 
 from geotrek.authent.tests.factories import StructureFactory
@@ -12,13 +10,9 @@ from geotrek.trekking.tests.factories import POIFactory, TrekFactory
 class CirkwiFilterTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = PathFactory()
-            cls.poi = POIFactory.create(paths=[(cls.path, 0, 1)])
-            cls.trek = TrekFactory.create(paths=[(cls.path, 0, 1)])
-        else:
-            cls.poi = POIFactory.create(geom=Point(0, 0))
-            cls.trek = TrekFactory.create(geom=LineString((0, 0), (5, 5)))
+        cls.path = PathFactory()
+        cls.poi = POIFactory.create(paths=[(cls.path, 0, 1)])
+        cls.trek = TrekFactory.create(paths=[(cls.path, 0, 1)])
 
     def test_trek_filters_structures(self):
         other_structure = StructureFactory.create()

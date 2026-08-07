@@ -1,0 +1,21 @@
+<script type="text/javascript">
+    // Synchronously ensure MapEntity and MapEntity.i18n exist as soon as this script is executed
+    window.MapEntity = window.MapEntity || {};
+    window.MapEntity.i18n = window.MapEntity.i18n || {};
+
+    document.addEventListener('DOMContentLoaded', function () {
+        // Defer dispatch to next event loop cycle to ensure all DOMContentLoaded event handlers have run,
+        // specifically the inline translations definition in base.html.
+        setTimeout(function () {
+            const context = Object.assign({}, document.body.dataset);
+            if (context.viewname === 'add' || context.viewname === 'update') {
+                const mapId = context.viewname === 'detail' ? 'detailmap' : 'mainmap';
+                const mapElement = document.getElementById(mapId);
+                if (!mapElement) {
+                    const detail = Object.assign({}, context);
+                    window.dispatchEvent(new CustomEvent('entity:view:' + context.viewname, { detail: detail }));
+                }
+            }
+        }, 0);
+    });
+</script>

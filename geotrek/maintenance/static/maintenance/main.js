@@ -2,6 +2,7 @@
 // Maintenance / interventions
 //
 
+/*
 $(window).on('entity:map', function (e, data) {
     var modelname = 'intervention';
     var layername = `${modelname}_layer`;
@@ -59,3 +60,4 @@ $(window).on('entity:view:update', function (e, data) {
         setDatePickerConfig('#id_begin_date, #id_end_date');
     };
 });
+*/

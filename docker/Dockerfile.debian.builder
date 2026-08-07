@@ -25,7 +25,7 @@ FROM base AS builder
 
 COPY debian ./debian
 
-RUN env DEBIAN_FRONTEND=noninteractive mk-build-deps --install --tool='apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes' debian/control
+RUN apt-get update -qq && env DEBIAN_FRONTEND=noninteractive mk-build-deps --install --tool='apt-get -o Debug::pkgProblemResolver=yes --no-install-recommends --yes' debian/control
 
 COPY geotrek ./geotrek
 COPY conf ./conf

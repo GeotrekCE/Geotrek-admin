@@ -1,10 +1,14 @@
 {% load i18n geotrek_tags mapentity_tags tourism_tags %}
 
-{% is_tourism_enabled as enabled %}
-{% if enabled %}
+{% settings_value "TOURISM_ENABLED" as enabled %}
+{% settings_value "TOURISTICCONTENT_MODEL_ENABLED" as tc_enabled %}
+{% settings_value "TOURISTICEVENT_MODEL_ENABLED" as te_enabled %}
 
+{% if enabled %}
+{% if tc_enabled or te_enabled %}
 <h3>{% trans "Tourism" %}</h3>
 <table class="table">
+    {% if tc_enabled %}
     <tr>
         <th>{% trans "Touristic contents" %}</th>
         <td>
@@ -17,6 +21,8 @@
             {% valuelist object.touristic_contents field='name' %}
         </td>
     </tr>
+    {% endif %}
+    {% if te_enabled %}
     <tr>
         <th>{% trans "Touristic events" %}</th>
         <td>
@@ -29,6 +35,8 @@
             {% valuelist object.touristic_events field='name' %}
         </td>
     </tr>
+    {% endif %}
 </table>
 
+{% endif %}
 {% endif %}

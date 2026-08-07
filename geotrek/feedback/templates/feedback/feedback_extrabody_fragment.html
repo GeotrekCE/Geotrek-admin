@@ -1,5 +1,7 @@
-{% load static i18n feedback_tags %}
+{% load static i18n feedback_tags geotrek_tags %}
+{% settings_value "REPORT_MODEL_ENABLED" as feedback_enabled %}
 
+{% if feedback_enabled %}
 {% suricate_workflow_enabled as suricate_workflow_enabled %}
 {% enable_report_colors_per_status as enable_report_colors_per_status %}
 
@@ -11,17 +13,19 @@
 {% endif %}
 
 {% if enable_report_colors_per_status %}
-    <script type="text/javascript">
-        MapEntity.i18n['Statuses'] = "{% trans "Statuses" %}";
-        MapEntity.i18n['Legend'] = "{% trans "Legend" %}";
-    </script>
-    <script type="text/javascript" src="{% static "feedback/status_colors.js" %}"></script>
-    <link rel="stylesheet" href="{% static "feedback/style.css" %}" />
+{#    <script type="text/javascript">#}
+{#        MapEntity.i18n['Statuses'] = "{% trans "Statuses" %}";#}
+{#        MapEntity.i18n['Legend'] = "{% trans "Legend" %}";#}
+{#    </script>#}
+
+{#    <script type="text/javascript" src="{% static "feedback/js/status_colors.js" %}"></script>#}
+    <link rel="stylesheet" href="{% static "feedback/css/style.css" %}" />
 {% endif %}
 
 <script type="text/javascript">
-    MapEntity.i18n['Feedback'] = "{% trans "Feedback" %}";
-    MapEntity.i18n['Report'] = "{% trans "Report" %}";
+    {#MapEntity.i18n['Feedback'] = "{% trans "Feedback" %}";#}
+    {#MapEntity.i18n['Report'] = "{% trans "Report" %}";#}
 
     window.SETTINGS.urls['report_layer'] = "{% url "feedback:report-drf-list" format="geojson" %}";
 </script>
+{% endif %}

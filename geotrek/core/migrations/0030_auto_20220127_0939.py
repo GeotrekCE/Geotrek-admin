@@ -31,7 +31,7 @@ class Migration(migrations.Migration):
             name="geom",
             field=django.contrib.gis.db.models.fields.GeometryField(
                 default=None,
-                editable=(not settings.TREKKING_TOPOLOGY_ENABLED),
+                editable=True,
                 null=True,
                 spatial_index=False,
                 srid=settings.SRID,
