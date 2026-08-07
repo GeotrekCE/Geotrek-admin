@@ -180,6 +180,11 @@ class VigilanceAreaFilterSet(
         queryset=Provider.objects.filter(trek__isnull=False).distinct(),
         widget=autocomplete.Select2Multiple(),
     )
+    type = ModelMultipleChoiceFilter(
+        label=_("Vigilance area type"),
+        queryset=VigilanceAreaType.objects.all(),
+        widget=autocomplete.Select2Multiple(),
+    )
     after = filters.DateFilter(
         label=_("After"),
         lookup_expr="gte",
@@ -202,10 +207,16 @@ class VigilanceAreaFilterSet(
             "name",
             "published",
             "practicability",
-            "vigilance_area_type",
             "sources",
             "portals",
             "provider",
             "period_active",
             "active_today",
         ]
+
+    def __init__(self, *args, **kwargs):
+        # Remove vigilance area filters from ZoningFilterSet
+        self.base_filters.pop("vigilance_area_type", None)
+        self.base_filters.pop("vigilance_area_practicability", None)
+        self.base_filters.pop("vigilance_area", None)
+        super().__init__(*args, **kwargs)
