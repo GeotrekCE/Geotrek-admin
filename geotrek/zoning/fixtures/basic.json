@@ -95,56 +95,72 @@
         "pk": 1,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Pastoralisme"
+            "name": "Pastoralism",
+            "name_fr": "Pastoralisme",
+            "name_en": "Pastoralism"
         }
     },
     {
         "pk": 2,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Zone naturelle sensible"
+            "name": "Sensitive natural area",
+            "name_fr": "Zone naturelle sensible",
+            "name_en": "Sensitive natural area"
         }
     },
     {
         "pk": 3,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Travaux"
+            "name": "Construction",
+            "name_fr": "Travaux",
+            "name_en": "Construction"
         }
     },
     {
         "pk": 4,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Risque naturel"
+            "name": "Natural risk",
+            "name_fr": "Risque naturel",
+            "name_en": "Natural risk"
         }
     },
     {
         "pk": 5,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Terrain accidenté"
+            "name": "Rugged terrain",
+            "name_fr": "Terrain accidenté",
+            "name_en": "Rugged terrain"
         }
     },
     {
         "pk": 6,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Incident"
+            "name": "Incident",
+            "name_fr": "Incident",
+            "name_en": "Incident"
         }
     },
     {
         "pk": 7,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Événement"
+            "name": "Event",
+            "name_fr": "Événement",
+            "name_en": "Event"
         }
     },
     {
         "pk": 8,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Chasse"
+            "name": "Hunting",
+            "name_fr": "Chasse",
+            "name_en": "Hunting"
         }
     }
 ]
