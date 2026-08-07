@@ -4,11 +4,9 @@ from django.db import migrations
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0055_alter_topology_options'),
-        ('core', '0055_pre_generate_pgrouting_graph_topology'),
+        ("core", "0055_alter_topology_options"),
+        ("core", "0055_pre_generate_pgrouting_graph_topology"),
     ]
 
-    operations = [
-    ]
+    operations = []
