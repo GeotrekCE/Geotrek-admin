@@ -1,7 +1,5 @@
-import json
-
 from django.conf import settings
-from django.contrib.gis.geos import GEOSGeometry, MultiPolygon, Polygon, fromstr
+from django.contrib.gis.geos import MultiPolygon, Polygon, fromstr
 from django.utils.translation import gettext as _
 
 from geotrek.common.parsers import (
@@ -12,7 +10,6 @@ from geotrek.common.parsers import (
     RowImportError,
     ShapeParser,
 )
-from geotrek.common.utils.parsers import force_geom_to_2d
 from geotrek.zoning.models import (
     City,
     District,
@@ -201,8 +198,3 @@ class GeotrekVigilanceAreaParser(GeotrekParser):
         super().__init__(*args, **kwargs)
         self.fields.pop("uuid")  # TEST
         self.next_url = f"{self.url}/api/v2/vigilancearea"
-
-    def build_geos_geometry(self, src, val):
-        geom = GEOSGeometry(json.dumps(val))
-        geom = force_geom_to_2d(geom)
-        return geom
