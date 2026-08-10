@@ -1,4 +1,4 @@
-from dal import autocomplete
+from dal import autocomplete, forward
 from django import forms
 from django.db.models import Exists, OuterRef, Q
 from django.utils.translation import gettext_lazy as _
@@ -162,7 +162,10 @@ class ZoningFilterSet(FilterSet):
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url="zoning:vigilancearea-drf-autocomplete",
-            forward=["vigilance_area_type", "vigilance_area_practicability"],
+            forward=[
+                "vigilance_area_type",
+                forward.Field("vigilance_area_practicability", "practicability"),
+            ],
             attrs={
                 "data-placeholder": _("Vigilance area"),
             },
