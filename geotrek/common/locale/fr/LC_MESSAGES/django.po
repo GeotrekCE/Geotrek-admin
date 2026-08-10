@@ -648,9 +648,6 @@ msgid_plural "%(n)s warnings:"
 msgstr[0] "%(n)s avertissement :"
 msgstr[1] "%(n)s avertissements :"
 
-msgid "Draft"
-msgstr "Brouillon"
-
 msgid "Object is published but"
 msgstr "L'objet est publié mais"
 
