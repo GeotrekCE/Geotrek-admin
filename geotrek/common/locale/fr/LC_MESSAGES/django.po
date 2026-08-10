@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-05 16:37+0000\n"
+"POT-Creation-Date: 2026-08-10 09:01+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/common/fr/>\n"
@@ -535,6 +535,9 @@ msgstr "Second identifiant externe"
 msgid "Publication Infos"
 msgstr "Infos de publication"
 
+msgid "Draft"
+msgstr "Brouillon"
+
 msgid "Track infos"
 msgstr "Infos de suivi"
 
@@ -636,9 +639,6 @@ msgid "%(n)s warning:"
 msgid_plural "%(n)s warnings:"
 msgstr[0] "%(n)s avertissement :"
 msgstr[1] "%(n)s avertissements :"
-
-msgid "Draft"
-msgstr "Brouillon"
 
 msgid "Object is published but"
 msgstr "L'objet est publié mais"
