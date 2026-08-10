@@ -9,7 +9,7 @@ from django.db import migrations
 # Before running the next migration, we need to remove these indexes if they already exist.
 class Migration(migrations.Migration):
     dependencies = [
-        ("core", "0050_path_length_2d"),
+        ("core", "0055_pre_generate_pgrouting_graph_topology"),
     ]
 
     operations = [
