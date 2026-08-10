@@ -546,9 +546,6 @@ msgstr "Second identifiant externe"
 msgid "Publication Infos"
 msgstr "Infos de publication"
 
-msgid "Draft"
-msgstr "Brouillon"
-
 msgid "Track infos"
 msgstr "Infos de suivi"
 
