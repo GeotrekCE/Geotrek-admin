@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-05 16:37+0000\n"
+"POT-Creation-Date: 2026-08-10 09:01+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/common/nl/>\n"
@@ -535,6 +535,9 @@ msgstr ""
 msgid "Publication Infos"
 msgstr ""
 
+msgid "Draft"
+msgstr ""
+
 msgid "Track infos"
 msgstr ""
 
@@ -636,9 +639,6 @@ msgid "%(n)s warning:"
 msgid_plural "%(n)s warnings:"
 msgstr[0] ""
 msgstr[1] ""
-
-msgid "Draft"
-msgstr ""
 
 msgid "Object is published but"
 msgstr ""
