@@ -305,11 +305,7 @@ class VigilanceAreaViewSet(AutocompleteMixin, GeotrekMapentityViewSet):
         forwarded = json.loads(forwarded_str)
         parsed_dict = {}
         for key, value in forwarded.items():
-            if key == "vigilance_area_practicability":
-                key = "practicability"
-                values = value
-            else:
-                values = [int(x) for x in value]
+            values = value if key == "practicability" else [int(x) for x in value]
             if values:
                 parsed_dict[f"{key}__in"] = values
         return parsed_dict
