@@ -1215,9 +1215,9 @@ class SignageViewsTest(CommonTest):
         data["blades-TOTAL_FORMS"] = "2"
         data["blades-1-id"] = ""
         data["blades-1-number"] = "1"
-        data["blades-1-direction"] = "1"
-        data["blades-1-type"] = "1"
-        data["blades-1-color"] = "1"
+        data["blades-1-direction"] = BladeDirectionFactory.create().pk
+        data["blades-1-type"] = BladeTypeFactory.create().pk
+        data["blades-1-color"] = BladeColorFactory.create().pk
 
         response = self.client.post(self._get_add_url(), data)
         self.assertEqual(response.status_code, 200)
