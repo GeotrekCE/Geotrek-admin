@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 * Remove ``deleted`` attribute from blade model
+* Allow to add multiple blades from signage form
 
 **Documentation**
 

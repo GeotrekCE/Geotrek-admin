@@ -33,7 +33,7 @@ from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 
 from .filters import BladeFilterSet, SignageFilterSet
-from .forms import BladeForm, LineFormset, SignageForm
+from .forms import BladeForm, BladeFormset, LineFormset, SignageForm
 from .models import (
     Blade,
     Line,
@@ -62,6 +62,11 @@ logger = logging.getLogger(__name__)
 class LineMixin(FormsetMixin):
     context_name = "line_formset"
     formset_class = LineFormset
+
+
+class BladeMixin(FormsetMixin):
+    context_name = "blade_formset"
+    formset_class = BladeFormset
 
 
 class SignageList(CustomColumnsMixin, MapEntityList):
@@ -117,12 +122,12 @@ class SignageDocument(MapEntityDocument):
     model = Signage
 
 
-class SignageCreate(MapEntityCreate):
+class SignageCreate(BladeMixin, MapEntityCreate):
     model = Signage
     form_class = SignageForm
 
 
-class SignageUpdate(MapEntityUpdate):
+class SignageUpdate(BladeMixin, MapEntityUpdate):
     queryset = Signage.objects.existing()
     form_class = SignageForm
 

@@ -7,16 +7,16 @@
     {% crispy form %}
 
     <fieldset class="formset">
+        {{ blade_formset.non_form_errors }}
         {{ blade_formset.management_form }}
         {% for blade_form in blade_formset.forms %}
-            <div class="form-row inline controls controls-row {{ blade_from.prefix }}">
-                {% crispy blade_form %}
-                {% if blade_form.instance.pk %}
-                    <a href="{% url 'signage:blade_edit' pk=blade_form.instance.pk %}">{% trans "Edit" %}</a>
-                {% endif %}
+            <div class="form-row inline controls controls-row {{ blade_form.prefix }}">
+            {% if blade_form.instance.pk %}{{ blade_form.DELETE }}{% endif %}
+            {% crispy blade_form %}
             </div>
         {% endfor %}
     </fieldset>
+
     </form>
 {% endblock mainform %}
 

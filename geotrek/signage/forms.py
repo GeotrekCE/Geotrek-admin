@@ -12,7 +12,33 @@ from django.utils.translation import gettext_lazy as _
 from geotrek.common.forms import CommonForm
 from geotrek.core.widgets import PointTopologyWidget
 from geotrek.infrastructure.forms import BaseInfrastructureForm
-from geotrek.signage.models import Blade, Line, LinePictogram, Signage
+from geotrek.signage.models import Blade, BladeCondition, Line, LinePictogram, Signage
+
+
+class CleanDuplicatedNumbersMixin:
+    duplication_error_message = None
+
+    def clean(self):
+        """Checks that two objects doesn't have the same number."""
+        if any(self.errors):
+            # Don't bother validating the formset unless each form is valid on its own
+            return
+
+        numbers = {}
+
+        for form in self.forms:
+            if self.can_delete and self._should_delete_form(form):
+                continue
+            number = form.cleaned_data.get("number")
+            numbers.setdefault(number, []).append(form)
+
+        duplicates = {n: forms for n, forms in numbers.items() if len(forms) > 1}
+
+        if duplicates:
+            for forms in duplicates.values():
+                for form in forms:
+                    form.add_error("number", self.duplication_error_message)
+            raise ValidationError(self.duplication_error_message)
 
 
 class LineForm(forms.ModelForm):
@@ -54,29 +80,8 @@ class LineForm(forms.ModelForm):
         )
 
 
-class BaseLineFormSet(BaseInlineFormSet):
-    def clean(self):
-        """Checks that no two lines have the same number."""
-        if any(self.errors):
-            # Don't bother validating the formset unless each form is valid on its own
-            return
-
-        msg = _("This order number is already used by another line.")
-        numbers = {}
-
-        for form in self.forms:
-            if self.can_delete and self._should_delete_form(form):
-                continue
-            number = form.cleaned_data.get("number")
-            numbers.setdefault(number, []).append(form)
-
-        duplicates = {n: forms for n, forms in numbers.items() if len(forms) > 1}
-
-        if duplicates:
-            for forms in duplicates.values():
-                for form in forms:
-                    form.add_error("number", msg)
-            raise ValidationError(msg)
+class BaseLineFormSet(CleanDuplicatedNumbersMixin, BaseInlineFormSet):
+    duplication_error_message = _("This order number is already used by another line.")
 
 
 LineFormset = inlineformset_factory(
@@ -172,6 +177,35 @@ class BladeForm(CommonForm):
         fields = ["id", "number", "direction", "type", "conditions", "color"]
 
 
+class BladeFormsetForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        fields_for_layout = Div(
+            "id", "number", "direction", "type", "conditions", "color"
+        )
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(*fields_for_layout)
+        self.fields["conditions"].widget = autocomplete.Select2Multiple(
+            attrs={"data-theme": "bootstrap4"},
+        )
+        self.fields["conditions"].queryset = BladeCondition.objects.all()
+
+    class Meta:
+        fields = ["id", "number", "direction", "type", "conditions", "color"]
+
+
+class BaseBladeFormSet(CleanDuplicatedNumbersMixin, BaseInlineFormSet):
+    duplication_error_message = _("This order number is already used by another blade.")
+
+
+BladeFormset = inlineformset_factory(
+    Signage, Blade, form=BladeFormsetForm, formset=BaseBladeFormSet, extra=1
+)
+
+
 if settings.TREKKING_TOPOLOGY_ENABLED:
 
     class BaseSignageForm(BaseInfrastructureForm):
@@ -207,6 +241,7 @@ class SignageForm(BaseSignageForm):
             "manager",
             "sealing",
             "access",
+            Fieldset(_("Blades")),
         )
     ]
 

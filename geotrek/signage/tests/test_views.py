@@ -1154,6 +1154,7 @@ class SignageViewsTest(CommonTest):
         }
 
     def get_good_data(self):
+        blade = BladeFactory.create()
         good_data = {
             "name_fr": "test",
             "name_en": "test_en",
@@ -1161,6 +1162,18 @@ class SignageViewsTest(CommonTest):
             "publication_date": "2020-03-17",
             "type": SignageTypeFactory.create().pk,
             "conditions": SignageConditionFactory.create().pk,
+            "blades-TOTAL_FORMS": "1",
+            "blades-INITIAL_FORMS": "1",
+            "blades-MIN_NUM_FORMS": "0",
+            "blades-MAX_NUM_FORMS": "1000",
+            "blades-0-id": blade.pk,
+            "blades-0-number": "1",
+            "blades-0-direction": blade.direction.pk,
+            "blades-0-type": blade.type.pk,
+            "blades-0-color": blade.color.pk,
+            "blades-0-conditions": ",".join(
+                [str(condition.pk) for condition in blade.conditions.all()]
+            ),
         }
         if settings.TREKKING_TOPOLOGY_ENABLED:
             path = PathFactory.create()
@@ -1194,6 +1207,23 @@ class SignageViewsTest(CommonTest):
         form = response.context["form"]
         type = form.fields["type"]
         self.assertTrue((signagetype.pk, str(signagetype)) in type.choices)
+
+    def test_creating_blades_with_same_number(self):
+        data = self.get_good_data()
+
+        # add a blade with the same number
+        data["blades-TOTAL_FORMS"] = "2"
+        data["blades-1-id"] = ""
+        data["blades-1-number"] = "1"
+        data["blades-1-direction"] = "1"
+        data["blades-1-type"] = "1"
+        data["blades-1-color"] = "1"
+
+        response = self.client.post(self._get_add_url(), data)
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(
+            response, "This order number is already used by another blade."
+        )
 
 
 class SignageMultiActionsViewTest(
