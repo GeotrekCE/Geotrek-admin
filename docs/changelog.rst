@@ -7,7 +7,7 @@ CHANGELOG
 
 **Improvements**
 
-* Remove deleted attribut of blade model
+* Remove ``deleted`` attribute from blade model
 
 
 2.126.0         (2026-08-06)

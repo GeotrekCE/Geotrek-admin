@@ -78,7 +78,7 @@ class BladeModelTest(TestCase):
 
     def test_manager(self):
         """
-        test that is the signage attached to a blade is deleted the blade does not appear in the Blade.objects.existing() queryset
+        Test that if the signage attached to a blade is deleted the blade does not appear in the Blade.objects.existing() queryset
         """
         blade = BladeFactory()
         self.assertEqual(list(Blade.objects.all()), [blade])

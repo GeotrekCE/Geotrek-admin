@@ -35,7 +35,7 @@ class SignageViewSet(api_viewsets.GeotrekGeometricViewset):
             ),
             Prefetch(
                 "blades",
-                queryset=Blade.objects.existing().select_related(
+                queryset=Blade.objects.all().select_related(
                     "direction", "type", "color"
                 ),
             ),
