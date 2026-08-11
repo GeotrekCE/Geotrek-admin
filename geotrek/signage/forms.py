@@ -19,7 +19,7 @@ class CleanDuplicatedNumbersMixin:
     duplication_error_message = None
 
     def clean(self):
-        """Checks that two objects doesn't have the same number."""
+        """Checks that no objects have the same number."""
         if any(self.errors):
             # Don't bother validating the formset unless each form is valid on its own
             return
