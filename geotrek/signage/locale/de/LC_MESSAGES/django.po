@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-11 07:14+0000\n"
+"POT-Creation-Date: 2026-08-11 11:00+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/signage/de/>\n"
@@ -55,6 +55,9 @@ msgid "Position of the blade on the signage (top=1). Assigning a position that h
 msgstr ""
 
 msgid "This order number is already used by another blade."
+msgstr ""
+
+msgid "Blades"
 msgstr ""
 
 msgid "Sealing"
@@ -142,9 +145,6 @@ msgid "City"
 msgstr ""
 
 msgid "Blade"
-msgstr ""
-
-msgid "Blades"
 msgstr ""
 
 msgid "Text"

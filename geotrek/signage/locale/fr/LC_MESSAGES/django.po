@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-11 07:14+0000\n"
+"POT-Creation-Date: 2026-08-11 11:00+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/signage/fr/>\n"
@@ -56,6 +56,9 @@ msgstr "Position de la lame sur la signalétique (haut = 1). Si vous attribuez u
 
 msgid "This order number is already used by another blade."
 msgstr "Ce numéro est déjà utilisé par une autre lame."
+
+msgid "Blades"
+msgstr "Lames"
 
 msgid "Sealing"
 msgstr "Scellement"
@@ -143,9 +146,6 @@ msgstr "Commune"
 
 msgid "Blade"
 msgstr "Lame"
-
-msgid "Blades"
-msgstr "Lames"
 
 msgid "Text"
 msgstr "Texte"
