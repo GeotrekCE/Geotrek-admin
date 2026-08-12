@@ -106,13 +106,6 @@ $(window).on('entity:view:filter', function (e, data) {
 
 
 $(window).on('entity:view:add entity:view:update', function (e, data) {
-    // Date picker
-    $('#id_begin_date, #id_end_date').datepicker({
-        autoclose: true,
-        language: window.SETTINGS.languages.default,
-        format: window.SETTINGS.date_format
-    });
-
     if(data.modelname == 'touristicevent') {
         $('#div_id_cancellation_reason').prop("hidden", !$('#id_cancelled').is(":checked"));
         $('#id_cancelled').change(function () {

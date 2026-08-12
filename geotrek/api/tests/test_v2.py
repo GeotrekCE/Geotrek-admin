@@ -6506,7 +6506,6 @@ class AltimetryCacheTests(BaseApiTest):
         self.assertEqual(response["Content-Type"], "application/json")
 
     def test_cache_is_used_when_getting_trek_profile(self):
-        # There are 8 queries to get trek profile
         with self.assertNumQueries(10):
             response = self.client.get(
                 reverse("apiv2:trek-profile", args=(self.trek.pk,))
