@@ -15,6 +15,7 @@ from modeltranslation.utils import build_localized_fieldname
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
+from geotrek.api.v2.utils import parse_date
 from geotrek.flatpages.models import FlatPage, MenuItem
 from geotrek.tourism.models import (
     TouristicContent,
@@ -26,7 +27,7 @@ from geotrek.tourism.models import (
 )
 from geotrek.trekking.models import POI, ServiceType, Trek
 from geotrek.zoning.choices import Practicability, VigilanceLevel
-from geotrek.zoning.models import City, District
+from geotrek.zoning.models import City, District, VigilanceArea
 from geotrek.zoning.utils import month_between, weekday_between
 
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
@@ -1064,6 +1065,53 @@ class OpenedFilter(BaseFilterBackend):
         if opened is not None:
             closed = opened == "false"
             qs = qs.filter(closed=closed)
+        today = date.today()
+        opened_from = parse_date(request.GET.get("opened_from"), today)
+        opened_to = parse_date(request.GET.get("opened_to"), today)
+        vigilance_area_types = request.GET.get("vigilance_area_types")
+        if vigilance_area_types is not None:
+            types_id = vigilance_area_types.split(",")
+            qs = qs.filter(
+                Exists(
+                    VigilanceArea.objects.filter(
+                        Q(active_months__len=0)
+                        | Q(
+                            active_months__overlap=month_between(opened_from, opened_to)
+                        ),
+                        Q(active_days__len=0)
+                        | Q(
+                            active_days__overlap=weekday_between(opened_from, opened_to)
+                        ),
+                        Q(end_date__isnull=True) | Q(end_date__gte=opened_to),
+                        start_date__lte=opened_from,
+                        published=True,
+                        geom__intersects=OuterRef("geom"),
+                        vigilance_area_type__in=types_id,
+                    )
+                )
+            )
+        vigilance_area_types_exclude = request.GET.get("vigilance_area_types_exclude")
+        if vigilance_area_types_exclude is not None:
+            types_id_exclude = vigilance_area_types_exclude.split(",")
+            qs = qs.exclude(
+                Exists(
+                    VigilanceArea.objects.filter(
+                        Q(active_months__len=0)
+                        | Q(
+                            active_months__overlap=month_between(opened_from, opened_to)
+                        ),
+                        Q(active_days__len=0)
+                        | Q(
+                            active_days__overlap=weekday_between(opened_from, opened_to)
+                        ),
+                        Q(end_date__isnull=True) | Q(end_date__gte=opened_to),
+                        start_date__lte=opened_from,
+                        published=True,
+                        geom__intersects=OuterRef("geom"),
+                        vigilance_area_type__in=types_id_exclude,
+                    )
+                )
+            )
         return qs
 
     def get_schema_fields(self, view):
@@ -1106,7 +1154,7 @@ class OpenedFilter(BaseFilterBackend):
                 schema=coreschema.String(
                     title=_("Vigilance area types"),
                     description=_(
-                        "Filter by one or more vigilance area types to determine open status, comma-separated."
+                        "Filter by one or more vigilance area types id related to a trek, comma-separated."
                     ),
                 ),
             ),
@@ -1117,7 +1165,7 @@ class OpenedFilter(BaseFilterBackend):
                 schema=coreschema.String(
                     title=_("Vigilance area types exclude"),
                     description=_(
-                        "Exclude by one or more vigilance area types to determine open status, comma-separated."
+                        "Exclude by one or more vigilance area types id related to a trek, comma-separated."
                     ),
                 ),
             ),
