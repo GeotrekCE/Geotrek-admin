@@ -217,6 +217,12 @@ msgstr "Praticabilités"
 msgid "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable', 'not practicable' and 'closed', comma-separated."
 msgstr "Filtrer par un ou plusieurs niveau de praticabilité entre 'practicable', 'possibly_practicable' et 'not practicable', séparés par des virgules."
 
+msgid "Vigilance levels"
+msgstr "Niveau de vigilance"
+
+msgid "Filter by one or more vigilance levels between 'information', 'warning' and 'alert', comma-separated."
+msgstr "Filtrer par un ou plusieurs niveau de vigilance entre 'information', 'warning' et 'alert', séparés par des virgules."
+
 msgid "Types"
 msgstr "Types"
 
@@ -336,6 +342,21 @@ msgstr ""
 
 msgid "Opened to"
 msgstr ""
+
+msgid "Vigilance area types"
+msgstr ""
+
+msgid "Filter by one or more vigilance area types to determine open status, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de type de parcours, séparés par des virgules."
+
+msgid "Vigilance area types exclude"
+msgstr "Types de zone de vigilance exclus"
+
+msgid "Exclude by one or more vigilance area types to determine open status, comma-separated."
+msgstr "Exclure un ou plusieurs types de zone de vigilance pour déterminer le statut d'ouverture, séparés par des virgules."
+
+msgid "Duration min"
+msgstr "Durée min"
 
 msgid "Filter by minimum duration (hours)."
 msgstr "Filtrer par la durée minimale d'un itinéraire (heures)."
