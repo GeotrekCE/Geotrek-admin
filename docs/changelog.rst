@@ -5,6 +5,9 @@ CHANGELOG
 2.126.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Documentation**
+
+* Remove documentation for unreleased basemap feature ((refs #5636))
 
 2.126.0         (2026-08-06)
 ----------------------------
