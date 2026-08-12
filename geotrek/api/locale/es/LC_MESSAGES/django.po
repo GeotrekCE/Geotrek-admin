@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-05 15:23+0000\n"
+"POT-Creation-Date: 2026-08-12 08:25+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Spanish <https://weblate.makina-corpus.net/projects/geotrek-admin/api/es/>\n"
@@ -250,6 +250,12 @@ msgstr ""
 msgid "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable', 'not practicable' and 'closed', comma-separated."
 msgstr ""
 
+msgid "Vigilance levels"
+msgstr ""
+
+msgid "Filter by one or more vigilance levels between 'information', 'warning' and 'alert', comma-separated."
+msgstr ""
+
 msgid "Types"
 msgstr ""
 
@@ -410,6 +416,18 @@ msgid "Filter treks that are open during the specified period. Expected date for
 msgstr ""
 
 msgid "Opened to"
+msgstr ""
+
+msgid "Vigilance area types"
+msgstr ""
+
+msgid "Filter by one or more vigilance area types to determine open status, comma-separated."
+msgstr ""
+
+msgid "Vigilance area types exclude"
+msgstr ""
+
+msgid "Exclude by one or more vigilance area types to determine open status, comma-separated."
 msgstr ""
 
 msgid "Duration min"
