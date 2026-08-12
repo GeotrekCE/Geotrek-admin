@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-09 15:00+0200\n"
+"POT-Creation-Date: 2026-08-12 14:21+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/api/nl/>\n"
@@ -238,7 +238,46 @@ msgstr ""
 msgid "(deprecated) replaced by '%(field)s'."
 msgstr ""
 
+msgid "Portals"
+msgstr ""
+
+msgid "Filter by one or more portal id, comma-separated."
+msgstr ""
+
+msgid "Practicalities"
+msgstr ""
+
+msgid "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable', 'not practicable' and 'closed', comma-separated."
+msgstr ""
+
+msgid "Vigilance levels"
+msgstr ""
+
+msgid "Filter by one or more vigilance levels between 'information', 'warning' and 'alert', comma-separated."
+msgstr ""
+
 msgid "Types"
+msgstr ""
+
+msgid "Filter by one or more types id, comma-separated."
+msgstr ""
+
+msgid "Types exclusion"
+msgstr ""
+
+msgid "Exclude one or more types id, comma-separated."
+msgstr ""
+
+msgid "Start date"
+msgstr ""
+
+msgid "Filter active vigilance areas fora period. Must be setup with end_date. Format is YYYY-MM-JJ."
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
+msgid "Filter active vigilance areas fora period. Must be setup with start_date. Format is YYYY-MM-JJ."
 msgstr ""
 
 msgid "Filter by one or more type id, comma-separated."
@@ -293,12 +332,6 @@ msgid "Filter by one or more district id, comma-separated."
 msgstr ""
 
 msgid "Filter by one or more themes id, comma-separated."
-msgstr ""
-
-msgid "Portals"
-msgstr ""
-
-msgid "Filter by one or more portal id, comma-separated."
 msgstr ""
 
 msgid "Query string"
@@ -368,6 +401,33 @@ msgid "Create date before"
 msgstr ""
 
 msgid "Filter objects created before or during date, format YYYY-MM-DD"
+msgstr ""
+
+msgid "Opened"
+msgstr ""
+
+msgid "Filter by open status, false=close, true=open."
+msgstr ""
+
+msgid "Opened from"
+msgstr ""
+
+msgid "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+msgstr ""
+
+msgid "Opened to"
+msgstr ""
+
+msgid "Vigilance area types"
+msgstr ""
+
+msgid "Filter by one or more vigilance area types id related to a trek, comma-separated."
+msgstr ""
+
+msgid "Vigilance area types exclude"
+msgstr ""
+
+msgid "Exclude by one or more vigilance area types id related to a trek, comma-separated."
 msgstr ""
 
 msgid "Duration min"

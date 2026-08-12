@@ -10,6 +10,16 @@ class Practicability(TextChoices):
         _("Under condition practicable"),
     )
     NOT_PRACTICABLE = "not_practicable", _("Not practicable")
+    CLOSED = "closed", _("Closed")
+
+
+class VigilanceLevel(TextChoices):
+    INFORMATION = "information", _("Information")
+    VIGILANCE = (
+        "vigilance",
+        _("Vigilance"),
+    )
+    ALERT = "alert", _("Alert")
 
 
 class WeekdayChoices(IntegerChoices):

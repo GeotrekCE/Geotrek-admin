@@ -40,6 +40,7 @@ class Migration(migrations.Migration):
                 (
                     "pictogram",
                     models.FileField(
+                        blank=True,
                         max_length=512,
                         null=True,
                         upload_to="upload",
@@ -47,6 +48,23 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("name", models.CharField(max_length=200, verbose_name="Name")),
+                (
+                    "date_insert",
+                    models.DateTimeField(
+                        auto_now_add=True,
+                        db_default=django.db.models.functions.datetime.Now(),
+                        verbose_name="Insertion date",
+                    ),
+                ),
+                (
+                    "date_update",
+                    models.DateTimeField(
+                        auto_now=True,
+                        db_default=django.db.models.functions.datetime.Now(),
+                        db_index=True,
+                        verbose_name="Update date",
+                    ),
+                ),
             ],
             options={
                 "verbose_name": "Vigilance area type",
@@ -206,11 +224,27 @@ class Migration(migrations.Migration):
                                 "Under condition practicable",
                             ),
                             ("not_practicable", "Not practicable"),
+                            ("closed", "Closed"),
                         ],
                         db_index=True,
                         default="practicable",
                         max_length=50,
                         verbose_name="Practicability",
+                    ),
+                ),
+                (
+                    "vigilance_level",
+                    models.CharField(
+                        blank=True,
+                        choices=[
+                            ("information", "Information"),
+                            ("vigilance", "Vigilance"),
+                            ("alert", "Alert"),
+                        ],
+                        db_index=True,
+                        max_length=50,
+                        null=True,
+                        verbose_name="Vigilance level",
                     ),
                 ),
                 (
@@ -331,6 +365,10 @@ class Migration(migrations.Migration):
                         verbose_name="Type",
                     ),
                 ),
+                (
+                    "commentary",
+                    models.TextField(blank=True, verbose_name="Commentary"),
+                ),
             ],
             options={
                 "verbose_name": "Vigilance area",
@@ -360,6 +398,7 @@ class Migration(migrations.Migration):
                                     "practicable",
                                     "under_condition_practicable",
                                     "not_practicable",
+                                    "closed",
                                 ],
                             )
                         ),

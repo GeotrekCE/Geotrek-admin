@@ -15,6 +15,7 @@ from modeltranslation.utils import build_localized_fieldname
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
+from geotrek.api.v2.utils import parse_date
 from geotrek.flatpages.models import FlatPage, MenuItem
 from geotrek.tourism.models import (
     TouristicContent,
@@ -25,7 +26,9 @@ from geotrek.tourism.models import (
     TouristicEventType,
 )
 from geotrek.trekking.models import POI, ServiceType, Trek
-from geotrek.zoning.models import City, District
+from geotrek.zoning.choices import Practicability, VigilanceLevel
+from geotrek.zoning.models import City, District, VigilanceArea
+from geotrek.zoning.utils import month_between, weekday_between
 
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
@@ -290,6 +293,144 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                     title=_("Trek"),
                     description=_("(deprecated) replaced by '%(field)s'.")
                     % {"field": "near_trek"},
+                ),
+            ),
+        )
+
+
+class GeotrekVigilanceAreaFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        structures = request.GET.get("structures")
+        if structures:
+            qs = qs.filter(structure__in=structures.split(","))
+        portals = request.GET.get("portals")
+        if portals:
+            qs = qs.filter(portals__in=portals.split(","))
+        practicabilities = request.GET.get("practicabilities")
+        if practicabilities:
+            practicabilities = [
+                getattr(Practicability, practicability.upper())
+                for practicability in practicabilities.split(",")
+            ]
+            qs = qs.filter(practicability__in=practicabilities)
+        vigilance_levels = request.GET.get("vigilance_levels")
+        if vigilance_levels:
+            vigilance_levels = [
+                getattr(VigilanceLevel, vigilance_level.upper())
+                for vigilance_level in vigilance_levels.split(",")
+            ]
+            qs = qs.filter(vigilance_level__in=vigilance_levels)
+        types = request.GET.get("types")
+        if types:
+            qs = qs.filter(vigilance_area_type__in=types.split(","))
+        types_exclude = request.GET.get("types_exclude")
+        if types_exclude:
+            qs = qs.exclude(vigilance_area_type__in=types_exclude.split(","))
+        start_date = request.GET.get("start_date")
+        end_date = request.GET.get("end_date")
+        if start_date and end_date:
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+            qs = (
+                qs.filter(
+                    Q(end_date__isnull=True) | Q(end_date__gte=start_date),
+                    start_date__lte=end_date,
+                )
+                .filter(
+                    Q(active_months__len=0)
+                    | Q(active_months__overlap=month_between(start_date, end_date))
+                )
+                .filter(
+                    Q(active_days__len=0)
+                    | Q(active_days__overlap=weekday_between(start_date, end_date))
+                )
+            )
+
+        return qs.distinct()
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name="structures",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Structures"),
+                    description=_(
+                        "Filter by one or more structure id, comma-separated."
+                    ),
+                ),
+            ),
+            Field(
+                name="portals",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Portals"),
+                    description=_("Filter by one or more portal id, comma-separated."),
+                ),
+            ),
+            Field(
+                name="practicabilities",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Practicalities"),
+                    description=_(
+                        "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable', 'not practicable' and 'closed', comma-separated."
+                    ),
+                ),
+            ),
+            Field(
+                name="vigilance_levels",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Vigilance levels"),
+                    description=_(
+                        "Filter by one or more vigilance levels between 'information', 'warning' and 'alert', comma-separated."
+                    ),
+                ),
+            ),
+            Field(
+                name="types",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Types"),
+                    description=_("Filter by one or more types id, comma-separated."),
+                ),
+            ),
+            Field(
+                name="types_exclude",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Types exclusion"),
+                    description=_("Exclude one or more types id, comma-separated."),
+                ),
+            ),
+            Field(
+                name="start_date",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Start date"),
+                    description=_(
+                        "Filter active vigilance areas fora period. Must be setup with end_date. Format is YYYY-MM-JJ."
+                    ),
+                ),
+            ),
+            Field(
+                name="end_date",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("End date"),
+                    description=_(
+                        "Filter active vigilance areas fora period. Must be setup with start_date. Format is YYYY-MM-JJ."
+                    ),
                 ),
             ),
         )
@@ -911,6 +1052,120 @@ class UpdateOrCreateDateFilter(BaseFilterBackend):
                     title=_("Create date before"),
                     description=_(
                         "Filter objects created before or during date, format YYYY-MM-DD"
+                    ),
+                ),
+            ),
+        )
+
+
+class OpenedFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        opened = request.GET.get("opened")
+        if opened is not None:
+            closed = opened == "false"
+            qs = qs.filter(closed=closed)
+        today = date.today()
+        opened_from = parse_date(request.GET.get("opened_from"), today)
+        opened_to = parse_date(request.GET.get("opened_to"), today)
+        vigilance_area_types = request.GET.get("vigilance_area_types")
+        if vigilance_area_types is not None:
+            types_id = vigilance_area_types.split(",")
+            qs = qs.filter(
+                Exists(
+                    VigilanceArea.objects.filter(
+                        Q(active_months__len=0)
+                        | Q(
+                            active_months__overlap=month_between(opened_from, opened_to)
+                        ),
+                        Q(active_days__len=0)
+                        | Q(
+                            active_days__overlap=weekday_between(opened_from, opened_to)
+                        ),
+                        Q(end_date__isnull=True) | Q(end_date__gte=opened_to),
+                        start_date__lte=opened_from,
+                        published=True,
+                        geom__intersects=OuterRef("geom"),
+                        vigilance_area_type__in=types_id,
+                    )
+                )
+            )
+        vigilance_area_types_exclude = request.GET.get("vigilance_area_types_exclude")
+        if vigilance_area_types_exclude is not None:
+            types_id_exclude = vigilance_area_types_exclude.split(",")
+            qs = qs.exclude(
+                Exists(
+                    VigilanceArea.objects.filter(
+                        Q(active_months__len=0)
+                        | Q(
+                            active_months__overlap=month_between(opened_from, opened_to)
+                        ),
+                        Q(active_days__len=0)
+                        | Q(
+                            active_days__overlap=weekday_between(opened_from, opened_to)
+                        ),
+                        Q(end_date__isnull=True) | Q(end_date__gte=opened_to),
+                        start_date__lte=opened_from,
+                        published=True,
+                        geom__intersects=OuterRef("geom"),
+                        vigilance_area_type__in=types_id_exclude,
+                    )
+                )
+            )
+        return qs
+
+    def get_schema_fields(self, view):
+        return (
+            Field(
+                name="opened",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Opened"),
+                    description=_("Filter by open status, false=close, true=open."),
+                ),
+            ),
+            Field(
+                name="opened_from",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Opened from"),
+                    description=_(
+                        "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+                    ),
+                ),
+            ),
+            Field(
+                name="opened_to",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Opened to"),
+                    description=_(
+                        "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+                    ),
+                ),
+            ),
+            Field(
+                name="vigilance_area_types",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Vigilance area types"),
+                    description=_(
+                        "Filter by one or more vigilance area types id related to a trek, comma-separated."
+                    ),
+                ),
+            ),
+            Field(
+                name="vigilance_area_types_exclude",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Vigilance area types exclude"),
+                    description=_(
+                        "Exclude by one or more vigilance area types id related to a trek, comma-separated."
                     ),
                 ),
             ),

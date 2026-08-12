@@ -1,4 +1,4 @@
-from dal import autocomplete
+from dal import autocomplete, forward
 from django import forms
 from django.db.models import Exists, OuterRef, Q
 from django.utils.translation import gettext_lazy as _
@@ -162,7 +162,10 @@ class ZoningFilterSet(FilterSet):
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url="zoning:vigilancearea-drf-autocomplete",
-            forward=["vigilance_area_type", "vigilance_area_practicability"],
+            forward=[
+                "vigilance_area_type",
+                forward.Field("vigilance_area_practicability", "practicability"),
+            ],
             attrs={
                 "data-placeholder": _("Vigilance area"),
             },
@@ -178,6 +181,11 @@ class VigilanceAreaFilterSet(
     provider = ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(trek__isnull=False).distinct(),
+        widget=autocomplete.Select2Multiple(),
+    )
+    type = ModelMultipleChoiceFilter(
+        label=_("Vigilance area type"),
+        queryset=VigilanceAreaType.objects.all(),
         widget=autocomplete.Select2Multiple(),
     )
     after = filters.DateFilter(
@@ -202,10 +210,17 @@ class VigilanceAreaFilterSet(
             "name",
             "published",
             "practicability",
-            "vigilance_area_type",
+            "vigilance_level",
             "sources",
             "portals",
             "provider",
             "period_active",
             "active_today",
         ]
+
+    def __init__(self, *args, **kwargs):
+        # Remove vigilance area filters from ZoningFilterSet
+        self.base_filters.pop("vigilance_area_type", None)
+        self.base_filters.pop("vigilance_area_practicability", None)
+        self.base_filters.pop("vigilance_area", None)
+        super().__init__(*args, **kwargs)
