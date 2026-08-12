@@ -9,7 +9,7 @@ from rest_framework.test import APITestCase
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory
-from geotrek.zoning.choices import Practicability
+from geotrek.zoning.choices import Practicability, VigilanceLevel
 from geotrek.zoning.models import VigilanceArea
 from geotrek.zoning.serializers import VigilanceAreaSerializer
 from geotrek.zoning.tests.factories import (
@@ -302,10 +302,12 @@ class VigilanceAreaTestCase(MapEntityTest):
             "id": 1,
             "name_en": "my area",
             "practicability": Practicability.PRACTICABLE.value,
+            "vigilance_level": VigilanceLevel.ALERT.value,
             "vigilance_area_type": area_type.pk,
             "structure": structure.pk,
             "start_date": "2026-07-06",
             "geom": "MULTIPOLYGON(((-0.3142392 -1.0870745, -0.4442674 1.9698002, 2.6553568 2.0446445, 2.6683833 -1.0177449, -0.3142392 -1.0870745)))",
+            "commentary": "commentary",
         }
 
     extra_column_list = ["eid"]

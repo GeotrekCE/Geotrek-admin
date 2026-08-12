@@ -210,6 +210,7 @@ class VigilanceAreaFilterSet(
             "name",
             "published",
             "practicability",
+            "vigilance_level",
             "sources",
             "portals",
             "provider",

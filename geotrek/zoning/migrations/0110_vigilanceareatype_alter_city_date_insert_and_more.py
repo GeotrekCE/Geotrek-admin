@@ -233,6 +233,21 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
+                    "vigilance_level",
+                    models.CharField(
+                        choices=[
+                            ("information", "Information"),
+                            ("vigilance", "Vigilance"),
+                            ("alert", "Alert"),
+                        ],
+                        db_index=True,
+                        blank=True,
+                        null=True,
+                        max_length=50,
+                        verbose_name="Practicability",
+                    ),
+                ),
+                (
                     "practical_info",
                     models.TextField(blank=True, verbose_name="Practical information"),
                 ),
@@ -349,6 +364,10 @@ class Migration(migrations.Migration):
                         to="zoning.vigilanceareatype",
                         verbose_name="Type",
                     ),
+                ),
+                (
+                    "commentary",
+                    models.TextField(blank=True, verbose_name="Commentary"),
                 ),
             ],
             options={

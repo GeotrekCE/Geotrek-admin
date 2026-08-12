@@ -44,6 +44,17 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
         today = datetime.date.today()
         start_date = parse_date(self.request.GET.get("opened_from"), today)
         end_date = parse_date(self.request.GET.get("opened_to"), today)
+        raw_types = self.request.GET.get("vigilance_area_types", "")
+        vigilance_area_types = [int(t) for t in raw_types.split(",") if t]
+        vigilance_area_types_condition = (
+            Q(vigilance_area_type__in=vigilance_area_types)
+            if vigilance_area_types
+            else Q()
+        )
+        raw_types_exclude = self.request.GET.get("vigilance_area_types_exclude", "")
+        vigilance_area_types_exclude = [
+            int(t) for t in raw_types_exclude.split(",") if t
+        ]
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
                 trekking_models.Trek.objects.existing()
@@ -95,11 +106,12 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                                 )
                             ),
                             Q(end_date__isnull=True) | Q(end_date__gte=end_date),
+                            vigilance_area_types_condition,
                             start_date__lte=start_date,
                             published=True,
                             practicability=Practicability.CLOSED,
                             geom__intersects=OuterRef("geom"),
-                        )
+                        ).exclude(vigilance_area_type__in=vigilance_area_types_exclude)
                     ),
                 )
                 .order_by("name")
@@ -173,6 +185,17 @@ class TourViewSet(TrekViewSet):
         today = datetime.date.today()
         start_date = parse_date(self.request.GET.get("opened_from"), today)
         end_date = parse_date(self.request.GET.get("opened_to"), today)
+        raw_types = self.request.GET.get("vigilance_area_types", "")
+        vigilance_area_types = [int(t) for t in raw_types.split(",") if t]
+        vigilance_area_types_condition = (
+            Q(vigilance_area_type__in=vigilance_area_types)
+            if vigilance_area_types
+            else Q()
+        )
+        raw_types_exclude = self.request.GET.get("vigilance_area_types_exclude", "")
+        vigilance_area_types_exclude = [
+            int(t) for t in raw_types_exclude.split(",") if t
+        ]
         qs = super().get_queryset()
         qs = (
             qs.annotate(count_children=Count("trek_children"))
@@ -190,11 +213,12 @@ class TourViewSet(TrekViewSet):
                             active_days__contains=weekday_between(start_date, end_date)
                         ),
                         Q(end_date__isnull=True) | Q(end_date__gte=end_date),
+                        vigilance_area_types_condition,
                         start_date__lte=start_date,
                         published=True,
                         practicability=Practicability.CLOSED,
                         geom__intersects=OuterRef("geom"),
-                    )
+                    ).exclude(vigilance_area_type__in=vigilance_area_types_exclude),
                 ),
             )
         )

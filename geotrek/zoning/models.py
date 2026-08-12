@@ -22,7 +22,7 @@ from geotrek.common.mixins.models import (
 )
 
 from ..common.functions import GenRandomUUID
-from .choices import MonthChoices, Practicability, WeekdayChoices
+from .choices import MonthChoices, Practicability, VigilanceLevel, WeekdayChoices
 from .managers import VigilanceAreaManager
 
 
@@ -177,6 +177,14 @@ class VigilanceArea(
         default=Practicability.PRACTICABLE,
         db_index=True,
     )
+    vigilance_level = models.CharField(
+        verbose_name=_("Vigilance level"),
+        choices=VigilanceLevel.choices,
+        max_length=50,
+        blank=True,
+        null=True,
+        db_index=True,
+    )
     vigilance_area_type = models.ForeignKey(
         VigilanceAreaType,
         on_delete=models.CASCADE,
@@ -223,6 +231,7 @@ class VigilanceArea(
         ),
         blank=True,
     )
+    commentary = models.TextField(verbose_name=_("Commentary"), blank=True)
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     uuid = models.UUIDField(
         default=uuid.uuid4, editable=False, unique=True, db_default=GenRandomUUID()

@@ -1148,10 +1148,20 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
 
         def get_steps(self, obj):
             today = datetime.now().date()
-            start_date = parse_date(
-                self.context["request"].GET.get("opened_from"), today
+            request = self.context["request"]
+            start_date = parse_date(request.GET.get("opened_from"), today)
+            end_date = parse_date(request.GET.get("opened_to"), today)
+            raw_types = request.GET.get("vigilance_area_types", "")
+            vigilance_area_types = [int(t) for t in raw_types.split(",") if t]
+            vigilance_area_types_condition = (
+                Q(vigilance_area_type__in=vigilance_area_types)
+                if vigilance_area_types
+                else Q()
             )
-            end_date = parse_date(self.context["request"].GET.get("opened_to"), today)
+            raw_types_exclude = request.GET.get("vigilance_area_types_exclude", "")
+            vigilance_area_types_exclude = [
+                int(t) for t in raw_types_exclude.split(",") if t
+            ]
             qs = (
                 obj.children.select_related("topo_object", "difficulty")
                 .prefetch_related(
@@ -1174,11 +1184,12 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                                 )
                             ),
                             Q(end_date__isnull=True) | Q(end_date__gte=end_date),
+                            vigilance_area_types_condition,
                             start_date__lte=start_date,
                             published=True,
                             practicability=Practicability.CLOSED,
                             geom__intersects=OuterRef("geom"),
-                        )
+                        ).exclude(vigilance_area_type__in=vigilance_area_types_exclude)
                     ),
                 )
             )
@@ -1525,6 +1536,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
                 "structure",
                 "vigilance_area_type",
                 "practicability",
+                "vigilance_level",
                 "description",
                 "practical_info",
                 "external_info_url",
@@ -1536,6 +1548,8 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
                 "published",
                 "uuid",
                 "attachments",
+                "date_insert",
+                "date_update",
             )
 
 

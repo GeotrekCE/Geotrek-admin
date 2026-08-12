@@ -217,6 +217,12 @@ msgstr ""
 msgid "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable', 'not practicable' and 'closed', comma-separated."
 msgstr ""
 
+msgid "Vigilance levels"
+msgstr ""
+
+msgid "Filter by one or more vigilance levels between 'information', 'warning' and 'alert', comma-separated."
+msgstr ""
+
 msgid "Types"
 msgstr ""
 
@@ -336,6 +342,18 @@ msgid "Filter treks that are open during the specified period. Expected date for
 msgstr ""
 
 msgid "Opened to"
+msgstr ""
+
+msgid "Vigilance area types"
+msgstr ""
+
+msgid "Filter by one or more vigilance area types to determine open status, comma-separated."
+msgstr ""
+
+msgid "Vigilance area types exclude"
+msgstr ""
+
+msgid "Exclude by one or more vigilance area types to determine open status, comma-separated."
 msgstr ""
 
 msgid "Duration min"
