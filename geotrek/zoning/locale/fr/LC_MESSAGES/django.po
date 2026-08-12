@@ -40,7 +40,7 @@ msgid "Closed"
 msgstr "Fermé"
 
 msgid "Information"
-msgstr "Informations"
+msgstr "Information"
 
 msgid "Vigilance"
 msgstr "Vigilance"
