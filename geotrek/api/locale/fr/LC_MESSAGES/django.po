@@ -346,13 +346,17 @@ msgstr ""
 msgid "Vigilance area types"
 msgstr ""
 
-msgid "Filter by one or more vigilance area types to determine open status, comma-separated."
+#, fuzzy
+#| msgid "Filter by one or more vigilance area types to determine open status, comma-separated."
+msgid "Filter by one or more vigilance area types id related to a trek, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de type de parcours, séparés par des virgules."
 
 msgid "Vigilance area types exclude"
 msgstr "Types de zone de vigilance exclus"
 
-msgid "Exclude by one or more vigilance area types to determine open status, comma-separated."
+#, fuzzy
+#| msgid "Exclude by one or more vigilance area types to determine open status, comma-separated."
+msgid "Exclude by one or more vigilance area types id related to a trek, comma-separated."
 msgstr "Exclure un ou plusieurs types de zone de vigilance pour déterminer le statut d'ouverture, séparés par des virgules."
 
 msgid "Duration min"
