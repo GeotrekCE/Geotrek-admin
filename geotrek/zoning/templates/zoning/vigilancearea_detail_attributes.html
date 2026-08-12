@@ -17,8 +17,14 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"practicability" }}</th>
-            <td class="text-{% if object.practicability == 'practicable' %}success-emphasis{% elif object.practicability == 'under_condition_practicable' %}warning{% else %}danger{% endif %}">
-                <i class="bi bi-{% if object.practicability == 'practicable' %}check-circle{% elif object.practicability == 'under_condition_practicable' %}exclamation-circle{% else %}x-circle{% endif %}"></i> {{ object.get_practicability_display }}
+            <td>
+                    <i class="bi bi-{% if object.practicability == 'practicable' %}check-circle text-success{% elif object.practicability == 'under_condition_practicable' %}exclamation-circle text-warning{% else %}x-circle text-danger{% endif %}"></i> {{ object.get_practicability_display }}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"vigilance_level" }}</th>
+            <td>
+                    <i class="bi bi-{% if object.vigilance_level == 'information' %}info-circle text-info{% elif object.vigilance_level == 'vigilance' %}exclamation-circle text-warning{% else %}exclamation-triangle text-danger{% endif %}"></i> {{ object.get_vigilance_level_display }}
             </td>
         </tr>
         <tr>
@@ -66,6 +72,12 @@
         <tr>
             <th>{% trans "Thumbnail" %}</th>
             <td><img src="{{ object.thumbnail.url }}"></td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"commentary" }}</th>
+            <td>{% if object.commentary %}{{ object.commentary|safe|linebreaks }}
+            {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
         </tr>
     </table>
     <table class="table table-bordered">

@@ -627,6 +627,7 @@ VIGILANCE_AREA_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "geometry",
         "name",
         "practicability",
+        "vigilance_level",
         "practical_info",
         "published",
         "sources",
@@ -634,6 +635,8 @@ VIGILANCE_AREA_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "structure",
         "uuid",
         "vigilance_area_type",
+        "date_insert",
+        "date_update",
     ]
 )
 
@@ -2012,6 +2015,45 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
         self.assertEqual(response.json()["count"], 17)
 
+    def test_trek_vigilancearea_types_filter(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.get_trek_list(
+            params={
+                "opened_from": start_date,
+                "opened_to": end_date,
+                "opened": "false",
+                "vigilance_area_types": self.vigilance_area2.vigilance_area_type.pk,
+            }
+        )
+        self.assertEqual(response.json()["count"], 17)
+
+    def test_trek_vigilancearea_types_filter_other_type(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.get_trek_list(
+            params={
+                "opened_from": start_date,
+                "opened_to": end_date,
+                "opened": "false",
+                "vigilance_area_types": self.vigilance_area1.vigilance_area_type.pk,
+            }
+        )
+        self.assertEqual(response.json()["count"], 0)
+
+    def test_trek_vigilancearea_types_exclude_filter(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.get_trek_list(
+            params={
+                "opened_from": start_date,
+                "opened_to": end_date,
+                "opened": "false",
+                "vigilance_area_types_exclude": self.vigilance_area2.vigilance_area_type.pk,
+            }
+        )
+        self.assertEqual(response.json()["count"], 0)
+
     def test_trek_vigilancearea_filter_out_of_period(self):
         start_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
         end_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
@@ -2075,6 +2117,45 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(
             json_response.get("features")[1].get("properties").get("count_children"), 1
         )
+
+    def test_tour_vigilancearea_types_filter(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.get_tour_list(
+            params={
+                "opened_from": start_date,
+                "opened_to": end_date,
+                "opened": "false",
+                "vigilance_area_types": self.vigilance_area2.vigilance_area_type.pk,
+            }
+        )
+        self.assertEqual(response.json()["count"], 1)
+
+    def test_tour_vigilancearea_types_filter_other_type(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.get_tour_list(
+            params={
+                "opened_from": start_date,
+                "opened_to": end_date,
+                "opened": "false",
+                "vigilance_area_types": self.vigilance_area1.vigilance_area_type.pk,
+            }
+        )
+        self.assertEqual(response.json()["count"], 0)
+
+    def test_tour_vigilancearea_types_exclude_filter(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.get_tour_list(
+            params={
+                "opened_from": start_date,
+                "opened_to": end_date,
+                "opened": "false",
+                "vigilance_area_types_exclude": self.vigilance_area2.vigilance_area_type.pk,
+            }
+        )
+        self.assertEqual(response.json()["count"], 0)
 
     @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
     def test_trek_external_pdf(self):
@@ -2908,6 +2989,45 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             {"opened_from": start_date, "opened_to": end_date, "opened": "false"}
         )
         self.assertEqual(len(response.json()["results"]), 2)
+
+    def test_touristiccontent_vigilancearea_types_filter(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.get_touristiccontent_list(
+            params={
+                "opened_from": start_date,
+                "opened_to": end_date,
+                "opened": "false",
+                "vigilance_area_types": self.vigilance_area2.vigilance_area_type.pk,
+            }
+        )
+        self.assertEqual(response.json()["count"], 2)
+
+    def test_touristiccontent_vigilancearea_types_filter_other_type(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.get_touristiccontent_list(
+            params={
+                "opened_from": start_date,
+                "opened_to": end_date,
+                "opened": "false",
+                "vigilance_area_types": self.vigilance_area1.vigilance_area_type.pk,
+            }
+        )
+        self.assertEqual(response.json()["count"], 0)
+
+    def test_touristiccontent_vigilancearea_types_exclude_filter(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        response = self.get_touristiccontent_list(
+            params={
+                "opened_from": start_date,
+                "opened_to": end_date,
+                "opened": "false",
+                "vigilance_area_types_exclude": self.vigilance_area2.vigilance_area_type.pk,
+            }
+        )
+        self.assertEqual(response.json()["count"], 0)
 
     def test_labels_accessibility_detail(self):
         self.check_structure_response(
