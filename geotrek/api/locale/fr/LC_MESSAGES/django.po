@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-12 08:25+0000\n"
+"POT-Creation-Date: 2026-08-12 14:21+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Camille Monchicourt <camille.monchicourt@ecrins-parcnational.fr>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/api/fr/>\n"
@@ -421,13 +421,17 @@ msgstr ""
 msgid "Vigilance area types"
 msgstr ""
 
-msgid "Filter by one or more vigilance area types to determine open status, comma-separated."
+#, fuzzy
+#| msgid "Filter by one or more vigilance area types to determine open status, comma-separated."
+msgid "Filter by one or more vigilance area types id related to a trek, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de type de parcours, séparés par des virgules."
 
 msgid "Vigilance area types exclude"
 msgstr "Types de zone de vigilance exclus"
 
-msgid "Exclude by one or more vigilance area types to determine open status, comma-separated."
+#, fuzzy
+#| msgid "Exclude by one or more vigilance area types to determine open status, comma-separated."
+msgid "Exclude by one or more vigilance area types id related to a trek, comma-separated."
 msgstr "Exclure un ou plusieurs types de zone de vigilance pour déterminer le statut d'ouverture, séparés par des virgules."
 
 msgid "Duration min"
