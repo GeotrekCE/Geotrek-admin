@@ -25,7 +25,7 @@ from geotrek.tourism.models import (
     TouristicEventType,
 )
 from geotrek.trekking.models import POI, ServiceType, Trek
-from geotrek.zoning.choices import Practicability
+from geotrek.zoning.choices import Practicability, VigilanceLevel
 from geotrek.zoning.models import City, District
 from geotrek.zoning.utils import month_between, weekday_between
 
@@ -313,6 +313,13 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
                 for practicability in practicabilities.split(",")
             ]
             qs = qs.filter(practicability__in=practicabilities)
+        vigilance_levels = request.GET.get("vigilance_levels")
+        if vigilance_levels:
+            vigilance_levels = [
+                getattr(VigilanceLevel, vigilance_level.upper())
+                for vigilance_level in vigilance_levels.split(",")
+            ]
+            qs = qs.filter(vigilance_level__in=vigilance_levels)
         types = request.GET.get("types")
         if types:
             qs = qs.filter(vigilance_area_type__in=types.split(","))
@@ -371,6 +378,17 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
                     title=_("Practicalities"),
                     description=_(
                         "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable', 'not practicable' and 'closed', comma-separated."
+                    ),
+                ),
+            ),
+            Field(
+                name="vigilance_levels",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Vigilance levels"),
+                    description=_(
+                        "Filter by one or more vigilance levels between 'information', 'warning' and 'alert', comma-separated."
                     ),
                 ),
             ),
@@ -1078,6 +1096,28 @@ class OpenedFilter(BaseFilterBackend):
                     title=_("Opened to"),
                     description=_(
                         "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+                    ),
+                ),
+            ),
+            Field(
+                name="vigilance_area_types",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Vigilance area types"),
+                    description=_(
+                        "Filter by one or more vigilance area types to determine open status, comma-separated."
+                    ),
+                ),
+            ),
+            Field(
+                name="vigilance_area_types_exclude",
+                required=False,
+                location="query",
+                schema=coreschema.String(
+                    title=_("Vigilance area types exclude"),
+                    description=_(
+                        "Exclude by one or more vigilance area types to determine open status, comma-separated."
                     ),
                 ),
             ),
