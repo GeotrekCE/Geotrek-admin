@@ -13,6 +13,15 @@ class Practicability(TextChoices):
     CLOSED = "closed", _("Closed")
 
 
+class VigilanceLevel(TextChoices):
+    INFORMATION = "information", _("Information")
+    VIGILANCE = (
+        "vigilance",
+        _("Vigilance"),
+    )
+    ALERT = "alert", _("Alert")
+
+
 class WeekdayChoices(IntegerChoices):
     MONDAY = 0, WEEKDAYS[0].title()
     TUESDAY = 1, WEEKDAYS[1].title()
