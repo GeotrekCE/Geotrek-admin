@@ -235,16 +235,16 @@ class Migration(migrations.Migration):
                 (
                     "vigilance_level",
                     models.CharField(
+                        blank=True,
                         choices=[
                             ("information", "Information"),
                             ("vigilance", "Vigilance"),
                             ("alert", "Alert"),
                         ],
                         db_index=True,
-                        blank=True,
-                        null=True,
                         max_length=50,
-                        verbose_name="Practicability",
+                        null=True,
+                        verbose_name="Vigilance level",
                     ),
                 ),
                 (
