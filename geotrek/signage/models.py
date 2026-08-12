@@ -13,7 +13,6 @@ from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
     GeotrekMapEntityMixin,
-    NoDeleteMixin,
     OptionalPictogramMixin,
     TimeStampedModelMixin,
 )
@@ -29,7 +28,7 @@ from geotrek.common.utils import (
 )
 from geotrek.core.models import Path, Topology
 from geotrek.infrastructure.models import BaseInfrastructure
-from geotrek.signage.managers import SignageGISManager
+from geotrek.signage.managers import BladeManager, SignageGISManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 
 
@@ -218,7 +217,6 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
     def delete(self, *args, **kwargs):
         for trek in self.treks.all():
             trek.save()
-        Blade.objects.filter(signage=self).update(deleted=True)
         super().delete(*args, **kwargs)
 
 
@@ -294,7 +292,6 @@ class Blade(
     ZoningPropertiesMixin,
     AddPropertyMixin,
     GeotrekMapEntityMixin,
-    NoDeleteMixin,
 ):
     signage = models.ForeignKey(
         Signage,
@@ -322,6 +319,8 @@ class Blade(
     conditions = models.ManyToManyField(
         BladeCondition, related_name="blades", verbose_name=_("Condition"), blank=True
     )
+
+    objects = BladeManager()
     colorblade_verbose_name = _("Color")
     printedelevation_verbose_name = _("Printed elevation")
     direction_verbose_name = _("Direction")
