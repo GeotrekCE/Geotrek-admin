@@ -147,7 +147,7 @@ class SpeciesSensitiveAreaShapeParser(ShapeParser):
     fields = {
         "geom": "geom",
         "contact": "contact",
-        "description": "description",
+        "description": "descriptio",
         "species": "espece",
     }
     constant_fields = {
