@@ -70,7 +70,7 @@ This mode forwards reports to Suricate, using the Standard API to post reports.
 
 Reports are forwarded as long as we enter a value for the ``email address`` field at creation, otherwise they are kept for internal usage only.
 
-With the standard Suricate API, Geotrek acts as an entry point for feedback reports. 
+With the Suricate Standard API mode, Geotrek acts as an entry point for feedback reports. 
 
 Reports created from Geotrek, either through Geotrek-rando or directly in Geotrek-admin, are automatically sent to Suricate.
 
@@ -87,7 +87,7 @@ This mode is therefore suitable when Geotrek is used to collect feedback reports
 
 .. note::
 
-   With the standard Suricate API, Geotrek-admin only displays feedback reports created from your Geotrek instance. It does not provide a complete view of
+   With the Suricate Standard API mode, Geotrek-admin only displays feedback reports created from your Geotrek instance. It does not provide a complete view of
    all feedback reports recorded in Suricate for your territory.
 
 In particular, this mode does not allow you to:
@@ -111,6 +111,10 @@ Set your account settings in ``custom.py``:
         'PRIVATE_KEY_SERVER_CLIENT': '<your private key server / client>',
     }
 
+.. important::
+
+   The Suricate Standard mode requires an agreement with the PRNSN (Pôle ressources national sports de nature).
+
 .. _suricate-management-workflow:
 
 3 - Suricate Management (Workflow)
@@ -122,9 +126,9 @@ Set your account settings in ``custom.py``:
 
 This mode allows Geotrek-admin to retrieve reports and related data directly from Suricate, using the Management API.
 
-Unlike the :ref:`standard Suricate API <suricate-standard>`, where reports are mainly managed and processed in Suricate, the Management Workflow is designed for organizations that want to process and manage reports directly from Geotrek-admin.
+Unlike the :ref:`Suricate Standard API mode <suricate-standard>`, where reports are mainly managed and processed in Suricate, the Management Workflow is designed for organizations that want to process and manage reports directly from Geotrek-admin.
 
-Reports can be qualified, assigned and followed up from Geotrek-admin using the Intervention module and a predefined workflow. Progress made in Geotrek-admin is then sent back to Suricate.
+Reports can be qualified, assigned and followed up from Geotrek-admin using the Intervention and Report modules and a predefined workflow. Progress made in Geotrek-admin is then sent back to Suricate.
 
 This mode is particularly relevant if your organization actively uses the Geotrek-admin feedback report module and wants to use Geotrek as its main tool for processing reports.
 
@@ -134,7 +138,7 @@ This mode is particularly relevant if your organization actively uses the Geotre
 
    It also implies enabling the Suricate Report mode.
 
-If you only need to forward reports collected through Geotrek to Suricate and want to manage them directly in Suricate, use the :ref:`standard Suricate API <suricate-standard>` instead.
+If you only need to forward reports collected through Geotrek to Suricate and want to manage them directly in Suricate, use the :ref:`Suricate Standard API mode <suricate-standard>` instead.
 
 .. figure:: ../images/advanced-configuration/suricate.png
    :alt: Suricate workflow
