@@ -176,7 +176,7 @@ class CommonTest(AuthentFixturesTest, MapEntityTest):
                 "name",
                 "name_en",
                 "target_id",
-                "target"
+                "target",
             ]
             if not field.related_model and field.name not in fields_name_different:
                 self.assertEqual(
