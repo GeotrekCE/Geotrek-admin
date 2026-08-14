@@ -15,6 +15,10 @@ CHANGELOG
 * Remove documentation for unreleased basemap feature (refs #5636)
 * Fix required field typo in sensitive area import (refs #5640)
 
+**Bug fixes**
+
+* Fix the import of descriptions from a shapefile for sensitive areas (species)
+
 
 2.126.0         (2026-08-06)
 ----------------------------
