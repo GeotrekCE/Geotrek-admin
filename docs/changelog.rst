@@ -14,6 +14,7 @@ CHANGELOG
 
 * Remove documentation for unreleased basemap feature (refs #5636)
 * Fix required field typo in sensitive area import (refs #5640)
+* Add more informations about Suricate API (refs #5643)
 
 
 2.126.0         (2026-08-06)
