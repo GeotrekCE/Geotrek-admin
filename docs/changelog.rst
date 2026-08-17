@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix intervention duplication to also duplicate its target when linked to its own topology instead of another object (e.g. signage, etc) (refs #3845)
+* Fix site duplication so that the clone ID is used as the tree ID if the original site doesn't have a parent (refs #5461)
 
 
 2.126.1         (2026-08-14)
