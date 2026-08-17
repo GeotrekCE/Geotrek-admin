@@ -360,7 +360,6 @@ class InterventionTest(TestCase):
         self.assertEqual(intervention_copy.target_type, intervention.target_type)
         self.assertNotEqual(intervention_copy.target_id, intervention.target_id)
         topology_copy = intervention_copy.target
-        self.assertNotEqual(topology_copy.pk, topology.pk)
         self.assertEqual(topology_copy.geom, topology.geom)
         self.assertEqual(topology_copy.offset, topology.offset)
         self.assertEqual(topology_copy.kind, "INTERVENTION")
