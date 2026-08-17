@@ -309,6 +309,7 @@ pillow==12.3.0
     #   large-image
     #   paperclip
     #   reportlab
+    #   svglib
     #   weasyprint
 pmtiles==3.7.0
     # via django-mapbox-baselayer
@@ -393,7 +394,7 @@ soupsieve==2.8.4
     # via beautifulsoup4
 sqlparse==0.5.5
     # via django
-svglib==1.5.1
+svglib==2.0.2
     # via easy-thumbnails
 tif2geojson==0.1.3
     # via geotrek (setup.py)
