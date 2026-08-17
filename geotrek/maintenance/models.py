@@ -423,7 +423,7 @@ class Intervention(
     def duplicate(self, **kwargs):
         clone = super().duplicate(**kwargs)
         if clone.target_type == ContentType.objects.get_for_model(Topology):
-            # if the target is a topology create a new one with the same information
+            # if the target is a topology instead of another object (e.g. signage, etc), create a new one with the same information
             topology = self.target
             new_topology = Topology.objects.create(kind="INTERVENTION")
             new_topology.mutate(topology)

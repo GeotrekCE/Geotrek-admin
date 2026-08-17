@@ -29,6 +29,7 @@ from geotrek.maintenance.tests.factories import (
     SignageInterventionFactory,
 )
 from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
+from geotrek.signage.models import Signage
 from geotrek.signage.tests.factories import BladeFactory, SignageFactory
 
 
@@ -342,6 +343,10 @@ class InterventionTest(TestCase):
         self.assertIn("-", interv.target_csv_display)
 
     def test_duplication_with_topology_target(self):
+        """
+        Test that duplicating an intervention with a topology target creates an independent topology copy.
+        https://github.com/GeotrekCE/Geotrek-admin/issues/3845
+        """
         topology = TopologyFactory.create()
         intervention = InterventionFactory.create(
             target=topology,
@@ -350,15 +355,32 @@ class InterventionTest(TestCase):
             name="intervention test",
         )
         self.assertEqual(Intervention.objects.count(), 1)
-        Intervention.duplicate(intervention)
+        intervention_copy = Intervention.duplicate(intervention)
         self.assertEqual(Intervention.objects.count(), 2)
-        intervention_copy = Intervention.objects.get(name="intervention test (copy)")
         self.assertEqual(intervention_copy.target_type, intervention.target_type)
         self.assertNotEqual(intervention_copy.target_id, intervention.target_id)
         topology_copy = intervention_copy.target
+        self.assertNotEqual(topology_copy.pk, topology.pk)
         self.assertEqual(topology_copy.geom, topology.geom)
         self.assertEqual(topology_copy.offset, topology.offset)
         self.assertEqual(topology_copy.kind, "INTERVENTION")
+
+    def test_duplication_without_topology_target(self):
+        """
+        Test that duplicating an intervention without topology target duplicate the target id.
+        """
+        signage = SignageFactory.create()
+        intervention = InterventionFactory.create(
+            target=signage,
+            target_id=signage.pk,
+            target_type=ContentType.objects.get_for_model(Signage),
+            name="intervention test",
+        )
+        self.assertEqual(Intervention.objects.count(), 1)
+        intervention_copy = Intervention.duplicate(intervention)
+        self.assertEqual(Intervention.objects.count(), 2)
+        self.assertEqual(intervention_copy.target_type, intervention.target_type)
+        self.assertEqual(intervention_copy.target_id, intervention.target_id)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")

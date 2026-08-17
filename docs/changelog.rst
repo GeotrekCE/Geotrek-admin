@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-* Fix geometry of duplicated intervention
+* Fix intervention duplication to also duplicate its target when linked to its own topology instead of another object (e.g. signage, etc) (refs #3845)
 
 
 2.126.1         (2026-08-14)

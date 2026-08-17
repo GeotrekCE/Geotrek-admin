@@ -167,17 +167,17 @@ class CommonTest(AuthentFixturesTest, MapEntityTest):
                 self.model.objects.filter(name__endswith="(copy)").count(), 1
             )
         self.assertEqual(self.model.objects.filter(structure=structure).count(), 1)
+        fields_name_different = [
+            "id",
+            "uuid",
+            "date_insert",
+            "date_update",
+            "name",
+            "name_en",
+            "target_id",
+            "target",
+        ]
         for field in self.model._meta.get_fields():
-            fields_name_different = [
-                "id",
-                "uuid",
-                "date_insert",
-                "date_update",
-                "name",
-                "name_en",
-                "target_id",
-                "target",
-            ]
             if not field.related_model and field.name not in fields_name_different:
                 self.assertEqual(
                     str(getattr(obj_1, field.name)),
