@@ -120,7 +120,6 @@ django==5.2.16
     #   django-treebeard
     #   django-weasyprint
     #   djangorestframework
-    #   djangorestframework-gis
     #   djangorestframework-simplejwt
     #   drf-extensions
     #   drf-spectacular
@@ -153,10 +152,8 @@ django-embed-video @ git+https://github.com/jazzband/django-embed-video.git@2b64
     #   geotrek (setup.py)
     #   mapentity
     #   paperclip
-django-filter==25.2
-    # via
-    #   djangorestframework-gis
-    #   mapentity
+django-filter==26.1
+    # via mapentity
 django-flask-authent-backend @ git+https://github.com/PnX-SI/django-flask-authent-backend@7aa95d5ce5fd4f5aa4bf29af03dfbd1de4d924ca#egg=django-flask-authent-backend
     # via geotrek (setup.py)
 django-js-asset==3.1.2
@@ -195,7 +192,7 @@ djangorestframework==3.16.1
     #   mapentity
 djangorestframework-datatables==0.7.2
     # via mapentity
-djangorestframework-gis==1.2.1
+djangorestframework-gis==1.0
     # via mapentity
 djangorestframework-simplejwt==5.5.1
     # via geotrek (setup.py)
