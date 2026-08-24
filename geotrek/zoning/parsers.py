@@ -15,7 +15,6 @@ from geotrek.zoning.models import (
     District,
     RestrictedArea,
     VigilanceArea,
-    VigilanceAreaType,
 )
 
 
