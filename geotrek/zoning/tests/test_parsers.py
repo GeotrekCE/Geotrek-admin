@@ -156,7 +156,7 @@ class VigilanceAreaGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(vigilance_area.published, True)
         self.assertEqual(str(vigilance_area.structure), "Structure 1")
         self.assertEqual(str(vigilance_area.vigilance_area_type), "Pastoralism")
-        self.assertEqual(str(vigilance_area.practicability), "closed")
+        self.assertEqual(str(vigilance_area.practicability), "not_practicable")
         self.assertEqual(str(vigilance_area.sources.first()), "source 1")
         self.assertEqual(vigilance_area.external_info_url, "https://test.fr")
         self.assertEqual(str(vigilance_area.start_date), "2026-08-04")
