@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("signage", "0047_alter_line_unique_together"),
+        ("signage", "0049_remove_blade_deleted"),
     ]
 
     operations = [
