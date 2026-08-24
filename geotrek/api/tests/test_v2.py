@@ -795,7 +795,7 @@ class BaseApiTest(TestCase):
             end_date=cls.today + datetime.timedelta(days=145),
             active_months=[],
             active_days=[],
-            practicability=zoning_choices.Practicability.CLOSED,
+            practicability=zoning_choices.Practicability.NOT_PRACTICABLE,
         )
         cls.vigilance_area2 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,
@@ -813,7 +813,7 @@ class BaseApiTest(TestCase):
                 cls.today.weekday(),
                 (cls.today.weekday() + 1) % 7,
             ],  # [Weekday-1, Weekday, Weekday+1]
-            practicability=zoning_choices.Practicability.CLOSED,
+            practicability=zoning_choices.Practicability.NOT_PRACTICABLE,
         )
         cls.vigilance_area3 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,

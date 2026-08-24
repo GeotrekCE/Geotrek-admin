@@ -48,7 +48,7 @@
                 "fr": "zone 1",
                 "en": "area 1"
             },
-            "practicability": "closed",
+            "practicability": "not_practicable",
             "practical_info": {
                 "fr": "<p>info pratique 1</p>",
                 "en": "<p>practical information 1</p>"
