@@ -1175,7 +1175,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                             Q(end_date__isnull=True) | Q(end_date__gte=end_date),
                             start_date__lte=start_date,
                             published=True,
-                            practicability=Practicability.CLOSED,
+                            practicability=Practicability.NOT_PRACTICABLE,
                             geom__intersects=OuterRef("geom"),
                         )
                     ),

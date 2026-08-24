@@ -214,7 +214,7 @@ msgstr ""
 msgid "Practicalities"
 msgstr ""
 
-msgid "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable', 'not practicable' and 'closed', comma-separated."
+msgid "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable' and 'not practicable', comma-separated."
 msgstr ""
 
 msgid "Vigilance levels"

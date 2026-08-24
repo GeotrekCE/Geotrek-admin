@@ -350,7 +350,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
                 schema=coreschema.String(
                     title=_("Practicalities"),
                     description=_(
-                        "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable', 'not practicable' and 'closed', comma-separated."
+                        "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable' and 'not practicable', comma-separated."
                     ),
                 ),
             ),
