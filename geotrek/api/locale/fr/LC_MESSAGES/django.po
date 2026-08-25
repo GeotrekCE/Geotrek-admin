@@ -220,10 +220,8 @@ msgstr "Filtrer par un ou plusieurs niveau de praticabilité entre 'practicable'
 msgid "Vigilance levels"
 msgstr "Niveau de vigilance"
 
-#, fuzzy
-#| msgid "Filter by one or more Place id, comma-separated."
 msgid "Filter by one or more vigilance levels id, comma-separated."
-msgstr "Filtrer par un ou plusieurs id de lieu d'évènement, séparés par des virgules."
+msgstr "Filtrer par un ou plusieurs id de niveau de vigilance, séparés par des virgules."
 
 msgid "Types"
 msgstr "Types"
@@ -238,22 +236,28 @@ msgid "Exclude one or more types id, comma-separated."
 msgstr "Exclure un ou plusieurs id de type, séparés par des virgules."
 
 msgid "Start date"
-msgstr ""
+msgstr "Date de début"
 
-msgid "Filter active vigilance areas fora period. Must be setup with end_date. Format is YYYY-MM-JJ."
-msgstr ""
+msgid "Filter active vigilance areas for a period. Must be setup with end_date. Format is YYYY-MM-JJ."
+msgstr "Filtrer les zones de vigilance actives sur une période. Doit être configuré avec end_date. Le format est YYYY-MM-JJ"
 
 msgid "End date"
-msgstr ""
+msgstr "Date de fin"
 
-msgid "Filter active vigilance areas fora period. Must be setup with start_date. Format is YYYY-MM-JJ."
-msgstr ""
+msgid "Filter active vigilance areas for a period. Must be setup with start_date. Format is YYYY-MM-JJ."
+msgstr "Filtrer les zones de vigilance actives sur une période. Doit être configuré avec start_date. Le format est YYYY-MM-JJ"
 
 msgid "Filter by one or more type id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de type, séparés par des virgules."
 
+msgid "Sites"
+msgstr "Sites"
+
 msgid "Filter by one or multiple site id. It will show only the POIs related to this outdoor site. If multiple sites, they should be separated by commas."
 msgstr "Filtrer par un ou plusieurs identifiants de site. Il affichera uniquementles POI liés à ce site outdoor. S'il s'agit de plusieurs sites, ils doivent être séparés par des virgules."
+
+msgid "Courses"
+msgstr "Courses"
 
 msgid "Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas."
 msgstr "Filtrer par un ou plusieurs identifiants de cours. Il n'affichera que les POIliés à ce parcours outdoor. S'il s'agit de plusieurs cours, ils doivent être séparés par des virgules. "
@@ -331,35 +335,31 @@ msgid "Filter objects created before or during date, format YYYY-MM-DD"
 msgstr ""
 
 msgid "Opened"
-msgstr ""
+msgstr "Ouvert"
 
 msgid "Filter by open status, false=close, true=open."
-msgstr ""
+msgstr "Filtrer par statut d'ouverture, false=fermé, true=ouvert"
 
 msgid "Opened from"
-msgstr ""
+msgstr "Ouvert du"
 
 msgid "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
-msgstr ""
+msgstr "Filtrer les itinéraires qui sont ouvert sur la période spécifiée. Format de date attendu : YYYY-MM-DD. Par defaut, la période utilisée est le jour courrant."
 
 msgid "Opened to"
-msgstr ""
+msgstr "Ouvert au"
 
 msgid "Vigilance area types"
-msgstr ""
+msgstr "Types de zone de vigilance"
 
-#, fuzzy
-#| msgid "Filter by one or more vigilance area types to determine open status, comma-separated."
 msgid "Filter by one or more vigilance area types id related to a trek, comma-separated."
-msgstr "Filtrer par un ou plusieurs id de type de parcours, séparés par des virgules."
+msgstr "Filtrer par un ou plusieurs id de type de zone de vigilance, séparés par des virgules."
 
 msgid "Vigilance area types exclude"
 msgstr "Types de zone de vigilance exclus"
 
-#, fuzzy
-#| msgid "Exclude by one or more vigilance area types to determine open status, comma-separated."
 msgid "Exclude by one or more vigilance area types id related to a trek, comma-separated."
-msgstr "Exclure un ou plusieurs types de zone de vigilance pour déterminer le statut d'ouverture, séparés par des virgules."
+msgstr "Exclure un ou plusieurs id de types de zone de vigilance associés à un itinéraire, séparés par des virgules."
 
 msgid "Duration min"
 msgstr "Durée min"
