@@ -26,7 +26,7 @@ from geotrek.tourism.models import (
     TouristicEventType,
 )
 from geotrek.trekking.models import POI, ServiceType, Trek
-from geotrek.zoning.choices import Practicability, VigilanceLevel
+from geotrek.zoning.choices import Practicability
 from geotrek.zoning.models import City, District, VigilanceArea
 from geotrek.zoning.utils import month_between, weekday_between
 
@@ -316,11 +316,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
             qs = qs.filter(practicability__in=practicabilities)
         vigilance_levels = request.GET.get("vigilance_levels")
         if vigilance_levels:
-            vigilance_levels = [
-                getattr(VigilanceLevel, vigilance_level.upper())
-                for vigilance_level in vigilance_levels.split(",")
-            ]
-            qs = qs.filter(vigilance_level__in=vigilance_levels)
+            qs = qs.filter(vigilance_level__in=vigilance_levels.split(","))
         types = request.GET.get("types")
         if types:
             qs = qs.filter(vigilance_area_type__in=types.split(","))
@@ -389,7 +385,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
                 schema=coreschema.String(
                     title=_("Vigilance levels"),
                     description=_(
-                        "Filter by one or more vigilance levels between 'information', 'warning' and 'alert', comma-separated."
+                        "Filter by one or more vigilance levels id, comma-separated."
                     ),
                 ),
             ),

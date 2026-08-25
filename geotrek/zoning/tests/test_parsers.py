@@ -17,6 +17,8 @@ from geotrek.zoning.models import (
     RestrictedArea,
     RestrictedAreaType,
     VigilanceArea,
+    VigilanceAreaType,
+    VigilanceLevel,
 )
 from geotrek.zoning.parsers import (
     CityParser,
@@ -92,6 +94,9 @@ class TestGeotrekVigilanceAreaParser(GeotrekVigilanceAreaParser):
         "vigilance_area_type": {
             "create": True,
         },
+        "vigilance_level": {
+            "create": True,
+        },
         "structure": {
             "create": True,
         },
@@ -118,6 +123,7 @@ class VigilanceAreaGeotrekParserTests(GeotrekParserTestMixin, TestCase):
             ("zoning", "structure.json"),
             ("zoning", "sources.json"),
             ("zoning", "vigilance_area_types.json"),
+            ("zoning", "vigilance_levels.json"),
             ("zoning", "vigilance_area_ids.json"),
             ("zoning", "vigilance_area.json"),
         ]
@@ -156,6 +162,7 @@ class VigilanceAreaGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(vigilance_area.published, True)
         self.assertEqual(str(vigilance_area.structure), "Structure 1")
         self.assertEqual(str(vigilance_area.vigilance_area_type), "Pastoralism")
+        self.assertEqual(str(vigilance_area.vigilance_level), "Advise")
         self.assertEqual(str(vigilance_area.practicability), "not_practicable")
         self.assertEqual(str(vigilance_area.sources.first()), "source 1")
         self.assertEqual(vigilance_area.external_info_url, "https://test.fr")
@@ -191,6 +198,15 @@ class VigilanceAreaGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertAlmostEqual(
             vigilance_area.geom.coords[0][0][3][1], 6285641.887099, places=5
         )
+
+        vigilance_levels = list(
+            VigilanceLevel.objects.all().values_list("name_en", flat=True)
+        )
+        self.assertEqual(vigilance_levels, ["Advise", "Warning"])
+        vigilance_types = list(
+            VigilanceAreaType.objects.all().values_list("name_en", flat=True)
+        )
+        self.assertEqual(vigilance_types, ["Pastoralism", "Natural risk"])
 
 
 class TestDistrictOpenStreetMapParser(OpenStreetMapDistrictParser):
