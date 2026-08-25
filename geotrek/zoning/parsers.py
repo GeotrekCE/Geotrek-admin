@@ -182,16 +182,19 @@ class GeotrekVigilanceAreaParser(GeotrekParser):
         "structure": "structure",
         "sources": "source",
         "vigilance_area_type": "vigilancearea_type",
+        "vigilance_level": "vigilancearea_vigilancelevel",
     }
     categories_keys_api_v2 = {
         "structure": "name",
         "sources": "name",
         "vigilance_area_type": "name",
+        "vigilance_level": "name",
     }
     natural_keys = {
         "structure": "name",
         "sources": "name",
         "vigilance_area_type": "name",
+        "vigilance_level": "name",
     }
 
     def __init__(self, *args, **kwargs):

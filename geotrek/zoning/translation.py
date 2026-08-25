@@ -15,5 +15,10 @@ class VigilanceAreaTypeTO(TranslationOptions):
     fields = ("name",)
 
 
+class VigilanceLevelTO(TranslationOptions):
+    fields = ("name",)
+
+
 translator.register(models.VigilanceAreaType, VigilanceAreaTypeTO)
 translator.register(models.VigilanceArea, VigilanceAreaTO)
+translator.register(models.VigilanceLevel, VigilanceLevelTO)

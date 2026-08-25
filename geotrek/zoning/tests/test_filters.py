@@ -17,6 +17,7 @@ from geotrek.zoning.tests.factories import (
     RestrictedAreaTypeFactory,
     VigilanceAreaFactory,
     VigilanceAreaTypeFactory,
+    VigilanceLevelFactory,
 )
 
 
@@ -137,9 +138,11 @@ class VigilanceAreaFilterTest(TestCase):
         cls.yesterday = cls.today - datetime.timedelta(days=1)
         cls.tomorrow = cls.today + datetime.timedelta(days=1)
         cls.area_type = VigilanceAreaTypeFactory.create()
+        cls.vigilance_level = VigilanceLevelFactory.create()
         cls.va = VigilanceAreaFactory.create(
             name="Alpha Area",
             vigilance_area_type=cls.area_type,
+            vigilance_level=cls.vigilance_level,
             start_date=cls.yesterday,
             end_date=cls.tomorrow,
             practicability=Practicability.PRACTICABLE,
@@ -163,6 +166,13 @@ class VigilanceAreaFilterTest(TestCase):
             data={"practicability": Practicability.NOT_PRACTICABLE}, queryset=qs
         )
         self.assertNotIn(self.va, f.qs)
+
+    def test_filter_by_vigilance_level(self):
+        qs = VigilanceArea.objects.all()
+        f = VigilanceAreaFilterSet(
+            data={"vigilance_level": [self.vigilance_level.pk]}, queryset=qs
+        )
+        self.assertIn(self.va, f.qs)
 
     def test_filter_by_vigilance_area_type(self):
         qs = VigilanceArea.objects.all()

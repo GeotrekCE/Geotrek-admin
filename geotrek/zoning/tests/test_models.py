@@ -22,6 +22,7 @@ from geotrek.zoning.tests.factories import (
     RestrictedAreaTypeFactory,
     VigilanceAreaFactory,
     VigilanceAreaTypeFactory,
+    VigilanceLevelFactory,
 )
 
 
@@ -387,6 +388,12 @@ class RestrictedAreaTestCase(TestCase):
 class VigilanceAreaTypeTestCase(TestCase):
     def test_vigilance_area_type_str(self):
         vat = VigilanceAreaTypeFactory(name="Warning Type")
+        self.assertEqual(str(vat), "Warning Type")
+
+
+class VigilanceLevelTestCase(TestCase):
+    def test_vigilance_level_str(self):
+        vat = VigilanceLevelFactory(name="Warning Type")
         self.assertEqual(str(vat), "Warning Type")
 
 

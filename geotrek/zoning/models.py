@@ -1,5 +1,6 @@
 import uuid
 
+from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields.array import ArrayField
@@ -22,7 +23,7 @@ from geotrek.common.mixins.models import (
 )
 
 from ..common.functions import GenRandomUUID
-from .choices import MonthChoices, Practicability, VigilanceLevel, WeekdayChoices
+from .choices import MonthChoices, Practicability, WeekdayChoices
 from .managers import VigilanceAreaManager
 
 
@@ -150,6 +151,19 @@ class VigilanceAreaType(OptionalPictogramMixin, TimeStampedModelMixin, models.Mo
         return self.name
 
 
+class VigilanceLevel(OptionalPictogramMixin, TimeStampedModelMixin, models.Model):
+    name = models.CharField(max_length=200, verbose_name=_("Name"))
+    color = ColorField(verbose_name=_("Color"), default="#1257A8")
+    level = models.PositiveSmallIntegerField(unique=True, null=True)
+
+    class Meta:
+        verbose_name = _("Vigilance level")
+        verbose_name_plural = _("Vigilance levels")
+
+    def __str__(self):
+        return self.name
+
+
 class VigilanceArea(
     TimeStampedModelMixin,
     StructureRelated,
@@ -177,13 +191,13 @@ class VigilanceArea(
         default=Practicability.PRACTICABLE,
         db_index=True,
     )
-    vigilance_level = models.CharField(
-        verbose_name=_("Vigilance level"),
-        choices=VigilanceLevel.choices,
-        max_length=50,
+    vigilance_level = models.ForeignKey(
+        VigilanceLevel,
+        on_delete=models.CASCADE,
         blank=True,
         null=True,
-        db_index=True,
+        verbose_name=_("Vigilance level"),
+        related_name="vigilance_areas",
     )
     vigilance_area_type = models.ForeignKey(
         VigilanceAreaType,

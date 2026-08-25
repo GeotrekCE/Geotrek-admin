@@ -27,6 +27,7 @@ class Migration(migrations.Migration):
             DROP VIEW IF EXISTS v_districts CASCADE;
             DROP VIEW IF EXISTS v_restrictedareas CASCADE;
             DROP VIEW IF EXISTS v_vigilanceareas CASCADE;
-            """
+            """,
+            reverse_sql=migrations.RunSQL.noop,
         )
     ]

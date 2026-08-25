@@ -171,6 +171,11 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
         api_views.VigilanceAreaTypeViewSet,
         basename="vigilancearea_type",
     )
+    router.register(
+        "vigilancearea_vigilancelevel",
+        api_views.VigilanceLevelViewSet,
+        basename="vigilancearea-vigilancelevel",
+    )
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
     router.register("outdoor_site", api_views.SiteViewSet, basename="site")
     router.register(

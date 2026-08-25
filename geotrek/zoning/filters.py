@@ -20,6 +20,7 @@ from geotrek.zoning.models import (
     RestrictedAreaType,
     VigilanceArea,
     VigilanceAreaType,
+    VigilanceLevel,
 )
 
 
@@ -186,6 +187,11 @@ class VigilanceAreaFilterSet(
     type = ModelMultipleChoiceFilter(
         label=_("Vigilance area type"),
         queryset=VigilanceAreaType.objects.all(),
+        widget=autocomplete.Select2Multiple(),
+    )
+    vigilance_level = ModelMultipleChoiceFilter(
+        label=_("Vigilance level"),
+        queryset=VigilanceLevel.objects.all(),
         widget=autocomplete.Select2Multiple(),
     )
     after = filters.DateFilter(
