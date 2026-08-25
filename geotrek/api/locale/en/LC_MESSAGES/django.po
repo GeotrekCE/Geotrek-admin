@@ -220,7 +220,7 @@ msgstr ""
 msgid "Vigilance levels"
 msgstr ""
 
-msgid "Filter by one or more vigilance levels between 'information', 'warning' and 'alert', comma-separated."
+msgid "Filter by one or more vigilance levels id, comma-separated."
 msgstr ""
 
 msgid "Types"

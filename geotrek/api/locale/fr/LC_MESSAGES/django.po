@@ -220,8 +220,10 @@ msgstr "Filtrer par un ou plusieurs niveau de praticabilité entre 'practicable'
 msgid "Vigilance levels"
 msgstr "Niveau de vigilance"
 
-msgid "Filter by one or more vigilance levels between 'information', 'warning' and 'alert', comma-separated."
-msgstr "Filtrer par un ou plusieurs niveau de vigilance entre 'information', 'warning' et 'alert', séparés par des virgules."
+#, fuzzy
+#| msgid "Filter by one or more Place id, comma-separated."
+msgid "Filter by one or more vigilance levels id, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de lieu d'évènement, séparés par des virgules."
 
 msgid "Types"
 msgstr "Types"

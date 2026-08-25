@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-24 08:51+0000\n"
+"POT-Creation-Date: 2026-08-25 08:35+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/de/>\n"
@@ -24,6 +24,9 @@ msgstr ""
 msgid "Unpublish (hidden on Geotrek-rando)"
 msgstr ""
 
+msgid "Color"
+msgstr ""
+
 msgid "Zoning"
 msgstr "Zonierung"
 
@@ -34,15 +37,6 @@ msgid "Under condition practicable"
 msgstr ""
 
 msgid "Not practicable"
-msgstr ""
-
-msgid "Information"
-msgstr ""
-
-msgid "Vigilance"
-msgstr ""
-
-msgid "Alert"
 msgstr ""
 
 msgid "City"
@@ -70,6 +64,9 @@ msgid "Name"
 msgstr "Name"
 
 msgid "Provider"
+msgstr ""
+
+msgid "Vigilance level"
 msgstr ""
 
 msgid "After"
@@ -120,6 +117,9 @@ msgstr "Distrikte"
 msgid "Vigilance area types"
 msgstr ""
 
+msgid "Vigilance levels"
+msgstr ""
+
 msgid "Description"
 msgstr ""
 
@@ -130,9 +130,6 @@ msgid "End date"
 msgstr ""
 
 msgid "Practicability"
-msgstr ""
-
-msgid "Vigilance level"
 msgstr ""
 
 msgid "Type"
