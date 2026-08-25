@@ -162,5 +162,38 @@
             "name_fr": "Chasse",
             "name_en": "Hunting"
         }
+    },
+    {
+        "pk": 1,
+        "model": "zoning.vigilancelevel",
+        "fields": {
+            "name": "Danger",
+            "name_fr": "Danger",
+            "name_en": "Danger",
+            "color": "#901A1A",
+            "level": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "zoning.vigilancelevel",
+        "fields": {
+            "name": "Warning",
+            "name_fr": "Mise en garde",
+            "name_en": "Warning",
+            "color": "#955a02",
+            "level": 2
+        }
+    },
+    {
+        "pk": 3,
+        "model": "zoning.vigilancelevel",
+        "fields": {
+            "name": "Advise",
+            "name_fr": "Conseil",
+            "name_en": "Advise",
+            "color": "#1257A8",
+            "level": 3
+        }
     }
 ]

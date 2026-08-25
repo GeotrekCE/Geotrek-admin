@@ -25,7 +25,7 @@
             <th>{{ object|verbose:"vigilance_level" }}</th>
             <td>
             {% if object.vigilance_level %}
-                <i class="bi bi-{% if object.vigilance_level == 'information' %}info-circle text-info{% elif object.vigilance_level == 'vigilance' %}exclamation-circle text-warning{% else %}exclamation-triangle text-danger{% endif %}"></i> {{ object.get_vigilance_level_display }}
+                <i class="bi bi-circle-fill" style="color: {{ object.vigilance_level.color }}"></i> {{ object.vigilance_level.name }}
             {% else %}
                 <span class="none">{% trans "None" %}</span>
             {% endif %}

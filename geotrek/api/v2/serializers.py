@@ -1494,8 +1494,18 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
             return get_translation_or_dict("name", self, obj)
 
         class Meta:
-            model = trekking_models.Theme
+            model = zoning_models.VigilanceAreaType
             fields = ("id", "name", "pictogram")
+
+    class VigilanceLevelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField()
+
+        def get_name(self, obj):
+            return get_translation_or_dict("name", self, obj)
+
+        class Meta:
+            model = zoning_models.VigilanceLevel
+            fields = ("id", "name", "color", "level", "pictogram")
 
     class VigilanceAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(

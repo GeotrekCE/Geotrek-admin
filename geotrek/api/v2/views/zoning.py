@@ -42,3 +42,8 @@ class VigilanceAreaViewSet(api_viewsets.GeotrekGeometricViewset):
 class VigilanceAreaTypeViewSet(api_viewsets.GeotrekViewSet):
     serializer_class = api_serializers.VigilanceAreaTypeSerializer
     queryset = zoning_models.VigilanceAreaType.objects.all().order_by("pk")
+
+
+class VigilanceLevelViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.VigilanceLevelSerializer
+    queryset = zoning_models.VigilanceLevel.objects.all().order_by("pk")
