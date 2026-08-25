@@ -414,7 +414,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
                 schema=coreschema.String(
                     title=_("Start date"),
                     description=_(
-                        "Filter active vigilance areas fora period. Must be setup with end_date. Format is YYYY-MM-JJ."
+                        "Filter active vigilance areas for a period. Must be setup with end_date. Format is YYYY-MM-JJ."
                     ),
                 ),
             ),
@@ -425,7 +425,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
                 schema=coreschema.String(
                     title=_("End date"),
                     description=_(
-                        "Filter active vigilance areas fora period. Must be setup with start_date. Format is YYYY-MM-JJ."
+                        "Filter active vigilance areas for a period. Must be setup with start_date. Format is YYYY-MM-JJ."
                     ),
                 ),
             ),

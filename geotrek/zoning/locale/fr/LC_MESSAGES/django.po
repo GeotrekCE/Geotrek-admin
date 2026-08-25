@@ -25,7 +25,7 @@ msgid "Unpublish (hidden on Geotrek-rando)"
 msgstr "Dépublier (caché sur Geotrek-rando)"
 
 msgid "Color"
-msgstr ""
+msgstr "Couleur"
 
 msgid "Zoning"
 msgstr "Zonage"
@@ -117,10 +117,8 @@ msgstr "Secteurs"
 msgid "Vigilance area types"
 msgstr "Types de zone de vigilance"
 
-#, fuzzy
-#| msgid "Vigilance level"
 msgid "Vigilance levels"
-msgstr "Niveau de vigilance"
+msgstr "Niveaux de vigilance"
 
 msgid "Description"
 msgstr "Description"
