@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-24 08:51+0000\n"
+"POT-Creation-Date: 2026-08-25 08:35+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Camille Monchicourt <camille.monchicourt@ecrins-parcnational.fr>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/api/fr/>\n"
@@ -253,8 +253,10 @@ msgstr "Filtrer par une ou plusieurs praticabilités entre 'practicable', 'under
 msgid "Vigilance levels"
 msgstr "Niveau de vigilance"
 
-msgid "Filter by one or more vigilance levels between 'information', 'warning' and 'alert', comma-separated."
-msgstr "Filtrer par un ou plusieurs niveau de vigilance entre 'information', 'warning' et 'alert', séparés par des virgules."
+#, fuzzy
+#| msgid "Filter by one or more Place id, comma-separated."
+msgid "Filter by one or more vigilance levels id, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de lieu d'évènement, séparés par des virgules."
 
 msgid "Types"
 msgstr "Types"
