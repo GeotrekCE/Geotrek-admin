@@ -8,7 +8,8 @@ from geotrek.zoning.models import City, District, RestrictedArea, VigilanceLevel
 from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
-    RestrictedAreaFactory, VigilanceLevelFactory,
+    RestrictedAreaFactory,
+    VigilanceLevelFactory,
 )
 
 
@@ -92,7 +93,8 @@ class ZoningAdminTest(TestCase):
         vigilance_level = VigilanceLevelFactory(color="#AC2F89")
         admin = VigilanceLevelAdmin(VigilanceLevel, AdminSite())
         self.assertEqual(
-            admin.color_markup(vigilance_level), '<span style="color: #AC2F89;">⬤</span> #AC2F89'
+            admin.color_markup(vigilance_level),
+            '<span style="color: #AC2F89;">⬤</span> #AC2F89',
         )
 
     def test_no_color_markup(self):
