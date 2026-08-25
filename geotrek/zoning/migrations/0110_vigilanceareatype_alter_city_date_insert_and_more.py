@@ -2,6 +2,7 @@
 
 import uuid
 
+import colorfield.fields
 import django.contrib.gis.db.models.fields
 import django.contrib.postgres.fields
 import django.contrib.postgres.indexes
@@ -69,6 +70,63 @@ class Migration(migrations.Migration):
             options={
                 "verbose_name": "Vigilance area type",
                 "verbose_name_plural": "Vigilance area types",
+            },
+        ),
+        migrations.CreateModel(
+            name="VigilanceLevel",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "date_insert",
+                    models.DateTimeField(
+                        auto_now_add=True,
+                        db_default=django.db.models.functions.datetime.Now(),
+                        verbose_name="Insertion date",
+                    ),
+                ),
+                (
+                    "date_update",
+                    models.DateTimeField(
+                        auto_now=True,
+                        db_default=django.db.models.functions.datetime.Now(),
+                        db_index=True,
+                        verbose_name="Update date",
+                    ),
+                ),
+                (
+                    "pictogram",
+                    models.FileField(
+                        blank=True,
+                        max_length=512,
+                        null=True,
+                        upload_to="upload",
+                        verbose_name="Pictogram",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200, verbose_name="Name")),
+                (
+                    "color",
+                    colorfield.fields.ColorField(
+                        default="#1257A8",
+                        image_field=None,
+                        max_length=25,
+                        samples=None,
+                        verbose_name="Color",
+                    ),
+                ),
+                ("level", models.PositiveSmallIntegerField(unique=True, null=True)),
+            ],
+            options={
+                "verbose_name": "Vigilance level",
+                "verbose_name_plural": "Vigilance levels",
             },
         ),
         migrations.AlterField(
@@ -224,7 +282,6 @@ class Migration(migrations.Migration):
                                 "Under condition practicable",
                             ),
                             ("not_practicable", "Not practicable"),
-                            ("closed", "Closed"),
                         ],
                         db_index=True,
                         default="practicable",
@@ -234,16 +291,12 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "vigilance_level",
-                    models.CharField(
+                    models.ForeignKey(
                         blank=True,
-                        choices=[
-                            ("information", "Information"),
-                            ("vigilance", "Vigilance"),
-                            ("alert", "Alert"),
-                        ],
-                        db_index=True,
-                        max_length=50,
                         null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="vigilance_areas",
+                        to="zoning.vigilancelevel",
                         verbose_name="Vigilance level",
                     ),
                 ),
@@ -398,7 +451,6 @@ class Migration(migrations.Migration):
                                     "practicable",
                                     "under_condition_practicable",
                                     "not_practicable",
-                                    "closed",
                                 ],
                             )
                         ),

@@ -9,7 +9,7 @@ from rest_framework.test import APITestCase
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory
-from geotrek.zoning.choices import Practicability, VigilanceLevel
+from geotrek.zoning.choices import Practicability
 from geotrek.zoning.models import VigilanceArea
 from geotrek.zoning.serializers import VigilanceAreaSerializer
 from geotrek.zoning.tests.factories import (
@@ -19,6 +19,7 @@ from geotrek.zoning.tests.factories import (
     RestrictedAreaTypeFactory,
     VigilanceAreaFactory,
     VigilanceAreaTypeFactory,
+    VigilanceLevelFactory,
 )
 from geotrek.zoning.views import VigilanceAreaViewSet
 
@@ -297,12 +298,13 @@ class VigilanceAreaTestCase(MapEntityTest):
 
     def get_good_data(self):
         area_type = VigilanceAreaTypeFactory()
+        vigilance_level = VigilanceLevelFactory()
         structure = StructureFactory.create()
         return {
             "id": 1,
             "name_en": "my area",
             "practicability": Practicability.PRACTICABLE.value,
-            "vigilance_level": VigilanceLevel.ALERT.value,
+            "vigilance_level": vigilance_level.pk,
             "vigilance_area_type": area_type.pk,
             "structure": structure.pk,
             "start_date": "2026-07-06",
