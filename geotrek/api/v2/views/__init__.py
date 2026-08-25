@@ -68,6 +68,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
         DistrictViewSet,  # noqa
         VigilanceAreaTypeViewSet,  # noqa
         VigilanceAreaViewSet,  # noqa
+        VigilanceLevelViewSet,  # noqa
     )
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
     from .outdoor import (

@@ -826,6 +826,7 @@ class BaseApiTest(TestCase):
             published=False,
         )
         cls.vigilance_area_type = zoning_factory.VigilanceAreaTypeFactory()
+        cls.vigilance_level = zoning_factory.VigilanceLevelFactory()
         cls.parent = trek_factory.TrekFactory.create(
             published=True,
             name="Parent",
@@ -1269,6 +1270,19 @@ class BaseApiTest(TestCase):
     def get_vigilanceareatype_detail(self, id_vigilanceareatype, params=None):
         return self.client.get(
             reverse("apiv2:vigilancearea_type-detail", args=(id_vigilanceareatype,)),
+            params,
+        )
+
+    def get_vigilancelevel_list(self, params=None):
+        return self.client.get(
+            reverse("apiv2:vigilancearea-vigilancelevel-list"), params
+        )
+
+    def get_vigilancelevel_detail(self, id_vigilancelevel, params=None):
+        return self.client.get(
+            reverse(
+                "apiv2:vigilancearea-vigilancelevel-detail", args=(id_vigilancelevel,)
+            ),
             params,
         )
 
@@ -3291,13 +3305,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_vigilancearea_filter_vigilance_level(self):
+        other_vigilance_level = zoning_factory.VigilanceLevelFactory.create(
+            name="other"
+        )
         vigilancearea_other_vigilance_level = (
             zoning_factory.VigilanceAreaFactory.create(
                 published=True,
-                vigilance_level=zoning_choices.VigilanceLevel.VIGILANCE,
+                vigilance_level=other_vigilance_level,
             )
         )
-        response = self.get_vigilancearea_list(params={"vigilance_levels": "vigilance"})
+        response = self.get_vigilancearea_list(
+            params={"vigilance_levels": other_vigilance_level.pk}
+        )
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(
             response.json()["results"][0]["id"],
@@ -3405,6 +3424,17 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_vigilanceareatype_detail(self.vigilance_area_type.pk),
             sorted(["id", "name", "pictogram"]),
+        )
+
+    def test_vigilancelevel_list(self):
+        self.check_number_elems_response(
+            self.get_vigilancelevel_list(), zoning_models.VigilanceLevel
+        )
+
+    def test_vigilancelevel_detail(self):
+        self.check_structure_response(
+            self.get_vigilancelevel_detail(self.vigilance_level.pk),
+            sorted(["id", "name", "color", "level", "pictogram"]),
         )
 
     def test_config(self):
