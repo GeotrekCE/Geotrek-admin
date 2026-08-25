@@ -238,13 +238,13 @@ msgstr ""
 msgid "Start date"
 msgstr ""
 
-msgid "Filter active vigilance areas fora period. Must be setup with end_date. Format is YYYY-MM-JJ."
+msgid "Filter active vigilance areas for a period. Must be setup with end_date. Format is YYYY-MM-JJ."
 msgstr ""
 
 msgid "End date"
 msgstr ""
 
-msgid "Filter active vigilance areas fora period. Must be setup with start_date. Format is YYYY-MM-JJ."
+msgid "Filter active vigilance areas for a period. Must be setup with start_date. Format is YYYY-MM-JJ."
 msgstr ""
 
 msgid "Filter by one or more type id, comma-separated."
