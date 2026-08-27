@@ -44,6 +44,8 @@ export default function SignageForm({
     id: true,
     date_insert: true,
     date_update: true,
+    appSynced: true,
+    appNewItem: true,
   })
   const handleChange = () => {
     setFormIsDirty(true)
@@ -57,7 +59,9 @@ export default function SignageForm({
     },
     onSubmit: async ({ value }) => {
       setFormIsDirty(false)
-      if (isEdit && value.appNewItem !== true) {
+      const hasRawData = await db.rawData.get({ id, reference: "signage" })
+
+      if (isEdit && value.appNewItem !== true && !hasRawData) {
         await db.rawData.add({
           ...defaultValues,
           reference: "signage",
