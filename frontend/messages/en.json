@@ -189,7 +189,8 @@
     "geom-action-select": "Place the point on map",
     "geom-action-cancel": "Return to view",
     "geom-description": "Linear interventions are not yet supported.",
-    "geom-linear-not-supported": "The geometry of this object is not a point, and linear objects are not yet supported."
+    "geom-linear-not-supported": "The geometry of this object is not a point, and linear objects are not yet supported.",
+    "reset": "Reset"
   },
   "content": {
     "infrastructure": "Infrastructure",
