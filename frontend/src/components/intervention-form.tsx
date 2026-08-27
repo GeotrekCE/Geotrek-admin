@@ -1,3 +1,4 @@
+import * as React from "react"
 import { toast } from "sonner"
 import {
   interventionDataSchema,
@@ -16,7 +17,6 @@ import { useNavigate } from "@tanstack/react-router"
 import { FormCheckboxField } from "./forms"
 import { Trash } from "lucide-react"
 import { usePermission } from "@/hook/useSettingsQuery"
-import { useLiveQuery } from "dexie-react-hooks"
 import { m } from "@/paraglide/messages"
 
 export default function InterventionForm({
@@ -32,14 +32,7 @@ export default function InterventionForm({
 }) {
   const navigate = useNavigate()
 
-  const rawDataItem = useLiveQuery(() =>
-    db.rawData
-      .where({
-        reference: "intervention",
-        id: isEdit ? defaultValues.id : undefined,
-      })
-      .first()
-  )
+  const [formIsDirty, setFormIsDirty] = React.useState(false)
 
   const [
     {
@@ -64,13 +57,18 @@ export default function InterventionForm({
     date_insert: true,
     date_update: true,
   })
+  const handleChange = () => {
+    setFormIsDirty(true)
+  }
   const form = useAppForm({
     defaultValues: defaultValuesForForm,
     validators: {
       onBlur: validators,
       onSubmit: validators,
+      onChange: handleChange,
     },
     onSubmit: async ({ value }) => {
+      setFormIsDirty(false)
       if (isEdit && value.appNewItem !== true) {
         await db.rawData.put({
           ...defaultValues,
@@ -297,29 +295,17 @@ export default function InterventionForm({
             {m["content.intervention"]().toLowerCase()}
           </Button>
 
-          {rawDataItem && (
+          {formIsDirty && (
             <Button
-              type="button"
-              variant="destructive"
-              onClick={async () => {
-                await db.rawData
-                  .where({ reference: "intervention", id: rawDataItem.id })
-                  .delete()
-                const { reference: _reference, ...restoredData } = rawDataItem
-                await db.interventionData.put(
-                  restoredData as InterventionDataSchemaProps
-                )
-                toast.success(
-                  m["common.restore-success"]({
-                    item: m["content.intervention"](),
-                  }),
-                  {
-                    position: "top-center",
-                  }
-                )
+              onClick={(event) => {
+                event.preventDefault()
+                form.reset()
+                setFormIsDirty(false)
               }}
+              type="reset"
+              variant="destructive"
             >
-              {m["content.restore-pending"]()}
+              {m["form.reset"]()}
             </Button>
           )}
         </FieldGroup>
