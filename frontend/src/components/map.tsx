@@ -71,6 +71,7 @@ export default function Map({
               ]
             : undefined
         }
+        padding={{ top: 30, right: 10, bottom: 10, left: 10 }}
         {...props}
         initialViewState={{
           ...props.initialViewState,

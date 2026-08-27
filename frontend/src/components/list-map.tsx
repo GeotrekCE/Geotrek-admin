@@ -52,6 +52,7 @@ export default function ListMap() {
           "--ctrl-position": position,
         } as React.CSSProperties
       }
+      padding={{ top: 30, right: 10, bottom: 130, left: 10 }}
     >
       {elements.map((item) => {
         if (!item.geom) {
