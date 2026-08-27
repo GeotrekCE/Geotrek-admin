@@ -192,7 +192,8 @@
     "geom-action-select": "Placer le point sur la carte",
     "geom-action-cancel": "Revenir en consultation",
     "geom-description": "Les interventions de type linéaire ne sont pas encore pris en charge.",
-    "geom-linear-not-supported": "La géométrie de cet objet n'est pas un point et les linéaires ne sont pas encore pris en charge."
+    "geom-linear-not-supported": "La géométrie de cet objet n'est pas un point et les linéaires ne sont pas encore pris en charge.",
+    "reset": "Annuler la saisie en cours"
   },
   "content": {
     "infrastructure": "Aménagement",
@@ -258,7 +259,7 @@
     "no-man-days": "Aucune affectation.",
     "number-of-days": "Nombre de jour :",
     "function": "Fonction :",
-    "restore-pending": "Annuler les modifications en attente",
+    "restore-pending": "Rétablir cette fiche à sa dernière version synchronisée",
     "restore-complete": "Restauration terminée"
   },
   "login": {

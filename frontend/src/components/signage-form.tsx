@@ -1,3 +1,4 @@
+import * as React from "react"
 import { toast } from "sonner"
 import { signageDataSchema, type SignageDataSchemaProps } from "@/schemas/data"
 
@@ -11,7 +12,6 @@ import { Button } from "@/components/ui/button"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { usePermission } from "@/hook/useSettingsQuery"
-import { useLiveQuery } from "dexie-react-hooks"
 import { m } from "@/paraglide/messages"
 
 export default function SignageForm({
@@ -26,15 +26,7 @@ export default function SignageForm({
   references: [SignageReferencesSchemaProps, CommonReferencesSchemaProps]
 }) {
   const navigate = useNavigate()
-
-  const rawDataItem = useLiveQuery(() =>
-    db.rawData
-      .where({
-        reference: "signage",
-        id: isEdit ? defaultValues.id : undefined,
-      })
-      .first()
-  )
+  const [formIsDirty, setFormIsDirty] = React.useState(false)
 
   const [
     { signagetype, signagecondition, sealing },
@@ -53,13 +45,18 @@ export default function SignageForm({
     date_insert: true,
     date_update: true,
   })
+  const handleChange = () => {
+    setFormIsDirty(true)
+  }
   const form = useAppForm({
     defaultValues: defaultValuesForForm,
     validators: {
       onBlur: validators,
       onSubmit: validators,
+      onChange: handleChange,
     },
     onSubmit: async ({ value }) => {
+      setFormIsDirty(false)
       if (isEdit && value.appNewItem !== true) {
         await db.rawData.add({
           ...defaultValues,
@@ -190,25 +187,18 @@ export default function SignageForm({
             {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
             {m["content.signage"]().toLowerCase()}
           </Button>
-          {rawDataItem && (
+
+          {formIsDirty && (
             <Button
-              type="button"
-              variant="destructive"
-              onClick={async () => {
-                await db.rawData
-                  .where({ reference: "signage", id: rawDataItem.id })
-                  .delete()
-                const { reference: _reference, ...restoredData } = rawDataItem
-                await db.signageData.put(restoredData as SignageDataSchemaProps)
-                toast.success(
-                  m["common.restore-success"]({ item: m["content.signage"]() }),
-                  {
-                    position: "top-center",
-                  }
-                )
+              onClick={(event) => {
+                event.preventDefault()
+                form.reset()
+                setFormIsDirty(false)
               }}
+              type="reset"
+              variant="destructive"
             >
-              {m["content.restore-pending"]()}
+              {m["form.reset"]()}
             </Button>
           )}
         </FieldGroup>
