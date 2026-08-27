@@ -40,6 +40,8 @@ export default function ReportForm({
     id: true,
     date_insert: true,
     date_update: true,
+    appSynced: true,
+    appNewItem: true,
   })
   const handleChange = () => {
     setFormIsDirty(true)
@@ -53,7 +55,8 @@ export default function ReportForm({
     },
     onSubmit: async ({ value }) => {
       setFormIsDirty(false)
-      if (isEdit && value.appNewItem !== true) {
+      const hasRawData = await db.rawData.get({ id, reference: "report" })
+      if (isEdit && value.appNewItem !== true && !hasRawData) {
         await db.rawData.add({
           ...defaultValues,
           reference: "report",

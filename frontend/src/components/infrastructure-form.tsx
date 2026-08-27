@@ -53,6 +53,8 @@ export default function InfrastructureForm({
     id: true,
     date_insert: true,
     date_update: true,
+    appSynced: true,
+    appNewItem: true,
   })
   const handleChange = () => {
     setFormIsDirty(true)
@@ -66,7 +68,11 @@ export default function InfrastructureForm({
     },
     onSubmit: async ({ value }) => {
       setFormIsDirty(false)
-      if (isEdit && value.appNewItem !== true) {
+      const hasRawData = await db.rawData.get({
+        id,
+        reference: "infrastructure",
+      })
+      if (isEdit && value.appNewItem !== true && !hasRawData) {
         await db.rawData.put({
           ...defaultValues,
           reference: "infrastructure",
