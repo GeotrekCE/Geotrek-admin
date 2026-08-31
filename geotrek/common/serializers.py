@@ -1,10 +1,19 @@
+import mimetypes
+import os
+from io import BytesIO
+
+import magic
+from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db import models as django_db_models
+from django.utils.translation import gettext_lazy as _
 from mapentity.serializers import MapentityGeojsonModelSerializer
+from PIL import Image, UnidentifiedImageError
 from rest_framework import serializers as rest_serializers
 from rest_framework_gis.fields import GeometrySerializerMethodField
 
 from ..authent.models import Structure
-from .models import AccessMean, HDViewPoint, Organism
+from .models import AccessMean, Attachment, FileType, HDViewPoint, License, Organism
 
 
 class TranslatedModelSerializer(rest_serializers.ModelSerializer):
@@ -61,6 +70,107 @@ class HDViewPointAPISerializer(HDViewPointSerializer):
     class Meta(HDViewPointSerializer.Meta):
         id_field = "id"
         fields = HDViewPointSerializer.Meta.fields
+
+
+class ContentTypeSerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = ContentType
+        fields = ("id", "app_label", "model")
+
+
+class FileTypeSerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = FileType
+        fields = ("id", "type")
+
+
+class LicenseSerializer(rest_serializers.ModelSerializer):
+    class Meta:
+        model = License
+        fields = ("id", "label")
+
+
+class AttachmentSerializer(rest_serializers.ModelSerializer):
+    attachment_file = rest_serializers.FileField(required=True)
+
+    class Meta:
+        model = Attachment
+        fields = [
+            "id",
+            "content_type",
+            "object_id",
+            "attachment_file",
+            "filetype",
+            "license",
+            "author",
+            "title",
+            "legend",
+            "creator",
+        ]
+
+    def validate_attachment_file(self, file):
+        """
+        Check that file extensions and mimetypes are allowed
+        """
+
+        # Check file size
+        if (
+            settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE
+            and settings.PAPERCLIP_MAX_BYTES_SIZE_IMAGE < file.size
+        ):
+            msg = _("The uploaded file is too large")
+            raise rest_serializers.ValidationError(msg)
+
+        # Check extension and mimetype
+        if settings.PAPERCLIP_ALLOWED_EXTENSIONS is not None:
+            extension = os.path.splitext(file.name)[1].lstrip(".").lower()
+            if extension not in settings.PAPERCLIP_ALLOWED_EXTENSIONS:
+                msg = _("File type '%(ext)s' not allowed") % {"ext": extension}
+                raise rest_serializers.ValidationError(msg)
+
+            file.seek(0)
+            file_mimetype = magic.from_buffer(file.read(), mime=True)
+            file.seek(0)
+
+            file_mimetype_allowed = f".{extension}" in mimetypes.guess_all_extensions(
+                file_mimetype
+            )
+            file_mimetype_allowed = file_mimetype_allowed or (
+                settings.PAPERCLIP_EXTRA_ALLOWED_MIMETYPES.get(extension, False)
+                and file_mimetype
+                in settings.PAPERCLIP_EXTRA_ALLOWED_MIMETYPES.get(extension)
+            )
+            if not file_mimetype_allowed:
+                msg = _("File mime type '%(mimetype)s' is not allowed for %(ext)s.") % {
+                    "mimetype": file_mimetype,
+                    "ext": extension,
+                }
+                raise rest_serializers.ValidationError(msg)
+
+        # Check image dimensions
+        try:
+            image = Image.open(BytesIO(file.read()))
+            if (
+                settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH
+                and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_WIDTH > image.width
+            ):
+                msg = _("The uploaded file is not wide enough")
+                raise rest_serializers.ValidationError(msg)
+            if (
+                settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT
+                and settings.PAPERCLIP_MIN_IMAGE_UPLOAD_HEIGHT > image.height
+            ):
+                msg = _("The uploaded file is not tall enough")
+                raise rest_serializers.ValidationError(msg)
+        except UnidentifiedImageError:
+            pass
+        except ValueError:
+            msg = _("Decompressed Data Too Large")
+            raise rest_serializers.ValidationError(msg)
+        finally:
+            file.seek(0)
+
+        return file
 
 
 class StructureGTAMSerializer(rest_serializers.ModelSerializer):

@@ -2,6 +2,7 @@ import json
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.urls import reverse
 from mapentity.tests import SuperUserFactory, UserFactory
@@ -18,6 +19,7 @@ from geotrek.common.tests import (
     CommonTest,
 )
 from geotrek.common.tests.factories import AccessMeanFactory
+from geotrek.common.tests.mixins import AttachmentTestMixin
 from geotrek.core.tests.factories import PathFactory
 from geotrek.infrastructure.models import (
     Infrastructure,
@@ -37,7 +39,7 @@ from geotrek.infrastructure.tests.factories import (
 )
 
 
-class InfrastructureViewsTest(CommonTest):
+class InfrastructureViewsTest(AttachmentTestMixin, CommonTest):
     model = Infrastructure
     modelfactory = InfrastructureFactory
     userfactory = PathManagerFactory
@@ -112,6 +114,13 @@ class InfrastructureViewsTest(CommonTest):
         form = response.context["form"]
         type = form.fields["type"]
         self.assertTrue((infratype.pk, str(infratype)) in type.choices)
+
+    def test_add_attachment(self):
+        target = InfrastructureFactory.create()
+        content_type = ContentType.objects.get_for_model(target)
+        self.validate_attachment_creation(
+            "infrastructure:infrastructure-drf-add-attachment", target, content_type
+        )
 
 
 class PointInfrastructureViewsTest(InfrastructureViewsTest):
