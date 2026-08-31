@@ -467,7 +467,7 @@ msgstr "Impossible de télécharger '{url}'"
 
 #, python-format
 msgid "File type '%(ext)s' not allowed"
-msgstr ""
+msgstr "Le type de fichier '%(ext)s' n'est pas autorisé"
 
 #, fuzzy, python-format
 #| msgid "Invalid attachment file %(url)s for %(class)s #%(pk)s: File mime type '%(mimetype)s' is not allowed for %(ext)s."
@@ -475,7 +475,7 @@ msgid "File mime type '%(mimetype)s' is not allowed for %(ext)s."
 msgstr "Fichier joint invalide %(url)s pour %(class)s #%(pk)s : Le type mime du fichier '%(mimetype)s' n'est pas autorisé pour l'extension %(ext)s."
 
 msgid "Decompressed Data Too Large"
-msgstr ""
+msgstr "Les données décompressées sont trop volumineuses"
 
 msgid "Import from web."
 msgstr "Importer du web."
