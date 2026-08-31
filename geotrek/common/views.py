@@ -677,6 +677,8 @@ class CommonReferences(ReferencesMixin):
         common_serializers.StructureGTAMSerializer,
         common_serializers.OrganismGTAMSerializer,
         common_serializers.AccessMeanGTAMSerializer,
+        common_serializers.FileTypeSerializer,
+        common_serializers.LicenseSerializer,
     ]
 
     def get_reference(self, model, serializer):
