@@ -4,7 +4,6 @@ from io import BytesIO
 
 import magic
 from django.conf import settings
-from django.contrib.contenttypes.models import ContentType
 from django.db import models as django_db_models
 from django.utils.translation import gettext_lazy as _
 from mapentity.serializers import MapentityGeojsonModelSerializer
@@ -70,12 +69,6 @@ class HDViewPointAPISerializer(HDViewPointSerializer):
     class Meta(HDViewPointSerializer.Meta):
         id_field = "id"
         fields = HDViewPointSerializer.Meta.fields
-
-
-class ContentTypeSerializer(rest_serializers.ModelSerializer):
-    class Meta:
-        model = ContentType
-        fields = ("id", "app_label", "model")
 
 
 class FileTypeSerializer(rest_serializers.ModelSerializer):
