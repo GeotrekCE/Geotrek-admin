@@ -4,7 +4,7 @@ asgiref==3.12.1
     # via
     #   -c requirements.txt
     #   django
-coverage==7.15.2
+coverage==7.15.4
     # via -r requirements-dev.in
 django==5.2.16
     # via
