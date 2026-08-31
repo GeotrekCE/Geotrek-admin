@@ -1,7 +1,14 @@
 import json
 import os
+import tempfile
+
+from django.core.files.uploadedfile import SimpleUploadedFile
+from django.test.utils import override_settings
+from rest_framework.reverse import reverse
 
 from geotrek.common.parsers import DownloadImportError
+
+from ...common.tests.factories import FileTypeFactory
 
 
 def dictfetchall(cursor):
@@ -29,3 +36,33 @@ class GeotrekParserTestMixin:
             raise DownloadImportError(msg)
         with open(filename) as f:
             return json.load(f)
+
+
+class AttachmentTestMixin:
+    @override_settings(MEDIA_ROOT=tempfile.mkdtemp())
+    def validate_attachment_creation(self, url, target, content_type):
+        content = b"%PDF-1.4 fake pdf content, not a real image"
+        file = SimpleUploadedFile("doc.pdf", content, content_type="application/pdf")
+
+        data = {
+            "content_type": content_type.pk,
+            "object_id": target.pk,
+            "attachment_file": file,
+            "filetype": FileTypeFactory.create().pk,
+            "title": "title",
+            "author": "author",
+        }
+
+        response = self.client.post(
+            reverse(url, args=[target.id]),
+            data=data,
+            format="multipart",
+        )
+        self.assertEqual(response.status_code, 201)
+        attachments = target.attachments.all()
+        self.assertEqual(attachments.count(), 1)
+        attachment = attachments[0]
+        self.assertTrue(
+            attachment.attachment_file.storage.exists(attachment.attachment_file.name)
+        )
+        self.assertEqual(attachment.attachment_file.size, len(content))
