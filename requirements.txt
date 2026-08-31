@@ -309,6 +309,7 @@ pillow==12.3.0
     #   large-image
     #   paperclip
     #   reportlab
+    #   svglib
     #   weasyprint
 pmtiles==3.7.0
     # via django-mapbox-baselayer
