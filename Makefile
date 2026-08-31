@@ -40,15 +40,24 @@ build_doc_translations:
 bash:
 	$(docker_compose) run --rm web bash
 
-build_prod:
-	docker build -t geotrek -f docker/Dockerfile .
+build_frontend:
+	@if [ -d frontend/dist ]; then \
+		echo "Using prebuilt frontend/dist from host"; \
+		docker build -t geotrek_frontend -f ./docker/Dockerfile.frontend.host .; \
+	else \
+		echo "Compiling frontend inside Docker"; \
+		docker build -t geotrek_frontend -f ./docker/Dockerfile.frontend --build-arg NODE_VERSION=$(shell cat frontend/.nvmrc) .; \
+	fi
 
-build_prod_no_cache:
-	docker build -t geotrek -f docker/Dockerfile --no-cache .
+build_prod: build_frontend
+	docker build -t geotrek -f docker/Dockerfile --build-arg FRONTEND_IMAGE=geotrek_frontend .
 
-build_deb:
+build_prod_no_cache: build_frontend
+	docker build -t geotrek -f docker/Dockerfile --build-arg FRONTEND_IMAGE=geotrek_frontend --no-cache .
+
+build_deb: build_frontend
 	docker pull $(DISTRO)
-	docker build -t geotrek_deb -f ./docker/Dockerfile.debian.builder --build-arg DISTRO=$(DISTRO) .
+	docker build -t geotrek_deb -f ./docker/Dockerfile.debian.builder --build-arg DISTRO=$(DISTRO) --build-arg FRONTEND_IMAGE=geotrek_frontend .
 	docker run --name geotrek_deb_run -t geotrek_deb bash -c "exit"
 	docker cp geotrek_deb_run:/dpkg ./
 	docker stop geotrek_deb_run

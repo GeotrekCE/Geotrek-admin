@@ -1,3 +1,8 @@
+-- pre 20
+
+DROP FUNCTION IF EXISTS point_to_id;
+DROP FUNCTION IF EXISTS create_pgrouting_topology;
+
 -- 10
 
 DROP TYPE IF EXISTS line_infos CASCADE;
@@ -50,6 +55,7 @@ DROP FUNCTION IF EXISTS paths_related_objects_d() CASCADE;
 DROP FUNCTION IF EXISTS troncon_latest_updated_d() CASCADE;
 DROP FUNCTION IF EXISTS path_latest_updated_d() CASCADE;
 DROP FUNCTION IF EXISTS set_pgrouting_values_to_null() CASCADE;
+DROP FUNCTION IF EXISTS set_pgrouting_values_to_null_if_draft_or_invisible() CASCADE;
 
 -- 50
 

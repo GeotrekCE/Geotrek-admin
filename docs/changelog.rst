@@ -2,8 +2,124 @@
 CHANGELOG
 =========
 
-2.124.5+dev     (XXXX-XX-XX)
+2.126.1+dev     (XXXX-XX-XX)
 ----------------------------
+
+**Bug fixes**
+
+* Fix intervention duplication to also duplicate its target when linked to its own topology instead of another object (e.g. signage, etc) (refs #3845)
+
+
+2.126.1         (2026-08-14)
+----------------------------
+
+**Improvements**
+
+* Remove ``deleted`` attribute from blade model
+* Allow to add multiple blades from signage form
+
+**Documentation**
+
+* Remove documentation for unreleased basemap feature (refs #5636)
+* Fix required field typo in sensitive area import (refs #5640)
+* Add more informations about Suricate API (refs #5643)
+
+**Bug fixes**
+
+* Fix the import of descriptions from a shapefile for sensitive areas (species)
+
+
+2.126.0         (2026-08-06)
+----------------------------
+
+**Warnings**
+
+* This version adds support for pgRouting 4. If you choose to upgrade pgRouting, run the following command in your database after installing the new version of switching to a new Docker image: ``ALTER EXTENSION pgrouting UPDATE;``.
+* Due to the regeneration of pgRouting's network topology, the database migration to this version might take several minutes.
+
+**Maintenance**
+
+* Add support for pgRouting 4
+
+**Documentation**
+
+* Add details about configuring basemaps and generating offline maps (refs #5610)
+
+
+2.125.3         (2026-07-28)
+----------------------------
+
+**Improvements**
+
+* GTAM: Display a message if the API does not provide offline maps
+* GTAM: Move "place on map" button above the map
+* GTAM: Add "status" field for report form
+* GTAM: Add support for GeometryCollection
+* GTAM: Improve form ux
+
+**Bug fixes**
+
+* GTAM: incorrect wording and translations
+* GTAM: fix some wording/translations
+
+
+2.125.2         (2026-07-21)
+----------------------------
+
+**Improvements**
+
+* GTAM: Add support for dates in older browser versions
+
+**Bug fixes**
+
+* GTAM: Fix geometry projection in reponse after creation
+
+
+2.125.1         (2026-07-16)
+----------------------------
+
+**Bug fixes**
+
+* GTAM
+
+  * Fix read permission for non-superuser
+  * Update settings when switching users
+  * Selective update: only the data affected by the user is sent
+  * Handle non-correct geom
+  * Manage general map bounds
+
+
+2.125.0         (2026-07-15)
+----------------------------
+
+**Features**
+
+* Add "GTAM v0", a new offline compatible mobile interface for Geotrek-admin
+  * See configuration and offline maps configuration here : https://geotrek.readthedocs.io/fr/latest/advanced-configuration/settings-for-geotrek-admin-mobile.html
+  * WARNING: docker user should update their nginx configuration to serve the new mobile interface. See documentation
+
+**Bug fixes**
+
+* Revert filters behavior as before select2 migration
+
+
+
+2.124.6         (2026-06-29)
+----------------------------
+
+**Improvements**
+
+* Update popup to allow opening detail page in new tab (issue #4626)
+* Allow to modify blade line order
+* Allow the order of blades to be modified
+
+**Documentation**
+
+* Update requirements for each scale deployments (refs #5524)
+
+**Documentation**
+
+- Add AI contribution requirements to PR template (#5525)
 
 
 2.124.5         (2026-06-09)
@@ -12,7 +128,7 @@ CHANGELOG
 **Improvements**
 
 * Adapting ApidaeTrekParser to distinctions (#5180)
-* Delete outdated settings related to categories and pictures (refs #4482) 
+* Delete outdated settings related to categories and pictures (refs #4482)
 
 **Bug fixes**
 

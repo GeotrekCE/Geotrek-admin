@@ -3,7 +3,6 @@ import json
 from django import template
 from django.conf import settings
 from django.db.models.functions import Coalesce
-from django.db.models.query import Prefetch
 from django.urls import reverse
 
 from geotrek.zoning.forms import MapFilterForm
@@ -57,32 +56,3 @@ def restricted_area_types():
             {"id": "restrictedarea", "name": area_type.name, "url": area_type_url}
         )
     return json.dumps(serialized)
-
-
-@register.simple_tag
-def restricted_areas_by_type():
-    restricted_areas_by_type = {
-        str(type.pk): {
-            "areas": [
-                {str(area.pk): type.name + " - " + area.name}
-                for area in type.restrictedarea_set.all()
-            ]  # We use an array instead of dict because JS parsing would re-order JSON dict
-        }
-        for type in RestrictedAreaType.objects.all().prefetch_related(
-            Prefetch(
-                "restrictedarea_set", queryset=RestrictedArea.objects.order_by("name")
-            )
-        )
-    }
-    return json.dumps(restricted_areas_by_type)
-
-
-@register.simple_tag
-def all_restricted_areas():
-    all_restricted_areas = [
-        {str(area.pk): area.area_type.name + " - " + area.name}
-        for area in RestrictedArea.objects.select_related("area_type").order_by(
-            "area_type__name", "name"
-        )
-    ]  # We use an array instead of dict because JS parsing would re-order JSON dict
-    return json.dumps(all_restricted_areas)

@@ -42,8 +42,11 @@ export MEMCACHED_PORT="11211"
 # Create geotrek user (only on a new install)
 if [ "$2" = "" ]; then
 	useradd --system --create-home --home-dir /opt/geotrek-admin geotrek || true
-  chown -R geotrek:geotrek /opt/geotrek-admin || true
 fi
+
+# add geotrek user to www-data group (only on a new install)
+usermod -a -G www-data geotrek || true
+chown -R geotrek:geotrek /opt/geotrek-admin || true
 
 # Create directories
 mkdir -p /opt/geotrek-admin/var/conf/extra_static || true

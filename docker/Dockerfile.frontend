@@ -1,0 +1,24 @@
+ARG NODE_VERSION=24
+FROM node:${NODE_VERSION} AS builder
+
+WORKDIR /frontend
+
+# Copy dependency configuration
+COPY frontend/package*.json ./
+COPY frontend/project.inlang ./project.inlang
+
+# Install packages
+RUN npm ci
+
+# Copy the rest of the source
+COPY frontend/ ./
+
+# Handle env file config
+RUN if [ -f .env.dist.prod ]; then cp .env.dist.prod .env; else cp .env.prod .env; fi
+
+# Run the build
+RUN npm run build
+
+# Export the built static assets into a minimal scratch image
+FROM scratch
+COPY --from=builder /frontend/dist /frontend/dist

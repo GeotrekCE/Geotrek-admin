@@ -6,7 +6,7 @@ appy==1.0.21
     # via django-appypod
 argdispatch==1.5.0
     # via pdfimpose
-asgiref==3.11.1
+asgiref==3.12.1
     # via django
 async-timeout==5.0.1
     # via redis
@@ -17,7 +17,7 @@ attrs==26.1.0
     #   referencing
 bcrypt==5.0.0
     # via django-flask-authent-backend
-beautifulsoup4==4.14.3
+beautifulsoup4==4.15.0
     # via mapentity
 billiard==4.2.4
     # via celery
@@ -38,12 +38,13 @@ celery==5.6.3
     # via
     #   geotrek (setup.py)
     #   django-celery-results
-certifi==2026.5.20
+certifi==2026.6.17
     # via
+    #   django-mapbox-baselayer
     #   fiona
     #   requests
     #   sentry-sdk
-cffi==2.0.0
+cffi==2.1.0
     # via
     #   cairocffi
     #   persistent
@@ -51,11 +52,11 @@ cffi==2.0.0
     #   weasyprint
 chardet==7.4.3
     # via geotrek (setup.py)
-charset-normalizer==3.4.7
+charset-normalizer==3.4.9
     # via
     #   reportlab
     #   requests
-click==8.4.1
+click==8.4.2
     # via
     #   celery
     #   click-didyoumean
@@ -63,6 +64,7 @@ click==8.4.1
     #   click-repl
     #   cligj
     #   fiona
+    #   mercantile
 click-didyoumean==0.3.1
     # via celery
 click-plugins==1.1.1.2
@@ -84,7 +86,7 @@ datetime==6.0
     # via appy
 defusedxml==0.7.1
     # via cairosvg
-django==5.2.15
+django==5.2.16
     # via
     #   geotrek (setup.py)
     #   crispy-bootstrap4
@@ -101,6 +103,8 @@ django==5.2.15
     #   django-js-asset
     #   django-large-image
     #   django-leaflet
+    #   django-maintenance-mode
+    #   django-mapbox-baselayer
     #   django-modelcluster
     #   django-modeltranslation
     #   django-tinymce
@@ -108,6 +112,7 @@ django==5.2.15
     #   django-weasyprint
     #   djangorestframework
     #   djangorestframework-gis
+    #   djangorestframework-simplejwt
     #   drf-extensions
     #   drf-spectacular
     #   easy-thumbnails
@@ -150,7 +155,9 @@ django-large-image==0.10.3
     # via geotrek (setup.py)
 django-leaflet==0.19.post11
     # via mapentity
-django-maintenance-mode==0.22.0
+django-maintenance-mode==0.23.0
+    # via geotrek (setup.py)
+django-mapbox-baselayer==1.5.2
     # via geotrek (setup.py)
 django-modelcluster==6.5
     # via geotrek (setup.py)
@@ -171,6 +178,7 @@ djangorestframework==3.16.1
     #   django-large-image
     #   djangorestframework-datatables
     #   djangorestframework-gis
+    #   djangorestframework-simplejwt
     #   drf-extensions
     #   drf-spectacular
     #   mapentity
@@ -178,6 +186,8 @@ djangorestframework-datatables==0.7.2
     # via mapentity
 djangorestframework-gis==1.2.1
     # via mapentity
+djangorestframework-simplejwt==5.5.1
+    # via geotrek (setup.py)
 drf-dynamic-fields==0.4.0
     # via geotrek (setup.py)
 drf-extensions==0.8.0
@@ -193,7 +203,7 @@ easy-thumbnails==2.10.1
     #   paperclip
 exceptiongroup==1.3.1
     # via celery
-filelock==3.29.1
+filelock==3.29.5
     # via django-large-image
 fiona==1.10.1
     # via
@@ -205,11 +215,11 @@ geojson==3.3.0
     # via
     #   geotrek (setup.py)
     #   tif2geojson
-gevent==26.5.0
+gevent==26.7.0
     # via gunicorn
 gpxpy==1.6.2
     # via mapentity
-greenlet==3.5.1
+greenlet==3.5.3
     # via gevent
 gunicorn==26.0.0
     # via geotrek (setup.py)
@@ -227,22 +237,24 @@ kombu==5.6.2
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
-large-image==1.34.2
+large-image==1.35.1
     # via
     #   django-large-image
     #   large-image-source-vips
-large-image-source-vips==1.34.2
+large-image-source-vips==1.35.0
     # via geotrek (setup.py)
 lxml==6.1.1
     # via
     #   mapentity
     #   svglib
-mapentity==8.17.1
+mapentity==8.17.3
     # via geotrek (setup.py)
 markdown==3.10.2
     # via geotrek (setup.py)
 mbutil==0.3.0
     # via landez
+mercantile==1.2.1
+    # via django-mapbox-baselayer
 numpy==2.2.6
     # via
     #   large-image
@@ -268,7 +280,7 @@ persistent==6.7
     # via
     #   btrees
     #   zodb
-pillow==12.2.0
+pillow==12.3.0
     # via
     #   geotrek (setup.py)
     #   cairosvg
@@ -278,6 +290,8 @@ pillow==12.2.0
     #   paperclip
     #   reportlab
     #   weasyprint
+pmtiles==3.7.0
+    # via django-mapbox-baselayer
 prompt-toolkit==3.0.52
     # via click-repl
 psycopg2==2.9.12
@@ -286,11 +300,13 @@ pycparser==3.0
     # via cffi
 pydyf==0.12.1
     # via weasyprint
-pygal==3.1.0
+pygal==3.1.3
     # via geotrek (setup.py)
+pyjwt==2.13.0
+    # via djangorestframework-simplejwt
 pymemcache==4.0.0
     # via geotrek (setup.py)
-pymupdf==1.27.2.3
+pymupdf==1.28.0
     # via pdfimpose
 pyopenair==1.2.1
     # via geotrek (setup.py)
@@ -300,7 +316,7 @@ python-dateutil==2.9.0.post0
     # via celery
 python-dotenv==1.2.2
     # via geotrek (setup.py)
-python-fsutil==0.16.1
+python-fsutil==0.17.0
     # via django-maintenance-mode
 python-magic==0.4.27
     # via paperclip
@@ -320,13 +336,14 @@ referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
-reportlab==4.5.1
+reportlab==5.0.0
     # via
     #   easy-thumbnails
     #   svglib
 requests==2.34.2
     # via
     #   django-embed-video
+    #   django-mapbox-baselayer
     #   landez
     #   mapentity
 rjsmin==1.2.5
@@ -335,7 +352,9 @@ rpds-py==0.30.0
     # via
     #   jsonschema
     #   referencing
-sentry-sdk==2.61.1
+ruamel-yaml==0.19.1
+    # via drf-yasg
+sentry-sdk==2.66.1
     # via geotrek (setup.py)
 setuptools==80.10.2
     # via
@@ -349,7 +368,7 @@ six==1.17.0
     # via python-dateutil
 soupsieve==2.8.4
     # via beautifulsoup4
-sqlparse==0.5.5
+sqlparse==0.6.0
     # via django
 svglib==1.5.1
     # via easy-thumbnails
@@ -363,21 +382,24 @@ tinycss2==1.5.1
     #   weasyprint
 tinyhtml5==2.1.0
     # via weasyprint
+tqdm==4.70.0
+    # via django-mapbox-baselayer
 transaction==5.1
     # via zodb
-typing-extensions==4.15.0
+typing-extensions==4.16.0
     # via
     #   asgiref
     #   beautifulsoup4
     #   django-modeltranslation
     #   exceptiongroup
     #   large-image
+    #   pyjwt
     #   referencing
-tzdata==2026.2
+tzdata==2026.3
     # via
     #   kombu
     #   mapentity
-tzlocal==5.3.1
+tzlocal==5.4.4
     # via celery
 uritemplate==4.2.0
     # via drf-spectacular
@@ -390,7 +412,7 @@ vine==5.1.0
     #   amqp
     #   celery
     #   kombu
-wcwidth==0.8.0
+wcwidth==0.8.2
     # via prompt-toolkit
 weasyprint==69.0
     # via
@@ -431,5 +453,5 @@ zope-interface==8.5
     #   zope-proxy
 zope-proxy==7.2
     # via zope-deferredimport
-zopfli==0.4.2
+zopfli==0.4.3
     # via fonttools

@@ -2,10 +2,7 @@ from dal import autocomplete
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.utils.translation import gettext_lazy as _
-from django_filters import (
-    ModelMultipleChoiceFilter,
-    MultipleChoiceFilter,
-)
+from django_filters import filters
 
 from geotrek.altimetry.filters import AltimetryAllGeometriesFilterSet
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -28,17 +25,19 @@ class InfrastructureFilterSet(
     ZoningFilterSet,
     StructureRelatedFilterSet,
 ):
-    implantation_year = MultipleChoiceFilter(
+    name = filters.CharFilter(label=_("Name"), lookup_expr="icontains")
+    description = filters.CharFilter(label=_("Description"), lookup_expr="icontains")
+    implantation_year = filters.MultipleChoiceFilter(
         choices=lambda: Infrastructure.objects.implantation_year_choices(),
         widget=autocomplete.Select2Multiple(),
     )
-    intervention_year = MultipleChoiceFilter(
+    intervention_year = filters.MultipleChoiceFilter(
         label=_("Intervention year"),
         method="filter_intervention_year",
         choices=lambda: Intervention.objects.year_choices(),
         widget=autocomplete.Select2Multiple(),
     )
-    category = MultipleChoiceFilter(
+    category = filters.MultipleChoiceFilter(
         label=_("Category"),
         field_name="type__type",
         choices=InfrastructureTypeChoices.choices,
@@ -49,17 +48,17 @@ class InfrastructureFilterSet(
         required=False,
         widget=autocomplete.Select2Multiple(),
     )
-    maintenance_difficulty = ModelMultipleChoiceFilter(
+    maintenance_difficulty = filters.ModelMultipleChoiceFilter(
         queryset=InfrastructureMaintenanceDifficultyLevel.objects.all(),
         label=_("Maintenance difficulty"),
         widget=autocomplete.Select2Multiple(),
     )
-    usage_difficulty = ModelMultipleChoiceFilter(
+    usage_difficulty = filters.ModelMultipleChoiceFilter(
         queryset=InfrastructureUsageDifficultyLevel.objects.all(),
         label=_("Usage difficulty"),
         widget=autocomplete.Select2Multiple(),
     )
-    provider = ModelMultipleChoiceFilter(
+    provider = filters.ModelMultipleChoiceFilter(
         label=_("Provider"),
         queryset=Provider.objects.filter(infrastructure__isnull=False).distinct(),
         widget=autocomplete.Select2Multiple(),

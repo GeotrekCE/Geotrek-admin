@@ -80,6 +80,7 @@ class ZoningFilterSet(FilterSet):
         required=False,
         widget=autocomplete.ModelSelect2Multiple(
             url="zoning:restrictedarea-autocomplete",
+            forward=["area_type"],
             attrs={
                 "data-placeholder": _("Restricted area"),
             },

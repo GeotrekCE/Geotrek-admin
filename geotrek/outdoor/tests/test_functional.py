@@ -54,7 +54,7 @@ class SiteViewsTests(CommonTest):
             f'        <p class="m-0 p-1">\n'
             f"            {str(self.obj.type)}<br>\n"
             f"        </p>\n    \n"
-            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/site/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f'    <a id="detail-btn" href="/site/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
 
@@ -134,7 +134,7 @@ class CourseViewsTests(CommonTest):
             f'        <p class="m-0 p-1">\n'
             f"            {str(self.obj.type)}<br>\n"
             f"        </p>\n    \n"
-            f'    <button id="detail-btn" class="btn btn-sm btn-info mt-2" onclick="window.location.href=\'/course/{self.obj.pk}/\'">Detail sheet</button>\n'
+            f'    <a id="detail-btn" href="/course/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
 

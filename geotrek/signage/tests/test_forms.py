@@ -4,7 +4,12 @@ from django.test import TestCase, override_settings
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.signage.forms import BladeForm, LineFormset
 from geotrek.signage.models import Line
-from geotrek.signage.tests.factories import BladeFactory, LineFactory, SignageFactory
+from geotrek.signage.tests.factories import (
+    BladeFactory,
+    BladeTypeFactory,
+    LineFactory,
+    SignageFactory,
+)
 
 
 class BladeFormTest(TestCase):
@@ -39,6 +44,48 @@ class BladeFormTest(TestCase):
         form = BladeForm(user=self.user, initial={"signage": self.signage})
         self.assertEqual(form.fields["number"].initial, None)
 
+    def test_number_shift_int(self):
+        blade1 = BladeFactory(signage=self.signage, number="1")
+        blade2 = BladeFactory(signage=self.signage, number="2")
+        blade4 = BladeFactory(signage=self.signage, number="4")
+        data = {
+            "number": "1",
+            "direction": None,
+            "type": BladeTypeFactory().pk,
+            "conditions": None,
+            "color": None,
+        }
+        form = BladeForm(user=self.user, initial={"signage": self.signage}, data=data)
+        self.assertTrue(form.is_valid())
+        form.save()
+        blade1.refresh_from_db()
+        blade2.refresh_from_db()
+        blade4.refresh_from_db()
+        self.assertEqual(blade1.number, "2")
+        self.assertEqual(blade2.number, "3")
+        self.assertEqual(blade4.number, "4")
+
+    def test_number_shift_str(self):
+        blade1 = BladeFactory(signage=self.signage, number="A")
+        blade2 = BladeFactory(signage=self.signage, number="B")
+        blade4 = BladeFactory(signage=self.signage, number="D")
+        data = {
+            "number": "A",
+            "direction": None,
+            "type": BladeTypeFactory().pk,
+            "conditions": None,
+            "color": None,
+        }
+        form = BladeForm(user=self.user, initial={"signage": self.signage}, data=data)
+        self.assertTrue(form.is_valid())
+        form.save()
+        blade1.refresh_from_db()
+        blade2.refresh_from_db()
+        blade4.refresh_from_db()
+        self.assertEqual(blade1.number, "B")
+        self.assertEqual(blade2.number, "C")
+        self.assertEqual(blade4.number, "D")
+
     def test_lines_formset(self):
         blade = BladeFactory.create()
         blade.lines.all().delete()
@@ -72,6 +119,65 @@ class BladeFormTest(TestCase):
         formset.save()
         self.assertTrue(formset.is_valid())
         self.assertEqual(Line.objects.count(), 0)
+
+    def test_lines_formset_with_same_numbers(self):
+        blade = BladeFactory.create()
+        blade.lines.all().delete()
+        line_1 = LineFactory.create(blade=blade, number=4)
+        line_2 = LineFactory.create(blade=blade, number=5)
+        data = {
+            "lines-TOTAL_FORMS": "2",
+            "lines-INITIAL_FORMS": "2",
+            "lines-MIN_NUM_FORMS": "0",
+            "lines-MAX_NUM_FORMS": "0",
+            "lines-0-id": str(line_1.pk),
+            "lines-0-number": 5,
+            "lines-0-text": "test",
+            "lines-0-distance": 0.2,
+            "lines-0-pictogram-name": "pictogram_foo",
+            "lines-0-time": 5,
+            "lines-1-id": str(line_2.pk),
+            "lines-1-number": 5,
+            "lines-1-text": "test",
+            "lines-1-distance": 0.2,
+            "lines-1-pictogram-name": "pictogram_foo",
+            "lines-1-time": 5,
+        }
+        formset = LineFormset(data, instance=blade)
+        self.assertFalse(formset.is_valid())
+        self.assertEqual(
+            formset.errors,
+            [
+                {"number": ["This order number is already used by another line."]},
+                {"number": ["This order number is already used by another line."]},
+            ],
+        )
+
+    def test_lines_formset_with_errors(self):
+        blade = BladeFactory.create()
+        blade.lines.all().delete()
+        line_1 = LineFactory.create(blade=blade, number=4)
+        line_2 = LineFactory.create(blade=blade, number=5)
+        data = {
+            "lines-TOTAL_FORMS": "2",
+            "lines-INITIAL_FORMS": "2",
+            "lines-MIN_NUM_FORMS": "0",
+            "lines-MAX_NUM_FORMS": "0",
+            "lines-0-id": str(line_1.pk),
+            "lines-0-number": "cinq",
+            "lines-0-text": "test",
+            "lines-0-distance": 0.2,
+            "lines-0-pictogram-name": "pictogram_foo",
+            "lines-0-time": 5,
+            "lines-1-id": str(line_2.pk),
+            "lines-1-number": 2,
+            "lines-1-text": "test",
+            "lines-1-distance": 0.2,
+            "lines-1-pictogram-name": "pictogram_foo",
+            "lines-1-time": 5,
+        }
+        formset = LineFormset(data, instance=blade)
+        self.assertFalse(formset.is_valid())
 
     def test_direction_field_visibility(self):
         blade_form = BladeForm(user=self.user, initial={"signage": self.signage})

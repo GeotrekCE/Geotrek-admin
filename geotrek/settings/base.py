@@ -1,6 +1,7 @@
 import logging
 import os
 import sys
+from datetime import timedelta
 
 from django.conf.global_settings import LANGUAGES as LANGUAGES_LIST
 from django.contrib.gis.geos import fromstr
@@ -305,8 +306,10 @@ PROJECT_APPS += (
     "tinymce",
     "easy_thumbnails",
     "mapentity",
+    "mapbox_baselayer",
     "paperclip",  # paperclip should be load after mapentity for templates
     "leaflet",  # After mapentity to allow it to patch settings
+    "rest_framework_simplejwt",
     "rest_framework",
     "rest_framework_gis",
     "embed_video",
@@ -804,7 +807,17 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Geotrek Public API",
     "VERSION": VERSION,
     "SERVE_INCLUDE_SCHEMA": False,
+GTAM_CONFIG = {
+    "REFERENCES_INTERVAL_SYNC": 7 * 24,
+    "DATA_INTERVAL_SYNC": 7 * 24,
+    "SYNC_MAP_MIN_ZOOM": 10,
 }
+
+"""
+If true; displays the attached pois pictures in the Trek's geojson pictures property.
+In Geotrek-rando it enables correlated pictures to be displayed in the slideshow.
+"""
+TREK_WITH_POIS_PICTURES = False
 
 API_IS_PUBLIC = True
 
@@ -952,6 +965,11 @@ REST_FRAMEWORK = {
     "STRICT_JSON": False,  # allow serialize float NaN values
 }
 
+SIMPLE_JWT = {
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=3),
+    "REFRESH_TOKEN_LIFETIME": timedelta(days=21),
+}
+
 ALLOW_PATH_DELETION_TOPOLOGY = True
 
 ENABLE_HD_VIEWS = True
@@ -1037,6 +1055,11 @@ if custom_settings_file and "tests" not in ENV:
     with open(custom_settings_file) as f:
         logger.info("Read custom configuration from %s", custom_settings_file)
         exec(f.read())
+
+MAP_UTILS_CONFIG = {
+    "TMP_FOLDER": TMP_DIR,
+    "DEFAULT_BBOX": api_bbox(SPATIAL_EXTENT, 0),
+}
 
 MODELTRANSLATION_DEFAULT_LANGUAGE = MODELTRANSLATION_LANGUAGES[0]
 

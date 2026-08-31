@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.core.paginator import Paginator
@@ -65,6 +67,13 @@ class AutocompleteMixin:
         serializer = self.serializer_autocomplete_bbox_class(qs, many=True)
         return Response({"results": serializer.data, "pagination": {"more": has_more}})
 
+    def _parse_forwarded(self, forwarded_str):
+        forwarded = json.loads(forwarded_str)
+        parsed_dict = {}
+        for key, value in forwarded.items():
+            parsed_dict[f"{key}__in"] = [int(x) for x in value]
+        return parsed_dict
+
     @action(detail=False)
     def autocomplete(self, request, *args, **kwargs):
         qs = self.get_queryset_autocomplete()
@@ -81,9 +90,13 @@ class AutocompleteMixin:
 
         else:
             q = self.request.query_params.get("q")
-            qs, has_more = self.paginate_autocomplete(
-                request, qs.filter(self._get_filters(q)) if q else qs
-            )
+
+            qs = qs.filter(self._get_filters(q)) if q else qs
+            forwards = self.request.query_params.get("forward")
+            if forwards:
+                parsed_forwards = self._parse_forwarded(forwards)
+                qs = qs.filter(**parsed_forwards)
+            qs, has_more = self.paginate_autocomplete(request, qs)
 
             serializer = self.serializer_autocomplete_class(qs, many=True)
             data = {"results": serializer.data, "pagination": {"more": has_more}}

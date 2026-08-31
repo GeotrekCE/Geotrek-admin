@@ -230,14 +230,14 @@ Setup to use screamshotter-related features locally
 
 Use the domain defined in ``SERVER_NAME`` in your ``.env`` to reach your local Geotrek-admin web instance. By default the address is ``http://geotrek.local:8000``.
 
-Database reset
+Instance reset
 ==============
 
-Data only:
+This command will delete all your data in your database and media files. Also it will reconfigure and load data with default values, as if it was a new instance:
 
 ::
 
-   docker compose run --rm web ./manage.py flush
+   make flush
 
 Restore existing Database
 =========================
