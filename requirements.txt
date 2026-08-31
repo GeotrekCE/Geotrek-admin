@@ -23,7 +23,7 @@ billiard==4.2.4
     # via celery
 brotli==1.2.0
     # via fonttools
-btrees==6.4
+btrees==6.5
     # via zodb
 cachetools==7.1.7
     # via large-image
