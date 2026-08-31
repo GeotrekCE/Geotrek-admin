@@ -2,8 +2,48 @@
 CHANGELOG
 =========
 
-2.125.3+dev     (XXXX-XX-XX)
+2.126.1+dev     (XXXX-XX-XX)
 ----------------------------
+
+**Bug fixes**
+
+* Fix intervention duplication to also duplicate its target when linked to its own topology instead of another object (e.g. signage, etc) (refs #3845)
+
+
+2.126.1         (2026-08-14)
+----------------------------
+
+**Improvements**
+
+* Remove ``deleted`` attribute from blade model
+* Allow to add multiple blades from signage form
+
+**Documentation**
+
+* Remove documentation for unreleased basemap feature (refs #5636)
+* Fix required field typo in sensitive area import (refs #5640)
+* Add more informations about Suricate API (refs #5643)
+
+**Bug fixes**
+
+* Fix the import of descriptions from a shapefile for sensitive areas (species)
+
+
+2.126.0         (2026-08-06)
+----------------------------
+
+**Warnings**
+
+* This version adds support for pgRouting 4. If you choose to upgrade pgRouting, run the following command in your database after installing the new version of switching to a new Docker image: ``ALTER EXTENSION pgrouting UPDATE;``.
+* Due to the regeneration of pgRouting's network topology, the database migration to this version might take several minutes.
+
+**Maintenance**
+
+* Add support for pgRouting 4
+
+**Documentation**
+
+* Add details about configuring basemaps and generating offline maps (refs #5610)
 
 
 2.125.3         (2026-07-28)
@@ -40,14 +80,13 @@ CHANGELOG
 
 **Bug fixes**
 
-GTAM
-^^^^
+* GTAM
 
-* Fix read permission for non-superuser
-* Update settings when switching users
-* Selective update: only the data affected by the user is sent
-* Handle non-correct geom
-* Manage general map bounds
+  * Fix read permission for non-superuser
+  * Update settings when switching users
+  * Selective update: only the data affected by the user is sent
+  * Handle non-correct geom
+  * Manage general map bounds
 
 
 2.125.0         (2026-07-15)

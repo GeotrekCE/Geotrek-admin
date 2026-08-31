@@ -1,6 +1,6 @@
 from django.core.management.base import BaseCommand
 
-from geotrek.core.models import Path
+from geotrek.core.models import Path, PgRoutingNode
 from geotrek.core.path_router import PathRouter
 
 
@@ -22,5 +22,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         flush = options.get("flush")
         if flush:
+            PgRoutingNode.objects.all().delete()
             Path.objects.all().update(source_pgr=None, target_pgr=None)
         PathRouter()  # PathRouter's init method builds the network topology

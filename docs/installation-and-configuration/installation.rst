@@ -66,15 +66,6 @@ An Internet connection with open HTTP and HTTPS destination ports is required.
 
 * **Ubuntu Noble 24.04 LTS**. Server flavor is recommended, but other Ubuntu flavors (including Desktop) are also supported.
 
-.. warning::
-
-  Geotrek-admin does not support pgRouting 4.x yet.
-
-  Most installations on Ubuntu 22.04 or 24.04 using the default system repositories are not affected, as pgRouting is currently provided in a 3.x version.
-
-  However, if you are in one of the following cases, make sure pgRouting stays on a 3.x version and is not upgraded to 4.x:
-    - installations using the `PostgreSQL APT Repository <https://wiki.postgresql.org/wiki/Apt>`_
-    - installations using an external PostgreSQL database
 
 Information to prepare before installation
 ===========================================

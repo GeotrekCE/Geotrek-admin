@@ -159,27 +159,41 @@ Refer to :ref:`this section <sensitiveareas-source-list>` to learn about the ava
 
 To import sensitive areas from an ESRI Shapefile (zipped), ensure the following:
 
-- The archive must include ``.shp``, ``.shx``, ``.dbf``, ``.prj``, etc.
+- The archive must include the ``.shp``, ``.shx``, ``.dbf``, ``.prj``, etc. files.
 - Field names must be configured correctly, as detailed below.
 
-**Species sensitive areas**:
+Species sensitive areas
+^^^^^^^^^^^^^^^^^^^^^^^
 
-- ``espece``: Species name (required, must exist in Biodiv'Sports).
-- ``contact``: Optional contact information (text or HTML).
-- ``descriptio``: Optional description (text or HTML).
+**Required fields**
 
-**Regulatory sensitive areas**:
+- ``espece``: Species name. The species must already exist in Biodiv'Sports.
 
-- ``name``: Area name (required).
-- ``contact``: Optional contact information (text or HTML).
-- ``descriptio``: Optional description (text or HTML).
-- ``periode``: Months during which the area is sensitive (comma-separated, e.g., ``6,7,8`` for June-August).
-- ``practices``: Practices associated with the area (comma-separated).
-- ``url``: Optional URL for the record.
+**Optional fields**
+
+- ``contact``: Contact information (text or HTML).
+- ``descriptio``: Description (text or HTML).
+
+Regulatory sensitive areas
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+**Required fields**
+
+- ``nom``: Area name.
+
+**Optional fields**
+
+- ``contact``: Contact information (text or HTML).
+- ``descriptio``: Description (text or HTML).
+- ``periode``: Months during which the area is sensitive, as comma-separated
+  month numbers (e.g. ``6,7,8`` for June to August).
+- ``practices``: Practices associated with the area, as comma-separated values.
+- ``url``: URL associated with the area.
 
 .. warning::
-    - Re-importing the same file will create duplicates.
-    - Field names in shapefiles are limited to 10 characters (e.g., ``descriptio``).
+
+   - Re-importing the same file will create duplicates.
+   - Shapefile field names are limited to 10 characters (e.g. ``descriptio``).
 
 Custom parsers
 ---------------
