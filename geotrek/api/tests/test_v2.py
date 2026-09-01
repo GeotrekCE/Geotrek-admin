@@ -4395,20 +4395,20 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(response.json()["results"][0]["title"]["en"], "AAA")
 
     def test_filter_sources_by_portal(self):
-        # 5 queries for 5 related objects
+        # 6 queries for 6 related objects
         # 1 query for select on IDs
         # 1 count query
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get("/api/v2/source/", {"portals": self.portal.pk})
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()["count"], 1)
             self.assertEqual(response.json()["results"][0]["name"], self.source.name)
 
     def test_filter_sources_by_lang(self):
-        # 5 queries for 5 related objects
+        # 6 queries for 6 related objects
         # 1 query for select on IDs
         # 1 count query
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get("/api/v2/source/", {"language": "fr"})
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()["count"], 1)

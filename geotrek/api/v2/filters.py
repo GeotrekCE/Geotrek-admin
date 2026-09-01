@@ -1887,7 +1887,7 @@ class TreksAndSitesAndTourismRelatedPortalThemeFilter(
         return (set_1 | set_2 | set_3 | set_4).distinct()
 
 
-class TreksAndSitesAndTourismAndFlatpagesRelatedPortalThemeFilter(
+class TreksAndSitesAndTourismAndFlatpagesandVigilanceRelatedPortalThemeFilter(
     RelatedObjectsPublishedNotDeletedByPortalFilter
 ):
     def filter_queryset(self, request, qs, view):
@@ -1932,11 +1932,17 @@ class TreksAndSitesAndTourismAndFlatpagesRelatedPortalThemeFilter(
             .prefetch_related("portal, source")
             .values_list("source__pk", flat=True)
         )
+        vigilancearea_sources = list(
+            VigilanceArea.objects.filter(portals_query, published=True)
+            .prefetch_related("portals, sources")
+            .values_list("sources__pk", flat=True)
+        )
         all_sources_pks = (
             flatpages_sources
             + treks_sources
             + touristiccontent_sources
             + touristicevent_sources
+            + vigilancearea_sources
         )
         if "geotrek.outdoor" in settings.INSTALLED_APPS:
             sites_sources = list(
