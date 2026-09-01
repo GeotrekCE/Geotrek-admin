@@ -188,7 +188,6 @@
     "required": "obligatoire",
     "create": "Créer",
     "edit": "Modifier",
-    "description-RTE": "L'ajout d'images et d'intégrations vidéos n'est pas pris en charge.",
     "geom-action-select": "Placer le point sur la carte",
     "geom-action-cancel": "Revenir en consultation",
     "geom-description": "Les interventions de type linéaire ne sont pas encore pris en charge.",
