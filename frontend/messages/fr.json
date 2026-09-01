@@ -120,6 +120,8 @@
     "sync-up-title": "Mes saisies",
     "sync-up-no-data": "Aucun objet n'a été créé ou modifié depuis la dernière synchronisation",
     "sync-up-success": "Synchronisation réussie",
+    "sync-up-success-with-errors": "Synchronisation réussie mais avec des erreurs sur les pièces jointes",
+    "sync-up-error-attachment": "Échec de l'envoi du fichier {filename}",
     "sync-reference-title": "Référentiel de saisie",
     "sync-reference-none": "Fichier de configuration manquant",
     "sync-reference-description": "Fichier de configuration, permissions, valeurs des listes déroulantes…",
@@ -192,7 +194,10 @@
     "geom-action-cancel": "Revenir en consultation",
     "geom-description": "Les interventions de type linéaire ne sont pas encore pris en charge.",
     "geom-linear-not-supported": "La géométrie de cet objet n'est pas un point et les linéaires ne sont pas encore pris en charge.",
-    "reset": "Annuler la saisie en cours"
+    "reset": "Annuler la saisie en cours",
+    "attachments-photo-title": "Envoyer des photos",
+    "attachments-photo-item": "Photo",
+    "attachments-photo-add": "Ajouter une photo"
   },
   "content": {
     "infrastructure": "Aménagement",
@@ -259,7 +264,10 @@
     "number-of-days": "Nombre de jour :",
     "function": "Fonction :",
     "restore-pending": "Rétablir cette fiche à sa dernière version synchronisée",
-    "restore-complete": "Restauration terminée"
+    "restore-complete": "Restauration terminée",
+    "attachments-photo-title": "Mes nouvelles photos à envoyer",
+    "attachments-photo-item": "Photo",
+    "attachments-no-photos": "Aucune photos"
   },
   "login": {
     "title": "Bienvenue sur Geotrek-admin Mobile",
