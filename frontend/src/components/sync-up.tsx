@@ -59,10 +59,7 @@ function Message({
           )}
           {interventionCount > 0 && (
             <li>
-              {m["common.intervention-count"](
-                { count: interventionCount },
-                { locale: "fr" }
-              )}
+              {m["common.intervention-count"]({ count: interventionCount })}
             </li>
           )}
           {infrastructureCount > 0 && (

@@ -13,6 +13,8 @@ import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { usePermission } from "@/hook/useSettingsQuery"
 import { m } from "@/paraglide/messages"
+import { FormUploadGallery } from "@/components/form-upload-gallery"
+import { type AttachmentsSchemaProps } from "@/schemas/attachments"
 
 export default function SignageForm({
   defaultValues,
@@ -20,7 +22,7 @@ export default function SignageForm({
   pictogram,
   references,
 }: {
-  defaultValues: SignageDataSchemaProps
+  defaultValues: SignageDataSchemaProps & AttachmentsSchemaProps
   isEdit?: boolean
   pictogram?: { url?: string }
   references: [SignageReferencesSchemaProps, CommonReferencesSchemaProps]
@@ -57,9 +59,12 @@ export default function SignageForm({
       onSubmit: validators,
       onChange: handleChange,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value: { attachments: rawAttachments, ...value } }) => {
       setFormIsDirty(false)
       const hasRawData = await db.rawData.get({ id, reference: "signage" })
+      const attachments = rawAttachments?.filter(
+        (attachment) => attachment.value !== null
+      )
 
       if (isEdit && value.appNewItem !== true && !hasRawData) {
         await db.rawData.add({
@@ -71,6 +76,7 @@ export default function SignageForm({
         ? await db.signageData.put({
             ...value,
             id,
+            attachments,
             date_insert,
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -78,6 +84,7 @@ export default function SignageForm({
         : // @ts-expect-error "id" is auto-incremented in indexedDB
           await db.signageData.add({
             ...value,
+            attachments,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -186,6 +193,8 @@ export default function SignageForm({
             label={m["form.access"]()}
             list={accessmean}
           />
+
+          <FormUploadGallery />
 
           <Button type="submit">
             {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
