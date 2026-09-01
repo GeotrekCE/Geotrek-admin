@@ -120,6 +120,8 @@
     "sync-up-title": "My entries",
     "sync-up-no-data": "No object has been created or modified since the last synchronization.",
     "sync-up-success": "Synchronization successful",
+    "sync-up-success-with-errors": "Synchronization successful, but with errors in the attachments",
+    "sync-up-error-attachment": "Failed to send the file {filename}",
     "sync-reference-title": "Data Entry Repository",
     "sync-reference-none": "Missing configuration file",
     "sync-reference-description": "Data Entry Repository configuration files",
@@ -189,7 +191,10 @@
     "geom-action-cancel": "Return to view",
     "geom-description": "Linear interventions are not yet supported.",
     "geom-linear-not-supported": "The geometry of this object is not a point, and linear objects are not yet supported.",
-    "reset": "Reset"
+    "reset": "Reset",
+    "attachments-photo-title": "Send photos",
+    "attachments-photo-item": "Photo",
+    "attachments-photo-add": "Add a photo"
   },
   "content": {
     "infrastructure": "Infrastructure",
@@ -256,7 +261,10 @@
     "number-of-days": "Number of days:",
     "function": "Function:",
     "restore-pending": "Undo pending changes",
-    "restore-complete": "Restoration complete"
+    "restore-complete": "Restoration complete",
+    "attachments-photo-title": "My new photos to send",
+    "attachments-photo-item": "Photo",
+    "attachments-no-photos": "No photos"
   },
   "login": {
     "title": "Welcome to Geotrek-admin Mobile",

@@ -16,6 +16,7 @@ import type {
   ReportDataSchemaProps,
   SignageDataSchemaProps,
 } from "@/schemas/data"
+import type { AttachmentsSchemaProps } from "@/schemas/attachments"
 
 const DB_NAME = "gtam"
 Dexie.debug = true
@@ -35,10 +36,14 @@ export const db = new Dexie(DB_NAME) as Dexie & {
     },
     "id"
   >
-  signageData: EntityTable<SignageDataSchemaProps>
-  infrastructureData: EntityTable<InfrastructureDataSchemaProps>
-  interventionData: EntityTable<InterventionDataSchemaProps>
-  reportData: EntityTable<ReportDataSchemaProps>
+  signageData: EntityTable<SignageDataSchemaProps & AttachmentsSchemaProps>
+  infrastructureData: EntityTable<
+    InfrastructureDataSchemaProps & AttachmentsSchemaProps
+  >
+  interventionData: EntityTable<
+    InterventionDataSchemaProps & AttachmentsSchemaProps
+  >
+  reportData: EntityTable<ReportDataSchemaProps & AttachmentsSchemaProps>
   rawData: EntityTable<
     (
       | SignageDataSchemaProps

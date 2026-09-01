@@ -96,6 +96,7 @@ function RouteComponent() {
               blades: [],
               date_insert: "",
               date_update: "",
+              attachments: [],
             }}
             pictogram={
               "pictogram" in references[0] ? references[0].pictogram : undefined
@@ -128,6 +129,7 @@ function RouteComponent() {
               usage_difficulty: null,
               date_insert: "",
               date_update: "",
+              attachments: [],
             }}
             pictogram={
               "pictogram" in references[0] ? references[0].pictogram : undefined
@@ -173,6 +175,7 @@ function RouteComponent() {
               },
               disorders: [],
               man_day: [],
+              attachments: [],
             }}
             pictogram={
               "pictogram" in references[0] ? references[0].pictogram : undefined
@@ -202,6 +205,7 @@ function RouteComponent() {
               category: null,
               problem_magnitude: null,
               status: null,
+              attachments: [],
             }}
             pictogram={
               "pictogram" in references[0] ? references[0].pictogram : undefined

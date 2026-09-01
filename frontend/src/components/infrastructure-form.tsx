@@ -16,6 +16,8 @@ import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { usePermission } from "@/hook/useSettingsQuery"
 import { m } from "@/paraglide/messages"
+import { FormUploadGallery } from "@/components/form-upload-gallery"
+import { type AttachmentsSchemaProps } from "@/schemas/attachments"
 
 export default function InfrastructureForm({
   defaultValues,
@@ -23,7 +25,7 @@ export default function InfrastructureForm({
   pictogram,
   references,
 }: {
-  defaultValues: InfrastructureDataSchemaProps
+  defaultValues: InfrastructureDataSchemaProps & AttachmentsSchemaProps
   isEdit?: boolean
   pictogram?: { url?: string }
   references: [InfrastructureReferencesSchemaProps, CommonReferencesSchemaProps]
@@ -66,8 +68,11 @@ export default function InfrastructureForm({
       onSubmit: validators,
       onChange: handleChange,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value: { attachments: rawAttachments, ...value } }) => {
       setFormIsDirty(false)
+      const attachments = rawAttachments?.filter(
+        (attachment) => attachment.value !== null
+      )
       const hasRawData = await db.rawData.get({
         id,
         reference: "infrastructure",
@@ -82,6 +87,7 @@ export default function InfrastructureForm({
         ? await db.infrastructureData.put({
             ...value,
             id,
+            attachments,
             date_insert,
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -89,6 +95,7 @@ export default function InfrastructureForm({
         : // @ts-expect-error "id" is auto-incremented in indexedDB
           await db.infrastructureData.add({
             ...value,
+            attachments,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -196,6 +203,8 @@ export default function InfrastructureForm({
             list={infrastructuremaintenancedifficultylevel}
             description={m["form.maintenance-level-description"]()}
           />
+
+          <FormUploadGallery />
 
           <Button type="submit">
             {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}

@@ -18,6 +18,8 @@ import { FormCheckboxField } from "./forms"
 import { Trash } from "lucide-react"
 import { usePermission } from "@/hook/useSettingsQuery"
 import { m } from "@/paraglide/messages"
+import { FormUploadGallery } from "@/components/form-upload-gallery"
+import { type AttachmentsSchemaProps } from "@/schemas/attachments"
 
 export default function InterventionForm({
   defaultValues,
@@ -25,7 +27,7 @@ export default function InterventionForm({
   pictogram,
   references,
 }: {
-  defaultValues: InterventionDataSchemaProps
+  defaultValues: InterventionDataSchemaProps & AttachmentsSchemaProps
   isEdit?: boolean
   pictogram?: { url?: string }
   references: [InterventionReferencesSchemaProps, CommonReferencesSchemaProps]
@@ -69,8 +71,11 @@ export default function InterventionForm({
       onSubmit: validators,
       onChange: handleChange,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value: { attachments: rawAttachments, ...value } }) => {
       setFormIsDirty(false)
+      const attachments = rawAttachments?.filter(
+        (attachment) => attachment.value !== null
+      )
       const hasRawData = await db.rawData.get({ id, reference: "intervention" })
       if (isEdit && value.appNewItem !== true && !hasRawData) {
         await db.rawData.put({
@@ -82,6 +87,7 @@ export default function InterventionForm({
         ? await db.interventionData.put({
             ...value,
             id,
+            attachments,
             date_insert,
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -89,6 +95,7 @@ export default function InterventionForm({
         : // @ts-expect-error "id" is auto-incremented in indexedDB
           await db.interventionData.add({
             ...value,
+            attachments,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -292,6 +299,8 @@ export default function InterventionForm({
               </fieldset>
             )}
           </form.Field>
+
+          <FormUploadGallery />
 
           <Button type="submit">
             {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
