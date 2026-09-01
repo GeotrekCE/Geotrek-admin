@@ -370,6 +370,7 @@ class AttachmentsMixin:
 
         data["content_type"] = ContentType.objects.get_for_model(obj).pk
         data["object_id"] = obj.pk
+        data["filetype"] = FileType.objects.get_or_create(type="Photographie")[0].pk
         data["creator"] = request.user.pk
 
         serializer = AttachmentSerializer(data=data, context={"request": request})
