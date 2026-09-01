@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { m } from "@/paraglide/messages"
+import { FormUploadGallery } from "@/components/form-upload-gallery"
+import { type AttachmentsSchemaProps } from "@/schemas/attachments"
 
 export default function ReportForm({
   defaultValues,
@@ -16,7 +18,7 @@ export default function ReportForm({
   pictogram,
   references,
 }: {
-  defaultValues: ReportDataSchemaProps
+  defaultValues: ReportDataSchemaProps & AttachmentsSchemaProps
   isEdit?: boolean
   pictogram?: { url?: string }
   references: [ReportReferencesSchemaProps]
@@ -53,8 +55,11 @@ export default function ReportForm({
       onSubmit: validators,
       onChange: handleChange,
     },
-    onSubmit: async ({ value }) => {
+    onSubmit: async ({ value: { attachments: rawAttachments, ...value } }) => {
       setFormIsDirty(false)
+      const attachments = rawAttachments?.filter(
+        (attachment) => attachment.value !== null
+      )
       const hasRawData = await db.rawData.get({ id, reference: "report" })
       if (isEdit && value.appNewItem !== true && !hasRawData) {
         await db.rawData.add({
@@ -66,6 +71,7 @@ export default function ReportForm({
         ? await db.reportData.put({
             ...value,
             id,
+            attachments,
             date_insert,
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -73,6 +79,7 @@ export default function ReportForm({
         : // @ts-expect-error "id" is auto-incremented in indexedDB
           await db.reportData.add({
             ...value,
+            attachments,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -142,6 +149,8 @@ export default function ReportForm({
             label={m["form.status"]()}
             list={reportstatus}
           />
+
+          <FormUploadGallery />
 
           <Button type="submit">
             {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}

@@ -14,6 +14,7 @@ import NotFound from "@/components/not-found"
 import type { ReportDataSchemaProps } from "@/schemas/data"
 import { m } from "@/paraglide/messages"
 import { Alert, AlertTitle } from "@/components/ui/alert"
+import PhotosGallery from "@/components/ui/photos-gallery"
 
 export default function ReportDetail(params: { id: string; type: string }) {
   const navigate = useNavigate()
@@ -187,6 +188,8 @@ export default function ReportDetail(params: { id: string; type: string }) {
             <p className="italic">{m["content.no-status"]()}</p>
           )}
         </section>
+
+        <PhotosGallery attachments={detail.attachments} />
 
         {isAsyncItem && (
           <div className="mt-4 flex flex-col gap-4">
