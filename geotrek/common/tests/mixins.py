@@ -8,8 +8,6 @@ from rest_framework.reverse import reverse
 
 from geotrek.common.parsers import DownloadImportError
 
-from ...common.tests.factories import FileTypeFactory
-
 
 def dictfetchall(cursor):
     "Return all rows from a cursor as a dict"
@@ -48,7 +46,6 @@ class AttachmentTestMixin:
             "content_type": content_type.pk,
             "object_id": target.pk,
             "attachment_file": file,
-            "filetype": FileTypeFactory.create().pk,
             "title": "title",
             "author": "author",
         }
@@ -66,3 +63,4 @@ class AttachmentTestMixin:
             attachment.attachment_file.storage.exists(attachment.attachment_file.name)
         )
         self.assertEqual(attachment.attachment_file.size, len(content))
+        self.assertEqual(attachment.filetype.type, "Photographie")
