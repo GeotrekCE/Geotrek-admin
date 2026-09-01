@@ -29,19 +29,19 @@ import {
   SelectField,
   GeomField,
   CheckboxField,
+  FileUploadField,
   // SwitchField,
   // RadioGroupField,
   // SliderField,
-  // FileUploadField,
   FormTextField,
   FormTextareaField,
   FormSelectField,
   FormGeomField,
   FormCheckboxField,
+  FormFileUploadField,
   // FormSwitchField,
   // FormRadioGroupField,
   // FormSliderField,
-  // FormFileUploadField,
 } from "@/components/forms/"
 import { cn } from "@/lib/utils"
 import {
@@ -165,10 +165,10 @@ const { useAppForm, withForm, withFieldGroup } = createFormHook({
     SelectField,
     GeomField,
     CheckboxField,
+    FileUploadField,
     // SwitchField,
     // RadioGroupField,
     // SliderField,
-    // FileUploadField,
   },
   formComponents: {
     // Layout & actions
@@ -186,10 +186,10 @@ const { useAppForm, withForm, withFieldGroup } = createFormHook({
     SelectField: FormSelectField,
     GeomField: FormGeomField,
     CheckboxField: FormCheckboxField,
+    FileUploadField: FormFileUploadField,
     // SwitchField: FormSwitchField,
     // RadioGroupField: FormRadioGroupField,
     // SliderField: FormSliderField,
-    // FileUploadField: FormFileUploadField,
   },
 })
 
@@ -227,6 +227,9 @@ function useFormFields<TValues extends Record<string, unknown>>() {
     FormCheckboxField: FormCheckboxField as unknown as Typed<
       typeof FormCheckboxField
     >,
+    FormFileUploadField: FormFileUploadField as unknown as Typed<
+      typeof FormFileUploadField
+    >,
     // FormSwitchField: FormSwitchField as unknown as Typed<
     //   typeof FormSwitchField
     // >,
@@ -235,9 +238,6 @@ function useFormFields<TValues extends Record<string, unknown>>() {
     // >,
     // FormSliderField: FormSliderField as unknown as Typed<
     //   typeof FormSliderField
-    // >,
-    // FormFileUploadField: FormFileUploadField as unknown as Typed<
-    //   typeof FormFileUploadField
     // >,
   }
 }

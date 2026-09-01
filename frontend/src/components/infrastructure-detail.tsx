@@ -16,6 +16,7 @@ import { usePermission } from "@/hook/useSettingsQuery"
 import type { InfrastructureDataSchemaProps } from "@/schemas/data"
 import { m } from "@/paraglide/messages"
 import { Alert, AlertTitle } from "@/components/ui/alert"
+import PhotosGallery from "@/components/ui/photos-gallery"
 
 export default function InfrastructureDetail(params: {
   id: string
@@ -229,6 +230,8 @@ export default function InfrastructureDetail(params: {
             <p className="italic">{m["content.no-access"]()}</p>
           )}
         </section>
+
+        <PhotosGallery attachments={detail.attachments} />
 
         {isAsyncItem && (
           <div className="mt-4 flex flex-col gap-4">
