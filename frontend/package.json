@@ -24,7 +24,7 @@
     "@tanstack/react-form": "^1.33.2",
     "@tanstack/react-query": "^5.100.10",
     "@tanstack/react-router": "^1.169.2",
-    "@tiptap/core": "^3.27.1",
+    "@tiptap/core": "^3.30.4",
     "@tiptap/react": "^3.27.1",
     "@tiptap/starter-kit": "^3.27.1",
     "class-variance-authority": "^0.7.1",
