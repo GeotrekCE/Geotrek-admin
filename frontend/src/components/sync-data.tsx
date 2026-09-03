@@ -1,3 +1,4 @@
+import * as React from "react"
 import CardSync from "@/components/card-sync"
 import Map from "@/components/map"
 import { getUpdatedStatus } from "@/lib/date"
@@ -8,6 +9,7 @@ import { useDataQuery } from "@/hook/useDataQuery"
 import { cn } from "@/lib/utils"
 import { getPolygonFromBounds } from "@/lib/map"
 import type { LngLatBoundsLike } from "maplibre-gl"
+import type { MapRef } from "react-map-gl/maplibre"
 import { db } from "@/lib/db"
 import { useLiveQuery } from "dexie-react-hooks"
 import { Alert, AlertTitle } from "./ui/alert"
@@ -28,6 +30,14 @@ export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
     structure: structure ?? undefined,
   })
 
+  const mapRef = React.useRef<MapRef>(null)
+
+  React.useEffect(() => {
+    if (mapRef.current && bounds) {
+      mapRef.current.fitBounds(bounds as LngLatBoundsLike)
+    }
+  }, [bounds])
+
   return (
     <CardSync
       title={m["common.sync-data-title"]()}
@@ -40,6 +50,7 @@ export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
                 {m["common.sync-data-aera"]()}
               </h4>
               <Map
+                ref={mapRef}
                 className="pointer-none aspect-square max-h-80 touch-none"
                 noControls
                 initialViewState={{ bounds: bounds as LngLatBoundsLike }}
