@@ -2,8 +2,6 @@ import * as React from "react"
 import Header from "@/components/header"
 import { getLocale } from "@/paraglide/runtime"
 import { Link, useNavigate } from "@tanstack/react-router"
-import Map from "@/components/map"
-import { Marker } from "react-map-gl/maplibre"
 import { Badge } from "@/components/ui/badge"
 import { CircleAlert } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
@@ -15,8 +13,8 @@ import NotFound from "@/components/not-found"
 import { usePermission } from "@/hook/useSettingsQuery"
 import type { InfrastructureDataSchemaProps } from "@/schemas/data"
 import { m } from "@/paraglide/messages"
-import { Alert, AlertTitle } from "@/components/ui/alert"
 import PhotosGallery from "@/components/ui/photos-gallery"
+import DetailMap from "@/components/detail-map"
 
 export default function InfrastructureDetail(params: {
   id: string
@@ -41,6 +39,10 @@ export default function InfrastructureDetail(params: {
       })
       .first()
   )
+
+  const reference = useLiveQuery(() => db.references.get("signage"))
+  const pictogram =
+    reference && "pictogram" in reference ? reference.pictogram : undefined
 
   const handleDelete = React.useCallback(() => {
     // @ts-expect-error not never
@@ -155,24 +157,7 @@ export default function InfrastructureDetail(params: {
             {m["content.location"]()}
           </h3>
           {detail.geom && (
-            <>
-              <Map className="pointer-none aspect-square touch-none">
-                {detail.geom.type === "Point" && (
-                  <Marker
-                    longitude={detail.geom.coordinates[0]}
-                    latitude={detail.geom.coordinates[1]}
-                    anchor="bottom"
-                  />
-                )}
-              </Map>
-              {detail.geom.type !== "Point" && (
-                <Alert className="mt-4" variant="warning">
-                  <AlertTitle>
-                    {m["form.geom-linear-not-supported"]()}
-                  </AlertTitle>
-                </Alert>
-              )}
-            </>
+            <DetailMap geom={detail.geom} pictogram={pictogram} />
           )}
         </section>
 
