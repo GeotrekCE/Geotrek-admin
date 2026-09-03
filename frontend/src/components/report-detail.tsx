@@ -32,7 +32,7 @@ export default function ReportDetail(params: { id: string; type: string }) {
       .first()
   )
 
-  const reference = useLiveQuery(() => db.references.get("signage"))
+  const reference = useLiveQuery(() => db.references.get("report"))
   const pictogram =
     reference && "pictogram" in reference ? reference.pictogram : undefined
 
