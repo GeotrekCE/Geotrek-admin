@@ -6,6 +6,7 @@ import MapLibre, {
   GeolocateControl,
   NavigationControl,
   type MapProps,
+  type MapRef,
 } from "react-map-gl/maplibre"
 import "maplibre-gl/dist/maplibre-gl.css"
 import { cn } from "@/lib/utils"
@@ -28,6 +29,7 @@ export default function Map({
   className?: string
   style?: React.CSSProperties
   noControls?: boolean
+  ref?: React.Ref<MapRef>
 }) {
   const settings = useLiveQuery(() => db.settings.get("settings"))
   const classNameWrapper = "grid grow place-items-center bg-accent"
