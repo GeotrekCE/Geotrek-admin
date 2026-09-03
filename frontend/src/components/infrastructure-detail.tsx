@@ -40,7 +40,7 @@ export default function InfrastructureDetail(params: {
       .first()
   )
 
-  const reference = useLiveQuery(() => db.references.get("signage"))
+  const reference = useLiveQuery(() => db.references.get("infrastructure"))
   const pictogram =
     reference && "pictogram" in reference ? reference.pictogram : undefined
 
