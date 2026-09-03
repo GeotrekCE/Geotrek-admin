@@ -83,6 +83,7 @@
         "countPlural=other": "{count} offline map layers"
       }
     }],
+    "map-bbox": "Synced Data Area",
     "data-scope": "Data scope",
     "data-scope-all": "Data from all structures",
     "data-scope-own": "Data from my structure",
