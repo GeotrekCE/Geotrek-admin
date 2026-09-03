@@ -7,6 +7,7 @@ import { useList } from "@/lib/list"
 import { cn } from "@/lib/utils"
 import { db } from "@/lib/db"
 import Map from "@/components/map"
+import MapBboxDataLayer from "./map-bbox-data-layer"
 
 export default function ListMap() {
   const navigate = useNavigate()
@@ -39,14 +40,14 @@ export default function ListMap() {
 
   return (
     <Map
-      maxBounds={
-        bounds
+      initialViewState={{
+        bounds: bounds
           ? [
               [lng1, lat1],
               [lng2, lat2],
             ]
-          : undefined
-      }
+          : undefined,
+      }}
       style={
         {
           "--ctrl-position": position,
@@ -54,6 +55,7 @@ export default function ListMap() {
       }
       padding={{ top: 30, right: 10, bottom: 130, left: 10 }}
     >
+      <MapBboxDataLayer />
       {elements.map((item) => {
         if (!item.geom) {
           return null
