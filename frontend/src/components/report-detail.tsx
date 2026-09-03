@@ -2,8 +2,6 @@ import * as React from "react"
 import Header from "@/components/header"
 import { getLocale } from "@/paraglide/runtime"
 import { Link, useNavigate } from "@tanstack/react-router"
-import Map from "@/components/map"
-import { Marker } from "react-map-gl/maplibre"
 import { CircleAlert } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { useLiveQuery } from "dexie-react-hooks"
@@ -13,8 +11,8 @@ import { toast } from "sonner"
 import NotFound from "@/components/not-found"
 import type { ReportDataSchemaProps } from "@/schemas/data"
 import { m } from "@/paraglide/messages"
-import { Alert, AlertTitle } from "@/components/ui/alert"
 import PhotosGallery from "@/components/ui/photos-gallery"
+import DetailMap from "@/components/detail-map"
 
 export default function ReportDetail(params: { id: string; type: string }) {
   const navigate = useNavigate()
@@ -33,6 +31,10 @@ export default function ReportDetail(params: { id: string; type: string }) {
       })
       .first()
   )
+
+  const reference = useLiveQuery(() => db.references.get("signage"))
+  const pictogram =
+    reference && "pictogram" in reference ? reference.pictogram : undefined
 
   const name = `Signalement (id: ${params.id})`
 
@@ -123,24 +125,7 @@ export default function ReportDetail(params: { id: string; type: string }) {
               {m["content.location"]()}
             </h3>
             {detail.geom && (
-              <>
-                <Map className="pointer-none aspect-square touch-none">
-                  {detail.geom.type === "Point" && (
-                    <Marker
-                      longitude={detail.geom.coordinates[0]}
-                      latitude={detail.geom.coordinates[1]}
-                      anchor="bottom"
-                    />
-                  )}
-                </Map>
-                {detail.geom.type !== "Point" && (
-                  <Alert className="mt-4" variant="warning">
-                    <AlertTitle>
-                      {m["form.geom-linear-not-supported"]()}
-                    </AlertTitle>
-                  </Alert>
-                )}
-              </>
+              <DetailMap geom={detail.geom} pictogram={pictogram} />
             )}
           </section>
         )}

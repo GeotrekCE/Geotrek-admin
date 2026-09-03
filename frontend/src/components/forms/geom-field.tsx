@@ -21,6 +21,7 @@ import { m } from "@/paraglide/messages"
 import { Alert, AlertTitle } from "@/components/ui/alert"
 import * as z from "zod"
 import type { geometrySchema } from "@/schemas/data"
+import MapBboxDataLayer from "@/components/map-bbox-data-layer"
 
 type GeomFieldProps = {
   label: string
@@ -70,7 +71,6 @@ export function GeomField({
         <Map
           className="aspect-square"
           initialViewState={{ bounds: bounds as LngLatBoundsLike }}
-          maxBounds={bounds as LngLatBoundsLike}
           onClick={({ lngLat }) => {
             if (isEditing) {
               field.handleChange({
@@ -81,6 +81,7 @@ export function GeomField({
             }
           }}
         >
+          <MapBboxDataLayer />
           {isPoint && typeof lng === "number" && typeof lat === "number" && (
             <Marker longitude={lng} latitude={lat} anchor="bottom">
               <div className="grid items-center justify-center">

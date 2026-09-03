@@ -83,6 +83,7 @@
         "countPlural=other": "{count} fonds cartographiques embarqués"
       }
     }],
+    "map-bbox": "Zone données embarquées",
     "data-scope": "Portée des données",
     "data-scope-all": "Les données de toutes les structures",
     "data-scope-own": "Les données de ma structure",
