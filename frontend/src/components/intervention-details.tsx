@@ -39,7 +39,7 @@ export default function InterventionDetail(params: {
       .first()
   )
 
-  const reference = useLiveQuery(() => db.references.get("signage"))
+  const reference = useLiveQuery(() => db.references.get("intervention"))
   const pictogram =
     reference && "pictogram" in reference ? reference.pictogram : undefined
 
