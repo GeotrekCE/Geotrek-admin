@@ -19,6 +19,7 @@ from geotrek.zoning.tests.factories import (
     RestrictedAreaTypeFactory,
     VigilanceAreaFactory,
     VigilanceAreaTypeFactory,
+    VigilanceLevelFactory,
 )
 from geotrek.zoning.views import VigilanceAreaViewSet
 
@@ -297,15 +298,18 @@ class VigilanceAreaTestCase(MapEntityTest):
 
     def get_good_data(self):
         area_type = VigilanceAreaTypeFactory()
+        vigilance_level = VigilanceLevelFactory()
         structure = StructureFactory.create()
         return {
             "id": 1,
             "name_en": "my area",
             "practicability": Practicability.PRACTICABLE.value,
+            "vigilance_level": vigilance_level.pk,
             "vigilance_area_type": area_type.pk,
             "structure": structure.pk,
             "start_date": "2026-07-06",
             "geom": "MULTIPOLYGON(((-0.3142392 -1.0870745, -0.4442674 1.9698002, 2.6553568 2.0446445, 2.6683833 -1.0177449, -0.3142392 -1.0870745)))",
+            "commentary": "commentary",
         }
 
     extra_column_list = ["eid"]

@@ -1,5 +1,6 @@
 import uuid
 
+from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.postgres.fields.array import ArrayField
@@ -15,7 +16,7 @@ from geotrek.common.mixins.models import (
     BBoxMixin,
     ExternalSourceMixin,
     GeotrekMapEntityMixin,
-    PictogramMixin,
+    OptionalPictogramMixin,
     PicturesMixin,
     PublishableMixin,
     TimeStampedModelMixin,
@@ -139,12 +140,25 @@ class District(TimeStampedModelMixin, BBoxMixin, models.Model):
         return self.name
 
 
-class VigilanceAreaType(PictogramMixin, models.Model):
+class VigilanceAreaType(OptionalPictogramMixin, TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=200, verbose_name=_("Name"))
 
     class Meta:
         verbose_name = _("Vigilance area type")
         verbose_name_plural = _("Vigilance area types")
+
+    def __str__(self):
+        return self.name
+
+
+class VigilanceLevel(OptionalPictogramMixin, TimeStampedModelMixin, models.Model):
+    name = models.CharField(max_length=200, verbose_name=_("Name"))
+    color = ColorField(verbose_name=_("Color"), default="#1257A8")
+    level = models.PositiveSmallIntegerField(unique=True, null=True)
+
+    class Meta:
+        verbose_name = _("Vigilance level")
+        verbose_name_plural = _("Vigilance levels")
 
     def __str__(self):
         return self.name
@@ -176,6 +190,14 @@ class VigilanceArea(
         max_length=50,
         default=Practicability.PRACTICABLE,
         db_index=True,
+    )
+    vigilance_level = models.ForeignKey(
+        VigilanceLevel,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        verbose_name=_("Vigilance level"),
+        related_name="vigilance_areas",
     )
     vigilance_area_type = models.ForeignKey(
         VigilanceAreaType,
@@ -223,6 +245,7 @@ class VigilanceArea(
         ),
         blank=True,
     )
+    commentary = models.TextField(verbose_name=_("Commentary"), blank=True)
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     uuid = models.UUIDField(
         default=uuid.uuid4, editable=False, unique=True, db_default=GenRandomUUID()

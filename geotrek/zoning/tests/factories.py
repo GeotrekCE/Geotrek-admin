@@ -105,6 +105,16 @@ class VigilanceAreaTypeFactory(factory.django.DjangoModelFactory):
     pictogram = factory.django.ImageField()
 
 
+class VigilanceLevelFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.VigilanceLevel
+
+    name = factory.Sequence(lambda n: f"Vigilance level name {n}")
+    color = factory.Faker("color")
+    pictogram = factory.django.ImageField()
+    level = factory.Sequence(lambda n: n)
+
+
 class VigilanceAreaFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = models.VigilanceArea
@@ -112,4 +122,5 @@ class VigilanceAreaFactory(factory.django.DjangoModelFactory):
     structure = factory.SubFactory(StructureFactory)
     name = factory.Sequence(lambda n: f"Vigilance area name {n}")
     vigilance_area_type = factory.SubFactory(VigilanceAreaTypeFactory)
+    vigilance_level = factory.SubFactory(VigilanceLevelFactory)
     geom = "SRID=4326;MULTIPOLYGON(((-0.3142392 -1.0870745, -0.4442674 1.9698002, 2.6553568 2.0446445, 2.6683833 -1.0177449, -0.3142392 -1.0870745)))"

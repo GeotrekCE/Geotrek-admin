@@ -1,12 +1,15 @@
+from django.contrib.admin import AdminSite
 from django.test import TestCase
 from django.urls import reverse
 from mapentity.tests.factories import SuperUserFactory
 
-from geotrek.zoning.models import City, District, RestrictedArea
+from geotrek.zoning.admin import VigilanceLevelAdmin
+from geotrek.zoning.models import City, District, RestrictedArea, VigilanceLevel
 from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
     RestrictedAreaFactory,
+    VigilanceLevelFactory,
 )
 
 
@@ -85,3 +88,16 @@ class ZoningAdminTest(TestCase):
             reverse("admin:zoning_restrictedarea_changelist"), data, follow=True
         )
         self.assertEqual(RestrictedArea.objects.filter(published=False).count(), 2)
+
+    def test_color_markup(self):
+        vigilance_level = VigilanceLevelFactory(color="#AC2F89")
+        admin = VigilanceLevelAdmin(VigilanceLevel, AdminSite())
+        self.assertEqual(
+            admin.color_markup(vigilance_level),
+            '<span style="color: #AC2F89;">⬤</span> #AC2F89',
+        )
+
+    def test_no_color_markup(self):
+        vigilance_level = VigilanceLevelFactory(color="")
+        admin = VigilanceLevelAdmin(VigilanceLevel, AdminSite())
+        self.assertEqual(admin.color_markup(vigilance_level), "")
