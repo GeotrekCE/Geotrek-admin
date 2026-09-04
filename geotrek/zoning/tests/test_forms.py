@@ -1,11 +1,13 @@
 from django.test import TestCase
 from django.test.utils import override_settings
 
-from geotrek.zoning.forms import MapFilterForm
+from geotrek.authent.tests.factories import UserFactory
+from geotrek.zoning.forms import MapFilterForm, VigilanceAreaForm
 from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
     RestrictedAreaFactory,
+    VigilanceAreaFactory,
 )
 
 
@@ -84,3 +86,39 @@ class MapFilterFormTest(TestCase):
             }
             form = MapFilterForm(data=data)
             self.assertTrue(form.is_valid())
+
+
+class VigilanceAreaFormTest(TestCase):
+    def test_form_initial_values_with_multiple_items(self):
+        """
+        Test that initial values for active_days and active_months (which use ArrayField)
+        are correctly loaded as lists and not as serialized strings when creating/editing
+        VigilanceArea through the form.
+        """
+        area = VigilanceAreaFactory(active_days=[1, 2], active_months=[3, 4])
+        form = VigilanceAreaForm(user=UserFactory(), instance=area)
+        self.assertEqual(form.initial["active_days"], [1, 2])
+        self.assertEqual(form.initial["active_months"], [3, 4])
+
+    def test_form_validation_and_save_with_multiple_items(self):
+        """
+        Test that the form validates and correctly saves multiple active_days and
+        active_months values.
+        """
+        area = VigilanceAreaFactory()
+        data = {
+            "name_en": "Area test",
+            "structure": area.structure.pk,
+            "vigilance_area_type": area.vigilance_area_type.pk,
+            "practicability": area.practicability,
+            "vigilance_level": area.vigilance_level.pk,
+            "start_date": area.start_date,
+            "geom": "SRID=4326;MULTIPOLYGON(((-0.3142392 -1.0870745, -0.4442674 1.9698002, 2.6553568 2.0446445, 2.6683833 -1.0177449, -0.3142392 -1.0870745)))",
+            "active_days": [1, 2],
+            "active_months": [3, 4],
+        }
+        form = VigilanceAreaForm(user=UserFactory(), instance=area, data=data)
+        self.assertTrue(form.is_valid(), form.errors)
+        saved_area = form.save()
+        self.assertEqual(saved_area.active_days, [1, 2])
+        self.assertEqual(saved_area.active_months, [3, 4])

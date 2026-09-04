@@ -4,12 +4,18 @@ from django.utils.translation import gettext as _
 
 from geotrek.common.parsers import (
     DownloadImportError,
+    GeotrekParser,
     GlobalImportError,
     OpenStreetMapParser,
     RowImportError,
     ShapeParser,
 )
-from geotrek.zoning.models import City, District, RestrictedArea
+from geotrek.zoning.models import (
+    City,
+    District,
+    RestrictedArea,
+    VigilanceArea,
+)
 
 
 # Data: https://www.data.gouv.fr/fr/datasets/decoupage-administratif-communal-francais-issu-d-openstreetmap/
@@ -132,3 +138,66 @@ class OpenStreetMapCityParser(OpenStreetMapZoningParserMixin):
         super().__init__(*args, **kwargs)
         if self.code_tag:
             self.fields["code"] = f"tags.{self.code_tag}"
+
+
+class VigilanceAreaParser:
+    model = VigilanceArea
+    eid = "eid"
+    fields = {"name": "nom", "geom": "geom", "eid": "id"}
+    m2m_fields = {}
+    constant_fields = {
+        "published": True,
+    }
+    natural_keys = {"vigilance_area_type": "name"}
+
+    def filter_code(self, src, val):
+        return str(val)
+
+    def filter_geom(self, src, val):
+        if val is None:
+            return None
+        if not val.valid:
+            self.add_warning(_("Invalid geometry for field '{src}'").format(src=src))
+            return None
+        if val.geom_type == "MultiPolygon":
+            return val
+        elif val.geom_type == "Polygon":
+            return MultiPolygon(val)
+        raise GlobalImportError(
+            _(
+                "Invalid geometry type for field '{src}'. "
+                "Should be (Multi)Polygon, not {geom_type}"
+            ).format(src=src, geom_type=val.geom_type)
+        )
+
+
+class GeotrekVigilanceAreaParser(GeotrekParser):
+    """Geotrek parser for Geotrek vigilance areas"""
+
+    fill_empty_translated_fields = True
+    url = None
+    model = VigilanceArea
+    replace_fields = {"eid": "uuid", "geom": "geometry"}
+    url_categories = {
+        "structure": "structure",
+        "sources": "source",
+        "vigilance_area_type": "vigilancearea_type",
+        "vigilance_level": "vigilancearea_vigilancelevel",
+    }
+    categories_keys_api_v2 = {
+        "structure": "name",
+        "sources": "name",
+        "vigilance_area_type": "name",
+        "vigilance_level": "name",
+    }
+    natural_keys = {
+        "structure": "name",
+        "sources": "name",
+        "vigilance_area_type": "name",
+        "vigilance_level": "name",
+    }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields.pop("uuid")  # TEST
+        self.next_url = f"{self.url}/api/v2/vigilancearea"

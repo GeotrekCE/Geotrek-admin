@@ -1,0 +1,158 @@
+{% extends "mapentity/mapentity_detail_attributes.html" %}
+{% load i18n geotrek_tags mapentity_tags %}
+
+{% block attributes %}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"vigilance_area_type" }}</th>
+            <td>{{ object.vigilance_area_type }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"practicability" }}</th>
+            <td>
+                    <i class="bi bi-{% if object.practicability == 'practicable' %}check-circle text-success{% elif object.practicability == 'under_condition_practicable' %}exclamation-circle text-warning{% else %}x-circle text-danger{% endif %}"></i> {{ object.get_practicability_display }}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"vigilance_level" }}</th>
+            <td>
+            {% if object.vigilance_level %}
+                <i class="bi bi-circle-fill" style="color: {{ object.vigilance_level.color }}"></i> {{ object.vigilance_level.name }}
+            {% else %}
+                <span class="none">{% trans "None" %}</span>
+            {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"sources" }}</th>
+            <td>
+                {% for source in object.sources.all %}
+                    <span class="badge badge-primary">{{ source.name }}</span>
+                    {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"portals" }}</th>
+            <td>
+                {% for portal in object.portals.all %}
+                    <span class="badge badge-primary">{{ portal.name }}</span>
+                    {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{% if object.description %}{{ object.description|safe|linebreaks }}
+            {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"practical_info" }}</th>
+            <td>{% if object.practical_info %}{{ object.practical_info|safe|linebreaks }}
+            {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"external_info_url" }}</th>
+            <td>{% if object.external_info_url %}
+                <a class="btn btn-primary" href="{{ object.external_info_url }}" target="_blank"
+                   rel="noopener noreferrer">{{ object.external_info_url }}</a>
+            {% else %}
+                <span class="none">{% trans "None" %}</span>
+            {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Thumbnail" %}</th>
+            <td><img src="{{ object.thumbnail.url }}"></td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"commentary" }}</th>
+            <td>{% if object.commentary %}{{ object.commentary|safe|linebreaks }}
+            {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+    </table>
+    <table class="table table-bordered">
+        <thead>
+        <tr class="table-active">
+            <th colspan="2" class="text-center"><i class="bi bi-calendar-range text-danger"></i> {% trans "Period" %}</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th class="table-active">{{ object|verbose:"period_active" }}</th>
+            <td>
+                <p><i class="bi {% if object.period_active %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i>
+                {% if object.period_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</p>
+            </td>
+        </tr>
+        <tr>
+            <th class="table-active">{{ object|verbose:"active_today" }}</th>
+            <td>
+                <p><i class="bi {% if object.active_today %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i>
+                {% if object.active_today %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</p>
+            </td>
+        </tr>
+        <tr>
+            <th class="table-active">{{ object|verbose:"start_date" }}</th>
+            <td>{% if object.start_date %}
+                {{ object.start_date|date:"SHORT_DATE_FORMAT" }}
+            {% else %}
+                <span class="none">{% trans "None" %}</span>
+            {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th class="table-active">{{ object|verbose:"end_date" }}</th>
+            <td>{% if object.end_date %}
+                {{ object.end_date|date:"SHORT_DATE_FORMAT" }}
+            {% else %}
+                <span class="none">{% trans "None" %}</span>
+            {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th class="table-active">{{ object|verbose:"active_days" }}</th>
+            <td>
+                {% if object.active_days|length == 0 %}
+                    <span class="none">{% trans "All week" %}</span>
+                {% else %}
+                    {% for day in object.active_days_labels %}
+                        <span class="badge badge-secondary">{{ day }}</span>
+                    {% endfor %}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th class="table-active">{{ object|verbose:"active_months" }}</th>
+            <td>
+                {% if object.active_months|length == 0 %}
+                    <span class="none">{% trans "All year" %}</span>
+                {% else %}
+                    {% for month in object.active_months_labels %}
+                        <span class="badge badge-secondary">{{ month }}</span>
+                    {% endfor %}
+                {% endif %}
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    {% include "common/fragments/publication_info.html" %}
+    {% include "common/fragments/provider_eid.html" %}
+    {% include "common/fragments/trackinfo.html" %}
+
+    {{ block.super }}
+{% endblock attributes %}

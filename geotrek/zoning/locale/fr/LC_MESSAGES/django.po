@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 10:08+0000\n"
+"POT-Creation-Date: 2026-08-25 08:35+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/fr/>\n"
@@ -24,8 +24,20 @@ msgstr "Publier (visible sur Geotrek-rando)"
 msgid "Unpublish (hidden on Geotrek-rando)"
 msgstr "Dépublier (caché sur Geotrek-rando)"
 
+msgid "Color"
+msgstr "Couleur"
+
 msgid "Zoning"
 msgstr "Zonage"
+
+msgid "Practicable"
+msgstr "Praticable"
+
+msgid "Under condition practicable"
+msgstr "Praticable sous conditions"
+
+msgid "Not practicable"
+msgstr "Non praticable"
 
 msgid "City"
 msgstr "Commune"
@@ -39,11 +51,53 @@ msgstr "Type de zonage"
 msgid "Restricted area"
 msgstr "Zone réglementaire"
 
-msgid "Restricted areas"
-msgstr "Zones réglementaires"
+msgid "Vigilance area type"
+msgstr "Type de zone de vigilance"
+
+msgid "Vigilance area Practicability"
+msgstr "Praticabilité de la zone de vigilance"
+
+msgid "Vigilance area"
+msgstr "Zone de vigilance"
 
 msgid "Name"
 msgstr "Nom"
+
+msgid "Provider"
+msgstr "Fournisseur"
+
+msgid "Vigilance level"
+msgstr "Niveau de vigilance"
+
+msgid "After"
+msgstr "Après"
+
+msgid "Before"
+msgstr "Avant"
+
+msgid "Period active"
+msgstr "En cours"
+
+msgid "Active today"
+msgstr "Actif aujourd'hui"
+
+msgid "Active days"
+msgstr "Jours actifs"
+
+msgid "Days of the week when the vigilance area is active. Empty equals all week."
+msgstr "Jours de la semaine pendant lesquels la zone de vigilance est active. Vide signifie toute la semaine."
+
+msgid "Active months"
+msgstr "Mois actifs"
+
+msgid "Months of the year when the vigilance area is active. Empty equals all year."
+msgstr "Mois de l'année pendant lesquels la zone de vigilance est active. Vide signifie toute l'année."
+
+msgid "Period"
+msgstr "Période"
+
+msgid "Restricted areas"
+msgstr "Zones réglementaires"
 
 msgid "Published"
 msgstr "Publié"
@@ -60,6 +114,64 @@ msgstr "Communes"
 msgid "Districts"
 msgstr "Secteurs"
 
+msgid "Vigilance area types"
+msgstr "Types de zone de vigilance"
+
+msgid "Vigilance levels"
+msgstr "Niveaux de vigilance"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Start date"
+msgstr "Date de début"
+
+msgid "End date"
+msgstr "Date de fin"
+
+msgid "Practicability"
+msgstr "Praticabilité"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Practical information"
+msgstr "Informations pratiques"
+
+msgid "External information URL"
+msgstr "URL d'information externe"
+
+msgid "Portals"
+msgstr "Portails"
+
+msgid "Sources"
+msgstr "Sources"
+
+msgid "Commentary"
+msgstr "Commentaire"
+
+msgid "Start date is after end date"
+msgstr "La date de début est après la date de fin"
+
+#, python-format
+msgid "From %s to %s"
+msgstr "Du %s au %s"
+
+#, python-format
+msgid "From %s"
+msgstr "À partir du %s"
+
+#, python-format
+msgid " - days %s"
+msgstr " - jours %s "
+
+#, python-format
+msgid " - months %s"
+msgstr " - mois %s"
+
+msgid "Vigilance areas"
+msgstr "Zones de vigilance"
+
 #, python-brace-format
 msgid "Invalid geometry for field '{src}'"
 msgstr "La géométrie du champ '{src}' est invalide"
@@ -67,3 +179,21 @@ msgstr "La géométrie du champ '{src}' est invalide"
 #, python-brace-format
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
 msgstr "Le type de géométrie du champ '{src}' est invalide. Il devrait être (Multi)Polygon, pas {geom_type}"
+
+msgid "None"
+msgstr "Aucun(e)"
+
+msgid "Thumbnail"
+msgstr "Miniature"
+
+msgid "Active"
+msgstr "Actif"
+
+msgid "Inactive"
+msgstr "Inactif"
+
+msgid "All week"
+msgstr "Toute la semaine"
+
+msgid "All year"
+msgstr "Toute l'année"

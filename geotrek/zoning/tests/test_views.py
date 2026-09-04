@@ -1,18 +1,30 @@
 import json
 
+from django.contrib.auth.models import Group, Permission
+from django.test import TestCase
 from django.urls import reverse
+from mapentity.tests import MapEntityTest, SuperUserFactory
 from mapentity.tests.factories import UserFactory
 from rest_framework.test import APITestCase
 
+from geotrek.authent.tests.base import AuthentFixturesTest
+from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory
+from geotrek.zoning.choices import Practicability
+from geotrek.zoning.models import VigilanceArea
+from geotrek.zoning.serializers import VigilanceAreaSerializer
 from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
     RestrictedAreaFactory,
     RestrictedAreaTypeFactory,
+    VigilanceAreaFactory,
+    VigilanceAreaTypeFactory,
+    VigilanceLevelFactory,
 )
+from geotrek.zoning.views import VigilanceAreaViewSet
 
 
-class AutocompleteTestMixin:
+class AutoCompleteBBoxTestMixin:
     factory_class = None
 
     def test_autocomplete_bbox_is_limit_by_10(self):
@@ -104,6 +116,10 @@ class AutocompleteTestMixin:
         self.assertEqual(response.status_code, 200, response.json())
         self.assertEqual(len(response.json()["results"]), 10)
         self.assertTrue(response.json()["pagination"]["more"])
+
+
+class AutocompleteTestMixin:
+    factory_class = None
 
     def test_autocomplete_custom_page_size(self):
         self.factory_class.create_batch(20, name="Test")
@@ -220,17 +236,23 @@ class LandLayersViewsTest:
         self.assertEqual(response.status_code, 200, response.json())
 
 
-class CityViewSetTestCase(AutocompleteTestMixin, LandLayersViewsTest, APITestCase):
+class CityViewSetTestCase(
+    AutoCompleteBBoxTestMixin, AutocompleteTestMixin, LandLayersViewsTest, APITestCase
+):
     layer = "city"
     factory_class = CityFactory
 
 
-class DistrictViewSetTestCase(AutocompleteTestMixin, LandLayersViewsTest, APITestCase):
+class DistrictViewSetTestCase(
+    AutoCompleteBBoxTestMixin, AutocompleteTestMixin, LandLayersViewsTest, APITestCase
+):
     layer = "district"
     factory_class = DistrictFactory
 
 
-class RestrictedAreaViewTest(AutocompleteTestMixin, LandLayersViewsTest, APITestCase):
+class RestrictedAreaViewTest(
+    AutoCompleteBBoxTestMixin, AutocompleteTestMixin, LandLayersViewsTest, APITestCase
+):
     layer = "restrictedarea"
     factory_class = RestrictedAreaFactory
 
@@ -266,3 +288,154 @@ class RestrictedAreaViewTest(AutocompleteTestMixin, LandLayersViewsTest, APITest
             {area["id"] for area in response.json()["results"]},
             {area.pk for area in type_1_areas},
         )
+
+
+class VigilanceAreaTestCase(MapEntityTest):
+    model = VigilanceArea
+    modelfactory = VigilanceAreaFactory
+    userfactory = SuperUserFactory
+    maxDiff = None
+
+    def get_good_data(self):
+        area_type = VigilanceAreaTypeFactory()
+        vigilance_level = VigilanceLevelFactory()
+        structure = StructureFactory.create()
+        return {
+            "id": 1,
+            "name_en": "my area",
+            "practicability": Practicability.PRACTICABLE.value,
+            "vigilance_level": vigilance_level.pk,
+            "vigilance_area_type": area_type.pk,
+            "structure": structure.pk,
+            "start_date": "2026-07-06",
+            "geom": "MULTIPOLYGON(((-0.3142392 -1.0870745, -0.4442674 1.9698002, 2.6553568 2.0446445, 2.6683833 -1.0177449, -0.3142392 -1.0870745)))",
+            "commentary": "commentary",
+        }
+
+    extra_column_list = ["eid"]
+    expected_column_list_extra = ["id", "physical_type", "eid"]
+    expected_column_formatlist_extra = ["id", "physical_type", "eid"]
+    expected_json_geom = {
+        "coordinates": [
+            [
+                [
+                    [-0.3142392, -1.0870745],
+                    [-0.4442674, 1.9698002],
+                    [2.6553568, 2.0446445],
+                    [2.6683833, -1.0177449],
+                    [-0.3142392, -1.0870745],
+                ]
+            ]
+        ],
+        "type": "MultiPolygon",
+    }
+
+    def get_expected_geojson_geom(self):
+        return self.expected_json_geom
+
+    def get_expected_geojson_attrs(self):
+        return {"id": self.obj.pk, "name": self.obj.name, "published": False}
+
+    def get_expected_datatables_attrs(self):
+        return {
+            "id": self.obj.pk,
+            "name": f'<a data-pk="{self.obj.pk}" href="/vigilancearea/{self.obj.pk}/" title="{self.obj.name}">{self.obj.name}</a>',
+            "period_active": '<i class="bi bi-check-circle text-success"></i>',
+            "practicability": Practicability.PRACTICABLE.label,
+            "vigilance_area_type": self.obj.vigilance_area_type.name,
+        }
+
+    def get_expected_popup_content(self):
+        return (
+            f'<div class="d-flex flex-column justify-content-center">\n'
+            f'    <p class="text-center m-0 p-1"><strong>{str(self.obj)}</strong></p>\n    \n'
+            f'    <a id="detail-btn" href="/vigilancearea/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
+            f"</div>"
+        )
+
+
+class VigilanceAreaAutocompleteTest(AutocompleteTestMixin, APITestCase):
+    layer = "vigilancearea-drf"
+    factory_class = VigilanceAreaFactory
+
+    def test_autocomplete_forward(self):
+        area_type_1 = VigilanceAreaTypeFactory()
+        area_type_1_areas = VigilanceAreaFactory.create_batch(
+            2, vigilance_area_type=area_type_1
+        )
+        area_type_2 = VigilanceAreaTypeFactory()
+        VigilanceAreaFactory.create_batch(2, vigilance_area_type=area_type_2)
+        url = reverse(f"zoning:{self.layer}-autocomplete")
+        response = self.client.get(
+            url, data={"forward": json.dumps({"vigilance_area_type": [area_type_1.pk]})}
+        )
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 2)
+        self.assertEqual(
+            {area["id"] for area in response.json()["results"]},
+            {area.pk for area in area_type_1_areas},
+        )
+
+    def test_get_queryset_autocomplete_bbox(self):
+        view = VigilanceAreaViewSet()
+        qs = view.get_queryset_autocomplete_bbox()
+        self.assertIsNotNone(qs)
+
+
+class VigilanceAreaDetailViewTest(AuthentFixturesTest):
+    @classmethod
+    def setUpTestData(cls):
+        super().setUpTestData()
+        profile = UserProfileFactory.create(
+            user__username="testuser", user__password="password"
+        )
+        cls.user = profile.user
+        cls.user.groups.add(Group.objects.get(name="Référents communication"))
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="read_vigilancearea")
+        )
+        cls.area_same_struct = VigilanceAreaFactory(
+            structure=cls.user.profile.structure
+        )
+        cls.other_struct = StructureFactory()
+        cls.area_other_struct = VigilanceAreaFactory(structure=cls.other_struct)
+
+    def setUp(self):
+        super().setUp()
+        self.client.force_login(self.user)
+
+    def test_can_edit_context_flag(self):
+        url_same = reverse(
+            "zoning:vigilancearea_detail", kwargs={"pk": self.area_same_struct.pk}
+        )
+        response_same = self.client.get(url_same)
+        self.assertEqual(response_same.status_code, 200)
+        self.assertTrue(response_same.context["can_edit"])
+
+        url_other = reverse(
+            "zoning:vigilancearea_detail", kwargs={"pk": self.area_other_struct.pk}
+        )
+        response_other = self.client.get(url_other)
+        self.assertEqual(response_other.status_code, 200)
+        self.assertFalse(response_other.context["can_edit"])
+
+
+class VigilanceAreaSerializerTest(TestCase):
+    def test_serializer_output(self):
+        area = VigilanceAreaFactory(practicability=Practicability.PRACTICABLE)
+        qs = VigilanceArea.objects.all()
+        serializer = VigilanceAreaSerializer(qs.get(pk=area.pk))
+        data = serializer.data
+        self.assertIn(area.name, data["name"])
+        self.assertEqual(data["practicability"], Practicability.PRACTICABLE.label)
+        self.assertIn("period_active", data)
+
+
+class ZoningTagsTest(TestCase):
+    def test_restricted_area_types_with_areas(self):
+        from geotrek.zoning.templatetags.zoning_tags import restricted_area_types
+
+        area = RestrictedAreaFactory()
+        result = json.loads(restricted_area_types())
+        self.assertEqual(len(result), 1)
+        self.assertEqual(result[0]["name"], area.area_type.name)

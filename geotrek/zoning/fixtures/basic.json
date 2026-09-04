@@ -90,5 +90,110 @@
         "fields": {
             "name": "R\u00e9serve int\u00e9grale"
         }
+    },
+    {
+        "pk": 1,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Pastoralism",
+            "name_fr": "Pastoralisme",
+            "name_en": "Pastoralism"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Sensitive natural area",
+            "name_fr": "Zone naturelle sensible",
+            "name_en": "Sensitive natural area"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Construction",
+            "name_fr": "Travaux",
+            "name_en": "Construction"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Natural risk",
+            "name_fr": "Risque naturel",
+            "name_en": "Natural risk"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Rugged terrain",
+            "name_fr": "Terrain accidenté",
+            "name_en": "Rugged terrain"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Incident",
+            "name_fr": "Incident",
+            "name_en": "Incident"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Event",
+            "name_fr": "Événement",
+            "name_en": "Event"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "name": "Hunting",
+            "name_fr": "Chasse",
+            "name_en": "Hunting"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "zoning.vigilancelevel",
+        "fields": {
+            "name": "Danger",
+            "name_fr": "Danger",
+            "name_en": "Danger",
+            "color": "#901A1A",
+            "level": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "zoning.vigilancelevel",
+        "fields": {
+            "name": "Warning",
+            "name_fr": "Mise en garde",
+            "name_en": "Warning",
+            "color": "#955a02",
+            "level": 2
+        }
+    },
+    {
+        "pk": 3,
+        "model": "zoning.vigilancelevel",
+        "fields": {
+            "name": "Advise",
+            "name_fr": "Conseil",
+            "name_en": "Advise",
+            "color": "#1257A8",
+            "level": 3
+        }
     }
 ]

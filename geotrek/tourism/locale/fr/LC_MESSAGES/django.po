@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"POT-Creation-Date: 2026-07-28 17:56+0200\n"
 "PO-Revision-Date: 2025-10-10 09:15+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/tourism/fr/>\n"
@@ -432,9 +432,6 @@ msgstr "oui,non"
 
 msgid "None"
 msgstr "Aucun(e)"
-
-msgid "External id"
-msgstr "ID externe"
 
 msgid "Thumbnail"
 msgstr "Miniature"

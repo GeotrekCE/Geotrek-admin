@@ -14,4 +14,18 @@
         <th>{% trans "Restricted areas" %}</th>
         <td>{% valuelist object.areas %}</td>
     </tr>
+    <tr>
+        <th>{% trans "Vigilance areas" %}</th>
+        <td>
+            <ul class="list-group">
+                {% for vigilance_area in object.vigilance_areas %}
+                    <li title="{{ vigilance_area.get_practicability_display }} - {{ vigilance_area.period_resume }}" class="list-group-item" >
+                        <a href="{{ vigilance_area.get_absolute_url }}" target="_blank">
+                            <i class="bi bi-{% if not vigilance_area.period_active %}clock-history{% elif vigilance_area.practicability == 'practicable' %}check-circle{% elif vigilance_area.practicability == "under_condition_practicable" %}exclamation{% else %}x{% endif %} text-{% if not vigilance_area.period_active %}secondary{% elif vigilance_area.practicability == 'practicable' %}info{% elif vigilance_area.practicability == "possibly_practicable" %}warning{% else %}danger{% endif %}"></i>
+    &nbsp;{{ vigilance_area.name }} ({{ vigilance_area.vigilance_area_type }})</a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </td>
+    </tr>
 </table>

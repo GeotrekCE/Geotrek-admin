@@ -1,9 +1,13 @@
+from crispy_forms.layout import Div, Fieldset
 from dal import autocomplete
+from dal_select2.widgets import Select2Multiple
 from django import forms
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-from geotrek.zoning.models import City, District, RestrictedArea
+from geotrek.common.forms import CommonForm
+from geotrek.zoning.choices import MonthChoices, WeekdayChoices
+from geotrek.zoning.models import City, District, RestrictedArea, VigilanceArea
 
 
 class MapFilterForm(forms.Form):
@@ -44,3 +48,76 @@ class MapFilterForm(forms.Form):
                 ),
                 required=False,
             )
+
+
+class VigilanceAreaForm(CommonForm):
+    active_days = forms.TypedMultipleChoiceField(
+        choices=WeekdayChoices.choices,
+        coerce=int,
+        required=False,
+        widget=Select2Multiple(choices=WeekdayChoices.choices),
+        label=_("Active days"),
+        help_text=_(
+            "Days of the week when the vigilance area is active. Empty equals all week."
+        ),
+    )
+    active_months = forms.TypedMultipleChoiceField(
+        choices=MonthChoices.choices,
+        coerce=int,
+        required=False,
+        widget=Select2Multiple(choices=MonthChoices.choices),
+        label=_("Active months"),
+        help_text=_(
+            "Months of the year when the vigilance area is active. Empty equals all year."
+        ),
+    )
+
+    geomfields = ["geom"]
+    fieldslayout = [
+        Div(
+            "structure",
+            "name",
+            Fieldset(
+                _("Period"), "start_date", "end_date", "active_days", "active_months"
+            ),
+            "vigilance_area_type",
+            "vigilance_level",
+            "practicability",
+            "published",
+            "description",
+            "practical_info",
+            "external_info_url",
+            "sources",
+            "portals",
+            "commentary",
+            "eid",
+        )
+    ]
+
+    class Meta(CommonForm.Meta):
+        model = VigilanceArea
+        fields = [
+            *CommonForm.Meta.fields,
+            "name",
+            "structure",
+            "description",
+            "eid",
+            "vigilance_area_type",
+            "external_info_url",
+            "practicability",
+            "vigilance_level",
+            "practical_info",
+            "sources",
+            "portals",
+            "published",
+            "start_date",
+            "end_date",
+            "active_days",
+            "active_months",
+            "commentary",
+            "geom",
+        ]
+        widgets = {
+            "start_date": forms.TextInput(attrs={"type": "date"}),
+            "end_date": forms.TextInput(attrs={"type": "date"}),
+        }
