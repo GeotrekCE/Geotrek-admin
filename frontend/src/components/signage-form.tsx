@@ -1,3 +1,4 @@
+import * as React from "react"
 import { toast } from "sonner"
 import { signageDataSchema, type SignageDataSchemaProps } from "@/schemas/data"
 
@@ -11,8 +12,9 @@ import { Button } from "@/components/ui/button"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { usePermission } from "@/hook/useSettingsQuery"
-import { useLiveQuery } from "dexie-react-hooks"
 import { m } from "@/paraglide/messages"
+import { FormUploadGallery } from "@/components/form-upload-gallery"
+import { type AttachmentsSchemaProps } from "@/schemas/attachments"
 
 export default function SignageForm({
   defaultValues,
@@ -20,21 +22,13 @@ export default function SignageForm({
   pictogram,
   references,
 }: {
-  defaultValues: SignageDataSchemaProps
+  defaultValues: SignageDataSchemaProps & AttachmentsSchemaProps
   isEdit?: boolean
   pictogram?: { url?: string }
   references: [SignageReferencesSchemaProps, CommonReferencesSchemaProps]
 }) {
   const navigate = useNavigate()
-
-  const rawDataItem = useLiveQuery(() =>
-    db.rawData
-      .where({
-        reference: "signage",
-        id: isEdit ? defaultValues.id : undefined,
-      })
-      .first()
-  )
+  const [formIsDirty, setFormIsDirty] = React.useState(false)
 
   const [
     { signagetype, signagecondition, sealing },
@@ -52,15 +46,27 @@ export default function SignageForm({
     id: true,
     date_insert: true,
     date_update: true,
+    appSynced: true,
+    appNewItem: true,
   })
+  const handleChange = () => {
+    setFormIsDirty(true)
+  }
   const form = useAppForm({
     defaultValues: defaultValuesForForm,
     validators: {
       onBlur: validators,
       onSubmit: validators,
+      onChange: handleChange,
     },
-    onSubmit: async ({ value }) => {
-      if (isEdit && value.appNewItem !== true) {
+    onSubmit: async ({ value: { attachments: rawAttachments, ...value } }) => {
+      setFormIsDirty(false)
+      const hasRawData = await db.rawData.get({ id, reference: "signage" })
+      const attachments = rawAttachments?.filter(
+        (attachment) => attachment.value !== null
+      )
+
+      if (isEdit && value.appNewItem !== true && !hasRawData) {
         await db.rawData.add({
           ...defaultValues,
           reference: "signage",
@@ -70,6 +76,7 @@ export default function SignageForm({
         ? await db.signageData.put({
             ...value,
             id,
+            attachments,
             date_insert,
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -77,6 +84,7 @@ export default function SignageForm({
         : // @ts-expect-error "id" is auto-incremented in indexedDB
           await db.signageData.add({
             ...value,
+            attachments,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -186,29 +194,24 @@ export default function SignageForm({
             list={accessmean}
           />
 
+          <FormUploadGallery />
+
           <Button type="submit">
             {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
             {m["content.signage"]().toLowerCase()}
           </Button>
-          {rawDataItem && (
+
+          {formIsDirty && (
             <Button
-              type="button"
-              variant="destructive"
-              onClick={async () => {
-                await db.rawData
-                  .where({ reference: "signage", id: rawDataItem.id })
-                  .delete()
-                const { reference: _reference, ...restoredData } = rawDataItem
-                await db.signageData.put(restoredData as SignageDataSchemaProps)
-                toast.success(
-                  m["common.restore-success"]({ item: m["content.signage"]() }),
-                  {
-                    position: "top-center",
-                  }
-                )
+              onClick={(event) => {
+                event.preventDefault()
+                form.reset()
+                setFormIsDirty(false)
               }}
+              type="reset"
+              variant="destructive"
             >
-              {m["content.restore-pending"]()}
+              {m["form.reset"]()}
             </Button>
           )}
         </FieldGroup>

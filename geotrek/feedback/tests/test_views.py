@@ -6,6 +6,7 @@ from unittest import mock
 
 from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import Point
 from django.core import mail
 from django.core.cache import caches
@@ -26,6 +27,7 @@ from geotrek.zoning.models import City
 
 from ...authent.tests.factories import UserProfileFactory
 from ...common.tests import CommonTest
+from ...common.tests.mixins import AttachmentTestMixin
 from ..models import (
     Report,
     ReportActivity,
@@ -143,7 +145,7 @@ class ReportSerializationOptimizeTests(TestCase):
         self.filed_report = feedback_factories.ReportFactory(status=self.filed_status)
 
 
-class ReportViewsTest(CommonTest):
+class ReportViewsTest(AttachmentTestMixin, CommonTest):
     model = feedback_models.Report
     modelfactory = feedback_factories.ReportFactory
     userfactory = SuperUserFactory
@@ -361,6 +363,13 @@ class ReportViewsTest(CommonTest):
         response = self.client.post(self.model.get_add_url(), data)
         self.assertEqual(response.status_code, 302)
         self.assertRedirects(response, expected_url=reverse("feedback:report_list"))
+
+    def test_add_attachment(self):
+        target = ReportFactory.create()
+        content_type = ContentType.objects.get_for_model(target)
+        self.validate_attachment_creation(
+            "feedback:report-drf-add-attachment", target, content_type
+        )
 
 
 class SuricateViewPermissions(AuthentFixturesMixin, TestCase):

@@ -11,7 +11,11 @@ from django.utils.translation import gettext as _
 from mapentity import views as mapentity_views
 
 from geotrek.common.functions import ST_X, ST_Y
-from geotrek.common.mixins.views import CustomColumnsMixin, ReferencesMixin
+from geotrek.common.mixins.views import (
+    AttachmentsMixin,
+    CustomColumnsMixin,
+    ReferencesMixin,
+)
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 
 from . import models as feedback_models
@@ -143,7 +147,7 @@ class ReportUpdate(mapentity_views.MapEntityUpdate):
     form_class = ReportForm
 
 
-class ReportViewSet(GeotrekMapentityViewSet):
+class ReportViewSet(AttachmentsMixin, GeotrekMapentityViewSet):
     model = feedback_models.Report
     serializer_class = feedback_serializers.ReportSerializer
     geojson_serializer_class = feedback_serializers.ReportGeojsonSerializer

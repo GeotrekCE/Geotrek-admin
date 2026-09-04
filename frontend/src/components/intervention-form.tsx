@@ -1,3 +1,4 @@
+import * as React from "react"
 import { toast } from "sonner"
 import {
   interventionDataSchema,
@@ -16,8 +17,9 @@ import { useNavigate } from "@tanstack/react-router"
 import { FormCheckboxField } from "./forms"
 import { Trash } from "lucide-react"
 import { usePermission } from "@/hook/useSettingsQuery"
-import { useLiveQuery } from "dexie-react-hooks"
 import { m } from "@/paraglide/messages"
+import { FormUploadGallery } from "@/components/form-upload-gallery"
+import { type AttachmentsSchemaProps } from "@/schemas/attachments"
 
 export default function InterventionForm({
   defaultValues,
@@ -25,21 +27,14 @@ export default function InterventionForm({
   pictogram,
   references,
 }: {
-  defaultValues: InterventionDataSchemaProps
+  defaultValues: InterventionDataSchemaProps & AttachmentsSchemaProps
   isEdit?: boolean
   pictogram?: { url?: string }
   references: [InterventionReferencesSchemaProps, CommonReferencesSchemaProps]
 }) {
   const navigate = useNavigate()
 
-  const rawDataItem = useLiveQuery(() =>
-    db.rawData
-      .where({
-        reference: "intervention",
-        id: isEdit ? defaultValues.id : undefined,
-      })
-      .first()
-  )
+  const [formIsDirty, setFormIsDirty] = React.useState(false)
 
   const [
     {
@@ -63,15 +58,26 @@ export default function InterventionForm({
     id: true,
     date_insert: true,
     date_update: true,
+    appSynced: true,
+    appNewItem: true,
   })
+  const handleChange = () => {
+    setFormIsDirty(true)
+  }
   const form = useAppForm({
     defaultValues: defaultValuesForForm,
     validators: {
       onBlur: validators,
       onSubmit: validators,
+      onChange: handleChange,
     },
-    onSubmit: async ({ value }) => {
-      if (isEdit && value.appNewItem !== true) {
+    onSubmit: async ({ value: { attachments: rawAttachments, ...value } }) => {
+      setFormIsDirty(false)
+      const attachments = rawAttachments?.filter(
+        (attachment) => attachment.value !== null
+      )
+      const hasRawData = await db.rawData.get({ id, reference: "intervention" })
+      if (isEdit && value.appNewItem !== true && !hasRawData) {
         await db.rawData.put({
           ...defaultValues,
           reference: "intervention",
@@ -81,6 +87,7 @@ export default function InterventionForm({
         ? await db.interventionData.put({
             ...value,
             id,
+            attachments,
             date_insert,
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -88,6 +95,7 @@ export default function InterventionForm({
         : // @ts-expect-error "id" is auto-incremented in indexedDB
           await db.interventionData.add({
             ...value,
+            attachments,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -292,34 +300,24 @@ export default function InterventionForm({
             )}
           </form.Field>
 
+          <FormUploadGallery />
+
           <Button type="submit">
             {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
             {m["content.intervention"]().toLowerCase()}
           </Button>
 
-          {rawDataItem && (
+          {formIsDirty && (
             <Button
-              type="button"
-              variant="destructive"
-              onClick={async () => {
-                await db.rawData
-                  .where({ reference: "intervention", id: rawDataItem.id })
-                  .delete()
-                const { reference: _reference, ...restoredData } = rawDataItem
-                await db.interventionData.put(
-                  restoredData as InterventionDataSchemaProps
-                )
-                toast.success(
-                  m["common.restore-success"]({
-                    item: m["content.intervention"](),
-                  }),
-                  {
-                    position: "top-center",
-                  }
-                )
+              onClick={(event) => {
+                event.preventDefault()
+                form.reset()
+                setFormIsDirty(false)
               }}
+              type="reset"
+              variant="destructive"
             >
-              {m["content.restore-pending"]()}
+              {m["form.reset"]()}
             </Button>
           )}
         </FieldGroup>
