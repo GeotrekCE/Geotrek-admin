@@ -1,4 +1,3 @@
-import { Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useFormContext } from "@/components/ui/form-context"
 import { FormFileUploadField } from "@/components/forms/file-upload-field"
@@ -34,20 +33,17 @@ export function FormUploadGallery() {
                   </Button>
                 </li>
               ))}
+              <li className="col-span-full text-sm text-accent-foreground">
+                <FormFileUploadField
+                  name={`attachments[${field.state.value?.length || 0}].value`}
+                  label={`${m["form.attachments-photo-item"]()} ${field.state.value?.length ? field.state.value.length + 1 : 1}`}
+                  accept="image/*"
+                  onChangeCapture={() => {
+                    field.pushValue({ value: null })
+                  }}
+                />
+              </li>
             </ul>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => {
-                field.pushValue({ value: null })
-              }}
-              className="flex size-30 items-center justify-center rounded-lg bg-primary/15"
-            >
-              <Plus className="size-8 text-primary/90" aria-hidden />
-              <span className="sr-only">
-                {m["form.attachments-photo-add"]()}
-              </span>
-            </Button>
           </div>
         )}
       </form.AppField>

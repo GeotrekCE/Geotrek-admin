@@ -1,5 +1,5 @@
 import * as React from "react"
-import { PencilIcon } from "lucide-react"
+import { Plus } from "lucide-react"
 import { useSelector } from "@tanstack/react-form"
 import { Input } from "@/components/ui/input"
 import { FieldDescription, FieldLabel } from "@/components/ui/field"
@@ -61,7 +61,7 @@ export function FileUploadField({
                 />
               ) : (
                 <span className="flex size-30 items-center justify-center rounded-lg bg-primary/15">
-                  <PencilIcon className="size-6 text-primary/90" />
+                  <Plus className="size-8 text-primary/90" aria-hidden />
                 </span>
               )}
               <Input
