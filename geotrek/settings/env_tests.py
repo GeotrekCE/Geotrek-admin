@@ -16,7 +16,7 @@ INSTALLED_APPS += (
     'geotrek.diving',
     'geotrek.sensitivity',
     'geotrek.outdoor',
-    'drf_yasg',
+    'drf_spectacular',
 )
 
 LANGUAGE_CODE = 'en'
