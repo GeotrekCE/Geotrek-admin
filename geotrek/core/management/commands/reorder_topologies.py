@@ -151,6 +151,8 @@ class Command(BaseCommand):
         failed_topologies = []
         num_updated_topologies = 0
         for topology in qs:
+            if options["verbosity"] >= 2:
+                self.stdout.write(f"Processing topology: {topology.pk}")
             (reordered, succeeded) = reorder_aggregations_of_topology(topology)
             if reordered:
                 num_updated_topologies += 1
