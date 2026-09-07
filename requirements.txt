@@ -258,7 +258,7 @@ large-image==1.35.1
     # via
     #   django-large-image
     #   large-image-source-vips
-large-image-source-vips==1.35.0
+large-image-source-vips==1.35.4
     # via geotrek (setup.py)
 lxml==6.1.1
     # via
