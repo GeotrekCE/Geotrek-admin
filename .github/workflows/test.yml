@@ -118,7 +118,7 @@ jobs:
         options: >-
           --health-cmd pg_isready
       redis:
-        image: redis:5.0-alpine
+        image: redis:8-alpine
         ports:
           - 6379:6379
 
