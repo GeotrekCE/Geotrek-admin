@@ -43,6 +43,32 @@ type ResultPromise =
   | ReportDataSchemaProps
   | FetchError
 
+function getAttachmentErrors(result?: ResultPromise) {
+  if (
+    typeof result === "object" &&
+    !("message" in result) &&
+    "attachmentErrors" in result &&
+    Array.isArray(result.attachmentErrors)
+  ) {
+    return result.attachmentErrors as string[]
+  }
+
+  return []
+}
+
+function getFailedAttachments(result?: ResultPromise) {
+  if (
+    typeof result === "object" &&
+    !("message" in result) &&
+    "failedAttachments" in result &&
+    Array.isArray(result?.failedAttachments)
+  ) {
+    return result.failedAttachments as { value: File | null }[]
+  }
+
+  return []
+}
+
 function getStatusFromResult(result?: ResultPromise) {
   if (result === undefined) {
     return {
@@ -106,119 +132,120 @@ function RouteComponent() {
   const handleSubmit = React.useCallback(async () => {
     const [signageData, interventionData, infrastructureData, reportData] =
       asyncData ?? []
+    const tableByReference = {
+      signage: db.signageData,
+      intervention: db.interventionData,
+      infrastructure: db.infrastructureData,
+      report: db.reportData,
+    } as const
+    const refByReference = {
+      signage: "signage",
+      intervention: "intervention",
+      infrastructure: "infrastructure",
+      report: "report",
+    } as const
+
+    const handleResult = (
+      reference: keyof typeof tableByReference,
+      result: Record<string, unknown>[],
+      variables: Array<{ id?: number; appNewItem?: boolean }>
+    ) => {
+      result
+        .flatMap((entry) => Object.values(entry))
+        .forEach((value, index) => {
+          const status = getStatusFromResult(value as ResultPromise)
+          if (!status.isSuccess || !value || typeof value !== "object") {
+            return
+          }
+
+          const targetId = variables[index]?.id
+          if (targetId == null) {
+            return
+          }
+
+          const failedAttachments = getFailedAttachments(value as ResultPromise)
+          const nextValue =
+            failedAttachments.length > 0
+              ? {
+                  ...value,
+                  attachments: failedAttachments,
+                  appSynced: false,
+                }
+              : value
+
+          tableByReference[reference].where({ id: targetId }).delete()
+          if (!variables[index].appNewItem && failedAttachments.length === 0) {
+            db.rawData
+              .where({ reference: refByReference[reference], id: targetId })
+              .delete()
+          }
+
+          if (variables[index].appNewItem && failedAttachments.length > 0) {
+            db.rawData.put({
+              ...(value as
+                | SignageDataSchemaProps
+                | InterventionDataSchemaProps
+                | InfrastructureDataSchemaProps
+                | ReportDataSchemaProps),
+              reference: refByReference[reference],
+            })
+          }
+          tableByReference[reference].put(nextValue as never)
+
+          toast.success(m["common.sync-up-success"](), {
+            id: "upload-success",
+            position: "top-center",
+          })
+
+          getAttachmentErrors(value as ResultPromise).forEach((error) =>
+            toast.error(error, {
+              id: `upload-attachment-error-${targetId}`,
+              position: "top-center",
+            })
+          )
+        })
+    }
 
     if (signageData && signageData.length) {
       signageMutation.mutate(signageData, {
-        onSuccess(result, variables) {
-          result
-            .flatMap((item) => Object.values(item))
-            .map(getStatusFromResult)
-            .map(({ data, isSuccess }, index) => {
-              if (isSuccess) {
-                db.signageData.where({ id: variables[index].id }).delete()
-                if (!variables[index].appNewItem) {
-                  db.rawData
-                    .where({
-                      reference: "signage",
-                      id: variables[index].id,
-                    })
-                    .delete()
-                }
-                db.signageData.put(data[0] as SignageDataSchemaProps)
-                toast.success(m["common.sync-up-success"](), {
-                  id: "upload-success",
-                  position: "top-center",
-                })
-              }
-            })
-        },
+        onSuccess: (result, variables) =>
+          handleResult(
+            "signage",
+            result as Record<string, unknown>[],
+            variables
+          ),
       })
     }
     if (interventionData && interventionData.length) {
       interventionMutation.mutate(interventionData, {
-        onSuccess(result, variables) {
-          result
-            .flatMap((item) => Object.values(item))
-            .map(getStatusFromResult)
-            .map(({ data, isSuccess }, index) => {
-              if (isSuccess) {
-                db.interventionData.where({ id: variables[index].id }).delete()
-                if (!variables[index].appNewItem) {
-                  db.rawData
-                    .where({
-                      reference: "intervention",
-                      id: variables[index].id,
-                    })
-                    .delete()
-                }
-                db.interventionData.put(data[0] as InterventionDataSchemaProps)
-                toast.success(m["common.sync-up-success"](), {
-                  id: "upload-success",
-                  position: "top-center",
-                })
-              }
-            })
-        },
+        onSuccess: (result, variables) =>
+          handleResult(
+            "intervention",
+            result as Record<string, unknown>[],
+            variables
+          ),
       })
     }
 
     if (infrastructureData && infrastructureData.length) {
       infrastructureMutation.mutate(infrastructureData, {
-        onSuccess(result, variables) {
-          result
-            .flatMap((item) => Object.values(item))
-            .map(getStatusFromResult)
-            .map(({ data, isSuccess }, index) => {
-              if (isSuccess) {
-                db.infrastructureData
-                  .where({ id: variables[index].id })
-                  .delete()
-                if (!variables[index].appNewItem) {
-                  db.rawData
-                    .where({
-                      reference: "infrastructure",
-                      id: variables[index].id,
-                    })
-                    .delete()
-                }
-                db.infrastructureData.put(
-                  data[0] as InfrastructureDataSchemaProps
-                )
-                toast.success(m["common.sync-up-success"](), {
-                  id: "upload-success",
-                  position: "top-center",
-                })
-              }
-            })
-        },
+        onSuccess: (result, variables) =>
+          handleResult(
+            "infrastructure",
+            result as Record<string, unknown>[],
+            variables
+          ),
       })
     }
 
     if (reportData && reportData.length) {
       reportMutation.mutate(reportData, {
-        onSuccess(result, variables) {
-          result
-            .flatMap((item) => Object.values(item))
-            .map(getStatusFromResult)
-            .map(({ data, isSuccess }, index) => {
-              if (isSuccess) {
-                db.reportData.where({ id: variables[index].id }).delete()
-                if (!variables[index].appNewItem) {
-                  db.rawData
-                    .where({
-                      reference: "report",
-                      id: variables[index].id,
-                    })
-                    .delete()
-                }
-                db.reportData.put(data[0] as ReportDataSchemaProps)
-                toast.success(m["common.sync-up-success"](), {
-                  id: "upload-success",
-                  position: "top-center",
-                })
-              }
-            })
-        },
+        onSuccess: (result, variables) =>
+          handleResult(
+            "report",
+            result as Record<string, unknown>[],
+            variables
+          ),
       })
     }
   }, [
@@ -296,6 +323,11 @@ function RouteComponent() {
                 (mutationData) => !!mutationData?.[item.id]
               )?.[item.id]
             )
+
+            const hasAttachmentErrors = result.data?.some(
+              (item) => getAttachmentErrors(item as ResultPromise).length > 0
+            )
+
             return (
               <li key={`${item.reference}-${item.id}`} className="my-4">
                 <Item
@@ -309,10 +341,10 @@ function RouteComponent() {
                       }}
                       className={cn(
                         "bg-accent",
-                        result.isError &&
-                          "border-destructive bg-destructive/10 [a]:hover:bg-destructive/10!",
                         result.isSuccess &&
-                          "border-green-600 [a]:hover:bg-green-600/10!"
+                          "border-green-600 [a]:hover:bg-green-600/10!",
+                        (result.isError || hasAttachmentErrors) &&
+                          "border-destructive bg-destructive/10 [a]:hover:bg-destructive/10!"
                       )}
                     >
                       {mutationItem.isPending && (
@@ -335,7 +367,10 @@ function RouteComponent() {
                           {item.name}
                         </ItemTitle>
                         <ItemDescription className="line-clamp-none">
-                          {item.reference} -{" "}
+                          {m[
+                            `content.${item.reference as "signage" | "infrastructure" | "report" | "intervention"}`
+                          ]()}
+                          -{" "}
                           <time
                             dateTime={item.date_update}
                             className="text-xs text-muted-foreground"
@@ -360,7 +395,24 @@ function RouteComponent() {
                             </div>
                           </div>
                         )}
-                        {result.isSuccess && (
+                        {result.isSuccess && hasAttachmentErrors && (
+                          <div className="mt-3 text-accent-foreground">
+                            <span className="flex items-center gap-2 font-bold">
+                              <X className="size-4" aria-hidden />
+                              {m["common.sync-up-success-with-errors"]()}
+                            </span>
+                            <div className="ms-6">
+                              {result.data.map((item, index) => (
+                                <p key={index} className="my-1 text-sm">
+                                  {getAttachmentErrors(
+                                    item as ResultPromise
+                                  ).join(", ")}
+                                </p>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                        {result.isSuccess && !hasAttachmentErrors && (
                           <div className="mt-3 text-accent-foreground">
                             <span className="flex items-center gap-2 font-bold">
                               <Check className="size-4" aria-hidden />

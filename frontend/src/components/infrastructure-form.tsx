@@ -1,3 +1,4 @@
+import * as React from "react"
 import { toast } from "sonner"
 import {
   infrastructureDataSchema,
@@ -14,8 +15,9 @@ import { Button } from "@/components/ui/button"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { usePermission } from "@/hook/useSettingsQuery"
-import { useLiveQuery } from "dexie-react-hooks"
 import { m } from "@/paraglide/messages"
+import { FormUploadGallery } from "@/components/form-upload-gallery"
+import { type AttachmentsSchemaProps } from "@/schemas/attachments"
 
 export default function InfrastructureForm({
   defaultValues,
@@ -23,21 +25,14 @@ export default function InfrastructureForm({
   pictogram,
   references,
 }: {
-  defaultValues: InfrastructureDataSchemaProps
+  defaultValues: InfrastructureDataSchemaProps & AttachmentsSchemaProps
   isEdit?: boolean
   pictogram?: { url?: string }
   references: [InfrastructureReferencesSchemaProps, CommonReferencesSchemaProps]
 }) {
   const navigate = useNavigate()
 
-  const rawDataItem = useLiveQuery(() =>
-    db.rawData
-      .where({
-        reference: "infrastructure",
-        id: isEdit ? defaultValues.id : undefined,
-      })
-      .first()
-  )
+  const [formIsDirty, setFormIsDirty] = React.useState(false)
 
   const [
     {
@@ -60,15 +55,29 @@ export default function InfrastructureForm({
     id: true,
     date_insert: true,
     date_update: true,
+    appSynced: true,
+    appNewItem: true,
   })
+  const handleChange = () => {
+    setFormIsDirty(true)
+  }
   const form = useAppForm({
     defaultValues: defaultValuesForForm,
     validators: {
       onBlur: validators,
       onSubmit: validators,
+      onChange: handleChange,
     },
-    onSubmit: async ({ value }) => {
-      if (isEdit && value.appNewItem !== true) {
+    onSubmit: async ({ value: { attachments: rawAttachments, ...value } }) => {
+      setFormIsDirty(false)
+      const attachments = rawAttachments?.filter(
+        (attachment) => attachment.value !== null
+      )
+      const hasRawData = await db.rawData.get({
+        id,
+        reference: "infrastructure",
+      })
+      if (isEdit && value.appNewItem !== true && !hasRawData) {
         await db.rawData.put({
           ...defaultValues,
           reference: "infrastructure",
@@ -78,6 +87,7 @@ export default function InfrastructureForm({
         ? await db.infrastructureData.put({
             ...value,
             id,
+            attachments,
             date_insert,
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -85,6 +95,7 @@ export default function InfrastructureForm({
         : // @ts-expect-error "id" is auto-incremented in indexedDB
           await db.infrastructureData.add({
             ...value,
+            attachments,
             date_insert: new Date().toISOString(),
             date_update: new Date().toISOString(),
             appSynced: false,
@@ -193,33 +204,23 @@ export default function InfrastructureForm({
             description={m["form.maintenance-level-description"]()}
           />
 
+          <FormUploadGallery />
+
           <Button type="submit">
             {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
             {m["content.infrastructure"]().toLowerCase()}
           </Button>
-          {rawDataItem && (
+          {formIsDirty && (
             <Button
-              type="button"
-              variant="destructive"
-              onClick={async () => {
-                await db.rawData
-                  .where({ reference: "infrastructure", id: rawDataItem.id })
-                  .delete()
-                const { reference: _reference, ...restoredData } = rawDataItem
-                await db.infrastructureData.put(
-                  restoredData as InfrastructureDataSchemaProps
-                )
-                toast.success(
-                  m["common.restore-success"]({
-                    item: m["content.infrastructure"](),
-                  }),
-                  {
-                    position: "top-center",
-                  }
-                )
+              onClick={(event) => {
+                event.preventDefault()
+                form.reset()
+                setFormIsDirty(false)
               }}
+              type="reset"
+              variant="destructive"
             >
-              {m["content.restore-pending"]()}
+              {m["form.reset"]()}
             </Button>
           )}
         </FieldGroup>
