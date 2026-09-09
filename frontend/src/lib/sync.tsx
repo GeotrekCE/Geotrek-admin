@@ -174,18 +174,19 @@ async function syncAttachments(
 export async function syncEntityData<
   T extends BodyForMutation & AttachmentsSchemaProps & { id?: number },
 >(body: T, reference: SyncReference) {
-  const attachments = body.attachments
+  const { attachments, appSynced: _appSynced, ...nextBody } = body
   const req = await getRequestForSync(body, reference)
 
   if (req.method === "NONE") {
-    if (body.id == null || !attachments?.length) {
+    if (!body.id || !attachments?.length) {
       return
     }
 
     const result = await syncAttachments(reference, body.id, attachments)
+
     return {
       [body.id]: {
-        ...body,
+        ...nextBody,
         ...result,
       },
     }
