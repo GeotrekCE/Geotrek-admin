@@ -74,13 +74,10 @@ export default function Map({
             : undefined
         }
         padding={{ top: 10, right: 10, bottom: 10, left: 10 }}
-        {...props}
-        initialViewState={{
-          ...props.initialViewState,
-        }}
         scrollZoom={!noControls}
         touchPitch={!noControls}
         dragPan={!noControls}
+        {...props}
         onLoad={(event: MapLibreEvent) => {
           props.onLoad?.(event)
           document
