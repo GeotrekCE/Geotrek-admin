@@ -16,7 +16,7 @@ export default function DetailMap({
 }) {
   const appSync = useLiveQuery(() => db.appSync.get("data"))
 
-  const { bounds } = appSync || {}
+  const bounds = appSync?.bounds
 
   const [lng1, lat1, lng2, lat2] = bounds || []
 
@@ -25,12 +25,16 @@ export default function DetailMap({
       <Map
         className="pointer-none aspect-square touch-none"
         initialViewState={{
-          bounds: bounds
-            ? [
-                [lng1, lat1],
-                [lng2, lat2],
-              ]
-            : undefined,
+          bounds:
+            bounds && geom.type !== "Point"
+              ? [
+                  [lng1, lat1],
+                  [lng2, lat2],
+                ]
+              : undefined,
+          longitude: geom.type === "Point" ? geom.coordinates[0] : undefined,
+          latitude: geom.type === "Point" ? geom.coordinates[1] : undefined,
+          zoom: 12,
         }}
       >
         <MapBboxDataLayer />
