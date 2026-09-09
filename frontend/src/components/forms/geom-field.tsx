@@ -43,7 +43,9 @@ export function GeomField({
   >
   const [lng, lat] = (value.type === "Point" && value.coordinates) || []
   const appSync = useLiveQuery(() => db.appSync.get("data"))
-  const { bounds } = appSync || {}
+
+  const bounds = appSync?.bounds
+  const [lng1, lat1, lng2, lat2] = bounds || []
 
   const [isEditing, setEditing] = React.useState(false)
 
@@ -70,7 +72,19 @@ export function GeomField({
 
         <Map
           className="aspect-square"
-          initialViewState={{ bounds: bounds as LngLatBoundsLike }}
+          initialViewState={{
+            bounds:
+              bounds && value.type !== "Point"
+                ? [
+                    [lng1, lat1],
+                    [lng2, lat2],
+                  ]
+                : undefined,
+            longitude:
+              value.type === "Point" ? value.coordinates[0] : undefined,
+            latitude: value.type === "Point" ? value.coordinates[1] : undefined,
+            zoom: 12,
+          }}
           onClick={({ lngLat }) => {
             if (isEditing) {
               field.handleChange({
