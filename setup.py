@@ -63,6 +63,11 @@ setup(
         "gunicorn[gevent]",
         "sentry-sdk",
         "django-embed_video@git+https://github.com/jazzband/django-embed-video.git@master#egg=django-embed-video",  # wait for 1.4.11 release ...
+        "leuvenmapmatching",
+        "matplotlib",
+        "smopy",
+        "rtree"
+
     ],
     include_package_data=True,
     license="BSD, see LICENSE file.",
