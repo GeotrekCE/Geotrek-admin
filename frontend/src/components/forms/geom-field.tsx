@@ -1,8 +1,6 @@
 import * as React from "react"
-import { useLiveQuery } from "dexie-react-hooks"
 import { useSelector } from "@tanstack/react-form"
 import Map from "@/components/map"
-import type { LngLatBoundsLike } from "maplibre-gl"
 import { FieldDescription, FieldLabel } from "@/components/ui/field"
 import {
   useFieldContext,
@@ -13,15 +11,15 @@ import {
 } from "@/components/ui/form-context"
 import Required from "@/components/forms/required"
 import { Marker } from "react-map-gl/maplibre"
-import { cn } from "@/lib/utils"
 import { MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { db } from "@/lib/db"
 import { m } from "@/paraglide/messages"
 import { Alert, AlertTitle } from "@/components/ui/alert"
 import * as z from "zod"
 import type { geometrySchema } from "@/schemas/data"
 import MapBboxDataLayer from "@/components/map-bbox-data-layer"
+import useBounds from "@/hook/useBounds"
+import LayerGeom from "@/components/layer-geom"
 
 type GeomFieldProps = {
   label: string
@@ -42,10 +40,7 @@ export function GeomField({
     typeof geometrySchema
   >
   const [lng, lat] = (value.type === "Point" && value.coordinates) || []
-  const appSync = useLiveQuery(() => db.appSync.get("data"))
-
-  const bounds = appSync?.bounds
-  const [lng1, lat1, lng2, lat2] = bounds || []
+  const bounds = useBounds(value)
 
   const [isEditing, setEditing] = React.useState(false)
 
@@ -73,13 +68,7 @@ export function GeomField({
         <Map
           className="aspect-square"
           initialViewState={{
-            bounds:
-              bounds && value.type !== "Point"
-                ? [
-                    [lng1, lat1],
-                    [lng2, lat2],
-                  ]
-                : undefined,
+            bounds: bounds && value.type !== "Point" ? bounds : undefined,
             longitude:
               value.type === "Point" ? value.coordinates[0] : undefined,
             latitude: value.type === "Point" ? value.coordinates[1] : undefined,
@@ -96,28 +85,22 @@ export function GeomField({
           }}
         >
           <MapBboxDataLayer />
-          {isPoint && typeof lng === "number" && typeof lat === "number" && (
+          {isPoint && isEditing ? (
             <Marker longitude={lng} latitude={lat} anchor="bottom">
               <div className="grid items-center justify-center">
-                <MapPin
-                  className={cn(
-                    "col-start-1 row-start-1 fill-white stroke-1 [&>circle]:hidden",
-                    isEditing ? "size-12 fill-white/60" : "size-10"
-                  )}
-                />
+                <MapPin className="col-start-1 row-start-1 size-12 fill-white/60 stroke-1 [&>circle]:hidden" />
                 {icon?.url && (
                   <img
                     loading="lazy"
                     src={icon.url}
                     alt=""
-                    className={cn(
-                      "col-start-1 row-start-1 m-auto",
-                      isEditing ? "size-8" : "size-6"
-                    )}
+                    className="col-start-1 row-start-1 m-auto size-8"
                   />
                 )}
               </div>
             </Marker>
+          ) : (
+            <LayerGeom geom={value} pictogram={icon} />
           )}
         </Map>
         {isPoint && typeof lng === "number" && typeof lat === "number" && (
