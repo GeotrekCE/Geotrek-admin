@@ -44,13 +44,11 @@ export default function MapBboxDataLayer() {
       },
     ],
   }
-  // TODO: use theme color
-  // customProperties and oklch color are not supported in maplibre-gl
-  // "#677331" === var(--primary)
-  const color = "#677331"
+
+  const color = "#777"
 
   return (
-    <Source id="my-rectangle" type="geojson" data={rectangleGeoJSON}>
+    <Source type="geojson" data={rectangleGeoJSON}>
       <Layer
         id="rectangle-outline"
         type="line"

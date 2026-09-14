@@ -1,13 +1,11 @@
 import * as React from "react"
-import { useLiveQuery } from "dexie-react-hooks"
 import { useNavigate } from "@tanstack/react-router"
-import { MapPin } from "lucide-react"
-import { Marker } from "react-map-gl/maplibre"
+import type { MapLayerMouseEvent } from "react-map-gl/maplibre"
 import { useList } from "@/lib/list"
-import { cn } from "@/lib/utils"
-import { db } from "@/lib/db"
 import Map from "@/components/map"
 import MapBboxDataLayer from "./map-bbox-data-layer"
+import useBounds from "@/hook/useBounds"
+import LayerGeom from "./layer-geom"
 
 export default function ListMap() {
   const navigate = useNavigate()
@@ -18,11 +16,7 @@ export default function ListMap() {
     snapPoints,
   } = useList()
 
-  const appSync = useLiveQuery(() => db.appSync.get("data"))
-
-  const { bounds } = appSync || {}
-
-  const [lng1, lat1, lng2, lat2] = bounds || []
+  const bounds = useBounds()
 
   const position = React.useMemo(() => {
     if (filters.focusOn) {
@@ -34,6 +28,45 @@ export default function ListMap() {
     }
   }, [filters.focusOn, snapPoint, snapPoints])
 
+  const [cursor, setCursor] = React.useState<string>("auto")
+
+  const onClick = React.useCallback(
+    (event: MapLayerMouseEvent) => {
+      const feature = event.features && event.features[0]
+      const metadata = feature?.layer.metadata
+
+      if (
+        metadata &&
+        typeof metadata === "object" &&
+        "id" in metadata &&
+        "reference" in metadata &&
+        typeof metadata.id === "number" &&
+        typeof metadata.reference === "string"
+      ) {
+        const reference = metadata.reference as
+          | "infrastructure"
+          | "intervention"
+          | "signage"
+          | "report"
+
+        navigate({
+          to: ".",
+          search: {
+            ...filters,
+            focusOn: {
+              id: metadata.id,
+              reference,
+            },
+          },
+        })
+      }
+    },
+    [filters, navigate]
+  )
+
+  const onMouseEnter = React.useCallback(() => setCursor("pointer"), [])
+  const onMouseLeave = React.useCallback(() => setCursor("auto"), [])
+
   if (isPending) {
     return null
   }
@@ -41,18 +74,18 @@ export default function ListMap() {
   return (
     <Map
       initialViewState={{
-        bounds: bounds
-          ? [
-              [lng1, lat1],
-              [lng2, lat2],
-            ]
-          : undefined,
+        bounds: bounds || undefined,
       }}
       style={
         {
           "--ctrl-position": position,
         } as React.CSSProperties
       }
+      onMouseEnter={onMouseEnter}
+      onMouseLeave={onMouseLeave}
+      interactiveLayerIds={["lineString-layer"]}
+      onClick={onClick}
+      cursor={cursor}
       padding={{ top: 30, right: 10, bottom: 130, left: 10 }}
     >
       <MapBboxDataLayer />
@@ -60,21 +93,17 @@ export default function ListMap() {
         if (!item.geom) {
           return null
         }
-
-        const coordinates =
-          item.geom.type === "GeometryCollection"
-            ? item.geom.geometries[0].coordinates
-            : item.geom.coordinates
-
-        // We display the first point for LineString/MultiLineString
-        const [longitude, latitude] = coordinates.flat(Infinity) as number[]
-
         return (
-          <Marker
+          <LayerGeom
             key={`${item.reference}-${item.id}`}
-            longitude={longitude}
-            latitude={latitude}
-            anchor="bottom"
+            id={item.id}
+            reference={item.reference}
+            geom={item.geom}
+            pictogram={item.pictogram}
+            isActive={
+              filters.focusOn?.id === item.id &&
+              filters.focusOn?.reference === item.reference
+            }
             onClick={() => {
               navigate({
                 to: ".",
@@ -84,31 +113,7 @@ export default function ListMap() {
                 },
               })
             }}
-          >
-            <div className="grid items-center justify-center">
-              <MapPin
-                className={cn(
-                  "col-start-1 row-start-1 fill-white stroke-1 [&>circle]:hidden",
-                  filters.focusOn?.id === item.id &&
-                    filters.focusOn?.reference === item.reference
-                    ? "size-12"
-                    : "size-10"
-                )}
-              />
-              <img
-                loading="lazy"
-                src={item?.pictogram.url}
-                alt=""
-                className={cn(
-                  "col-start-1 row-start-1 m-auto",
-                  filters.focusOn?.id === item.id &&
-                    filters.focusOn?.reference === item.reference
-                    ? "size-8"
-                    : "size-6"
-                )}
-              />
-            </div>
-          </Marker>
+          />
         )
       })}
     </Map>
