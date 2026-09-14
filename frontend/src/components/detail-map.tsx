@@ -1,11 +1,9 @@
-import { Marker } from "react-map-gl/maplibre"
 import Map from "@/components/map"
 import { Alert, AlertTitle } from "@/components/ui/alert"
 import { m } from "@/paraglide/messages"
 import MapBboxDataLayer from "./map-bbox-data-layer"
-import { MapPin } from "lucide-react"
-import { useLiveQuery } from "dexie-react-hooks"
-import { db } from "@/lib/db"
+import LayerGeom from "@/components/layer-geom"
+import useBounds from "@/hook/useBounds"
 
 export default function DetailMap({
   geom,
@@ -14,49 +12,21 @@ export default function DetailMap({
   geom: GeoJSON.Geometry
   pictogram?: { url: string }
 }) {
-  const appSync = useLiveQuery(() => db.appSync.get("data"))
-
-  const bounds = appSync?.bounds
-
-  const [lng1, lat1, lng2, lat2] = bounds || []
+  const bounds = useBounds(geom)
 
   return (
     <>
       <Map
         className="pointer-none aspect-square touch-none"
         initialViewState={{
-          bounds:
-            bounds && geom.type !== "Point"
-              ? [
-                  [lng1, lat1],
-                  [lng2, lat2],
-                ]
-              : undefined,
+          bounds: bounds && geom.type !== "Point" ? bounds : undefined,
           longitude: geom.type === "Point" ? geom.coordinates[0] : undefined,
           latitude: geom.type === "Point" ? geom.coordinates[1] : undefined,
           zoom: 12,
         }}
       >
         <MapBboxDataLayer />
-        {geom.type === "Point" && (
-          <Marker
-            longitude={geom.coordinates[0]}
-            latitude={geom.coordinates[1]}
-            anchor="bottom"
-          >
-            <div className="grid items-center justify-center">
-              <MapPin className="col-start-1 row-start-1 size-10 fill-white stroke-1 [&>circle]:hidden" />
-              {pictogram && (
-                <img
-                  loading="lazy"
-                  src={pictogram.url}
-                  className="col-start-1 row-start-1 m-auto size-6"
-                  alt=""
-                />
-              )}
-            </div>
-          </Marker>
-        )}
+        <LayerGeom geom={geom} pictogram={pictogram} />
       </Map>
       {geom.type !== "Point" && (
         <Alert className="mt-4" variant="warning">
