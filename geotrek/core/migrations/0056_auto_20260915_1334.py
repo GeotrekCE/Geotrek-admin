@@ -9,9 +9,8 @@ def generate_pgr_network_topology(apps, schema_editor):
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('core', '0055_pre_generate_pgrouting_graph_topology'),
+        ("core", "0055_pre_generate_pgrouting_graph_topology"),
     ]
 
     operations = [

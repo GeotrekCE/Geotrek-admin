@@ -8,7 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix intervention duplication to also duplicate its target when linked to its own topology instead of another object (e.g. signage, etc) (refs #3845)
-* Fix invisible paths not flushed when regenerating the pgRouting graph topology with the ``--flush`` option
+* Fix invisible paths data not flushed when regenerating the pgRouting graph topology with the ``--flush`` option
 
 **Documentation**
 

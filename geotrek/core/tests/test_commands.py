@@ -1475,7 +1475,9 @@ class GeneratePgrNetworkTopologyTest(TestCase):
         obsolete_path_1_target = 4654
         cursor = connection.cursor()
         query = """UPDATE core_path SET source = %s, target = %s WHERE id = %s"""
-        cursor.execute(query, [obsolete_path_1_source, obsolete_path_1_target, path_1.pk])
+        cursor.execute(
+            query, [obsolete_path_1_source, obsolete_path_1_target, path_1.pk]
+        )
         path_1.refresh_from_db()
         path_2.refresh_from_db()
         self.assertEqual(path_1.source_pgr, obsolete_path_1_source)
@@ -1492,7 +1494,9 @@ class GeneratePgrNetworkTopologyTest(TestCase):
         self.assertIsNotNone(path_2.source_pgr)
         self.assertIsNotNone(path_2.target_pgr)
 
-    def test_regenerating_network_topology_with_flush_clears_draft_or_invisible_paths(self):
+    def test_regenerating_network_topology_with_flush_clears_draft_or_invisible_paths(
+        self,
+    ):
         """Checks that running the command with the flush option clears data for draft or invisible paths."""
         geom_1 = LineString(
             Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID
