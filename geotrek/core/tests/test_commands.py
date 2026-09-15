@@ -1469,16 +1469,21 @@ class GeneratePgrNetworkTopologyTest(TestCase):
         )
         path_1 = PathFactory.create(geom=geom_1)
         path_2 = PathFactory.create(geom=geom_2)
-        # Simulate obsolete data for path_1, that should be overwritten thanks to the flush option:
+
+        # Simulate obsolete data for path_1, which should be overwritten thanks to the flush option:
         obsolete_path_1_source = 4653
         obsolete_path_1_target = 4654
         cursor = connection.cursor()
-        query = """UPDATE core_path SET source = %s, target = %s"""
-        cursor.execute(query, [obsolete_path_1_source, obsolete_path_1_target])
+        query = """UPDATE core_path SET source = %s, target = %s WHERE id = %s"""
+        cursor.execute(query, [obsolete_path_1_source, obsolete_path_1_target, path_1.pk])
         path_1.refresh_from_db()
+        path_2.refresh_from_db()
         self.assertEqual(path_1.source_pgr, obsolete_path_1_source)
         self.assertEqual(path_1.target_pgr, obsolete_path_1_target)
-        # Finally, run the command and check the graph data
+        self.assertIsNone(path_2.source_pgr)
+        self.assertIsNone(path_2.target_pgr)
+
+        # Run the command and check the graph data
         call_command("generate_pgr_network_topology", "--flush")
         path_1.refresh_from_db()
         path_2.refresh_from_db()
@@ -1486,3 +1491,35 @@ class GeneratePgrNetworkTopologyTest(TestCase):
         self.assertNotEqual(path_1.target_pgr, obsolete_path_1_target)
         self.assertIsNotNone(path_2.source_pgr)
         self.assertIsNotNone(path_2.target_pgr)
+
+    def test_regenerating_network_topology_with_flush_clears_draft_or_invisible_paths(self):
+        """Checks that running the command with the flush option clears data for draft or invisible paths."""
+        geom_1 = LineString(
+            Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID
+        )
+        geom_2 = LineString(
+            Point(700000, 6600100), Point(700100, 6600000), srid=settings.SRID
+        )
+        path_1 = PathFactory.create(geom=geom_1, draft=True)
+        path_2 = PathFactory.create(geom=geom_2, visible=False)
+
+        # Simulate obsolete data for both paths. This data should be cleared thanks to the flush option:
+        cursor = connection.cursor()
+        query = """UPDATE core_path SET source = %s, target = %s WHERE id = %s"""
+        cursor.execute(query, [1, 2, path_1.pk])
+        cursor.execute(query, [3, 4, path_2.pk])
+        path_1.refresh_from_db()
+        path_2.refresh_from_db()
+        self.assertEqual(path_1.source_pgr, 1)
+        self.assertEqual(path_1.target_pgr, 2)
+        self.assertEqual(path_2.source_pgr, 3)
+        self.assertEqual(path_2.target_pgr, 4)
+
+        # Run the command and check the graph data
+        call_command("generate_pgr_network_topology", "--flush")
+        path_1.refresh_from_db()
+        path_2.refresh_from_db()
+        self.assertIsNone(path_1.source_pgr)
+        self.assertIsNone(path_1.target_pgr)
+        self.assertIsNone(path_2.source_pgr)
+        self.assertIsNone(path_2.target_pgr)
