@@ -45,6 +45,8 @@ function RouteComponent() {
     [params.type]
   )
 
+  const typeReferences = references?.[0]
+
   const settings = useLiveQuery(() => db.settings.get("settings"))
 
   if (
@@ -56,9 +58,10 @@ function RouteComponent() {
   }
 
   if (
-    references === undefined ||
-    references[0] === undefined ||
-    references[1] === undefined ||
+    typeReferences === undefined ||
+    !("pictogram" in typeReferences) ||
+    typeReferences.pictogram === undefined ||
+    references?.[1] === undefined ||
     settings === undefined
   ) {
     // todo loading
@@ -69,6 +72,8 @@ function RouteComponent() {
     id: settings.user.attachedStructure.id,
     name: settings.user.attachedStructure.label,
   }
+
+  const pictogram = typeReferences.pictogram
 
   return (
     <div>
@@ -98,9 +103,7 @@ function RouteComponent() {
               date_update: "",
               attachments: [],
             }}
-            pictogram={
-              "pictogram" in references[0] ? references[0].pictogram : undefined
-            }
+            pictogram={pictogram}
             references={
               references as unknown as [
                 SignageReferencesSchemaProps,
@@ -131,9 +134,7 @@ function RouteComponent() {
               date_update: "",
               attachments: [],
             }}
-            pictogram={
-              "pictogram" in references[0] ? references[0].pictogram : undefined
-            }
+            pictogram={pictogram}
             references={
               references as unknown as [
                 InfrastructureReferencesSchemaProps,
@@ -177,9 +178,7 @@ function RouteComponent() {
               man_day: [],
               attachments: [],
             }}
-            pictogram={
-              "pictogram" in references[0] ? references[0].pictogram : undefined
-            }
+            pictogram={pictogram}
             references={
               references as unknown as [
                 InterventionReferencesSchemaProps,
@@ -207,9 +206,7 @@ function RouteComponent() {
               status: null,
               attachments: [],
             }}
-            pictogram={
-              "pictogram" in references[0] ? references[0].pictogram : undefined
-            }
+            pictogram={pictogram}
             references={references as unknown as [ReportReferencesSchemaProps]}
           />
         )}

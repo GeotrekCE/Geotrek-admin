@@ -27,7 +27,7 @@ export default function InfrastructureForm({
 }: {
   defaultValues: InfrastructureDataSchemaProps & AttachmentsSchemaProps
   isEdit?: boolean
-  pictogram?: { url?: string }
+  pictogram: { url?: string }
   references: [InfrastructureReferencesSchemaProps, CommonReferencesSchemaProps]
 }) {
   const navigate = useNavigate()
@@ -160,7 +160,8 @@ export default function InfrastructureForm({
           <FormGeomField
             name="geom"
             label={m["form.location"]()}
-            icon={pictogram}
+            reference="infrastructure"
+            pictogram={pictogram}
             required
           />
 

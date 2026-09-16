@@ -10,8 +10,6 @@ import {
   createFormField,
 } from "@/components/ui/form-context"
 import Required from "@/components/forms/required"
-import { Marker } from "react-map-gl/maplibre"
-import { MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { m } from "@/paraglide/messages"
 import { Alert, AlertTitle } from "@/components/ui/alert"
@@ -19,32 +17,39 @@ import * as z from "zod"
 import type { geometrySchema } from "@/schemas/data"
 import MapBboxDataLayer from "@/components/map-bbox-data-layer"
 import useBounds from "@/hook/useBounds"
-import LayerGeom from "@/components/layer-geom"
+import MapElementsLayer from "../map-elements-layer"
 
 type GeomFieldProps = {
   label: string
   description?: string
   required?: boolean
-  icon?: { url?: string }
+  reference: "signage" | "report" | "intervention" | "infrastructure"
+  pictogram: { url?: string }
 }
 
 export function GeomField({
   label,
   description,
   required,
-  icon,
+  reference,
+  pictogram,
 }: GeomFieldProps) {
   const id = React.useId()
   const field = useFieldContext()
   const value = useSelector(field.store, (s) => s.value) as z.infer<
     typeof geometrySchema
   >
-  const [lng, lat] = (value.type === "Point" && value.coordinates) || []
-  const bounds = useBounds(value)
+  const isPoint = value.type === "Point"
+  const hasPoint = isPoint && value.coordinates.length > 0
+
+  const [lng, lat] = (isPoint && value.coordinates) || []
+
+  const bounds = useBounds(!isPoint ? value : undefined)
 
   const [isEditing, setEditing] = React.useState(false)
 
-  const isPoint = value.type === "Point"
+  const isEditingPoint = hasPoint && isEditing
+
   return (
     <FormFieldSet>
       <FormField>
@@ -68,10 +73,9 @@ export function GeomField({
         <Map
           className="aspect-square"
           initialViewState={{
-            bounds: bounds && value.type !== "Point" ? bounds : undefined,
-            longitude:
-              value.type === "Point" ? value.coordinates[0] : undefined,
-            latitude: value.type === "Point" ? value.coordinates[1] : undefined,
+            bounds: bounds && !hasPoint ? bounds : undefined,
+            longitude: hasPoint ? value.coordinates[0] : undefined,
+            latitude: hasPoint ? value.coordinates[1] : undefined,
             zoom: 12,
           }}
           onClick={({ lngLat }) => {
@@ -85,23 +89,19 @@ export function GeomField({
           }}
         >
           <MapBboxDataLayer />
-          {isPoint && isEditing ? (
-            <Marker longitude={lng} latitude={lat} anchor="bottom">
-              <div className="grid items-center justify-center">
-                <MapPin className="col-start-1 row-start-1 size-12 fill-white/60 stroke-1 [&>circle]:hidden" />
-                {icon?.url && (
-                  <img
-                    loading="lazy"
-                    src={icon.url}
-                    alt=""
-                    className="col-start-1 row-start-1 m-auto size-8"
-                  />
-                )}
-              </div>
-            </Marker>
-          ) : (
-            <LayerGeom geom={value} pictogram={icon} />
-          )}
+          <MapElementsLayer
+            active={{ reference, id: 1 }}
+            elements={[
+              {
+                reference,
+                geom: value as Parameters<
+                  typeof MapElementsLayer
+                >[0]["elements"][number]["geom"],
+                pictogram,
+                id: isEditingPoint ? 1 : undefined,
+              },
+            ]}
+          />
         </Map>
         {isPoint && typeof lng === "number" && typeof lat === "number" && (
           <FieldDescription className="text-end text-xs">

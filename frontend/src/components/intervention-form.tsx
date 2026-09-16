@@ -29,7 +29,7 @@ export default function InterventionForm({
 }: {
   defaultValues: InterventionDataSchemaProps & AttachmentsSchemaProps
   isEdit?: boolean
-  pictogram?: { url?: string }
+  pictogram: { url?: string }
   references: [InterventionReferencesSchemaProps, CommonReferencesSchemaProps]
 }) {
   const navigate = useNavigate()
@@ -200,7 +200,8 @@ export default function InterventionForm({
           <FormGeomField
             name="geom"
             label={m["form.location"]()}
-            icon={pictogram}
+            reference="intervention"
+            pictogram={pictogram}
             required
             description={m["form.geom-description"]()}
           />

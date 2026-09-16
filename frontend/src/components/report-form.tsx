@@ -20,7 +20,7 @@ export default function ReportForm({
 }: {
   defaultValues: ReportDataSchemaProps & AttachmentsSchemaProps
   isEdit?: boolean
-  pictogram?: { url?: string }
+  pictogram: { url?: string }
   references: [ReportReferencesSchemaProps]
 }) {
   const navigate = useNavigate()
@@ -122,7 +122,8 @@ export default function ReportForm({
           <FormGeomField
             name="geom"
             label={m["form.location"]()}
-            icon={pictogram}
+            reference="report"
+            pictogram={pictogram}
             required
           />
 
