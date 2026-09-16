@@ -52,6 +52,7 @@ function RouteComponent() {
     () => db.references.bulkGet([params.type, "common"]),
     [params.type]
   )
+  const typeReferences = references?.[0]
 
   if (!detail) {
     return (
@@ -75,6 +76,18 @@ function RouteComponent() {
   }
 
   if (
+    typeReferences === undefined ||
+    !("pictogram" in typeReferences) ||
+    typeReferences.pictogram === undefined ||
+    references?.[1] === undefined
+  ) {
+    // todo loading
+    return null
+  }
+
+  const pictogram = typeReferences.pictogram
+
+  if (
     references === undefined ||
     references[0] === undefined ||
     references[1] === undefined
@@ -90,9 +103,7 @@ function RouteComponent() {
         {params.type === "signage" && (
           <SignageForm
             defaultValues={detail as SignageDataSchemaProps}
-            pictogram={
-              "pictogram" in references[0] ? references[0].pictogram : undefined
-            }
+            pictogram={pictogram}
             references={
               references as unknown as [
                 SignageReferencesSchemaProps,
@@ -106,9 +117,7 @@ function RouteComponent() {
         {params.type === "infrastructure" && (
           <InfrastructureForm
             defaultValues={detail as InfrastructureDataSchemaProps}
-            pictogram={
-              "pictogram" in references[0] ? references[0].pictogram : undefined
-            }
+            pictogram={pictogram}
             references={
               references as unknown as [
                 InfrastructureReferencesSchemaProps,
@@ -122,9 +131,7 @@ function RouteComponent() {
         {params.type === "intervention" && (
           <InterventionForm
             defaultValues={detail as InterventionDataSchemaProps}
-            pictogram={
-              "pictogram" in references[0] ? references[0].pictogram : undefined
-            }
+            pictogram={pictogram}
             references={
               references as unknown as [
                 InterventionReferencesSchemaProps,
@@ -138,9 +145,7 @@ function RouteComponent() {
         {params.type === "report" && (
           <ReportForm
             defaultValues={detail as ReportDataSchemaProps}
-            pictogram={
-              "pictogram" in references[0] ? references[0].pictogram : undefined
-            }
+            pictogram={pictogram}
             references={references as unknown as [ReportReferencesSchemaProps]}
             isEdit
           />

@@ -9,11 +9,11 @@ export default function MapBboxDataLayer() {
 
   const { bounds } = appSync || {}
 
-  const [lng1, lat1, lng2, lat2] = bounds || []
-
   if (bounds === undefined) {
     return null
   }
+
+  const [lng1, lat1, lng2, lat2] = bounds
 
   const rectangleGeoJSON: FeatureCollection = {
     type: "FeatureCollection",

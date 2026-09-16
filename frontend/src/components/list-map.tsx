@@ -1,11 +1,12 @@
 import * as React from "react"
 import { useNavigate } from "@tanstack/react-router"
-import type { MapLayerMouseEvent } from "react-map-gl/maplibre"
+
+import { type MapLayerMouseEvent } from "react-map-gl/maplibre"
 import { useList } from "@/lib/list"
 import Map from "@/components/map"
 import MapBboxDataLayer from "./map-bbox-data-layer"
+import MapElementsLayer, { MAP_ELEMENTS_LAYER_IDS } from "./map-elements-layer"
 import useBounds from "@/hook/useBounds"
-import LayerGeom from "./layer-geom"
 
 export default function ListMap() {
   const navigate = useNavigate()
@@ -30,38 +31,40 @@ export default function ListMap() {
 
   const [cursor, setCursor] = React.useState<string>("auto")
 
+  const handleClick = React.useCallback(
+    (
+      id: number,
+      reference: "infrastructure" | "intervention" | "signage" | "report"
+    ) => {
+      navigate({
+        to: ".",
+        search: {
+          ...filters,
+          focusOn: {
+            id,
+            reference,
+          },
+        },
+      })
+    },
+    [filters, navigate]
+  )
+
   const onClick = React.useCallback(
     (event: MapLayerMouseEvent) => {
-      const feature = event.features && event.features[0]
-      const metadata = feature?.layer.metadata
+      const properties = event?.features?.[0].properties
 
-      if (
-        metadata &&
-        typeof metadata === "object" &&
-        "id" in metadata &&
-        "reference" in metadata &&
-        typeof metadata.id === "number" &&
-        typeof metadata.reference === "string"
-      ) {
-        const reference = metadata.reference as
+      if (properties && !properties.cluster) {
+        const reference = properties.reference as
           | "infrastructure"
           | "intervention"
           | "signage"
           | "report"
 
-        navigate({
-          to: ".",
-          search: {
-            ...filters,
-            focusOn: {
-              id: metadata.id,
-              reference,
-            },
-          },
-        })
+        handleClick(properties.id, reference)
       }
     },
-    [filters, navigate]
+    [handleClick]
   )
 
   const onMouseEnter = React.useCallback(() => setCursor("pointer"), [])
@@ -83,39 +86,13 @@ export default function ListMap() {
       }
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
-      interactiveLayerIds={["lineString-layer"]}
+      interactiveLayerIds={[...MAP_ELEMENTS_LAYER_IDS]}
       onClick={onClick}
       cursor={cursor}
       padding={{ top: 30, right: 10, bottom: 130, left: 10 }}
     >
       <MapBboxDataLayer />
-      {elements.map((item) => {
-        if (!item.geom) {
-          return null
-        }
-        return (
-          <LayerGeom
-            key={`${item.reference}-${item.id}`}
-            id={item.id}
-            reference={item.reference}
-            geom={item.geom}
-            pictogram={item.pictogram}
-            isActive={
-              filters.focusOn?.id === item.id &&
-              filters.focusOn?.reference === item.reference
-            }
-            onClick={() => {
-              navigate({
-                to: ".",
-                search: {
-                  ...filters,
-                  focusOn: { id: item.id, reference: item.reference },
-                },
-              })
-            }}
-          />
-        )
-      })}
+      <MapElementsLayer elements={elements} active={filters.focusOn} />
     </Map>
   )
 }

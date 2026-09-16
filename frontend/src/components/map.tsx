@@ -1,4 +1,9 @@
-import maplibregl, { type MapLibreEvent } from "maplibre-gl"
+import * as maplibregl from "maplibre-gl"
+import {
+  GeoJSONSource,
+  type MapLayerMouseEvent,
+  type MapLibreEvent,
+} from "maplibre-gl"
 import { useLiveQuery } from "dexie-react-hooks"
 import { Loader2 } from "lucide-react"
 import { OfflinePlugin } from "@makina-corpus/maplibre-offline-pmtiles"
@@ -78,16 +83,59 @@ export default function Map({
         touchPitch={!noControls}
         dragPan={!noControls}
         {...props}
-        onLoad={(event: MapLibreEvent) => {
-          props.onLoad?.(event)
+        onLoad={async (event: MapLibreEvent) => {
+          const map = event.target
           document
             .querySelector(".maplibregl-ctrl-attrib")
             ?.classList.remove("maplibregl-compact-show")
           if (currentLayerSettings.styleUrl.startsWith("offline-pmtiles://")) {
-            offlineManager.loadMap(event.target, currentLayerSettings.id)
+            await offlineManager.loadMap(map, currentLayerSettings.id)
+            const offlineLayer = map
+              .getStyle()
+              .layers.find((item) =>
+                [
+                  `${currentLayerSettings.id}-raster`,
+                  `${currentLayerSettings.id}-vector`,
+                ].includes(item.id)
+              )?.id
+            if (offlineLayer) {
+              map.moveLayer(offlineLayer, map.getStyle().layers[0].id)
+            }
           } else {
-            event.target.setStyle(currentLayerSettings.styleUrl)
+            map.setStyle(currentLayerSettings.styleUrl)
           }
+          props.onLoad?.(event)
+        }}
+        onClick={async (event: MapLayerMouseEvent) => {
+          props.onClick?.(event)
+          const feature = event.features?.[0]
+          if (!feature) {
+            return
+          }
+          const clusterId = feature.properties.cluster_id
+
+          if (!clusterId) {
+            return
+          }
+
+          const geojsonSource = event.target.getSource("points-source")
+          if (!(geojsonSource instanceof GeoJSONSource)) {
+            return
+          }
+
+          const zoom = await geojsonSource.getClusterExpansionZoom(clusterId)
+
+          if (feature.geometry.type !== "Point") {
+            return
+          }
+
+          const [longitude, latitude] = feature.geometry.coordinates
+
+          event.target.easeTo({
+            center: [longitude, latitude],
+            zoom,
+            duration: 500,
+          })
         }}
       >
         <LayerControl position="bottom-left" />
