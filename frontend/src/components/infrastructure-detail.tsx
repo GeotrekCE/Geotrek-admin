@@ -41,8 +41,6 @@ export default function InfrastructureDetail(params: {
   )
 
   const reference = useLiveQuery(() => db.references.get("infrastructure"))
-  const pictogram =
-    reference && "pictogram" in reference ? reference.pictogram : undefined
 
   const handleDelete = React.useCallback(() => {
     // @ts-expect-error not never
@@ -57,7 +55,12 @@ export default function InfrastructureDetail(params: {
 
   const { can_bypass_structure, is_superuser } = usePermission()
 
-  if (!loaded) {
+  if (
+    !loaded ||
+    !reference ||
+    !("pictogram" in reference) ||
+    !reference.pictogram
+  ) {
     return null
   }
 
@@ -157,7 +160,11 @@ export default function InfrastructureDetail(params: {
             {m["content.location"]()}
           </h3>
           {detail.geom && (
-            <DetailMap geom={detail.geom} pictogram={pictogram} />
+            <DetailMap
+              geom={detail.geom}
+              reference="infrastructure"
+              pictogram={reference.pictogram}
+            />
           )}
         </section>
 

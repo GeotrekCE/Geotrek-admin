@@ -2,15 +2,17 @@ import Map from "@/components/map"
 import { Alert, AlertTitle } from "@/components/ui/alert"
 import { m } from "@/paraglide/messages"
 import MapBboxDataLayer from "./map-bbox-data-layer"
-import LayerGeom from "@/components/layer-geom"
 import useBounds from "@/hook/useBounds"
+import MapElementsLayer from "./map-elements-layer"
 
 export default function DetailMap({
   geom,
+  reference,
   pictogram,
 }: {
+  reference: "signage" | "report" | "intervention" | "infrastructure"
   geom: GeoJSON.Geometry
-  pictogram?: { url: string }
+  pictogram: { url: string }
 }) {
   const bounds = useBounds(geom)
 
@@ -26,7 +28,17 @@ export default function DetailMap({
         }}
       >
         <MapBboxDataLayer />
-        <LayerGeom geom={geom} pictogram={pictogram} />
+        <MapElementsLayer
+          elements={[
+            {
+              geom: geom as Parameters<
+                typeof MapElementsLayer
+              >[0]["elements"][number]["geom"],
+              reference,
+              pictogram,
+            },
+          ]}
+        />
       </Map>
       {geom.type !== "Point" && (
         <Alert className="mt-4" variant="warning">
