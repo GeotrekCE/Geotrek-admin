@@ -33,8 +33,6 @@ export default function ReportDetail(params: { id: string; type: string }) {
   )
 
   const reference = useLiveQuery(() => db.references.get("report"))
-  const pictogram =
-    reference && "pictogram" in reference ? reference.pictogram : undefined
 
   const name = `Signalement (id: ${params.id})`
 
@@ -49,7 +47,12 @@ export default function ReportDetail(params: { id: string; type: string }) {
     })
   }, [name, navigate, params.id])
 
-  if (!loaded) {
+  if (
+    !loaded ||
+    !reference ||
+    !("pictogram" in reference) ||
+    !reference.pictogram
+  ) {
     return null
   }
 
@@ -125,7 +128,11 @@ export default function ReportDetail(params: { id: string; type: string }) {
               {m["content.location"]()}
             </h3>
             {detail.geom && (
-              <DetailMap geom={detail.geom} pictogram={pictogram} />
+              <DetailMap
+                geom={detail.geom}
+                reference="infrastructure"
+                pictogram={reference.pictogram}
+              />
             )}
           </section>
         )}

@@ -21,3 +21,39 @@ export function getBoundsFromPolygon(polygon: string) {
     number,
   ]
 }
+
+export function getFeatureCollection(
+  data: Array<{
+    id?: number
+    reference?: string
+    geom: GeoJSON.Geometry | null
+    pictogram?: { url?: string }
+  }>,
+  active?: { id: number; reference: string }
+) {
+  return {
+    type: "FeatureCollection",
+    features: data.flatMap((item) => {
+      if (!item.geom) {
+        return []
+      }
+
+      return [
+        {
+          type: "Feature",
+          id: `${item.reference}-${item.id || 1}`,
+          geometry: item.geom,
+          properties: {
+            id: item.id,
+            reference: item.reference || undefined,
+            active:
+              item.id === active?.id && item.reference === active?.reference,
+            pictogram: item.pictogram?.url
+              ? `pictogram-${item.reference}`
+              : undefined,
+          },
+        },
+      ]
+    }),
+  }
+}

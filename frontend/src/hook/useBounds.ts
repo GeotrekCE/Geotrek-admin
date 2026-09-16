@@ -1,6 +1,7 @@
 import { db } from "@/lib/db"
 import { useLiveQuery } from "dexie-react-hooks"
-import maplibregl, { type LngLatLike } from "maplibre-gl"
+import * as maplibregl from "maplibre-gl"
+import { type LngLatLike } from "maplibre-gl"
 
 export default function useBounds(geom?: GeoJSON.Geometry) {
   const appSync = useLiveQuery(() => db.appSync.get("data"))

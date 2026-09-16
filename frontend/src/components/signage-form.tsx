@@ -24,7 +24,7 @@ export default function SignageForm({
 }: {
   defaultValues: SignageDataSchemaProps & AttachmentsSchemaProps
   isEdit?: boolean
-  pictogram?: { url?: string }
+  pictogram: { url?: string }
   references: [SignageReferencesSchemaProps, CommonReferencesSchemaProps]
 }) {
   const navigate = useNavigate()
@@ -149,7 +149,8 @@ export default function SignageForm({
           <FormGeomField
             name="geom"
             label={m["form.location"]()}
-            icon={pictogram}
+            pictogram={pictogram}
+            reference="signage"
             required
           />
 

@@ -1,4 +1,5 @@
-import maplibregl, { type MapLibreEvent } from "maplibre-gl"
+import * as maplibregl from "maplibre-gl"
+import { type MapLibreEvent } from "maplibre-gl"
 import { useLiveQuery } from "dexie-react-hooks"
 import { Loader2 } from "lucide-react"
 import { OfflinePlugin } from "@makina-corpus/maplibre-offline-pmtiles"
@@ -78,16 +79,29 @@ export default function Map({
         touchPitch={!noControls}
         dragPan={!noControls}
         {...props}
-        onLoad={(event: MapLibreEvent) => {
-          props.onLoad?.(event)
+        onLoad={async (event: MapLibreEvent) => {
+          const map = event.target
           document
             .querySelector(".maplibregl-ctrl-attrib")
             ?.classList.remove("maplibregl-compact-show")
           if (currentLayerSettings.styleUrl.startsWith("offline-pmtiles://")) {
-            offlineManager.loadMap(event.target, currentLayerSettings.id)
+            await offlineManager.loadMap(map, currentLayerSettings.id)
+            const offlineLayer = map
+              .getStyle()
+              .layers.find((item) =>
+                [
+                  `${currentLayerSettings.id}-raster`,
+                  `${currentLayerSettings.id}-vector`,
+                ].includes(item.id)
+              )?.id
+            if (offlineLayer) {
+              map.moveLayer(offlineLayer, map.getStyle().layers[0].id)
+            }
           } else {
-            event.target.setStyle(currentLayerSettings.styleUrl)
+            map.setStyle(currentLayerSettings.styleUrl)
           }
+          props.onLoad?.(event)
+          console.log(map)
         }}
       >
         <LayerControl position="bottom-left" />

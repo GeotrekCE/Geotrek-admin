@@ -44,8 +44,6 @@ export default function SignageDetail(params: { id: string; type: string }) {
   )
 
   const reference = useLiveQuery(() => db.references.get("signage"))
-  const pictogram =
-    reference && "pictogram" in reference ? reference.pictogram : undefined
 
   const handleDelete = React.useCallback(() => {
     // @ts-expect-error not never
@@ -60,7 +58,12 @@ export default function SignageDetail(params: { id: string; type: string }) {
 
   const { can_bypass_structure, is_superuser } = usePermission()
 
-  if (!loaded) {
+  if (
+    !loaded ||
+    !reference ||
+    !("pictogram" in reference) ||
+    !reference.pictogram
+  ) {
     return null
   }
 
@@ -159,7 +162,11 @@ export default function SignageDetail(params: { id: string; type: string }) {
             {m["content.location"]()}
           </h3>
           {detail.geom && (
-            <DetailMap geom={detail.geom} pictogram={pictogram} />
+            <DetailMap
+              geom={detail.geom}
+              reference="signage"
+              pictogram={reference.pictogram}
+            />
           )}
         </section>
 

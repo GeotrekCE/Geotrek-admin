@@ -19,20 +19,22 @@ import * as z from "zod"
 import type { geometrySchema } from "@/schemas/data"
 import MapBboxDataLayer from "@/components/map-bbox-data-layer"
 import useBounds from "@/hook/useBounds"
-import LayerGeom from "@/components/layer-geom"
+import MapElementsLayer from "../map-elements-layer"
 
 type GeomFieldProps = {
   label: string
   description?: string
   required?: boolean
-  icon?: { url?: string }
+  reference: "signage" | "report" | "intervention" | "infrastructure"
+  pictogram: { url?: string }
 }
 
 export function GeomField({
   label,
   description,
   required,
-  icon,
+  reference,
+  pictogram,
 }: GeomFieldProps) {
   const id = React.useId()
   const field = useFieldContext()
@@ -89,10 +91,10 @@ export function GeomField({
             <Marker longitude={lng} latitude={lat} anchor="bottom">
               <div className="grid items-center justify-center">
                 <MapPin className="col-start-1 row-start-1 size-12 fill-white/60 stroke-1 [&>circle]:hidden" />
-                {icon?.url && (
+                {pictogram?.url && (
                   <img
                     loading="lazy"
-                    src={icon.url}
+                    src={pictogram.url}
                     alt=""
                     className="col-start-1 row-start-1 m-auto size-8"
                   />
@@ -100,7 +102,17 @@ export function GeomField({
               </div>
             </Marker>
           ) : (
-            <LayerGeom geom={value} pictogram={icon} />
+            <MapElementsLayer
+              elements={[
+                {
+                  reference,
+                  geom: value as Parameters<
+                    typeof MapElementsLayer
+                  >[0]["elements"][number]["geom"],
+                  pictogram,
+                },
+              ]}
+            />
           )}
         </Map>
         {isPoint && typeof lng === "number" && typeof lat === "number" && (
