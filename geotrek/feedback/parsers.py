@@ -101,9 +101,6 @@ class SuricateParser(SuricateGestionRequestManager):
         )
         should_update_status = True
         if settings.SURICATE_WORKFLOW_ENABLED:
-            should_import = (
-                should_import and bool(report["locked"])
-            )  # In Workflow mode, only import locked reports. In Management mode, import locked or unlocked reports.
             should_update_status = (
                 rep_status.identifier != "waiting"
                 or report["uid"] not in self.existing_uuids
