@@ -802,6 +802,13 @@ TINYMCE_DEFAULT_CONFIG = {
 SYNC_MOBILE_ROOT = os.path.join(VAR_DIR, "mobile")
 SYNC_MOBILE_OPTIONS = {"skip_tiles": False}
 
+SPECTACULAR_SETTINGS = {
+    "TITLE": TITLE,
+    "DESCRIPTION": "Geotrek Public API",
+    "VERSION": VERSION,
+    "SERVE_INCLUDE_SCHEMA": False,
+}
+
 GTAM_CONFIG = {
     "REFERENCES_INTERVAL_SYNC": 7 * 24,
     "DATA_INTERVAL_SYNC": 7 * 24,
@@ -813,13 +820,6 @@ If true; displays the attached pois pictures in the Trek's geojson pictures prop
 In Geotrek-rando it enables correlated pictures to be displayed in the slideshow.
 """
 TREK_WITH_POIS_PICTURES = False
-
-SWAGGER_SETTINGS = {
-    "USE_SESSION_AUTH": False,
-    "APIS_SORTER": "alpha",
-    "JSON_EDITOR": True,
-    "API_V2_DESCRIPTION": "New Geotrek API",
-}
 
 API_IS_PUBLIC = True
 
@@ -963,6 +963,7 @@ ACCESSIBILITY_ATTACHMENTS_ENABLED = True
 USE_X_FORWARDED_HOST = False
 
 REST_FRAMEWORK = {
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "STRICT_JSON": False,  # allow serialize float NaN values
 }
 

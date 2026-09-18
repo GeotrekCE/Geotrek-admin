@@ -75,15 +75,6 @@ click-repl==0.3.0
     # via celery
 cligj==0.7.2
     # via fiona
-coreapi==2.3.3
-    # via
-    #   geotrek (setup.py)
-    #   drf-yasg
-coreschema==0.0.4
-    # via
-    #   geotrek (setup.py)
-    #   coreapi
-    #   drf-yasg
 crispy-bootstrap4==2026.2
     # via mapentity
 cssselect2==0.9.0
@@ -124,7 +115,6 @@ django==5.2.16
     #   djangorestframework-simplejwt
     #   drf-extensions
     #   drf-spectacular
-    #   drf-yasg
     #   easy-thumbnails
     #   mapentity
     #   paperclip
@@ -191,7 +181,6 @@ djangorestframework==3.16.1
     #   djangorestframework-simplejwt
     #   drf-extensions
     #   drf-spectacular
-    #   drf-yasg
     #   mapentity
 djangorestframework-datatables==0.7.2
     # via mapentity
@@ -203,10 +192,10 @@ drf-dynamic-fields==0.4.0
     # via geotrek (setup.py)
 drf-extensions==0.8.0
     # via geotrek (setup.py)
-drf-spectacular==0.29.0
-    # via django-large-image
-drf-yasg==1.21.5
-    # via geotrek (setup.py)
+drf-spectacular @ git+https://github.com/submarcos/drf-spectacular.git@21b8aa2377128d87ab5575eff6e663cfe71f7dde#egg=drf-spectacular
+    # via
+    #   geotrek (setup.py)
+    #   django-large-image
 easy-thumbnails==2.10.1
     # via
     #   geotrek (setup.py)
@@ -239,13 +228,7 @@ idna==3.18
 importlib-metadata==9.0.0
     # via pygal
 inflection==0.5.1
-    # via
-    #   drf-spectacular
-    #   drf-yasg
-itypes==1.2.0
-    # via coreapi
-jinja2==3.1.6
-    # via coreschema
+    # via drf-spectacular
 jsonschema==4.26.0
     # via drf-spectacular
 jsonschema-specifications==2025.9.1
@@ -268,8 +251,6 @@ mapentity==8.17.3
     # via geotrek (setup.py)
 markdown==3.10.2
     # via geotrek (setup.py)
-markupsafe==3.0.3
-    # via jinja2
 mbutil==0.3.0
     # via landez
 mercantile==1.2.1
@@ -282,7 +263,6 @@ numpy==2.2.6
 packaging==26.3
     # via
     #   drf-extensions
-    #   drf-yasg
     #   gunicorn
     #   kombu
     #   large-image-source-vips
@@ -342,9 +322,7 @@ python-fsutil==0.17.0
 python-magic==0.4.27
     # via paperclip
 pytz==2026.2
-    # via
-    #   datetime
-    #   drf-yasg
+    # via datetime
 pyvips==3.1.1
     # via large-image-source-vips
 pyxdg==0.28
@@ -365,7 +343,6 @@ reportlab==5.0.0
     #   svglib
 requests==2.34.2
     # via
-    #   coreapi
     #   django-embed-video
     #   django-mapbox-baselayer
     #   landez
@@ -376,8 +353,6 @@ rpds-py==0.30.0
     # via
     #   jsonschema
     #   referencing
-ruamel-yaml==0.19.1
-    # via drf-yasg
 sentry-sdk==2.66.1
     # via geotrek (setup.py)
 setuptools==80.10.2
@@ -426,10 +401,7 @@ tzdata==2026.3
 tzlocal==5.4.4
     # via celery
 uritemplate==4.2.0
-    # via
-    #   coreapi
-    #   drf-spectacular
-    #   drf-yasg
+    # via drf-spectacular
 urllib3==2.7.0
     # via
     #   requests
