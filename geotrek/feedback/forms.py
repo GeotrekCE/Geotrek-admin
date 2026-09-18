@@ -201,8 +201,6 @@ class ReportForm(CommonForm):
                 report.assigned_handler = report.current_user
                 report.status = waiting_status
                 report.save()
-                report.lock_in_suricate()
-                TimerEvent.objects.create(step=waiting_status, report=report)
             # Self-assign report without moderation step
             elif (
                 self.old_status.identifier in ["filed"]
@@ -212,7 +210,6 @@ class ReportForm(CommonForm):
                 report.current_user = self.user
                 report.assigned_handler = self.user
                 report.save()
-                TimerEvent.objects.create(step=waiting_status, report=report)
             # Reassign report through moderation step
             elif (
                 self.old_status.identifier in ["waiting"]
@@ -242,6 +239,12 @@ class ReportForm(CommonForm):
                 report.send_notifications_on_status_change(
                     self.old_status.identifier, msg_sentinel, msg_admins
                 )
+            if (
+                self.old_status.identifier != report.status.identifier
+                and report.status.identifier == "waiting"
+            ):
+                report.lock_in_suricate()
+                TimerEvent.objects.create(step=waiting_status, report=report)
             if (
                 self.old_status.identifier != report.status.identifier
                 and report.status.identifier in ["classified", "rejected"]
