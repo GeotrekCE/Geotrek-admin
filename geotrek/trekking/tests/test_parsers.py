@@ -1548,8 +1548,7 @@ class ApidaeTrekParserTests(TestCase):
             verbosity=0,
         )
         self.assertEqual(Trek.objects.count(), 1)
-        trek = Trek.objects.all().first()
-        sources = trek.source.all()
+        sources = Trek.objects.first().source.all()
         self.assertEqual(len(sources), 1)
         self.assertEqual(sources.first().name, "Office de tourisme de Sallanches")
         self.assertEqual(sources.first().website, "")
