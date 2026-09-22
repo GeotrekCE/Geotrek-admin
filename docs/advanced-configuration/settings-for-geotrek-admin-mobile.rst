@@ -203,14 +203,6 @@ without modifying the application configuration.
 
    Managing basemaps
 
-.. important::
-
-    If ``LEAFLET_CONFIG['TILES']`` is defined in ``custom.py``, it overrides the
-    basemaps configured in the administration interface.
-
-    To use the administration interface, comment out or remove the
-    ``LEAFLET_CONFIG['TILES']`` setting before restarting Geotrek-admin.
-
 Custom basemaps
 ^^^^^^^^^^^^^^^
 

@@ -23,9 +23,9 @@ billiard==4.2.4
     # via celery
 brotli==1.2.0
     # via fonttools
-btrees==6.4
+btrees==6.5
     # via zodb
-cachetools==7.1.4
+cachetools==7.1.7
     # via large-image
 cairocffi==1.7.1
     # via
@@ -171,7 +171,7 @@ django-mapbox-baselayer==1.5.2
     #   mapentity
 django-modelcluster==6.5
     # via geotrek (setup.py)
-django-modeltranslation==0.20.3
+django-modeltranslation==0.20.4
     # via mapentity
 django-mptt==0.18.0
     # via geotrek (setup.py)
@@ -228,7 +228,7 @@ geojson==3.3.0
     # via
     #   geotrek (setup.py)
     #   tif2geojson
-gevent==26.5.0
+gevent==26.7.0
     # via gunicorn
 gpxpy==1.6.2
     # via mapentity
@@ -256,11 +256,11 @@ kombu==5.6.2
     # via celery
 landez==2.5.0
     # via geotrek (setup.py)
-large-image==1.35.0
+large-image==1.35.4
     # via
     #   django-large-image
     #   large-image-source-vips
-large-image-source-vips==1.35.0
+large-image-source-vips==1.35.4
     # via geotrek (setup.py)
 lxml==6.1.1
     # via
@@ -284,7 +284,7 @@ numpy==2.2.6
     #   large-image
     #   large-image-source-vips
     #   shapely
-packaging==26.2
+packaging==26.3
     # via
     #   drf-extensions
     #   drf-yasg
@@ -314,10 +314,11 @@ pillow==12.3.0
     #   large-image
     #   paperclip
     #   reportlab
+    #   svglib
     #   weasyprint
 pmtiles==3.7.0
     # via django-mapbox-baselayer
-prompt-toolkit==3.0.52
+prompt-toolkit==3.0.53
     # via click-repl
 psycopg2==2.9.12
     # via geotrek (setup.py)
@@ -331,7 +332,7 @@ pyjwt==2.13.0
     # via djangorestframework-simplejwt
 pymemcache==4.0.0
     # via geotrek (setup.py)
-pymupdf==1.28.0
+pymupdf==1.28.2
     # via pdfimpose
 pyopenair==1.2.1
     # via geotrek (setup.py)
@@ -339,7 +340,7 @@ pyphen==0.17.2
     # via weasyprint
 python-dateutil==2.9.0.post0
     # via celery
-python-dotenv==1.2.2
+python-dotenv==1.2.3
     # via geotrek (setup.py)
 python-fsutil==0.17.0
     # via django-maintenance-mode
@@ -363,7 +364,7 @@ referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
-reportlab==4.5.1
+reportlab==5.0.0
     # via
     #   easy-thumbnails
     #   svglib
@@ -396,9 +397,9 @@ six==1.17.0
     # via python-dateutil
 soupsieve==2.8.4
     # via beautifulsoup4
-sqlparse==0.5.5
+sqlparse==0.6.0
     # via django
-svglib==1.5.1
+svglib==2.2.0
     # via easy-thumbnails
 tif2geojson==0.1.3
     # via geotrek (setup.py)
@@ -410,7 +411,7 @@ tinycss2==1.5.1
     #   weasyprint
 tinyhtml5==2.1.0
     # via weasyprint
-tqdm==4.69.1
+tqdm==4.70.0
     # via django-mapbox-baselayer
 transaction==5.1
     # via zodb

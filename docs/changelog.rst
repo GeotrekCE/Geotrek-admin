@@ -29,6 +29,38 @@ CHANGELOG
 * Remove the "invalid geometry" filter
 
 
+2.126.2         (2026-09-22)
+----------------------------
+
+**Bug fixes**
+
+* Fix intervention duplication to also duplicate its target when linked to its own topology instead of another object (e.g. signage, etc) (refs #3845)
+* Fix invisible paths data not flushed when regenerating the pgRouting graph topology with the ``--flush`` option
+
+**Documentation**
+
+* Clarify static page publication and mobile menu limitations - #5670 (refs #5670)
+
+
+2.126.1         (2026-08-14)
+----------------------------
+
+**Improvements**
+
+* Remove ``deleted`` attribute from blade model
+* Allow to add multiple blades from signage form
+
+**Documentation**
+
+* Remove documentation for unreleased basemap feature (refs #5636)
+* Fix required field typo in sensitive area import (refs #5640)
+* Add more informations about Suricate API (refs #5643)
+
+**Bug fixes**
+
+* Fix the import of descriptions from a shapefile for sensitive areas (species)
+
+
 2.126.0         (2026-08-06)
 ----------------------------
 
@@ -80,14 +112,13 @@ CHANGELOG
 
 **Bug fixes**
 
-GTAM
-^^^^
+* GTAM
 
-* Fix read permission for non-superuser
-* Update settings when switching users
-* Selective update: only the data affected by the user is sent
-* Handle non-correct geom
-* Manage general map bounds
+  * Fix read permission for non-superuser
+  * Update settings when switching users
+  * Selective update: only the data affected by the user is sent
+  * Handle non-correct geom
+  * Manage general map bounds
 
 
 2.125.0         (2026-07-15)

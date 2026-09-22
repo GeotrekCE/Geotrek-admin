@@ -139,22 +139,37 @@ Il est aussi possible de prévisualiser une page statique avant de la rendre acc
 Publier une page
 ================
 
-Une page créée n'est pas immédiatement visible sur un portail Geotrek-rando. Il faut d'abord la marquer comme "Publiée" pour chacune des langues souhaitées. Il faut ensuite lui donner un moyen d'être accessible sur le site portail. Plusieurs options :
+Une page créée n'est pas immédiatement visible sur Geotrek-rando ou Geotrek-mobile.
+Il faut d'abord la marquer comme **« Publiée »** pour chacune des langues souhaitées.
 
-- faire figurer un lien vers la page dans les menus déroulants (voir `Arborescence de menus`_)
-- placer la page dans l'arborescence des pages (voir `Arborescence des pages statiques`_)
-- placer un lien direct dans une autre section du site : dans une page d'accueil personnalisée, dans un bas de page, etc.
+.. note::
+
+   Dans l'interface d'administration, l'aide associée au champ **« Publié »** indique « Visible sur Geotrek-rando ». Ce libellé est incomplet : la publication permet de rendre le contenu visible sur **Geotrek-rando et/ou Geotrek-mobile**, selon la ou les plateformes sélectionnées.
+
+Pour rendre une page accessible aux utilisateurs, plusieurs options sont possibles :
+
+* faire figurer un lien vers la page dans les menus (voir `Arborescence de menus`_) ;
+* placer la page dans l'arborescence des pages (voir `Arborescence des pages statiques`_) ;
+* placer un lien direct dans une autre section du site : dans une page d'accueil personnalisée, dans un bas de page, etc.
+
+Dans le cas d'une page associée à un élément de menu, **la page et l'élément de menu doivent tous les deux être marqués comme « Publié »**.
 
 Arborescence de menus
 =====================
 
 .. image:: ../images/user-manual/flatpages_admin_with_menuitems.png
 
-La page listant les "Éléments Menus" indique la structure arborescente qui sous-tend les menus tels qu'ils apparaîtront sur le portail.
+La page listant les « Éléments Menus » indique la structure arborescente qui
+sous-tend les menus tels qu'ils apparaîtront sur le portail.
 
 .. note::
 
-    Un portail de type Geotrek-rando ne peut afficher que 2 niveaux de menus !
+   La gestion des menus hiérarchiques dépend de la plateforme :
+
+   * **Geotrek-rando** prend en charge la hiérarchie des éléments de menu. Un portail de type Geotrek-rando ne peut afficher que 2 niveaux de menus.
+   * **Geotrek-mobile** et la synchronisation mobile ne prennent en charge que les éléments de menu situés **à la racine de l'arborescence**. Les éléments enfants ne sont pas transmis à l'application mobile.
+
+   Pour rendre une page accessible depuis Geotrek-mobile, il faut donc l'associer à un élément de menu de premier niveau, publié et configuré pour la plateforme mobile.
 
 Chaque élément de menu a les champs suivants :
 
@@ -173,7 +188,7 @@ Chaque élément de menu peut avoir une cible ou non. S'il a une cible le clic s
   + une page web externe sur un autre site web, par exemple ``https://fr.wikipedia.org/wiki/Randonnée``. Auquel cas une bonne pratique web est de l'ouvrir un nouvel onglet (checkbox cochée)
   + une page web interne au portail, typiquement une recherche pré-enregistrée, par exemple "/search?practices=4&difficulty=2&duration=1". Auquel cas une bonne pratique est de rester sur le même onglet (checkbox non-cochée)
 
-Le champ *Plateforme* permet de différencier des menus destinés uniquement à un portail web ou uniquement à une application Geotrek-mobile. Cette possibilité de paramètrage sera bientôt supprimée.
+Le champ *Plateforme* permet de différencier des menus destinés uniquement à un portail web Geotrek-rando ou uniquement à une application Geotrek-mobile. 
 
 Arborescence des pages statiques
 ================================
