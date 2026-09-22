@@ -31,24 +31,33 @@ from .models import (
 class PhysicalEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = PhysicalEdge
-        fields = ["physical_type"]
+        fields = [*ValidTopologyFilterSet.Meta.fields, "physical_type"]
 
 
 class CirculationEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = CirculationEdge
-        fields = ["circulation_type", "authorization_type"]
+        fields = [
+            *ValidTopologyFilterSet.Meta.fields,
+            "circulation_type",
+            "authorization_type",
+        ]
 
 
 class LandEdgeFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
         model = LandEdge
-        fields = ["land_type", "owner", "agreement"]
+        fields = [
+            *ValidTopologyFilterSet.Meta.fields,
+            "land_type",
+            "owner",
+            "agreement",
+        ]
 
 
 class OrganismFilterSet(ValidTopologyFilterSet, MapEntityFilterSet):
     class Meta(MapEntityFilterSet.Meta):
-        fields = ["organization"]
+        fields = [*ValidTopologyFilterSet.Meta.fields, "organization"]
 
 
 class CompetenceEdgeFilterSet(OrganismFilterSet):

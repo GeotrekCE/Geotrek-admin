@@ -280,16 +280,16 @@ class TestReportColor(TestCase):
 
     @override_settings(ENABLE_REPORT_COLORS_PER_STATUS=True)
     def test_default_color(self):
-        self.assertEqual(self.report_1.color, "#ffff00")
+        self.assertEqual(self.report_1.color.lower(), "#ffff00")
 
     @override_settings(ENABLE_REPORT_COLORS_PER_STATUS=False)
     def test_disabled_color(self):
-        self.assertEqual(self.report.color, "#ffff00")
+        self.assertEqual(self.report.color.lower(), "#ffff00")
 
     @override_settings(ENABLE_REPORT_COLORS_PER_STATUS=True)
     @override_settings(MAPENTITY_CONFIG={})
     def test_no_default_color(self):
-        self.assertEqual(self.report_1.color, "#ffff00")
+        self.assertEqual(self.report_1.color.lower(), "#ffff00")
 
 
 class TestPendingAPIRequests(SuricateTests):

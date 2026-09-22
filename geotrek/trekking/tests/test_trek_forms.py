@@ -1,6 +1,5 @@
 import json
 
-from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.core.exceptions import ValidationError
 from django.core.management import call_command
@@ -15,11 +14,10 @@ from ..models import OrderedTrekChild
 from .factories import RatingFactory, TrekFactory
 
 
-class TrekRatingFormTest(TestCase):
+class TrekFormRatingTests(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory.create()
-        cls.path = PathFactory.create()
         cls.rating = RatingFactory()
         cls.trek = TrekFactory(practice=cls.rating.scale.practice)
 
@@ -29,11 +27,6 @@ class TrekRatingFormTest(TestCase):
             "practice": str(self.rating.scale.practice.pk),
             f"rating_scale_{self.rating.scale.pk}": str(self.rating.pk),
         }
-
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = json.dumps({"paths": [self.path.pk]})
-        else:
-            data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
 
         form = TrekForm(user=self.user, instance=self.trek, data=data)
         self.assertTrue(form.is_valid())
@@ -47,12 +40,6 @@ class TrekRatingFormTest(TestCase):
             "name_en": "Trek",
             "practice": str(self.rating.scale.practice.pk),
         }
-
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = json.dumps({"paths": [self.path.pk]})
-        else:
-            data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
-
         form = TrekForm(user=self.user, instance=self.trek, data=data)
         self.assertTrue(form.is_valid())
         form.save()
@@ -65,15 +52,7 @@ class TrekRatingFormTest(TestCase):
             "practice": str(self.rating.scale.practice.pk),
             f"rating_scale_{other_rating.scale.pk}": str(other_rating.pk),
         }
-
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = json.dumps({"paths": [self.path.pk]})
-
-        else:
-            data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
-
         form = TrekForm(user=self.user, instance=self.trek, data=data)
-
         self.assertFalse(form.is_valid())
         with self.assertRaisesRegex(
             ValidationError,
@@ -87,7 +66,7 @@ class TrekRatingFormTest(TestCase):
         "trek": ["practice", "departure", "duration", "description_teaser"]
     }
 )
-class TrekCompletenessTest(TestCase):
+class TrekFormCompletenessTest(TestCase):
     """Test completeness fields on error if empty, according to COMPLETENESS_LEVEL setting"""
 
     @classmethod
@@ -95,16 +74,15 @@ class TrekCompletenessTest(TestCase):
         call_command("update_geotrek_permissions", verbosity=0)
         cls.user = UserFactory.create()
         cls.user.user_permissions.add(Permission.objects.get(codename="publish_trek"))
-        path = PathFactory.create()
+        cls.user.user_permissions.add(
+            Permission.objects.get(codename="can_draw_off_path_network")
+        )
         cls.data = {
             "name_en": "My trek",
             "name_fr": "Ma rando",
+            "geom": '{"type": "LineString", "coordinates": [[0, 0], [1, 1]]}',
+            "geom_changed": "true",
         }
-
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.data["topology"] = json.dumps({"paths": [path.pk]})
-        else:
-            cls.data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
 
     def test_completeness_warning(self):
         """Test form is valid if completeness level is only warning"""
@@ -204,7 +182,7 @@ class TrekCompletenessTest(TestCase):
             form.clean()
 
 
-class TrekItinerancyTestCase(TestCase):
+class TrekFormItinerancyTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = UserFactory()
@@ -255,11 +233,8 @@ class TrekItinerancyTestCase(TestCase):
             ),
         }
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            data["topology"] = json.dumps({"paths": [path.pk]})
-        else:
-            data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
+        path = PathFactory.create()
+        data["topology"] = json.dumps({"paths": [path.pk]})
 
         form = TrekForm(instance=self.trek2, user=self.user, data=data)
         self.assertTrue(form.is_valid())
@@ -287,11 +262,8 @@ class TrekItinerancyTestCase(TestCase):
             "hidden_ordered_children": str(self.trek1.pk),
         }
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            data["topology"] = json.dumps({"paths": [path.pk]})
-        else:
-            data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
+        path = PathFactory.create()
+        data["topology"] = json.dumps({"paths": [path.pk]})
 
         form = TrekForm(instance=self.trek2, user=self.user, data=data)
         self.assertTrue(form.is_valid())

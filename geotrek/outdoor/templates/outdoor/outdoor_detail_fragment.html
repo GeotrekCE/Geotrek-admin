@@ -1,10 +1,12 @@
 {% load i18n geotrek_tags mapentity_tags outdoor_tags %}
 
-{% is_outdoor_enabled as enabled %}
-{% if enabled %}
+{% settings_value "COURSE_MODEL_ENABLED" as course_enabled %}
+{% settings_value "SITE_MODEL_ENABLED" as site_enabled %}
 
+{% if course_enabled or site_enabled %}
 <h3>{% trans "Outdoor" %}</h3>
 <table class="table">
+    {% if site_enabled %}
     <tr>
         <th>{% trans "Sites" %}</th>
         <td>
@@ -17,6 +19,8 @@
             {% valuelist object.sites field='name' %}
         </td>
     </tr>
+    {% endif %}
+    {% if course_enabled %}
     <tr>
         <th>{% trans "Courses" %}</th>
         <td>
@@ -29,6 +33,6 @@
             {% valuelist object.courses.all field='name' %}
         </td>
     </tr>
+    {% endif %}
 </table>
-
 {% endif %}

@@ -13,9 +13,10 @@ from mapentity.forms import TranslatedModelForm
 from mapentity.widgets import MapWidget, SelectMultipleWithPop
 from modeltranslation.utils import build_localized_fieldname
 
-from geotrek.common.forms import CommonForm
-from geotrek.core.forms import TopologyForm
-from geotrek.core.widgets import LineTopologyWidget, PointTopologyWidget
+from geotrek.core.mixins.forms import (
+    LineTopologyFormMixin,
+    PointTopologyFormMixin,
+)
 
 from .models import (
     POI,
@@ -27,45 +28,8 @@ from .models import (
     WebLink,
 )
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
 
-    class BaseTrekForm(TopologyForm):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["topology"].widget.modifiable
-            # TODO: We should change LeafletWidget to keep modifiable.
-            # Init of TopologyForm -> commonForm -> mapentityForm
-            # already add a leafletwidget with modifiable
-            self.fields["topology"].widget = LineTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-            self.fields["points_reference"].label = ""
-            self.fields["points_reference"].widget.target_map = "topology"
-            self.fields["parking_location"].label = ""
-            self.fields["parking_location"].widget.target_map = "topology"
-
-        class Meta(TopologyForm.Meta):
-            model = Trek
-else:
-
-    class BaseTrekForm(CommonForm):
-        geomfields = ["geom"]
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["geom"].widget.modifiable
-            self.fields["geom"].widget = MapWidget(attrs={"geom_type": "LINESTRING"})
-            self.fields["geom"].widget.modifiable = modifiable
-            self.fields["points_reference"].label = ""
-            self.fields["points_reference"].widget.target_map = "geom"
-            self.fields["parking_location"].label = ""
-            self.fields["parking_location"].widget.target_map = "geom"
-
-        class Meta(CommonForm.Meta):
-            model = Trek
-            fields = [*CommonForm.Meta.fields, "geom"]
-
-
-class TrekForm(BaseTrekForm):
+class TrekForm(LineTopologyFormMixin):
     children = forms.ModelMultipleChoiceField(
         label=_("Children"),
         help_text=_("Select children in order"),
@@ -78,6 +42,13 @@ class TrekForm(BaseTrekForm):
         widget=forms.widgets.HiddenInput(),
         required=False,
     )
+
+    geomfields = [
+        "parking_location",
+        "points_reference",
+        *LineTopologyFormMixin.geomfields,
+    ]
+
     leftpanel_scrollable = False
 
     base_fieldslayout = [
@@ -129,12 +100,12 @@ class TrekForm(BaseTrekForm):
                     "source",
                     "portal",
                     "children",
-                    "hidden_ordered_children",
                     "eid",
                     "eid2",
                     "reservation_system",
                     "reservation_id",
                     "pois_excluded",
+                    "hidden_ordered_children",
                     css_id="advanced",  # used in Javascript for activating tab if error
                     css_class="scrollable tab-pane",
                 ),
@@ -157,9 +128,65 @@ class TrekForm(BaseTrekForm):
         ),
     ]
 
+    class Meta(LineTopologyFormMixin.Meta):
+        model = Trek
+        fields = [
+            *LineTopologyFormMixin.Meta.fields,
+            "structure",
+            "name",
+            "review",
+            "published",
+            "labels",
+            "departure",
+            "arrival",
+            "duration",
+            "difficulty",
+            "route",
+            "ambiance",
+            "access",
+            "description_teaser",
+            "description",
+            "ratings_description",
+            "points_reference",
+            "accessibility_infrastructure",
+            "advised_parking",
+            "parking_location",
+            "public_transport",
+            "advice",
+            "gear",
+            "themes",
+            "networks",
+            "practice",
+            "accessibilities",
+            "accessibility_level",
+            "accessibility_signage",
+            "accessibility_slope",
+            "accessibility_covering",
+            "accessibility_exposure",
+            "accessibility_width",
+            "accessibility_advice",
+            "web_links",
+            "information_desks",
+            "source",
+            "portal",
+            "children",
+            "eid",
+            "eid2",
+            "reservation_system",
+            "reservation_id",
+            "pois_excluded",
+            "hidden_ordered_children",
+        ]
+        widgets = {
+            "parking_location": MapWidget(
+                attrs={"target_map": "topology", "custom_icon": "markers/parking.svg"}
+            ),
+            "points_reference": MapWidget(
+                attrs={"target_map": "topology", "custom_icon": "markers/points.svg"}
+            ),
+        }
+
     def __init__(self, *args, **kwargs):
-        # Store ordered_ids before calling super().__init__()
-        self._ordered_children_ids = []
         self.fieldslayout = deepcopy(self.base_fieldslayout)
         service_types = ServiceType.objects.all()
         if any(st.pictogram for st in service_types):
@@ -190,18 +217,6 @@ class TrekForm(BaseTrekForm):
         self.fields[
             build_localized_fieldname("name", settings.LANGUAGE_CODE)
         ].required = True
-
-        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
-            self.fields.pop("points_reference")
-        else:
-            # Edit points of reference with custom edition JavaScript class
-            self.fields[
-                "points_reference"
-            ].widget.geometry_field_class = "PointsReferenceField"
-
-        self.fields[
-            "parking_location"
-        ].widget.geometry_field_class = "ParkingLocationField"
         self.fields["duration"].widget.attrs["min"] = "0"
 
         # Since we use chosen() in trek_form.html, we don't need the default help text
@@ -220,40 +235,18 @@ class TrekForm(BaseTrekForm):
             queryset_children = OrderedTrekChild.objects.filter(
                 parent__id=self.instance.pk
             ).order_by("order")
-            ordered_children_ids = list(
-                queryset_children.values_list("child__id", flat=True)
-            )
-            self._ordered_children_ids = ordered_children_ids
-
             # init multiple children field with data
-            all_children = Trek.objects.existing().exclude(pk=self.instance.pk)
+            self.fields["children"].queryset = Trek.objects.existing().exclude(
+                pk=self.instance.pk
+            )
+            self.fields["children"].initial = [
+                c.child.pk for c in self.instance.trek_children.all()
+            ]
 
-            # Set initial with ordered IDs
-            self.fields["children"].initial = ordered_children_ids
             # init hidden field with children order
             self.fields["hidden_ordered_children"].initial = ",".join(
-                str(x) for x in ordered_children_ids
+                str(x) for x in queryset_children.values_list("child__id", flat=True)
             )
-
-            # Force the queryset to render options in the correct order
-            # by using Case/When to preserve the order
-            if ordered_children_ids:
-                from django.db.models import Case, IntegerField, Value, When
-
-                preserved = Case(
-                    *[
-                        When(pk=pk, then=Value(i))
-                        for i, pk in enumerate(ordered_children_ids)
-                    ],
-                    default=Value(len(ordered_children_ids) + 1),
-                    output_field=IntegerField(),
-                )
-
-                self.fields["children"].queryset = all_children.annotate(
-                    custom_order=preserved
-                ).order_by("custom_order", "name")
-            else:
-                self.fields["children"].queryset = all_children
 
         for scale in RatingScale.objects.all():
             ratings = None
@@ -276,6 +269,20 @@ class TrekForm(BaseTrekForm):
         else:
             self.fieldslayout[0][1][1].remove("pois_excluded")
 
+        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
+            self.fields.pop("points_reference")
+        else:
+            self.fields["points_reference"].label = ""
+            # Edit points of reference with custom edition JavaScript class
+            self.fields[
+                "points_reference"
+            ].widget.geometry_field_class = "PointsReferenceField"
+
+        self.fields["parking_location"].label = ""
+        self.fields[
+            "parking_location"
+        ].widget.geometry_field_class = "ParkingLocationField"
+
     def clean(self):
         cleaned_data = super().clean()
         practice = self.cleaned_data["practice"]
@@ -296,12 +303,7 @@ class TrekForm(BaseTrekForm):
         Check the trek is not parent and child at the same time
         """
         children = self.cleaned_data["children"]
-        if (
-            children
-            and self.instance
-            and self.instance.pk
-            and self.instance.trek_parents.exists()
-        ):
+        if children and self.instance and self.instance.trek_parents.exists():
             raise ValidationError(
                 _("Cannot add children because this trek is itself a child.")
             )
@@ -371,85 +373,8 @@ class TrekForm(BaseTrekForm):
 
         return instance
 
-    class Meta(BaseTrekForm.Meta):
-        fields = [
-            *BaseTrekForm.Meta.fields,
-            "structure",
-            "name",
-            "review",
-            "published",
-            "labels",
-            "departure",
-            "arrival",
-            "duration",
-            "difficulty",
-            "route",
-            "ambiance",
-            "access",
-            "description_teaser",
-            "description",
-            "ratings_description",
-            "points_reference",
-            "accessibility_infrastructure",
-            "advised_parking",
-            "parking_location",
-            "public_transport",
-            "advice",
-            "gear",
-            "themes",
-            "networks",
-            "practice",
-            "accessibilities",
-            "accessibility_level",
-            "accessibility_signage",
-            "accessibility_slope",
-            "accessibility_covering",
-            "accessibility_exposure",
-            "accessibility_width",
-            "accessibility_advice",
-            "web_links",
-            "information_desks",
-            "source",
-            "portal",
-            "children",
-            "hidden_ordered_children",
-            "eid",
-            "eid2",
-            "reservation_system",
-            "reservation_id",
-            "pois_excluded",
-        ]
 
-
-if settings.TREKKING_TOPOLOGY_ENABLED:
-
-    class BasePOIForm(TopologyForm):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["topology"].widget.modifiable
-            self.fields["topology"].widget = PointTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-
-        class Meta(TopologyForm.Meta):
-            model = POI
-
-else:
-
-    class BasePOIForm(CommonForm):
-        geomfields = ["geom"]
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["geom"].widget.modifiable
-            self.fields["geom"].widget = MapWidget(attrs={"geom_type": "POINT"})
-            self.fields["geom"].widget.modifiable = modifiable
-
-        class Meta(CommonForm.Meta):
-            model = POI
-            fields = [*CommonForm.Meta.fields, "geom"]
-
-
-class POIForm(BasePOIForm):
+class POIForm(PointTopologyFormMixin):
     fieldslayout = [
         Div(
             "structure",
@@ -462,9 +387,10 @@ class POIForm(BasePOIForm):
         )
     ]
 
-    class Meta(BasePOIForm.Meta):
+    class Meta(PointTopologyFormMixin.Meta):
+        model = POI
         fields = [
-            *BasePOIForm.Meta.fields,
+            *PointTopologyFormMixin.Meta.fields,
             "structure",
             "name",
             "description",
@@ -475,35 +401,11 @@ class POIForm(BasePOIForm):
         ]
 
 
-if settings.TREKKING_TOPOLOGY_ENABLED:
+class ServiceForm(PointTopologyFormMixin):
+    class Meta(PointTopologyFormMixin.Meta):
+        model = Service
+        fields = [*PointTopologyFormMixin.Meta.fields, "structure", "type", "eid"]
 
-    class BaseServiceForm(TopologyForm):
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["topology"].widget.modifiable
-            self.fields["topology"].widget = PointTopologyWidget()
-            self.fields["topology"].widget.modifiable = modifiable
-
-        class Meta(TopologyForm.Meta):
-            model = Service
-
-else:
-
-    class BaseServiceForm(CommonForm):
-        geomfields = ["geom"]
-
-        def __init__(self, *args, **kwargs):
-            super().__init__(*args, **kwargs)
-            modifiable = self.fields["geom"].widget.modifiable
-            self.fields["geom"].widget = MapWidget(attrs={"geom_type": "POINT"})
-            self.fields["geom"].widget.modifiable = modifiable
-
-        class Meta(CommonForm.Meta):
-            model = Service
-            fields = [*CommonForm.Meta.fields, "geom"]
-
-
-class ServiceForm(BaseServiceForm):
     fieldslayout = [
         Div(
             "structure",
@@ -511,9 +413,6 @@ class ServiceForm(BaseServiceForm):
             "eid",
         )
     ]
-
-    class Meta(BaseServiceForm.Meta):
-        fields = [*BaseServiceForm.Meta.fields, "structure", "type", "eid"]
 
 
 class WebLinkCreateFormPopup(TranslatedModelForm):

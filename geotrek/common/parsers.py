@@ -1,3 +1,4 @@
+import copy
 import importlib
 import json
 import logging
@@ -1591,8 +1592,6 @@ class GeotrekAggregatorParser:
         "Course": ("geotrek.outdoor.parsers", "GeotrekCourseParser"),
     }
 
-    invalid_model_topology = ["Trek", "POI", "Service", "Signage", "Infrastructure"]
-
     def __init__(self, progress_cb=None, user=None, encoding="utf8"):
         self.progress_cb = progress_cb
         self.user = user
@@ -1647,24 +1646,6 @@ class GeotrekAggregatorParser:
                 models_to_import = self.mapping_model_parser.keys()
             parsers_to_parse = []
             for model in models_to_import:
-                if settings.TREKKING_TOPOLOGY_ENABLED:
-                    if model in self.invalid_model_topology:
-                        warning = (
-                            f"{model}s can't be imported with dynamic segmentation"
-                        )
-                        logger.warning(warning)
-                        key_warning = _("Model %(model)s") % {"model": model}
-                        self.add_warning(key_warning, warning)
-                        self.report_by_api_v2_by_type[key][model] = {
-                            "nb_lines": 0,
-                            "nb_success": 0,
-                            "nb_created": 0,
-                            "nb_updated": 0,
-                            "nb_deleted": None,
-                            "nb_unmodified": 0,
-                            "warnings": self.warnings,
-                        }
-                        continue
                 module_name, class_name = self.mapping_model_parser[model]
                 module = importlib.import_module(module_name)
                 parser = getattr(module, class_name)
@@ -1758,6 +1739,8 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         **kwargs,
     ):
         super().__init__(*args, **kwargs)
+
+        self.field_options = copy.deepcopy(self.field_options)
         self.bbox = Polygon.from_bbox(settings.SPATIAL_EXTENT)
         self.bbox.srid = settings.SRID
         self.bbox.transform(4326)  # WGS84

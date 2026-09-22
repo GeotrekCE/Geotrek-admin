@@ -42,7 +42,7 @@ Un itinéraire repose sur un ou plusieurs tronçons, et certains POIs leur sont 
 	Il n'existe actuellement aucun moyen de contrôler manuellement l'association entre
 	randonnées et les POIs.
 
-	Si le paramètre ``TREKKING_TOPOLOGY_ENABLED`` est défini sur ``False``, aucun tronçon n'est impliqué.
+	Si l'itinéraire ou les POIs sont découplés du réseau de tronçons, aucun tronçon n'est impliqué.
 	Les POIs sont ainsi liés à des treks utilisant une intersection spatiale de base, avec une
 	distance définie dans le paramètre ``TREK_POI_INTERSECTION_MARGIN`` (par défaut à 500 mètres).
 

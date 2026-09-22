@@ -1,0 +1,15 @@
+{% load i18n mapentity_tags geotrek_tags %}
+
+{% is_topology_model topo_object|model_class as is_topology_model %}
+{% if is_topology_model %}
+    <tr>
+        <th>{{ topo_object|verbose:"coupled" }}</th>
+        <td>
+            {% if topo_object.coupled %}
+                <i class="bi bi-check-circle text-success"></i>
+            {% else %}
+                <i class="bi bi-x-circle text-danger"></i>
+            {% endif %}
+        </td>
+    </tr>
+{% endif %}

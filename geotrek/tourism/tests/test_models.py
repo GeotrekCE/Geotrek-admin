@@ -86,23 +86,13 @@ class TourismRelations(TestCase):
         cls.event2 = tourism_factories.TouristicEventFactory(
             geom=f"SRID={settings.SRID};POINT(60 60)", name="ZZZ"
         )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = core_factories.PathFactory(
-                geom=f"SRID={settings.SRID};LINESTRING(0 100, 100 100)"
-            )
-            cls.poi = trekking_factories.POIFactory(paths=[(cls.path, 0.5, 0.5)])
-        else:
-            cls.poi = trekking_factories.POIFactory(
-                geom=f"SRID={settings.SRID};POINT(50 100)"
-            )
+        cls.path = core_factories.PathFactory(
+            geom=f"SRID={settings.SRID};LINESTRING(0 100, 100 100)"
+        )
+        cls.poi = trekking_factories.POIFactory(paths=[(cls.path, 0.5, 0.5)])
 
     def setUp(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.trek = trekking_factories.TrekFactory(paths=[self.path])
-        else:
-            self.trek = trekking_factories.TrekFactory(
-                geom=f"SRID={settings.SRID};LINESTRING(0 100, 100 100)"
-            )
+        self.trek = trekking_factories.TrekFactory(paths=[self.path])
 
     def test_spatial_link_with_tourism(self):
         self.assertIn(self.content2, self.content.touristic_contents.all())

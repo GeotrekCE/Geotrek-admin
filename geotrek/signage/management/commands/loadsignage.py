@@ -2,7 +2,6 @@ import os.path
 
 from django.conf import settings
 from django.contrib.gis.gdal import DataSource
-from django.contrib.gis.geos import Point
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
@@ -444,23 +443,15 @@ class Command(BaseCommand):
                 signage = Signage.objects.create(**fields_to_integrate)
                 if conditions:
                     signage.conditions.set(conditions)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            try:
-                geometry = geometry.transform(settings.API_SRID, clone=True)
-                geometry.coord_dim = 2
-                serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
-                topology = Topology.deserialize(serialized)
-                signage.mutate(topology)
-            except IndexError:
-                msg = "Invalid Geometry type."
-                raise GEOSException(msg)
-        else:
-            if geometry.geom_type != "Point":
-                msg = "Invalid Geometry type."
-                raise GEOSException(msg)
-            geometry = geometry.transform(settings.SRID, clone=True)
-            signage.geom = Point(geometry.x, geometry.y)
-            signage.save()
+        try:
+            geometry = geometry.transform(settings.API_SRID, clone=True)
+            geometry.coord_dim = 2
+            serialized = f'{{"lng": {geometry.x}, "lat": {geometry.y}}}'
+            topology = Topology.deserialize(serialized)
+            signage.mutate(topology)
+        except Exception as e:
+            msg = f"Invalid geometry ({e})"
+            raise GEOSException(msg)
         self.counter += 1
 
         return signage

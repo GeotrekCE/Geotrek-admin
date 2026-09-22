@@ -30,15 +30,13 @@ from geotrek.common.mixins.models import (
 from geotrek.common.signals import log_cascade_deletion
 from geotrek.common.utils import intersecting
 from geotrek.core.models import Path
+from geotrek.maintenance.models import Intervention
 from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
 from geotrek.zoning.models import District
 
 from .helpers import SuricateMessenger
 from .managers import ReportManager, SelectableUserManager
-
-if "geotrek.maintenance" in settings.INSTALLED_APPS:
-    from geotrek.maintenance.models import Intervention
 
 logger = logging.getLogger(__name__)
 

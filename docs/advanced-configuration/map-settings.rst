@@ -435,9 +435,6 @@ Minimum distance to merge two paths in unit of SRID.
 
                 PATH_SNAPPING_DISTANCE = 2
 
-.. note::
-  Used only when ``TREKKING_TOPOLOGY_ENABLED = True``
-
 Snap distance
 ~~~~~~~~~~~~~~~
 
@@ -480,7 +477,6 @@ Minimum distance to merge two paths.
 
 .. note::
   - Should be higher or the same as ``PATH_SNAPPING_DISTANCE``.
-  - Used only when ``TREKKING_TOPOLOGY_ENABLED = True``.
 
 Enable treks points of reference
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

@@ -2,8 +2,8 @@
 # Django Development
 # ..........................
 
-import sys
 import os
+import sys
 
 # Makemessages uses Locale_paths's settings to get the list of translations to do.
 # We change 'var/extra_locale' to 'geotrek/locale'
@@ -22,13 +22,10 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 INSTALLED_APPS += (
     'django_extensions',
     'debug_toolbar',
-    'geotrek.diving',
-    'geotrek.sensitivity',
-    'geotrek.outdoor',
     'drf_yasg',
 )
 
-INTERNAL_IPS = type(str('c'), (), {'__contains__': lambda *a: True})()
+INTERNAL_IPS = type('c', (), {'__contains__': lambda *a: True})()
 
 ALLOWED_HOSTS = ['*']
 

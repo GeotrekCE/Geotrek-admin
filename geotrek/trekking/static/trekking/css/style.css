@@ -31,7 +31,7 @@
 }
 
 .leaflet-marker-icon.parking-location {
-    background-image: url(../parking.png);
+    background-image: url(../img/parking.png);
     background-size: cover;
     width: 20px !important;
     height: 20px !important;
@@ -41,7 +41,7 @@
 
 
 .leaflet-draw.id_parking_location .leaflet-draw-draw-marker {
-    background-image: url(../parking.png);
+    background-image: url(../img/parking.png);
     background-position: 5px 5px, center;
     background-size: 15px;
 }

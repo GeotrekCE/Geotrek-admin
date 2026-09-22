@@ -1,16 +1,10 @@
 import json
 
 from django import template
-from django.conf import settings
 
 from geotrek.outdoor.models import Practice, RatingScale, Site
 
 register = template.Library()
-
-
-@register.simple_tag
-def is_outdoor_enabled():
-    return "geotrek.outdoor" in settings.INSTALLED_APPS
 
 
 @register.simple_tag

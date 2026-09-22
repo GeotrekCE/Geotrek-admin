@@ -97,7 +97,7 @@ jobs:
     strategy:
       matrix:
         os: ['jammy-3.10', 'noble-3.12']
-        tests-env: ['tests', 'tests_nds']
+        tests-env: ['tests']
 
     env:
       ENV: ${{ matrix.tests-env }}
@@ -204,7 +204,7 @@ jobs:
     strategy:
       matrix:
         os: ['jammy-3.10', 'noble-3.12']
-        tests-env: ['tests', 'tests_nds']
+        tests-env: ['tests']
 
     env:
       ENV: ${{ matrix.tests-env }}
@@ -555,6 +555,11 @@ jobs:
           images:  |
             geotrekce/admin
             ghcr.io/geotrekce/geotrek-admin
+          tags: |
+            # Tag basé sur la version semver (ex: v1.0.0 ou v1.0.0-beta.1)
+            type=semver,pattern={{version}}
+            # Tag latest UNIQUEMENT si ce n'est pas une prerelease
+            type=semver,pattern=latest,prerelease=false
 
       - name: Build and push image
         uses: docker/build-push-action@v7
@@ -572,13 +577,13 @@ jobs:
 
       - name: Install SSH key
         uses: shimataro/ssh-key-action@v2
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' && github.event.release.prerelease == false }}
         with:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           known_hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
 
       - name: Publish debian packages
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
+        if: ${{ github.event_name == 'release' && github.event.action == 'created' && github.event.release.prerelease == false }}
         run: |
           if [[ "${{ github.ref }}" == *"dev"* ]]; then
             export DEB_COMPONENT=dev

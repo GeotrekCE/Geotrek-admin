@@ -59,6 +59,7 @@ class SignageFilterSet(
         model = Signage
         fields = [
             *StructureRelatedFilterSet.Meta.fields,
+            *ValidTopologyFilterSet.Meta.fields,
             "name",
             "code",
             "description",

@@ -1,5 +1,5 @@
 {% extends "mapentity/mapentity_detail_attributes.html" %}
-{% load i18n signage_tags mapentity_tags %}
+{% load i18n signage_tags mapentity_tags geotrek_tags %}
 
 {% block attributes %}
 
@@ -12,6 +12,7 @@
             <th>{{ object|verbose:"name" }}</th>
             <td>{{ object.name }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=object %}
         <tr>
             <th>{{ object|verbose:"code" }}</th>
             <td>{{ object.code|default:"" }}</td>
@@ -77,7 +78,7 @@
         {% include "mapentity/trackinfo_fragment.html" %}
     </table>
 
-    {% blades_enabled as is_blades_enabled %}
+    {% settings_value "BLADE_ENABLED" as is_blades_enabled %}
     {% if is_blades_enabled and perms.signage.read_blade %}
         {% direction_on_lines_enabled as is_direction_on_lines_enabled %}
         <h3>{% trans "Blades" %}</h3>

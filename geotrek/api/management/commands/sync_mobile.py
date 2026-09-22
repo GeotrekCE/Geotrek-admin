@@ -670,7 +670,7 @@ class Command(BaseCommand):
             self.stdout.write("\x1b[36m**\x1b[0m \x1b[1mtiles/\x1b[0m ...", ending="")
             self.stdout._out.flush()
 
-        global_extent = settings.LEAFLET_CONFIG["SPATIAL_EXTENT"]
+        global_extent = [coord for coords in settings.BOUNDS for coord in coords]
 
         logger.info("Global extent is %s", global_extent)
         logger.info("Build global tiles file...")

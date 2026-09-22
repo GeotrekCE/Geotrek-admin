@@ -7,6 +7,7 @@
             <th>{{ intervention|verbose:"name" }}</th>
             <td>{{ intervention.name }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=intervention.target %}
         <tr>
             <th>{{ intervention|verbose:"begin_date" }}</th>
             <td>{{ intervention.begin_date }}</td>

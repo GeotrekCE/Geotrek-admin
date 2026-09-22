@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib import admin
 from django.db.models import Q
 
@@ -13,171 +14,166 @@ from geotrek.signage.models import (
     SignageType,
 )
 
+if settings.SIGNAGE_MODEL_ENABLED:
 
-@admin.register(Color)
-class ColorBladeAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ("label",)
-    merge_field = "label"
+    @admin.register(Color)
+    class ColorBladeAdmin(MergeActionMixin, admin.ModelAdmin):
+        search_fields = ("label",)
+        merge_field = "label"
 
+    @admin.register(Direction)
+    class DirectionBladeAdmin(MergeActionMixin, admin.ModelAdmin):
+        search_fields = ("label",)
+        merge_field = "label"
 
-@admin.register(Direction)
-class DirectionBladeAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ("label",)
-    merge_field = "label"
+    @admin.register(LinePictogram)
+    class LinePictogramAdmin(MergeActionMixin, admin.ModelAdmin):
+        search_fields = ("label",)
+        merge_field = "label"
+        list_display = ("label", "pictogram_img", "code")
 
+    @admin.register(Sealing)
+    class SealingAdmin(MergeActionMixin, admin.ModelAdmin):
+        search_fields = ("label",)
+        merge_field = "label"
 
-@admin.register(LinePictogram)
-class LinePictogramAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ("label",)
-    merge_field = "label"
-    list_display = ("label", "pictogram_img", "code")
-
-
-@admin.register(Sealing)
-class SealingAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ("label",)
-    merge_field = "label"
-
-    def get_queryset(self, request):
-        """
-        filter objects by structure
-        """
-        qs = super().get_queryset(request)
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            qs = qs.filter(structure=request.user.profile.structure)
-        return qs
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "structure":
+        def get_queryset(self, request):
+            """
+            filter objects by structure
+            """
+            qs = super().get_queryset(request)
             if not request.user.has_perm("authent.can_bypass_structure"):
-                return None
-            kwargs["initial"] = request.user.profile.structure
-            return db_field.formfield(**kwargs)
+                qs = qs.filter(structure=request.user.profile.structure)
+            return qs
 
-    def save_model(self, request, obj, form, change):
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            obj.structure = request.user.profile.structure
-        obj.save()
+        def formfield_for_foreignkey(self, db_field, request, **kwargs):
+            if db_field.name == "structure":
+                if not request.user.has_perm("authent.can_bypass_structure"):
+                    return None
+                kwargs["initial"] = request.user.profile.structure
+                return db_field.formfield(**kwargs)
 
-    def get_list_display(self, request):
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            return ("label",)
-        return ("label", "structure")
-
-    def get_list_filter(self, request):
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            return ()
-        return ("structure",)
-
-
-@admin.register(BladeType)
-class BladeTypeAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ("label", "structure")
-    merge_field = "label"
-
-    def get_queryset(self, request):
-        """
-        filter objects by structure
-        """
-        qs = super().get_queryset(request)
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            qs = qs.filter(structure=request.user.profile.structure)
-        return qs
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "structure":
+        def save_model(self, request, obj, form, change):
             if not request.user.has_perm("authent.can_bypass_structure"):
-                return None
-            kwargs["initial"] = request.user.profile.structure
-            return db_field.formfield(**kwargs)
+                obj.structure = request.user.profile.structure
+            obj.save()
 
-    def save_model(self, request, obj, form, change):
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            obj.structure = request.user.profile.structure
-        obj.save()
-
-    def get_list_display(self, request):
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            return ("label",)
-        return ("label", "structure")
-
-    def get_list_filter(self, request):
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            return ()
-        return ("structure",)
-
-
-@admin.register(SignageType)
-class SignageTypeAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ("label", "structure")
-    merge_field = "label"
-
-    def get_queryset(self, request):
-        """
-        filter objects by structure
-        """
-        qs = super().get_queryset(request)
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            qs = qs.filter(structure=request.user.profile.structure)
-        return qs
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "structure":
+        def get_list_display(self, request):
             if not request.user.has_perm("authent.can_bypass_structure"):
-                return None
-            kwargs["initial"] = request.user.profile.structure
-            return db_field.formfield(**kwargs)
+                return ("label",)
+            return ("label", "structure")
 
-    def save_model(self, request, obj, form, change):
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            obj.structure = request.user.profile.structure
-        obj.save()
-
-    def get_list_display(self, request):
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            return ("label", "pictogram_img")
-        return ("label", "structure", "pictogram_img")
-
-    def get_list_filter(self, request):
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            return ()
-        return ("structure",)
-
-
-@admin.register(BladeCondition, SignageCondition)
-class ModelConditionAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ("label", "structure__name")
-    merge_field = "label"
-
-    def get_queryset(self, request):
-        """
-        filter objects by structure
-        """
-        qs = super().get_queryset(request)
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            qs = qs.filter(
-                Q(structure=request.user.profile.structure) | Q(structure=None)
-            )
-        return qs
-
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        if db_field.name == "structure":
+        def get_list_filter(self, request):
             if not request.user.has_perm("authent.can_bypass_structure"):
-                return None
-            kwargs["initial"] = request.user.profile.structure
-            return db_field.formfield(**kwargs)
+                return ()
+            return ("structure",)
 
-    def save_model(self, request, obj, form, change):
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            obj.structure = request.user.profile.structure
-        obj.save()
+    @admin.register(BladeType)
+    class BladeTypeAdmin(MergeActionMixin, admin.ModelAdmin):
+        search_fields = ("label", "structure")
+        merge_field = "label"
 
-    def get_list_display(self, request):
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            return ("label",)
-        return ("label", "structure")
+        def get_queryset(self, request):
+            """
+            filter objects by structure
+            """
+            qs = super().get_queryset(request)
+            if not request.user.has_perm("authent.can_bypass_structure"):
+                qs = qs.filter(structure=request.user.profile.structure)
+            return qs
 
-    def get_list_filter(self, request):
-        if not request.user.has_perm("authent.can_bypass_structure"):
-            return ()
-        return ("structure",)
+        def formfield_for_foreignkey(self, db_field, request, **kwargs):
+            if db_field.name == "structure":
+                if not request.user.has_perm("authent.can_bypass_structure"):
+                    return None
+                kwargs["initial"] = request.user.profile.structure
+                return db_field.formfield(**kwargs)
+
+        def save_model(self, request, obj, form, change):
+            if not request.user.has_perm("authent.can_bypass_structure"):
+                obj.structure = request.user.profile.structure
+            obj.save()
+
+        def get_list_display(self, request):
+            if not request.user.has_perm("authent.can_bypass_structure"):
+                return ("label",)
+            return ("label", "structure")
+
+        def get_list_filter(self, request):
+            if not request.user.has_perm("authent.can_bypass_structure"):
+                return ()
+            return ("structure",)
+
+    @admin.register(SignageType)
+    class SignageTypeAdmin(MergeActionMixin, admin.ModelAdmin):
+        search_fields = ("label", "structure")
+        merge_field = "label"
+
+        def get_queryset(self, request):
+            """
+            filter objects by structure
+            """
+            qs = super().get_queryset(request)
+            if not request.user.has_perm("authent.can_bypass_structure"):
+                qs = qs.filter(structure=request.user.profile.structure)
+            return qs
+
+        def formfield_for_foreignkey(self, db_field, request, **kwargs):
+            if db_field.name == "structure":
+                if not request.user.has_perm("authent.can_bypass_structure"):
+                    return None
+                kwargs["initial"] = request.user.profile.structure
+                return db_field.formfield(**kwargs)
+
+        def save_model(self, request, obj, form, change):
+            if not request.user.has_perm("authent.can_bypass_structure"):
+                obj.structure = request.user.profile.structure
+            obj.save()
+
+        def get_list_display(self, request):
+            if not request.user.has_perm("authent.can_bypass_structure"):
+                return ("label", "pictogram_img")
+            return ("label", "structure", "pictogram_img")
+
+        def get_list_filter(self, request):
+            if not request.user.has_perm("authent.can_bypass_structure"):
+                return ()
+            return ("structure",)
+
+    @admin.register(BladeCondition, SignageCondition)
+    class ModelConditionAdmin(MergeActionMixin, admin.ModelAdmin):
+        search_fields = ("label", "structure__name")
+        merge_field = "label"
+
+        def get_queryset(self, request):
+            """
+            filter objects by structure
+            """
+            qs = super().get_queryset(request)
+            if not request.user.has_perm("authent.can_bypass_structure"):
+                qs = qs.filter(
+                    Q(structure=request.user.profile.structure) | Q(structure=None)
+                )
+            return qs
+
+        def formfield_for_foreignkey(self, db_field, request, **kwargs):
+            if db_field.name == "structure":
+                if not request.user.has_perm("authent.can_bypass_structure"):
+                    return None
+                kwargs["initial"] = request.user.profile.structure
+                return db_field.formfield(**kwargs)
+
+        def save_model(self, request, obj, form, change):
+            if not request.user.has_perm("authent.can_bypass_structure"):
+                obj.structure = request.user.profile.structure
+            obj.save()
+
+        def get_list_display(self, request):
+            if not request.user.has_perm("authent.can_bypass_structure"):
+                return ("label",)
+            return ("label", "structure")
+
+        def get_list_filter(self, request):
+            if not request.user.has_perm("authent.can_bypass_structure"):
+                return ()
+            return ("structure",)

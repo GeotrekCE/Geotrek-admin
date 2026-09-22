@@ -1,3 +1,4 @@
+/*
 var ServiceLayer = L.GeoJSON.extend({
 
     initialize: function (servicesData, options) {
@@ -39,3 +40,5 @@ var ServiceLayer = L.GeoJSON.extend({
         return marker;
     }
 });
+
+ */

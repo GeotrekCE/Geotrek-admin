@@ -7,7 +7,8 @@
     {{ block.super }}
 
     {% if suricate_workflow_enabled %}
-        <script type="text/javascript" src="{% static "feedback/workflow.js" %}"></script>
+        <script type="text/javascript" src="{% static "feedback/js/workflow.js" %}"></script>
+
         <script type="application/json" id="predefined_emails">
             {% predefined_emails as predefined_emails %}
             {{ predefined_emails|safe }}
