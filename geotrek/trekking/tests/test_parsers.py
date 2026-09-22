@@ -1534,6 +1534,26 @@ class ApidaeTrekParserTests(TestCase):
         self.assertEqual(trek.ambiance_en, "")
 
     @mock.patch("requests.get")
+    def test_trek_import_source_website_default_value_is_empty_string(self, mocked_get):
+        """
+        The imported trek has a source with no website data. The default value for this
+        website attribute should be an empty string.
+        """
+        mocked_get.side_effect = self.make_dummy_get(
+            "simple_trek_with_source_missing_website.json"
+        )
+        call_command(
+            "import",
+            "geotrek.trekking.tests.test_parsers.TestApidaeTrekParser",
+            verbosity=0,
+        )
+        self.assertEqual(Trek.objects.count(), 1)
+        sources = Trek.objects.first().source.all()
+        self.assertEqual(len(sources), 1)
+        self.assertEqual(sources.first().name, "Office de tourisme de Sallanches")
+        self.assertEqual(sources.first().website, "")
+
+    @mock.patch("requests.get")
     def test_trek_geometry_can_be_imported_from_gpx(self, mocked_get):
         mocked_get.side_effect = self.make_dummy_get("a_trek.json")
 
