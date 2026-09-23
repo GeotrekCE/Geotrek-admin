@@ -24,8 +24,6 @@ setup(
         "cairocffi",
         "python-dotenv",
         "pymemcache",
-        "coreschema",
-        "coreapi",
         "django-autocomplete-light",
         "psycopg2",
         "pdfimpose",
@@ -38,7 +36,7 @@ setup(
         "geojson",
         "tif2geojson",
         "drf-dynamic-fields",
-        "drf-yasg",
+        "drf-spectacular@git+https://github.com/submarcos/drf-spectacular.git@fix/contrib-gis-different-source#egg=drf-spectacular",  # wait for merge & fix https://github.com/tfranzel/drf-spectacular/pull/1428
         "xlrd",
         "landez",
         "large-image-source-vips",
