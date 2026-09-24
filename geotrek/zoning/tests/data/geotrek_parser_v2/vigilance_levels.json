@@ -1,0 +1,25 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+      "id": 1,
+      "name": {
+          "fr": "Mise en garde",
+          "en": "Warning"
+      },
+      "color": "#D2691E",
+      "pictogram": null
+    },
+    {
+      "id": 2,
+      "name": {
+          "fr": "Conseil",
+          "en": "Advise"
+      },
+      "color": "#6495ED",
+      "pictogram": null
+    }
+  ]
+}

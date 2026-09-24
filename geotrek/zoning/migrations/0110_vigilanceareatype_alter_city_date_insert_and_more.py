@@ -2,6 +2,7 @@
 
 import uuid
 
+import colorfield.fields
 import django.contrib.gis.db.models.fields
 import django.contrib.postgres.fields
 import django.contrib.postgres.indexes
@@ -40,6 +41,7 @@ class Migration(migrations.Migration):
                 (
                     "pictogram",
                     models.FileField(
+                        blank=True,
                         max_length=512,
                         null=True,
                         upload_to="upload",
@@ -47,10 +49,84 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 ("name", models.CharField(max_length=200, verbose_name="Name")),
+                (
+                    "date_insert",
+                    models.DateTimeField(
+                        auto_now_add=True,
+                        db_default=django.db.models.functions.datetime.Now(),
+                        verbose_name="Insertion date",
+                    ),
+                ),
+                (
+                    "date_update",
+                    models.DateTimeField(
+                        auto_now=True,
+                        db_default=django.db.models.functions.datetime.Now(),
+                        db_index=True,
+                        verbose_name="Update date",
+                    ),
+                ),
             ],
             options={
                 "verbose_name": "Vigilance area type",
                 "verbose_name_plural": "Vigilance area types",
+            },
+        ),
+        migrations.CreateModel(
+            name="VigilanceLevel",
+            fields=[
+                (
+                    "id",
+                    models.AutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                (
+                    "date_insert",
+                    models.DateTimeField(
+                        auto_now_add=True,
+                        db_default=django.db.models.functions.datetime.Now(),
+                        verbose_name="Insertion date",
+                    ),
+                ),
+                (
+                    "date_update",
+                    models.DateTimeField(
+                        auto_now=True,
+                        db_default=django.db.models.functions.datetime.Now(),
+                        db_index=True,
+                        verbose_name="Update date",
+                    ),
+                ),
+                (
+                    "pictogram",
+                    models.FileField(
+                        blank=True,
+                        max_length=512,
+                        null=True,
+                        upload_to="upload",
+                        verbose_name="Pictogram",
+                    ),
+                ),
+                ("name", models.CharField(max_length=200, verbose_name="Name")),
+                (
+                    "color",
+                    colorfield.fields.ColorField(
+                        default="#1257A8",
+                        image_field=None,
+                        max_length=25,
+                        samples=None,
+                        verbose_name="Color",
+                    ),
+                ),
+                ("level", models.PositiveSmallIntegerField(unique=True, null=True)),
+            ],
+            options={
+                "verbose_name": "Vigilance level",
+                "verbose_name_plural": "Vigilance levels",
             },
         ),
         migrations.AlterField(
@@ -214,6 +290,17 @@ class Migration(migrations.Migration):
                     ),
                 ),
                 (
+                    "vigilance_level",
+                    models.ForeignKey(
+                        blank=True,
+                        null=True,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        related_name="vigilance_areas",
+                        to="zoning.vigilancelevel",
+                        verbose_name="Vigilance level",
+                    ),
+                ),
+                (
                     "practical_info",
                     models.TextField(blank=True, verbose_name="Practical information"),
                 ),
@@ -330,6 +417,10 @@ class Migration(migrations.Migration):
                         to="zoning.vigilanceareatype",
                         verbose_name="Type",
                     ),
+                ),
+                (
+                    "commentary",
+                    models.TextField(blank=True, verbose_name="Commentary"),
                 ),
             ],
             options={

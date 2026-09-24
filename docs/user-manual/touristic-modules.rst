@@ -491,6 +491,15 @@ Il est également possible d’importer directement les zonages depuis un format
 
 	Pour activer le module Zones sensibles, se référer à cette section :ref:`Sensitive areas <sensitivity>`
 
+.. _zones-vigilance:
+
+Zones de vigilance
+==================
+
+Le module Zones de vigilance permet de gérer et de diffuser des informations temporaires liées aux conflits d'usage en milieu naturel. Il offre la possibilité de définir des zones géographiques concernées par des restrictions, des recommandations ou des points de vigilance (travaux, battues, activités pastorales, risques naturels, etc.), en précisant leur période de validité.
+
+Grâce au croisement entre les zones concernées et les données de Geotrek (itinéraires, contenus touristiques, sites outdoor, etc.), le module identifie automatiquement les éléments impactés et permet d'informer les gestionnaires comme les usagers des éventuelles perturbations ou restrictions d'accès. Il constitue ainsi un outil de gestion favorisant la cohabitation des différents usages des espaces naturels et une meilleure diffusion des informations temporaires.
+
 .. _pleinenature:
 
 Activités outdoor

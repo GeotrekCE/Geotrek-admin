@@ -77,7 +77,11 @@ class VigilanceAreaForm(CommonForm):
         Div(
             "structure",
             "name",
+            Fieldset(
+                _("Period"), "start_date", "end_date", "active_days", "active_months"
+            ),
             "vigilance_area_type",
+            "vigilance_level",
             "practicability",
             "published",
             "description",
@@ -85,11 +89,8 @@ class VigilanceAreaForm(CommonForm):
             "external_info_url",
             "sources",
             "portals",
-            "provider",
+            "commentary",
             "eid",
-            Fieldset(
-                _("Period"), "start_date", "end_date", "active_days", "active_months"
-            ),
         )
     ]
 
@@ -100,11 +101,11 @@ class VigilanceAreaForm(CommonForm):
             "name",
             "structure",
             "description",
-            "provider",
             "eid",
             "vigilance_area_type",
             "external_info_url",
             "practicability",
+            "vigilance_level",
             "practical_info",
             "sources",
             "portals",
@@ -113,6 +114,7 @@ class VigilanceAreaForm(CommonForm):
             "end_date",
             "active_days",
             "active_months",
+            "commentary",
             "geom",
         ]
         widgets = {
