@@ -1,16 +1,16 @@
-from django.contrib.gis.db.models import PointField
+from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import GeoFunc, GeomOutputGeoFunc
-from django.db.models import BooleanField, CharField, FloatField
+from django.db.models.expressions import Func
 
 
 class Length(GeoFunc):
     """ST_Length postgis function"""
 
-    output_field = FloatField()
+    output_field = models.FloatField()
 
 
 class LengthSpheroid(GeoFunc):
-    output_field = FloatField()
+    output_field = models.FloatField()
 
 
 class SimplifyPreserveTopology(GeomOutputGeoFunc):
@@ -20,7 +20,7 @@ class SimplifyPreserveTopology(GeomOutputGeoFunc):
 class GeometryType(GeoFunc):
     """GeometryType postgis function"""
 
-    output_field = CharField()
+    output_field = models.CharField()
     function = "GeometryType"
 
 
@@ -34,13 +34,13 @@ class DumpGeom(GeomOutputGeoFunc):
 class StartPoint(GeoFunc):
     """ST_StartPoint postgis function"""
 
-    output_field = PointField()
+    output_field = models.PointField()
 
 
 class EndPoint(GeoFunc):
     """ST_EndPoint postgis function"""
 
-    output_field = PointField()
+    output_field = models.PointField()
 
 
 class Buffer(GeomOutputGeoFunc):
@@ -52,26 +52,31 @@ class Buffer(GeomOutputGeoFunc):
 class Area(GeoFunc):
     """ST_Area postgis function"""
 
-    output_field = FloatField()
+    output_field = models.FloatField()
 
 
 class ST_X(GeoFunc):
     """ST_X postgis function"""
 
-    output_field = FloatField()
+    output_field = models.FloatField()
     function = "ST_X"
 
 
 class ST_Y(GeoFunc):
     """ST_Y postgis function"""
 
-    output_field = FloatField()
+    output_field = models.FloatField()
     function = "ST_Y"
 
 
 class IsSimple(GeoFunc):
-    output_field = BooleanField()
+    output_field = models.BooleanField()
 
 
 class GeometryN(GeomOutputGeoFunc):
     """ST_GeometryN postgis function"""
+
+
+class GenRandomUUID(Func):
+    function = "gen_random_uuid"
+    output_field = models.UUIDField()

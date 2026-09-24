@@ -68,12 +68,6 @@
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
-        <tr>
-            <th>{% trans "Provider" %}</th>
-            <td>{% if report.provider %}{{ report.provider.name|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr>
         {% if suricate_workflow_enabled %}
         <tr>
             <th>{{ report|verbose:"created_in_suricate" }}</th>
@@ -113,16 +107,12 @@
             <th>{{ report|verbose:"uses_timers" }}</th>
             <td>{% if report.uses_timers %}{% trans "Yes" %}{% else %}{% trans "No"%}{% endif %}</td>
         </tr>
-            <tr>
-                <th>{{ report|verbose:"eid" }}</th>
-                <td>{{ report.get_eid }}</td>
-            </tr>
         <tr>
             <th>{{ report|verbose:"locked" }}</th>
             <td>{% if report.locked %}{% trans "Yes" %}{% else %}{% trans "No"%}{% endif %}</td>
         </tr>
         {% endif %}
-        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
-
+    {% include "common/fragments/provider_eid.html" %}
+    {% include "common/fragments/trackinfo.html" %}
 {% endblock attributes %}

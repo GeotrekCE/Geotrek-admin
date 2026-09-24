@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"POT-Creation-Date: 2026-07-28 17:56+0200\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/tourism/de/>\n"
@@ -430,9 +430,6 @@ msgstr "Ja, nein,"
 
 msgid "None"
 msgstr "Keine"
-
-msgid "External id"
-msgstr "Externer Identifikator"
 
 msgid "Thumbnail"
 msgstr "Thumbnail"
