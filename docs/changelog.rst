@@ -15,6 +15,10 @@ CHANGELOG
 
 * Clarify static page publication and mobile menu limitations - #5670 (refs #5670)
 
+**CI**
+
+* Fix GitHub Actions release workflow to attach assets with official Github cli instead of deprecated action
+
 
 2.126.1         (2026-08-14)
 ----------------------------
