@@ -249,7 +249,8 @@ class ParserTestCustomError(Exception):
 class ParserTests(TestCase):
     def test_bad_parser_class(self):
         with self.assertRaisesRegex(
-            CommandError, "Failed to import parser class 'DoesNotExist'"
+            CommandError,
+            "Failed to import parser class 'geotrek.common.tests.test_parsers.DoesNotExist'",
         ):
             call_command(
                 "import",
@@ -260,9 +261,9 @@ class ParserTests(TestCase):
 
     def test_bad_parser_file(self):
         with self.assertRaisesRegex(
-            CommandError, "Failed to import parser file 'geotrek/common.py'"
+            CommandError, "Failed to import parser class 'DoesNotExist'"
         ):
-            call_command("import", "geotrek.common.DoesNotExist", "", verbosity=0)
+            call_command("import", "DoesNotExist", "", verbosity=0)
 
     def test_no_filename_no_url(self):
         with self.assertRaisesRegex(CommandError, "File path missing"):

@@ -3,6 +3,7 @@ from os.path import join
 
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
+from django.utils.module_loading import import_string
 
 from geotrek.common.parsers import ImportError
 
@@ -30,26 +31,28 @@ class Command(BaseCommand):
 
         if "." in options["parser"]:
             # Python import syntax
-            module_name, class_name = options["parser"].rsplit(".", 1)
-            module_path = module_name.replace(".", "/") + ".py"
+            try:
+                Parser = import_string(options["parser"])
+            except Exception:
+                msg = f"Failed to import parser class '{options['parser']}'"
+                raise CommandError(msg)
         else:
             # just a class name
             module_path = join(settings.VAR_DIR, "conf/parsers.py")
             module_name = "parsers"
             class_name = options["parser"]
-
-        spec = importlib.util.spec_from_file_location(module_name, module_path)
-        module = importlib.util.module_from_spec(spec)
-        try:
-            spec.loader.exec_module(module)
-        except FileNotFoundError:
-            msg = f"Failed to import parser file '{module_path}'"
-            raise CommandError(msg)
-        try:
-            Parser = getattr(module, class_name)
-        except AttributeError:
-            msg = f"Failed to import parser class '{class_name}'"
-            raise CommandError(msg)
+            spec = importlib.util.spec_from_file_location(module_name, module_path)
+            module = importlib.util.module_from_spec(spec)
+            try:
+                spec.loader.exec_module(module)
+            except FileNotFoundError:
+                msg = f"Failed to import parser file '{module_path}'"
+                raise CommandError(msg)
+            try:
+                Parser = getattr(module, class_name)
+            except AttributeError:
+                msg = f"Failed to import parser class '{class_name}'"
+                raise CommandError(msg)
         if not Parser.filename and not Parser.url and not options["filename"]:
             msg = "File path missing"
             raise CommandError(msg)
