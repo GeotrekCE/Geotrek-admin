@@ -446,7 +446,7 @@ weasyprint==69.0
     #   geotrek (setup.py)
     #   django-weasyprint
     #   mapentity
-webencodings==0.5.1
+webencodings==0.6.1
     # via
     #   cssselect2
     #   tinycss2
