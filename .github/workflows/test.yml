@@ -611,8 +611,6 @@ jobs:
 
       - name: Attach zip archive as release binary
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        uses: skx/github-action-publish-binaries@master
+        run: gh release upload "${{ github.ref_name }}" *.zip --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: 'install-docker.zip'
