@@ -289,6 +289,11 @@ jobs:
               path: ./frontend/dist
               key: frontend-${{ steps.get-key.outputs.FRONTEND_CACHE_KEY }}
 
+          - name: Prepare versioning
+            run: |
+                grep '^[0-9]\+\.[0-9]\+\.[0-9]\+$' VERSION || sed -i 's/+dev/.~dev'$GITHUB_RUN_ID'/' debian/changelog
+                sed -i 's/geotrek-admin (\([0-9]\+\.[0-9]\+\.[0-9]\+\)\(.*\)) RELEASED;/geotrek-admin (\1.'amd64'\2) debian;/' debian/changelog
+
           - name: Building package
             run: |
               docker build -t geotrek-deb-builder -f docker/build-deb/Dockerfile .
