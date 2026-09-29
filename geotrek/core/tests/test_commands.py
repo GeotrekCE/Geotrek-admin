@@ -1,4 +1,5 @@
 import os
+import re
 from io import StringIO
 from unittest import mock, skipIf
 
@@ -711,7 +712,10 @@ class ReorderTopologiesPathAggregationTest(TestCase):
             ),
             [0, 0, 1],
         )
-        call_command("reorder_topologies", verbosity=0)
+        output = StringIO()
+        call_command("reorder_topologies", verbosity=2, stdout=output)
+        self.assertIsNotNone(re.search(r"Processing topology: \d+", output.getvalue()))
+        self.assertIsNotNone(re.search(r"1 topology has been updated", output.getvalue()))
         geometries = self.get_geometries(topo)
         self.assertEqual(
             geometries,
