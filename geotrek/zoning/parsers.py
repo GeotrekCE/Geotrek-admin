@@ -9,7 +9,12 @@ from geotrek.common.parsers import (
     RowImportError,
     ShapeParser,
 )
-from geotrek.zoning.models import City, District, RestrictedArea
+from geotrek.zoning.models import (
+    City,
+    District,
+    RestrictedArea,
+    VigilanceArea,
+)
 
 
 # Data: https://www.data.gouv.fr/fr/datasets/decoupage-administratif-communal-francais-issu-d-openstreetmap/
@@ -132,3 +137,34 @@ class OpenStreetMapCityParser(OpenStreetMapZoningParserMixin):
         super().__init__(*args, **kwargs)
         if self.code_tag:
             self.fields["code"] = f"tags.{self.code_tag}"
+
+
+class VigilanceAreaParser:
+    model = VigilanceArea
+    eid = "eid"
+    fields = {"name": "nom", "geom": "geom", "eid": "id"}
+    m2m_fields = {}
+    constant_fields = {
+        "published": True,
+    }
+    natural_keys = {"vigilance_area_type": "name"}
+
+    def filter_code(self, src, val):
+        return str(val)
+
+    def filter_geom(self, src, val):
+        if val is None:
+            return None
+        if not val.valid:
+            self.add_warning(_("Invalid geometry for field '{src}'").format(src=src))
+            return None
+        if val.geom_type == "MultiPolygon":
+            return val
+        elif val.geom_type == "Polygon":
+            return MultiPolygon(val)
+        raise GlobalImportError(
+            _(
+                "Invalid geometry type for field '{src}'. "
+                "Should be (Multi)Polygon, not {geom_type}"
+            ).format(src=src, geom_type=val.geom_type)
+        )

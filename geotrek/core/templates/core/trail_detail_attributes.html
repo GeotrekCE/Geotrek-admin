@@ -33,19 +33,10 @@
             <th>{{ trail|verbose:"comments" }}</th>
             <td>{{ trail.comments|safe|linebreaks }}</td>
         </tr>
-        {% include "altimetry/elevationinfo_fragment.html" %}
-        {% include "mapentity/trackinfo_fragment.html" %}
-        <tr>
-            <th>{% trans "External id" %}</th>
-            <td>{{ trail.get_eid }}</td>
-        </tr>
-        <tr>
-            <th>{% trans "Provider" %}</th>
-            <td>{% if trail.provider %}{{ trail.provider.name|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
-            </td>
-        </tr>
     </table>
+    {% include "altimetry/elevationinfo_fragment.html" %}
+    {% include "common/fragments/provider_eid.html" %}
+    {% include "common/fragments/trackinfo.html" %}
 
     {{ block.super }}
 

@@ -1,3 +1,4 @@
+import encodings
 import logging
 from copy import deepcopy
 
@@ -68,6 +69,7 @@ class CommonForm(MapEntityForm):
         "RegulatorySensitiveAreaForm": "sensitivity_regulatory",
         "BladeForm": "blade",
         "ReportForm": "report",
+        "VigilanceAreaForm": "vigilance_area",
     }
 
     def deep_remove(self, fieldslayout, name):
@@ -388,11 +390,29 @@ class ImportSuricateForm(forms.Form):
         )
 
 
+def get_all_python_encodings():
+    # Récupère tous les alias officiels et nettoie la liste
+    aliases = set(encodings.aliases.aliases.values())
+
+    # On trie et on formate sous la forme de tuples (valeur, libellé) requis par Django
+    choices = sorted(
+        [
+            (alias.upper().replace("_", "-"), alias.upper().replace("_", "-"))
+            for alias in aliases
+        ]
+    )
+    return choices
+
+
 class ImportDatasetFormWithFile(ImportDatasetForm):
     file = forms.FileField(label=_("File"), required=True, widget=forms.FileInput)
     encoding = forms.ChoiceField(
         label=_("Encoding"),
-        choices=(("Windows-1252", "Windows-1252"), ("UTF-8", "UTF-8")),
+        choices=get_all_python_encodings(),
+        initial="UTF-8",
+        help_text=_(
+            "Try another encoding if special caracters are malformed. (ex: CP1252)"
+        ),
     )
 
     def __init__(self, *args, **kwargs):

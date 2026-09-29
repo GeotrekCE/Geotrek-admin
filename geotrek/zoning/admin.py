@@ -1,6 +1,12 @@
+from django.conf import settings
 from django.contrib import admin
 from django.utils.translation import gettext as _
 from leaflet.admin import LeafletGeoAdmin
+
+if "modeltranslation" in settings.INSTALLED_APPS:
+    from modeltranslation.admin import TabbedTranslationAdmin
+else:
+    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
 
 from geotrek.common.mixins.actions import MergeActionMixin
 from geotrek.zoning import models as zoning_models
@@ -43,7 +49,13 @@ class DistrictAdmin(LeafletGeoAdmin):
     actions = (publish, unpublish)
 
 
+class VigilanceAreaTypeAdmin(TabbedTranslationAdmin):
+    search_fields = ("name", "description")
+    list_display = ("name", "pictogram_img")
+
+
 admin.site.register(zoning_models.RestrictedAreaType, RestrictedAreaTypeAdmin)
 admin.site.register(zoning_models.RestrictedArea, RestrictedAreaAdmin)
 admin.site.register(zoning_models.City, CityAdmin)
 admin.site.register(zoning_models.District, DistrictAdmin)
+admin.site.register(zoning_models.VigilanceAreaType, VigilanceAreaTypeAdmin)

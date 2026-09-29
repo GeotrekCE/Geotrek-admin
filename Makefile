@@ -116,7 +116,7 @@ coverage:
 	rm ./var/.coverage*
 
 test:
-	$(docker_compose) run -e ENV=tests --rm web ./manage.py test $(test_name) --shuffle --noinput --parallel
+	$(docker_compose) run -e ENV=tests --rm web ./manage.py test $(test_name) --shuffle --noinput
 
 test_nds:
 	$(docker_compose) run -e ENV=tests_nds --rm web ./manage.py test $(test_name) --shuffle --noinput --parallel

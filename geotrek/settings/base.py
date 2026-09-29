@@ -133,7 +133,6 @@ LANGUAGES = (
     ("it", _("Italian")),
     ("es", _("Spanish")),
 )
-LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "fr")
 
 MODELTRANSLATION_LANGUAGES = tuple(os.getenv("LANGUAGES", "fr en").split(" "))
 
@@ -279,8 +278,11 @@ WSGI_APPLICATION = "geotrek.wsgi.application"
 # modeltranslation should be kept before django.contrib.admin
 if "makemigrations" in sys.argv:
     PROJECT_APPS = ()
+    LANGUAGE_CODE = "en"
 else:
     PROJECT_APPS = ("modeltranslation",)
+    LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "fr")
+
 
 #
 # /!\ Application names (last levels) must be unique
@@ -293,6 +295,7 @@ PROJECT_APPS += (
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
     "dal",
     "dal_select2",
     "clearcache",
@@ -682,6 +685,7 @@ SITE_MODEL_ENABLED = True
 COURSE_MODEL_ENABLED = True
 # This model is necessary for most of the other. Can be add in case if the paths will not be change by anyone.
 PATH_MODEL_ENABLED = True
+VIGILANCE_AREA_MODEL_ENABLED = True
 
 
 TREKKING_TOPOLOGY_ENABLED = True

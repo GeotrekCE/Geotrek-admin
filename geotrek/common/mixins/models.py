@@ -10,6 +10,7 @@ from django.contrib.gis.db.models.functions import Envelope, Transform
 from django.core.files.storage import default_storage
 from django.core.mail import mail_managers
 from django.db.models import Count, Max
+from django.db.models.functions import Now
 from django.template import Context, Template
 from django.template.defaultfilters import slugify
 from django.template.loader import render_to_string
@@ -28,10 +29,17 @@ from geotrek.common.utils import classproperty, logger
 class TimeStampedModelMixin(models.Model):
     # Computed values (managed at DB-level with triggers)
     date_insert = models.DateTimeField(
-        auto_now_add=True, editable=False, verbose_name=_("Insertion date")
+        auto_now_add=True,
+        editable=False,
+        verbose_name=_("Insertion date"),
+        db_default=Now(),
     )
     date_update = models.DateTimeField(
-        auto_now=True, editable=False, verbose_name=_("Update date"), db_index=True
+        auto_now=True,
+        editable=False,
+        verbose_name=_("Update date"),
+        db_index=True,
+        db_default=Now(),
     )
 
     class Meta:

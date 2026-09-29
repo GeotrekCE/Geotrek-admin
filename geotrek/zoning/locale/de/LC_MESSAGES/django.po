@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 10:08+0000\n"
+"POT-Creation-Date: 2026-07-30 14:29+0200\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/de/>\n"
@@ -27,6 +27,15 @@ msgstr ""
 msgid "Zoning"
 msgstr "Zonierung"
 
+msgid "Practicable"
+msgstr ""
+
+msgid "Under condition practicable"
+msgstr ""
+
+msgid "Not practicable"
+msgstr ""
+
 msgid "City"
 msgstr "Kommune"
 
@@ -39,11 +48,54 @@ msgstr "Eingeschränkter Bereichstyp"
 msgid "Restricted area"
 msgstr "Regulatorische Zonierung"
 
-msgid "Restricted areas"
-msgstr "Regulatorische Zonierung"
+#, fuzzy
+#| msgid "Restricted area type"
+msgid "Vigilance area type"
+msgstr "Eingeschränkter Bereichstyp"
+
+#, fuzzy
+#| msgid "Restricted area type"
+msgid "Vigilance area Practicability"
+msgstr "Eingeschränkter Bereichstyp"
+
+msgid "Vigilance area"
+msgstr ""
 
 msgid "Name"
 msgstr "Name"
+
+msgid "Provider"
+msgstr ""
+
+msgid "After"
+msgstr ""
+
+msgid "Before"
+msgstr ""
+
+msgid "Period active"
+msgstr ""
+
+msgid "Active today"
+msgstr ""
+
+msgid "Active days"
+msgstr ""
+
+msgid "Days of the week when the vigilance area is active. Empty equals all week."
+msgstr ""
+
+msgid "Active months"
+msgstr ""
+
+msgid "Months of the year when the vigilance area is active. Empty equals all year."
+msgstr ""
+
+msgid "Period"
+msgstr ""
+
+msgid "Restricted areas"
+msgstr "Regulatorische Zonierung"
 
 msgid "Published"
 msgstr ""
@@ -60,6 +112,60 @@ msgstr "Kommunen"
 msgid "Districts"
 msgstr "Distrikte"
 
+#, fuzzy
+#| msgid "Restricted area type"
+msgid "Vigilance area types"
+msgstr "Eingeschränkter Bereichstyp"
+
+msgid "Description"
+msgstr ""
+
+msgid "Start date"
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
+msgid "Practicability"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Practical information"
+msgstr ""
+
+msgid "External information URL"
+msgstr ""
+
+msgid "Portals"
+msgstr ""
+
+msgid "Sources"
+msgstr ""
+
+msgid "Start date is after end date"
+msgstr ""
+
+#, python-format
+msgid "From %s to %s"
+msgstr ""
+
+#, python-format
+msgid "From %s"
+msgstr ""
+
+#, python-format
+msgid " - days %s"
+msgstr ""
+
+#, python-format
+msgid " - months %s"
+msgstr ""
+
+msgid "Vigilance areas"
+msgstr ""
+
 #, python-brace-format
 msgid "Invalid geometry for field '{src}'"
 msgstr "Die Geometrie des Feldes '{src}' ist ungültig."
@@ -67,3 +173,15 @@ msgstr "Die Geometrie des Feldes '{src}' ist ungültig."
 #, python-brace-format
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
 msgstr "Der Geometrietyp des Feldes '{src}' ist ungültig. Es sollte (Multi)Polygon, nicht {geom_type}"
+
+msgid "None"
+msgstr ""
+
+msgid "Thumbnail"
+msgstr ""
+
+msgid "All week"
+msgstr ""
+
+msgid "All year"
+msgstr ""

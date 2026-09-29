@@ -1,0 +1,37 @@
+{% load i18n %}
+{% load mapentity_tags %}
+
+{% if object.provider or object.eid or object.eid2 %}
+    <table class="table table-bordered">
+        <thead>
+        <tr class="table-active">
+            <th colspan="2" class="text-center">
+                <i class="bi bi-info-circle"></i> {% trans "External identifiers" %}
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <th class="table-active">{{ object|verbose:"provider" }}</th>
+            <td>{% if object.provider %}
+                {{ object.provider.name|safe }}
+            {% else %}
+                <span class="none">{% trans "None" %}</span>
+            {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th class="table-active">{{ object|verbose:"eid" }}</th>
+            <td>{{ object.get_eid }}</td>
+        </tr>
+        {% if object.eid2 %}
+        <tr>
+            <th class="table-active">{% trans "Second external id" %}</th>
+            <td>{% if object.eid2 %}{{ object.eid2|safe }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        {% endif %}
+        </tbody>
+    </table>
+{% endif %}

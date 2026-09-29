@@ -7,8 +7,10 @@
             <th>{{ signagemanagementedge|verbose:"organization" }}</th>
             <td>{{ signagemanagementedge.organization }}</td>
         </tr>
-        {% include "altimetry/elevationinfo_fragment.html" %}
-        {% include "mapentity/trackinfo_fragment.html" %}
+
     </table>
+    {% include "altimetry/elevationinfo_fragment.html" %}
+    {% include "common/fragments/provider_eid.html" %}
+    {% include "common/fragments/trackinfo.html" %}
     {{ block.super }}
 {% endblock detailspanel %}
