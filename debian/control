@@ -8,12 +8,8 @@ Priority: optional
 Standards-Version: 3.9.2
 Build-Depends:
  debhelper (>= 9),
- dh-virtualenv (>= 1.0),
  git,
- python3-django,
- python3.10 | python3.12,
- python3.10-venv | python3.12-venv,
- python3.10-dev | python3.12-dev,
+ gettext,
  libgdal-dev (>= 2.2),
  libffi-dev (>= 3),
  libxml2-dev (>= 2.9.2),
@@ -21,23 +17,23 @@ Build-Depends:
  zlib1g-dev (>= 1.2.11)
 
 Package: geotrek-admin
-Architecture: any
+Architecture: amd64
 Depends:
  ${misc:Depends},
  ${shlibs:Depends},
  nginx,
  postgresql-client,
+ libpq5,
  libcairo2,
+ libpango-1.0-0,
+ libpangocairo-1.0-0,
+ libmagic1 | libmagic1t64,
+ libvips42 | libvips42t64,
  memcached,
  gettext,
  gdal-bin,
  fonts-dejavu-core,
  fonts-liberation,
  shared-mime-info,
- redis-server,
- screamshotter (>= 2.0.9),
- screamshotter (<< 3.0.0),
- convertit,
- python3.10 | python3.12,
- libvips
+ redis-server
 Description: Manage and promote your trails and tourist content and activities.

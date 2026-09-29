@@ -8,8 +8,6 @@ argdispatch==1.5.0
     # via pdfimpose
 asgiref==3.12.1
     # via django
-async-timeout==5.0.1
-    # via redis
 attrs==26.1.0
     # via
     #   fiona
@@ -212,8 +210,6 @@ easy-thumbnails==2.10.1
     #   geotrek (setup.py)
     #   mapentity
     #   paperclip
-exceptiongroup==1.3.1
-    # via celery
 filelock==3.29.5
     # via django-large-image
 fiona==1.10.1
@@ -412,13 +408,9 @@ transaction==5.1
     # via zodb
 typing-extensions==4.16.0
     # via
-    #   asgiref
     #   beautifulsoup4
     #   django-modeltranslation
-    #   exceptiongroup
     #   large-image
-    #   pyjwt
-    #   referencing
 tzdata==2026.3
     # via
     #   kombu

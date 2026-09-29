@@ -4,7 +4,7 @@
 # export DEBCONF_DEBUG=developer
 
 if [ "$1" = "purge" ]; then
-	rm -rf /opt/geotrek-admin/var
+	rm -rf /opt/geotrek-admin
 	deluser --quiet geotrek || true
 fi
 

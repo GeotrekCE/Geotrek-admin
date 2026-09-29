@@ -1,5 +1,5 @@
-ARG BASE_IMAGE=ubuntu:noble
-ARG PYTHON_VERSION=3.12
+ARG BASE_IMAGE=ubuntu:resolute
+ARG PYTHON_VERSION=3.14
 ARG FRONTEND_IMAGE=scratch
 
 FROM ${BASE_IMAGE} AS base
@@ -85,6 +85,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
         git \
         build-essential \
         graphviz \
+        libgdal-dev \
         libpq-dev
 
 USER geotrek
