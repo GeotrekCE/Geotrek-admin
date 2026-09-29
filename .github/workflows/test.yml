@@ -297,7 +297,7 @@ jobs:
           - name: Building package
             run: |
               docker build -t geotrek-deb-builder -f docker/build-deb/Dockerfile .
-              docker run --rm -v "./:/workspace" -e DEB_VERSION="${{ github.ref_name }}" geotrek-deb-builder
+              docker run --rm -v "./:/workspace" -e DEB_VERSION="$(cat VERSION)" geotrek-deb-builder
               cp *.deb /home/runner/work/Geotrek-admin/
 
           - name: Archive package artifact
