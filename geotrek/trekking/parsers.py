@@ -799,7 +799,7 @@ class ApidaeTrekParser(AttachmentParserMixin, ApidaeBaseTrekkingParser):
         manager = val
         sources = self.apply_filter(dst="source", src=src, val=[manager["nom"]])
         source = sources[0]
-        source.website = manager.get("siteWeb")
+        source.website = manager.get("siteWeb", "")
         source.save()
         return sources
 

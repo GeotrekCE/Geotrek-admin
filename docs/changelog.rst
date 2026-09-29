@@ -2,7 +2,15 @@
 CHANGELOG
 =========
 
-2.126.1+dev     (XXXX-XX-XX)
+2.126.2+dev     (XXXX-XX-XX)
+----------------------------
+
+**Bug fixes**
+
+* Fix Apidae Trek parser crash: default value for a source's website was null while the field is non-nullable
+
+
+2.126.2         (2026-09-22)
 ----------------------------
 
 **Bug fixes**
