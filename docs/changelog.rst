@@ -2,21 +2,14 @@
 CHANGELOG
 =========
 
-2.126.2+dev     (XXXX-XX-XX)
-----------------------------
-
-**Bug fixes**
-
-* Fix Apidae Trek parser crash: default value for a source's website was null while the field is non-nullable
-
-
-2.126.2         (2026-09-22)
+2.126.1+dev     (XXXX-XX-XX)
 ----------------------------
 
 **Bug fixes**
 
 * Fix intervention duplication to also duplicate its target when linked to its own topology instead of another object (e.g. signage, etc) (refs #3845)
 * Fix invisible paths data not flushed when regenerating the pgRouting graph topology with the ``--flush`` option
+* Fix Apidae Trek parser crash: default value for a source's website was null while the field is non-nullable
 
 **Documentation**
 
