@@ -80,7 +80,7 @@ class ThemeViewSet(ListCacheResponseMixin, api_viewsets.GeotrekViewSet):
 class SourceViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = (
         *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TreksAndSitesAndTourismAndFlatpagesRelatedPortalThemeFilter,
+        api_filters.TreksAndSitesAndTourismAndFlatpagesandVigilanceRelatedPortalThemeFilter,
     )
     serializer_class = api_serializers.RecordSourceSerializer
     queryset = common_models.RecordSource.objects.all()

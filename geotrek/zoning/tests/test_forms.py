@@ -111,6 +111,7 @@ class VigilanceAreaFormTest(TestCase):
             "structure": area.structure.pk,
             "vigilance_area_type": area.vigilance_area_type.pk,
             "practicability": area.practicability,
+            "vigilance_level": area.vigilance_level.pk,
             "start_date": area.start_date,
             "geom": "SRID=4326;MULTIPOLYGON(((-0.3142392 -1.0870745, -0.4442674 1.9698002, 2.6553568 2.0446445, 2.6683833 -1.0177449, -0.3142392 -1.0870745)))",
             "active_days": [1, 2],

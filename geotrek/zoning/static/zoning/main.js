@@ -3,13 +3,14 @@ $(window).on('entity:map', function (e, data) {
     var map = data.map;
 
     var landLayers = [{ url: window.SETTINGS.urls.district_layer, name: tr("Districts"), id: 'district' },
-    { url: window.SETTINGS.urls.city_layer, name: tr("Cities"), id: 'city' }];
+    { url: window.SETTINGS.urls.city_layer, name: tr("Cities"), id: 'city' },
+    { url: window.SETTINGS.urls.vigilancearea_layer, name: tr("Vigilance areas"), id: 'vigilancearea' }];
 
     landLayers = landLayers.concat(window.SETTINGS.map['restricted_area_types']);
     landLayers.map(function (el) {
         el.isActive = false;
         return el;
-    })
+    });
 
     for (var i = 0; i < landLayers.length; i++) {
         var landLayer = landLayers[i];

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 14:29+0200\n"
+"POT-Creation-Date: 2026-08-25 08:35+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/nl/>\n"
@@ -22,6 +22,9 @@ msgid "Publish (visible on Geotrek-rando)"
 msgstr ""
 
 msgid "Unpublish (hidden on Geotrek-rando)"
+msgstr ""
+
+msgid "Color"
 msgstr ""
 
 msgid "Zoning"
@@ -61,6 +64,9 @@ msgid "Name"
 msgstr ""
 
 msgid "Provider"
+msgstr ""
+
+msgid "Vigilance level"
 msgstr ""
 
 msgid "After"
@@ -111,6 +117,9 @@ msgstr ""
 msgid "Vigilance area types"
 msgstr ""
 
+msgid "Vigilance levels"
+msgstr ""
+
 msgid "Description"
 msgstr ""
 
@@ -136,6 +145,9 @@ msgid "Portals"
 msgstr ""
 
 msgid "Sources"
+msgstr ""
+
+msgid "Commentary"
 msgstr ""
 
 msgid "Start date is after end date"
@@ -172,6 +184,12 @@ msgid "None"
 msgstr ""
 
 msgid "Thumbnail"
+msgstr ""
+
+msgid "Active"
+msgstr ""
+
+msgid "Inactive"
 msgstr ""
 
 msgid "All week"

@@ -99,7 +99,9 @@ class AutocompleteMixin:
         forwarded = json.loads(forwarded_str)
         parsed_dict = {}
         for key, value in forwarded.items():
-            parsed_dict[f"{key}__in"] = [int(x) for x in value]
+            values = [int(x) for x in value]
+            if values:
+                parsed_dict[f"{key}__in"] = values
         return parsed_dict
 
     @action(detail=False, renderer_classes=[JSONRenderer])
@@ -298,6 +300,15 @@ class VigilanceAreaViewSet(AutocompleteMixin, GeotrekMapentityViewSet):
 
     def get_queryset_autocomplete_bbox(self):
         return self.model.objects.only("name", "id")
+
+    def _parse_forwarded(self, forwarded_str):
+        forwarded = json.loads(forwarded_str)
+        parsed_dict = {}
+        for key, value in forwarded.items():
+            values = value if key == "practicability" else [int(x) for x in value]
+            if values:
+                parsed_dict[f"{key}__in"] = values
+        return parsed_dict
 
     def get_queryset(self):
         qs = self.model.objects.all()

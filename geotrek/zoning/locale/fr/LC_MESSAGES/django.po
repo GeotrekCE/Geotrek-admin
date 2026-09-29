@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-30 14:29+0200\n"
+"POT-Creation-Date: 2026-08-25 08:35+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/fr/>\n"
@@ -23,6 +23,9 @@ msgstr "Publier (visible sur Geotrek-rando)"
 
 msgid "Unpublish (hidden on Geotrek-rando)"
 msgstr "Dépublier (caché sur Geotrek-rando)"
+
+msgid "Color"
+msgstr "Couleur"
 
 msgid "Zoning"
 msgstr "Zonage"
@@ -62,6 +65,9 @@ msgstr "Nom"
 
 msgid "Provider"
 msgstr "Fournisseur"
+
+msgid "Vigilance level"
+msgstr "Niveau de vigilance"
 
 msgid "After"
 msgstr "Après"
@@ -111,6 +117,9 @@ msgstr "Secteurs"
 msgid "Vigilance area types"
 msgstr "Types de zone de vigilance"
 
+msgid "Vigilance levels"
+msgstr "Niveaux de vigilance"
+
 msgid "Description"
 msgstr "Description"
 
@@ -137,6 +146,9 @@ msgstr "Portails"
 
 msgid "Sources"
 msgstr "Sources"
+
+msgid "Commentary"
+msgstr "Commentaire"
 
 msgid "Start date is after end date"
 msgstr "La date de début est après la date de fin"
@@ -173,6 +185,12 @@ msgstr "Aucun(e)"
 
 msgid "Thumbnail"
 msgstr "Miniature"
+
+msgid "Active"
+msgstr "Actif"
+
+msgid "Inactive"
+msgstr "Inactif"
 
 msgid "All week"
 msgstr "Toute la semaine"

@@ -1,0 +1,124 @@
+{
+  "count": 2,
+  "next": null,
+  "previous": null,
+  "results": [
+    {
+            "id": 108,
+            "active_days": [
+                0,
+                1,
+                2
+            ],
+            "active_months": [
+                8
+            ],
+            "description": {
+                "fr": "<p>description 1</p>",
+                "en": "<p>description 1</p>"
+            },
+            "end_date": "2026-08-28",
+            "external_info_url": "https://test.fr",
+            "geometry": {
+                "type": "MultiPolygon",
+                "coordinates": [
+                    [
+                        [
+                            [
+                                1.3758659,
+                                43.6576886
+                            ],
+                            [
+                                1.3298607,
+                                43.6179337
+                            ],
+                            [
+                                1.4029884,
+                                43.5637253
+                            ],
+                            [
+                                1.3758659,
+                                43.6576886
+                            ]
+                        ]
+                    ]
+                ]
+            },
+            "name": {
+                "fr": "zone 1",
+                "en": "area 1"
+            },
+            "practicability": "not_practicable",
+            "practical_info": {
+                "fr": "<p>info pratique 1</p>",
+                "en": "<p>practical information 1</p>"
+            },
+            "published": true,
+            "sources": [1],
+            "start_date": "2026-08-04",
+            "structure": 1,
+            "uuid": "43ce926d-9236-4a62-ac7f-799d1c024b5a",
+            "vigilance_area_type": 1,
+            "vigilance_level": 2
+    },
+    {
+            "id": 127,
+            "active_days": [
+                5,
+                6
+            ],
+            "active_months": [],
+            "description": {
+                "fr": "<p>description 2</p>",
+                "en": "<p>description 2</p>"
+            },
+            "end_date": "2027-07-03",
+            "external_info_url": "https://test.fr",
+            "geometry": {
+                "type": "MultiPolygon",
+                "coordinates": [
+                    [
+                        [
+                            [
+                                1.3758659,
+                                43.6576886
+                            ],
+                            [
+                                1.3298607,
+                                43.6179337
+                            ],
+                            [
+                                1.4029884,
+                                43.5637253
+                            ],
+                            [
+                                1.5052986,
+                                43.6132111
+                            ],
+                            [
+                                1.3758659,
+                                43.6576886
+                            ]
+                        ]
+                    ]
+                ]
+            },
+            "name": {
+                "fr": "zone 2",
+                "en": "area 2"
+            },
+            "practicability": "not_practicable",
+            "practical_info": {
+                "fr": "<p>info pratique 2</p>",
+                "en": "<p>practical information 2</p>"
+            },
+            "published": true,
+            "sources": [2],
+            "start_date": "2026-07-03",
+            "structure": 3,
+            "uuid": "0dce3b07-4e50-42f1-9af9-2d3ea0bcdbbc",
+            "vigilance_area_type": 2,
+            "vigilance_level": 1
+    }
+  ]
+}

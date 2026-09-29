@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-09 15:00+0200\n"
+"POT-Creation-Date: 2026-08-25 08:41+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Camille Monchicourt <camille.monchicourt@ecrins-parcnational.fr>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/api/fr/>\n"
@@ -238,20 +238,59 @@ msgstr "Itinéraire"
 msgid "(deprecated) replaced by '%(field)s'."
 msgstr "(déprécié) remplacé par '%(field)s'."
 
+msgid "Portals"
+msgstr "Portails"
+
+msgid "Filter by one or more portal id, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de portails, séparés par des virgules."
+
+msgid "Practicalities"
+msgstr "Praticabilités"
+
+msgid "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable' and 'not practicable', comma-separated."
+msgstr "Filtrer par une ou plusieurs praticabilités entre 'practicable', 'under_condition_practicable', et 'not practicable', séparés par des virgules."
+
+msgid "Vigilance levels"
+msgstr "Niveau de vigilance"
+
+msgid "Filter by one or more vigilance levels id, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de niveau de vigilance, séparés par des virgules."
+
 msgid "Types"
 msgstr "Types"
+
+msgid "Filter by one or more types id, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de type, séparés par des virgules."
+
+msgid "Types exclusion"
+msgstr "Exclusion de type"
+
+msgid "Exclude one or more types id, comma-separated."
+msgstr "Exclure un ou plusieurs id de type, séparés par des virgules."
+
+msgid "Start date"
+msgstr "Date de début"
+
+msgid "Filter active vigilance areas for a period. Must be setup with end_date. Format is YYYY-MM-JJ."
+msgstr "Filtrer les zones de vigilance actives sur une période. Doit être configuré avec end_date. Le format est YYYY-MM-JJ"
+
+msgid "End date"
+msgstr "Date de fin"
+
+msgid "Filter active vigilance areas for a period. Must be setup with start_date. Format is YYYY-MM-JJ."
+msgstr "Filtrer les zones de vigilance actives sur une période. Doit être configuré avec start_date. Le format est YYYY-MM-JJ"
 
 msgid "Filter by one or more type id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de type, séparés par des virgules."
 
 msgid "Sites"
-msgstr ""
+msgstr "Sites"
 
 msgid "Filter by one or multiple site id. It will show only the POIs related to this outdoor site. If multiple sites, they should be separated by commas."
 msgstr "Filtrer par un ou plusieurs identifiants de site. Il affichera uniquementles POI liés à ce site outdoor. S'il s'agit de plusieurs sites, ils doivent être séparés par des virgules."
 
 msgid "Courses"
-msgstr ""
+msgstr "Courses"
 
 msgid "Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas."
 msgstr "Filtrer par un ou plusieurs identifiants de cours. Il n'affichera que les POIliés à ce parcours outdoor. S'il s'agit de plusieurs cours, ils doivent être séparés par des virgules. "
@@ -294,12 +333,6 @@ msgstr "Filtrer par un ou plusieurs id de secteur, séparés par des virgules."
 
 msgid "Filter by one or more themes id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de thème, séparés par des virgules."
-
-msgid "Portals"
-msgstr "Portails"
-
-msgid "Filter by one or more portal id, comma-separated."
-msgstr "Filtrer par un ou plusieurs id de portails, séparés par des virgules."
 
 msgid "Query string"
 msgstr "Recherche"
@@ -369,6 +402,33 @@ msgstr ""
 
 msgid "Filter objects created before or during date, format YYYY-MM-DD"
 msgstr ""
+
+msgid "Opened"
+msgstr "Ouvert"
+
+msgid "Filter by open status, false=close, true=open."
+msgstr "Filtrer par statut d'ouverture, false=fermé, true=ouvert"
+
+msgid "Opened from"
+msgstr "Ouvert du"
+
+msgid "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+msgstr "Filtrer les itinéraires qui sont ouvert sur la période spécifiée. Format de date attendu : YYYY-MM-DD. Par defaut, la période utilisée est le jour courrant."
+
+msgid "Opened to"
+msgstr "Ouvert au"
+
+msgid "Vigilance area types"
+msgstr "Types de zone de vigilance"
+
+msgid "Filter by one or more vigilance area types id related to a trek, comma-separated."
+msgstr "Filtrer par un ou plusieurs id de type de zone de vigilance, séparés par des virgules."
+
+msgid "Vigilance area types exclude"
+msgstr "Types de zone de vigilance exclus"
+
+msgid "Exclude by one or more vigilance area types id related to a trek, comma-separated."
+msgstr "Exclure un ou plusieurs id de types de zone de vigilance associés à un itinéraire, séparés par des virgules."
 
 msgid "Duration min"
 msgstr "Durée min"
