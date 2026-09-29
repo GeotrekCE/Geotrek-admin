@@ -595,13 +595,11 @@ jobs:
             ssh -p ${{ secrets.SSH_PORT }} -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} make noble_main -C /srv/packages
           fi
 
-      - name: Attach debian packages as release binaries
+      - name: Upload assets to release
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        uses: skx/github-action-publish-binaries@master
+        run: gh release upload "${{ github.ref_name }}" *.deb --clobber
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          args: '*.deb'
 
       - name: Prepare install-docker.zip
         if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
