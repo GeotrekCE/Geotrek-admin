@@ -33,6 +33,7 @@ def _rewrite_f(self, q):
         rewritten.rhs = self._rewrite_f(q.rhs)
     return rewritten
 
+
 def apply_treebeard_compat_patch():
     # treebeard 5 updates tree paths with Django expressions that modeltranslation 0.20
     # rewrites via mutable lhs/rhs attributes. Shallow copies are sufficient here because

@@ -21,7 +21,8 @@ class FlatPageModelTest(TestCase):
         )
 
         self.assertEqual(
-            FlatPageFactory._meta.model.objects.get(pk=child.pk).get_parent().pk, parent.pk
+            FlatPageFactory._meta.model.objects.get(pk=child.pk).get_parent().pk,
+            parent.pk,
         )
 
 
@@ -35,5 +36,6 @@ class MenuItemModelTest(TestCase):
         )
 
         self.assertEqual(
-            MenuItemFactory._meta.model.objects.get(pk=child.pk).get_parent().pk, parent.pk
+            MenuItemFactory._meta.model.objects.get(pk=child.pk).get_parent().pk,
+            parent.pk,
         )
