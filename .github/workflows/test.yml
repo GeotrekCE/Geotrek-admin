@@ -431,8 +431,8 @@ jobs:
           sudo service apache2 stop
           sudo apt-get purge apache2*
           sudo apt-get autoremove
-          echo "deb [arch=amd64] https://packages.geotrek.fr/ubuntu $(lsb_release -sc) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
-          wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
+          cp tools/geotrek.sources /etc/apt/sources.list.d/geotrek.sources
+          sudo curl -o /etc/apt/keyrings/apt.geotrek.gpg --fail https://packages.geotrek.fr/geotrek.gpg
           sudo apt-get -q update
           echo "geotrek-admin geotrek-admin/LANGUAGES string en fr" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
