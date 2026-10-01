@@ -88,15 +88,14 @@ jobs:
 
   test:
     name: Python Unittests
-    runs-on: ubuntu-latest
-    container: makinacorpus/geodjango:${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
 
     permissions:
       packages: write  # required to publish docker image
 
     strategy:
       matrix:
-        os: ['jammy-3.10', 'noble-3.12']
+        os: ['ubuntu-26.04']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -150,18 +149,22 @@ jobs:
            libxml2-dev \
            libxslt-dev \
            libpangocairo-1.0-0 \
-           libgdk-pixbuf2.0-dev \
+           libgdk-pixbuf-2.0-dev \
            libffi-dev \
            libvips
         apt-get install -y --no-install-recommends postgis
 
-    - name: Install python venv
-      run: |
-          uv venv venv
+    - name: Setup uv
+      uses: astral-sh/setup-uv@v7
+      with:
+        version: "latest"
+        python-version: 3.13
+        enable-cache: true
+        activate-environment: true
 
     - name: Install python dependencies
       run: |
-        UV_PYTHON=/__w/Geotrek-admin/Geotrek-admin/venv/bin/python uv pip sync requirements.txt requirements-dev.txt
+        uv pip sync requirements.txt requirements-dev.txt
 
     - name: Create test required directories
       run: |
@@ -170,26 +173,26 @@ jobs:
     - name: Prepare environment
       run: |
         mkdir -p $VAR_DIR/conf/extra_static $VAR_DIR/tmp
-        ./venv/bin/python ./manage.py collectstatic --clear --noinput --verbosity=0
-        ./venv/bin/python ./manage.py compilemessages
+        python manage.py collectstatic --clear --noinput --verbosity=0
+        python manage.py compilemessages
 
     - name: Check missing migrations
       run: |
-        ENV=dev ./venv/bin/python ./manage.py makemigrations --check
+        ENV=dev python ./manage.py makemigrations --check
 
     - name: Check running migrations
       run: |
-        ENV=dev ./venv/bin/python ./manage.py migrate
+        ENV=dev python ./manage.py migrate
 
     - name: Launch Celery
       run: |
-        ./venv/bin/celery -A geotrek worker -c 1 &
+        celery -A geotrek worker -c 1 &
 
     - name: Unit test
       run: |
-        ./venv/bin/coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
-        ./venv/bin/coverage combine
-        ./venv/bin/coverage xml -o coverage.xml
+        coverage run --parallel-mode --concurrency=multiprocessing ./manage.py test --parallel -v 3
+        coverage combine
+        coverage xml -o coverage.xml
 
     - name: Save coverage
       uses: actions/upload-artifact@v7
@@ -197,32 +200,12 @@ jobs:
         name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
         path: coverage.xml
 
-  upload_coverage:
-    name: Upload coverage to codecov
-    runs-on: ubuntu-latest
-    needs: [ test ]
-    strategy:
-      matrix:
-        os: ['jammy-3.10', 'noble-3.12', 'resolute-3.13']
-        tests-env: ['tests', 'tests_nds']
-
-    env:
-      ENV: ${{ matrix.tests-env }}
-      OS: ${{ matrix.os }}
-
-    steps:
-      - uses: actions/checkout@v7
-      - uses: actions/download-artifact@v8
-        with:
-            name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
-            path: .
-
-      - uses: codecov/codecov-action@v7
-        with:
-            files: ./coverage.xml
-            env_vars: OS,ENV
-            token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
-            fail_ci_if_error: true # optional (default = false)
+    - uses: codecov/codecov-action@v7
+      with:
+          files: ./coverage.xml
+          env_vars: OS,ENV
+          token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
+          fail_ci_if_error: true # optional (default = false)
 
   build_docker_image:
     name: Build docker image
