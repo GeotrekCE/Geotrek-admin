@@ -61,7 +61,7 @@ echo "=== 5. Préparation de l'arborescence du paquet (staging) ==="
 mkdir -p "${PKG_ROOT}/opt" \
          "${PKG_ROOT}/DEBIAN" \
          "${PKG_ROOT}/etc/logrotate.d" \
-         "${PKG_ROOT}/etc/apt/source.list.d" \
+         "${PKG_ROOT}/etc/apt/sources.list.d" \
          "${PKG_ROOT}/lib/systemd/system" \
          "${PKG_ROOT}/usr/sbin"
 
@@ -97,13 +97,13 @@ ln -sf /opt/geotrek-admin/bin/manage.py "${PKG_ROOT}/usr/sbin/geotrek"
 # 5.3 Fichiers systemd, logrotate et source
 cp debian/geotrek*.service "${PKG_ROOT}/lib/systemd/system/"
 cp debian/geotrek-admin.logrotate "${PKG_ROOT}/etc/logrotate.d/geotrek-admin"
-cp tools/geotrek.sources "${PKG_ROOT}/etc/apt/source.list.d/"
+cp tools/geotrek.sources "${PKG_ROOT}/etc/apt/sources.list.d/"
 
 # 5.4 Fichiers de contrôle DEBIAN
 # conffiles
-cp debian/conffiles "${PKG_ROOT}/DEBIAN/conffiles"
+(cat debian/conffiles; echo "") | sed '/^[[:space:]]*$/d' > "${PKG_ROOT}/DEBIAN/conffiles"
 echo "/etc/logrotate.d/geotrek-admin" >> "${PKG_ROOT}/DEBIAN/conffiles"
-echo "/etc/apt/source.list.d/geotrek.sources" >> "${PKG_ROOT}/DEBIAN/conffiles"
+echo "/etc/apt/sources.list.d/geotrek.sources" >> "${PKG_ROOT}/DEBIAN/conffiles"
 sort -u "${PKG_ROOT}/DEBIAN/conffiles" -o "${PKG_ROOT}/DEBIAN/conffiles"
 
 # debconf : config et templates (sans préfixe geotrek-admin.)
