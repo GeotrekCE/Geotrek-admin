@@ -279,8 +279,7 @@ jobs:
 
           - name: Building package
             run: |
-              docker build -t geotrek-deb-builder -f docker/build-deb/Dockerfile .
-              docker run --rm -v "./:/workspace" -e DEB_VERSION="$(cat VERSION)" geotrek-deb-builder
+              make build_deb
               cp *.deb /home/runner/work/Geotrek-admin/
 
           - name: Archive package artifact
@@ -414,7 +413,7 @@ jobs:
           sudo systemctl stop apache2 2>/dev/null || true
           sudo systemctl disable --now apache2 2>/dev/null || true
           sudo fuser -k 80/tcp 2>/dev/null || true
-          sudo cp tools/geotrek.sources /etc/apt/sources.list.d/geotrek.sources
+          sudo cp debian/geotrek.sources /etc/apt/sources.list.d/geotrek.sources
           sudo curl -o /etc/apt/keyrings/apt.geotrek.gpg --fail https://packages.geotrek.fr/geotrek.gpg
           sudo apt-get -q update
           echo "geotrek-admin geotrek-admin/MANAGE_DB boolean false" >> .debian_settings
