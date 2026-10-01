@@ -93,14 +93,16 @@ cp -a "${TARGET_DIR}" "${PKG_ROOT}/opt/"
 # 5.2 Lien symbolique usr/sbin/geotrek
 ln -sf /opt/geotrek-admin/bin/manage.py "${PKG_ROOT}/usr/sbin/geotrek"
 
-# 5.3 Fichiers systemd et logrotate
+# 5.3 Fichiers systemd, logrotate et source
 cp debian/geotrek*.service "${PKG_ROOT}/lib/systemd/system/"
 cp debian/geotrek-admin.logrotate "${PKG_ROOT}/etc/logrotate.d/geotrek-admin"
+cp tools/geotrek.sources "${PKG_ROOT}/etc/apt/source.list.d/"
 
 # 5.4 Fichiers de contrôle DEBIAN
 # conffiles
 cp debian/conffiles "${PKG_ROOT}/DEBIAN/conffiles"
 echo "/etc/logrotate.d/geotrek-admin" >> "${PKG_ROOT}/DEBIAN/conffiles"
+echo "/etc/apt/source.list.d/geotrek.sources" >> "${PKG_ROOT}/DEBIAN/conffiles"
 sort -u "${PKG_ROOT}/DEBIAN/conffiles" -o "${PKG_ROOT}/DEBIAN/conffiles"
 
 # debconf : config et templates (sans préfixe geotrek-admin.)
