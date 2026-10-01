@@ -34,7 +34,7 @@ else
 fi
 
 sudo apt update
-sudo apt install -y $postgis_and_routing curl ca-certificates software-properties-common
+sudo apt install -y $postgis_and_routing curl ca-certificates
 sudo curl -o /etc/apt/sources.list.d/geotrek.sources https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/geotrek.sources
 sudo curl -o /usr/share/geotrek/apt.geotrek.gpg --fail https://packages.geotrek.fr/geotrek.gpg
 sudo apt update
