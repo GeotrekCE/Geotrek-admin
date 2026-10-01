@@ -26,6 +26,14 @@ if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
 	fi
 fi
 
-#DEBHELPER#
+if [ "$1" = "purge" ]; then
+	if which deb-systemd-helper >/dev/null 2>&1; then
+		deb-systemd-helper purge 'geotrek.service' >/dev/null 2>&1 || true
+	fi
+fi
+
+if [ -d /run/systemd/system ]; then
+	systemctl --system daemon-reload >/dev/null 2>&1 || true
+fi
 
 exit 0

@@ -156,4 +156,13 @@ fi
 if [ -f /etc/apt/sources.list.d/geotrek.list ]; then
     rm /etc/apt/sources.list.d/geotrek.list || true
 fi
-#DEBHELPER#
+# Intégration systemd
+if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-deconfigure" ] || [ "$1" = "abort-remove" ] ; then
+	if [ -d /run/systemd/system ]; then
+		systemctl --system daemon-reload >/dev/null 2>&1 || true
+		systemctl enable geotrek.service geotrek-ui.service geotrek-api.service geotrek-celery.service >/dev/null 2>&1 || true
+		systemctl restart geotrek.service >/dev/null 2>&1 || true
+	fi
+fi
+
+exit 0
