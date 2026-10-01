@@ -101,8 +101,8 @@ jobs:
     env:
       ENV: ${{ matrix.tests-env }}
       OS: ${{ matrix.os }}
-      POSTGRES_HOST: postgres
-      REDIS_HOST: redis
+      POSTGRES_HOST: 127.0.0.1
+      REDIS_HOST: 127.0.0.1
 
     services:
       postgres:
