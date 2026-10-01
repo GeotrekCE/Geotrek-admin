@@ -26,6 +26,7 @@ setup(
         "pymemcache",
         "coreschema",
         "coreapi",
+        "legacy-cgi; python_version >= '3.13'",
         "django-autocomplete-light",
         "psycopg2",
         "pdfimpose",
