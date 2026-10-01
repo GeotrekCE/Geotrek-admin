@@ -61,6 +61,7 @@ echo "=== 5. Préparation de l'arborescence du paquet (staging) ==="
 mkdir -p "${PKG_ROOT}/opt" \
          "${PKG_ROOT}/DEBIAN" \
          "${PKG_ROOT}/etc/logrotate.d" \
+         "${PKG_ROOT}/etc/apt/source.list.d" \
          "${PKG_ROOT}/lib/systemd/system" \
          "${PKG_ROOT}/usr/sbin"
 
