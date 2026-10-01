@@ -435,6 +435,7 @@ jobs:
           sudo curl -o /etc/apt/keyrings/apt.geotrek.gpg --fail https://packages.geotrek.fr/geotrek.gpg
           sudo apt-get -q update
           echo "geotrek-admin geotrek-admin/MANAGE_DB boolean false" >> .debian_settings
+          echo "geotrek-admin geotrek-admin/POSTGRES_HOST string $POSTGRES_HOST" >> .debian_settings
           echo "geotrek-admin geotrek-admin/LANGUAGES string en fr" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
@@ -449,7 +450,7 @@ jobs:
         run: |
           sudo apt-get install -y --no-install-recommends /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb
           sudo rm -f /etc/nginx/sites-enabled/default
-          sudo systemctl restart geotrek-ui geotrek-api geotrek-celery nginx
+          sudo systemctl restart redis-server memcached geotrek-ui geotrek-api geotrek-celery nginx
 
       - name: Load Data
         run: |
@@ -461,6 +462,7 @@ jobs:
           	cd $dir > /dev/null
           	sudo cp -r * /opt/geotrek-admin/var/media/upload/
           done
+          sudo chown -R geotrek:geotrek /opt/geotrek-admin/var
 
       - name: Wait for Geotrek to be ready
         run: |
@@ -468,7 +470,7 @@ jobs:
           timeout 60 bash -c 'until curl -sf -H "Host: geotrek.local" http://127.0.0.1/ >/dev/null; do sleep 1; done' || {
             echo "=== Erreur : Geotrek ne répond pas sur le port 80 ==="
             echo "--- Statut des services systemd ---"
-            sudo systemctl status nginx geotrek-ui geotrek-api geotrek --no-pager || true
+            sudo systemctl status nginx geotrek-ui geotrek-api geotrek redis-server memcached --no-pager || true
             echo "--- Logs Nginx ---"
             sudo cat /var/log/nginx/error.log /var/log/nginx/geotrek_error.log || true
             echo "--- Logs Gunicorn (Geotrek UI) ---"
@@ -488,6 +490,18 @@ jobs:
         run: |
           /home/runner/work/Geotrek-admin/Geotrek-admin/cypress/node_modules/.bin/cypress run -P /home/runner/work/Geotrek-admin/Geotrek-admin/cypress --record --key 64a5a9b3-9869-4a2f-91e4-e3cd27c2f564
         continue-on-error: false
+
+      - name: Dump server logs on failure
+        if: failure()
+        run: |
+          echo "=== Geotrek UI logs ==="
+          sudo journalctl -u geotrek-ui -n 200 --no-pager || true
+          echo "=== Geotrek Log File ==="
+          sudo cat /opt/geotrek-admin/var/log/geotrek.log || true
+          echo "=== Nginx Geotrek Error Log ==="
+          sudo cat /var/log/nginx/geotrek_error.log || true
+          echo "=== Nginx Error Log ==="
+          sudo cat /var/log/nginx/error.log || true
 
       - name: Archive results as artifacts
         uses: actions/upload-artifact@v7
