@@ -436,6 +436,7 @@ jobs:
           sudo apt-get -q update
           echo "geotrek-admin geotrek-admin/MANAGE_DB boolean false" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_HOST string $POSTGRES_HOST" >> .debian_settings
+          echo "geotrek-admin geotrek-admin/TIME_ZONE string Europe/Paris" >> .debian_settings
           echo "geotrek-admin geotrek-admin/LANGUAGES string en fr" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
