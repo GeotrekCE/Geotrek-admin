@@ -22,7 +22,7 @@ if [ "$(locale charmap)" != "UTF-8" ]; then
 	exit 1
 fi
 
-if ! `localectl status | grep -q "System Locale: LANG=.*UTF-8"`; then
+if ! `echo $LANG | grep -q ".*UTF-8"`; then
 	echo "ERROR! Your system locale charmap is not UTF-8"
 	exit 1
 fi
