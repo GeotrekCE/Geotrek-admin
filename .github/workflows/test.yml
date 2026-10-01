@@ -203,7 +203,7 @@ jobs:
     needs: [ test ]
     strategy:
       matrix:
-        os: ['jammy-3.10', 'noble-3.12']
+        os: ['jammy-3.10', 'noble-3.12', 'resolute-3.13']
         tests-env: ['tests', 'tests_nds']
 
     env:
@@ -428,12 +428,13 @@ jobs:
 
       - name: Simulate install.sh procedure
         run: |
-          sudo service apache2 stop
-          sudo apt-get purge apache2*
-          sudo apt-get autoremove
+          sudo systemctl stop apache2 2>/dev/null || true
+          sudo systemctl disable --now apache2 2>/dev/null || true
+          sudo fuser -k 80/tcp 2>/dev/null || true
           sudo cp tools/geotrek.sources /etc/apt/sources.list.d/geotrek.sources
           sudo curl -o /etc/apt/keyrings/apt.geotrek.gpg --fail https://packages.geotrek.fr/geotrek.gpg
           sudo apt-get -q update
+          echo "geotrek-admin geotrek-admin/MANAGE_DB boolean false" >> .debian_settings
           echo "geotrek-admin geotrek-admin/LANGUAGES string en fr" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_USER string $POSTGRES_USER" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_DB string $POSTGRES_DB" >> .debian_settings
@@ -446,9 +447,9 @@ jobs:
 
       - name: Install package
         run: |
-          sudo unlink /etc/nginx/sites-enabled/default
-          sudo apt-get install --no-install-recommends /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb || exit 0;
-          sudo systemctl restart nginx
+          sudo apt-get install -y --no-install-recommends /home/runner/work/Geotrek-admin/Geotrek-admin/*.deb
+          sudo rm -f /etc/nginx/sites-enabled/default
+          sudo systemctl restart geotrek-ui geotrek-api geotrek-celery nginx
 
       - name: Load Data
         run: |
@@ -460,6 +461,22 @@ jobs:
           	cd $dir > /dev/null
           	sudo cp -r * /opt/geotrek-admin/var/media/upload/
           done
+
+      - name: Wait for Geotrek to be ready
+        run: |
+          echo "Waiting for Geotrek on port 80..."
+          timeout 60 bash -c 'until curl -sf -H "Host: geotrek.local" http://127.0.0.1/ >/dev/null; do sleep 1; done' || {
+            echo "=== Erreur : Geotrek ne répond pas sur le port 80 ==="
+            echo "--- Statut des services systemd ---"
+            sudo systemctl status nginx geotrek-ui geotrek-api geotrek --no-pager || true
+            echo "--- Logs Nginx ---"
+            sudo cat /var/log/nginx/error.log /var/log/nginx/geotrek_error.log || true
+            echo "--- Logs Gunicorn (Geotrek UI) ---"
+            sudo journalctl -u geotrek-ui -n 50 --no-pager || true
+            echo "--- Test Curl direct ---"
+            curl -v -H "Host: geotrek.local" http://127.0.0.1/ || true
+            exit 1
+          }
 
       - name: Install cypress
         run: |
