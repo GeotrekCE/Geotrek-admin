@@ -21,6 +21,9 @@ Architecture: amd64
 Depends:
  ${misc:Depends},
  ${shlibs:Depends},
+ curl,
+ convertit,
+ screamshotter,
  nginx,
  postgresql-client,
  libpq5,
