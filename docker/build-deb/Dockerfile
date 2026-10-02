@@ -8,7 +8,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     equivs \
     ca-certificates \
     git \
+    libdistro-info-perl \
     && rm -rf /var/lib/apt/lists/*
+
 
 # uv for Python runtime
 COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
