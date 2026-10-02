@@ -5,6 +5,10 @@ CHANGELOG
 2.126.2+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Fix filter_attachments for Tourinsoft v3 parsers
+
 
 2.126.2         (2026-09-29)
 ----------------------------
