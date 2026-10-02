@@ -28,7 +28,9 @@ fi
 
 if [ "$1" = "purge" ]; then
 	if which deb-systemd-helper >/dev/null 2>&1; then
-		deb-systemd-helper purge 'geotrek.service' >/dev/null 2>&1 || true
+		for unit in geotrek.service geotrek-ui.service geotrek-api.service geotrek-celery.service; do
+			deb-systemd-helper purge "$unit" >/dev/null 2>&1 || true
+		done
 	fi
 fi
 

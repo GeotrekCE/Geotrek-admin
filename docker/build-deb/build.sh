@@ -99,6 +99,7 @@ ln -sf /opt/geotrek-admin/bin/manage.py "${PKG_ROOT}/usr/sbin/geotrek"
 cp debian/geotrek*.service "${PKG_ROOT}/lib/systemd/system/"
 cp debian/geotrek-admin.logrotate "${PKG_ROOT}/etc/logrotate.d/geotrek-admin"
 cp debian/geotrek.sources "${PKG_ROOT}/etc/apt/sources.list.d/"
+install -Dm644 debian/apt.geotrek.gpg "${PKG_ROOT}/etc/apt/keyrings/apt.geotrek.gpg"
 
 # 5.4 DEBIAN control files
 cp debian/conffiles "${PKG_ROOT}/DEBIAN/conffiles"
