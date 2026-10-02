@@ -128,7 +128,7 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
 
     sudo apt install curl ca-certificates
     sudo curl -o /etc/apt/sources.list.d/geotrek.sources https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/geotrek.sources
-    sudo curl -o /usr/share/geotrek/apt.geotrek.gpg --fail https://packages.geotrek.fr/geotrek.gpg
+    sudo curl -o /etc/apt/keyrings/apt.geotrek.gpg --fail https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/tools/apt.geotrek.gpg
     sudo apt update
 
 If you want to use a local database, install the pgRouting package by running:

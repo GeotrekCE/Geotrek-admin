@@ -414,7 +414,7 @@ jobs:
           sudo systemctl disable --now apache2 2>/dev/null || true
           sudo fuser -k 80/tcp 2>/dev/null || true
           sudo cp debian/geotrek.sources /etc/apt/sources.list.d/geotrek.sources
-          sudo curl -o /etc/apt/keyrings/apt.geotrek.gpg --fail https://packages.geotrek.fr/geotrek.gpg
+          sudo cp debian/apt.geotrek.gpg /etc/apt/keyrings/
           sudo apt-get -q update
           echo "geotrek-admin geotrek-admin/MANAGE_DB boolean false" >> .debian_settings
           echo "geotrek-admin geotrek-admin/POSTGRES_HOST string $POSTGRES_HOST" >> .debian_settings

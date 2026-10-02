@@ -36,7 +36,7 @@ fi
 sudo apt update
 sudo apt install -y $postgis_and_routing curl ca-certificates
 sudo curl -o /etc/apt/sources.list.d/geotrek.sources https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/debian/geotrek.sources
-sudo curl -o /etc/apt/keyrings/apt.geotrek.gpg --fail https://packages.geotrek.fr/geotrek.gpg
+sudo curl -o /etc/apt/keyrings/apt.geotrek.gpg --fail https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/debian/apt.geotrek.gpg
 sudo apt update
 sudo apt install --no-install-recommends -y postgis  # force install postgis scripts only to use loaddem command, even if script does not manage database installation
 sudo apt install --no-install-recommends -y geotrek-admin

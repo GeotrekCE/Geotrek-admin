@@ -149,10 +149,7 @@ fi
 
 rm -rf /opt/geotrek-admin/var/tmp/*
 
-# install or update key
-if [ ! -f /etc/apt/keyrings/apt.geotrek.gpg ]; then
-    curl -o /etc/apt/keyrings/apt.geotrek.gpg --fail https://packages.geotrek.fr/geotrek.gpg || true
-fi
+# remove old list if exists
 if [ -f /etc/apt/sources.list.d/geotrek.list ]; then
     rm /etc/apt/sources.list.d/geotrek.list || true
 fi
