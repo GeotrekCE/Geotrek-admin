@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-* Fix filter_attachments for Tourinsoft v3 parsers
+* Fix bug in Tourinsoft v3 parsers when "Photo" is not defined
 
 **Maintenance**
 
