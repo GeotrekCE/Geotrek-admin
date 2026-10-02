@@ -9,6 +9,7 @@
   "common": {
     "back": "Back to previous page",
     "cancel": "Cancel",
+    "confirm": "Confirm",
     "error": "An error occurred",
     "clear-all": "Clear all",
     "apply": "Apply",
@@ -280,7 +281,9 @@
     "restore-complete": "Restoration complete",
     "attachments-photo-title": "My new photos to send",
     "attachments-photo-item": "Photo",
-    "attachments-no-photos": "No photos"
+    "attachments-no-photos": "No photos",
+    "confirm-dialog-title": "Are you sure you want to {reason}?",
+    "confirm-dialog-description": "All changes will be lost"
   },
   "login": {
     "title": "Welcome to Geotrek-admin Mobile",
