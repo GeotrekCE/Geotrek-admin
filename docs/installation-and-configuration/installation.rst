@@ -70,7 +70,7 @@ An Internet connection with open HTTP and HTTPS destination ports is required.
 
 **Software requirements are:**
 
-* **Ubuntu Noble 24.04 LTS**. Server flavor is recommended, but other Ubuntu flavors (including Desktop) are also supported.
+* **Ubuntu 26.04 LTS**. Server flavor is recommended, but other flavors (including Desktop) are also supported.
 
 
 Information to prepare before installation
