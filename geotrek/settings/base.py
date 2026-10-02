@@ -39,7 +39,7 @@ if os.path.exists(DOT_ENV_FILE):
     load_dotenv(DOT_ENV_FILE)
 
 # [Retrocompatibility] For prods where SERVER_NAME still contains several values:
-SERVER_NAMES = os.getenv("SERVER_NAME", "localhost").split(" ")
+SERVER_NAMES = (os.getenv("SERVER_NAME") or "localhost").split(" ")
 SERVER_NAME = SERVER_NAMES[0]
 ALLOWED_HOSTS = ["127.0.0.1", *SERVER_NAMES]  # allow "127.0.0.1" for docker healthcheck
 ALLOWED_HOSTS = ["*" if host == "_" else host for host in ALLOWED_HOSTS]
@@ -123,7 +123,7 @@ AUTHENT_GROUPS_MAPPING = {
 # timezone as the operating system.
 # If running in a Windows environment this must be set to the same as your
 # system time zone.
-TIME_ZONE = os.getenv("TIME_ZONE", "UTC")
+TIME_ZONE = os.getenv("TIME_ZONE") or "UTC"
 
 # Language code for this installation. All choices can be found here:
 # http://www.i18nguy.com/unicode/language-identifiers.html
@@ -133,9 +133,9 @@ LANGUAGES = (
     ("it", _("Italian")),
     ("es", _("Spanish")),
 )
-LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "fr")
+LANGUAGE_CODE = os.getenv("LANGUAGE_CODE") or "fr"
 
-MODELTRANSLATION_LANGUAGES = tuple(os.getenv("LANGUAGES", "fr en").split(" "))
+MODELTRANSLATION_LANGUAGES = tuple((os.getenv("LANGUAGES") or "fr en").split(" "))
 
 LOCALE_PATHS = (
     # override locale
@@ -391,7 +391,7 @@ PAPERCLIP_LICENSE_MODEL = "common.License"
 PAPERCLIP_ATTACHMENT_MODEL = "common.Attachment"
 
 # Data projection
-SRID = int(os.getenv("SRID", "2154"))  # Lambert-93 for Metropolitan France
+SRID = int(os.getenv("SRID") or 2154)  # Lambert-93 for Metropolitan France
 
 # API projection (client-side), can differ from SRID (database). Leaflet requires 4326.
 API_SRID = 4326
@@ -478,7 +478,7 @@ MAPENTITY_CONFIG = {
 }
 
 MAP_STYLES = {}  # backward compatibility. Don't use this settings anymore, use MAPENTITY_CONFIG['MAP_STYLES']
-DEFAULT_STRUCTURE_NAME = os.getenv("DEFAULT_STRUCTURE", "My structure")
+DEFAULT_STRUCTURE_NAME = os.getenv("DEFAULT_STRUCTURE") or "My structure"
 
 VIEWPORT_MARGIN = 0.1  # On list page, around SPATIAL_EXTENT
 

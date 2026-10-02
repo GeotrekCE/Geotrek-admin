@@ -4,7 +4,7 @@
 # export DEBCONF_DEBUG=developer
 
 if [ "$1" = "purge" ]; then
-	rm -rf /opt/geotrek-admin/var
+	rm -rf /opt/geotrek-admin
 	deluser --quiet geotrek || true
 fi
 
@@ -26,6 +26,16 @@ if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
 	fi
 fi
 
-#DEBHELPER#
+if [ "$1" = "purge" ]; then
+	if which deb-systemd-helper >/dev/null 2>&1; then
+		for unit in geotrek.service geotrek-ui.service geotrek-api.service geotrek-celery.service; do
+			deb-systemd-helper purge "$unit" >/dev/null 2>&1 || true
+		done
+	fi
+fi
+
+if [ -d /run/systemd/system ]; then
+	systemctl --system daemon-reload >/dev/null 2>&1 || true
+fi
 
 exit 0

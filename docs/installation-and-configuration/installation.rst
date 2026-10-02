@@ -4,10 +4,16 @@
 Installation
 ============
 
-Ubuntu package
+Debian package
 ==============
 
-Use these instructions to install Geotrek-admin in an easy way on a dedicated Ubuntu Noble 24.04 or Jammy 22.04 LTS server for production.
+Use these instructions to install Geotrek-admin in an easy way on a debian like LTS server for production.
+We recommend to use Ubuntu 26.04 LTS server flavor, but other debian variants (Bookworm, Trixie) (including Desktop) are also supported.
+All supported Ubuntu LTS version are tested in CI/CD pipeline, so we can guarantee that the installation will work on these versions.
+
+Docker installation
+===================
+
 For another distributions, please use :ref:`the Docker installation method <docker-section>`. It requires more technical skills.
 Lastly, for a developer instance, please follow :ref:`the dedicated procedure <development-section>`.
 
@@ -121,9 +127,8 @@ If you are not confident with the ``install.sh`` script, or if you are having tr
 .. code-block:: bash
 
     sudo apt install curl ca-certificates
-    sudo install -d /usr/share/geotrek
-    sudo curl -o /usr/share/geotrek/apt.geotrek.org.key --fail https://packages.geotrek.fr/geotrek.gpg.key
-    echo "deb [signed-by=/usr/share/geotrek/apt.geotrek.org.key] https://packages.geotrek.fr/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
+    sudo curl -o /etc/apt/sources.list.d/geotrek.sources --fail https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/debian/geotrek.sources
+    sudo curl -o /etc/apt/keyrings/apt.geotrek.gpg --fail https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/debian/apt.geotrek.gpg
     sudo apt update
 
 If you want to use a local database, install the pgRouting package by running:

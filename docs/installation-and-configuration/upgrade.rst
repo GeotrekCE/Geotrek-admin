@@ -333,7 +333,7 @@ Update PostgreSQL / PostGIS / PgRouting on Ubuntu Focal 20.04
 
     Ubuntu Focal will be deprecated on May 2026. We recommend you to install PostgreSQL on a dedicated server, with a most recent version of Ubuntu.
 
-    Prefer upgrade your server to Ubuntu Noble 24.04 from now.
+    Prefer upgrade your server to Ubuntu 26.04 from now.
 
     If possible, install PostgreSQL on the same host or datacenter than your Geotrek-admin instance.
 
