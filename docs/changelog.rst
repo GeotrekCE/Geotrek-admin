@@ -5,6 +5,10 @@ CHANGELOG
 2.126.2+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Fix bug in Tourinsoft v3 parsers when "Photo" is not defined
+
 **Maintenance**
 
 * Debian package is now universal and can be installed on any supported debian-like system. CI only test installation on supported Ubuntu LTS versions.
