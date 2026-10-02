@@ -2,8 +2,6 @@ import * as React from "react"
 import Header from "@/components/header"
 import { getLocale } from "@/paraglide/runtime"
 import { Link, useNavigate } from "@tanstack/react-router"
-import Map from "@/components/map"
-import { Marker } from "react-map-gl/maplibre"
 import { Badge } from "@/components/ui/badge"
 import {
   Item,
@@ -13,7 +11,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item"
 import { CircleAlert, Info } from "lucide-react"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
 import { cn } from "@/lib/utils"
@@ -22,7 +20,9 @@ import NotFound from "@/components/not-found"
 import { usePermission } from "@/hook/useSettingsQuery"
 import type { SignageDataSchemaProps } from "@/schemas/data"
 import { m } from "@/paraglide/messages"
-import { Alert, AlertTitle } from "@/components/ui/alert"
+import PhotosGallery from "@/components/ui/photos-gallery"
+import DetailMap from "@/components/detail-map"
+import DetailConfirmButton from "@/components/detail-confirm-button"
 
 export default function SignageDetail(params: { id: string; type: string }) {
   const navigate = useNavigate()
@@ -44,6 +44,8 @@ export default function SignageDetail(params: { id: string; type: string }) {
       .first()
   )
 
+  const reference = useLiveQuery(() => db.references.get("signage"))
+
   const handleDelete = React.useCallback(() => {
     // @ts-expect-error not never
     db.signageData.delete(Number(params.id))
@@ -57,7 +59,12 @@ export default function SignageDetail(params: { id: string; type: string }) {
 
   const { can_bypass_structure, is_superuser } = usePermission()
 
-  if (!loaded) {
+  if (
+    !loaded ||
+    !reference ||
+    !("pictogram" in reference) ||
+    !reference.pictogram
+  ) {
     return null
   }
 
@@ -156,24 +163,11 @@ export default function SignageDetail(params: { id: string; type: string }) {
             {m["content.location"]()}
           </h3>
           {detail.geom && (
-            <>
-              <Map className="pointer-none aspect-square touch-none">
-                {detail.geom.type === "Point" && (
-                  <Marker
-                    longitude={detail.geom.coordinates[0]}
-                    latitude={detail.geom.coordinates[1]}
-                    anchor="bottom"
-                  />
-                )}
-              </Map>
-              {detail.geom.type !== "Point" && (
-                <Alert className="mt-4" variant="warning">
-                  <AlertTitle>
-                    {m["form.geom-linear-not-supported"]()}
-                  </AlertTitle>
-                </Alert>
-              )}
-            </>
+            <DetailMap
+              geom={detail.geom}
+              reference="signage"
+              pictogram={reference.pictogram}
+            />
           )}
         </section>
 
@@ -314,6 +308,8 @@ export default function SignageDetail(params: { id: string; type: string }) {
           )}
         </section>
 
+        <PhotosGallery attachments={detail.attachments} />
+
         {isAsyncItem && (
           <div className="mt-4 flex flex-col gap-4">
             <Link
@@ -324,17 +320,18 @@ export default function SignageDetail(params: { id: string; type: string }) {
               {m["common.edit-item"]({ item: m["content.signage"]() })}
             </Link>
             {detail.appNewItem === true && (
-              <Button
-                variant="destructive"
-                className="w-full"
+              <DetailConfirmButton
+                reason={m["common.delete-item"]({
+                  item: m["content.signage"](),
+                })}
                 onClick={handleDelete}
-              >
-                {m["common.delete-item"]({ item: m["content.signage"]() })}
-              </Button>
+                variant="destructive"
+              />
             )}
             {rawDataItem && (
-              <Button
-                type="button"
+              <DetailConfirmButton
+                reason={m["content.restore-pending"]()}
+                type="reset"
                 variant="destructive"
                 onClick={async () => {
                   await db.rawData
@@ -348,9 +345,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
                     position: "top-center",
                   })
                 }}
-              >
-                {m["content.restore-pending"]()}
-              </Button>
+              />
             )}
           </div>
         )}

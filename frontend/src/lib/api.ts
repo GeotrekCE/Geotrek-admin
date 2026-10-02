@@ -34,12 +34,13 @@ export async function queryFn<T extends z.ZodObject | z.ZodArray>(
   const urlSearchParams = searchParams
     ? `?${new URLSearchParams(searchParams).toString()}`
     : ""
+  const isFormData = options.body instanceof FormData
   const response = await fetch(`${API_URL}${url}${urlSearchParams}`, {
     method: "GET",
     ...options,
     headers: {
       "Accept-Language": getLocale(),
-      "Content-Type": "application/json",
+      ...(isFormData ? {} : { "Content-Type": "application/json" }),
       ...(options?.headers ?? {}),
     },
   })
