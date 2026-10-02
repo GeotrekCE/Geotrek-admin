@@ -206,10 +206,10 @@ export default function InfrastructureForm({
           />
 
           <FormUploadGallery />
-
           <Button type="submit">
-            {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
-            {m["content.infrastructure"]().toLowerCase()}
+            {isEdit
+              ? m["form.edit"]()
+              : `${m["form.create"]()} ${m["content.infrastructure"]().toLowerCase()}`}
           </Button>
           {formIsDirty && (
             <Button

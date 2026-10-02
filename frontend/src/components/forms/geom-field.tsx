@@ -66,7 +66,9 @@ export function GeomField({
           >
             {isEditing
               ? m["form.geom-action-cancel"]()
-              : m["form.geom-action-select"]()}
+              : hasPoint
+                ? m["form.geom-action-edit"]()
+                : m["form.geom-action-select"]()}
           </Button>
         )}
 

@@ -304,8 +304,9 @@ export default function InterventionForm({
           <FormUploadGallery />
 
           <Button type="submit">
-            {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
-            {m["content.intervention"]().toLowerCase()}
+            {isEdit
+              ? m["form.edit"]()
+              : `${m["form.create"]()} ${m["content.intervention"]().toLowerCase()}`}
           </Button>
 
           {formIsDirty && (
