@@ -35,54 +35,66 @@
     "documentation": "Voir la documentation",
     "loading": "Chargement",
     "less-than-a-minute": "moins d'une minute",
-    "items-count": [{
-      "declarations": ["input count", "local countPlural = count: plural"],
-      "selectors": ["countPlural"],
-      "match": {
-        "countPlural=one": "{count} élément",
-        "countPlural=other": "{count} éléments"
+    "items-count": [
+      {
+        "declarations": ["input count", "local countPlural = count: plural"],
+        "selectors": ["countPlural"],
+        "match": {
+          "countPlural=one": "{count} élément",
+          "countPlural=other": "{count} éléments"
+        }
       }
-    }],
-    "signage-count": [{
-      "declarations": ["input count", "local countPlural = count: plural"],
-      "selectors": ["countPlural"],
-      "match": { 
-        "countPlural=one": "{count} signalétique",
-        "countPlural=other": "{count} signalétiques"
+    ],
+    "signage-count": [
+      {
+        "declarations": ["input count", "local countPlural = count: plural"],
+        "selectors": ["countPlural"],
+        "match": {
+          "countPlural=one": "{count} signalétique",
+          "countPlural=other": "{count} signalétiques"
+        }
       }
-    }], 
-    "intervention-count": [{
-      "declarations": ["input count", "local countPlural = count: plural"],
-      "selectors": ["countPlural"],
-      "match": { 
-        "countPlural=one": "{count} intervention",
-        "countPlural=other": "{count} interventions"
-    }
-    }],
-    "infrastructure-count": [{
-      "declarations": ["input count", "local countPlural = count: plural"],
-      "selectors": ["countPlural"],
-      "match": { 
-        "countPlural=one": "{count} aménagement",
-        "countPlural=other": "{count} aménagements"
+    ],
+    "intervention-count": [
+      {
+        "declarations": ["input count", "local countPlural = count: plural"],
+        "selectors": ["countPlural"],
+        "match": {
+          "countPlural=one": "{count} intervention",
+          "countPlural=other": "{count} interventions"
+        }
       }
-    }], 
-    "report-count": [{
-      "declarations": ["input count", "local countPlural = count: plural"],
-      "selectors": ["countPlural"],
-      "match": { 
-        "countPlural=one": "{count} signalement",
-        "countPlural=other": "{count} signalements"
+    ],
+    "infrastructure-count": [
+      {
+        "declarations": ["input count", "local countPlural = count: plural"],
+        "selectors": ["countPlural"],
+        "match": {
+          "countPlural=one": "{count} aménagement",
+          "countPlural=other": "{count} aménagements"
+        }
       }
-    }],    
-    "map-layers-count": [{
-      "declarations": ["input count", "local countPlural = count: plural"],
-      "selectors": ["countPlural"],
-      "match": {
-        "countPlural=one": "{count} fond cartographique embarqué",
-        "countPlural=other": "{count} fonds cartographiques embarqués"
+    ],
+    "report-count": [
+      {
+        "declarations": ["input count", "local countPlural = count: plural"],
+        "selectors": ["countPlural"],
+        "match": {
+          "countPlural=one": "{count} signalement",
+          "countPlural=other": "{count} signalements"
+        }
       }
-    }],
+    ],
+    "map-layers-count": [
+      {
+        "declarations": ["input count", "local countPlural = count: plural"],
+        "selectors": ["countPlural"],
+        "match": {
+          "countPlural=one": "{count} fond cartographique embarqué",
+          "countPlural=other": "{count} fonds cartographiques embarqués"
+        }
+      }
+    ],
     "map-bbox": "Zone données embarquées",
     "data-scope": "Portée des données",
     "data-scope-all": "Les données de toutes les structures",
@@ -150,7 +162,6 @@
     "sync-data-failed": "Erreur lors de l'enregistrement des données",
     "sync-no-rights": "Vous n'avez pas de droits suffisants pour synchroniser. Contactez un administrateur.",
     "sync-too-large-data": "Le volume de données sélectionné est trop important"
-    
   },
   "form": {
     "name": "Nom",
@@ -190,11 +201,12 @@
     "problem-magnitude": "Amplitude du problème",
     "required": "obligatoire",
     "create": "Créer",
-    "edit": "Modifier",
+    "edit": "Enregistrer les modifications",
     "geom-action-select": "Placer le point sur la carte",
+    "geom-action-edit": "Déplacer le point sur la carte",
     "geom-action-cancel": "Revenir en consultation",
-    "geom-description": "Les interventions de type linéaire ne sont pas encore pris en charge.",
-    "geom-linear-not-supported": "La géométrie de cet objet n'est pas un point et les linéaires ne sont pas encore pris en charge.",
+    "geom-description": "Les interventions de type linéaire ne sont pas encore modifiables.",
+    "geom-linear-not-supported": "La géométrie de cet objet n'est pas un point et les linéaires ne sont pas encore modifiables.",
     "reset": "Annuler la saisie en cours",
     "attachments-photo-title": "Envoyer des photos",
     "attachments-photo-item": "Photo",

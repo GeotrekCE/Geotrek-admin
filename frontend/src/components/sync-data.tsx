@@ -111,7 +111,7 @@ export default function SyncData({ hasAsyncData }: { hasAsyncData: boolean }) {
                 onClick={refetch}
                 type="button"
               >
-                Re-télécharger les données
+                {m["common.sync-data-redownload"]()}
               </Button>
             )}
           </>

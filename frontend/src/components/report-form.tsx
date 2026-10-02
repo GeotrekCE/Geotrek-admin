@@ -154,8 +154,9 @@ export default function ReportForm({
           <FormUploadGallery />
 
           <Button type="submit">
-            {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
-            {m["content.report"]().toLowerCase()}
+            {isEdit
+              ? m["form.edit"]()
+              : `${m["form.create"]()} ${m["content.report"]().toLowerCase()}`}
           </Button>
 
           {formIsDirty && (

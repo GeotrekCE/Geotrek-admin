@@ -35,54 +35,66 @@
     "documentation": "See documentation",
     "loading": "Loading",
     "less-than-a-minute": "less than a minute",
-    "items-count": [{
-      "declarations": ["input count", "local countPlural = count: plural"],
-      "selectors": ["countPlural"],
-      "match": {
-        "countPlural=one": "{count} item",
-        "countPlural=other": "{count} items"
+    "items-count": [
+      {
+        "declarations": ["input count", "local countPlural = count: plural"],
+        "selectors": ["countPlural"],
+        "match": {
+          "countPlural=one": "{count} item",
+          "countPlural=other": "{count} items"
+        }
       }
-    }],
-    "signage-count": [{
-      "declarations": ["input count", "local countPlural = count: plural"],
-      "selectors": ["countPlural"],
-      "match": { 
-        "countPlural=one": "{count} signage",
-        "countPlural=other": "{count} signages"
+    ],
+    "signage-count": [
+      {
+        "declarations": ["input count", "local countPlural = count: plural"],
+        "selectors": ["countPlural"],
+        "match": {
+          "countPlural=one": "{count} signage",
+          "countPlural=other": "{count} signages"
+        }
       }
-    }], 
-    "intervention-count": [{
-      "declarations": ["input count", "local countPlural = count: plural"],
-      "selectors": ["countPlural"],
-      "match": { 
-        "countPlural=one": "{count} intervention",
-        "countPlural=other": "{count} interventions"
-    }
-    }],
-    "infrastructure-count": [{
-      "declarations": ["input count", "local countPlural = count: plural"],
-      "selectors": ["countPlural"],
-      "match": { 
-        "countPlural=one": "{count} infrastructure",
-        "countPlural=other": "{count} infrastructures"
+    ],
+    "intervention-count": [
+      {
+        "declarations": ["input count", "local countPlural = count: plural"],
+        "selectors": ["countPlural"],
+        "match": {
+          "countPlural=one": "{count} intervention",
+          "countPlural=other": "{count} interventions"
+        }
       }
-    }], 
-    "report-count": [{
-      "declarations": ["input count", "local countPlural = count: plural"],
-      "selectors": ["countPlural"],
-      "match": { 
-        "countPlural=one": "{count} report",
-        "countPlural=other": "{count} reports"
+    ],
+    "infrastructure-count": [
+      {
+        "declarations": ["input count", "local countPlural = count: plural"],
+        "selectors": ["countPlural"],
+        "match": {
+          "countPlural=one": "{count} infrastructure",
+          "countPlural=other": "{count} infrastructures"
+        }
       }
-    }],    
-    "map-layers-count": [{
-      "declarations": ["input count", "local countPlural = count: plural"],
-      "selectors": ["countPlural"],
-      "match": {
-        "countPlural=one": "{count} offline map layer",
-        "countPlural=other": "{count} offline map layers"
+    ],
+    "report-count": [
+      {
+        "declarations": ["input count", "local countPlural = count: plural"],
+        "selectors": ["countPlural"],
+        "match": {
+          "countPlural=one": "{count} report",
+          "countPlural=other": "{count} reports"
+        }
       }
-    }],
+    ],
+    "map-layers-count": [
+      {
+        "declarations": ["input count", "local countPlural = count: plural"],
+        "selectors": ["countPlural"],
+        "match": {
+          "countPlural=one": "{count} offline map layer",
+          "countPlural=other": "{count} offline map layers"
+        }
+      }
+    ],
     "map-bbox": "Synced Data Area",
     "data-scope": "Data scope",
     "data-scope-all": "Data from all structures",
@@ -112,7 +124,7 @@
     "update-needed-description": "Please update the data entry repository before your next data entry.",
     "update-recommended": "An update is recommended",
     "update-recommended-description": "It is recommended that you update the data before your next data entry.",
-    "sync-needed-description":"Synchronize your entries before you can select new data to download.",
+    "sync-needed-description": "Synchronize your entries before you can select new data to download.",
     "offline-cannot-sync": "You are offline and cannot synchronise data",
     "items-to-sync": "Items are waiting to be synchronized",
     "select": "Select",
@@ -146,6 +158,8 @@
     "sync-data-edit-aera": "Change area",
     "sync-data-download": "Download data",
     "sync-data-redownload": "Redownload data",
+    "sync-data-saved": "Data stored in the app",
+    "sync-data-failed": "Error saving data",
     "sync-no-rights": "You do not have sufficient permissions to sync. Contact an administrator.",
     "sync-too-large-data": "The selected data volume is too large"
   },
@@ -187,11 +201,12 @@
     "problem-magnitude": "Problem magnitude",
     "required": "required",
     "create": "Create",
-    "edit": "Edit",
-    "geom-action-select": "Place the point on map",
+    "edit": "Save changes",
+    "geom-action-edit": "Move the point on the map",
+    "geom-action-select": "Put the point on map",
     "geom-action-cancel": "Return to view",
-    "geom-description": "Linear interventions are not yet supported.",
-    "geom-linear-not-supported": "The geometry of this object is not a point, and linear objects are not yet supported.",
+    "geom-description": "Linear interventions are not yet editable.",
+    "geom-linear-not-supported": "The geometry of this object is not a point, and linear objects are not yet editable.",
     "reset": "Reset",
     "attachments-photo-title": "Send photos",
     "attachments-photo-item": "Photo",

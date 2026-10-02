@@ -198,8 +198,9 @@ export default function SignageForm({
           <FormUploadGallery />
 
           <Button type="submit">
-            {isEdit ? m["form.edit"]() : m["form.create"]()}{" "}
-            {m["content.signage"]().toLowerCase()}
+            {isEdit
+              ? m["form.edit"]()
+              : `${m["form.create"]()} ${m["content.signage"]().toLowerCase()}`}
           </Button>
 
           {formIsDirty && (
