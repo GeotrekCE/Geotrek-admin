@@ -9,6 +9,12 @@ CHANGELOG
 
 * Fix filter_attachments for Tourinsoft v3 parsers
 
+**Maintenance**
+
+* Debian package is now universal and can be installed on any supported debian-like system. CI only test installation on supported Ubuntu LTS versions.
+* Next release will update your source list and signature key to new format.
+* Geotrek-admin use now embedded python 3.13 version on all variants of debian package or docker image.
+
 
 2.126.2         (2026-09-29)
 ----------------------------
