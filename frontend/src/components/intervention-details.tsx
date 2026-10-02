@@ -4,7 +4,7 @@ import { getLocale } from "@/paraglide/runtime"
 import { Link, useNavigate } from "@tanstack/react-router"
 import { Badge } from "@/components/ui/badge"
 import { CircleAlert } from "lucide-react"
-import { Button, buttonVariants } from "@/components/ui/button"
+import { buttonVariants } from "@/components/ui/button"
 import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
 import { cn } from "@/lib/utils"
@@ -15,6 +15,7 @@ import type { InterventionDataSchemaProps } from "@/schemas/data"
 import { m } from "@/paraglide/messages"
 import PhotosGallery from "@/components/ui/photos-gallery"
 import DetailMap from "@/components/detail-map"
+import DetailConfirmButton from "@/components/detail-confirm-button"
 
 export default function InterventionDetail(params: {
   id: string
@@ -287,17 +288,18 @@ export default function InterventionDetail(params: {
               {m["common.edit-item"]({ item: m["content.intervention"]() })}
             </Link>
             {detail.appNewItem === true && (
-              <Button
-                variant="destructive"
-                className="w-full"
+              <DetailConfirmButton
+                reason={m["common.delete-item"]({
+                  item: m["content.intervention"](),
+                })}
                 onClick={handleDelete}
-              >
-                {m["common.delete-item"]({ item: m["content.intervention"]() })}
-              </Button>
+                variant="destructive"
+              />
             )}
             {rawDataItem && (
-              <Button
-                type="button"
+              <DetailConfirmButton
+                reason={m["content.restore-pending"]()}
+                type="reset"
                 variant="destructive"
                 onClick={async () => {
                   await db.rawData
@@ -311,9 +313,7 @@ export default function InterventionDetail(params: {
                     position: "top-center",
                   })
                 }}
-              >
-                {m["content.restore-pending"]()}
-              </Button>
+              />
             )}
           </div>
         )}
