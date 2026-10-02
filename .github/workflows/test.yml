@@ -518,17 +518,9 @@ jobs:
           mkdir -p tmp_frontend/frontend
           cp -r frontend/dist tmp_frontend/frontend/
 
-      - name: Download 22.04 debian artifact
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        uses: actions/download-artifact@v8
+      - uses: actions/download-artifact@v8
         with:
-          name: jammy
-
-      - name: Download 24.04 debian artifact
-        if: ${{ github.event_name == 'release' && github.event.action == 'created' }}
-        uses: actions/download-artifact@v8
-        with:
-          name: noble
+          name: debian-package
 
       - name: Download docker image
         uses: ishworkh/container-image-artifact-download@v2.1.0

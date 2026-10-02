@@ -55,10 +55,9 @@ build_prod: build_frontend
 build_prod_no_cache: build_frontend
 	docker build -t geotrek -f docker/Dockerfile --build-arg FRONTEND_IMAGE=geotrek_frontend --no-cache .
 
-build_deb:
+build_deb: build_frontend
 	docker build -t geotrek-deb-builder -f docker/build-deb/Dockerfile .
 	docker run --rm -v "./:/workspace" -e DEB_VERSION="$$(cat VERSION)" geotrek-deb-builder
-
 
 release:
 	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
