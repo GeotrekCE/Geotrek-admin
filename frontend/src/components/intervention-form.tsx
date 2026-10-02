@@ -253,12 +253,15 @@ export default function InterventionForm({
               <fieldset className="flex flex-col flex-wrap items-start">
                 <legend className="mt-3">{m["form.man-days"]()}</legend>
                 {field.state.value?.map((_item, index: number) => (
-                  <div key={index} className="items-starts my-3 flex gap-5">
+                  <div
+                    key={index}
+                    className="items-starts my-3 flex flex-wrap gap-5"
+                  >
                     <FormTextField
                       name={`man_day[${index}].nb_days`}
                       label={m["form.time-in-days"]()}
                       type="number"
-                      className="w-40"
+                      className="max-w-full"
                       step="0.01"
                     />
 
