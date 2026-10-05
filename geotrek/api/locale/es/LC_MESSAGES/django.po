@@ -211,9 +211,8 @@ msgstr ""
 msgid "Filter by one or multiple site id. It will show only the POIs related to this outdoor site. If multiple sites, they should be separated by commas."
 msgstr ""
 
-msgid "Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas."
+msgid "Filter by one or multiple course id. It will show only the POIs related to this outdoor course. If multiple courses, they should be separated by commas."
 msgstr ""
-
 msgid "Filter by a trek id. It will only show the contents related to this trek."
 msgstr ""
 
