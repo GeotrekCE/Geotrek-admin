@@ -281,7 +281,6 @@ class ReportForm(CommonForm):
                 # from 'filed' to 'waiting' : status was already set to be "waiting" in Suricate thanks to code above line 126
                 # statuses from 'waiting' al the way through 'solved'  : status was already set to be "waiting" in Suricate thanks to previous workflow steps
                 report.change_position_in_suricate(force=True)
-                report.unlock_in_suricate()
 
         elif (
             report.status
