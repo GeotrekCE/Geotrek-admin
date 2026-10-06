@@ -658,34 +658,38 @@ class TestSuricateForms(SuricateWorkflowTests):
                 + str(self.filed_report_1.formatted_external_uuid)
             ).encode()
         ).hexdigest()
-        mocked_get.assert_has_calls([
-            mock.call(
-                f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_report_1.formatted_external_uuid}&id_origin=geotrek&check={check}",
-                auth=("", ""),
-            ),
-            mock.call(
-                f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&id_origin=geotrek&check={check}",
-                auth=("", ""),
-            ),
-            mock.call(
-                f"http://suricate.wsmanagement.example.com/wsUnlockAlert?uid_alerte={self.filed_report_1.formatted_external_uuid}&id_origin=geotrek&check={check}",
-                auth=("", ""),
-            ),
-        ])
-        mocked_post.assert_has_calls([
-            mock.call(
-                "http://suricate.wsmanagement.example.com/wsUpdateStatus",
-                {
-                    'id_origin': 'geotrek',
-                    'uid_alerte': self.filed_report_1.formatted_external_uuid,
-                    'statut': 'waiting',
-                    'txt_changestatut': None,
-                    'txt_changestatut_sentinelle': None,
-                    'check': check
-                },
-                auth=('', ''),
-            )
-        ])
+        mocked_get.assert_has_calls(
+            [
+                mock.call(
+                    f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_report_1.formatted_external_uuid}&id_origin=geotrek&check={check}",
+                    auth=("", ""),
+                ),
+                mock.call(
+                    f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&id_origin=geotrek&check={check}",
+                    auth=("", ""),
+                ),
+                mock.call(
+                    f"http://suricate.wsmanagement.example.com/wsUnlockAlert?uid_alerte={self.filed_report_1.formatted_external_uuid}&id_origin=geotrek&check={check}",
+                    auth=("", ""),
+                ),
+            ]
+        )
+        mocked_post.assert_has_calls(
+            [
+                mock.call(
+                    "http://suricate.wsmanagement.example.com/wsUpdateStatus",
+                    {
+                        "id_origin": "geotrek",
+                        "uid_alerte": self.filed_report_1.formatted_external_uuid,
+                        "statut": "waiting",
+                        "txt_changestatut": None,
+                        "txt_changestatut_sentinelle": None,
+                        "check": check,
+                    },
+                    auth=("", ""),
+                )
+            ]
+        )
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
@@ -697,7 +701,9 @@ class TestSuricateForms(SuricateWorkflowTests):
         new_geom = Point(0, 0, srid=2154)
         data = {"email": "test@test.fr", "geom": new_geom}
         form = ReportForm(
-            instance=self.filed_locked_report, data=data, user=self.workflow_manager.user
+            instance=self.filed_locked_report,
+            data=data,
+            user=self.workflow_manager.user,
         )
         form.save()
         # Assert relocation is forwarded to Suricate
@@ -711,34 +717,38 @@ class TestSuricateForms(SuricateWorkflowTests):
                 + str(self.filed_locked_report.formatted_external_uuid)
             ).encode()
         ).hexdigest()
-        mocked_get.assert_has_calls([
-            mock.call(
-                f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_locked_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
-                auth=("", ""),
-            ),
-            mock.call(
-                f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_locked_report.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&id_origin=geotrek&check={check}",
-                auth=("", ""),
-            ),
-            mock.call(
-                f"http://suricate.wsmanagement.example.com/wsUnlockAlert?uid_alerte={self.filed_locked_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
-                auth=("", ""),
-            ),
-        ])
-        mocked_post.assert_has_calls([
-            mock.call(
-                "http://suricate.wsmanagement.example.com/wsUpdateStatus",
-                {
-                    'id_origin': 'geotrek',
-                    'uid_alerte': self.filed_locked_report.formatted_external_uuid,
-                    'statut': 'waiting',
-                    'txt_changestatut': None,
-                    'txt_changestatut_sentinelle': None,
-                    'check': check
-                },
-                auth=('', ''),
-            )
-        ])
+        mocked_get.assert_has_calls(
+            [
+                mock.call(
+                    f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_locked_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
+                    auth=("", ""),
+                ),
+                mock.call(
+                    f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_locked_report.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&id_origin=geotrek&check={check}",
+                    auth=("", ""),
+                ),
+                mock.call(
+                    f"http://suricate.wsmanagement.example.com/wsUnlockAlert?uid_alerte={self.filed_locked_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
+                    auth=("", ""),
+                ),
+            ]
+        )
+        mocked_post.assert_has_calls(
+            [
+                mock.call(
+                    "http://suricate.wsmanagement.example.com/wsUpdateStatus",
+                    {
+                        "id_origin": "geotrek",
+                        "uid_alerte": self.filed_locked_report.formatted_external_uuid,
+                        "statut": "waiting",
+                        "txt_changestatut": None,
+                        "txt_changestatut_sentinelle": None,
+                        "check": check,
+                    },
+                    auth=("", ""),
+                )
+            ]
+        )
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
@@ -764,16 +774,18 @@ class TestSuricateForms(SuricateWorkflowTests):
                 + str(self.filed_report_1.formatted_external_uuid)
             ).encode()
         ).hexdigest()
-        mocked_get.assert_has_calls([
-            mock.call(
-                f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_report_1.formatted_external_uuid}&id_origin=geotrek&check={check}",
-                auth=("", ""),
-            ),
-            mock.call(
-                f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&force_update=1&id_origin=geotrek&check={check}",
-                auth=("", ""),
-            ),
-        ])
+        mocked_get.assert_has_calls(
+            [
+                mock.call(
+                    f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_report_1.formatted_external_uuid}&id_origin=geotrek&check={check}",
+                    auth=("", ""),
+                ),
+                mock.call(
+                    f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&force_update=1&id_origin=geotrek&check={check}",
+                    auth=("", ""),
+                ),
+            ]
+        )
         mocked_post.assert_called_once_with(
             "http://suricate.wsmanagement.example.com/wsUpdateStatus",
             {
@@ -798,7 +810,9 @@ class TestSuricateForms(SuricateWorkflowTests):
         new_geom = Point(2, 2, srid=2154)
         data = {"email": "test@test.fr", "geom": new_geom}
         form = ReportForm(
-            instance=self.filed_locked_report, data=data, user=self.workflow_manager.user
+            instance=self.filed_locked_report,
+            data=data,
+            user=self.workflow_manager.user,
         )
         form.save()
         # Assert relocation is forwarded to Suricate
@@ -812,16 +826,18 @@ class TestSuricateForms(SuricateWorkflowTests):
                 + str(self.filed_locked_report.formatted_external_uuid)
             ).encode()
         ).hexdigest()
-        mocked_get.assert_has_calls([
-            mock.call(
-                f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_locked_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
-                auth=("", ""),
-            ),
-            mock.call(
-                f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_locked_report.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&force_update=1&id_origin=geotrek&check={check}",
-                auth=("", ""),
-            ),
-        ])
+        mocked_get.assert_has_calls(
+            [
+                mock.call(
+                    f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_locked_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
+                    auth=("", ""),
+                ),
+                mock.call(
+                    f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_locked_report.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&force_update=1&id_origin=geotrek&check={check}",
+                    auth=("", ""),
+                ),
+            ]
+        )
         mocked_post.assert_called_once_with(
             "http://suricate.wsmanagement.example.com/wsUpdateStatus",
             {
