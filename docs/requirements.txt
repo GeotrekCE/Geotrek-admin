@@ -15,11 +15,16 @@ babel==2.17.0
     #   sphinx
     #   sphinx-intl
 certifi==2026.7.22
-    # via requests
+    # via
+    #   -c ../requirements.txt
+    #   requests
 charset-normalizer==3.5.2
-    # via requests
+    # via
+    #   -c ../requirements.txt
+    #   requests
 click==8.4.2
     # via
+    #   -c ../requirements.txt
     #   sphinx-intl
     #   uvicorn
 colorama==0.4.6
@@ -30,6 +35,7 @@ h11==0.16.0
     # via uvicorn
 idna==3.20
     # via
+    #   -c ../requirements.txt
     #   anyio
     #   requests
 imagesize==1.4.1
@@ -41,7 +47,9 @@ markupsafe==3.0.3
     #   jinja2
     #   sphinx-immaterial
 packaging==26.3
-    # via sphinx
+    # via
+    #   -c ../requirements.txt
+    #   sphinx
 pydantic==2.12.3
     # via
     #   pydantic-extra-types
@@ -54,25 +62,26 @@ pygments==2.20.0
     # via sphinx
 requests==2.34.2
     # via
+    #   -c ../requirements.txt
     #   sphinx
     #   sphinx-immaterial
 snowballstemmer==3.0.1
     # via sphinx
 sphinx==8.1.3
     # via
-    #   -r docs/requirements.in
+    #   -r requirements.in
     #   sphinx-autobuild
     #   sphinx-design
     #   sphinx-immaterial
     #   sphinx-intl
 sphinx-autobuild==2024.10.3
-    # via -r docs/requirements.in
+    # via -r requirements.in
 sphinx-design==0.6.1
-    # via -r docs/requirements.in
+    # via -r requirements.in
 sphinx-immaterial==0.13.9
-    # via -r docs/requirements.in
+    # via -r requirements.in
 sphinx-intl==2.4.0
-    # via -r docs/requirements.in
+    # via -r requirements.in
 sphinxcontrib-applehelp==2.0.0
     # via sphinx
 sphinxcontrib-devhelp==2.0.0
@@ -89,6 +98,7 @@ starlette==1.3.1
     # via sphinx-autobuild
 typing-extensions==4.16.0
     # via
+    #   -c ../requirements.txt
     #   pydantic
     #   pydantic-core
     #   pydantic-extra-types
@@ -97,7 +107,9 @@ typing-extensions==4.16.0
 typing-inspection==0.4.2
     # via pydantic
 urllib3==2.8.0
-    # via requests
+    # via
+    #   -c ../requirements.txt
+    #   requests
 uvicorn==0.38.0
     # via sphinx-autobuild
 watchfiles==1.1.1
