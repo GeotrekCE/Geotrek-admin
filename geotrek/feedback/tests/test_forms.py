@@ -56,6 +56,9 @@ class TestSuricateForms(SuricateWorkflowTests):
         cls.filed_report_2 = ReportFactory(
             status=cls.filed_status, external_uuid=uuid.uuid4()
         )
+        cls.filed_locked_report = ReportFactory(
+            status=cls.filed_status, locked=True, external_uuid=uuid.uuid4()
+        )
         cls.waiting_report = ReportFactory(
             status=cls.waiting_status,
             uses_timers=True,
@@ -451,7 +454,10 @@ class TestSuricateForms(SuricateWorkflowTests):
             auth=("", ""),
         )
         mocked_post.assert_has_calls([call1, call2], any_order=True)
-        mocked_get.assert_not_called()
+        mocked_get.assert_called_once_with(
+            f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
+            auth=("", ""),
+        )
         # Assert user is not notified
         self.assertEqual(len(mail.outbox), mails_before)
 
@@ -630,8 +636,10 @@ class TestSuricateForms(SuricateWorkflowTests):
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
-    def test_relocate_report_in_district(self, mocked_get):
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_relocate_unlocked_report_in_district(self, mocked_post, mocked_get):
         self.build_get_request_patch(mocked_get)
+        self.build_post_request_patch(mocked_post)
         # Relocate report inside of main district
         new_geom = Point(0, 0, srid=2154)
         data = {"email": "test@test.fr", "geom": new_geom}
@@ -650,16 +658,94 @@ class TestSuricateForms(SuricateWorkflowTests):
                 + str(self.filed_report_1.formatted_external_uuid)
             ).encode()
         ).hexdigest()
-        mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&id_origin=geotrek&check={check}",
-            auth=("", ""),
-        )
+        mocked_get.assert_has_calls([
+            mock.call(
+                f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_report_1.formatted_external_uuid}&id_origin=geotrek&check={check}",
+                auth=("", ""),
+            ),
+            mock.call(
+                f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&id_origin=geotrek&check={check}",
+                auth=("", ""),
+            ),
+            mock.call(
+                f"http://suricate.wsmanagement.example.com/wsUnlockAlert?uid_alerte={self.filed_report_1.formatted_external_uuid}&id_origin=geotrek&check={check}",
+                auth=("", ""),
+            ),
+        ])
+        mocked_post.assert_has_calls([
+            mock.call(
+                "http://suricate.wsmanagement.example.com/wsUpdateStatus",
+                {
+                    'id_origin': 'geotrek',
+                    'uid_alerte': self.filed_report_1.formatted_external_uuid,
+                    'statut': 'waiting',
+                    'txt_changestatut': None,
+                    'txt_changestatut_sentinelle': None,
+                    'check': check
+                },
+                auth=('', ''),
+            )
+        ])
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
     @mock.patch("geotrek.feedback.helpers.requests.post")
-    def test_relocate_report_outside_district(self, mocked_post, mocked_get):
+    def test_relocate_locked_report_in_district(self, mocked_post, mocked_get):
         self.build_get_request_patch(mocked_get)
+        self.build_post_request_patch(mocked_post)
+        # Relocate report inside of main district
+        new_geom = Point(0, 0, srid=2154)
+        data = {"email": "test@test.fr", "geom": new_geom}
+        form = ReportForm(
+            instance=self.filed_locked_report, data=data, user=self.workflow_manager.user
+        )
+        form.save()
+        # Assert relocation is forwarded to Suricate
+        long, lat = new_geom.transform(4326, clone=True).coords
+        long_txt = f"{long:.6f}"
+        lat_txt = f"{lat:.6f}"
+        check = md5(
+            (
+                SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER
+                + SuricateMessenger().gestion_manager.ID_ORIGIN
+                + str(self.filed_locked_report.formatted_external_uuid)
+            ).encode()
+        ).hexdigest()
+        mocked_get.assert_has_calls([
+            mock.call(
+                f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_locked_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
+                auth=("", ""),
+            ),
+            mock.call(
+                f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_locked_report.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&id_origin=geotrek&check={check}",
+                auth=("", ""),
+            ),
+            mock.call(
+                f"http://suricate.wsmanagement.example.com/wsUnlockAlert?uid_alerte={self.filed_locked_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
+                auth=("", ""),
+            ),
+        ])
+        mocked_post.assert_has_calls([
+            mock.call(
+                "http://suricate.wsmanagement.example.com/wsUpdateStatus",
+                {
+                    'id_origin': 'geotrek',
+                    'uid_alerte': self.filed_locked_report.formatted_external_uuid,
+                    'statut': 'waiting',
+                    'txt_changestatut': None,
+                    'txt_changestatut_sentinelle': None,
+                    'check': check
+                },
+                auth=('', ''),
+            )
+        ])
+
+    @test_for_workflow_mode
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_relocate_unlocked_report_outside_district(self, mocked_post, mocked_get):
+        self.build_get_request_patch(mocked_get)
+        self.build_post_request_patch(mocked_post)
         # Relocate report outside of main district
         new_geom = Point(2, 2, srid=2154)
         data = {"email": "test@test.fr", "geom": new_geom}
@@ -678,6 +764,16 @@ class TestSuricateForms(SuricateWorkflowTests):
                 + str(self.filed_report_1.formatted_external_uuid)
             ).encode()
         ).hexdigest()
+        mocked_get.assert_has_calls([
+            mock.call(
+                f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_report_1.formatted_external_uuid}&id_origin=geotrek&check={check}",
+                auth=("", ""),
+            ),
+            mock.call(
+                f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&force_update=1&id_origin=geotrek&check={check}",
+                auth=("", ""),
+            ),
+        ])
         mocked_post.assert_called_once_with(
             "http://suricate.wsmanagement.example.com/wsUpdateStatus",
             {
@@ -690,11 +786,55 @@ class TestSuricateForms(SuricateWorkflowTests):
             },
             auth=("", ""),
         )
-        mocked_get.assert_called_once_with(
-            f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_report_1.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&force_update=1&id_origin=geotrek&check={check}",
+        self.assertEqual(self.filed_report_1.status, self.rejected_status)
+
+    @test_for_workflow_mode
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    @mock.patch("geotrek.feedback.helpers.requests.post")
+    def test_relocate_locked_report_outside_district(self, mocked_post, mocked_get):
+        self.build_get_request_patch(mocked_get)
+        self.build_post_request_patch(mocked_post)
+        # Relocate report outside of main district
+        new_geom = Point(2, 2, srid=2154)
+        data = {"email": "test@test.fr", "geom": new_geom}
+        form = ReportForm(
+            instance=self.filed_locked_report, data=data, user=self.workflow_manager.user
+        )
+        form.save()
+        # Assert relocation is forwarded to Suricate
+        long, lat = new_geom.transform(4326, clone=True).coords
+        long_txt = f"{long:.6f}"
+        lat_txt = f"{lat:.6f}"
+        check = md5(
+            (
+                SuricateMessenger().gestion_manager.PRIVATE_KEY_CLIENT_SERVER
+                + SuricateMessenger().gestion_manager.ID_ORIGIN
+                + str(self.filed_locked_report.formatted_external_uuid)
+            ).encode()
+        ).hexdigest()
+        mocked_get.assert_has_calls([
+            mock.call(
+                f"http://suricate.wsmanagement.example.com/wsLockAlert?uid_alerte={self.filed_locked_report.formatted_external_uuid}&id_origin=geotrek&check={check}",
+                auth=("", ""),
+            ),
+            mock.call(
+                f"http://suricate.wsmanagement.example.com/wsUpdateGPS?uid_alerte={self.filed_locked_report.formatted_external_uuid}&gpslatitude={lat_txt}&gpslongitude={long_txt}&force_update=1&id_origin=geotrek&check={check}",
+                auth=("", ""),
+            ),
+        ])
+        mocked_post.assert_called_once_with(
+            "http://suricate.wsmanagement.example.com/wsUpdateStatus",
+            {
+                "id_origin": "geotrek",
+                "uid_alerte": self.filed_locked_report.formatted_external_uuid,
+                "statut": "waiting",
+                "txt_changestatut": "Le Signalement ne concerne pas le Département - Relocalisé hors du Département",
+                "txt_changestatut_sentinelle": "Le Signalement ne concerne pas le Département - Relocalisé hors du Département",
+                "check": check,
+            },
             auth=("", ""),
         )
-        self.assertEqual(self.filed_report_1.status, self.rejected_status)
+        self.assertEqual(self.filed_locked_report.status, self.rejected_status)
 
     @test_for_workflow_mode
     @mock.patch("geotrek.feedback.helpers.requests.get")
