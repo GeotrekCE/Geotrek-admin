@@ -31,7 +31,7 @@ import {
   FieldSet as DefaultFieldSet,
   fieldVariants,
 } from "@/components/ui/field"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 // ---------------------------------------------------------------------------
 // 1. Contexts

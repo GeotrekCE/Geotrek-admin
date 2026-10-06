@@ -2,13 +2,13 @@ import * as React from "react"
 import { m } from "@/paraglide/messages"
 import { Button } from "@/components/ui/button"
 import {
-  Popover,
-  PopoverContent,
-  PopoverDescription,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverTrigger,
-} from "@/components/ui/popover"
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog"
 
 export default function DetailConfirmButton({
   onClick,
@@ -18,23 +18,27 @@ export default function DetailConfirmButton({
   const [open, setOpen] = React.useState(false)
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
-      <PopoverTrigger
-        render={<Button {...props}>{reason}</Button>}
-      ></PopoverTrigger>
-      <PopoverContent align="center" side="top">
-        <PopoverHeader>
-          <PopoverTitle>
+    <AlertDialog open={open} onOpenChange={setOpen}>
+      <AlertDialogTrigger
+        render={
+          <Button className="h-auto py-2 whitespace-normal" {...props}>
+            {reason}
+          </Button>
+        }
+      ></AlertDialogTrigger>
+      <AlertDialogContent>
+        <AlertDialogHeader>
+          <AlertDialogTitle>
             <strong>
               {m["content.confirm-dialog-title"]({
                 reason: reason.toLocaleLowerCase(),
               })}
             </strong>
-          </PopoverTitle>
-          <PopoverDescription>
+          </AlertDialogTitle>
+          <AlertDialogDescription>
             {m["content.confirm-dialog-description"]()}
-          </PopoverDescription>
-        </PopoverHeader>
+          </AlertDialogDescription>
+        </AlertDialogHeader>
         <Button onClick={() => setOpen(false)} variant="outline">
           {m["common.cancel"]()}
         </Button>
@@ -48,7 +52,7 @@ export default function DetailConfirmButton({
         >
           {m["common.confirm"]()}
         </Button>
-      </PopoverContent>
-    </Popover>
+      </AlertDialogContent>
+    </AlertDialog>
   )
 }

@@ -43,7 +43,7 @@ import {
   // FormRadioGroupField,
   // FormSliderField,
 } from "@/components/forms/"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 import {
   fieldContext,
   formContext,

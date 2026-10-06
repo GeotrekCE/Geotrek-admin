@@ -14,7 +14,7 @@ import MapLibre, {
   type MapRef,
 } from "react-map-gl/maplibre"
 import "maplibre-gl/dist/maplibre-gl.css"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 import { db } from "@/lib/db"
 import { useAppSettings } from "@/hook/useAppSettings"
 import useLayers from "@/hook/useLayers"

@@ -23,7 +23,7 @@ import { useLiveQuery } from "dexie-react-hooks"
 import { db } from "@/lib/db"
 import { Button } from "@/components/ui/button"
 import useSyncDataMutations from "@/hook/useSyncDataMutations"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 import { FetchError } from "@/lib/api"
 import type {
   InfrastructureDataSchemaProps,
