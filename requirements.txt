@@ -422,7 +422,7 @@ vine==5.1.0
     #   amqp
     #   celery
     #   kombu
-wcwidth==0.8.2
+wcwidth==0.9.1
     # via prompt-toolkit
 weasyprint==70.0
     # via
