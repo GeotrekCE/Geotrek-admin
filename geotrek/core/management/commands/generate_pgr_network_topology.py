@@ -23,5 +23,5 @@ class Command(BaseCommand):
         flush = options.get("flush")
         if flush:
             PgRoutingNode.objects.all().delete()
-            Path.objects.all().update(source_pgr=None, target_pgr=None)
+            Path.include_invisible.all().update(source_pgr=None, target_pgr=None)
         PathRouter()  # PathRouter's init method builds the network topology

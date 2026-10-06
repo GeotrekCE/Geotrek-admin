@@ -138,13 +138,16 @@ When you try to upgrade your Geotrek-admin, you can have problems with signature
 
    An error occurred while checking the signature.
    The repository is not updated and previous index files will be used.
-   GPG error: https://packages.geotrek.fr/ubuntu bionic InRelease: The following signatures are invalid
 
-You have to update the signature key to get the last update:
+You have to update the signature key to get the last source file:
 
 ::
 
-   wget -O- "https://packages.geotrek.fr/geotrek.gpg.key" | sudo apt-key add -
+    sudo rm /etc/apt/sources.list.d/geotrek.list
+    sudo rm /etc/apt/sources.list.d/geotrek.sources
+    sudo curl -o /etc/apt/sources.list.d/geotrek.sources https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/debian/geotrek.sources
+    sudo curl -o /etc/apt/keyrings/apt.geotrek.gpg --fail https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/debian/apt.geotrek.gpg
+
 
 
 Show main packages versions

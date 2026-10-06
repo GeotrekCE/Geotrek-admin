@@ -2,13 +2,37 @@
 CHANGELOG
 =========
 
-2.126.1+dev     (XXXX-XX-XX)
+2.126.2+dev     (XXXX-XX-XX)
+----------------------------
+
+**Bug fixes**
+
+* Fix bug in Tourinsoft v3 parsers when "Photo" is not defined
+* Fix site duplication so that the clone ID is used as the tree ID if the original site doesn't have a parent (refs #5461)
+
+**Maintenance**
+
+* Debian package is now universal and can be installed on any supported debian-like system. CI only test installation on supported Ubuntu LTS versions.
+* Next release will update your source list and signature key to new format.
+* Geotrek-admin use now embedded python 3.13 version on all variants of debian package or docker image.
+
+
+2.126.2         (2026-09-29)
 ----------------------------
 
 **Bug fixes**
 
 * Fix intervention duplication to also duplicate its target when linked to its own topology instead of another object (e.g. signage, etc) (refs #3845)
-* Fix site duplication so that the clone ID is used as the tree ID if the original site doesn't have a parent (refs #5461)
+* Fix invisible paths data not flushed when regenerating the pgRouting graph topology with the ``--flush`` option
+* Fix Apidae Trek parser crash: default value for a source's website was null while the field is non-nullable
+
+**Documentation**
+
+* Clarify static page publication and mobile menu limitations - #5670 (refs #5670)
+
+**CI**
+
+* Fix GitHub Actions release workflow to attach assets with official Github cli instead of deprecated action
 
 
 2.126.1         (2026-08-14)

@@ -1623,7 +1623,19 @@ class TourInSoftParserTests(TestCase):
                 super().__init__()
 
         parser = TestTourParser()
-        result = parser.filter_attachments("", [])
+        result = parser.filter_attachments("attachments", [])
+        self.assertListEqual(result, [])
+
+    def test_attachment_v3_without_photo_attribut(self):
+        class TestTourParser(TourInSoftParser):
+            version_tourinsoft = 3
+
+            def __init__(self):
+                self.model = Trek
+                super().__init__()
+
+        parser = TestTourParser()
+        result = parser.filter_attachments("attachments", [{"test": "no photo"}])
         self.assertListEqual(result, [])
 
     def test_get_nb_v2(self):

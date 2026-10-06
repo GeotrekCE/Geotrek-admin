@@ -4,11 +4,17 @@
 
 set -e
 
-if lsb_release -d | grep 'Ubuntu 24.04' || lsb_release -d | grep 'Ubuntu 22.04' > /dev/null; then
-	echo "Either, Ubuntu 24.04, 22.04 found"
+if lsb_release -d | grep 'Ubuntu 26.04' || lsb_release -d | grep 'Ubuntu 24.04' || lsb_release -d | grep 'Ubuntu 22.04' > /dev/null; then
+	echo "Either, Ubuntu 26.04, 24.04, 22.04 found"
 else
-	echo "ERROR! Neither Ubuntu 24.04, Ubuntu 22.04 found."
-	exit 1
+	echo "Warning! You install this package on untested system. Continue ? [y/n]"
+  read answer
+  if [ "$answer" != "${answer#[Yy]}" ] ;then
+    echo "Continue installation"
+  else
+    echo "Installation aborted"
+    exit 1
+  fi
 fi
 
 if [ "$(locale charmap)" != "UTF-8" ]; then
@@ -16,7 +22,7 @@ if [ "$(locale charmap)" != "UTF-8" ]; then
 	exit 1
 fi
 
-if ! `localectl status | grep -q "System Locale: LANG=.*UTF-8"`; then
+if ! `echo $LANG | grep -q ".*UTF-8"`; then
 	echo "ERROR! Your system locale charmap is not UTF-8"
 	exit 1
 fi
@@ -28,11 +34,9 @@ else
 fi
 
 sudo apt update
-sudo apt install -y $postgis_and_routing curl ca-certificates software-properties-common
-sudo install -d /usr/share/geotrek
-sudo curl -o /usr/share/geotrek/apt.geotrek.org.key --fail https://packages.geotrek.fr/geotrek.gpg.key
-sudo rm -f /etc/apt/sources.list.d/geotrek.list
-echo "deb [signed-by=/usr/share/geotrek/apt.geotrek.org.key] https://packages.geotrek.fr/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/geotrek.list
+sudo apt install -y $postgis_and_routing curl ca-certificates
+sudo curl -o /etc/apt/sources.list.d/geotrek.sources https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/debian/geotrek.sources
+sudo curl -o /etc/apt/keyrings/apt.geotrek.gpg --fail https://raw.githubusercontent.com/GeotrekCE/Geotrek-admin/master/debian/apt.geotrek.gpg
 sudo apt update
 sudo apt install --no-install-recommends -y postgis  # force install postgis scripts only to use loaddem command, even if script does not manage database installation
 sudo apt install --no-install-recommends -y geotrek-admin

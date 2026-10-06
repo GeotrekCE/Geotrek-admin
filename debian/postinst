@@ -14,11 +14,11 @@ db_get geotrek-admin/POSTGRES_USER; export POSTGRES_USER="$RET"
 db_get geotrek-admin/POSTGRES_PASSWORD; export POSTGRES_PASSWORD="$RET"
 db_get geotrek-admin/POSTGRES_DB; export POSTGRES_DB="$RET"
 
-db_get geotrek-admin/SRID; export SRID="$RET"
+db_get geotrek-admin/SRID; export SRID="${RET:-2154}"
 
-db_get geotrek-admin/TIME_ZONE; export TIME_ZONE="$RET"
-db_get geotrek-admin/LANGUAGES; export LANGUAGES="$RET"
-db_get geotrek-admin/SERVER_NAME; export SERVER_NAME="$RET"
+db_get geotrek-admin/TIME_ZONE; export TIME_ZONE="${RET:-Europe/Paris}"
+db_get geotrek-admin/LANGUAGES; export LANGUAGES="${RET:-fr en}"
+db_get geotrek-admin/SERVER_NAME; export SERVER_NAME="${RET:-localhost}"
 db_get geotrek-admin/RANDO_SERVER_NAME; export RANDO_SERVER_NAME="$RET"
 if [ -n "${RANDO_SERVER_NAME}" ] && [ "${RANDO_SERVER_NAME}" != "*" ]; then
     export RANDO_SERVER_NAME_PIPE="^`echo "$RANDO_SERVER_NAME" | sed 's/ /|/g'`$"
@@ -133,7 +133,9 @@ fi
 
 echo "Reload" >&2
 # Reload nginx
-if [ -f /etc/init.d/nginx ] ; then
+if [ -d /run/systemd/system ]; then
+	systemctl reload-or-restart nginx >/dev/null 2>&1 || true
+elif [ -f /etc/init.d/nginx ] ; then
 	if which invoke-rc.d > /dev/null ; then
 		if invoke-rc.d nginx status > /dev/null 2>&1 ; then
 			invoke-rc.d nginx reload 3>/dev/null || true
@@ -147,6 +149,17 @@ fi
 
 rm -rf /opt/geotrek-admin/var/tmp/*
 
-# TODO: geotrek user, crontab, certbot
+# remove old list if exists
+if [ -f /etc/apt/sources.list.d/geotrek.list ]; then
+    rm /etc/apt/sources.list.d/geotrek.list || true
+fi
+# Intégration systemd
+if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-deconfigure" ] || [ "$1" = "abort-remove" ] ; then
+	if [ -d /run/systemd/system ]; then
+		systemctl --system daemon-reload >/dev/null 2>&1 || true
+		systemctl enable geotrek.service geotrek-ui.service geotrek-api.service geotrek-celery.service >/dev/null 2>&1 || true
+		systemctl restart geotrek.service >/dev/null 2>&1 || true
+	fi
+fi
 
-#DEBHELPER#
+exit 0

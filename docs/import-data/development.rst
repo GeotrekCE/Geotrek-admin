@@ -404,7 +404,7 @@ The `Esprit Parc <https://www.espritparcnational.com/>`_ brand promotes tourist 
         .. note::
             Imported contents will be automatically published and approved (certified).
 
-        If you use an url that filters a **unique category**, you can change its name. Example to get only Honey products and set the Geotrek category and type in which import them:
+        If you use an url that filters a **unique category**, you can change its name. To get Esprit Parc categories (typologies), you can get the list at <https://gestion.espritparcnational.com/ws?f=getTypologieProduits>`_. Example to get only Honey products and set the Geotrek category and type in which import them:
 
         ::
 

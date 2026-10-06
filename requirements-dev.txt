@@ -4,14 +4,14 @@ asgiref==3.12.1
     # via
     #   -c requirements.txt
     #   django
-coverage==7.15.2
+coverage==7.16.1
     # via -r requirements-dev.in
-django==5.2.16
+django==5.2.17
     # via
     #   -c requirements.txt
     #   django-debug-toolbar
     #   django-extensions
-django-debug-toolbar==6.3.0
+django-debug-toolbar==7.1.1
     # via -r requirements-dev.in
 django-extensions==4.1
     # via -r requirements-dev.in
@@ -30,20 +30,16 @@ python-dateutil==2.9.0.post0
     #   -c requirements.txt
     #   faker
     #   freezegun
-ruff==0.15.22
+ruff==0.16.1
     # via -r requirements-dev.in
 six==1.17.0
     # via
     #   -c requirements.txt
     #   python-dateutil
-sqlparse==0.5.5
+sqlparse==0.6.0
     # via
     #   -c requirements.txt
     #   django
     #   django-debug-toolbar
 tblib==3.2.2
     # via -r requirements-dev.in
-typing-extensions==4.16.0
-    # via
-    #   -c requirements.txt
-    #   asgiref

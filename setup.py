@@ -24,8 +24,6 @@ setup(
         "cairocffi",
         "python-dotenv",
         "pymemcache",
-        "coreschema",
-        "coreapi",
         "django-autocomplete-light",
         "psycopg2",
         "pdfimpose",

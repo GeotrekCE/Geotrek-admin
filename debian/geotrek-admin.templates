@@ -74,6 +74,7 @@ Description: Languages
 
 Template: geotrek-admin/TIME_ZONE
 Type: string
+Default: Europe/Paris
 Description: Time zone
  From database names (https://en.wikipedia.org/wiki/List_of_tz_database_time_zones)
 
