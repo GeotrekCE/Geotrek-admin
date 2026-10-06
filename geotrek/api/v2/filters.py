@@ -441,25 +441,25 @@ class NearbyContentFilter(BaseFilterBackend):
                 ),
                 "schema": {"type": "integer"},
             },
-                {
-                    "name": "near_outdoorsite",
-                    "required": False,
-                    "in": "query",
-                    "description": _(
-                        "Filter by an outdoor site id. It will only show the contents related to this outdoor site."
-                    ),
-                    "schema": {"type": "integer"},
-                },
-                {
-                    "name": "near_outdoorcourse",
-                    "required": False,
-                    "in": "query",
-                    "description": _(
-                        "Filter by an outdoor course id. It will only show the contents related to this outdoor course."
-                    ),
-                    "schema": {"type": "integer"},
-                },
-            ]
+            {
+                "name": "near_outdoorsite",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by an outdoor site id. It will only show the contents related to this outdoor site."
+                ),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "near_outdoorcourse",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by an outdoor course id. It will only show the contents related to this outdoor course."
+                ),
+                "schema": {"type": "integer"},
+            },
+        ]
         return parameters
 
 
