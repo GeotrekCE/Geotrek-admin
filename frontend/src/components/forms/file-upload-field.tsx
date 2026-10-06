@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/form-context"
 import { Spinner } from "@/components/ui/spinner"
 import Required from "./required"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 interface TextFieldProps extends Omit<
   React.ComponentProps<"input">,

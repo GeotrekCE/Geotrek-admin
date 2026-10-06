@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 import LastSync from "@/components/last-sync"
 import useOnline from "@/hook/useOnline"
 import { m } from "@/paraglide/messages"

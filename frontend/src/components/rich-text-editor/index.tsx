@@ -1,6 +1,6 @@
 import { Editor, EditorContent, useEditor } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 import { Separator } from "@/components/ui/separator"
 import Undo from "@/components/rich-text-editor/controls/Undo"
 import Redo from "@/components/rich-text-editor/controls/Redo"

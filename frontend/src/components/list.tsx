@@ -10,7 +10,7 @@ import {
   ItemTitle,
 } from "@/components/ui/item"
 import { Link } from "@tanstack/react-router"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 import { useList, type SnapPoint } from "@/lib/list"
 import { getLocale } from "@/paraglide/runtime"
 import { Skeleton } from "@/components/ui/skeleton"
