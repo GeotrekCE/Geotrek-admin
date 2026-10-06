@@ -13,6 +13,13 @@ jobs:
         with:
           script: |
             const pr = context.payload.pull_request;
+            const pr = context.payload.pull_request;
+
+            // If the PR is null, it means this is a push to master, so we can skip the label check
+            if (!pr) {
+              console.log("✅ Push on master: automatic validation of the check.");
+              return;
+            }
             const labels = pr.labels;
             
             if (labels.length === 0) {
