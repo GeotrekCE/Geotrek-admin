@@ -24,6 +24,7 @@ from rest_framework.views import APIView
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import (
+    AttachmentsMixin,
     BelongStructureMixin,
     CustomColumnsMixin,
     PublishedFieldMixin,
@@ -144,7 +145,7 @@ class SignageDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class SignageViewSet(GeotrekMapentityViewSet):
+class SignageViewSet(AttachmentsMixin, GeotrekMapentityViewSet):
     model = Signage
     serializer_class = SignageSerializer
     geojson_serializer_class = SignageGeojsonSerializer
