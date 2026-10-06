@@ -400,6 +400,7 @@ transaction==5.1
 typing-extensions==4.16.0
     # via
     #   beautifulsoup4
+    #   click-repl
     #   django-modeltranslation
     #   large-image
     #   swagger-spec-validator
