@@ -75,7 +75,7 @@ cligj==0.7.2
     # via fiona
 crispy-bootstrap4==2026.2
     # via mapentity
-cssselect2==0.9.0
+cssselect2==0.10.1
     # via
     #   cairosvg
     #   svglib
