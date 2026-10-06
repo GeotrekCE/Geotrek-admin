@@ -393,7 +393,7 @@ tinycss2==1.5.1
     #   weasyprint
 tinyhtml5==2.1.0
     # via weasyprint
-tqdm==4.70.0
+tqdm==4.70.1
     # via django-mapbox-baselayer
 transaction==5.1
     # via zodb
