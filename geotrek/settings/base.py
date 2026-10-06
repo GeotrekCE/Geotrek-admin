@@ -964,6 +964,7 @@ USE_X_FORWARDED_HOST = False
 
 REST_FRAMEWORK = {
     "STRICT_JSON": False,  # allow serialize float NaN values
+    "LIST_SERIALIZER_ERRORS_AS_DICT": False,
 }
 
 SIMPLE_JWT = {

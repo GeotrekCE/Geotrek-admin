@@ -24,9 +24,6 @@ setup(
         "cairocffi",
         "python-dotenv",
         "pymemcache",
-        "coreschema",
-        "coreapi",
-        "legacy-cgi; python_version >= '3.13'",  # for coreapi
         "django-autocomplete-light",
         "psycopg2",
         "pdfimpose",
