@@ -1,0 +1,22 @@
+name: "Check required PR labels"
+
+on:
+  pull_request:
+    types: [opened, edited, synchronized, labeled, unlabeled]
+
+jobs:
+  check-labels:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check if PR has labels
+        uses: actions/github-script
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const labels = pr.labels;
+            
+            if (labels.length === 0) {
+              core.setFailed("❌ Blocked: This Pull Request has no labels. Please add one to be able to merge.");
+            } else {
+              console.log(`✅ Success: The PR has ${labels.length} label(s).`);
+            }
