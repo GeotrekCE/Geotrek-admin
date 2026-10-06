@@ -150,7 +150,7 @@ django-flask-authent-backend @ git+https://github.com/PnX-SI/django-flask-authen
     # via geotrek (setup.py)
 django-js-asset==4.2.0
     # via django-mptt
-django-large-image==0.10.3
+django-large-image==0.10.5
     # via geotrek (setup.py)
 django-leaflet==0.19.post11
     # via mapentity
