@@ -296,7 +296,7 @@ pillow==12.3.0
     #   reportlab
     #   svglib
     #   weasyprint
-pmtiles==3.7.0
+pmtiles==3.8.1
     # via django-mapbox-baselayer
 prompt-toolkit==3.0.53
     # via click-repl
