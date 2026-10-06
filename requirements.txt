@@ -404,7 +404,7 @@ typing-extensions==4.16.0
     #   django-modeltranslation
     #   large-image
     #   swagger-spec-validator
-tzdata==2026.3
+tzdata==2026.5
     # via
     #   kombu
     #   mapentity
