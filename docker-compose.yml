@@ -42,8 +42,6 @@ services:
       dockerfile: ./docker/Dockerfile
       target: dev
       args:
-        BASE_IMAGE: ${DEV_BASE_IMAGE:-ubuntu:jammy}
-        PYTHON_VERSION: ${DEV_PYTHON_VERSION:-3.10}
         FRONTEND_IMAGE: scratch
     depends_on:
       postgres:

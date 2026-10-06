@@ -56,30 +56,22 @@ build_prod_no_cache: build_frontend
 	docker build -t geotrek -f docker/Dockerfile --build-arg FRONTEND_IMAGE=geotrek_frontend --no-cache .
 
 build_deb: build_frontend
-	docker pull $(DISTRO)
-	docker build -t geotrek_deb -f ./docker/Dockerfile.debian.builder --build-arg DISTRO=$(DISTRO) --build-arg FRONTEND_IMAGE=geotrek_frontend .
-	docker run --name geotrek_deb_run -t geotrek_deb bash -c "exit"
-	docker cp geotrek_deb_run:/dpkg ./
-	docker stop geotrek_deb_run
-	docker rm geotrek_deb_run
+	docker build -t geotrek-deb-builder -f docker/build-deb/Dockerfile .
+	docker run --rm -v "./:/workspace" -e DEB_VERSION="$$(cat VERSION)" geotrek-deb-builder
 
 release:
-	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
-	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -t geotrek_release  bash -c "dch -M -v $(version) -D RELEASED --force-distribution -m \"New package release\""
+	docker build -t geotrek-deb-builder -f docker/build-deb/Dockerfile .
+	docker run --rm -v "./:/workspace" --entrypoint dch geotrek-deb-builder -M -v $(version) -D RELEASED --force-distribution -m "New package release"
 	echo "$(version)" > geotrek/VERSION
 	sed -i "s/.*+dev/$(version)+dev/g" docs/changelog.rst
 	sed -i 's/+dev/    /g' docs/changelog.rst
 	sed -i "s/XXXX-XX-XX/$(shell date +%Y-%m-%d)/g" docs/changelog.rst
-	docker stop geotrek_release
-	docker rm geotrek_release
 
 back_to_dev:
-	docker build -t geotrek_release -f ./docker/Dockerfile.debian.builder --target base .
-	docker run --name geotrek_release -v ./debian:/dpkg-build/debian -t geotrek_release  bash -c "dch -M -v $(version)+dev --no-force-save-on-release -m \"Merging improvements\""
+	docker build -t geotrek-deb-builder -f docker/build-deb/Dockerfile .
+	docker run --rm -v "./:/workspace" --entrypoint dch geotrek-deb-builder -M -v $(version)+dev --no-force-save-on-release -m "Merging improvements"
 	echo "$(version)+dev" > geotrek/VERSION
 	sed -i '4a $(version)+dev     (XXXX-XX-XX)\n----------------------------\n\n' docs/changelog.rst
-	docker stop geotrek_release
-	docker rm geotrek_release
 
 deps:
 	$(docker_compose) run --remove-orphans --no-deps --rm web bash -c "uv pip compile setup.py -o requirements.txt && uv pip compile requirements-dev.in -o requirements-dev.txt && cd docs/ && uv pip compile -c ../requirements.txt -c ../requirements-dev.txt requirements.in -o requirements.txt"

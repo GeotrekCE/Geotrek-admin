@@ -1295,7 +1295,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
                     entry["Photo"]["Credit"],
                 )
                 for entry in val
-                if entry["Photo"] is not None
+                if entry.get("Photo") is not None
             ]
         elif self.version_tourinsoft == 2:
             return [
