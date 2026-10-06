@@ -2,7 +2,7 @@
 #    uv pip compile setup.py -o requirements.txt
 amqp==5.4.0
     # via kombu
-appy==1.0.21
+appy==1.0.22
     # via django-appypod
 argdispatch==1.5.0
     # via pdfimpose
