@@ -192,7 +192,7 @@ drf-dynamic-fields==0.4.0
     # via geotrek (setup.py)
 drf-extensions==0.8.0
     # via geotrek (setup.py)
-drf-spectacular==0.29.0
+drf-spectacular==0.30.0
     # via django-large-image
 drf-yasg==1.21.17
     # via geotrek (setup.py)
