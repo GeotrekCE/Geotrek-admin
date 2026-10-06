@@ -142,7 +142,7 @@ django-embed-video @ git+https://github.com/jazzband/django-embed-video.git@2b64
     #   geotrek (setup.py)
     #   mapentity
     #   paperclip
-django-filter==26.1
+django-filter==26.2
     # via
     #   djangorestframework-gis
     #   mapentity
