@@ -200,7 +200,8 @@ class SuricateAPITests(SuricateTests):
         self.build_get_request_patch(mocked_get, cause_JPG_error=True)
         self.assertEqual(len(mail.outbox), 0)
         call_command("sync_suricate", verbosity=2)
-        # 8 out of 9 are imported because one of them is out of bbox by design
+        # 8 out of 9 are imported because one of them is out of bbox by design.
+        # They should be imported whether they are locked or not.
         self.assertEqual(Report.objects.count(), 8)
         self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
         self.assertEqual(AttachedMessage.objects.count(), 44)
@@ -257,6 +258,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(len(mail.outbox), 0)
         call_command("sync_suricate", verbosity=2)
         # 8 out of 9 are imported because one of them is out of bbox by design
+        # They should be imported whether they are locked or not.
         self.assertEqual(Report.objects.count(), 8)
         self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
         self.assertEqual(AttachedMessage.objects.count(), 44)
@@ -305,6 +307,7 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(len(mail.outbox), 0)
         call_command("sync_suricate", verbosity=2)
         # 8 out of 9 are imported because one of them is out of bbox by design
+        # They should be imported whether they are locked or not.
         self.assertEqual(Report.objects.count(), 8)
         self.assertEqual(ReportProblemMagnitude.objects.count(), 3)
         self.assertEqual(AttachedMessage.objects.count(), 44)
