@@ -160,7 +160,7 @@ django-mapbox-baselayer==1.5.2
     # via geotrek (setup.py)
 django-modelcluster==6.5
     # via geotrek (setup.py)
-django-modeltranslation==0.20.4
+django-modeltranslation==0.20.6
     # via mapentity
 django-mptt==0.18.0
     # via geotrek (setup.py)
