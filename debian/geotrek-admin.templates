@@ -15,7 +15,7 @@ Description: Geotrek-rando server name(s)
 
 Template: geotrek-admin/MANAGE_DB
 Type: boolean
-Default: yes
+Default: true
 Description: Create a PostgreSQL database?
  Choose yes to let Geotrek create a local user and database for you.
  Choose no to specify your own database connexion settings.
