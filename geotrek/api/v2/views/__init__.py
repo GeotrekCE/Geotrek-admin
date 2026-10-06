@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.gis.geos import Polygon
 from rest_framework import permissions, response
+from rest_framework.generics import GenericAPIView
 from rest_framework.views import APIView
 
 from geotrek import __version__
@@ -95,8 +96,8 @@ if "geotrek.signage" in settings.INSTALLED_APPS:
         SignageTypeViewSet,  # noqa
         SignageViewSet,  # noqa
     )
-if "drf_yasg" in settings.INSTALLED_APPS:
-    from .swagger import schema_view  # noqa
+if "drf_spectacular" in settings.INSTALLED_APPS:
+    from .swagger import APIV2SchemaView  # noqa
 
 
 class ConfigView(APIView):
@@ -113,7 +114,7 @@ class ConfigView(APIView):
         return response.Response({"bbox": bbox.extent})
 
 
-class GeotrekVersionAPIView(APIView):
+class GeotrekVersionAPIView(GenericAPIView):
     permission_classes = [
         permissions.AllowAny,
     ]
