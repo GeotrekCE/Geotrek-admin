@@ -69,7 +69,7 @@ click-plugins==1.1.1.2
     # via
     #   celery
     #   fiona
-click-repl==0.3.0
+click-repl==0.4.0
     # via celery
 cligj==0.7.2
     # via fiona
@@ -400,6 +400,7 @@ transaction==5.1
 typing-extensions==4.16.0
     # via
     #   beautifulsoup4
+    #   click-repl
     #   django-modeltranslation
     #   large-image
     #   swagger-spec-validator
