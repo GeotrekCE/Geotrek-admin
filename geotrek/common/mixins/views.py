@@ -3,6 +3,7 @@ from io import BytesIO
 
 from django.conf import settings
 from django.contrib import messages
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
 from django.shortcuts import get_object_or_404
@@ -13,12 +14,14 @@ from mapentity import views as mapentity_views
 from mapentity.helpers import suffix_for, user_has_perm
 from pdfimpose.schema.saddle import impose
 from pymupdf import Document
-from rest_framework import permissions
+from rest_framework import parsers, permissions, renderers, status
+from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework_simplejwt.authentication import JWTAuthentication
 
 from geotrek.common.models import Attachment, FileType
+from geotrek.common.serializers import AttachmentSerializer
 from geotrek.common.utils import logger
 from geotrek.common.utils.portals import smart_get_template_by_portal
 
@@ -350,3 +353,27 @@ class ReferencesMixin(APIView):
         if self.pictogram_filename:
             data["pictogram"] = {"url": self.get_pictogram_url(request)}
         return Response(data)
+
+
+class AttachmentsMixin:
+    @action(
+        methods=["post"],
+        detail=True,
+        renderer_classes=[renderers.JSONRenderer],
+        parser_classes=[parsers.MultiPartParser, parsers.FormParser],
+        url_path="add-attachment",
+    )
+    def add_attachment(self, request, *args, **kwargs):
+        obj = self.get_object()
+        raw_data = request.data
+        data = raw_data.dict() if hasattr(raw_data, "dict") else dict(raw_data)
+
+        data["content_type"] = ContentType.objects.get_for_model(obj).pk
+        data["object_id"] = obj.pk
+        data["filetype"] = FileType.objects.get_or_create(type="Photographie")[0].pk
+        data["creator"] = request.user.pk
+
+        serializer = AttachmentSerializer(data=data, context={"request": request})
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)

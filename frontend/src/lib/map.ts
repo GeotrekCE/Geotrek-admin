@@ -21,3 +21,74 @@ export function getBoundsFromPolygon(polygon: string) {
     number,
   ]
 }
+
+function getFirstPosition(
+  geometry: GeoJSON.Geometry
+): GeoJSON.Position | undefined {
+  if (geometry.type === "GeometryCollection") {
+    for (const child of geometry.geometries) {
+      const position = getFirstPosition(child)
+      if (position) return position
+    }
+    return undefined
+  }
+
+  let coordinates: unknown = geometry.coordinates
+  while (
+    Array.isArray(coordinates) &&
+    !coordinates.every((coordinate) => typeof coordinate === "number")
+  ) {
+    coordinates = coordinates[0]
+  }
+
+  if (
+    !Array.isArray(coordinates) ||
+    typeof coordinates[0] !== "number" ||
+    typeof coordinates[1] !== "number"
+  ) {
+    return undefined
+  }
+
+  return [coordinates[0], coordinates[1]]
+}
+
+export function getFeatureCollection(
+  data: Array<{
+    id?: number
+    reference?: string
+    geom: GeoJSON.Geometry | null
+    pictogram?: { url?: string }
+  }>,
+  pointNonPointGeometries = false
+) {
+  return {
+    type: "FeatureCollection",
+    features: data.flatMap((item) => {
+      if (!item.geom) {
+        return []
+      }
+
+      let geometry = item.geom
+      if (pointNonPointGeometries && geometry.type !== "Point") {
+        const coordinates = getFirstPosition(geometry)
+        if (!coordinates) return []
+        geometry = { type: "Point", coordinates }
+      }
+
+      return [
+        {
+          type: "Feature",
+          id: `${item.reference}-${item.id || 1}`,
+          geometry,
+          properties: {
+            id: item.id,
+            reference: item.reference || undefined,
+            pictogram: item.pictogram?.url
+              ? `pictogram-${item.reference}`
+              : undefined,
+          },
+        },
+      ]
+    }),
+  }
+}

@@ -17,6 +17,7 @@ from rest_framework.views import APIView
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.views import (
+    AttachmentsMixin,
     BelongStructureMixin,
     CustomColumnsMixin,
     PublishedFieldMixin,
@@ -117,7 +118,7 @@ class InfrastructureDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class InfrastructureViewSet(GeotrekMapentityViewSet):
+class InfrastructureViewSet(AttachmentsMixin, GeotrekMapentityViewSet):
     model = Infrastructure
     serializer_class = InfrastructureSerializer
     geojson_serializer_class = InfrastructureGeojsonSerializer

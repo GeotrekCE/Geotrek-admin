@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-05 16:37+0000\n"
+"POT-Creation-Date: 2026-08-31 13:32+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/common/fr/>\n"
@@ -464,6 +464,17 @@ msgstr "La source '%(name)s' n'existait pas dans Geotrek-admin. Elle a été cr�
 #, python-brace-format
 msgid "Failed to download '{url}'"
 msgstr "Impossible de télécharger '{url}'"
+
+#, python-format
+msgid "File type '%(ext)s' not allowed"
+msgstr "Le type de fichier '%(ext)s' n'est pas autorisé"
+
+#, python-format
+msgid "File mime type '%(mimetype)s' is not allowed for %(ext)s."
+msgstr "Le type mime du fichier '%(mimetype)s' n'est pas autorisé pour l'extension %(ext)s."
+
+msgid "Decompressed Data Too Large"
+msgstr "Les données décompressées sont trop volumineuses"
 
 msgid "Import from web."
 msgstr "Importer du web."
