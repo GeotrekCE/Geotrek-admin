@@ -367,10 +367,12 @@ class AttachmentsMixin:
         obj = self.get_object()
         raw_data = request.data
         data = raw_data.dict() if hasattr(raw_data, "dict") else dict(raw_data)
+        user = self.request.user
+        structure = user.profile.structure if user else None
 
         data["content_type"] = ContentType.objects.get_for_model(obj).pk
         data["object_id"] = obj.pk
-        data["filetype"] = FileType.objects.get_or_create(type="Photographie")[0].pk
+        data["filetype"] = FileType.objects.get_or_create(type="Photographie", structure=structure)[0].pk
         data["creator"] = request.user.pk
 
         serializer = AttachmentSerializer(data=data, context={"request": request})

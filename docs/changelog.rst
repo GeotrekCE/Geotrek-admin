@@ -5,6 +5,9 @@ CHANGELOG
 2.126.4+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Fix Filetype association in add-attachment endpoint
 
 2.126.4         (2026-10-07)
 ----------------------------
