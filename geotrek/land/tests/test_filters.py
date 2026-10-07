@@ -1,6 +1,3 @@
-from unittest import skipIf
-
-from django.conf import settings
 from django.test import TestCase
 
 from geotrek.core.tests.factories import PathFactory, getRandomLineStringInBounds
@@ -17,7 +14,6 @@ from geotrek.land.tests.factories import (
 )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class LandFiltersTest(TestCase):
     filterclass = None
 

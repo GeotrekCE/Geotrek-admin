@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-07-22 09:48+0000\n"
+"POT-Creation-Date: 2026-02-04 22:27+0100\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/tourism/nl/>\n"
@@ -401,15 +401,6 @@ msgid "Add a new touristic content"
 msgstr ""
 
 msgid "Add a new touristic event"
-msgstr ""
-
-msgid "Data sources"
-msgstr ""
-
-msgid "No result"
-msgstr ""
-
-msgid "Choose value(s)"
 msgstr ""
 
 msgid "Public print"

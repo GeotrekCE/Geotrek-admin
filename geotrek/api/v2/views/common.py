@@ -51,13 +51,12 @@ class ThemeViewSet(ListCacheResponseMixin, api_viewsets.GeotrekViewSet):
             if last_update_touristic_event
             else "0000-00-00",
         ]
-        if "geotrek.outdoor" in settings.INSTALLED_APPS:
-            from geotrek.outdoor.models import Site
+        from geotrek.outdoor.models import Site
 
-            list_update_site = Site.last_update_and_count.get("last_update")
-            last_updates.append(
-                list_update_site.isoformat() if list_update_site else "0000-00-00",
-            )
+        list_update_site = Site.last_update_and_count.get("last_update")
+        last_updates.append(
+            list_update_site.isoformat() if list_update_site else "0000-00-00",
+        )
 
         last_update = max(*last_updates)
 

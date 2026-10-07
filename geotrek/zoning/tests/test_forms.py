@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.test.utils import override_settings
 
 from geotrek.zoning.forms import MapFilterForm
+from geotrek.zoning.models import City
 from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
@@ -53,14 +54,14 @@ class MapFilterFormTest(TestCase):
         Tests that certain form fields are not included when no corresponding objects
         exist.
         """
-
+        City.objects.all().delete()
         with override_settings(
             LAND_BBOX_CITIES_ENABLED=True,
             LAND_BBOX_DISTRICTS_ENABLED=True,
             LAND_BBOX_AREAS_ENABLED=True,
         ):
             form = MapFilterForm()
-            self.assertNotIn("bbox_city", form.fields)
+            self.assertNotIn("bbox_city", form.fields, City.objects.all())
             self.assertNotIn("bbox_district", form.fields)
             self.assertNotIn("bbox_restrictedarea", form.fields)
 

@@ -2,6 +2,7 @@
 // Infrastructure
 //
 
+/*
 $(window).on('entity:map', function (e, data) {
     var modelname = 'infrastructure';
     var layername = `${modelname}_layer`;
@@ -31,3 +32,4 @@ $(window).on('entity:map', function (e, data) {
         }
     });
 });
+*/

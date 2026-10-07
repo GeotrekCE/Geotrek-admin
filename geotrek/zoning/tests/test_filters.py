@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.test import TestCase
 
 from geotrek.core.filters import PathFilterSet
@@ -37,13 +36,7 @@ class ZoningFilterTest(TestCase):
         cls.path = PathFactory.create(
             geom="SRID=2154;LINESTRING(200000 300000, 1100000 1200000)"
         )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.trek = TrekFactory.create(paths=[cls.path], published=False)
-        else:
-            cls.trek = TrekFactory.create(
-                geom="SRID=2154;LINESTRING(200000 300000, 1100000 1200000)",
-                published=False,
-            )
+        cls.trek = TrekFactory.create(paths=[cls.path], published=False)
 
     def test_filter_zoning_city(self):
         filter = PathFilterSet(

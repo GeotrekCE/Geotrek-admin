@@ -354,6 +354,26 @@ This parameter allows enabling or disabling the Course module:
 
                 COURSE_MODEL_ENABLED = False
 
+Sensitive area model enabled
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+This parameter allows enabling or disabling the Sensitive area module:
+
+.. md-tab-set::
+    :name: sensitive-area-model-enabled-tabs
+
+    .. md-tab-item:: Default configuration
+
+         .. code-block:: python
+
+                SENSITIVE_AREA_MODEL_ENABLED = True
+
+    .. md-tab-item:: Example
+
+         .. code-block:: python
+
+                SENSITIVE_AREA_MODEL_ENABLED = False
+
 Flatpages enabled
 ~~~~~~~~~~~~~~~~~~~~
 
@@ -487,7 +507,7 @@ Treks
 Trek signage intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which signage is considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``).
+This setting defines the maximum distance (in meters) within which signage is considered related to treks. Works only on objects that are not coupled to the path network.
 
 .. md-tab-set::
     :name: trek-signage-intersection-margin-tabs
@@ -507,7 +527,7 @@ This setting defines the maximum distance (in meters) within which signage is co
 Trek infrastructure intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which infrastructure is considered related to treks. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``).
+This setting defines the maximum distance (in meters) within which infrastructure is considered related to treks. Works only on objects that are not coupled to the path network.
 
 .. md-tab-set::
     :name: trek-infrastructure-intersection-margin-tabs
@@ -531,7 +551,7 @@ Interventions
 Intervention intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, tourism content, etc. Works only without dynamic segmentation (``TREKKING_TOPOLOGY_ENABLED = False``).
+This setting defines the maximum distance (in meters) within which interventions are considered related to other objects such as treks, POIs, services, tourism content, etc. Works only on objects that are not coupled to the path network.
 
 .. md-tab-set::
     :name: intervention-intersection-margin-tabs
@@ -644,26 +664,6 @@ This parameter is used to assign the ``direction`` field to lines rather than bl
 
               DIRECTION_ON_LINES_ENABLED = True
 
-
-Enable signage lines
-~~~~~~~~~~~~~~~~~~~~~
-
-This parameter is used to manage lines per blade.
-
-.. md-tab-set::
-  :name: signage-line-enabled-tabs
-
-  .. md-tab-item:: Default configuration
-
-      .. code-block:: python
-
-              SIGNAGE_LINE_ENABLED = False
-
-  .. md-tab-item:: Example
-
-      .. code-block:: python
-
-              SIGNAGE_LINE_ENABLED = True
 
 Blade code type
 ~~~~~~~~~~~~~~~~
@@ -792,7 +792,7 @@ POI
 Trek POI intersection margin
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-You can define a buffer around treks to intersect POIs (works only without dynamic segmentation).
+You can define a buffer around treks to intersect POIs (works only on objects that are not coupled to the path network).
 
 .. md-tab-set::
     :name: trek-poi-intersection-marging-tabs

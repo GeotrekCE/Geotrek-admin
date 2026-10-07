@@ -1,9 +1,8 @@
 import json
 import os
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 
-from django.conf import settings
 from django.contrib.gis.geos import LineString, Point, Polygon
 from django.contrib.gis.geos.collections import GeometryCollection, MultiPoint
 from django.core.management import call_command
@@ -25,7 +24,6 @@ from geotrek.outdoor.models import (
 from geotrek.outdoor.parsers import OpenStreetMapOutdoorSiteParser
 
 
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
 class MappingOutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -100,7 +98,6 @@ class MappingOutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(str(site.type), "Renamed Site Type")
 
 
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
 class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -282,7 +279,6 @@ class OutdoorGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         )
 
 
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
 class OutdoorGeotrekParserWrongChildrenTests(GeotrekParserTestMixin, TestCase):
     @classmethod
     def setUpTestData(cls):

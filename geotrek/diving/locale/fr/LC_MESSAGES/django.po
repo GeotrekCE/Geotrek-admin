@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-01-30 13:53+0000\n"
+"POT-Creation-Date: 2026-03-12 15:52+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/diving/fr/>\n"
@@ -18,17 +18,9 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
 "X-Generator: Weblate 5.13.3\n"
 
-#, python-format
-msgid "Difficulty with id '%s' already exists"
-msgstr "Une difficulté avec l'id '%s' existe déjà"
-
 #, python-brace-format
 msgid "Difficulty id {old} was changed to {new} successfully."
 msgstr "L'id de la difficulté a été changé de {old} à {new} avec succès."
-
-#, python-format
-msgid "Level with id '%s' already exists"
-msgstr "Un niveau avec l'id '%s' existe déjà"
 
 #, python-brace-format
 msgid "Level id {old} was changed to {new} successfully."
@@ -36,6 +28,14 @@ msgstr "Le niveau avec l'id {old} a été changé vers {new} avec succès."
 
 msgid "Diving"
 msgstr "Plongée"
+
+#, python-format
+msgid "Difficulty with id '%s' already exists"
+msgstr "Une difficulté avec l'id '%s' existe déjà"
+
+#, python-format
+msgid "Level with id '%s' already exists"
+msgstr "Un niveau avec l'id '%s' existe déjà"
 
 msgid "Name"
 msgstr "Nom"

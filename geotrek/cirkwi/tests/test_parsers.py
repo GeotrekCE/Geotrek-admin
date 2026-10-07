@@ -1,10 +1,9 @@
 import io
 import os
 from copy import copy
-from unittest import mock, skipIf
+from unittest import mock
 from unittest.mock import Mock
 
-from django.conf import settings
 from django.core.management import call_command
 from django.test import TestCase
 
@@ -69,7 +68,6 @@ class TestCirkwiTouristicContentParserEn(CirkwiTouristicContentParser):
     delete_attachments = False
 
 
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
 class CirkwiParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):

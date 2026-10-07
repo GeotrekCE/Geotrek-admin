@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-14 08:17+0000\n"
+"POT-Creation-Date: 2026-09-22 13:50+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/signage/fr/>\n"
@@ -56,6 +56,9 @@ msgstr "Position de la lame sur la signalétique (haut = 1). Si vous attribuez u
 
 msgid "This order number is already used by another blade."
 msgstr "Ce numéro d'ordre est déjà utilisé par une autre lame."
+
+msgid "Implantation year"
+msgstr "Année d'implantation"
 
 msgid "Blades"
 msgstr "Lames"
@@ -201,6 +204,9 @@ msgstr "Ajouter"
 
 msgid "meters"
 msgstr "mètres"
+
+msgid "Topology is not valid."
+msgstr "La topologie est invalide."
 
 msgid "Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."
 msgstr "L’accès est restreint car tous les éléments sélectionnés n’appartiennent pas à votre structure. Utilisez le filtre par structure pour sélectionner uniquement les éléments autorisés."

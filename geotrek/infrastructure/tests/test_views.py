@@ -1,6 +1,5 @@
 import json
 
-from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
@@ -81,11 +80,10 @@ class InfrastructureViewsTest(AttachmentTestMixin, CommonTest):
             "conditions": [InfrastructureConditionFactory.create().pk],
             "accessibility": "description accessibility",
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            good_data["topology"] = f'{{"paths": [{path.pk}]}}'
-        else:
-            good_data["geom"] = "LINESTRING (0.0 0.0, 1.0 1.0)"
+        path = PathFactory.create()
+        good_data["topology"] = f'{{"paths": [{path.pk}]}}'
+        good_data["topology_changed"] = "true"
+
         return good_data
 
     def get_expected_popup_content(self):
@@ -98,6 +96,9 @@ class InfrastructureViewsTest(AttachmentTestMixin, CommonTest):
             f'    <a id="detail-btn" href="/infrastructure/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
     def test_description_in_detail_page(self):
         infra = InfrastructureFactory.create(description="<b>Beautiful !</b>")
@@ -141,11 +142,10 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
             ).pk,
             "conditions": [InfrastructureConditionFactory.create().pk],
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            good_data["topology"] = f'{{"paths": [{path.pk}]}}'
-        else:
-            good_data["geom"] = "POINT(0.42 0.666)"
+        PathFactory.create()
+        good_data["topology"] = '{"type":"Point","coordinates":[3.0,46.5]}'
+        good_data["topology_changed"] = "true"
+
         return good_data
 
     def get_expected_popup_content(self):
@@ -158,6 +158,9 @@ class PointInfrastructureViewsTest(InfrastructureViewsTest):
             f'    <a id="detail-btn" href="/infrastructure/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
 
 class InfrastructureMultiActionsViewTest(

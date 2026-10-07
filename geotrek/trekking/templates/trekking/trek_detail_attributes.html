@@ -13,6 +13,7 @@
             <th>{{ trek|verbose:"name" }}</th>
             <td>{{ trek.name }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=trek %}
         <tr>
             <th>{{ trek|verbose:"departure" }}</th>
             <td>{{ trek.departure }}</td>

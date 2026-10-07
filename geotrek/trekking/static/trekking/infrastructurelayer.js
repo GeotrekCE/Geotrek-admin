@@ -1,3 +1,4 @@
+/*
 var InfrastructuresLayer = L.GeoJSON.extend({
 
     initialize: function (infrastructuresData, options) {
@@ -45,3 +46,4 @@ var InfrastructuresLayer = L.GeoJSON.extend({
         return marker;
     }
 });
+*/

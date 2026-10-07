@@ -1,8 +1,9 @@
 import importlib
+import sys
 from os.path import join
 
 from django.conf import settings
-from django.core.management.base import BaseCommand, CommandError
+from django.core.management.base import BaseCommand, CommandError, OutputWrapper
 
 from geotrek.common.parsers import ImportError
 
@@ -54,8 +55,14 @@ class Command(BaseCommand):
             msg = "File path missing"
             raise CommandError(msg)
 
+        is_default_stdout = (
+            isinstance(self.stdout, OutputWrapper)
+            and getattr(self.stdout, "_out", None) is sys.stdout
+        )
+        should_silence = getattr(settings, "TEST", False) and is_default_stdout
+
         def progress_cb(progress, line, eid):
-            if verbosity >= 2:
+            if verbosity >= 2 and not should_silence:
                 self.stdout.write(
                     "{line:04d}: {eid: <10} ({progress:02d}%)".format(
                         line=line, eid=eid or "", progress=int(100 * progress)
@@ -69,5 +76,7 @@ class Command(BaseCommand):
         except ImportError as e:
             raise CommandError(e)
 
-        if (verbosity >= 1 and parser.warnings) or verbosity >= 2:
+        if (
+            (verbosity >= 1 and parser.warnings) or verbosity >= 2
+        ) and not should_silence:
             self.stdout.write(parser.report())

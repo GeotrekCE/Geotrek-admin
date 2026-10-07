@@ -3,6 +3,7 @@
 CREATE VIEW {{ schema_geotrek }}.v_trails
 AS WITH v_trails AS
     (SELECT core_topology.geom,
+            core_topology.coupled,
             core_topology.id,
             core_trail.structure_id,
             core_trail.name,
@@ -25,6 +26,7 @@ SELECT a.id,
        a.departure AS "Departure",
        a.arrival AS "Arrival",
        a.comments AS "Comments",
+       a.coupled AS "Network-coupled",
        a.min_elevation AS "Minimum elevation",
        a.max_elevation AS "Maximum elevation",
        a.geom

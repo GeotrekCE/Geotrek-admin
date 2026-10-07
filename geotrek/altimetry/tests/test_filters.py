@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.test import TestCase
 
 from geotrek.core.tests.factories import PathFactory
@@ -13,17 +12,8 @@ class AltimetryFilterTest(TestCase):
         cls.path = PathFactory.create(
             geom="SRID=2154;LINESTRING(200000 300000, 1100000 1200000)"
         )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.trek = TrekFactory.create(paths=[cls.path], published=False)
-            cls.poi = POIFactory.create(name="POI1", paths=[(cls.path, 0.5, 0.5)])
-        else:
-            cls.trek = TrekFactory.create(
-                geom="SRID=2154;LINESTRING(200000 300000, 1100000 1200000)",
-                published=False,
-            )
-            cls.poi = POIFactory.create(
-                name="POI1", geom="SRID=2154;POINT (650000 750000)"
-            )
+        cls.trek = TrekFactory.create(paths=[cls.path], published=False)
+        cls.poi = POIFactory.create(name="POI1", paths=[(cls.path, 0.5, 0.5)])
 
     def test_filters_point(self):
         self.assertIn("elevation", POIFilterSet.get_filters())

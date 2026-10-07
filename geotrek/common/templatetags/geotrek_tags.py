@@ -76,3 +76,8 @@ def duration(value):
         final_duration = _("%s min") % duration.minute
 
     return final_duration
+
+
+@register.filter
+def model_class(obj):
+    return obj._meta.model

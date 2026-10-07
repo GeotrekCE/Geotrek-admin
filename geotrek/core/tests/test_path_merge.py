@@ -1,5 +1,3 @@
-from unittest import skipIf
-
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
@@ -15,7 +13,6 @@ from geotrek.core.tests.factories import (
 )
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class MergePathTest(TestCase):
     @classmethod
     def setUpTestData(cls):

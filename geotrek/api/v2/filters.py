@@ -14,6 +14,7 @@ from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
 from geotrek.flatpages.models import FlatPage, MenuItem
+from geotrek.outdoor.models import Course, Site
 from geotrek.tourism.models import (
     TouristicContent,
     TouristicContentType,
@@ -24,9 +25,6 @@ from geotrek.tourism.models import (
 )
 from geotrek.trekking.models import POI, ServiceType, Trek
 from geotrek.zoning.models import City, District
-
-if "geotrek.outdoor" in settings.INSTALLED_APPS:
-    from geotrek.outdoor.models import Course, Site
 
 
 def get_published_filter_expression(model: type[Model], language: str | None = None):
@@ -395,24 +393,23 @@ class NearbyContentFilter(BaseFilterBackend):
                 base_model=qs.model, queryset=qs, target_model=Trek, target_pk=near_trek
             )
 
-        if "geotrek.outdoor" in settings.INSTALLED_APPS:
-            near_outdoorsite = request.GET.get("near_outdoorsite")
-            if near_outdoorsite:
-                qs = _filter_near(
-                    base_model=qs.model,
-                    queryset=qs,
-                    target_model=Site,
-                    target_pk=near_outdoorsite,
-                )
+        near_outdoorsite = request.GET.get("near_outdoorsite")
+        if near_outdoorsite:
+            qs = _filter_near(
+                base_model=qs.model,
+                queryset=qs,
+                target_model=Site,
+                target_pk=near_outdoorsite,
+            )
 
-            near_outdoorcourse = request.GET.get("near_outdoorcourse")
-            if near_outdoorcourse:
-                qs = _filter_near(
-                    base_model=qs.model,
-                    queryset=qs,
-                    target_model=Course,
-                    target_pk=near_outdoorcourse,
-                )
+        near_outdoorcourse = request.GET.get("near_outdoorcourse")
+        if near_outdoorcourse:
+            qs = _filter_near(
+                base_model=qs.model,
+                queryset=qs,
+                target_model=Course,
+                target_pk=near_outdoorcourse,
+            )
         return qs
 
     def get_schema_operation_parameters(self, view):
@@ -444,28 +441,25 @@ class NearbyContentFilter(BaseFilterBackend):
                 ),
                 "schema": {"type": "integer"},
             },
+            {
+                "name": "near_outdoorsite",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by an outdoor site id. It will only show the contents related to this outdoor site."
+                ),
+                "schema": {"type": "integer"},
+            },
+            {
+                "name": "near_outdoorcourse",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by an outdoor course id. It will only show the contents related to this outdoor course."
+                ),
+                "schema": {"type": "integer"},
+            },
         ]
-        if "geotrek.outdoor" in settings.INSTALLED_APPS:
-            parameters += [
-                {
-                    "name": "near_outdoorsite",
-                    "required": False,
-                    "in": "query",
-                    "description": _(
-                        "Filter by an outdoor site id. It will only show the contents related to this outdoor site."
-                    ),
-                    "schema": {"type": "integer"},
-                },
-                {
-                    "name": "near_outdoorcourse",
-                    "required": False,
-                    "in": "query",
-                    "description": _(
-                        "Filter by an outdoor course id. It will only show the contents related to this outdoor course."
-                    ),
-                    "schema": {"type": "integer"},
-                },
-            ]
         return parameters
 
 
@@ -1440,15 +1434,14 @@ class HDViewPointPublishedByPortalFilter(
             qs, request, "poi"
         )
         set_3 = qs.none()
-        if "geotrek.outdoor" in settings.INSTALLED_APPS:
-            related_name = "site"
-            qs = qs.filter(**{f"{related_name}__isnull": False})
-            portal_query = self.filter_queryset_related_objects_by_portal(
-                request, related_name
-            )
-            set_3 = self.filter_queryset_related_objects_published(
-                qs, request, related_name, portal_query
-            )
+        related_name = "site"
+        qs = qs.filter(**{f"{related_name}__isnull": False})
+        portal_query = self.filter_queryset_related_objects_by_portal(
+            request, related_name
+        )
+        set_3 = self.filter_queryset_related_objects_published(
+            qs, request, related_name, portal_query
+        )
         return (set_1 | set_2 | set_3).distinct()
 
 
@@ -1466,10 +1459,9 @@ class TreksAndSitesAndTourismRelatedPortalThemeFilter(
             qs, request, "touristic_events"
         )
         set_4 = qs.none()
-        if "geotrek.outdoor" in settings.INSTALLED_APPS:
-            set_4 = self.filter_queryset_related_objects_published_by_portal(
-                qs, request, "sites"
-            )
+        set_4 = self.filter_queryset_related_objects_published_by_portal(
+            qs, request, "sites"
+        )
         return (set_1 | set_2 | set_3 | set_4).distinct()
 
 
@@ -1524,13 +1516,12 @@ class TreksAndSitesAndTourismAndFlatpagesRelatedPortalThemeFilter(
             + touristiccontent_sources
             + touristicevent_sources
         )
-        if "geotrek.outdoor" in settings.INSTALLED_APPS:
-            sites_sources = list(
-                Site.objects.filter(lang_query, portal_query)
-                .prefetch_related("portal, source")
-                .values_list("source__pk", flat=True)
-            )
-            all_sources_pks += sites_sources
+        sites_sources = list(
+            Site.objects.filter(lang_query, portal_query)
+            .prefetch_related("portal, source")
+            .values_list("source__pk", flat=True)
+        )
+        all_sources_pks += sites_sources
 
         # Return distinct sources
         return qs.filter(pk__in=set(all_sources_pks))
