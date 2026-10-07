@@ -58,7 +58,7 @@ class LineTopologyFormMixin(CommonForm):
       - the user's permissions
     """
 
-    geomfields = ["topology", "geom"]
+    geomfields = ["geom", "topology"]
     topology = LineTopologyField(required=False, label="")
     geom = LineStringField(
         required=False,

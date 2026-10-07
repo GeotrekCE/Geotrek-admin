@@ -2474,6 +2474,28 @@ class TrailViewsTest(CommonTest):
         response = self.client.get(trail.get_detail_url())
         self.assertEqual(response.status_code, 200)
 
+    def test_off_network_detail_page(self):
+        self.user.user_permissions.add(
+            Permission.objects.get(codename="can_draw_off_path_network")
+        )
+        data = {
+            "name": "off_net_trail",
+            "departure": "Below",
+            "arrival": "Above",
+            "comments": "No comment",
+            "geom": '{"type": "LineString", "coordinates": [[3.0, 46.5], [3.001, 46.501]]}',
+            "geom_changed": "true",
+            "certifications-TOTAL_FORMS": "0",
+            "certifications-INITIAL_FORMS": "0",
+            "certifications-MAX_NUM_FORMS": "1000",
+            "certifications-MIN_NUM_FORMS": "",
+        }
+        response = self.client.post(Trail.get_add_url(), data)
+        self.assertEqual(response.status_code, 302)
+        trail = Trail.objects.get(name="off_net_trail")
+        detail_resp = self.client.get(trail.get_detail_url())
+        self.assertEqual(detail_resp.status_code, 200)
+
     @mock.patch("mapentity.helpers.requests")
     def test_document_export(self, mock_requests):
         trail = TrailFactory(date_update="2000-01-01")

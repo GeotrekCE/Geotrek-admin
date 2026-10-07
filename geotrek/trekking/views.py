@@ -296,26 +296,12 @@ class TrekMarkupPublic(TrekDocumentPublicMixin, MarkupPublic):
 
 class TrekCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Trek
-
-    def get_form_class(self):
-        # TODO: use form_class = TrekForm instead, which currently causes the geom do be saved incorrectly.
-        # To reproduce:
-        # 1. replace this method with form_class = ...
-        # 2. create an object with a geometry off the path network
-        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
-        return TrekForm
+    form_class = TrekForm
 
 
 class TrekUpdate(MapEntityUpdate):
     queryset = Trek.objects.existing()
-
-    def get_form_class(self):
-        # TODO: use form_class = TrekForm instead, which currently causes the geom do be saved incorrectly.
-        # To reproduce:
-        # 1. replace this method with form_class = ...
-        # 2. update an object with a geometry off the path network
-        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
-        return TrekForm
+    form_class = TrekForm
 
     @same_structure_required("trekking:trek_detail")
     def dispatch(self, *args, **kwargs):

@@ -44,9 +44,9 @@ class TrekForm(LineTopologyFormMixin):
     )
 
     geomfields = [
+        *LineTopologyFormMixin.geomfields,
         "parking_location",
         "points_reference",
-        *LineTopologyFormMixin.geomfields,
     ]
 
     leftpanel_scrollable = False

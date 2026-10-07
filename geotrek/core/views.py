@@ -698,26 +698,12 @@ class TrailDocument(MapEntityDocument):
 
 class TrailCreate(CreateFromTopologyMixin, CertificationTrailMixin, MapEntityCreate):
     model = Trail
-
-    def get_form_class(self):
-        # TODO: use form_class = TrailForm instead, which currently causes the geom do be saved incorrectly.
-        # To reproduce:
-        # 1. replace this method with form_class = ...
-        # 2. create an object with a geometry off the path network
-        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
-        return TrailForm
+    form_class = TrailForm
 
 
 class TrailUpdate(CertificationTrailMixin, MapEntityUpdate):
     queryset = Trail.objects.existing()
-
-    def get_form_class(self):
-        # TODO: use form_class = TrailForm instead, which currently causes the geom do be saved incorrectly.
-        # To reproduce:
-        # 1. replace this method with form_class = ...
-        # 2. update an object with a geometry off the path network
-        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
-        return TrailForm
+    form_class = TrailForm
 
     @same_structure_required("core:trail_detail")
     def dispatch(self, *args, **kwargs):
