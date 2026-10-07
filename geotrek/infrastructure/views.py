@@ -99,26 +99,12 @@ class InfrastructureDocument(MapEntityDocument):
 
 class InfrastructureCreate(CreateFromTopologyMixin, MapEntityCreate):
     model = Infrastructure
-
-    def get_form_class(self):
-        # TODO: use form_class = InfrastructureForm instead, which currently causes the geom do be saved incorrectly.
-        # To reproduce:
-        # 1. replace this method with form_class = ...
-        # 2. create an object with a geometry off the path network
-        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
-        return InfrastructureForm
+    form_class = InfrastructureForm
 
 
 class InfrastructureUpdate(MapEntityUpdate):
     queryset = Infrastructure.objects.existing()
-
-    def get_form_class(self):
-        # TODO: use form_class = InfrastructureForm instead, which currently causes the geom do be saved incorrectly.
-        # To reproduce:
-        # 1. replace this method with form_class = ...
-        # 2. update an object with a geometry off the path network
-        # 3. access its detail page -> InternalError: transform: latitude or longitude exceeded limits (-14)
-        return InfrastructureForm
+    form_class = InfrastructureForm
 
     @same_structure_required("infrastructure:infrastructure_detail")
     def dispatch(self, *args, **kwargs):
