@@ -27,6 +27,7 @@ CHANGELOG
 * Debian package is now universal and can be installed on any supported debian-like system. CI only test installation on supported Ubuntu LTS versions.
 * Next release will update your source list and signature key to new format.
 * Geotrek-admin use now embedded python 3.13 version on all variants of debian package or docker image.
+* Add support for evolution of Suricate API: only lock reports when they are being handled
 
 
 2.126.2         (2026-09-29)
