@@ -5,27 +5,18 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 })
 
 describe('Create signage', () => {
-    before(() => {
+    beforeEach(() => {
         const username = 'admin';
         const password = 'admin';
 
-        cy.loginByCSRF(username, password)
-            .then((resp) => {
-                expect(resp.status).to.eq(200)
-            });
+        cy.loginByCSRF(username, password);
         cy.mockTiles();
-    })
-
-    beforeEach(() => {
-        cy.setCookie('django_language', 'en');
-        Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
     });
 
     it('Create signage', () => {
         cy.visit('/signage/list');
         cy.wait('@tiles');
-        cy.server()
-        cy.route('/api/signage/drf/signages.geojson').as('signage')
+        cy.intercept('/api/signage/drf/signages.geojson').as('signage')
         cy.get("a.btn-success[href='/signage/add/']").contains('Add').click()
         cy.wait('@signage')
         cy.get("a.pointtopology-control").click()

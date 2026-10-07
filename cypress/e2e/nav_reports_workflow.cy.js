@@ -1,17 +1,9 @@
 describe('Nav reports workflow', () => {
-    before(() => {
+    beforeEach(() => {
         const username = 'admin';
         const password = 'admin';
-        cy.loginByCSRF(username, password)
-            .then((resp) => {
-                expect(resp.status).to.eq(200)
-            });
+        cy.loginByCSRF(username, password);
         cy.mockTiles();
-    })
-
-    beforeEach(() => {
-        Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
-        cy.setCookie('django_language', 'en');
     });
 
     it('Handles resolved intervention reports', () => {

@@ -1,23 +1,14 @@
 describe('Create tourism event', () => {
-  before(() => {
-    const username = 'admin'
-    const password = 'admin'
-
-    cy.loginByCSRF(username, password)
-      .then((resp) => {
-        expect(resp.status).to.eq(200)
-      })
-    cy.mockTiles();
-  })
-
   beforeEach(() => {
-    cy.setCookie('django_language', 'en');
-    Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
+    const username = 'admin';
+    const password = 'admin';
+
+    cy.loginByCSRF(username, password);
+    cy.mockTiles();
+    cy.visit('/touristicevent/add/').get("#event").scrollTo('bottom');
   });
 
   it('Should dynamically show/hide cancellation reason', () => {
-    cy.visit('/touristicevent/add/').get("#event").scrollTo('bottom');
-    //
     cy.wait('@tiles');
     // check initially hidden
     cy.get('#div_id_cancellation_reason').should("not.be.visible");

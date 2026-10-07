@@ -5,26 +5,17 @@ Cypress.on('uncaught:exception', (err, runnable) => {
 })
 
 describe('Create trek', () => {
-    before(() => {
+    beforeEach(() => {
         const username = 'admin';
         const password = 'admin';
 
-        cy.loginByCSRF(username, password)
-            .then((resp) => {
-                expect(resp.status).to.eq(200);
-            });
+        cy.loginByCSRF(username, password);
         cy.mockTiles();
-    });
-
-    beforeEach(() => {
-        Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
-        cy.setCookie('django_language', 'en');
     });
 
     it('Create trek', () => {
         cy.visit('/trek/list');
         cy.wait('@tiles');
-        cy.server();
         cy.get("a.btn-success[href='/trek/add/']").contains('Add').click();
         cy.get("input[id='id_duration']").type('100');
         cy.get("input[name='name_en']").type('Trek number 1');
@@ -41,7 +32,7 @@ describe('Create trek', () => {
         cy.get("select[id='id_practice']").select("Cycling", { force: true });
         cy.get("select[id='id_difficulty']").select("Very hard", { force: true });
         cy.get("select[id='id_route']").select("Loop", { force: true });
-        cy.setTinyMceContent('id_access_en', 'Access number 1');;
+        cy.setTinyMceContent('id_access_en', 'Access number 1');
         cy.setTinyMceContent('id_description_teaser_en', 'Description teaser number 1');
         cy.setTinyMceContent('id_ambiance_en', 'Ambiance number 1');
         cy.setTinyMceContent('id_description_en', 'Description number 1');

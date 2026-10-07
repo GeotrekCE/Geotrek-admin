@@ -1,18 +1,10 @@
 describe('Create path', () => {
-    before(() => {
+    beforeEach(() => {
         const username = 'admin';
         const password = 'admin';
 
-        cy.loginByCSRF(username, password)
-            .then((resp) => {
-                expect(resp.status).to.eq(200);
-            });
+        cy.loginByCSRF(username, password);
         cy.mockTiles();
-    });
-
-    beforeEach(() => {
-        cy.setCookie('django_language', 'en');
-        Cypress.Cookies.preserveOnce('sessionid', 'csrftoken');
     });
 
     it('Create path', () => {

@@ -1,5 +1,8 @@
 Cypress.Commands.add('loginByCSRF', (username, password) => {
-    cy.request('/login/?next=/')
+  cy.session(
+    [username, password],
+    () => {
+      cy.request('/login/')
       .its('body')
       .then((body) => {
         // we can use Cypress.$ to parse the string body
@@ -16,11 +19,34 @@ Cypress.Commands.add('loginByCSRF', (username, password) => {
             "csrfmiddlewaretoken": $html.find('input[name=csrfmiddlewaretoken]').val(), // insert this as part of form body
          }
         });
+        cy.setCookie('django_language', 'en');
       });
-    });
+    },
+    {
+      validate() {
+        cy.request('/').its('status').should('eq', 200);
+      },
+    }
+  );
+});
 
-Cypress.Commands.add('mockTiles', (username, password) => {
+Cypress.Commands.add('mockTiles', () => {
     cy.intercept("https://*.tile.opentopomap.org/*/*/*.png", {fixture: "images/tile.png"}).as("tiles");
+    cy.intercept(
+      "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json",
+      {
+        body: {
+          version: 8,
+          glyphs: "https://data.geopf.fr/annexes/ressources/vectorTiles/fonts/{fontstack}/{range}.pbf",
+          sources: {},
+          layers: [],
+        },
+      }
+    ).as("mapStyle");
+    cy.intercept(
+      "https://data.geopf.fr/annexes/ressources/vectorTiles/fonts/**",
+      { body: new ArrayBuffer(0) }
+    ).as("mapFonts");
 });
 
 
