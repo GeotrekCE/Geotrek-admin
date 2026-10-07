@@ -100,6 +100,7 @@ class GeotrekMapWidget(MapWidget):
     """
     MapWidget with features specific to Geotrek:
       - Set geom_changed to True when geom is modified.
+      - Load the path layer by default when rendering its own map (point topologies).
     """
 
     def __init__(self, attrs=None, *args, **kwargs):
@@ -110,4 +111,7 @@ class GeotrekMapWidget(MapWidget):
     @property
     def media(self):
         media = super().media
-        return media + Media(js=["core/mapwidget_set_geom_changed.js"])
+        js = ["core/mapwidget_set_geom_changed.js"]
+        if not self.attrs.get("target_map"):
+            js.append("core/mapwidget_load_path_layer.js")
+        return media + Media(js=js)
