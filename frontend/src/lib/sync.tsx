@@ -14,10 +14,7 @@ export type BodyForMutation = Record<
 >
 
 export type SyncReference =
-  | "signage"
-  | "intervention"
-  | "infrastructure"
-  | "report"
+  "signage" | "intervention" | "infrastructure" | "report"
 
 const endpointMap: Record<string, string> = {
   signage: "/signage/drf/signages",
