@@ -5,7 +5,7 @@ import type {
   ReportDataSchemaProps,
   SignageDataSchemaProps,
 } from "@/schemas/data"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { buttonVariants } from "@/components/ui/button"
 import { Link } from "@tanstack/react-router"
@@ -59,10 +59,7 @@ function Message({
           )}
           {interventionCount > 0 && (
             <li>
-              {m["common.intervention-count"](
-                { count: interventionCount },
-                { locale: "fr" }
-              )}
+              {m["common.intervention-count"]({ count: interventionCount })}
             </li>
           )}
           {infrastructureCount > 0 && (

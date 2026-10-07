@@ -3560,7 +3560,9 @@ class OutdoorRatingTestCase(TestCase):
 
 
 class FlatPageTestCase(TestCase):
-    published_page_factory = partial(flatpages_factory.FlatPageFactory, published=True)
+    published_page_factory = staticmethod(
+        partial(flatpages_factory.FlatPageFactory, published=True)
+    )
 
     @staticmethod
     def add_child(parent, child, pos="last-child"):
@@ -4010,7 +4012,7 @@ class FlatPageTestCase(TestCase):
 
 
 class MenuItemTestCase(TestCase):
-    published_menu_item_factory = partial(MenuItemFactory, published=True)
+    published_menu_item_factory = staticmethod(partial(MenuItemFactory, published=True))
 
     @staticmethod
     def add_child(parent, child):

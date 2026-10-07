@@ -270,7 +270,7 @@ class OpenStreetMapInfrastructureParserTests(TestCase):
 
     def test_Infrastructure_eid_filter_OSM(self):
         infrastructure_eid = self.objects.all().values_list("eid", flat=True)
-        self.assertListEqual(list(infrastructure_eid), ["N1", "W2", "W3", "R4"])
+        self.assertEqual(list(infrastructure_eid), ["N1", "W2", "W3", "R4"])
         self.assertNotEqual(infrastructure_eid, ["1", "2", "3", "4"])
 
     def test_default_name(self):

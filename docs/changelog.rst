@@ -28,6 +28,19 @@ CHANGELOG
 * Strengthen the "invalid topology" filter criteria
 * Remove the "invalid geometry" filter
 
+
+2.126.3         (2026-10-06)
+----------------------------
+
+**Improvements**
+
+* GTAM: Display the extent based on the GTA configuration and inform users of
+  the extent of the embedded data
+* GTAM: Users can upload photo attachments
+* GTAM: Added cluster layers and refactored the layer display mechanism
+* GTAM: Display of linear geometries
+* Allow to add multiple blades from signage form
+
 **Bug fixes**
 
 * Fix bug in Tourinsoft v3 parsers when "Photo" is not defined

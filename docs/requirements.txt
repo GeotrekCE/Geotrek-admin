@@ -22,7 +22,7 @@ charset-normalizer==3.5.2
     # via
     #   -c ../requirements.txt
     #   requests
-click==8.4.2
+click==8.5.0
     # via
     #   -c ../requirements.txt
     #   sphinx-intl
@@ -80,7 +80,7 @@ sphinx-design==0.6.1
     # via -r requirements.in
 sphinx-immaterial==0.13.9
     # via -r requirements.in
-sphinx-intl==2.3.2
+sphinx-intl==2.4.0
     # via -r requirements.in
 sphinxcontrib-applehelp==2.0.0
     # via sphinx
