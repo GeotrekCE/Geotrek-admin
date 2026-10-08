@@ -101,6 +101,7 @@ class GeotrekMapWidget(MapWidget):
     MapWidget with features specific to Geotrek:
       - Set geom_changed to True when geom is modified.
       - Prevent Geoman edit controls from modifying read-only geometries.
+      - Load the path layer by default when rendering its own map (point topologies).
     """
 
     def __init__(self, attrs=None, *args, **kwargs):
@@ -114,4 +115,6 @@ class GeotrekMapWidget(MapWidget):
         js = ["core/mapwidget_set_geom_changed.js"]
         if not self.modifiable or self.attrs.get("allowed_types") == ["POINT"]:
             js.append("core/mapwidget_disable_edit_readonly_geom.js")
+        if not self.attrs.get("target_map"):
+            js.append("core/mapwidget_load_path_layer.js")
         return media + Media(js=js)
