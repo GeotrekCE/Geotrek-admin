@@ -657,13 +657,15 @@ class TrekPointsReferenceTest(TrekkingManagerTest):
     def test_points_reference_editable_as_hidden_input(self):
         url = self.trek.get_update_url()
         response = self.client.get(url)
-        self.assertContains(response, 'name="points_reference"')
+        self.assertContains(response, 'name="points_reference"', count=1)
+        self.assertContains(response, 'name="parking_location"', count=1)
 
     @override_settings(TREK_POINTS_OF_REFERENCE_ENABLED=False)
     def test_points_reference_is_marked_as_disabled_when_disabled(self):
         url = self.trek.get_update_url()
         response = self.client.get(url)
         self.assertNotContains(response, 'name="points_reference"')
+        self.assertContains(response, 'name="parking_location"', count=1)
 
 
 class TrekGPXTest(TrekkingManagerTest):

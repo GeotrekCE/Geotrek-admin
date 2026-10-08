@@ -104,6 +104,7 @@ class CourseFormTest(TestCase):
                 "parent_sites": [str(self.course.parent_sites.first().pk)],
             },
         )
+        self.assertEqual(form.geomfields, ["geom", "points_reference"])
         self.assertTrue(form.is_valid())
         created = form.save()
         self.assertEqual(len(created.points_reference), 1)
@@ -127,6 +128,7 @@ class CourseFormTest(TestCase):
                 "parent_sites": [str(self.course.parent_sites.first().pk)],
             },
         )
+        self.assertEqual(form.geomfields, ["geom"])
         self.assertTrue(form.is_valid())
         created = form.save()
         self.assertIsNone(created.points_reference)

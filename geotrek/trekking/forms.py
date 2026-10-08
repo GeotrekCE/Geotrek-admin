@@ -86,9 +86,7 @@ class TrekForm(LineTopologyFormMixin):
                     css_class="scrollable tab-pane active",
                 ),
                 Div(
-                    "points_reference",
                     "advised_parking",
-                    "parking_location",
                     "public_transport",
                     "advice",
                     "gear",
@@ -188,6 +186,8 @@ class TrekForm(LineTopologyFormMixin):
 
     def __init__(self, *args, **kwargs):
         self.fieldslayout = deepcopy(self.base_fieldslayout)
+        if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
+            self.geomfields = [f for f in self.geomfields if f != "points_reference"]
         service_types = ServiceType.objects.all()
         if any(st.pictogram for st in service_types):
             label = _("Insert service:")

@@ -25,6 +25,37 @@ class TopologyFormTest(TestCase):
         form.save()
         self.assertEqual(topo, form.instance)
 
+    def test_geotrek_map_widget_media_for_readonly_geom(self):
+        modifiable_widget = GeotrekMapWidget(attrs={"modifiable": True})
+        self.assertNotIn(
+            "core/mapwidget_disable_edit_readonly_geom.js",
+            modifiable_widget.media._js,
+        )
+
+        readonly_widget = GeotrekMapWidget(attrs={"modifiable": False})
+        self.assertIn(
+            "core/mapwidget_disable_edit_readonly_geom.js",
+            readonly_widget.media._js,
+        )
+
+        point_only_widget = GeotrekMapWidget(attrs={"allowed_types": ["POINT"]})
+        self.assertIn(
+            "core/mapwidget_disable_edit_readonly_geom.js",
+            point_only_widget.media._js,
+        )
+
+    def test_line_topology_form_geom_widget_without_permission(self):
+        user = UserFactory()
+        form = TrailForm(user=user)
+        self.assertFalse(form.fields["geom"].widget.modifiable)
+        self.assertEqual(
+            form.fields["geom"].widget.attrs.get("geom_type"), "LINESTRING"
+        )
+        self.assertIn(
+            "core/mapwidget_disable_edit_readonly_geom.js",
+            form.fields["geom"].widget.media._js,
+        )
+
     def test_geotrek_map_widget_media_without_target_map(self):
         widget = GeotrekMapWidget()
         self.assertIn("core/mapwidget_set_geom_changed.js", widget.media._js)

@@ -4,6 +4,7 @@ from django import forms
 from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext as _
+from mapentity.widgets import MapWidget
 
 from geotrek.common.forms import CommonForm
 from geotrek.outdoor.models import Course, OrderedCourseChild, RatingScale, Site
@@ -165,11 +166,10 @@ class CourseForm(CommonForm):
         required=False,
     )
 
-    geomfields = ["geom"]
+    geomfields = ["geom", "points_reference"]
 
     fieldslayout = [
         Div(
-            "points_reference",
             "structure",
             "name",
             "parent_sites",
@@ -215,8 +215,15 @@ class CourseForm(CommonForm):
             "hidden_ordered_children",
         ]
         model = Course
+        widgets = {
+            "points_reference": MapWidget(
+                attrs={"target_map": "geom", "custom_icon": "markers/points.svg"}
+            ),
+        }
 
     def __init__(self, parent_sites=None, *args, **kwargs):
+        if not settings.OUTDOOR_COURSE_POINTS_OF_REFERENCE_ENABLED:
+            self.geomfields = [f for f in self.geomfields if f != "points_reference"]
         super().__init__(*args, **kwargs)
         self.fields["parent_sites"].queryset = Site.objects.only("name").order_by(
             "name"
@@ -289,7 +296,6 @@ class CourseForm(CommonForm):
         else:
             # Edit points of reference with custom edition JavaScript class
             self.fields["points_reference"].label = ""
-            self.fields["points_reference"].widget.target_map = "geom"
             self.fields[
                 "points_reference"
             ].widget.geometry_field_class = "PointsReferenceField"
