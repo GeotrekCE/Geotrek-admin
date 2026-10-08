@@ -100,6 +100,7 @@ class GeotrekMapWidget(MapWidget):
     """
     MapWidget with features specific to Geotrek:
       - Set geom_changed to True when geom is modified.
+      - Prevent Geoman edit controls from modifying read-only geometries.
     """
 
     def __init__(self, attrs=None, *args, **kwargs):
@@ -110,4 +111,7 @@ class GeotrekMapWidget(MapWidget):
     @property
     def media(self):
         media = super().media
-        return media + Media(js=["core/mapwidget_set_geom_changed.js"])
+        js = ["core/mapwidget_set_geom_changed.js"]
+        if not self.modifiable or self.attrs.get("allowed_types") == ["POINT"]:
+            js.append("core/mapwidget_disable_edit_readonly_geom.js")
+        return media + Media(js=js)

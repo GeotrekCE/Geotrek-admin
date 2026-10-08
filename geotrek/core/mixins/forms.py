@@ -104,7 +104,8 @@ class LineTopologyFormMixin(CommonForm):
     def disable_drawing_off_network_at_init(self):
         self.fields["geom"].disabled = True
         self.fields["geom"].widget = GeotrekMapWidget(
-            attrs={"target_map": "topology", "modifiable": False}
+            geom_type="LINESTRING",
+            attrs={"target_map": "topology", "modifiable": False},
         )
         self.fields.pop("geom_changed")
 
