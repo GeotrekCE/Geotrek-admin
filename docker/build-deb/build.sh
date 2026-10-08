@@ -43,7 +43,10 @@ uv venv "${TARGET_DIR}" --allow-existing --python "${PYTHON_BIN}"
 ln -sfn . "${TARGET_DIR}/venv"
 
 echo "Installing dependencies from requirements.txt..."
-uv pip install -r requirements.txt --python "${TARGET_DIR}/bin/python"
+uv pip install -r requirements.txt \
+    --no-binary numpy \
+    --config-settings-package numpy:setup-args="-Dcpu-baseline=none" \
+    --python "${TARGET_DIR}/bin/python"
 
 echo "Compiling gettext messages..."
 "${TARGET_DIR}/bin/django-admin" compilemessages || "${TARGET_DIR}/bin/python" manage.py compilemessages || true
