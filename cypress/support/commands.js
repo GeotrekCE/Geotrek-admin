@@ -75,25 +75,35 @@ const DEFAULT_TEST_VIEW = {
   zoom: 14,
 };
 
+const getMapInstance = (win) =>
+  win.mapentity_map || win.maps?.[0]?.getMap?.() || win.gm?.mapAdapter?.mapInstance;
+
 Cypress.Commands.add('waitForMap', (mapSelector = '.maplibre-map', view = DEFAULT_TEST_VIEW) => {
   cy.get(mapSelector).find('.maplibregl-canvas').should('be.visible');
   cy.window().should((win) => {
-    expect(win.maps).to.be.an('array').and.not.be.empty;
-    const map = win.maps[0].getMap();
+    const map = getMapInstance(win);
     expect(map).to.exist;
     expect(map.loaded()).to.be.true;
+    if (win.document.querySelector('#id_geom, #id_topology')) {
+      expect(win.gm?.loaded).to.be.true;
+      expect(win.document.querySelector(`${mapSelector} .mapentity-field-draw-buttons`)).to.exist;
+    }
   });
   if (view) {
     cy.window().then((win) => {
-      const map = win.maps[0].getMap();
-      map.jumpTo({ center: view.center, zoom: view.zoom });
+      const map = getMapInstance(win);
+      const center =
+        view.center ||
+        win.SETTINGS?.map?.maplibreConfig?.DEFAULT_CENTER ||
+        DEFAULT_TEST_VIEW.center;
+      map.jumpTo({ center, zoom: view.zoom });
     });
   }
 });
 
 Cypress.Commands.add('waitForPathSnapLayer', (bbox = [[150, 150], [450, 250]]) => {
   cy.window().should((win) => {
-    const map = win.maps[0].getMap();
+    const map = getMapInstance(win);
     expect(map.getLayer('mapentity-snap-layer-path')).to.exist;
     expect(win.gm?.actionInstances?.helper__snapping).to.exist;
     const features = map.queryRenderedFeatures(bbox, {
@@ -105,7 +115,7 @@ Cypress.Commands.add('waitForPathSnapLayer', (bbox = [[150, 150], [450, 250]]) =
 
 Cypress.Commands.add('waitForPathRoutingLayer', (bbox = [[150, 150], [450, 250]]) => {
   cy.window().should((win) => {
-    const map = win.maps[0].getMap();
+    const map = getMapInstance(win);
     const pathLayer = win.pathLayerName || 'layer-path-lines';
     expect(map.getLayer(pathLayer)).to.exist;
     expect(map.getSource('mapbox-gl-path-source-point-and-line')).to.exist;

@@ -15,9 +15,9 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
 
     it('creates a path using the MapLibre Geoman line tool', () => {
       cy.visit('/path/add/');
-      cy.waitForMap('#id-geom_map');
+      cy.waitForMap('#id_geom_map');
 
-      cy.drawGeomanLine('#id-geom_map', [PATH_START, PATH_END], 'id_geom');
+      cy.drawGeomanLine('#id_geom_map', [PATH_START, PATH_END], 'id_geom');
 
       cy.get('#id_geom')
         .invoke('val')
@@ -45,17 +45,17 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
 
     it('creates a POI with snapping onto the path network', () => {
       cy.visit('/poi/add/');
-      cy.waitForMap('#id-geom_map');
+      cy.waitForMap('#id_geom_map');
       cy.waitForPathSnapLayer(PATH_BBOX);
 
       // Compute the exact unprojected latitude at y = 200 (on the path) and y = 208 (click position within 20px snap distance)
       cy.window().then((win) => {
-        const map = win.maps[0].getMap();
+        const map = win.mapentity_map || win.maps?.[0]?.getMap?.();
         const pathLat = map.unproject([300, 200]).lat;
         const clickLat = map.unproject([300, 208]).lat;
 
         // Click slightly below the path (8px away, within snap_distance=20)
-        cy.drawGeomanPoint('#id-geom_map', [300, 208], 'id_geom');
+        cy.drawGeomanPoint('#id_geom_map', [300, 208], 'id_geom');
 
         cy.get('#id_geom_changed').should('have.value', 'true');
         cy.get('#id_geom')
@@ -74,7 +74,7 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
       });
 
       cy.get('select[name="type"]').select(1, { force: true });
-      cy.get('input[name="name_fr"]').type('POI with snapping');
+      cy.get('input[name^="name_"]:visible').first().type('POI with snapping');
       cy.submitEntityForm();
 
       cy.wait('@postPoi').its('response.statusCode').should('eq', 302);
@@ -86,16 +86,16 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
 
     it('creates a POI without snapping (clicked away from the path network)', () => {
       cy.visit('/poi/add/');
-      cy.waitForMap('#id-geom_map');
+      cy.waitForMap('#id_geom_map');
       cy.waitForPathSnapLayer(PATH_BBOX);
 
       cy.window().then((win) => {
-        const map = win.maps[0].getMap();
+        const map = win.mapentity_map || win.maps?.[0]?.getMap?.();
         const pathLat = map.unproject([300, 200]).lat;
         const unsnappedTargetLat = map.unproject([300, 350]).lat;
 
         // Click far from the path (150px away, outside snapRadius=40px)
-        cy.drawGeomanPoint('#id-geom_map', [300, 350], 'id_geom');
+        cy.drawGeomanPoint('#id_geom_map', [300, 350], 'id_geom');
 
         cy.get('#id_geom_changed').should('have.value', 'true');
         cy.get('#id_geom')
@@ -113,7 +113,7 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
       });
 
       cy.get('select[name="type"]').select(1, { force: true });
-      cy.get('input[name="name_fr"]').type('POI without snapping');
+      cy.get('input[name^="name_"]:visible').first().type('POI without snapping');
       cy.submitEntityForm();
 
       cy.wait('@postPoi').its('response.statusCode').should('eq', 302);
@@ -144,16 +144,16 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
     it('draws an itinerary topologically along the path network', () => {
       cy.loginByCSRF('admin', 'admin');
       cy.visit('/trek/add/');
-      cy.waitForMap('#id-topology_map');
+      cy.waitForMap('#id_topology_map');
       cy.waitForPathRoutingLayer(PATH_BBOX);
 
-      // Topological routing mode is active by default and "Follow paths" is checked
+      // Activate topological routing mode (interactive: false by default)
       cy.get('button.mapbox-gl-path-btn-edit')
         .should('be.visible')
-        .and('have.class', 'mapbox-gl-path-active');
-      cy.get('input.mapbox-gl-path-Follow-paths').should('be.checked');
+        .click()
+        .should('have.class', 'mapbox-gl-path-active');
 
-      const canvasContainer = '#id-topology_map .maplibregl-canvas-container';
+      const canvasContainer = '#id_topology_map .maplibregl-canvas-container';
 
       // Click start point and end point on the support path
       cy.get(canvasContainer).click(230, 200, { force: true });
@@ -171,7 +171,7 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
           expect(topology[0].positions).to.have.property('0');
         });
 
-      cy.get('input[name="name_fr"]').type('Topological Trek E2E');
+      cy.get('input[name^="name_"]:visible').first().type('Topological Trek E2E');
       cy.submitEntityForm();
 
       cy.wait('@postTrek').its('response.statusCode').should('eq', 302);
@@ -184,22 +184,20 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
     it('allows free drawing (off-path network) when the user has core.can_draw_off_path_network permission', () => {
       cy.loginByCSRF('admin', 'admin');
       cy.visit('/trek/add/');
-      cy.waitForMap('#id-topology_map');
+      cy.waitForMap('#id_topology_map');
 
       // Free line draw button for #id_geom and #id_geom_changed must exist for a user with permission
       cy.get('#id_geom_draw_line').should('exist').and('be.visible');
       cy.get('#id_geom_changed').should('exist').and('have.value', 'false');
 
-      // Disable topological path control before drawing a free line off the path network
-      cy.get('button.mapbox-gl-path-btn-edit').click();
-      cy.get('button.mapbox-gl-path-btn-edit').should(
-        'not.have.class',
-        'mapbox-gl-path-active'
-      );
+      // Topological path control is inactive by default so Geoman free drawing can be used directly
+      cy.get('button.mapbox-gl-path-btn-edit')
+        .should('be.visible')
+        .and('not.have.class', 'mapbox-gl-path-active');
 
       // Draw a free line off the path network (at y = 350)
       cy.drawGeomanLine(
-        '#id-topology_map',
+        '#id_topology_map',
         [
           [200, 350],
           [380, 350],
@@ -217,7 +215,7 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
           expect(geojson.coordinates).to.have.length(2);
         });
 
-      cy.get('input[name="name_fr"]').type('Free Drawn Trek E2E');
+      cy.get('input[name^="name_"]:visible').first().type('Free Drawn Trek E2E');
       cy.submitEntityForm();
 
       cy.wait('@postTrek').its('response.statusCode').should('eq', 302);
@@ -231,7 +229,7 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
       // 'comm' user has trekking.add_trek / change_geom_trek permissions, but NOT core.can_draw_off_path_network
       cy.loginByCSRF('comm', 'comm');
       cy.visit('/trek/add/');
-      cy.waitForMap('#id-topology_map');
+      cy.waitForMap('#id_topology_map');
       cy.waitForPathRoutingLayer(PATH_BBOX);
 
       // Secondary point geometry buttons are loaded in Geoman
@@ -246,16 +244,17 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
       // Topological drawing control IS available and works for this user
       cy.get('button.mapbox-gl-path-btn-edit')
         .should('be.visible')
-        .and('have.class', 'mapbox-gl-path-active');
+        .click()
+        .should('have.class', 'mapbox-gl-path-active');
 
-      const canvasContainer = '#id-topology_map .maplibregl-canvas-container';
+      const canvasContainer = '#id_topology_map .maplibregl-canvas-container';
       cy.get(canvasContainer).click(240, 200, { force: true });
       cy.get(canvasContainer).click(360, 200, { force: true });
 
       cy.wait('@routeGeometry').its('response.statusCode').should('eq', 200);
       cy.get('#id_topology_changed').should('have.value', 'true');
 
-      cy.get('input[name="name_fr"]').type('Comm Topological Trek E2E');
+      cy.get('input[name^="name_"]:visible').first().type('Comm Topological Trek E2E');
       cy.submitEntityForm();
 
       cy.wait('@postTrek').its('response.statusCode').should('eq', 302);
