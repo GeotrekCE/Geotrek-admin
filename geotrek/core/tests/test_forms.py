@@ -55,6 +55,7 @@ class TopologyFormTest(TestCase):
             "core/mapwidget_disable_edit_readonly_geom.js",
             form.fields["geom"].widget.media._js,
         )
+
     def test_geotrek_map_widget_media_without_target_map(self):
         widget = GeotrekMapWidget()
         self.assertIn("core/mapwidget_set_geom_changed.js", widget.media._js)
