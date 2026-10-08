@@ -1,67 +1,143 @@
 from django.db import models
-from django.db.models.expressions import Case, When
+from django.db.models.expressions import Exists, ExpressionWrapper, OuterRef
 from django.db.models.query_utils import Q
 from django.views.generic.dates import timezone_today
 
+from geotrek.zoning.utils import month_between, weekday_between
 
-class VigilanceAreaManager(models.Manager):
-    def active(self):
-        qs = self.get_queryset()
-        qs = qs.filter(period_active=True)
-        return qs
+
+def _period_ongoing_condition(today):
+    ongoing = Q(start_date__lte=today) & (
+        Q(end_date__isnull=True) | Q(end_date__gte=today)
+    )
+    return ongoing
+
+
+def _period_finished_condition(today):
+    finished = Q(end_date__lt=today)
+    return finished
+
+
+def _period_active_today_condition(today):
+    active_today = (
+        _period_ongoing_condition(today)
+        & (Q(active_days=[]) | Q(active_days__contains=[today.weekday()]))
+        & (Q(active_months=[]) | Q(active_months__contains=[today.month]))
+    )
+    return active_today
+
+
+class VigilancePeriodQuerySet(models.QuerySet):
+    def ongoing(self):
+        ongoing = _period_ongoing_condition(timezone_today())
+        return self.filter(ongoing)
 
     def finished(self):
-        qs = self.get_queryset()
-        qs = qs.filter(finished=True)
-        return qs
+        finished = _period_finished_condition(timezone_today())
+        return self.filter(finished)
 
-    def active_by_date(self, start_date=None, end_date=None):
-        qs = self.get_queryset()
-        qs = (
-            qs.filter(Q(end_date__isnull=True) | Q(end_date__gte=start_date))
-            if start_date
-            else qs
-        )
-        qs = qs.filter(Q(start_date__lte=end_date)) if end_date else qs
-        return qs
+    def active_today(self):
+        active_today = _period_active_today_condition(timezone_today())
+        return self.filter(active_today)
 
+
+class VigilancePeriodManager(models.Manager.from_queryset(VigilancePeriodQuerySet)):
     def get_queryset(self):
-        qs = super().get_queryset()
+        """
+        # period_ongoing = boolean to define if a period is active (today in active period)
+        # finished = boolean to define if a period is finished (today after end date)
+        # active_today = boolean to define if the period is active today (active and day and/or month match)
+        """
         today = timezone_today()
-        today_number = today.weekday()
-        current_month_number = today.month
+        qs = super().get_queryset()
 
-        # add boolean to define if period is active (today in active period)
-        qs = qs.annotate(
-            period_active=Case(
-                When(start_date__lte=today, end_date__isnull=True, then=True),
-                When(start_date__lte=today, end_date__gte=today, then=True),
-                default=False,
-                output_field=models.BooleanField(),
+        return qs.annotate(
+            ongoing=ExpressionWrapper(_period_ongoing_condition(today), output_field=models.BooleanField()),
+            finished=ExpressionWrapper(_period_finished_condition(today), output_field=models.BooleanField()),
+            active_today=ExpressionWrapper(_period_active_today_condition(today),output_field=models.BooleanField()),
+        )
+
+    def ongoing(self):
+        return self.get_queryset().ongoing()
+
+    def finished(self):
+        return self.get_queryset().finished()
+
+    def active_today(self):
+        return self.get_queryset().active_today()
+
+
+class VigilanceAreaQuerySet(models.QuerySet):
+    def _periods_exists(self, condition=None, negate=False):
+        rel = self.model._meta.get_field("periods")
+        periods = rel.related_model._base_manager.filter(
+            **{rel.field.name: OuterRef("pk")}
+        )
+        if condition is not None:
+            periods = periods.filter(condition)
+        return ~Exists(periods) if negate else Exists(periods)
+
+    def _no_periods(self):
+        return self._periods_exists(negate=True)
+
+    def _has_periods(self):
+        return self._periods_exists()
+
+    def _ongoing_expr(self, today):
+        return self._periods_exists(_period_ongoing_condition(today)) | self._no_periods()
+
+    def _finished_expr(self, today):
+        not_finished = Q(end_date__isnull=True) | Q(end_date__gte=today)
+        return self._periods_exists(not_finished, negate=True) & self._has_periods()
+
+    def _active_today_expr(self, today):
+        return self._periods_exists(_period_active_today_condition(today)) | self._no_periods()
+
+    def ongoing(self):
+        return self.filter(self._ongoing_expr(timezone_today()))
+
+    def finished(self):
+        return self.filter(self._finished_expr(timezone_today()))
+
+    def active_today(self):
+        return self.filter(self._active_today_expr(timezone_today()))
+
+    def active_by_dates(self, start=None, end=None):
+        if start and end:
+            period_active = Q(start_date__lte=end) & (
+                Q(end_date__isnull=True) | Q(end_date__gte=start)
             )
-        )
-        # add boolean to define if period is finished (today after end date)
-        qs = qs.annotate(
-            finished=Case(
-                When(end_date__isnull=False, end_date__lt=today, then=True),
-                default=False,
-                output_field=models.BooleanField(),
+            period_valid = (
+                Q(active_months__len=0) | Q(active_months__overlap=month_between(start, end))
+            ) & (
+                Q(active_days__len=0) | Q(active_days__overlap=weekday_between(start, end))
             )
+            return self.filter(
+                self._periods_exists(period_active & period_valid) | self._no_periods()
+            )
+        return self
+
+
+class VigilanceAreaManager(models.Manager.from_queryset(VigilanceAreaQuerySet)):
+    def get_queryset(self):
+        """
+        # ongoing = boolean to define if an area have an period in progress (today in active period)
+        # finished = boolean to define if all the periods of an area are finished (today after end date)
+        # active_today = boolean to define if an area have a period active today (active and day and/or month match)
+        """
+        today = timezone_today()
+        qs = super().get_queryset()
+        return qs.annotate(
+            ongoing=qs._ongoing_expr(today),
+            finished=qs._finished_expr(today),
+            active_today=qs._active_today_expr(today),
         )
-        # add boolean to define if active today (active and day and/or month match)
-        qs = qs.annotate(
-            active_today=Case(
-                When(
-                    Q(period_active=True)
-                    & (Q(active_days=[]) | Q(active_days__contains=[today_number]))
-                    & (
-                        Q(active_months=[])
-                        | Q(active_months__contains=[current_month_number])
-                    ),
-                    then=True,
-                ),
-                default=False,
-                output_field=models.BooleanField(),
-            ),
-        )
-        return qs
+
+    def ongoing(self):
+        return self.get_queryset().ongoing()
+
+    def finished(self):
+        return self.get_queryset().finished()
+
+    def active_today(self):
+        return self.get_queryset().active_today()

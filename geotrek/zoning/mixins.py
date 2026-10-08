@@ -109,9 +109,7 @@ class ZoningPropertiesMixin:
     def get_vigilance_areas(self):
         if self.geom:
             today = datetime.date.today()
-            qs = VigilanceArea.objects.filter(
-                Q(end_date__gte=today) | Q(end_date__isnull=True)
-            )
+            qs = VigilanceArea.objects.exclude(finished=True)
             qs = qs.filter(geom__intersects=self.geom)
         else:
             qs = VigilanceArea.objects.none()
