@@ -18,4 +18,13 @@
             }
         }, 0);
     });
+
+    // Prevent native browser dragging of icons inside MapLibre controls (which otherwise
+    // suppresses button click events and triggers MaplibreFileLayerControl's drop handler).
+    document.addEventListener('dragstart', function (e) {
+        const target = e.target instanceof Element ? e.target : e.target?.parentElement;
+        if (target && target.closest('.maplibregl-ctrl')) {
+            e.preventDefault();
+        }
+    });
 </script>

@@ -306,3 +306,10 @@ fieldset {
 .form-actions {
   z-index: 1000;
 }
+
+.maplibregl-ctrl button img,
+.mapentity-draw-btn img {
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}

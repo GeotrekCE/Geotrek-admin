@@ -59,11 +59,13 @@ class TopologyFormTest(TestCase):
     def test_geotrek_map_widget_media_without_target_map(self):
         widget = GeotrekMapWidget()
         self.assertIn("core/mapwidget_set_geom_changed.js", widget.media._js)
+        self.assertIn("core/mapwidget_point_topology_button.js", widget.media._js)
         self.assertIn("core/mapwidget_load_path_layer.js", widget.media._js)
 
     def test_geotrek_map_widget_media_with_target_map(self):
         widget = GeotrekMapWidget(attrs={"target_map": "topology"})
         self.assertIn("core/mapwidget_set_geom_changed.js", widget.media._js)
+        self.assertIn("core/mapwidget_point_topology_button.js", widget.media._js)
         self.assertNotIn("core/mapwidget_load_path_layer.js", widget.media._js)
 
 
