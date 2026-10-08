@@ -9,7 +9,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.db.models.functions import Envelope, Transform
 from django.contrib.gis.geos import Polygon
-from django.core.exceptions import FieldError
+from django.core.exceptions import FieldDoesNotExist, FieldError
 from django.core.files.storage import default_storage
 from django.core.mail import mail_managers
 from django.db.models import Count, Max
@@ -74,8 +74,13 @@ class TimeStampedModelMixin(models.Model):
                 extent.srid = 3857
 
                 # Get the SRID of the geometry field to transform extent to the correct SRID
-                geom_field = app_settings["GEOM_FIELD_NAME"]
-                geom_field_obj = cls._meta.get_field(geom_field)
+                geom_field = getattr(
+                    cls, "main_geom_field", app_settings["GEOM_FIELD_NAME"]
+                )
+                model = cls
+                for field_name in geom_field.split("__"):
+                    geom_field_obj = model._meta.get_field(field_name)
+                    model = getattr(geom_field_obj, "related_model", None)
                 target_srid = getattr(geom_field_obj, "srid", 4326) or 4326
                 extent.transform(target_srid)
                 qs = qs.filter(**{f"{geom_field}__intersects": extent})
@@ -86,7 +91,7 @@ class TimeStampedModelMixin(models.Model):
             agg = qs.aggregate(latest=Max(date_field), count=Count("pk"))
             return agg["latest"], agg["count"]
 
-        except (cls.DoesNotExist, FieldError):
+        except (cls.DoesNotExist, FieldError, FieldDoesNotExist):
             return None, 0
 
     @classmethod

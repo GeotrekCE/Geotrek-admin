@@ -324,6 +324,7 @@ class Blade(
     bladecode_verbose_name = _("Code")
     coordinates_verbose_name = "{} ({})".format(_("Coordinates"), spatial_reference())
     can_duplicate = False
+    main_geom_field = "signage__geom"
 
     class Meta:
         verbose_name = _("Blade")
