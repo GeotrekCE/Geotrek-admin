@@ -5,7 +5,7 @@ from django.db import migrations
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("zoning", "0110_vigilanceareatype_alter_city_date_insert_and_more"),
+        ("zoning", "0110_vigilanceareatype_vigilancelevel_and_more"),
     ]
 
     operations = [

@@ -78,77 +78,87 @@
             <td><img src="{{ object.thumbnail.url }}"></td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"commentary" }}</th>
-            <td>{% if object.commentary %}{{ object.commentary|safe|linebreaks }}
+            <th>{{ object|verbose:"comment" }}</th>
+            <td>{% if object.comment %}{{ object.comment|safe|linebreaks }}
             {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
     </table>
+
     <table class="table table-bordered">
-        <thead>
+    <thead>
         <tr class="table-active">
-            <th colspan="2" class="text-center"><i class="bi bi-calendar-range text-danger"></i> {% trans "Period" %}</th>
+            <th class="text-center"><i class="bi bi-calendar-week text-danger"></i> {% trans "Periods" %}</th>
         </tr>
-        </thead>
-        <tbody>
-        <tr>
-            <th class="table-active">{{ object|verbose:"period_active" }}</th>
-            <td>
-                <p><i class="bi {% if object.period_active %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i>
-                {% if object.period_active %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</p>
-            </td>
-        </tr>
-        <tr>
-            <th class="table-active">{{ object|verbose:"active_today" }}</th>
-            <td>
-                <p><i class="bi {% if object.active_today %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i>
-                {% if object.active_today %}{% trans "Active" %}{% else %}{% trans "Inactive" %}{% endif %}</p>
-            </td>
-        </tr>
-        <tr>
-            <th class="table-active">{{ object|verbose:"start_date" }}</th>
-            <td>{% if object.start_date %}
-                {{ object.start_date|date:"SHORT_DATE_FORMAT" }}
-            {% else %}
-                <span class="none">{% trans "None" %}</span>
-            {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th class="table-active">{{ object|verbose:"end_date" }}</th>
-            <td>{% if object.end_date %}
-                {{ object.end_date|date:"SHORT_DATE_FORMAT" }}
-            {% else %}
-                <span class="none">{% trans "None" %}</span>
-            {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th class="table-active">{{ object|verbose:"active_days" }}</th>
-            <td>
-                {% if object.active_days|length == 0 %}
-                    <span class="none">{% trans "All week" %}</span>
-                {% else %}
-                    {% for day in object.active_days_labels %}
-                        <span class="badge badge-secondary">{{ day }}</span>
-                    {% endfor %}
-                {% endif %}
-            </td>
-        </tr>
-        <tr>
-            <th class="table-active">{{ object|verbose:"active_months" }}</th>
-            <td>
-                {% if object.active_months|length == 0 %}
-                    <span class="none">{% trans "All year" %}</span>
-                {% else %}
-                    {% for month in object.active_months_labels %}
-                        <span class="badge badge-secondary">{{ month }}</span>
-                    {% endfor %}
-                {% endif %}
-            </td>
-        </tr>
-        </tbody>
-    </table>
+    </thead>
+    <tbody id="accordionPeriods">
+        {% for period in object.periods.all %}
+            <tr>
+                <td class="p-0">
+                    <button class="btn btn-block text-left" type="button"
+                            data-toggle="collapse"
+                            data-target="#collapse{{ period.id }}"
+                            aria-expanded="false"
+                            aria-controls="collapse{{ period.id }}">
+                        {% if period.end_date %}
+                            {{ period.start_date|date:"SHORT_DATE_FORMAT" }}
+                            <i class="bi bi-arrow-right text-muted"></i>
+                            {{ period.end_date|date:"SHORT_DATE_FORMAT" }}
+                        {% else %}
+                            {% trans "From" %} {{ period.start_date|date:"SHORT_DATE_FORMAT" }}
+                        {% endif %}
+                    </button>
+                </td>
+            </tr>
+            <tr>
+                <td class="p-0 border-0">
+                    <div id="collapse{{ period.id }}" class="collapse" data-parent="#accordionPeriods">
+                        <div class="p-0">
+                            <table class="table table-striped table-bordered mb-0">
+                                <tr>
+                                    <th>{% trans "Ongoing period" %}</th>
+                                    <td><i class="bi {% if period.ongoing %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i></td>
+                                </tr>
+                                <tr>
+                                    <th>{% trans "Active today" %}</th>
+                                    <td><i class="bi {% if period.active_today %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i></td>
+                                </tr>
+                                <tr>
+                                    <th>{% trans "Active days" %}</th>
+                                    <td>
+                                        {% for day in period.active_days_labels %}
+                                            <span class="badge badge-secondary">{{ day }}</span>
+                                        {% empty %}
+                                            <span class="text-muted">{% trans "Every days" %}</span>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{% trans "Active months" %}</th>
+                                    <td>
+                                        {% for month in period.active_months_labels %}
+                                            <span class="badge badge-secondary">{{ month }}</span>
+                                        {% empty %}
+                                            <span class="text-muted">{% trans "Every months" %}</span>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{% trans "Annual recurrence" %}</th>
+                                    <td><i class="bi {% if period.annual %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td>{% trans "This area is always active" %}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
     {% include "common/fragments/publication_info.html" %}
     {% include "common/fragments/provider_eid.html" %}

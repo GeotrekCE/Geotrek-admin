@@ -53,14 +53,14 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.GeotrekTouristicContentFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
-        api_filters.OpenedFilter,
+        api_filters.PracticableFilter,
     )
     serializer_class = api_serializers.TouristicContentSerializer
 
     def get_queryset(self):
         today = datetime.date.today()
-        start_date = api_utils.parse_date(self.request.GET.get("opened_from"), today)
-        end_date = api_utils.parse_date(self.request.GET.get("opened_to"), today)
+        start_date = api_utils.parse_date(self.request.GET.get("practicable_from"), today)
+        end_date = api_utils.parse_date(self.request.GET.get("practicable_to"), today)
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
                 tourism_models.TouristicContent.objects.existing()
@@ -79,26 +79,13 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
                 )
                 .annotate(
                     geom_transformed=Transform(F("geom"), settings.API_SRID),
-                    closed=Exists(
+                    impracticable=Exists(
                         VigilanceArea.objects.filter(
-                            Q(active_months__len=0)
-                            | Q(
-                                active_months__contains=month_between(
-                                    start_date, end_date
-                                )
-                            ),
-                            Q(active_days__len=0)
-                            | Q(
-                                active_days__contains=weekday_between(
-                                    start_date, end_date
-                                )
-                            ),
-                            Q(end_date__isnull=True) | Q(end_date__gte=end_date),
-                            start_date__lte=start_date,
                             published=True,
                             practicability=Practicability.NOT_PRACTICABLE,
                             geom__intersects=OuterRef("geom"),
                         )
+                        .active_by_dates(start_date, end_date)
                     ),
                 )
                 .order_by("name")

@@ -10,6 +10,7 @@ from django.db.models import Index
 from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.dates import timezone_today
+from mapentity.models import DuplicateMixin
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
@@ -24,7 +25,7 @@ from geotrek.common.mixins.models import (
 
 from ..common.functions import GenRandomUUID
 from .choices import MonthChoices, Practicability, WeekdayChoices
-from .managers import VigilanceAreaManager
+from .managers import VigilanceAreaManager, VigilancePeriodManager
 
 
 class RestrictedAreaType(models.Model):
@@ -175,15 +176,6 @@ class VigilanceArea(
 ):
     name = models.CharField(max_length=250, verbose_name=_("Name"), db_index=True)
     description = models.TextField(verbose_name=_("Description"), blank=True)
-    start_date = models.DateField(
-        verbose_name=_("Start date"),
-        default=timezone_today,
-        db_default=Now(),
-        db_index=True,
-    )
-    end_date = models.DateField(
-        verbose_name=_("End date"), blank=True, null=True, db_index=True
-    )
     practicability = models.CharField(
         verbose_name=_("Practicability"),
         choices=Practicability.choices,
@@ -223,6 +215,69 @@ class VigilanceArea(
         related_name="vigilance_areas",
         verbose_name=_("Sources"),
     )
+    comment = models.TextField(verbose_name=_("Comment"), blank=True)
+    geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
+    uuid = models.UUIDField(
+        default=uuid.uuid4, editable=False, unique=True, db_default=GenRandomUUID()
+    )
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def ongoing_verbose_name(self):
+        return _("Ongoing period")
+
+    @property
+    def active_today_verbose_name(self):
+        return _("Active today")
+
+    @property
+    def periods_resume(self):
+        result = "\n - "
+        if self.periods.count() > 0:
+            result += "\n - ".join([period.period_resume for period in self.periods.all()])
+        else:
+            result += _("Always active")
+        return result
+
+    objects = VigilanceAreaManager()
+
+    class Meta:
+        verbose_name = _("Vigilance area")
+        verbose_name_plural = _("Vigilance areas")
+        ordering = ["name"]
+        indexes = [
+            GistIndex(name="vigilance_area_geom_gist_idx", fields=["geom"]),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(geom__isvalid=True),
+                name="%(app_label)s_%(class)s_geom_is_valid",
+            ),
+            models.CheckConstraint(
+                check=models.Q(practicability__in=Practicability.values),
+                name="%(app_label)s_%(class)s_practicability_valid",
+            ),
+        ]
+
+
+class VigilancePeriod(DuplicateMixin, models.Model):
+    vigilance_area = models.ForeignKey(
+        VigilanceArea,
+        on_delete=models.CASCADE,
+        verbose_name=_("Vigilance level"),
+        related_name="periods",
+    )
+    start_date = models.DateField(
+        verbose_name=_("Start date"),
+        default=timezone_today,
+        db_default=Now(),
+        db_index=True,
+    )
+    end_date = models.DateField(
+        verbose_name=_("End date"), blank=True, null=True, db_index=True
+    )
     active_days = ArrayField(
         models.IntegerField(
             choices=WeekdayChoices.choices,
@@ -245,14 +300,7 @@ class VigilanceArea(
         ),
         blank=True,
     )
-    commentary = models.TextField(verbose_name=_("Commentary"), blank=True)
-    geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
-    uuid = models.UUIDField(
-        default=uuid.uuid4, editable=False, unique=True, db_default=GenRandomUUID()
-    )
-
-    def __str__(self):
-        return self.name
+    annual = models.BooleanField(default=False, verbose_name=_("Annual recurrence"))
 
     def clean(self):
         if self.start_date and self.end_date:
@@ -271,14 +319,6 @@ class VigilanceArea(
         return [choices_map.get(month) for month in self.active_months]
 
     @property
-    def period_active_verbose_name(self):
-        return _("Period active")
-
-    @property
-    def active_today_verbose_name(self):
-        return _("Active today")
-
-    @property
     def period_resume(self):
         if self.end_date:
             result = _("From %s to %s") % (self.start_date, self.end_date)
@@ -289,29 +329,20 @@ class VigilanceArea(
             result += _(" - days %s") % (",".join(self.active_days_labels))
         if self.active_months:
             result += _(" - months %s") % (",".join(self.active_months_labels))
+        if self.annual:
+            result += _(" (annual)")
         return result
 
-    objects = VigilanceAreaManager()
+    objects = VigilancePeriodManager()
 
     class Meta:
-        verbose_name = _("Vigilance area")
-        verbose_name_plural = _("Vigilance areas")
-        ordering = ["name"]
+        verbose_name = _("Vigilance area period")
+        verbose_name_plural = _("Vigilance area periods")
+        ordering = ["start_date", "end_date"]
         indexes = [
-            GistIndex(name="vigilance_area_geom_gist_idx", fields=["geom"]),
             GinIndex(name="va_active_days_gin_idx", fields=["active_days"]),
             GinIndex(
                 name="va_active_months_gin_idx",
                 fields=["active_months"],
-            ),
-        ]
-        constraints = [
-            models.CheckConstraint(
-                check=models.Q(geom__isvalid=True),
-                name="%(app_label)s_%(class)s_geom_is_valid",
-            ),
-            models.CheckConstraint(
-                check=models.Q(practicability__in=Practicability.values),
-                name="%(app_label)s_%(class)s_practicability_valid",
             ),
         ]

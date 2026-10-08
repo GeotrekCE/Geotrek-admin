@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-25 08:35+0000\n"
+"POT-Creation-Date: 2026-10-07 09:52+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/fr/>\n"
@@ -75,8 +75,8 @@ msgstr "Après"
 msgid "Before"
 msgstr "Avant"
 
-msgid "Period active"
-msgstr "En cours"
+msgid "Ongoing period"
+msgstr "Période en cours"
 
 msgid "Active today"
 msgstr "Actif aujourd'hui"
@@ -93,8 +93,8 @@ msgstr "Mois actifs"
 msgid "Months of the year when the vigilance area is active. Empty equals all year."
 msgstr "Mois de l'année pendant lesquels la zone de vigilance est active. Vide signifie toute l'année."
 
-msgid "Period"
-msgstr "Période"
+msgid "Periods"
+msgstr "Périodes"
 
 msgid "Restricted areas"
 msgstr "Zones réglementaires"
@@ -123,12 +123,6 @@ msgstr "Niveaux de vigilance"
 msgid "Description"
 msgstr "Description"
 
-msgid "Start date"
-msgstr "Date de début"
-
-msgid "End date"
-msgstr "Date de fin"
-
 msgid "Practicability"
 msgstr "Praticabilité"
 
@@ -147,8 +141,20 @@ msgstr "Portails"
 msgid "Sources"
 msgstr "Sources"
 
-msgid "Commentary"
+msgid "Comment"
 msgstr "Commentaire"
+
+msgid "Vigilance areas"
+msgstr "Zones de vigilance"
+
+msgid "Start date"
+msgstr "Date de début"
+
+msgid "End date"
+msgstr "Date de fin"
+
+msgid "Annual recurrence"
+msgstr "Recurrence annuelle"
 
 msgid "Start date is after end date"
 msgstr "La date de début est après la date de fin"
@@ -169,8 +175,14 @@ msgstr " - jours %s "
 msgid " - months %s"
 msgstr " - mois %s"
 
-msgid "Vigilance areas"
-msgstr "Zones de vigilance"
+msgid " (annual)"
+msgstr " (annuelle)"
+
+msgid "Vigilance area period"
+msgstr "Période de la zone de vigilance"
+
+msgid "Vigilance area periods"
+msgstr "Périodes de la zone de vigilance"
 
 #, python-brace-format
 msgid "Invalid geometry for field '{src}'"
@@ -186,14 +198,17 @@ msgstr "Aucun(e)"
 msgid "Thumbnail"
 msgstr "Miniature"
 
-msgid "Active"
-msgstr "Actif"
+msgid "From"
+msgstr "À partir du"
 
-msgid "Inactive"
-msgstr "Inactif"
+msgid "Every days"
+msgstr "Tous les jours"
 
-msgid "All week"
-msgstr "Toute la semaine"
+msgid "Every months"
+msgstr "Tous les mois"
 
-msgid "All year"
-msgstr "Toute l'année"
+msgid "Add a new period"
+msgstr "Ajouter une nouvelle période"
+
+msgid "Delete this period"
+msgstr "Supprimer cette période"

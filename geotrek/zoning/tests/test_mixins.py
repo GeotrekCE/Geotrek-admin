@@ -11,7 +11,7 @@ from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
     RestrictedAreaFactory,
-    VigilanceAreaFactory,
+    VigilanceAreaFactory, VigilancePeriodFactory,
 )
 
 
@@ -146,22 +146,27 @@ class ZoningPropertiesMixinTest(TestCase):
 
     def test_vigilance_areas(self):
         today = timezone_today()
-        va_active = VigilanceAreaFactory.create(
-            geom=self.geom_1_wkt,
+        period1 = VigilancePeriodFactory.create(
             start_date=today - datetime.timedelta(days=1),
             end_date=None,
+        )
+        period2 = VigilancePeriodFactory.create(
+            start_date=today - datetime.timedelta(days=10),
+            end_date=today - datetime.timedelta(days=1),
+        )
+        va_active = VigilanceAreaFactory.create(
+            geom=self.geom_1_wkt,
+            periods=[period1],
             published=True,
         )
         va_unpublished = VigilanceAreaFactory.create(
             geom=self.geom_1_wkt,
-            start_date=today - datetime.timedelta(days=1),
-            end_date=None,
+            periods=[period1],
             published=False,
         )
         va_finished = VigilanceAreaFactory.create(
             geom=self.geom_1_wkt,
-            start_date=today - datetime.timedelta(days=10),
-            end_date=today - datetime.timedelta(days=1),
+            periods=[period2],
             published=True,
         )
 

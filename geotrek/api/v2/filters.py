@@ -328,20 +328,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
         if start_date and end_date:
             start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
             end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
-            qs = (
-                qs.filter(
-                    Q(end_date__isnull=True) | Q(end_date__gte=start_date),
-                    start_date__lte=end_date,
-                )
-                .filter(
-                    Q(active_months__len=0)
-                    | Q(active_months__overlap=month_between(start_date, end_date))
-                )
-                .filter(
-                    Q(active_days__len=0)
-                    | Q(active_days__overlap=weekday_between(start_date, end_date))
-                )
-            )
+            qs = qs.active_by_dates(start_date, end_date)
 
         return qs.distinct()
 
@@ -1054,92 +1041,81 @@ class UpdateOrCreateDateFilter(BaseFilterBackend):
         )
 
 
-class OpenedFilter(BaseFilterBackend):
+class PracticableFilter(BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         qs = queryset
-        opened = request.GET.get("opened")
-        if opened is not None:
-            closed = opened == "false"
-            qs = qs.filter(closed=closed)
+
+        # practicable during the period (practicable_from - practicable_to)
+        practicable = request.GET.get("practicable")
+        if practicable is not None:
+            qs = qs.filter(impracticable=(practicable == "false"))
+
         today = date.today()
-        opened_from = parse_date(request.GET.get("opened_from"), today)
-        opened_to = parse_date(request.GET.get("opened_to"), today)
-        vigilance_area_types = request.GET.get("vigilance_area_types")
-        if vigilance_area_types is not None:
-            types_id = vigilance_area_types.split(",")
-            qs = qs.filter(
-                Exists(
-                    VigilanceArea.objects.filter(
-                        Q(active_months__len=0)
-                        | Q(
-                            active_months__overlap=month_between(opened_from, opened_to)
-                        ),
-                        Q(active_days__len=0)
-                        | Q(
-                            active_days__overlap=weekday_between(opened_from, opened_to)
-                        ),
-                        Q(end_date__isnull=True) | Q(end_date__gte=opened_to),
-                        start_date__lte=opened_from,
-                        published=True,
-                        geom__intersects=OuterRef("geom"),
-                        vigilance_area_type__in=types_id,
+        practicable_from = parse_date(request.GET.get("practicable_from"), today)
+        practicable_to = parse_date(request.GET.get("practicable_to"), today)
+        if practicable_from and practicable_to:
+            # intersects at least one vigilance area active during the period and with one of the type 'vigilance_area_types'
+            vigilance_area_types = request.GET.get("vigilance_area_types")
+            if vigilance_area_types is not None:
+                types_id = vigilance_area_types.split(",")
+                qs = qs.filter(
+                    Exists(
+                        VigilanceArea.objects
+                        .filter(
+                            published=True,
+                            geom__intersects=OuterRef("geom"),
+                            vigilance_area_type__in=types_id,
+                        )
+                        .active_by_dates(practicable_from, practicable_to)
                     )
                 )
-            )
-        vigilance_area_types_exclude = request.GET.get("vigilance_area_types_exclude")
-        if vigilance_area_types_exclude is not None:
-            types_id_exclude = vigilance_area_types_exclude.split(",")
-            qs = qs.exclude(
-                Exists(
-                    VigilanceArea.objects.filter(
-                        Q(active_months__len=0)
-                        | Q(
-                            active_months__overlap=month_between(opened_from, opened_to)
-                        ),
-                        Q(active_days__len=0)
-                        | Q(
-                            active_days__overlap=weekday_between(opened_from, opened_to)
-                        ),
-                        Q(end_date__isnull=True) | Q(end_date__gte=opened_to),
-                        start_date__lte=opened_from,
-                        published=True,
-                        geom__intersects=OuterRef("geom"),
-                        vigilance_area_type__in=types_id_exclude,
+            # does not intersect vigilance areas active during the period and with one of the type 'vigilance_area_types_exclude'
+            vigilance_area_types_exclude = request.GET.get("vigilance_area_types_exclude")
+            if vigilance_area_types_exclude is not None:
+                types_id_exclude = vigilance_area_types_exclude.split(",")
+                qs = qs.exclude(
+                    Exists(
+                        VigilanceArea.objects
+                        .filter(
+                            published=True,
+                            geom__intersects=OuterRef("geom"),
+                            vigilance_area_type__in=types_id_exclude,
+                        )
+                        .active_by_dates(practicable_from, practicable_to)
                     )
                 )
-            )
         return qs
 
     def get_schema_fields(self, view):
         return (
             Field(
-                name="opened",
+                name="practicable",
                 required=False,
                 location="query",
                 schema=coreschema.String(
-                    title=_("Opened"),
-                    description=_("Filter by open status, false=close, true=open."),
+                    title=_("Practicable"),
+                    description=_("Filter by practicability status, false=impracticable, true=practicable."),
                 ),
             ),
             Field(
-                name="opened_from",
+                name="practicable_from",
                 required=False,
                 location="query",
                 schema=coreschema.String(
-                    title=_("Opened from"),
+                    title=_("Praticable from"),
                     description=_(
-                        "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+                        "Filter treks that are practicable during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
                     ),
                 ),
             ),
             Field(
-                name="opened_to",
+                name="practicable_to",
                 required=False,
                 location="query",
                 schema=coreschema.String(
-                    title=_("Opened to"),
+                    title=_("Practicable to"),
                     description=_(
-                        "Filter treks that are open during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+                        "Filter treks that are practicable during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
                     ),
                 ),
             ),

@@ -1,3 +1,4 @@
+import datetime
 import itertools
 
 import factory
@@ -124,3 +125,20 @@ class VigilanceAreaFactory(factory.django.DjangoModelFactory):
     vigilance_area_type = factory.SubFactory(VigilanceAreaTypeFactory)
     vigilance_level = factory.SubFactory(VigilanceLevelFactory)
     geom = "SRID=4326;MULTIPOLYGON(((-0.3142392 -1.0870745, -0.4442674 1.9698002, 2.6553568 2.0446445, 2.6683833 -1.0177449, -0.3142392 -1.0870745)))"
+
+    @factory.post_generation
+    def periods(obj, create, extracted=None, **kwargs):
+        if not create:
+            return
+        if extracted is not None:
+            obj.periods.set(extracted)
+        else:
+            VigilancePeriodFactory.create(vigilance_area=obj, **kwargs)
+
+
+class VigilancePeriodFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.VigilancePeriod
+
+    vigilance_area = factory.SubFactory(VigilanceAreaFactory, periods=[])
+    start_date = factory.LazyFunction(datetime.date.today)
