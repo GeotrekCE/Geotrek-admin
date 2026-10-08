@@ -233,11 +233,45 @@ DECLARE
     points3d_smoothed geometry[];
     points3d_simplified geometry[];
     result elevation_infos;
+    sub_elevation elevation_infos;
+    length2d float;
+    total_length2d float;
     previous_geom geometry;
 BEGIN
     -- Skip if no DEM (speed-up tests)
     IF NOT EXISTS (SELECT 1 FROM altimetry_dem) THEN
         SELECT ST_Force3DZ(geom), 0.0, 0, 0, 0, 0 INTO result;
+        RETURN result;
+    END IF;
+
+    IF ST_GeometryType(geom) IN ('ST_MultiPoint', 'ST_MultiLineString', 'ST_GeometryCollection') THEN
+        result.draped := NULL;
+        result.slope := 0.0;
+        result.min_elevation := NULL;
+        result.max_elevation := NULL;
+        result.positive_gain := 0;
+        result.negative_gain := 0;
+        total_length2d := 0.0;
+        FOR current IN SELECT (ST_Dump(geom)).geom LOOP
+            SELECT * FROM ft_elevation_infos(current, epsilon) INTO sub_elevation;
+            IF result.draped IS NULL THEN
+                result.draped := sub_elevation.draped;
+            ELSE
+                result.draped := ST_Collect(result.draped, sub_elevation.draped);
+            END IF;
+            length2d := ST_Length2D(current);
+            IF total_length2d + length2d > 0 THEN
+                result.slope := (result.slope * total_length2d + sub_elevation.slope * length2d) / (total_length2d + length2d);
+            END IF;
+            total_length2d := total_length2d + length2d;
+            result.min_elevation := least(result.min_elevation, sub_elevation.min_elevation);
+            result.max_elevation := greatest(result.max_elevation, sub_elevation.max_elevation);
+            result.positive_gain := result.positive_gain + sub_elevation.positive_gain;
+            result.negative_gain := result.negative_gain + sub_elevation.negative_gain;
+        END LOOP;
+        result.draped := coalesce(result.draped, ST_Force3DZ(geom));
+        result.min_elevation := coalesce(result.min_elevation, 0);
+        result.max_elevation := coalesce(result.max_elevation, 0);
         RETURN result;
     END IF;
 

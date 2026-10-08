@@ -573,8 +573,8 @@ class Topology(
         return "{} ({})".format(_("Topology"), self.pk)
 
     def ispoint(self):
-        if not self.pk:
-            return self.geom and self.geom.geom_type == "Point"
+        if not self.pk or not self.coupled:
+            return bool(self.geom and self.geom.geom_type == "Point")
         return all(
             [a.start_position == a.end_position for a in self.aggregations.all()]
         )
@@ -672,7 +672,7 @@ class Topology(
         self.offset = other.offset
         self.save(update_fields=["offset"])
         self.geom = other.geom
-        self.save(update_fields=["geom"])
+        self.save(update_fields=["geom", "coupled"])
 
         # Now copy all agregations from other to self
         aggrs = other.aggregations.all()
@@ -731,6 +731,12 @@ class Topology(
             # Otherwise we keep coupled status from DB and reload computed values.
             if geom_modified_in_python:
                 self.coupled = False
+                if (
+                    "update_fields" in kwargs
+                    and kwargs["update_fields"] is not None
+                    and "coupled" not in kwargs["update_fields"]
+                ):
+                    kwargs["update_fields"] = [*kwargs["update_fields"], "coupled"]
                 PathAggregation.objects.filter(topo_object=self).delete()
             else:
                 self.coupled = existing.coupled
