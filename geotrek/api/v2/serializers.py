@@ -553,7 +553,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
 
     class TouristicContentSerializer(TouristicModelSerializer):
         attachments = AttachmentSerializer(many=True, source="sorted_attachments")
-        closed = serializers.BooleanField()
+        impracticable = serializers.BooleanField()
         departure_city = serializers.SerializerMethodField()
         departure_city_code = serializers.SerializerMethodField()
         published_vigilance_areas = serializers.SerializerMethodField()
@@ -573,7 +573,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
                 "attachments",
                 "approved",
                 "category",
-                "closed",
+                "impracticable",
                 "description",
                 "description_teaser",
                 "departure_city",
@@ -848,7 +848,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         accessibility_slope = serializers.SerializerMethodField()
         accessibility_width = serializers.SerializerMethodField()
         ambiance = serializers.SerializerMethodField()
-        closed = serializers.BooleanField()
+        impracticable = serializers.BooleanField()
         description = serializers.SerializerMethodField()
         description_teaser = serializers.SerializerMethodField()
         departure = serializers.SerializerMethodField()
@@ -1082,7 +1082,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 "children",
                 "cities",
                 "city_codes",
-                "closed",
+                "impracticable",
                 "create_datetime",
                 "departure",
                 "departure_city",
@@ -1149,8 +1149,8 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         def get_steps(self, obj):
             today = datetime.now().date()
             request = self.context["request"]
-            start_date = parse_date(request.GET.get("opened_from"), today)
-            end_date = parse_date(request.GET.get("opened_to"), today)
+            start_date = parse_date(request.GET.get("practicable_from"), today)
+            end_date = parse_date(request.GET.get("practicable_to"), today)
             qs = (
                 obj.children.select_related("topo_object", "difficulty")
                 .prefetch_related(
@@ -1158,26 +1158,13 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 )
                 .annotate(
                     geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
-                    closed=Exists(
+                    impracticable=Exists(
                         VigilanceArea.objects.filter(
-                            Q(active_months__len=0)
-                            | Q(
-                                active_months__contains=month_between(
-                                    start_date, end_date
-                                )
-                            ),
-                            Q(active_days__len=0)
-                            | Q(
-                                active_days__contains=weekday_between(
-                                    start_date, end_date
-                                )
-                            ),
-                            Q(end_date__isnull=True) | Q(end_date__gte=end_date),
-                            start_date__lte=start_date,
                             published=True,
                             practicability=Practicability.NOT_PRACTICABLE,
                             geom__intersects=OuterRef("geom"),
                         )
+                        .active_by_dates(start_date, end_date)
                     ),
                 )
             )
@@ -1507,6 +1494,11 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
             model = zoning_models.VigilanceLevel
             fields = ("id", "name", "color", "level", "pictogram")
 
+    class VigilancePeriodSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        class Meta:
+            model = zoning_models.VigilancePeriod
+            fields = ("id", "start_date", "end_date", "active_days", "active_months", "annual")
+
     class VigilanceAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(
             read_only=True, source="geom_transformed", precision=7
@@ -1515,6 +1507,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
         description = serializers.SerializerMethodField()
         practical_info = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True, source="sorted_attachments")
+        periods = VigilancePeriodSerializer(many=True)
 
         def get_name(self, obj):
             return get_translation_or_dict("name", self, obj)
@@ -1539,10 +1532,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
                 "practical_info",
                 "external_info_url",
                 "sources",
-                "start_date",
-                "end_date",
-                "active_days",
-                "active_months",
+                "periods",
                 "published",
                 "uuid",
                 "attachments",

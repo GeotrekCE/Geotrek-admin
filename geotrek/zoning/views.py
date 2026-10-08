@@ -4,6 +4,7 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.core.paginator import Paginator
 from django.db.models import Q
+from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
 from mapentity.decorators import view_cache_latest, view_cache_response_content
@@ -26,6 +27,7 @@ from rest_framework.response import Response
 
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.functions import SimplifyPreserveTopology
+from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import (
     BelongStructureMixin,
     CompletenessMixin,
@@ -37,8 +39,15 @@ from geotrek.core.views import CreateFromTopologyMixin
 
 from ..trekking.views import FlattenPicturesMixin
 from .filters import VigilanceAreaFilterSet
-from .forms import VigilanceAreaForm
-from .models import City, District, RestrictedArea, RestrictedAreaType, VigilanceArea
+from .forms import VigilanceAreaForm, VigilancePeriodForm
+from .models import (
+    City,
+    District,
+    RestrictedArea,
+    RestrictedAreaType,
+    VigilanceArea,
+    VigilancePeriod,
+)
 from .serializers import (
     CityAutoCompleteBBoxSerializer,
     CityAutoCompleteSerializer,
@@ -223,7 +232,7 @@ class CityViewSet(
 
 class VigilanceAreaList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
     queryset = VigilanceArea.objects.all()
-    mandatory_columns = ["id", "name", "period_active"]
+    mandatory_columns = ["id", "name", "ongoing"]
     default_extra_columns = [
         "vigilance_area_type",
         "practicability",
@@ -262,14 +271,26 @@ class VigilanceAreaDetail(CompletenessMixin, MapEntityDetail):
         return context
 
 
-class VigilanceAreaCreate(CreateFromTopologyMixin, MapEntityCreate):
+class VigilanceAreaCreate(FormsetMixin, CreateFromTopologyMixin, MapEntityCreate):
     model = VigilanceArea
     form_class = VigilanceAreaForm
 
+    # Period formset settings
+    context_name = "vigilanceperiod_formset"
+    formset_class = inlineformset_factory(
+        VigilanceArea, VigilancePeriod, form=VigilancePeriodForm, extra=1
+    )
 
-class VigilanceareaUpdate(MapEntityUpdate):
+
+class VigilanceAreaUpdate(FormsetMixin, MapEntityUpdate):
     queryset = VigilanceArea.objects.all()
     form_class = VigilanceAreaForm
+
+    # Period formset settings
+    context_name = "vigilanceperiod_formset"
+    formset_class = inlineformset_factory(
+        VigilanceArea, VigilancePeriod, form=VigilancePeriodForm, extra=0
+    )
 
     @same_structure_required("zoning:vigilancearea_detail")
     def dispatch(self, *args, **kwargs):

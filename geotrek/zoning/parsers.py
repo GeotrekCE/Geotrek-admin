@@ -144,11 +144,10 @@ class VigilanceAreaParser:
     model = VigilanceArea
     eid = "eid"
     fields = {"name": "nom", "geom": "geom", "eid": "id"}
-    m2m_fields = {}
     constant_fields = {
         "published": True,
     }
-    natural_keys = {"vigilance_area_type": "name"}
+    natural_keys = {"vigilance_area_type": "name", "periods": "start_date"}
 
     def filter_code(self, src, val):
         return str(val)
@@ -201,3 +200,7 @@ class GeotrekVigilanceAreaParser(GeotrekParser):
         super().__init__(*args, **kwargs)
         self.fields.pop("uuid")  # TEST
         self.next_url = f"{self.url}/api/v2/vigilancearea"
+
+    def filter_periods(self, src, val):
+        # TODO : Create new periods
+        return val

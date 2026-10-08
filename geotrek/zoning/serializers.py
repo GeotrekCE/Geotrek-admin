@@ -97,7 +97,7 @@ class VigilanceAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source="name_display")
     thumbnail = serializers.CharField(source="thumbnail_display")
     practicability = serializers.SerializerMethodField()
-    period_active = MapentityDatatableBooleanField()
+    ongoing = MapentityDatatableBooleanField()
 
     def get_practicability(self, obj):
         return obj.get_practicability_display()

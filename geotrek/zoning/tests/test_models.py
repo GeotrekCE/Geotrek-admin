@@ -13,7 +13,7 @@ from geotrek.zoning.models import (
     City,
     District,
     RestrictedArea,
-    VigilanceArea,
+    VigilanceArea, VigilancePeriod,
 )
 from geotrek.zoning.tests.factories import (
     CityFactory,
@@ -22,7 +22,7 @@ from geotrek.zoning.tests.factories import (
     RestrictedAreaTypeFactory,
     VigilanceAreaFactory,
     VigilanceAreaTypeFactory,
-    VigilanceLevelFactory,
+    VigilanceLevelFactory, VigilancePeriodFactory,
 )
 
 
@@ -397,119 +397,199 @@ class VigilanceLevelTestCase(TestCase):
         self.assertEqual(str(vat), "Warning Type")
 
 
-class VigilanceAreaModelTest(TestCase):
-    def test_vigilance_area_str(self):
-        va = VigilanceAreaFactory(name="My Vigilance Area")
-        self.assertEqual(str(va), "My Vigilance Area")
-
+class VigilancePeriodTestCase(TestCase):
     def test_clean_start_date_after_end_date(self):
         today = timezone_today()
-        va = VigilanceAreaFactory.build(
+        period = VigilancePeriodFactory.build(
             start_date=today,
             end_date=today - datetime.timedelta(days=1),
         )
         with self.assertRaises(ValidationError) as cm:
-            va.clean()
+            period.clean()
         self.assertIn("start_date", cm.exception.error_dict)
 
     def test_clean_valid_dates(self):
         today = timezone_today()
-        va = VigilanceAreaFactory.build(
+        period = VigilancePeriodFactory.build(
             start_date=today,
             end_date=today + datetime.timedelta(days=5),
         )
-        va.clean()
+        period.clean()
 
     def test_active_days_and_months_labels(self):
-        va = VigilanceAreaFactory(active_days=[0, 6], active_months=[1, 12])
-        self.assertEqual(len(va.active_days_labels), 2)
-        self.assertEqual(len(va.active_months_labels), 2)
-
-    def test_verbose_name_properties(self):
-        va = VigilanceAreaFactory()
-        self.assertEqual(str(va.period_active_verbose_name), "Period active")
-        self.assertEqual(str(va.active_today_verbose_name), "Active today")
+        period = VigilancePeriodFactory(active_days=[0, 6], active_months=[1, 12])
+        self.assertEqual(len(period.active_days_labels), 2)
+        self.assertEqual(len(period.active_months_labels), 2)
 
     def test_period_resume(self):
         today = timezone_today()
-        va_no_end = VigilanceAreaFactory(
+        period_no_end = VigilancePeriodFactory(
             start_date=today,
             end_date=None,
             active_days=[0],
             active_months=[1],
         )
-        self.assertIn(str(today), va_no_end.period_resume)
+        self.assertIn(str(today), period_no_end.period_resume)
+        self.assertIn("days Monday", period_no_end.period_resume)
+        self.assertIn("months January", period_no_end.period_resume)
 
-        va_with_end = VigilanceAreaFactory(
+        period_with_end = VigilancePeriodFactory(
             start_date=today,
             end_date=today + datetime.timedelta(days=10),
             active_days=[],
             active_months=[],
         )
-        self.assertIn(str(today), va_with_end.period_resume)
+        self.assertIn(str(today), period_with_end.period_resume)
         self.assertIn(
-            str(today + datetime.timedelta(days=10)), va_with_end.period_resume
+            str(today + datetime.timedelta(days=10)), period_with_end.period_resume
         )
 
 
-class VigilanceAreaManagerTest(TestCase):
+class VigilanceAreaModelTest(TestCase):
+    def test_vigilance_area_str(self):
+        va = VigilanceAreaFactory(name="My Vigilance Area")
+        self.assertEqual(str(va), "My Vigilance Area")
+
+    def test_verbose_name_properties(self):
+        va = VigilanceAreaFactory()
+        self.assertEqual(str(va.ongoing_verbose_name), "Ongoing period")
+        self.assertEqual(str(va.active_today_verbose_name), "Active today")
+
+    # TODO : test period_resume for vigilance area
+    def test_period_resume(self):
+        today = timezone_today()
+        va = VigilanceAreaFactory(
+            periods=[]
+        )
+
+        period_no_end = VigilancePeriodFactory(
+            vigilance_area=va,
+            start_date=today,
+            end_date=None,
+            active_days=[0],
+            active_months=[1],
+        )
+        period_with_end = VigilancePeriodFactory(
+            vigilance_area=va,
+            start_date=today,
+            end_date=today + datetime.timedelta(days=10),
+        )
+
+        self.assertIn(f"- {period_no_end.period_resume}", va.periods_resume)
+        self.assertIn(f"- {period_with_end.period_resume}", va.periods_resume)
+
+
+class VigilancePeriodAndAreaManagerTest(TestCase):
     def setUp(self):
         self.today = timezone_today()
         self.yesterday = self.today - datetime.timedelta(days=1)
         self.tomorrow = self.today + datetime.timedelta(days=1)
         self.last_week = self.today - datetime.timedelta(days=7)
 
-    def test_manager_period_active_and_finished(self):
-        va_active = VigilanceAreaFactory(start_date=self.yesterday, end_date=None)
-        va_active_until_tomorrow = VigilanceAreaFactory(
-            start_date=self.yesterday, end_date=self.tomorrow
-        )
-        va_finished = VigilanceAreaFactory(
-            start_date=self.last_week, end_date=self.yesterday
-        )
-        va_future = VigilanceAreaFactory(start_date=self.tomorrow, end_date=None)
+        self.weekday = self.today.weekday()
+        self.other_weekday = (self.weekday + 1) % 7
+        self.month = self.today.month
+        self.other_month = (self.month % 12) + 1
 
-        active_qs = VigilanceArea.objects.active()
-        self.assertIn(va_active, active_qs)
-        self.assertIn(va_active_until_tomorrow, active_qs)
-        self.assertNotIn(va_finished, active_qs)
-        self.assertNotIn(va_future, active_qs)
+    def test_manager_ongoing_and_finished(self):
+        period_active = VigilancePeriodFactory(
+            start_date=self.yesterday,
+            end_date=None
+        )
+        period_active_until_tomorrow = VigilancePeriodFactory(
+            start_date=self.yesterday,
+            end_date=self.tomorrow
+        )
+        period_finished = VigilancePeriodFactory(
+            start_date=self.last_week,
+            end_date=self.yesterday
+        )
+        period_futur = VigilancePeriodFactory(
+            start_date=self.last_week,
+            end_date=self.yesterday
+        )
 
-        finished_qs = VigilanceArea.objects.finished()
-        self.assertIn(va_finished, finished_qs)
-        self.assertNotIn(va_active, finished_qs)
+        ongoing_qs_period = VigilancePeriod.objects.ongoing()
+        self.assertIn(period_active, ongoing_qs_period)
+        self.assertIn(period_active_until_tomorrow, ongoing_qs_period)
+        self.assertNotIn(period_finished, ongoing_qs_period)
+        self.assertNotIn(period_futur, ongoing_qs_period)
+
+        ongoing_qs_area = VigilanceArea.objects.ongoing()
+        self.assertIn(period_active.vigilance_area, ongoing_qs_area)
+        self.assertIn(period_active_until_tomorrow.vigilance_area, ongoing_qs_area)
+        self.assertNotIn(period_finished.vigilance_area, ongoing_qs_area)
+        self.assertNotIn(period_futur.vigilance_area, ongoing_qs_area)
+
+        finished_qs_period = VigilancePeriod.objects.finished()
+        self.assertIn(period_finished, finished_qs_period)
+        self.assertNotIn(period_active, finished_qs_period)
+
+        finished_qs_area = VigilanceArea.objects.finished()
+        self.assertIn(period_finished.vigilance_area, finished_qs_area)
+        self.assertNotIn(period_active.vigilance_area, finished_qs_area)
 
     def test_manager_active_today(self):
+        period_today = VigilancePeriodFactory(
+            start_date=self.yesterday,
+            end_date=None,
+            active_days=[self.weekday],
+            active_months=[self.month],
+        )
+        period_wrong_day = VigilancePeriodFactory(
+            start_date=self.yesterday,
+            end_date=None,
+            active_days=[self.other_weekday],
+            active_months=[self.month],
+        )
+        period_wrong_month = VigilancePeriodFactory(
+            start_date=self.yesterday,
+            end_date=None,
+            active_days=[self.weekday],
+            active_months=[self.other_month],
+        )
+
+        qs_period = VigilancePeriod.objects.active_today()
+        self.assertIn(period_today, qs_period)
+        self.assertNotIn(period_wrong_day, qs_period)
+        self.assertNotIn(period_wrong_month, qs_period)
+
+        qs_area = VigilanceArea.objects.active_today()
+        self.assertIn(period_today.vigilance_area, qs_area)
+        self.assertNotIn(period_wrong_day.vigilance_area, qs_area)
+        self.assertNotIn(period_wrong_month.vigilance_area, qs_area)
+
+    def test_active_by_dates(self):
         weekday = self.today.weekday()
         other_weekday = (weekday + 1) % 7
         month = self.today.month
         other_month = (month % 12) + 1
 
-        va_today = VigilanceAreaFactory(
+        period_active = VigilancePeriodFactory(
             start_date=self.yesterday,
-            end_date=None,
+            end_date=self.tomorrow,
             active_days=[weekday],
             active_months=[month],
         )
-        va_wrong_day = VigilanceAreaFactory(
+        period_wrong_dates = VigilancePeriodFactory(
+            start_date=self.tomorrow,
+            end_date=None,
+        )
+        period_wrong_day = VigilancePeriodFactory(
             start_date=self.yesterday,
             end_date=None,
             active_days=[other_weekday],
             active_months=[month],
         )
-        va_wrong_month = VigilanceAreaFactory(
+        period_wrong_month = VigilancePeriodFactory(
             start_date=self.yesterday,
             end_date=None,
             active_days=[weekday],
             active_months=[other_month],
         )
 
-        qs = VigilanceArea.objects.all()
-        self.assertTrue(qs.get(pk=va_today.pk).active_today)
-        self.assertFalse(qs.get(pk=va_wrong_day.pk).active_today)
-        self.assertFalse(qs.get(pk=va_wrong_month.pk).active_today)
-
-    def test_active_by_date(self):
-        va = VigilanceAreaFactory(start_date=self.yesterday, end_date=None)
-        qs = VigilanceArea.objects.active_by_date()
-        self.assertIn(va, qs)
+        qs = VigilanceArea.objects.active_by_dates(self.yesterday, self.today)
+        self.assertIn(period_active.vigilance_area, qs)
+        self.assertNotIn(period_wrong_dates.vigilance_area, qs)
+        self.assertNotIn(period_wrong_day.vigilance_area, qs)
+        self.assertNotIn(period_wrong_month.vigilance_area, qs)
