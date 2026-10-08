@@ -309,7 +309,16 @@ class VigilanceAreaTestCase(MapEntityTest):
             "structure": structure.pk,
             "start_date": "2026-07-06",
             "geom": "MULTIPOLYGON(((-0.3142392 -1.0870745, -0.4442674 1.9698002, 2.6553568 2.0446445, 2.6683833 -1.0177449, -0.3142392 -1.0870745)))",
-            "commentary": "commentary",
+            "comment": "comment",
+            "periods-TOTAL_FORMS": "1",
+            "periods-INITIAL_FORMS": "0",
+            "periods-MIN_NUM_FORMS": "0",
+            "periods-MAX_NUM_FORMS": "1000",
+            "periods-0-start_date": "2026-01-01",
+            "periods-0-end_date": "2026-12-31",
+            "periods-0-active_days": [1, 3, 5],
+            "periods-0-active_months": [6, 7, 8],
+            "periods-0-annual": "on",
         }
 
     extra_column_list = ["eid"]
@@ -340,7 +349,7 @@ class VigilanceAreaTestCase(MapEntityTest):
         return {
             "id": self.obj.pk,
             "name": f'<a data-pk="{self.obj.pk}" href="/vigilancearea/{self.obj.pk}/" title="{self.obj.name}">{self.obj.name}</a>',
-            "period_active": '<i class="bi bi-check-circle text-success"></i>',
+            "ongoing": '<i class="bi bi-check-circle text-success"></i>',
             "practicability": Practicability.PRACTICABLE.label,
             "vigilance_area_type": self.obj.vigilance_area_type.name,
         }
@@ -428,7 +437,7 @@ class VigilanceAreaSerializerTest(TestCase):
         data = serializer.data
         self.assertIn(area.name, data["name"])
         self.assertEqual(data["practicability"], Practicability.PRACTICABLE.label)
-        self.assertIn("period_active", data)
+        self.assertIn("ongoing", data)
 
 
 class ZoningTagsTest(TestCase):
