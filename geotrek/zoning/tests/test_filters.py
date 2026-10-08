@@ -17,7 +17,7 @@ from geotrek.zoning.tests.factories import (
     RestrictedAreaTypeFactory,
     VigilanceAreaFactory,
     VigilanceAreaTypeFactory,
-    VigilanceLevelFactory,
+    VigilanceLevelFactory, VigilancePeriodFactory,
 )
 
 
@@ -143,10 +143,14 @@ class VigilanceAreaFilterTest(TestCase):
             name="Alpha Area",
             vigilance_area_type=cls.area_type,
             vigilance_level=cls.vigilance_level,
-            start_date=cls.yesterday,
-            end_date=cls.tomorrow,
             practicability=Practicability.PRACTICABLE,
             published=True,
+            periods=None,
+        )
+        cls.period = VigilancePeriodFactory.create(
+            start_date=cls.today,
+            end_date=cls.tomorrow,
+            vigilance_area=cls.va,
         )
 
     def test_filter_by_name(self):
@@ -181,10 +185,16 @@ class VigilanceAreaFilterTest(TestCase):
         )
         self.assertIn(self.va, f.qs)
 
-    def test_filter_by_period_active(self):
+    def test_filter_by_ongoing_period(self):
         qs = VigilanceArea.objects.all()
-        f = VigilanceAreaFilterSet(data={"period_active": "true"}, queryset=qs)
+        f = VigilanceAreaFilterSet(data={"ongoing": "true"}, queryset=qs)
         self.assertIn(self.va, f.qs)
+
+    def test_filter_by_active_today(self):
+        qs = VigilanceArea.objects.all()
+        f = VigilanceAreaFilterSet(data={"active_today": "true"}, queryset=qs)
+        self.assertIn(self.va, f.qs)
+
 
     def test_filter_by_dates(self):
         qs = VigilanceArea.objects.all()

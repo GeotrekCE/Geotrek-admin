@@ -197,16 +197,18 @@ class VigilanceAreaFilterSet(
     after = filters.DateFilter(
         label=_("After"),
         lookup_expr="gte",
-        field_name="end_date",
+        field_name="periods__end_date",
         widget=forms.TextInput(attrs={"class": "form-control form-control-sm"}),
+        distinct=True
     )
     before = filters.DateFilter(
         label=_("Before"),
         lookup_expr="lte",
-        field_name="start_date",
+        field_name="periods__start_date",
         widget=forms.TextInput(attrs={"class": "form-control form-control-sm"}),
+        distinct=True
     )
-    period_active = filters.BooleanFilter(label=_("Period active"))
+    ongoing = filters.BooleanFilter(label=_("Ongoing period"))
     active_today = filters.BooleanFilter(label=_("Active today"))
 
     class Meta(StructureRelatedFilterSet.Meta):
@@ -220,7 +222,7 @@ class VigilanceAreaFilterSet(
             "sources",
             "portals",
             "provider",
-            "period_active",
+            "ongoing",
             "active_today",
         ]
 
