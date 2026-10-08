@@ -3,6 +3,7 @@ import json
 from collections import OrderedDict
 from io import StringIO
 
+import mercantile
 from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
@@ -1070,6 +1071,27 @@ class BladeViewsTest(CommonTest):
         self.assertNotIn("Blade direction", lines[1])
         self.assertIn("Direction 1", lines[0])
         self.assertIn("Line direction", lines[1])
+
+    def test_vector_tiles(self):
+        BladeFactory.create()
+        tile = mercantile.tile(3.0, 46.5, 10)
+        mvt_url = reverse(
+            "signage:blade-drf-mvt", kwargs={"z": tile.z, "x": tile.x, "y": tile.y}
+        )
+        response = self.client.get(mvt_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(response.content), 0)
+
+        empty_mvt_url = reverse(
+            "signage:blade-drf-mvt", kwargs={"z": 10, "x": 0, "y": 0}
+        )
+        empty_response = self.client.get(empty_mvt_url)
+        self.assertEqual(empty_response.status_code, 200)
+        self.assertEqual(empty_response.content, b"")
+
+        tilejson_url = reverse("signage:blade-drf-tilejson")
+        tilejson_response = self.client.get(tilejson_url)
+        self.assertEqual(tilejson_response.status_code, 200)
 
 
 class BladeTemplatesTest(TestCase):

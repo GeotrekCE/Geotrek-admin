@@ -2,6 +2,7 @@ import datetime
 import os
 from unittest.mock import MagicMock, patch
 
+import mercantile
 from django.conf import settings
 from django.core.files import File
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -21,6 +22,8 @@ from geotrek.common.tests.factories import (
     LabelFactory,
     OrganismFactory,
 )
+from geotrek.signage.models import Blade
+from geotrek.signage.tests.factories import BladeFactory
 from geotrek.trekking.tests.factories import TrekFactory
 from geotrek.zoning.tests.factories import CityFactory
 
@@ -282,6 +285,20 @@ class CommonMixinsComprehensiveCoverageTest(TestCase):
 
         lu3, cnt3 = Trek.latest_updated_with_count(z=0, x=0, y=0)
         self.assertEqual(cnt3, 0)  # Doesn't intersect fake coordinates
+
+        blade = BladeFactory.create()
+        tile = mercantile.tile(3.0, 46.5, 10)
+        lu_blade, cnt_blade = Blade.latest_updated_with_count(
+            z=tile.z, x=tile.x, y=tile.y
+        )
+        self.assertEqual(cnt_blade, 1)
+        self.assertEqual(lu_blade, blade.date_update)
+
+        # Test FieldDoesNotExist exception branch
+        with patch.object(Trek, "main_geom_field", "invalid_geom_field"):
+            lu_no_field, cnt_no_field = Trek.latest_updated_with_count(z=0, x=0, y=0)
+            self.assertIsNone(lu_no_field)
+            self.assertEqual(cnt_no_field, 0)
 
         # Test FieldError exception branch
         with patch.dict(app_settings, {"DATE_UPDATE_FIELD_NAME": "invalid_field"}):
