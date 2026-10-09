@@ -10,18 +10,3 @@ class WeekdayChoices(IntegerChoices):
     FRIDAY = 4, WEEKDAYS[4].title()
     SATURDAY = 5, WEEKDAYS[5].title()
     SUNDAY = 6, WEEKDAYS[6].title()
-
-
-class MonthChoices(IntegerChoices):
-    JANUARY = 1, MONTHS[1].title()
-    FEBRUARY = 2, MONTHS[2].title()
-    MARCH = 3, MONTHS[3].title()
-    APRIL = 4, MONTHS[4].title()
-    MAY = 5, MONTHS[5].title()
-    JUNE = 6, MONTHS[6].title()
-    JULY = 7, MONTHS[7].title()
-    AUGUST = 8, MONTHS[8].title()
-    SEPTEMBER = 9, MONTHS[9].title()
-    OCTOBER = 10, MONTHS[10].title()
-    NOVEMBER = 11, MONTHS[11].title()
-    DECEMBER = 12, MONTHS[12].title()

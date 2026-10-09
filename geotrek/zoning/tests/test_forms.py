@@ -111,13 +111,12 @@ class VigilancePeriodFormSetTest(TestCase):
             f"{self.PREFIX}-MAX_NUM_FORMS": "1000",
         }
 
-    def test_multiple_active_days_and_months(self):
+    def test_multiple_active_days(self):
         data = {
             **self.management_data(1),
             f"{self.PREFIX}-0-start_date": "2026-01-01",
             f"{self.PREFIX}-0-end_date": "2026-12-31",
             f"{self.PREFIX}-0-active_days": [1, 3, 5],
-            f"{self.PREFIX}-0-active_months": [6, 7, 8],
             f"{self.PREFIX}-0-annual": "on",
         }
         formset = self.build_formset(data)
@@ -126,9 +125,8 @@ class VigilancePeriodFormSetTest(TestCase):
         formset.save()
         period = self.area.periods.first()
         self.assertEqual(list(period.active_days), [1, 3, 5])
-        self.assertEqual(list(period.active_months), [6, 7, 8])
 
-    def test_empty_days_and_months_are_valid(self):
+    def test_empty_days_are_valid(self):
         data = {
             **self.management_data(1),
             f"{self.PREFIX}-0-start_date": "2026-01-01",
@@ -139,7 +137,6 @@ class VigilancePeriodFormSetTest(TestCase):
         formset.save()
         period = self.area.periods.first()
         self.assertEqual(period.active_days, [])
-        self.assertEqual(period.active_months, [])
 
     def test_multiple_periods_for_same_area(self):
         data = {
@@ -149,11 +146,9 @@ class VigilancePeriodFormSetTest(TestCase):
             f"{self.PREFIX}-0-active_days": [1, 2],
             f"{self.PREFIX}-1-start_date": "2026-05-01",
             f"{self.PREFIX}-1-end_date": "2026-06-30",
-            f"{self.PREFIX}-1-active_months": [5, 6],
             f"{self.PREFIX}-2-start_date": "2026-09-01",
             f"{self.PREFIX}-2-end_date": "2026-10-31",
             f"{self.PREFIX}-2-active_days": [6],
-            f"{self.PREFIX}-2-active_months": [9, 10],
             f"{self.PREFIX}-2-annual": True,
         }
         formset = self.build_formset(data)
@@ -163,9 +158,7 @@ class VigilancePeriodFormSetTest(TestCase):
         periods = self.area.periods.order_by("start_date")
         self.assertEqual(periods.count(), 3)
         self.assertEqual(periods[0].active_days, [1, 2])
-        self.assertEqual(periods[1].active_months, [5, 6])
         self.assertEqual(periods[2].active_days, [6])
-        self.assertEqual(periods[2].active_months, [9, 10])
         self.assertTrue(periods[2].annual)
 
     def test_edit_and_delete_existing_periods(self):

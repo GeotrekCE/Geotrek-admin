@@ -138,16 +138,6 @@
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th>{% trans "Active months" %}</th>
-                                    <td>
-                                        {% for month in period.active_months_labels %}
-                                            <span class="badge badge-secondary">{{ month }}</span>
-                                        {% empty %}
-                                            <span class="text-muted">{% trans "Every months" %}</span>
-                                        {% endfor %}
-                                    </td>
-                                </tr>
-                                <tr>
                                     <th>{% trans "Annual recurrence" %}</th>
                                     <td><i class="bi {% if period.annual %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i></td>
                                 </tr>
