@@ -66,7 +66,6 @@ from geotrek.trekking import models as trek_models
 from geotrek.trekking.tests import factories as trek_factory
 from geotrek.trekking.tests.base import TrekkingManagerTest
 from geotrek.trekking.tests.factories import PracticeFactory
-from geotrek.zoning import choices as zoning_choices
 from geotrek.zoning import models as zoning_models
 from geotrek.zoning.tests import factories as zoning_factory
 
@@ -3319,9 +3318,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             published=True,
             impracticable=False,
         )
-        response = self.get_vigilancearea_list(
-            params={"practicable": "true"}
-        )
+        response = self.get_vigilancearea_list(params={"practicable": "true"})
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(
             response.json()["results"][0]["id"],

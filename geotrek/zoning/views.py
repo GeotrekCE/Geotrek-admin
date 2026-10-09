@@ -45,7 +45,6 @@ from .models import (
     RestrictedArea,
     RestrictedAreaType,
     VigilanceArea,
-    VigilancePeriod,
 )
 from .serializers import (
     CityAutoCompleteBBoxSerializer,
@@ -273,12 +272,14 @@ class VigilancePeriodFormsetMixin(FormsetMixin):
     context_name = "vigilanceperiod_formset"
     formset_class = VigilancePeriodFormset
 
-class VigilanceAreaCreate(VigilancePeriodFormsetMixin, CreateFromTopologyMixin, MapEntityCreate):
+
+class VigilanceAreaCreate(
+    VigilancePeriodFormsetMixin, CreateFromTopologyMixin, MapEntityCreate
+):
     model = VigilanceArea
     form_class = VigilanceAreaForm
 
     # Period formset settings
-
 
 
 class VigilanceAreaUpdate(VigilancePeriodFormsetMixin, MapEntityUpdate):
@@ -321,7 +322,7 @@ class VigilanceAreaViewSet(AutocompleteMixin, GeotrekMapentityViewSet):
         for key, value in forwarded.items():
             if key == "impracticable":
                 if value in ("true", "false"):
-                    parsed_dict[f"{key}"] = value=="true"
+                    parsed_dict[f"{key}"] = value == "true"
             else:
                 values = [int(x) for x in value]
                 if values:
