@@ -42,8 +42,19 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
         today = datetime.date.today()
         start_date = parse_date(self.request.GET.get("practicable_from"), today)
         end_date = parse_date(self.request.GET.get("practicable_to"), today)
+        portals = self.request.GET.get("portals", "")
+
+        impracticable_vigilance_areas = VigilanceArea.objects.filter(
+            published=True,
+            impracticable=True,
+        ).active_by_dates(start_date, end_date)
+
+        if portals:
+            portals = [int(portal) for portal in portals.split(",")]
+            impracticable_vigilance_areas = impracticable_vigilance_areas.filter(portals__in=portals).distinct()
+
         with translation.override(self.request.GET.get("language"), deactivate=True):
-            return (
+            return  (
                 trekking_models.Trek.objects.existing()
                 .select_related("topo_object")
                 .prefetch_related(
@@ -79,11 +90,9 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                 .annotate(
                     geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
                     impracticable=Exists(
-                        VigilanceArea.objects.filter(
-                            published=True,
-                            impracticable=True,
+                        impracticable_vigilance_areas.filter(
                             geom__intersects=OuterRef("geom"),
-                        ).active_by_dates(start_date, end_date)
+                        )
                     ),
                 )
                 .order_by("name")
@@ -157,6 +166,17 @@ class TourViewSet(TrekViewSet):
         today = datetime.date.today()
         start_date = parse_date(self.request.GET.get("practicable_from"), today)
         end_date = parse_date(self.request.GET.get("practicable_to"), today)
+        portals = self.request.GET.get("portals", "")
+
+        impracticable_vigilance_areas = VigilanceArea.objects.filter(
+            published=True,
+            impracticable=True,
+        ).active_by_dates(start_date, end_date)
+
+        if portals:
+            portals = [int(portal) for portal in portals.split(",")]
+            impracticable_vigilance_areas = impracticable_vigilance_areas.filter(portals__in=portals).distinct()
+
         qs = super().get_queryset()
         qs = (
             qs.annotate(count_children=Count("trek_children"))
@@ -164,11 +184,9 @@ class TourViewSet(TrekViewSet):
             .annotate(
                 geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
                 trek_children__impracticable=Exists(
-                    VigilanceArea.objects.filter(
-                        published=True,
-                        impracticable=True,
+                    impracticable_vigilance_areas.filter(
                         geom__intersects=OuterRef("geom"),
-                    ).active_by_dates(start_date, end_date)
+                    )
                 ),
             )
         )

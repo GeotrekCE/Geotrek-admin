@@ -127,6 +127,11 @@ class VigilanceAreaFactory(factory.django.DjangoModelFactory):
     geom = "SRID=4326;MULTIPOLYGON(((-0.3142392 -1.0870745, -0.4442674 1.9698002, 2.6553568 2.0446445, 2.6683833 -1.0177449, -0.3142392 -1.0870745)))"
 
     @factory.post_generation
+    def portals(obj, create, extracted=None, **kwargs):
+        if create and extracted:
+            obj.portals.set(extracted)
+
+    @factory.post_generation
     def periods(obj, create, extracted=None, **kwargs):
         if not create:
             return
