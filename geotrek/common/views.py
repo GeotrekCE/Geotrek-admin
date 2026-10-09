@@ -374,6 +374,7 @@ class HDViewPointViewSet(GeotrekMapentityViewSet):
     geojson_serializer_class = common_serializers.HDViewPointGeoJSONSerializer
     filterset_class = HDViewPointFilterSet
     mapentity_list_class = HDViewPointList
+    vector_tiles_fields = ("id", "title")
 
     def get_queryset(self):
         qs = self.model.objects.all()
