@@ -16,9 +16,13 @@
             <td>{{ object.vigilance_area_type }}</td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"practicability" }}</th>
+            <th>{{ object|verbose:"impracticable" }}</th>
             <td>
-                    <i class="bi bi-{% if object.practicability == 'practicable' %}check-circle text-success{% elif object.practicability == 'under_condition_practicable' %}exclamation-circle text-warning{% else %}x-circle text-danger{% endif %}"></i> {{ object.get_practicability_display }}
+                {% if object.impracticable %}
+                    <i class="bi bi-x-circle text-danger"></i> {% trans "Impracticable" %}
+                {% else %}
+                    <i class="bi bi-check-circle text-success"></i> {% trans "Practicable" %}
+                {% endif %}
             </td>
         </tr>
         <tr>
@@ -78,8 +82,8 @@
             <td><img src="{{ object.thumbnail.url }}"></td>
         </tr>
         <tr>
-            <th>{{ object|verbose:"comment" }}</th>
-            <td>{% if object.comment %}{{ object.comment|safe|linebreaks }}
+            <th>{{ object|verbose:"private_comment" }}</th>
+            <td>{% if object.private_comment %}{{ object.private_comment|safe|linebreaks }}
             {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>

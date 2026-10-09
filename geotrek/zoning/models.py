@@ -24,7 +24,7 @@ from geotrek.common.mixins.models import (
 )
 
 from ..common.functions import GenRandomUUID
-from .choices import MonthChoices, Practicability, WeekdayChoices
+from .choices import MonthChoices, WeekdayChoices
 from .managers import VigilanceAreaManager, VigilancePeriodManager
 
 
@@ -176,13 +176,7 @@ class VigilanceArea(
 ):
     name = models.CharField(max_length=250, verbose_name=_("Name"), db_index=True)
     description = models.TextField(verbose_name=_("Description"), blank=True)
-    practicability = models.CharField(
-        verbose_name=_("Practicability"),
-        choices=Practicability.choices,
-        max_length=50,
-        default=Practicability.PRACTICABLE,
-        db_index=True,
-    )
+    impracticable = models.BooleanField(verbose_name=_("Impracticable"), default=False)
     vigilance_level = models.ForeignKey(
         VigilanceLevel,
         on_delete=models.CASCADE,
@@ -215,7 +209,7 @@ class VigilanceArea(
         related_name="vigilance_areas",
         verbose_name=_("Sources"),
     )
-    comment = models.TextField(verbose_name=_("Comment"), blank=True)
+    private_comment = models.TextField(verbose_name=_("Private comment"), blank=True)
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     uuid = models.UUIDField(
         default=uuid.uuid4, editable=False, unique=True, db_default=GenRandomUUID()
@@ -236,7 +230,9 @@ class VigilanceArea(
     def periods_resume(self):
         result = "\n - "
         if self.periods.count() > 0:
-            result += "\n - ".join([period.period_resume for period in self.periods.all()])
+            result += "\n - ".join(
+                [period.period_resume for period in self.periods.all()]
+            )
         else:
             result += _("Always active")
         return result
@@ -254,10 +250,6 @@ class VigilanceArea(
             models.CheckConstraint(
                 check=models.Q(geom__isvalid=True),
                 name="%(app_label)s_%(class)s_geom_is_valid",
-            ),
-            models.CheckConstraint(
-                check=models.Q(practicability__in=Practicability.values),
-                name="%(app_label)s_%(class)s_practicability_valid",
             ),
         ]
 

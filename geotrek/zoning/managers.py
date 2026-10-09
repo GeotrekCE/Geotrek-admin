@@ -52,9 +52,16 @@ class VigilancePeriodManager(models.Manager.from_queryset(VigilancePeriodQuerySe
         qs = super().get_queryset()
 
         return qs.annotate(
-            ongoing=ExpressionWrapper(_period_ongoing_condition(today), output_field=models.BooleanField()),
-            finished=ExpressionWrapper(_period_finished_condition(today), output_field=models.BooleanField()),
-            active_today=ExpressionWrapper(_period_active_today_condition(today),output_field=models.BooleanField()),
+            ongoing=ExpressionWrapper(
+                _period_ongoing_condition(today), output_field=models.BooleanField()
+            ),
+            finished=ExpressionWrapper(
+                _period_finished_condition(today), output_field=models.BooleanField()
+            ),
+            active_today=ExpressionWrapper(
+                _period_active_today_condition(today),
+                output_field=models.BooleanField(),
+            ),
         )
 
     def ongoing(self):
@@ -84,14 +91,19 @@ class VigilanceAreaQuerySet(models.QuerySet):
         return self._periods_exists()
 
     def _ongoing_expr(self, today):
-        return self._periods_exists(_period_ongoing_condition(today)) | self._no_periods()
+        return (
+            self._periods_exists(_period_ongoing_condition(today)) | self._no_periods()
+        )
 
     def _finished_expr(self, today):
         not_finished = Q(end_date__isnull=True) | Q(end_date__gte=today)
         return self._periods_exists(not_finished, negate=True) & self._has_periods()
 
     def _active_today_expr(self, today):
-        return self._periods_exists(_period_active_today_condition(today)) | self._no_periods()
+        return (
+            self._periods_exists(_period_active_today_condition(today))
+            | self._no_periods()
+        )
 
     def ongoing(self):
         return self.filter(self._ongoing_expr(timezone_today()))
@@ -108,9 +120,11 @@ class VigilanceAreaQuerySet(models.QuerySet):
                 Q(end_date__isnull=True) | Q(end_date__gte=start)
             )
             period_valid = (
-                Q(active_months__len=0) | Q(active_months__overlap=month_between(start, end))
+                Q(active_months__len=0)
+                | Q(active_months__overlap=month_between(start, end))
             ) & (
-                Q(active_days__len=0) | Q(active_days__overlap=weekday_between(start, end))
+                Q(active_days__len=0)
+                | Q(active_days__overlap=weekday_between(start, end))
             )
             return self.filter(
                 self._periods_exists(period_active & period_valid) | self._no_periods()

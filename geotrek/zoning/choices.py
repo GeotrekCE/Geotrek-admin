@@ -1,15 +1,5 @@
-from django.db.models import IntegerChoices, TextChoices
+from django.db.models import IntegerChoices
 from django.utils.dates import MONTHS, WEEKDAYS
-from django.utils.translation import gettext_lazy as _
-
-
-class Practicability(TextChoices):
-    PRACTICABLE = "practicable", _("Practicable")
-    UNDER_CONDITION_PRACTICABLE = (
-        "under_condition_practicable",
-        _("Under condition practicable"),
-    )
-    NOT_PRACTICABLE = "not_practicable", _("Not practicable")
 
 
 class WeekdayChoices(IntegerChoices):

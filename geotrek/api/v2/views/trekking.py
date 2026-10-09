@@ -18,9 +18,7 @@ from geotrek.api.v2.renderers import SVGProfileRenderer
 from geotrek.api.v2.utils import parse_date
 from geotrek.common.models import AccessibilityAttachment, Attachment, HDViewPoint
 from geotrek.trekking import models as trekking_models
-from geotrek.zoning.choices import Practicability
 from geotrek.zoning.models import VigilanceArea
-from geotrek.zoning.utils import month_between, weekday_between
 
 
 class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
@@ -81,13 +79,11 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                 .annotate(
                     geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
                     impracticable=Exists(
-                        VigilanceArea.objects
-                        .filter(
+                        VigilanceArea.objects.filter(
                             published=True,
-                            practicability=Practicability.NOT_PRACTICABLE,
+                            impracticable=True,
                             geom__intersects=OuterRef("geom"),
-                        )
-                        .active_by_dates(start_date, end_date)
+                        ).active_by_dates(start_date, end_date)
                     ),
                 )
                 .order_by("name")
@@ -170,10 +166,9 @@ class TourViewSet(TrekViewSet):
                 trek_children__impracticable=Exists(
                     VigilanceArea.objects.filter(
                         published=True,
-                        practicability=Practicability.NOT_PRACTICABLE,
+                        impracticable=True,
                         geom__intersects=OuterRef("geom"),
-                    )
-                    .active_by_dates(start_date, end_date)
+                    ).active_by_dates(start_date, end_date)
                 ),
             )
         )

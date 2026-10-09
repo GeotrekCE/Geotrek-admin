@@ -2,7 +2,7 @@ import datetime
 
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Exists, F, OuterRef, Q
+from django.db.models import Exists, F, OuterRef
 from django.db.models.query import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils import translation
@@ -15,9 +15,7 @@ from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
 from geotrek.common.models import Attachment
 from geotrek.tourism import models as tourism_models
-from geotrek.zoning.choices import Practicability
 from geotrek.zoning.models import VigilanceArea
-from geotrek.zoning.utils import month_between, weekday_between
 
 
 class LabelAccessibilityViewSet(api_viewsets.GeotrekViewSet):
@@ -59,7 +57,9 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         today = datetime.date.today()
-        start_date = api_utils.parse_date(self.request.GET.get("practicable_from"), today)
+        start_date = api_utils.parse_date(
+            self.request.GET.get("practicable_from"), today
+        )
         end_date = api_utils.parse_date(self.request.GET.get("practicable_to"), today)
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
@@ -82,10 +82,9 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
                     impracticable=Exists(
                         VigilanceArea.objects.filter(
                             published=True,
-                            practicability=Practicability.NOT_PRACTICABLE,
+                            impracticable=True,
                             geom__intersects=OuterRef("geom"),
-                        )
-                        .active_by_dates(start_date, end_date)
+                        ).active_by_dates(start_date, end_date)
                     ),
                 )
                 .order_by("name")
