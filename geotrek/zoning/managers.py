@@ -19,9 +19,8 @@ def _period_finished_condition(today):
 
 
 def _period_active_today_condition(today):
-    active_today = (
-        _period_ongoing_condition(today)
-        & (Q(active_days=[]) | Q(active_days__contains=[today.weekday()]))
+    active_today = _period_ongoing_condition(today) & (
+        Q(active_days=[]) | Q(active_days__contains=[today.weekday()])
     )
     return active_today
 
@@ -118,9 +117,8 @@ class VigilanceAreaQuerySet(models.QuerySet):
             period_active = Q(start_date__lte=end) & (
                 Q(end_date__isnull=True) | Q(end_date__gte=start)
             )
-            period_valid = (
-                Q(active_days__len=0)
-                | Q(active_days__overlap=weekday_between(start, end))
+            period_valid = Q(active_days__len=0) | Q(
+                active_days__overlap=weekday_between(start, end)
             )
             return self.filter(
                 self._periods_exists(period_active & period_valid) | self._no_periods()

@@ -3,11 +3,11 @@ from django import forms
 from django.db.models import Exists, OuterRef, Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import (
-    FilterSet,
     BooleanFilter,
+    FilterSet,
     ModelMultipleChoiceFilter,
     filters,
-widgets,
+    widgets,
 )
 
 from geotrek.authent.filters import StructureRelatedFilterSet
@@ -103,7 +103,12 @@ class IntersectionFilterVigilanceArea(RightFilter):
             value = [value]
 
         return qs.filter(
-            Exists(VigilanceArea.objects.filter(id__in=[area.id for area in value], geom__intersects=OuterRef("geom")))
+            Exists(
+                VigilanceArea.objects.filter(
+                    id__in=[area.id for area in value],
+                    geom__intersects=OuterRef("geom"),
+                )
+            )
         )
 
 
@@ -154,7 +159,9 @@ class ZoningFilterSet(FilterSet):
         widget=autocomplete.Select2Multiple(),
     )
     vigilance_area_impracticable = IntersectionFilterVigilanceAreaImpracticable(
-        label=_("Vigilance area impracticable"), required=False, widget=widgets.BooleanWidget()
+        label=_("Vigilance area impracticable"),
+        required=False,
+        widget=widgets.BooleanWidget(),
     )
     vigilance_area = IntersectionFilterVigilanceArea(
         label=_("Vigilance area"),
