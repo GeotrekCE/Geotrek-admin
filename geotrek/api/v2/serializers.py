@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.contrib.gis.geos import GEOSGeometry
-from django.db.models import Exists, F, OuterRef, Q
+from django.db.models import Exists, F, OuterRef
 from django.urls import reverse
 from django.utils.html import escape
 from django.utils.translation import get_language
@@ -37,9 +37,7 @@ from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
 from geotrek.common.utils import simplify_coords
 from geotrek.flatpages.models import MenuItem
-from geotrek.zoning.choices import Practicability
 from geotrek.zoning.models import VigilanceArea
-from geotrek.zoning.utils import month_between, weekday_between
 
 if "geotrek.core" in settings.INSTALLED_APPS:
     from geotrek.core import models as core_models
@@ -1161,10 +1159,9 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                     impracticable=Exists(
                         VigilanceArea.objects.filter(
                             published=True,
-                            practicability=Practicability.NOT_PRACTICABLE,
+                            impracticable=True,
                             geom__intersects=OuterRef("geom"),
-                        )
-                        .active_by_dates(start_date, end_date)
+                        ).active_by_dates(start_date, end_date)
                     ),
                 )
             )
@@ -1497,7 +1494,14 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
     class VigilancePeriodSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         class Meta:
             model = zoning_models.VigilancePeriod
-            fields = ("id", "start_date", "end_date", "active_days", "active_months", "annual")
+            fields = (
+                "id",
+                "start_date",
+                "end_date",
+                "active_days",
+                "active_months",
+                "annual",
+            )
 
     class VigilanceAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         geometry = geo_serializers.GeometryField(
@@ -1526,7 +1530,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
                 "geometry",
                 "structure",
                 "vigilance_area_type",
-                "practicability",
+                "impracticable",
                 "vigilance_level",
                 "description",
                 "practical_info",

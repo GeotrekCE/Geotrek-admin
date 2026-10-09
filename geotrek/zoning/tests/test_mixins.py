@@ -11,7 +11,8 @@ from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
     RestrictedAreaFactory,
-    VigilanceAreaFactory, VigilancePeriodFactory,
+    VigilanceAreaFactory,
+    VigilancePeriodFactory,
 )
 
 

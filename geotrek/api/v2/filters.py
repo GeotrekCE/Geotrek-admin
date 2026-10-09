@@ -26,9 +26,7 @@ from geotrek.tourism.models import (
     TouristicEventType,
 )
 from geotrek.trekking.models import POI, ServiceType, Trek
-from geotrek.zoning.choices import Practicability
 from geotrek.zoning.models import City, District, VigilanceArea
-from geotrek.zoning.utils import month_between, weekday_between
 
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
@@ -307,13 +305,9 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
         portals = request.GET.get("portals")
         if portals:
             qs = qs.filter(portals__in=portals.split(","))
-        practicabilities = request.GET.get("practicabilities")
-        if practicabilities:
-            practicabilities = [
-                getattr(Practicability, practicability.upper())
-                for practicability in practicabilities.split(",")
-            ]
-            qs = qs.filter(practicability__in=practicabilities)
+        practicable = request.GET.get("practicable")
+        if practicable:
+            qs = qs.filter(impracticable=(practicable=="false"))
         vigilance_levels = request.GET.get("vigilance_levels")
         if vigilance_levels:
             qs = qs.filter(vigilance_level__in=vigilance_levels.split(","))
@@ -355,13 +349,13 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
                 ),
             ),
             Field(
-                name="practicabilities",
+                name="practicable",
                 required=False,
                 location="query",
                 schema=coreschema.String(
-                    title=_("Practicalities"),
+                    title=_("Practicable"),
                     description=_(
-                        "Filter by one or more practicabilities between 'practicable', 'under_condition_practicable' and 'not practicable', comma-separated."
+                        "Filter by practicability status, false=impracticable, true=practicable."
                     ),
                 ),
             ),
@@ -1060,28 +1054,26 @@ class PracticableFilter(BaseFilterBackend):
                 types_id = vigilance_area_types.split(",")
                 qs = qs.filter(
                     Exists(
-                        VigilanceArea.objects
-                        .filter(
+                        VigilanceArea.objects.filter(
                             published=True,
                             geom__intersects=OuterRef("geom"),
                             vigilance_area_type__in=types_id,
-                        )
-                        .active_by_dates(practicable_from, practicable_to)
+                        ).active_by_dates(practicable_from, practicable_to)
                     )
                 )
             # does not intersect vigilance areas active during the period and with one of the type 'vigilance_area_types_exclude'
-            vigilance_area_types_exclude = request.GET.get("vigilance_area_types_exclude")
+            vigilance_area_types_exclude = request.GET.get(
+                "vigilance_area_types_exclude"
+            )
             if vigilance_area_types_exclude is not None:
                 types_id_exclude = vigilance_area_types_exclude.split(",")
                 qs = qs.exclude(
                     Exists(
-                        VigilanceArea.objects
-                        .filter(
+                        VigilanceArea.objects.filter(
                             published=True,
                             geom__intersects=OuterRef("geom"),
                             vigilance_area_type__in=types_id_exclude,
-                        )
-                        .active_by_dates(practicable_from, practicable_to)
+                        ).active_by_dates(practicable_from, practicable_to)
                     )
                 )
         return qs
@@ -1094,7 +1086,9 @@ class PracticableFilter(BaseFilterBackend):
                 location="query",
                 schema=coreschema.String(
                     title=_("Practicable"),
-                    description=_("Filter by practicability status, false=impracticable, true=practicable."),
+                    description=_(
+                        "Filter by practicability status, true=practicable, false=impracticable."
+                    ),
                 ),
             ),
             Field(

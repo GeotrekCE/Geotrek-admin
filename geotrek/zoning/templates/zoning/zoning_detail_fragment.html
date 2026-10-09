@@ -21,11 +21,17 @@
                 {% for vigilance_area in object.vigilance_areas %}
                     <li
                         data-toggle="tooltip"
-                        title="{% if vigilance_area.vigilance_level %}{{ vigilance_area.vigilance_level.name }} - {% endif %}{{ vigilance_area.get_practicability_display }} : {{ vigilance_area.periods_resume }}"
+                        title="{% if vigilance_area.vigilance_level %}{{ vigilance_area.vigilance_level.name }}{%  endif %} - {% if vigilance_area.impracticable %}{% trans "Impracticable" %}{% else %}{% trans "Practicable" %}{% endif %} : {{ vigilance_area.periods_resume }}"
                         class="list-group-item"
                     >
                         <a href="{{ vigilance_area.get_absolute_url }}" target="_blank">
-                            <i class="bi bi-{% if vigilance_area.practicability == 'practicable' %}check-circle{% elif vigilance_area.practicability == 'under_condition_practicable' %}exclamation{% else %}x{% endif %} text-{% if vigilance_area.practicability == 'practicable' %}info{% elif vigilance_area.practicability == 'possibly_practicable' %}warning{% else %}danger{% endif %}"></i>
+                            {% if not vigilance_area.ongoing %}
+                                <i class="bi bi-clock-history text-muted"></i>
+                            {% elif vigilance_area.impracticable %}
+                                <i class="bi bi-x text-danger"></i>
+                            {% else %}
+                                <i class="bi bi-check text-success"></i>
+                            {% endif %}
     &nbsp;                   {{ vigilance_area.name }} ({{ vigilance_area.vigilance_area_type }})</a>
                     </li>
                 {% endfor %}

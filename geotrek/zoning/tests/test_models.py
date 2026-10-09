@@ -13,7 +13,8 @@ from geotrek.zoning.models import (
     City,
     District,
     RestrictedArea,
-    VigilanceArea, VigilancePeriod,
+    VigilanceArea,
+    VigilancePeriod,
 )
 from geotrek.zoning.tests.factories import (
     CityFactory,
@@ -22,7 +23,8 @@ from geotrek.zoning.tests.factories import (
     RestrictedAreaTypeFactory,
     VigilanceAreaFactory,
     VigilanceAreaTypeFactory,
-    VigilanceLevelFactory, VigilancePeriodFactory,
+    VigilanceLevelFactory,
+    VigilancePeriodFactory,
 )
 
 
@@ -458,9 +460,7 @@ class VigilanceAreaModelTest(TestCase):
     # TODO : test period_resume for vigilance area
     def test_period_resume(self):
         today = timezone_today()
-        va = VigilanceAreaFactory(
-            periods=[]
-        )
+        va = VigilanceAreaFactory(periods=[])
 
         period_no_end = VigilancePeriodFactory(
             vigilance_area=va,
@@ -492,21 +492,15 @@ class VigilancePeriodAndAreaManagerTest(TestCase):
         self.other_month = (self.month % 12) + 1
 
     def test_manager_ongoing_and_finished(self):
-        period_active = VigilancePeriodFactory(
-            start_date=self.yesterday,
-            end_date=None
-        )
+        period_active = VigilancePeriodFactory(start_date=self.yesterday, end_date=None)
         period_active_until_tomorrow = VigilancePeriodFactory(
-            start_date=self.yesterday,
-            end_date=self.tomorrow
+            start_date=self.yesterday, end_date=self.tomorrow
         )
         period_finished = VigilancePeriodFactory(
-            start_date=self.last_week,
-            end_date=self.yesterday
+            start_date=self.last_week, end_date=self.yesterday
         )
         period_futur = VigilancePeriodFactory(
-            start_date=self.last_week,
-            end_date=self.yesterday
+            start_date=self.last_week, end_date=self.yesterday
         )
 
         ongoing_qs_period = VigilancePeriod.objects.ongoing()

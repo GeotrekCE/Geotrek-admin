@@ -48,7 +48,7 @@
                 "fr": "zone 1",
                 "en": "area 1"
             },
-            "practicability": "not_practicable",
+            "impracticable": true,
             "practical_info": {
                 "fr": "<p>info pratique 1</p>",
                 "en": "<p>practical information 1</p>"
@@ -107,7 +107,7 @@
                 "fr": "zone 2",
                 "en": "area 2"
             },
-            "practicability": "not_practicable",
+            "impracticable": true,
             "practical_info": {
                 "fr": "<p>info pratique 2</p>",
                 "en": "<p>practical information 2</p>"

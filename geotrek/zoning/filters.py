@@ -4,15 +4,15 @@ from django.db.models import Exists, OuterRef, Q
 from django.utils.translation import gettext_lazy as _
 from django_filters import (
     FilterSet,
+    BooleanFilter,
     ModelMultipleChoiceFilter,
-    MultipleChoiceFilter,
     filters,
+widgets,
 )
 
 from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.common.filters import BaseRightFilter, RightFilter
 from geotrek.common.models import Provider
-from geotrek.zoning.choices import Practicability
 from geotrek.zoning.models import (
     City,
     District,
@@ -78,17 +78,15 @@ class IntersectionFilterVigilanceAreaType(RightFilter):
         )
 
 
-class IntersectionFilterVigilanceAreaPracticability(
-    BaseRightFilter, MultipleChoiceFilter
-):
+class IntersectionFilterVigilanceAreaImpracticable(BaseRightFilter, BooleanFilter):
     def filter(self, qs, value):
-        if not value:
+        if value is None:
             return qs
 
         return qs.filter(
             Exists(
                 VigilanceArea.objects.filter(
-                    practicability__in=value, geom__intersects=OuterRef("geom")
+                    impracticable=value, geom__intersects=OuterRef("geom")
                 )
             )
         )
@@ -101,8 +99,11 @@ class IntersectionFilterVigilanceArea(RightFilter):
         if not value:
             return qs
 
+        if isinstance(value, VigilanceArea):
+            value = [value]
+
         return qs.filter(
-            Exists(VigilanceArea.objects.filter(geom__intersects=OuterRef("geom")))
+            Exists(VigilanceArea.objects.filter(id__in=[area.id for area in value], geom__intersects=OuterRef("geom")))
         )
 
 
@@ -152,11 +153,8 @@ class ZoningFilterSet(FilterSet):
         required=False,
         widget=autocomplete.Select2Multiple(),
     )
-    vigilance_area_practicability = IntersectionFilterVigilanceAreaPracticability(
-        label=_("Vigilance area Practicability"),
-        required=False,
-        widget=autocomplete.Select2Multiple(),
-        choices=Practicability.choices,
+    vigilance_area_impracticable = IntersectionFilterVigilanceAreaImpracticable(
+        label=_("Vigilance area impracticable"), required=False, widget=widgets.BooleanWidget()
     )
     vigilance_area = IntersectionFilterVigilanceArea(
         label=_("Vigilance area"),
@@ -165,7 +163,7 @@ class ZoningFilterSet(FilterSet):
             url="zoning:vigilancearea-drf-autocomplete",
             forward=[
                 "vigilance_area_type",
-                forward.Field("vigilance_area_practicability", "practicability"),
+                forward.Field("vigilance_area_impracticable", "impracticable"),
             ],
             attrs={
                 "data-placeholder": _("Vigilance area"),
@@ -199,14 +197,14 @@ class VigilanceAreaFilterSet(
         lookup_expr="gte",
         field_name="periods__end_date",
         widget=forms.TextInput(attrs={"class": "form-control form-control-sm"}),
-        distinct=True
+        distinct=True,
     )
     before = filters.DateFilter(
         label=_("Before"),
         lookup_expr="lte",
         field_name="periods__start_date",
         widget=forms.TextInput(attrs={"class": "form-control form-control-sm"}),
-        distinct=True
+        distinct=True,
     )
     ongoing = filters.BooleanFilter(label=_("Ongoing period"))
     active_today = filters.BooleanFilter(label=_("Active today"))
@@ -217,7 +215,7 @@ class VigilanceAreaFilterSet(
             *StructureRelatedFilterSet.Meta.fields,
             "name",
             "published",
-            "practicability",
+            "impracticable",
             "vigilance_level",
             "sources",
             "portals",
@@ -229,6 +227,6 @@ class VigilanceAreaFilterSet(
     def __init__(self, *args, **kwargs):
         # Remove vigilance area filters from ZoningFilterSet
         self.base_filters.pop("vigilance_area_type", None)
-        self.base_filters.pop("vigilance_area_practicability", None)
+        self.base_filters.pop("vigilance_area_impracticable", None)
         self.base_filters.pop("vigilance_area", None)
         super().__init__(*args, **kwargs)
