@@ -14,7 +14,7 @@ from geotrek.zoning.models import (
     District,
     RestrictedArea,
     VigilanceArea,
-VigilancePeriod,
+    VigilancePeriod,
 )
 
 
@@ -102,7 +102,9 @@ class VigilancePeriodForm(forms.ModelForm):
         }
 
 
-VigilancePeriodFormset = inlineformset_factory(VigilanceArea, VigilancePeriod, form=VigilancePeriodForm, extra=1)
+VigilancePeriodFormset = inlineformset_factory(
+    VigilanceArea, VigilancePeriod, form=VigilancePeriodForm, extra=1
+)
 
 
 class VigilanceAreaForm(CommonForm):
