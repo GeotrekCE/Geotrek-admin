@@ -24,7 +24,7 @@ from geotrek.common.mixins.models import (
 )
 
 from ..common.functions import GenRandomUUID
-from .choices import MonthChoices, WeekdayChoices
+from .choices import WeekdayChoices
 from .managers import VigilanceAreaManager, VigilancePeriodManager
 
 
@@ -281,17 +281,6 @@ class VigilancePeriod(DuplicateMixin, models.Model):
         default=list,
         blank=True,
     )
-    active_months = ArrayField(
-        models.IntegerField(
-            choices=MonthChoices.choices,
-        ),
-        verbose_name=_("Active months"),
-        default=list,
-        help_text=_(
-            "Months of the year when the vigilance area is active. Empty equals all year."
-        ),
-        blank=True,
-    )
     annual = models.BooleanField(default=False, verbose_name=_("Annual recurrence"))
 
     def clean(self):
@@ -306,11 +295,6 @@ class VigilancePeriod(DuplicateMixin, models.Model):
         return [choices_map.get(day) for day in self.active_days]
 
     @property
-    def active_months_labels(self):
-        choices_map = dict(MonthChoices.choices)
-        return [choices_map.get(month) for month in self.active_months]
-
-    @property
     def period_resume(self):
         if self.end_date:
             result = _("From %s to %s") % (self.start_date, self.end_date)
@@ -319,8 +303,6 @@ class VigilancePeriod(DuplicateMixin, models.Model):
 
         if self.active_days:
             result += _(" - days %s") % (",".join(self.active_days_labels))
-        if self.active_months:
-            result += _(" - months %s") % (",".join(self.active_months_labels))
         if self.annual:
             result += _(" (annual)")
         return result
@@ -333,8 +315,4 @@ class VigilancePeriod(DuplicateMixin, models.Model):
         ordering = ["start_date", "end_date"]
         indexes = [
             GinIndex(name="va_active_days_gin_idx", fields=["active_days"]),
-            GinIndex(
-                name="va_active_months_gin_idx",
-                fields=["active_months"],
-            ),
         ]

@@ -3,7 +3,7 @@ from django.db.models.expressions import Exists, ExpressionWrapper, OuterRef
 from django.db.models.query_utils import Q
 from django.views.generic.dates import timezone_today
 
-from geotrek.zoning.utils import month_between, weekday_between
+from geotrek.zoning.utils import weekday_between
 
 
 def _period_ongoing_condition(today):
@@ -22,7 +22,6 @@ def _period_active_today_condition(today):
     active_today = (
         _period_ongoing_condition(today)
         & (Q(active_days=[]) | Q(active_days__contains=[today.weekday()]))
-        & (Q(active_months=[]) | Q(active_months__contains=[today.month]))
     )
     return active_today
 
@@ -46,7 +45,7 @@ class VigilancePeriodManager(models.Manager.from_queryset(VigilancePeriodQuerySe
         """
         # period_ongoing = boolean to define if a period is active (today in active period)
         # finished = boolean to define if a period is finished (today after end date)
-        # active_today = boolean to define if the period is active today (active and day and/or month match)
+        # active_today = boolean to define if the period is active today (active and day match)
         """
         today = timezone_today()
         qs = super().get_queryset()
@@ -120,9 +119,6 @@ class VigilanceAreaQuerySet(models.QuerySet):
                 Q(end_date__isnull=True) | Q(end_date__gte=start)
             )
             period_valid = (
-                Q(active_months__len=0)
-                | Q(active_months__overlap=month_between(start, end))
-            ) & (
                 Q(active_days__len=0)
                 | Q(active_days__overlap=weekday_between(start, end))
             )
@@ -137,7 +133,7 @@ class VigilanceAreaManager(models.Manager.from_queryset(VigilanceAreaQuerySet)):
         """
         # ongoing = boolean to define if an area have an period in progress (today in active period)
         # finished = boolean to define if all the periods of an area are finished (today after end date)
-        # active_today = boolean to define if an area have a period active today (active and day and/or month match)
+        # active_today = boolean to define if an area have a period active today (active and day match)
         """
         today = timezone_today()
         qs = super().get_queryset()

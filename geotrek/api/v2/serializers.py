@@ -1499,7 +1499,6 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
                 "start_date",
                 "end_date",
                 "active_days",
-                "active_months",
                 "annual",
             )
 
