@@ -624,7 +624,7 @@ VIGILANCE_AREA_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "external_info_url",
         "geometry",
         "name",
-        "practicability",
+        "impracticable",
         "vigilance_level",
         "periods",
         "practical_info",
@@ -800,20 +800,18 @@ class BaseApiTest(TestCase):
         cls.vigilance_area1 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,
             published=True,
-            practicability=zoning_choices.Practicability.NOT_PRACTICABLE,
-            periods=[]
+            impracticable=True,
+            periods=[],
         )
         cls.vigilance_area2 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,
             geom=geom,
             published=True,
-            practicability=zoning_choices.Practicability.NOT_PRACTICABLE,
-            periods=[]
+            impracticable=True,
+            periods=[],
         )
         cls.vigilance_area3 = zoning_factory.VigilanceAreaFactory(
-            structure=cls.structure,
-            published=True,
-            periods=[]
+            structure=cls.structure, published=True, periods=[]
         )
         cls.vigilance_area4 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,
@@ -2046,7 +2044,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
         end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
         response = self.get_trek_list(
-            params={"practicable_from": start_date, "practicable_to": end_date, "practicable": "false"}
+            params={
+                "practicable_from": start_date,
+                "practicable_to": end_date,
+                "practicable": "false",
+            }
         )
         self.assertEqual(response.json()["count"], 17)
 
@@ -2090,7 +2092,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         start_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
         end_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
         response = self.get_trek_list(
-            params={"practicable_from": start_date, "practicable_to": end_date, "practicable": "false"}
+            params={
+                "practicable_from": start_date,
+                "practicable_to": end_date,
+                "practicable": "false",
+            }
         )
         self.assertEqual(response.json()["count"], 0)
 
@@ -2098,7 +2104,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         start_date = (self.today + datetime.timedelta(days=62)).strftime("%Y-%m-%d")
         end_date = (self.today + datetime.timedelta(days=63)).strftime("%Y-%m-%d")
         response = self.get_trek_list(
-            params={"practicable_from": start_date, "practicable_to": end_date, "practicable": "false"}
+            params={
+                "practicable_from": start_date,
+                "practicable_to": end_date,
+                "practicable": "false",
+            }
         )
         self.assertEqual(response.json()["count"], 0)
 
@@ -2106,7 +2116,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         start_date = (self.today + datetime.timedelta(days=2)).strftime("%Y-%m-%d")
         end_date = (self.today + datetime.timedelta(days=3)).strftime("%Y-%m-%d")
         response = self.get_trek_list(
-            params={"practicable_from": start_date, "practicable_to": end_date, "practicable": "false"}
+            params={
+                "practicable_from": start_date,
+                "practicable_to": end_date,
+                "practicable": "false",
+            }
         )
         self.assertEqual(response.json()["count"], 0)
 
@@ -2979,7 +2993,11 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
         end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
         response = self.get_touristiccontent_list(
-            {"practicable_from": start_date, "practicable_to": end_date, "practicable": "false"}
+            {
+                "practicable_from": start_date,
+                "practicable_to": end_date,
+                "practicable": "false",
+            }
         )
         self.assertEqual(len(response.json()["results"]), 2)
 
@@ -3285,7 +3303,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
         self.assertEqual(
             sorted(results.get("periods")[0].keys()),
-            VIGILANCE_PERIOD_PROPERTIES_GEOJSON_STRUCTURE
+            VIGILANCE_PERIOD_PROPERTIES_GEOJSON_STRUCTURE,
         )
 
     def test_vigilancearea_filter_structure(self):
@@ -3319,10 +3337,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_vigilancearea_filter_practicability(self):
         vigilancearea_other_practicability = zoning_factory.VigilanceAreaFactory.create(
             published=True,
-            practicability=zoning_choices.Practicability.UNDER_CONDITION_PRACTICABLE,
+            impracticable=False,
         )
         response = self.get_vigilancearea_list(
-            params={"practicabilities": "under_condition_practicable"}
+            params={"practicable": "true"}
         )
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(

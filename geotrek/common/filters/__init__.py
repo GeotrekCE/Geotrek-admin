@@ -31,7 +31,7 @@ class BaseRightFilter:
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.field.widget.attrs["class"] = (
-            self.field.widget.attrs.get("class", "") + "right-filter"
+            self.field.widget.attrs.get("class", "") + " right-filter"
         )
         self.field.widget.renderer = None
 

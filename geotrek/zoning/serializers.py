@@ -96,7 +96,6 @@ class RestrictedAreaAutoCompleteBBoxSerializer(RestrictedAreaAutoCompleteSeriali
 class VigilanceAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     name = serializers.CharField(source="name_display")
     thumbnail = serializers.CharField(source="thumbnail_display")
-    practicability = serializers.SerializerMethodField()
     ongoing = MapentityDatatableBooleanField()
 
     def get_practicability(self, obj):
