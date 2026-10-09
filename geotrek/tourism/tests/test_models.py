@@ -227,3 +227,9 @@ class TourtisticEventPlaceModelTest(TestCase):
     def test_place_label(self):
         place = TouristicEventPlaceFactory(name="Place to be")
         self.assertEqual(str(place), "Place to be")
+
+    def test_photo_url_none_and_content_extent(self):
+        desk = InformationDeskFactory.create(photo=None)
+        self.assertIsNone(desk.photo_url)
+        content = tourism_factories.TouristicContentFactory.create()
+        self.assertEqual(len(content.extent), 4)

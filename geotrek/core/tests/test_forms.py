@@ -2,6 +2,7 @@ from unittest import skipIf
 
 from django.conf import settings
 from django.core.checks import Error
+from django.core.exceptions import ValidationError
 from django.forms.widgets import HiddenInput
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -27,6 +28,23 @@ class TopologyFormTest(TestCase):
         form.cleaned_data = {"topology": topo}
         form.save()
         self.assertEqual(topo, form.instance)
+
+    def test_clean_removes_geom_error(self):
+        user = UserFactory()
+        topo = TrailFactory()
+        form = TrailForm(
+            instance=topo,
+            user=user,
+            data={
+                "name": "t",
+                "structure": topo.structure.pk,
+                "topology": str(topo.pk),
+            },
+        )
+        form.full_clean()
+        form._errors["geom"] = form.error_class(["err"])
+        form.clean()
+        self.assertNotIn("geom", form.errors)
 
 
 class PathFormTest(TestCase):
@@ -89,6 +107,30 @@ class PathFormTest(TestCase):
             },
         )
         self.assertFalse(form1.is_valid(), str(form1.errors))
+
+    def test_clean_geom_none_non_simple_and_reverse_save(self):
+        user = UserFactory()
+        form_non_simple = PathForm(
+            user=user,
+            data={
+                "geom": '{"geom": "LINESTRING(0 0, 2 2, 0 2, 2 0)", "snap": [null, null, null, null]}'
+            },
+        )
+        self.assertFalse(form_non_simple.is_valid())
+        form_none = PathForm(user=user)
+        form_none.cleaned_data = {"geom": None}
+        with self.assertRaises(ValidationError):
+            form_none.clean_geom()
+        form_rev = PathForm(
+            user=user,
+            data={
+                "geom": '{"geom": "LINESTRING(3 45, 3 46)", "snap": [null, null]}',
+                "reverse_geom": True,
+            },
+        )
+        self.assertTrue(form_rev.is_valid(), str(form_rev.errors))
+        path = form_rev.save()
+        self.assertIsNotNone(path.pk)
 
 
 class TrailFormTest(TestCase):

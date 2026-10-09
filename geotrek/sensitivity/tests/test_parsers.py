@@ -8,6 +8,7 @@ from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
+from geotrek.common.parsers import ValueImportError
 from geotrek.sensitivity.models import SensitiveArea, Species, SportPractice
 from geotrek.sensitivity.parsers import BiodivParser
 from geotrek.sensitivity.tests.factories import SpeciesFactory, SportPracticeFactory
@@ -468,3 +469,13 @@ class RegulatorySensitiveAreaShapeParserTest(TestCase):
         self.assertEqual(area.species.url, "http://test.com")
         self.assertEqual(area.contact, "Contact")
         self.assertEqual(area.description, "Test UTF8 éêè")
+
+    def test_biodiv_filter_geom_point_and_invalid(self):
+        p = BiodivParser()
+        pt = p.filter_geom("geom", {"type": "Point", "coordinates": [3.0, 45.0]})
+        self.assertEqual(pt.geom_type, "Point")
+        with self.assertRaises(ValueImportError):
+            p.filter_geom(
+                "geom",
+                {"type": "LineString", "coordinates": [[3.0, 45.0], [3.1, 45.1]]},
+            )

@@ -6,11 +6,12 @@ from unittest import mock, skipIf
 
 from bs4 import BeautifulSoup
 from django.conf import settings
-from django.contrib.auth.models import Group, Permission, User
+from django.contrib.auth.models import AnonymousUser, Group, Permission, User
 from django.contrib.gis.geos import LineString, MultiPoint, Point
 from django.core import mail
 from django.core.management import call_command
 from django.db import DEFAULT_DB_ALIAS, connections
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 from django.template.loader import get_template
 from django.test import RequestFactory, TestCase
@@ -33,7 +34,11 @@ from geotrek.common.tests import (
     CommonMultiActionViewsStructureMixin,
     CommonTest,
 )
-from geotrek.common.tests.factories import AttachmentFactory, ThemeFactory
+from geotrek.common.tests.factories import (
+    AttachmentFactory,
+    RecordSourceFactory,
+    ThemeFactory,
+)
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
 from geotrek.tourism.tests import factories as tourism_factories
@@ -41,6 +46,7 @@ from geotrek.tourism.tests import factories as tourism_factories
 # Make sur to register Trek model
 from geotrek.trekking import urls  # NOQA
 from geotrek.trekking import views as trekking_views
+from geotrek.trekking.views import POIFormatList, TrekDocumentPublic, TrekSignageViewSet
 from geotrek.zoning.tests.factories import CityFactory, DistrictFactory
 
 from ..models import POI, Service, Trek
@@ -1269,3 +1275,40 @@ class ServiceMultiActionsViewTest(
         "Related structure",
         "Type",
     ]
+
+    def test_trekking_views_extra_coverage(self):
+        self.client.force_login(self.user)
+        resp = self.client.post(
+            reverse("trekking:weblink_add"),
+            {"name_en": "Link", "url": "https://example.com"},
+        )
+        self.assertEqual(resp.status_code, 200)
+        self.assertIn("dismissAddAnotherPopup", resp.content.decode())
+
+        trek = TrekFactory.create(published=True)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            POIFactory.create(paths=[(trek.paths.first(), 0.5, 0.5)])
+        else:
+            POIFactory.create(geom=Point(700000, 6600000))
+        rf = RequestFactory()
+        fmt_view = POIFormatList()
+        fmt_view.request = rf.get("/")
+        list(fmt_view.get_queryset())
+
+        source = RecordSourceFactory.create(name="Src")
+        with mock.patch.object(Trek, "prepare_map_image"):
+            for qs in (f"?source={source.name}", "?source=unknown"):
+                view = TrekDocumentPublic()
+                view.object = trek
+                view.request = rf.get(f"/{qs}")
+                view.kwargs = {"pk": trek.pk, "slug": trek.slug, "lang": "en"}
+                view.get_context_data(object=trek)
+
+        trek.published = False
+        trek.save()
+        vs = TrekSignageViewSet()
+        vs.kwargs = {"pk": trek.pk}
+        vs.request = rf.get("/")
+        vs.request.user = AnonymousUser()
+        with self.assertRaises(Http404):
+            vs.get_queryset()

@@ -19,6 +19,7 @@ from geotrek.tourism.parsers import (
     GeotrekInformationDeskParser,
     GeotrekTouristicContentParser,
     GeotrekTouristicEventParser,
+    HebergementsApidaeParser,
     InformationDeskApidaeParser,
     InformationDeskOpenStreetMapParser,
     LEITouristicContentParser,
@@ -313,14 +314,26 @@ class ParserTests(TestCase):
         TouristicContentCategoryFactory(label="Eau vive")
 
         # Parser with provider creates objects with provider
-        call_command("import", "geotrek.tourism.tests.test_parsers.Provider1Parser")
+        call_command(
+            "import",
+            "geotrek.tourism.tests.test_parsers.Provider1Parser",
+            verbosity=0,
+        )
         self.assertEqual(TouristicContent.objects.count(), 1)
         self.assertEqual(TouristicContent.objects.first().provider.name, "Provider1")
         mocked.return_value.json = mocked_json2
         # Parser with provider does not delete other providers' objects
-        call_command("import", "geotrek.tourism.tests.test_parsers.Provider2Parser")
+        call_command(
+            "import",
+            "geotrek.tourism.tests.test_parsers.Provider2Parser",
+            verbosity=0,
+        )
         self.assertEqual(TouristicContent.objects.count(), 2)
-        call_command("import", "geotrek.tourism.tests.test_parsers.NoProviderParser")
+        call_command(
+            "import",
+            "geotrek.tourism.tests.test_parsers.NoProviderParser",
+            verbosity=0,
+        )
         # Parser with no provider behaves as if all objects are to handle (based on eid only)
         self.assertEqual(TouristicContent.objects.count(), 1)
 
@@ -354,7 +367,11 @@ class ParserTests(TestCase):
         TouristicContentCategoryFactory(label="Eau vive")
         TouristicContentType1Factory(label="Type A")
         TouristicContentType1Factory(label="Type B")
-        call_command("import", "geotrek.tourism.tests.test_parsers.EauViveParser")
+        call_command(
+            "import",
+            "geotrek.tourism.tests.test_parsers.EauViveParser",
+            verbosity=0,
+        )
         self.assertTrue(mocked.called)
         self.assertEqual(TouristicContent.objects.count(), 1)
 
@@ -383,8 +400,12 @@ class ParserTests(TestCase):
             CommandError,
             f"Failed to fetch {EauViveParser.url} after 3 attempt(s).",
         ):
-            call_command("import", "geotrek.tourism.tests.test_parsers.EauViveParser")
-            self.assertTrue(mocked.called)
+            call_command(
+                "import",
+                "geotrek.tourism.tests.test_parsers.EauViveParser",
+                verbosity=0,
+            )
+        self.assertTrue(mocked.called)
 
     @mock.patch("geotrek.common.parsers.requests.get")
     @mock.patch("geotrek.common.parsers.requests.head")
@@ -1693,3 +1714,66 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         self.assertEqual(len(touristic_content.geom[0]), 5)
         self.assertAlmostEqual(touristic_content.geom[0][0][0], 776475.184, places=2)
         self.assertAlmostEqual(touristic_content.geom[0][0][1], 6469444.353, places=2)
+
+    def test_tourism_parsers_extra_coverage(self):
+        # TouristicContentMixin.get_to_delete_kwargs with type1 non-empty and type2 empty
+        class CustomTCParser(TouristicContentApidaeParser):
+            category = "Foo"
+            type1 = ["T1"]
+            type2 = []
+            delete = True
+
+        TouristicContentType1Factory.create(label="T1", category=self.category)
+        cp = CustomTCParser()
+        cp.start()
+        kwargs = cp.get_to_delete_kwargs()
+        self.assertIn("type1", kwargs)
+
+        # AttachmentApidaeParserMixin.filter_attachments with image filename in legend
+        res = cp.filter_attachments(
+            "attachments",
+            [
+                {
+                    "type": "DOCUMENT",
+                    "traductionFichiers": [
+                        {
+                            "url": "http://example.com/a.jpg",
+                            "mimeType": "image/jpeg",
+                        }
+                    ],
+                    "legende": {"libelleFr": "photo.jpg"},
+                    "nom": {"libelleFr": "Leg"},
+                }
+            ],
+        )
+        self.assertEqual(res[0][1], "Leg")
+
+        # TouristicEventApidaeParser.filter_duration TypeError
+        ep = TouristicEventApidaeParser()
+        self.assertIsNone(ep.filter_duration("duration", (None, None)))
+
+        # HebergementsApidaeParser.filter_type1
+        hp = HebergementsApidaeParser()
+        hp.obj = mock.MagicMock()
+        with mock.patch.object(hp, "apply_filter", return_value="T"):
+            self.assertEqual(hp.filter_type1("type1", {"libelleFr": "H"}), "T")
+
+        # EspritParcParser.filter_category None
+        epp = EspritParcParser()
+        self.assertIsNone(epp.filter_category("category", None))
+
+        # TouristicContentTourInSoftParser & TouristicEventTourInSoftParser
+        class MyTCTIS(TouristicContentTourInSoftParser):
+            themes = ["Theme1"]
+
+        tctis = MyTCTIS()
+        self.assertEqual(tctis.m2m_constant_fields["themes"], ["Theme1"])
+
+        class MyTETIS(TouristicEventTourInSoftParser):
+            themes = ["Theme1"]
+
+        tetis = MyTETIS()
+        self.assertEqual(tetis.m2m_constant_fields["themes"], ["Theme1"])
+        past_range = f"01/01/2000{tetis.separator2}02/01/2000"
+        self.assertIsNone(tetis.filter_begin_date("begin_date", past_range))
+        self.assertIsNone(tetis.filter_end_date("end_date", past_range))

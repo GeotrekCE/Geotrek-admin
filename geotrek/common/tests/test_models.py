@@ -12,10 +12,12 @@ from geotrek.authent.tests.factories import (
 from geotrek.common.mixins.models import ExternalSourceMixin
 from geotrek.common.models import Provider, Theme
 from geotrek.common.tests.factories import (
+    FileTypeFactory,
     HDViewPointFactory,
     LabelFactory,
     OrganismFactory,
 )
+from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import TrekFactory
 
 
@@ -146,3 +148,15 @@ class ExternalSourceMixinTest(TestCase):
     def test_get_eid_without_provider(self):
         source = self.Source.objects.create(provider=self.provider)
         self.assertEqual(source.get_eid, " <span class='none'>None</span>")
+
+    def test_common_models_extra_coverage(self):
+        trek = TrekFactory.build()
+        trek._pictures = ["cached"]
+        self.assertEqual(trek.pictures, ["cached"])
+        with self.assertRaisesMessage(
+            AttributeError, f"{Trek} has already an attribute pictures"
+        ):
+            Trek.add_property("pictures", lambda s: None, "Pictures")
+
+        filetype = FileTypeFactory.create(structure=default_structure())
+        self.assertEqual(str(filetype), f"{filetype.type} ({filetype.structure.name})")

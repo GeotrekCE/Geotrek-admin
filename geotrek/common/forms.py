@@ -23,7 +23,6 @@ from modeltranslation.utils import build_localized_fieldname
 from geotrek.authent.models import (
     StructureOrNoneRelated,
     StructureRelated,
-    default_structure,
 )
 from geotrek.common.mixins.models import PublishableMixin
 from geotrek.common.models import (
@@ -312,10 +311,8 @@ class CommonForm(MapEntityForm):
             pass
         elif "structure" in self.fields:
             pass  # The form contains the structure field. Let django use its value.
-        elif self.user:
-            self.instance.structure = self.user.profile.structure
         else:
-            self.instance.structure = default_structure()
+            self.instance.structure = self.user.profile.structure
         return super().save(commit)
 
     @classmethod

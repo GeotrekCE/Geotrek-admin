@@ -728,14 +728,15 @@ def log_cascade_deletion_from_trek_topology(sender, instance, using, **kwargs):
 
 Path.add_property("treks", Trek.path_treks, _("Treks"))
 Topology.add_property("treks", Trek.topology_treks, _("Treks"))
-if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES:
-    Topology.add_property("published_treks", lambda self: [], _("Published treks"))
-else:
-    Topology.add_property(
-        "published_treks",
-        lambda self: intersecting(Trek, self).filter(published=True),
-        _("Published treks"),
-    )
+Topology.add_property(
+    "published_treks",
+    lambda self: (
+        []
+        if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES
+        else intersecting(Trek, self).filter(published=True)
+    ),
+    _("Published treks"),
+)
 Intervention.add_property(
     "treks", lambda self: self.target.treks if self.target else [], _("Treks")
 )

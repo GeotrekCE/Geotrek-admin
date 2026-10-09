@@ -4,6 +4,7 @@ from django.conf import settings
 from django.test import TestCase
 
 from geotrek.core.tests.factories import PathFactory
+from geotrek.infrastructure.models import InfrastructureAccessMean
 from geotrek.zoning.tests import factories as zoning_factory
 
 from .factories import InfrastructureFactory, InfrastructureTypeNoPictogramFactory
@@ -73,3 +74,7 @@ class InfrastructureTypeTesCase(TestCase):
             infrastructure_type.get_pictogram_url(),
             "/static/infrastructure/picto-infrastructure.png",
         )
+
+    def test_access_mean_str(self):
+        am = InfrastructureAccessMean.objects.create(label="Foot")
+        self.assertEqual(str(am), "Foot")

@@ -9,10 +9,12 @@ from django.test import TestCase
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.models import Blade
+from geotrek.signage.templatetags.signage_tags import meters
 from geotrek.signage.tests.factories import (
     BladeConditionFactory,
     BladeFactory,
     BladeTypeFactory,
+    LineFactory,
     LinePictogramFactory,
     SealingFactory,
     SignageConditionFactory,
@@ -138,3 +140,9 @@ class SignageTypeTestCase(TestCase):
         self.assertEqual(
             signage_type.get_pictogram_url(), "/static/signage/picto-signage.png"
         )
+
+    def test_line_pretty_none_and_meters_tag(self):
+        line = LineFactory.create(distance=None, time=None)
+        self.assertEqual(line.distance_pretty, "")
+        self.assertEqual(line.time_pretty, "")
+        self.assertEqual(meters(""), "")

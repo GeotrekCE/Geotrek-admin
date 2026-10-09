@@ -17,7 +17,14 @@ from django.test.utils import override_settings
 from geotrek.authent.models import Structure
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.common.utils import dbnow
-from geotrek.core.models import CertificationTrail, Path, PathAggregation, Trail
+from geotrek.core.models import (
+    CertificationTrail,
+    Network,
+    Path,
+    PathAggregation,
+    Topology,
+    Trail,
+)
 from geotrek.core.tests.factories import (
     CertificationLabelFactory,
     CertificationStatusFactory,
@@ -28,6 +35,7 @@ from geotrek.core.tests.factories import (
     TrailCategoryFactory,
     TrailFactory,
 )
+from geotrek.core.widgets import LineTopologyWidget
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
@@ -450,3 +458,57 @@ class CertificationTest(TestCase):
         self.assertEqual(
             "certification label / certification status", str(certification_trail)
         )
+
+    def test_core_models_extra_coverage(self):
+        Path.objects.all().delete()
+        self.assertIsNone(Path.no_draft_latest_updated())
+
+        p = PathFactory.create()
+        self.assertEqual(p.trails_display, "None")
+        self.assertEqual(p.usages_display, "")
+        self.assertEqual(p.networks_display, "")
+        t = TrailFactory.create(paths=[p])
+        if not settings.TREKKING_TOPOLOGY_ENABLED:
+            p._trails = [t]
+        self.assertIn(t.name, p.trails_display)
+
+        topo = Topology()
+        topo.kind = ""
+        topo.save()
+        self.assertEqual(topo.kind, "TOPOLOGY")
+        topo2 = Topology()
+        topo2.kind = ""
+        with (
+            mock.patch.object(Topology, "KIND", "TOPOLOGYMIXIN"),
+            self.assertRaises(Exception),
+        ):
+            topo2.save()
+
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            deser1 = Topology.deserialize(
+                [
+                    {"paths": [p.pk], "positions": {"0": [0.5, 0.5]}},
+                    {"paths": [p.pk], "positions": {"0": [0.5, 0.0]}},
+                    {"paths": [p.pk], "positions": {"0": [0.5, 1.0]}},
+                    {
+                        "paths": [p.pk, p.pk],
+                        "positions": {"0": [0.5, 0.0], "1": [0.5, 1.0]},
+                    },
+                    {"paths": [p.pk]},
+                ]
+            )
+            self.assertTrue(deser1.aggregations.exists())
+            w = LineTopologyWidget()
+            self.assertEqual(w.deserialize(t.pk), t.topo_object)
+            rendered = w.render("topology", t.pk)
+            self.assertIn("paths", rendered)
+
+        pa = PathAggregation(path=p, start_position=0.5, end_position=0.5)
+        pa.path.length = float("nan")
+        self.assertEqual(pa.start_meter, -1)
+        self.assertEqual(pa.end_meter, -1)
+
+        net = Network.objects.create(network="Net", structure=self.structure)
+        self.assertEqual(str(net), f"Net ({self.structure.name})")
+        net_no_struct = Network.objects.create(network="Net2", structure=None)
+        self.assertEqual(str(net_no_struct), "Net2")

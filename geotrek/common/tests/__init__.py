@@ -1,4 +1,6 @@
 import os
+import shutil
+import tempfile
 from unittest import mock
 
 from django.conf import settings
@@ -381,6 +383,18 @@ class CommonTest(AuthentFixturesTest, MapEntityTest):
 
 
 class CommonLiveTest(MapEntityLiveTest):
+    def setUp(self):
+        super().setUp()
+        self.tmp_media_root = tempfile.mkdtemp(dir=settings.TMP_DIR)
+        map_path = os.path.join(self.tmp_media_root, "maps")
+        os.makedirs(map_path, exist_ok=True)
+        self._override = override_settings(
+            MEDIA_ROOT=self.tmp_media_root, MAP_PATH=map_path
+        )
+        self._override.enable()
+        self.addCleanup(shutil.rmtree, self.tmp_media_root, ignore_errors=True)
+        self.addCleanup(self._override.disable)
+
     @mock.patch("mapentity.helpers.requests")
     def test_map_image_other_language(self, mock_requests):
         if self.model is None:
