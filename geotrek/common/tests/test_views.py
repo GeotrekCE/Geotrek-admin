@@ -5,6 +5,7 @@ from copy import deepcopy
 from io import StringIO
 from unittest import mock
 
+import mercantile
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -534,6 +535,30 @@ class HDViewPointViewTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertIn("id", response.json().get("properties"))
         self.assertIn("title", response.json().get("properties"))
+
+    def test_vector_tiles(self):
+        self.client.force_login(user=self.user_perm)
+        vp = HDViewPointFactory(content_object=self.trek)
+        geom_transformed = vp.geom.transform(4326, clone=True)
+        tile = mercantile.tile(geom_transformed.x, geom_transformed.y, 10)
+        mvt_url = reverse(
+            "common:hdviewpoint-drf-mvt",
+            kwargs={"z": tile.z, "x": tile.x, "y": tile.y},
+        )
+        response = self.client.get(mvt_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(response.content), 0)
+
+        empty_mvt_url = reverse(
+            "common:hdviewpoint-drf-mvt", kwargs={"z": 10, "x": 0, "y": 0}
+        )
+        empty_response = self.client.get(empty_mvt_url)
+        self.assertEqual(empty_response.status_code, 200)
+        self.assertEqual(empty_response.content, b"")
+
+        tilejson_url = reverse("common:hdviewpoint-drf-tilejson")
+        tilejson_response = self.client.get(tilejson_url)
+        self.assertEqual(tilejson_response.status_code, 200)
 
 
 class ConfigViewTest(AuthentFixturesMixin, TestCase):
