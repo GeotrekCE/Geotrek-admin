@@ -1,5 +1,5 @@
 from django.db.models import IntegerChoices
-from django.utils.dates import MONTHS, WEEKDAYS
+from django.utils.dates import WEEKDAYS
 
 
 class WeekdayChoices(IntegerChoices):

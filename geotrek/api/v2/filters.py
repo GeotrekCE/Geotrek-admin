@@ -307,7 +307,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
             qs = qs.filter(portals__in=portals.split(","))
         practicable = request.GET.get("practicable")
         if practicable:
-            qs = qs.filter(impracticable=(practicable=="false"))
+            qs = qs.filter(impracticable=(practicable == "false"))
         vigilance_levels = request.GET.get("vigilance_levels")
         if vigilance_levels:
             qs = qs.filter(vigilance_level__in=vigilance_levels.split(","))
