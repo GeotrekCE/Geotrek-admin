@@ -67,6 +67,7 @@ from geotrek.trekking.tests import factories as trek_factory
 from geotrek.trekking.tests.base import TrekkingManagerTest
 from geotrek.trekking.tests.factories import PracticeFactory
 from geotrek.zoning import models as zoning_models
+from geotrek.zoning.mixins import ZoningPropertiesMixin
 from geotrek.zoning.tests import factories as zoning_factory
 
 ANNOTATION_CATEGORY_DETAIL_JSON_STRUCTURE = sorted(["id", "label", "pictogram"])
@@ -806,6 +807,7 @@ class BaseApiTest(TestCase):
             published=True,
             impracticable=True,
             periods=[],
+            portals=[cls.portal.pk]
         )
         cls.vigilance_area3 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure, published=True, periods=[]
@@ -2043,6 +2045,30 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
         self.assertEqual(response.json()["count"], 17)
 
+    def test_trek_vigilancearea_impracticable_depends_on_portal(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        params = {
+            "practicable_from": start_date,
+            "practicable_to": end_date,
+            "practicable": "false",
+        }
+
+        response = self.get_trek_list({**params, "portals": str(self.portal.pk)})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+
+        other_portal = common_factory.TargetPortalFactory()
+        response = self.get_trek_list({**params, "portals": other_portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 0)
+
+        response = self.get_trek_list(
+            {**params, "portals": f"{self.portal.pk},{other_portal.pk}"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+
     def test_trek_vigilancearea_types_filter(self):
         start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
         end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
@@ -2142,6 +2168,30 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(
             json_response.get("features")[1].get("properties").get("count_children"), 1
         )
+
+    def test_tour_vigilancearea_impracticable_depends_on_portal(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        params = {
+            "practicable_from": start_date,
+            "practicable_to": end_date,
+            "practicable": "false",
+        }
+
+        response = self.get_tour_list({**params, "portals": str(self.portal.pk)})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+
+        other_portal = common_factory.TargetPortalFactory()
+        response = self.get_tour_list({**params, "portals": other_portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 0)
+
+        response = self.get_tour_list(
+            {**params, "portals": f"{self.portal.pk},{other_portal.pk}"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
 
     @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
     def test_trek_external_pdf(self):
@@ -2979,6 +3029,30 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             }
         )
         self.assertEqual(len(response.json()["results"]), 2)
+
+    def test_touristiccontent_vigilancearea_impracticable_depends_on_portal(self):
+        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        params = {
+            "practicable_from": start_date,
+            "practicable_to": end_date,
+            "practicable": "false",
+        }
+
+        response = self.get_touristiccontent_list({**params, "portals": str(self.portal.pk)})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+
+        other_portal = common_factory.TargetPortalFactory()
+        response = self.get_touristiccontent_list({**params, "portals": other_portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 0)
+
+        response = self.get_touristiccontent_list(
+            {**params, "portals": f"{self.portal.pk},{other_portal.pk}"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
 
     def test_labels_accessibility_detail(self):
         self.check_structure_response(
