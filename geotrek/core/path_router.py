@@ -238,17 +238,20 @@ class PathRouter:
                 FROM pgr;
 
             END $$;
-
-            SELECT
-                edge_geom,
-                edge,
-                fraction_start,
-                fraction_end
-            FROM route
         """
 
         with connection.cursor() as cursor:
             cursor.execute(query)
+            cursor.execute(
+                """
+                SELECT
+                    edge_geom,
+                    edge,
+                    fraction_start,
+                    fraction_end
+                FROM route
+                """
+            )
 
             query_result = cursor.fetchall()
             if query_result == []:
