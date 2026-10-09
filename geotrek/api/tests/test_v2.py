@@ -2,7 +2,7 @@ import datetime
 import json
 import re
 from functools import partial
-from unittest import skipIf
+from unittest import mock, skipIf
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -25,6 +25,7 @@ from paperclip.models import random_suffix_regexp
 from rest_framework.test import APIClient, APITestCase
 
 from geotrek import __version__
+from geotrek.api.v2.serializers import AttachmentSerializer
 from geotrek.api.v2.views.trekking import TrekViewSet
 from geotrek.authent import models as authent_models
 from geotrek.authent.tests import factories as authent_factory
@@ -6992,3 +6993,13 @@ class SensitivityAPIv2Test(TrekkingManagerTest):
         self.assertEqual(
             response.json()["results"][0]["name"], sensitive_area_month.species.name
         )
+
+    def test_attachment_serializer_thumbnail_error(self):
+
+        att = mock.MagicMock(is_image=True, attachment_file="bad.jpg")
+        with (
+            mock.patch("geotrek.api.v2.serializers.get_thumbnailer") as mthumb,
+            self.assertLogs("geotrek.api.v2.serializers", level="WARNING"),
+        ):
+            mthumb.return_value.get_thumbnail.side_effect = Exception("thumb error")
+            self.assertEqual(AttachmentSerializer().get_thumbnail(att), "")

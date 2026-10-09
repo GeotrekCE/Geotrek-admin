@@ -2,7 +2,7 @@ from unittest import mock
 
 from django.contrib.auth.models import Group, Permission
 from django.core.files.uploadedfile import SimpleUploadedFile
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 from paperclip.models import random_suffix_regexp
 
@@ -18,12 +18,21 @@ from geotrek.common.tests import (
     CommonMultiActionViewsMixin,
     CommonMultiActionViewsStructureMixin,
 )
+from geotrek.common.tests.factories import (
+    RecordSourceFactory,
+    TargetPortalFactory,
+)
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.tourism.tests.factories import (
     InformationDeskFactory,
     TouristicContentCategoryFactory,
     TouristicContentFactory,
     TouristicEventFactory,
+)
+from geotrek.tourism.views import (
+    TouristicContentDocumentPublic,
+    TouristicContentList,
+    TouristicEventDocumentPublic,
 )
 from geotrek.trekking.tests import factories as trekking_factories
 from geotrek.trekking.tests.base import TrekkingManagerTest
@@ -327,3 +336,33 @@ class TouristicEventMultiActionsViewTest(
         "Cancellation reason",
         "Event place",
     ]
+
+    def test_categories_list_and_document_public_source_portal_context(self):
+        cat = TouristicContentCategoryFactory.create()
+        content = TouristicContentFactory.create(published=True, category=cat)
+        self.assertIn(cat, TouristicContentList().categories_list)
+
+        source = RecordSourceFactory.create(name="Src")
+        portal = TargetPortalFactory.create(name="Prtl")
+        rf = RequestFactory()
+        event = TouristicEventFactory.create(published=True)
+        for view_cls, obj in (
+            (TouristicContentDocumentPublic, content),
+            (TouristicEventDocumentPublic, event),
+        ):
+            with mock.patch.object(type(obj), "prepare_map_image"):
+                for qs in (
+                    f"?source={source.name}&portal={portal.name}",
+                    "?source=unknown&portal=unknown",
+                ):
+                    view = view_cls()
+                    view.object = obj
+                    view.request = rf.get(f"/{qs}")
+                    view.kwargs = {"pk": obj.pk, "slug": obj.slug, "lang": "en"}
+                    ctx = view.get_context_data(object=obj)
+                    if "Src" in qs:
+                        self.assertEqual(ctx["source"], source)
+                        self.assertEqual(ctx["portal"], portal)
+                    else:
+                        self.assertNotIn("source", ctx)
+                        self.assertNotIn("portal", ctx)

@@ -3,8 +3,9 @@ import shutil
 import tempfile
 from copy import deepcopy
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 
+import redis
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType
@@ -14,6 +15,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
+from django_celery_results.models import TaskResult
 from mapentity.helpers import api_bbox
 from mapentity.tests import SuperUserFactory
 from mapentity.tests.factories import UserFactory
@@ -30,6 +32,7 @@ from geotrek.common.parsers import Parser
 from geotrek.common.tasks import import_datas
 from geotrek.common.tests.factories import (
     AccessMeanFactory,
+    AttachmentFactory,
     HDViewPointFactory,
     LicenseFactory,
     OrganismFactory,
@@ -167,6 +170,33 @@ class DocumentPublicPortalTest(TestCase):
             response, template_name="trekking/trek_public_pdf_base.html"
         )
 
+    def test_trek_document_external_topoguide_debug_and_perm(self):
+        filetype = FileType.objects.create(type="Topoguide")
+        AttachmentFactory.create(
+            content_object=self.trek,
+            filetype=filetype,
+            attachment_file=SimpleUploadedFile("topoguide.pdf", b"PDF content"),
+        )
+        with override_settings(DEBUG=True):
+            response = self.client.get(
+                reverse(
+                    "trekking:trek_printable",
+                    kwargs={"lang": "fr", "pk": self.trek.pk, "slug": self.trek.slug},
+                )
+            )
+            self.assertEqual(response.status_code, 200)
+
+        unpub_trek = TrekFactory.create(published=False)
+        user = UserFactory.create()
+        self.client.force_login(user)
+        response = self.client.get(
+            reverse(
+                "trekking:trek_printable",
+                kwargs={"lang": "fr", "pk": unpub_trek.pk, "slug": unpub_trek.slug},
+            )
+        )
+        self.assertEqual(response.status_code, 403)
+
 
 class ViewsTest(TestCase):
     @classmethod
@@ -208,6 +238,22 @@ class ViewsTest(TestCase):
         message = "Cannot build columns for class MissingColumns.\nPlease define on this class either : \n  - a field 'columns'\nOR \n  - two fields 'mandatory_columns' AND 'default_extra_columns'"
         mock_logger.error.assert_called_with(message)
 
+    def test_last_list(self):
+        response = self.client.get(reverse("home"))
+        self.assertRedirects(
+            response, reverse("trekking:trek_list"), fetch_redirect_response=False
+        )
+        self.client.force_login(self.super_user)
+        response = self.client.get(reverse("home"))
+        self.assertEqual(response.status_code, 302)
+        session = self.client.session
+        session["last_list"] = reverse("trekking:trek_list")
+        session.save()
+        response = self.client.get(reverse("home"))
+        self.assertRedirects(
+            response, reverse("trekking:trek_list"), fetch_redirect_response=False
+        )
+
 
 class ViewsImportTest(TestCase):
     @classmethod
@@ -232,17 +278,47 @@ class ViewsImportTest(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Communes")
 
-    @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Topology is enabled")
-    def test_import_update_access(self):
+    @mock.patch("geotrek.common.views.celery_app.control.inspect")
+    def test_import_update_access(self, mock_inspect):
+
         self.client.force_login(user=self.user)
+        TaskResult.objects.create(
+            task_id="task-1",
+            status="SUCCESS",
+            result='{"name": "geotrek.common.import-file"}',
+        )
+        mock_inspect.return_value.reserved.return_value = {
+            "celery@geotrek": [
+                {
+                    "id": "task-2",
+                    "name": "geotrek.common.import-file",
+                    "args": "('Parser', '/tmp/file.shp')",
+                },
+                {
+                    "id": "task-3",
+                    "name": "geotrek.common.import-web",
+                    "args": "('Parser',)",
+                },
+            ]
+        }
         url = reverse("common:import_update_json")
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(len(response.json()), 3)
+        mock_inspect.return_value.reserved.side_effect = (
+            redis.exceptions.ConnectionError()
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
 
-    def test_import_from_file_good_zip_file(self):
+    @mock.patch("geotrek.common.views.import_datas.delay")
+    def test_import_from_file_good_zip_file(self, mock_delay):
         self.client.force_login(user=self.super_user)
 
         with open("geotrek/common/tests/data/test.zip", "rb") as real_archive:
+            uploaded = SimpleUploadedFile(
+                "trek.zip", real_archive.read(), content_type="application/zip"
+            )
             url = reverse("common:import_dataset")
             choices = {
                 choice: id_choice
@@ -256,12 +332,30 @@ class ViewsImportTest(TestCase):
                 {
                     "upload-file": "Upload",
                     "with-file-parser": choices["Cities"],
-                    "with-file-file": real_archive,
+                    "with-file-file": uploaded,
                     "with-file-encoding": "UTF-8",
                 },
             )
             self.assertEqual(response_real.status_code, 200)
             self.assertNotContains(response_real, "File must be of ZIP type.")
+            self.assertTrue(mock_delay.called)
+
+        with mock.patch(
+            "geotrek.common.views.import_file",
+            side_effect=UnicodeDecodeError("utf-8", b"", 0, 1, "bad"),
+        ):
+            fake_file = SimpleUploadedFile("file.doc", b"content")
+            response_err = self.client.post(
+                url,
+                {
+                    "upload-file": "Upload",
+                    "with-file-parser": choices["Cities"],
+                    "with-file-file": fake_file,
+                    "with-file-encoding": "UTF-8",
+                },
+            )
+            self.assertEqual(response_err.status_code, 200)
+            self.assertTrue(response_err.context["encoding_error"])
 
     @mock.patch("geotrek.common.tasks.current_task")
     @mock.patch("geotrek.common.tasks.import_datas.delay")

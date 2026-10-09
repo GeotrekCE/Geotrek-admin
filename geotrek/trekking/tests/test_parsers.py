@@ -23,7 +23,7 @@ from geotrek.common.models import (
     RecordSource,
     Theme,
 )
-from geotrek.common.parsers import DownloadImportError
+from geotrek.common.parsers import DownloadImportError, ValueImportError
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.common.utils import testdata
 from geotrek.core.tests.factories import PathFactory
@@ -2923,3 +2923,26 @@ class OpenStreetMapPOIParserTest(TestCase):
         self.assertEqual(poi1_bis.id, id1)
         self.assertEqual(poi2_bis.id, id2)
         self.assertEqual(self.objects.count(), 4)
+
+    def test_schema_randonnee_generate_attachments_value_import_error(self):
+        parser = SchemaRandonneeParser()
+        with (
+            mock.patch.object(
+                parser, "check_attachment_updated", return_value=(False, False)
+            ),
+            mock.patch.object(parser, "generate_attachment"),
+            mock.patch.object(
+                parser,
+                "generate_content_attachment",
+                side_effect=ValueImportError("bad"),
+            ),
+        ):
+            res = list(
+                parser.generate_attachments(
+                    "attachments",
+                    [{"url": "http://example.com/a.jpg", "type_media": "image"}],
+                    [],
+                    False,
+                )
+            )
+            self.assertEqual(res, [False, []])

@@ -6,7 +6,7 @@ from io import StringIO
 from django.conf import settings
 from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
-from django.test import TestCase
+from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils.translation import gettext
@@ -50,6 +50,7 @@ from geotrek.signage.tests.factories import (
     SignageFactory,
     SignageTypeFactory,
 )
+from geotrek.signage.views import BladeCreate
 
 
 class SignageTest(TestCase):
@@ -1283,3 +1284,9 @@ class BladeMultiActionsViewTest(
 
         self.assertNotContains(response, "Blades\n")
         self.assertNotContains(response, "Signage\n")
+
+    def test_blade_create_with_unknown_signage_404(self):
+        view = BladeCreate()
+        view.request = RequestFactory().get("/?signage=999999")
+        with self.assertLogs("geotrek.signage.views", level="WARNING"):
+            self.assertIsNone(view.get_signage())

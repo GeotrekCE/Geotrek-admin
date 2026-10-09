@@ -1,16 +1,26 @@
 import os
+import shutil
 from shutil import copy as copyfile
+from unittest import mock
 
 from django.conf import settings
 from django.contrib.gis.geos import GeometryCollection, GEOSGeometry, MultiPoint, Point
 from django.test import SimpleTestCase, TestCase
 from django.test.utils import override_settings
 
-from ..parsers import Parser
-from ..utils import format_coordinates, simplify_coords, spatial_reference, uniquify
-from ..utils.file_infos import get_encoding_file
-from ..utils.import_celery import create_tmp_destination, subclasses
-from ..utils.parsers import (
+from geotrek.common.helpers_sync import ZipTilesBuilder
+from geotrek.common.utils import (
+    format_coordinates,
+    import_celery,
+    reify,
+    simplify_coords,
+    spatial_reference,
+    sqlfunction,
+    uniquify,
+)
+from geotrek.common.utils.file_infos import get_encoding_file, is_a_non_svg_image
+from geotrek.common.utils.import_celery import create_tmp_destination, subclasses
+from geotrek.common.utils.parsers import (
     GeomValueError,
     add_http_prefix,
     force_geom_to_2d,
@@ -18,6 +28,9 @@ from ..utils.parsers import (
     get_geom_from_kml,
     maybe_fix_encoding_to_utf8,
 )
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
+
+from ..parsers import Parser
 
 
 class UtilsTest(TestCase):
@@ -336,3 +349,35 @@ class TestConvertEncodingFiles(TestCase):
 
         encoding = get_encoding_file(new_file_name)
         self.assertEqual(encoding, "utf-8")
+
+    def test_utils_extra_coverage(self):
+        builder = ZipTilesBuilder(
+            None, tiles_url="http://server/wmts?LAYER=foo&FORMAT=image/jpeg&"
+        )
+        self.assertEqual(
+            builder.format_from_url("http://server/wmts?LAYER=foo&FORMAT=image/jpeg&"),
+            "image/jpeg",
+        )
+
+        descriptor = reify(lambda s: 1)
+        self.assertIs(descriptor.__get__(None), descriptor)
+        self.assertEqual(
+            sqlfunction("SELECT * FROM generate_series", "1", "2"), [(1,), (2,)]
+        )
+
+        self.assertFalse(is_a_non_svg_image(None))
+        self.assertTrue(is_a_non_svg_image(get_dummy_uploaded_image()))
+
+        new_tmp = os.path.join(settings.TMP_DIR, "missing_tmp_dir")
+        if os.path.exists(new_tmp):
+            shutil.rmtree(new_tmp)
+        with override_settings(TMP_DIR=new_tmp):
+            create_tmp_destination("bombadil")
+            self.assertTrue(os.path.exists(new_tmp))
+        shutil.rmtree(new_tmp)
+
+        with override_settings(VAR_DIR="/nonexistent"):
+            import_celery.parsers_module = None
+            request = mock.MagicMock(LANGUAGE_CODE="en")
+            request.user.has_perm.return_value = False
+            import_celery.discover_available_parsers(request)

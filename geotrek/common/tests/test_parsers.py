@@ -1,5 +1,7 @@
 import json
 import os
+import shutil
+import tempfile
 from io import StringIO
 from unittest import mock, skipIf
 from urllib.parse import urlparse
@@ -17,7 +19,7 @@ from django.test.utils import override_settings
 from requests import Response
 from requests.exceptions import ChunkedEncodingError
 
-from geotrek.authent.tests.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.common.models import (
     Attachment,
     FileType,
@@ -28,15 +30,18 @@ from geotrek.common.models import (
     Theme,
 )
 from geotrek.common.parsers import (
+    AtomParser,
     AttachmentParserMixin,
     DownloadImportError,
     ExcelParser,
     GeotrekAggregatorParser,
     GeotrekParser,
+    GlobalImportError,
     OpenStreetMapAttachmentsParserMixin,
     OpenStreetMapParser,
     OpenSystemParser,
     Parser,
+    RowImportError,
     TourInSoftParser,
     TourismSystemParser,
     ValueImportError,
@@ -53,7 +58,7 @@ from geotrek.tourism.models import (
 from geotrek.tourism.tests.factories import InformationDeskTypeFactory
 from geotrek.trekking.models import POI, Trek
 from geotrek.trekking.parsers import GeotrekTrekParser
-from geotrek.trekking.tests.factories import TrekFactory
+from geotrek.trekking.tests.factories import POIFactory, TrekFactory
 from geotrek.zoning.models import District
 
 
@@ -853,6 +858,11 @@ class MultilangParserTests(TestCase):
 
 class AttachmentParserTests(TestCase):
     def setUp(self):
+        self.tmp_media_root = tempfile.mkdtemp(dir=settings.TMP_DIR)
+        self._override = override_settings(MEDIA_ROOT=self.tmp_media_root)
+        self._override.enable()
+        self.addCleanup(shutil.rmtree, self.tmp_media_root, ignore_errors=True)
+        self.addCleanup(self._override.disable)
         self.filetype = FileType.objects.create(type="Photographie")
 
     @mock.patch("requests.get")
@@ -2175,6 +2185,13 @@ class GeotrekTrekTestSourcesParser(GeotrekTrekParser):
 
 
 class GeotrekAggregatorSourcesTests(TestCase):
+    def setUp(self):
+        self.tmp_media_root = tempfile.mkdtemp(dir=settings.TMP_DIR)
+        self._override = override_settings(MEDIA_ROOT=self.tmp_media_root)
+        self._override.enable()
+        self.addCleanup(shutil.rmtree, self.tmp_media_root, ignore_errors=True)
+        self.addCleanup(self._override.disable)
+
     def mocked_responses(self, url):
         class MockResponse:
             def __init__(self, mock_time, status_code):
@@ -2519,3 +2536,249 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
             warnings["Line 0"][0],
             "'https://api.wikimedia.org/core/v1/commons/file/Cime_de_Clot__de_Puy_Salié.jpg' is inaccessible (Error 404)",
         )
+
+    def test_common_parsers_extra_coverage(self):
+        class DummyParser(AttachmentParserMixin, Parser):
+            model = Organism
+            eid = "organism"
+            fields = {"organism": ["col1", "col2"], "structure": "struct"}
+            warn_on_missing_fields = True
+            field_options = {
+                "organism": {"mapping": {"sub": "Mapped"}, "partial": True},
+                "structure": {"fk": "structure"},
+            }
+
+            def next_row(self):
+                return []
+
+        p = DummyParser()
+        p.get_val({"col1": "v"}, "organism", ["col1", "col2"])
+        self.assertEqual(
+            p.get_mapping("organism", "my_sub_val", {"sub": "Mapped"}, True),
+            "Mapped",
+        )
+
+        struct = StructureFactory.create(name="S1")
+        obj = Organism.objects.create(organism="O1", structure=struct)
+        p.obj = obj
+        self.assertEqual(
+            p.filter_fk("structure", "O1", Organism, "organism", fk="structure"),
+            obj,
+        )
+
+        # set_value branches
+        poi = POIFactory.build()
+        p_poi = DummyParser()
+        p_poi.model = POI
+        p_poi.obj = poi
+        with self.assertRaises(RowImportError):
+            p_poi.set_value("type", "type", None)
+        with self.assertRaises(RowImportError):
+            p_poi.set_value("name", "name", "")
+        # TextField with null=False, blank=True -> description
+        p_poi.set_value("description", "description", None)
+        self.assertEqual(poi.description, "")
+
+        with (
+            mock.patch.object(
+                POI._meta,
+                "get_field",
+                return_value=mock.MagicMock(null=False, blank=True),
+            ),
+            self.assertRaises(RowImportError),
+        ):
+            p_poi.set_value("non_text", "non_text", None)
+
+        # get_eid_kwargs branches
+        p_req = DummyParser()
+        p_req.fields = {"organism": "col1"}
+        with self.assertRaises(ValueImportError):
+            p_req.get_eid_kwargs({})
+        with (
+            mock.patch.object(p_req, "get_val", side_effect=KeyError("col1")),
+            self.assertRaises(GlobalImportError),
+        ):
+            p_req.get_eid_kwargs({})
+        p_bad_eid = DummyParser()
+        p_bad_eid.fields = {"organism": "col1"}
+        p_bad_eid.eid = "missing_field"
+        with self.assertRaises(GlobalImportError):
+            p_bad_eid.get_eid_kwargs({})
+
+        # parse_row branches
+        with mock.patch.object(
+            p_req, "get_eid_kwargs", side_effect=RowImportError("err")
+        ):
+            p_req.parse_row({})
+
+        p.fields = {"organism": "col1"}
+        p.update_only = True
+        p.warn_on_missing_objects = True
+        p.parse_row({"COL1": "NonExistent"})
+        p.update_only = False
+
+        Organism.objects.create(organism="Dup", structure=struct)
+        Organism.objects.create(
+            organism="Dup", structure=StructureFactory.create(name="S2")
+        )
+        p.parse_row({"COL1": "Dup"})
+
+        other_user = UserFactory.create()
+        Organism.objects.create(
+            organism="Owned", structure=StructureFactory.create(name="OtherS")
+        )
+        p.user = other_user
+        p.to_delete = set()
+        p.parse_row({"COL1": "Owned"})
+
+        # get_to_delete_kwargs empty filters
+        p_empty_del = DummyParser()
+        p_empty_del.model = Trek
+        p_empty_del.constant_fields = {}
+        p_empty_del.m2m_constant_fields = {"themes": []}
+        p_empty_del.natural_keys = {"themes": "theme"}
+        p_empty_del.provider = None
+        self.assertEqual(p_empty_del.get_to_delete_kwargs(), {})
+
+        # AtomParser
+        class MyAtomParser(AtomParser):
+            model = Organism
+            fields = {
+                "organism": "Atom:title",
+                "structure": ("Atom:author", "Atom:title"),
+            }
+
+        atom_xml = (
+            '<?xml version="1.0"?>'
+            '<feed xmlns="http://www.w3.org/2005/Atom">'
+            "<entry><title>Entry1</title><author>Auth1</author></entry>"
+            "</feed>"
+        )
+        with tempfile.NamedTemporaryFile("w+", suffix=".xml") as tf:
+            tf.write(atom_xml)
+            tf.flush()
+            ap = MyAtomParser()
+            ap.filename = tf.name
+            rows = list(ap.next_row())
+            self.assertEqual(len(rows), 1)
+
+        # AttachmentParserMixin
+        p.download_attachments = False
+        with (
+            override_settings(PAPERCLIP_ENABLE_LINK=False),
+            self.assertRaises(Exception),
+        ):
+            p.start()
+        self.assertEqual(p.filter_attachments("attachments", None), [])
+        att = mock.MagicMock()
+        att.attachment_file.size = 100
+        with mock.patch("geotrek.common.parsers.FTP") as mock_ftp:
+            mock_ftp.return_value.size.return_value = 100
+            self.assertFalse(
+                p.has_size_changed("ftp://user:pass@example.com/dir/img.png", att)
+            )
+
+        # TourInSoftParser
+        class MyTISParser(TourInSoftParser):
+            model = POI
+            url = "http://example.com"
+
+        tis = MyTISParser()
+        with self.assertRaises(ValueImportError):
+            tis.filter_geom("geom", (None, "1.0"))
+        self.assertEqual(
+            tis.filter_email("email", f"{tis.separator}Tél{tis.separator2}0102"), ""
+        )
+        self.assertEqual(
+            tis.filter_website("website", f"{tis.separator}Tél{tis.separator2}0102"),
+            "",
+        )
+        self.assertIn(
+            "0102030405",
+            tis.filter_contact(
+                "contact",
+                (
+                    f"{tis.separator}Mél{tis.separator2}a@b.c{tis.separator}Tél{tis.separator2}0102030405",
+                    None,
+                ),
+            ),
+        )
+
+        # TourismSystemParser
+        class MyTSParser(TourismSystemParser):
+            model = Organism
+            url = "http://example.com"
+            login = "u"
+            password = "p"
+
+        ts = MyTSParser()
+        self.assertEqual(ts.filter_attachments("attachments", None), [])
+        self.assertEqual(
+            ts.filter_attachments(
+                "attachments",
+                [
+                    {"URL": "http://example.com/a.jpg", "name": {"fr": "L"}},
+                    {"URL": "http://example.com/b.jpg", "name": {}},
+                ],
+            ),
+            [
+                ("http://example.com/a.jpg", "L", None),
+                ("http://example.com/b.jpg", None, None),
+            ],
+        )
+        with mock.patch.object(ts, "request_or_retry") as mreq:
+            mreq.return_value = mock.MagicMock(
+                json=lambda: {"data": [{"k": "v"}], "metadata": {"total": 1}}
+            )
+            self.assertEqual(len(list(ts.next_row())), 1)
+
+        # OpenSystemParser
+        class MyOSParser(OpenSystemParser):
+            model = Organism
+            url = "http://example.com"
+            login = "u"
+            password = "p"
+
+        os_xml = (
+            b"<Data><Resultat><Objets><Objet>"
+            b"<ObjetCle><Cle>123</Cle></ObjetCle>"
+            b"<Liaisons><Liaison><ObjetOS><CodeUI>456</CodeUI></ObjetOS></Liaison></Liaisons>"
+            b"</Objet></Objets></Resultat></Data>"
+        )
+        osp = MyOSParser()
+        self.assertEqual(osp.normalize_field_name("test"), "test")
+        with mock.patch.object(
+            osp, "request_or_retry", return_value=mock.MagicMock(content=os_xml)
+        ):
+            self.assertEqual(len(list(osp.next_row())), 1)
+
+        # GeotrekParser next_row pagination
+        class MyGTParser(GeotrekParser):
+            model = POI
+            url = "http://example.com"
+            url_categories = {}
+
+        gtp = MyGTParser()
+        with mock.patch.object(gtp, "request_or_retry") as mreq:
+            mreq.side_effect = [
+                mock.MagicMock(
+                    json=lambda: {
+                        "count": 2,
+                        "next": "http://example.com?page=2",
+                        "results": [{"id": 1}],
+                    }
+                ),
+                mock.MagicMock(
+                    json=lambda: {"count": 2, "next": None, "results": [{"id": 2}]}
+                ),
+            ]
+            self.assertEqual(len(list(gtp.next_row())), 2)
+
+        # OpenStreetMapParser get_tag_info
+        class MyOSMParser(OpenStreetMapParser):
+            model = POI
+            tags = [{"amenity": "bench"}]
+
+        osmp = MyOSMParser()
+        self.assertEqual(osmp.get_tag_info([None, "val"]), "val")
+        self.assertIsNone(osmp.get_tag_info([None, ""]))

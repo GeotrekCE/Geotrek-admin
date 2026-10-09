@@ -1,5 +1,6 @@
 from django.test import TestCase
 
+from geotrek.feedback.models import Report
 from geotrek.maintenance.filters import ProjectFilterSet
 from geotrek.maintenance.tests.factories import ProjectFactory
 
@@ -15,3 +16,7 @@ class ProjectYearsFilterTest(TestCase):
         self.assertIn(p, filter.qs)
         self.assertEqual(len(filter.qs), 3)
         # We get all project if it's a wrong filter
+
+    def test_year_insert_choices_empty(self):
+        self.assertEqual(Report.objects.year_insert_choices(), (("", "---------"),))
+        self.assertEqual(Report.objects.year_update_choices(), (("", "---------"),))

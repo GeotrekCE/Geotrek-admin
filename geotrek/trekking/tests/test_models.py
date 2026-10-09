@@ -18,20 +18,33 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.test.utils import override_settings
 from easy_thumbnails.files import ThumbnailFile
+from mapentity.tests.factories import SuperUserFactory
 
 from geotrek.common.tests.factories import (
+    AttachmentFactory,
     AttachmentImageFactory,
     AttachmentPictoSVGFactory,
     LabelFactory,
 )
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
-from geotrek.trekking.models import OrderedTrekChild, Rating, RatingScale, Trek
+from geotrek.trekking.forms import TrekForm
+from geotrek.trekking.models import (
+    OrderedTrekChild,
+    Rating,
+    RatingScale,
+    Service,
+    Trek,
+)
+from geotrek.trekking.serializers import TrekSerializer
 from geotrek.trekking.tests.factories import (
+    AccessibilityFactory,
     POIFactory,
     PracticeFactory,
     RatingFactory,
     RatingScaleFactory,
     ServiceFactory,
+    ServiceTypeFactory,
     TrekFactory,
     TrekWithPOIsFactory,
     WebLinkCategoryFactory,
@@ -628,3 +641,67 @@ class TrekLabelsTestCase(TestCase):
 
     def test_published_label_property(self):
         self.assertEqual(self.trek.published_labels, [self.published_label])
+
+    def test_trekking_models_forms_and_serializers_extra_coverage(self):
+        trek = TrekFactory.create(published=True)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            poi = POIFactory.create(
+                paths=[(trek.paths.first(), 0.5, 0.5)], published=True
+            )
+            srv = ServiceFactory.create(paths=[(trek.paths.first(), 0.5, 0.5)])
+        else:
+            poi = POIFactory.create(geom=Point(700000, 6600000), published=True)
+            srv = ServiceFactory.create(geom=Point(700000, 6600000))
+        self.assertIsNone(trek.picture_print)
+        AttachmentFactory.create(
+            content_object=poi, attachment_file=get_dummy_uploaded_image()
+        )
+        self.assertIsNotNone(trek.picture_print)
+        self.assertEqual(trek.networks_display, "")
+        self.assertEqual(trek.information_desks_display, "")
+        self.assertEqual(trek.accessibilities_display, "")
+        self.assertEqual(trek.web_links_display, "")
+        self.assertEqual(trek.portal_display, "")
+        self.assertEqual(trek.source_display, "")
+        self.assertEqual(len(trek.extent), 4)
+        self.assertIn(trek, Trek.published_topology_treks(poi))
+
+        acc = AccessibilityFactory.create(name="Wheelchair")
+        self.assertEqual(acc.slug, "wheelchair")
+        wcat = WebLinkCategoryFactory.create(label="Cat")
+        self.assertEqual(str(wcat), "Cat")
+        self.assertEqual(poi.type_display, str(poi.type))
+        self.assertEqual(len(poi.extent), 4)
+
+        srv.type.published = True
+        srv.type.save()
+        srv.type.practices.add(trek.practice)
+        self.assertEqual(srv.type_display, str(srv.type))
+        self.assertIn(srv, Service.published_topology_services(trek))
+        self.assertEqual(
+            TrekSerializer().get_length_2d(trek), round(trek.length_2d_display)
+        )
+
+        ServiceTypeFactory.create(pictogram="upload/picto.png")
+        trek2 = TrekFactory.create()
+        trek3 = TrekFactory.create()
+        user = SuperUserFactory.create()
+        data = {
+            "name_en": "trek",
+            "structure": str(user.profile.structure.pk),
+            "children": [str(trek2.pk), str(trek3.pk)],
+            "hidden_ordered_children": f"invalid,{trek2.pk},",
+        }
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            data["topology"] = f'{{"paths": [{trek.paths.first().pk}]}}'
+        else:
+            data["geom"] = trek.geom.ewkt
+        form = TrekForm(instance=trek, user=user, data=data)
+        self.assertTrue(form.is_valid(), form.errors)
+        form.save()
+        self.assertEqual(
+            list(
+                trek.trek_children.order_by("order").values_list("child_id", flat=True)
+            ),
+            [trek2.pk, trek3.pk],
+        )
