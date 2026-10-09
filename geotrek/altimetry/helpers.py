@@ -24,6 +24,20 @@ class AltimetryHelper:
         if geometry3d.geom_type == "Point":
             return [[0, geometry3d.x, geometry3d.y, geometry3d.z]]
 
+        if geometry3d.geom_type in ("GeometryCollection", "MultiPoint"):
+            profile = []
+            for subgeom in geometry3d:
+                subgeom.srid = geometry3d.srid
+                if subgeom.geom_type == "Point":
+                    profile.append([offset, subgeom.x, subgeom.y, subgeom.z])
+                else:
+                    offset += subgeom.length
+                    subprofile = AltimetryHelper.elevation_profile(
+                        subgeom, precision, offset
+                    )
+                    profile.extend(subprofile)
+            return profile
+
         if geometry3d.geom_type == "MultiLineString":
             profile = []
             for subcoords in geometry3d.coords:

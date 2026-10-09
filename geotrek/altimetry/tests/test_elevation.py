@@ -1,7 +1,12 @@
 from unittest import SkipTest
 
 from django.conf import settings
-from django.contrib.gis.geos import LineString, MultiLineString, Point
+from django.contrib.gis.geos import (
+    GeometryCollection,
+    LineString,
+    MultiLineString,
+    Point,
+)
 from django.db import connection
 from django.test import TestCase
 
@@ -84,6 +89,31 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.min_elevation, 12)
         self.assertEqual(topo.max_elevation, 17)
         self.assertEqual(len(topo.geom_3d.coords), 5)
+        self.assertFalse(topo.ispoint())
+
+    def test_elevation_uncoupled_topology_multilinestring(self):
+        topo = TopologyUncoupledFactory.create(
+            geom="SRID=2154;MULTILINESTRING((63 97, 18 37), (18 37, 63 97))"
+        )
+        profile = topo.get_elevation_profile()
+        self.assertEqual(len(profile), 10)
+        self.assertEqual(topo.ascent, 5)
+        self.assertEqual(topo.descent, -5)
+        self.assertEqual(topo.min_elevation, 12)
+        self.assertEqual(topo.max_elevation, 17)
+        self.assertFalse(topo.ispoint())
+
+    def test_elevation_uncoupled_topology_geometrycollection(self):
+        topo = TopologyUncoupledFactory.create(
+            geom="SRID=2154;GEOMETRYCOLLECTION(POINT(33 57), LINESTRING(63 97, 18 37))"
+        )
+        profile = topo.get_elevation_profile()
+        self.assertEqual(len(profile), 6)
+        self.assertEqual(topo.ascent, 5)
+        self.assertEqual(topo.descent, 0)
+        self.assertEqual(topo.min_elevation, 12)
+        self.assertEqual(topo.max_elevation, 17)
+        self.assertFalse(topo.ispoint())
 
     def test_elevation_uncoupled_topology_point(self):
         topo = TopologyUncoupledFactory.create(geom="SRID=2154;POINT(33 57)")
@@ -92,6 +122,7 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.descent, 0)
         self.assertEqual(topo.min_elevation, 15)
         self.assertEqual(topo.max_elevation, 15)
+        self.assertTrue(topo.ispoint())
 
     def test_elevation_topology_point_offset(self):
         topo = TopologyFactory.create(paths=[(self.path, 0.5, 0.5)], offset=1)
@@ -130,6 +161,16 @@ class ElevationProfileTest(TestCase):
 
         profile = AltimetryHelper.elevation_profile(geom)
         self.assertEqual(len(profile), 4)
+
+    def test_elevation_profile_geometrycollection(self):
+        geom = GeometryCollection(
+            Point(1.5, 2.5, 8),
+            LineString((1.5, 2.5, 8), (2.5, 2.5, 10)),
+            srid=settings.SRID,
+        )
+
+        profile = AltimetryHelper.elevation_profile(geom)
+        self.assertEqual(len(profile), 3)
 
     def test_elevation_profile_point(self):
         geom = Point(1.5, 2.5, 8, srid=settings.SRID)
