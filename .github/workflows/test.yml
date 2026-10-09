@@ -289,6 +289,7 @@ jobs:
     env:
       CYPRESS_BASE_URL: http://geotrek.local
       CYPRESS_CACHE_FOLDER: ~/cypress/cache
+      ELECTRON_EXTRA_LAUNCH_ARGS: "--ignore-gpu-blocklist --enable-webgl --enable-webgl2 --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader"
 
     services:
       postgres:
@@ -381,6 +382,7 @@ jobs:
     env:
       CYPRESS_BASE_URL: http://geotrek.local
       CYPRESS_CACHE_FOLDER: ~/cypress/cache
+      ELECTRON_EXTRA_LAUNCH_ARGS: "--ignore-gpu-blocklist --enable-webgl --enable-webgl2 --use-gl=angle --use-angle=swiftshader --enable-unsafe-swiftshader"
 
     services:
       postgres:

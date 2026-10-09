@@ -1,15 +1,215 @@
-Cypress.Commands.add('login', (username = 'admin', password = 'admin') => {
-  cy.session([username, password], () => {
-    cy.visit('/login/')
-    cy.get('input[name="username"]').type(username)
-    cy.get('input[name="password"]').type(password)
-    cy.get('form').submit()
-    cy.url().should('not.include', '/login/')
-  })
+Cypress.Commands.add('loginByCSRF', (username, password) => {
+  cy.session(
+    [username, password],
+    () => {
+      cy.request('/login/')
+      .its('body')
+      .then((body) => {
+        // we can use Cypress.$ to parse the string body
+        // thus enabling us to query into it easily
+        const $html = Cypress.$(body);
+        cy.request({
+          method: 'POST',
+          url: '/login/?next=/',
+          failOnStatusCode: true, // dont fail so we can make assertions
+          form: true, // we are submitting a regular form body
+          body: {
+            username,
+            password,
+            "csrfmiddlewaretoken": $html.find('input[name=csrfmiddlewaretoken]').val(), // insert this as part of form body
+         }
+        });
+        cy.setCookie('django_language', 'en');
+      });
+    },
+    {
+      validate() {
+        cy.request('/').its('status').should('eq', 200);
+      },
+    }
+  );
 });
 
 Cypress.Commands.add('mockTiles', () => {
-    cy.intercept("https://*.openstreetmap.org/*/*/*.png", {fixture: "images/tile_osm.png"}).as("tiles_osm");
-    cy.intercept("https://*.tile.opentopomap.org/*/*/*.png", {fixture: "images/tile_otm.png"}).as("tiles_otm");
-    cy.intercept(/data\.geopf\.fr\/wmts\?LAYER=CADASTRALPARCELS/, {fixture: "images/tile_overlay.png"}).as("tiles_overlay");
+    cy.intercept("https://*.tile.opentopomap.org/*/*/*.png", {fixture: "images/tile.png"}).as("tiles");
+    cy.intercept("https://*.tile.openstreetmap.org/*/*/*.png", {fixture: "images/tile.png"}).as("osmTiles");
+    cy.intercept("http://*.tile.openstreetmap.org/*/*/*.png", {fixture: "images/tile.png"}).as("osmHttpTiles");
+    cy.intercept(
+      "https://data.geopf.fr/annexes/ressources/vectorTiles/styles/PLAN.IGN/standard.json",
+      {
+        body: {
+          version: 8,
+          glyphs: "https://data.geopf.fr/annexes/ressources/vectorTiles/fonts/{fontstack}/{range}.pbf",
+          sources: {},
+          layers: [],
+        },
+      }
+    ).as("mapStyle");
+    cy.intercept(
+      "https://data.geopf.fr/annexes/ressources/vectorTiles/fonts/**",
+      { body: new ArrayBuffer(0) }
+    ).as("mapFonts");
+    cy.intercept(
+      "https://demotiles.maplibre.org/font/**",
+      { body: new ArrayBuffer(0) }
+    ).as("maplibreDemoFonts");
+});
+
+
+Cypress.Commands.add('setTinyMceContent', (tinyMceId, content) => {
+  cy.window().then((win) => {
+    const editor = win.tinymce.get(tinyMceId);
+    editor.setContent(content);
+  });
+});
+
+Cypress.Commands.add('getTinyMceContent', (tinyMceId, content) => {
+  cy.window().then((win) => {
+    const editor = win.tinymce.get(tinyMceId);
+    return editor.getContent();
+  });
+});
+
+const DEFAULT_TEST_VIEW = {
+  center: [2.3628, 46.2833],
+  zoom: 14,
+};
+
+const getMapInstance = (win) =>
+  win.mapentity_map || win.maps?.[0]?.getMap?.() || win.gm?.mapAdapter?.mapInstance;
+
+Cypress.Commands.add('waitForMap', (mapSelector = '.maplibre-map', view = DEFAULT_TEST_VIEW) => {
+  cy.get(mapSelector).find('.maplibregl-canvas').should('be.visible');
+  cy.window().should((win) => {
+    const map = getMapInstance(win);
+    expect(map).to.exist;
+    expect(map.loaded()).to.be.true;
+    if (win.document.querySelector('#id_geom, #id_topology')) {
+      expect(win.gm?.loaded).to.be.true;
+      expect(win.document.querySelector(`${mapSelector} .mapentity-field-draw-buttons`)).to.exist;
+    }
+  });
+  if (view) {
+    cy.window().then((win) => {
+      const map = getMapInstance(win);
+      const center =
+        view.center ||
+        win.SETTINGS?.map?.maplibreConfig?.DEFAULT_CENTER ||
+        DEFAULT_TEST_VIEW.center;
+      map.jumpTo({ center, zoom: view.zoom });
+    });
+  }
+});
+
+Cypress.Commands.add('waitForPathSnapLayer', (bbox = [[150, 150], [450, 250]]) => {
+  cy.window().should((win) => {
+    const map = getMapInstance(win);
+    expect(map.getLayer('mapentity-snap-layer-path')).to.exist;
+    expect(win.gm?.actionInstances?.helper__snapping).to.exist;
+    const features = map.queryRenderedFeatures(bbox, {
+      layers: ['mapentity-snap-layer-path'],
+    });
+    expect(features.length).to.be.greaterThan(0);
+  });
+});
+
+Cypress.Commands.add('waitForPathRoutingLayer', (bbox = [[150, 150], [450, 250]]) => {
+  cy.window().should((win) => {
+    const map = getMapInstance(win);
+    const pathLayer = win.pathLayerName;
+    expect(pathLayer).to.be.a('string').and.not.be.empty;
+    expect(map.getLayer(pathLayer)).to.exist;
+    expect(map.getSource('gl-pathControl-points-and-lines')).to.exist;
+    expect(map.isSourceLoaded('gl-pathControl-points-and-lines')).to.be.true;
+    expect(map.getLayer('gl-pathControl-reference-points-circle')).to.exist;
+    const features = map.queryRenderedFeatures(bbox, {
+      layers: [pathLayer],
+    });
+    expect(features.length).to.be.greaterThan(0);
+  });
+});
+
+Cypress.Commands.add('drawTopologicalRoute', (mapSelector, points) => {
+  const canvasContainer = `${mapSelector} .maplibregl-canvas-container`;
+
+  cy.get('button.mapbox-gl-path-btn-edit')
+    .should('be.visible')
+    .click()
+    .should('have.class', 'mapbox-gl-path-active');
+
+  points.forEach(([x, y], index) => {
+    cy.window().should((win) => {
+      const map = getMapInstance(win);
+      expect(map.isSourceLoaded('gl-pathControl-points-and-lines')).to.be.true;
+      const snapFeatures = map.queryRenderedFeatures(
+        [
+          [x - 15, y - 15],
+          [x + 15, y + 15],
+        ],
+        { layers: [win.pathLayerName] }
+      );
+      expect(snapFeatures.length).to.be.greaterThan(0);
+    });
+
+    cy.get(canvasContainer).trigger('mousemove', x, y, { force: true });
+    cy.wait(50);
+    cy.get(canvasContainer).click(x, y, { force: true });
+
+    if (index === 0) {
+      // Wait for the first waypoint's MapboxPathControl.update to fire (setting routingControlFirstUpdate = true)
+      cy.get('#id_topology').should('have.value', '[]');
+      cy.window().should((win) => {
+        const map = getMapInstance(win);
+        expect(map.isSourceLoaded('gl-pathControl-points-and-lines')).to.be.true;
+      });
+    }
+  });
+});
+
+Cypress.Commands.add('drawGeomanLine', (mapSelector, points, fieldId = 'id_geom') => {
+  const drawBtnSelector = `#${fieldId}_draw_line`;
+  const canvasContainer = `${mapSelector} .maplibregl-canvas-container`;
+
+  cy.get(drawBtnSelector).should('be.visible').click();
+  cy.get(drawBtnSelector).should('have.class', 'active');
+
+  points.forEach(([x, y]) => {
+    cy.get(canvasContainer).trigger('mousemove', x, y, { force: true });
+    cy.wait(50);
+    cy.get(canvasContainer).trigger('mousemove', x, y, { force: true });
+    cy.wait(50);
+    cy.get(canvasContainer).click(x, y, { force: true });
+    cy.wait(50);
+  });
+
+  // Click the last vertex marker element to finish the Geoman line
+  cy.get(`${mapSelector} .maplibregl-marker`).last().click({ force: true });
+
+  cy.get(`#${fieldId}`).should(($input) => {
+    expect($input.val()).to.not.be.empty;
+  });
+});
+
+Cypress.Commands.add('drawGeomanPoint', (mapSelector, [x, y], fieldId = 'id_geom') => {
+  const drawBtnSelector = `#${fieldId}_draw_marker`;
+  const canvasContainer = `${mapSelector} .maplibregl-canvas-container`;
+
+  cy.get(drawBtnSelector).should('be.visible').click();
+  cy.get(drawBtnSelector).should('have.class', 'active');
+
+  // First mousemove populates external layer snapping coordinates (or clears them if off-path)
+  cy.get(canvasContainer).trigger('mousemove', x, y, { force: true });
+  cy.wait(50);
+  // Second mousemove + click updates Geoman MarkerPointer (after 10ms throttle) and places the marker
+  cy.get(canvasContainer).trigger('mousemove', x, y, { force: true });
+  cy.wait(50);
+  cy.get(canvasContainer).click(x, y, { force: true });
+
+  cy.get(`#${fieldId}`).should(($input) => {
+    expect($input.val()).to.not.be.empty;
+  });
+});
+
+Cypress.Commands.add('submitEntityForm', () => {
+  cy.get('#save_changes, #submit-id-save_changes').first().click();
 });
