@@ -28,6 +28,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix bug in Tourinsoft v3 parsers when "Photo" is not defined
+* Fix site duplication so that the clone ID is used as the tree ID if the original site doesn't have a parent (refs #5461)
 
 **Maintenance**
 

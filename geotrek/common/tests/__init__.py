@@ -174,8 +174,11 @@ class CommonTest(AuthentFixturesTest, MapEntityTest):
             "date_update",
             "name",
             "name_en",
+            # intervention
             "target_id",
             "target",
+            # site
+            "tree_id",
         ]
         for field in self.model._meta.get_fields():
             if not field.related_model and field.name not in fields_name_different:
