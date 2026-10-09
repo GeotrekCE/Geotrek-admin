@@ -643,7 +643,6 @@ VIGILANCE_PERIOD_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "start_date",
         "end_date",
         "active_days",
-        "active_months",
         "annual",
     ]
 )
@@ -820,18 +819,12 @@ class BaseApiTest(TestCase):
             vigilance_area=cls.vigilance_area1,
             start_date=cls.today - datetime.timedelta(days=3),
             end_date=cls.today + datetime.timedelta(days=145),
-            active_months=[],
             active_days=[],
         )
         cls.period2 = zoning_factory.VigilancePeriodFactory.create(
             vigilance_area=cls.vigilance_area2,
             start_date=cls.today - datetime.timedelta(days=3),
             end_date=None,
-            active_months=[
-                (cls.today.month - 2) % 12 + 1,
-                cls.today.month,
-                (cls.today.month) % 12 + 1,
-            ],  # [Month-1, Month, Month+1]
             active_days=[
                 (cls.today.weekday() - 1) % 7,
                 cls.today.weekday(),
@@ -2090,18 +2083,6 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_trek_vigilancearea_filter_out_of_period(self):
         start_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
         end_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
-        response = self.get_trek_list(
-            params={
-                "practicable_from": start_date,
-                "practicable_to": end_date,
-                "practicable": "false",
-            }
-        )
-        self.assertEqual(response.json()["count"], 0)
-
-    def test_trek_vigilancearea_filter_invalid_month(self):
-        start_date = (self.today + datetime.timedelta(days=62)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=63)).strftime("%Y-%m-%d")
         response = self.get_trek_list(
             params={
                 "practicable_from": start_date,
@@ -3415,18 +3396,6 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             params={"start_date": start_date, "end_date": end_date}
         )
         self.assertEqual(response.json()["count"], 0)
-
-    def test_vigilancearea_filter_invalid_month(self):
-        start_date = (self.today + datetime.timedelta(days=62)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=63)).strftime("%Y-%m-%d")
-        response = self.get_vigilancearea_list(
-            params={"start_date": start_date, "end_date": end_date}
-        )
-        self.assertEqual(response.json()["count"], 1)
-        self.assertEqual(
-            response.json()["results"][0]["id"],
-            self.vigilance_area1.pk,
-        )
 
     def test_vigilancearea_filter_invalid_weekday(self):
         start_date = (self.today + datetime.timedelta(days=2)).strftime("%Y-%m-%d")

@@ -166,10 +166,6 @@ class VigilanceAreaGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(vigilance_area.impracticable, True)
         self.assertEqual(str(vigilance_area.sources.first()), "source 1")
         self.assertEqual(vigilance_area.external_info_url, "https://test.fr")
-        self.assertEqual(str(vigilance_area.start_date), "2026-08-04")
-        self.assertEqual(str(vigilance_area.end_date), "2026-08-28")
-        self.assertEqual(vigilance_area.active_months, [8])
-        self.assertEqual(vigilance_area.active_days, [0, 1, 2])
         self.assertEqual(vigilance_area.eid, "43ce926d-9236-4a62-ac7f-799d1c024b5a")
 
         self.assertEqual(vigilance_area.geom.geom_type, "MultiPolygon")
@@ -207,6 +203,8 @@ class VigilanceAreaGeotrekParserTests(GeotrekParserTestMixin, TestCase):
             VigilanceAreaType.objects.all().values_list("name_en", flat=True)
         )
         self.assertEqual(vigilance_types, ["Pastoralism", "Natural risk"])
+
+        # TODO : test periods
 
 
 class TestDistrictOpenStreetMapParser(OpenStreetMapDistrictParser):

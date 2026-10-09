@@ -4,15 +4,17 @@ from dal import autocomplete
 from dal_select2.widgets import Select2Multiple
 from django import forms
 from django.conf import settings
+from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
-from geotrek.zoning.choices import MonthChoices, WeekdayChoices
+from geotrek.zoning.choices import WeekdayChoices
 from geotrek.zoning.models import (
     City,
     District,
     RestrictedArea,
     VigilanceArea,
+VigilancePeriod,
 )
 
 
@@ -67,16 +69,6 @@ class VigilancePeriodForm(forms.ModelForm):
             "Days of the week when the vigilance area is active. Empty equals all week."
         ),
     )
-    active_months = forms.TypedMultipleChoiceField(
-        choices=MonthChoices.choices,
-        coerce=int,
-        required=False,
-        widget=Select2Multiple(choices=MonthChoices.choices),
-        label=_("Active months"),
-        help_text=_(
-            "Months of the year when the vigilance area is active. Empty equals all year."
-        ),
-    )
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -89,7 +81,6 @@ class VigilancePeriodForm(forms.ModelForm):
                 css_class="border-0 p-0",
             ),
             "active_days",
-            "active_months",
             "annual",
         ]
 
@@ -103,13 +94,15 @@ class VigilancePeriodForm(forms.ModelForm):
             "start_date",
             "end_date",
             "active_days",
-            "active_months",
             "annual",
         )
         widgets = {
             "start_date": forms.TextInput(attrs={"type": "date"}),
             "end_date": forms.TextInput(attrs={"type": "date"}),
         }
+
+
+VigilancePeriodFormset = inlineformset_factory(VigilanceArea, VigilancePeriod, form=VigilancePeriodForm, extra=1)
 
 
 class VigilanceAreaForm(CommonForm):

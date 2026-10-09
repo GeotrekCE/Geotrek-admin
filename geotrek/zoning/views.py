@@ -4,7 +4,6 @@ from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.core.paginator import Paginator
 from django.db.models import Q
-from django.forms.models import inlineformset_factory
 from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
 from mapentity.decorators import view_cache_latest, view_cache_response_content
@@ -39,7 +38,7 @@ from geotrek.core.views import CreateFromTopologyMixin
 
 from ..trekking.views import FlattenPicturesMixin
 from .filters import VigilanceAreaFilterSet
-from .forms import VigilanceAreaForm, VigilancePeriodForm
+from .forms import VigilanceAreaForm, VigilancePeriodFormset
 from .models import (
     City,
     District,
@@ -270,26 +269,21 @@ class VigilanceAreaDetail(CompletenessMixin, MapEntityDetail):
         return context
 
 
-class VigilanceAreaCreate(FormsetMixin, CreateFromTopologyMixin, MapEntityCreate):
+class VigilancePeriodFormsetMixin(FormsetMixin):
+    context_name = "vigilanceperiod_formset"
+    formset_class = VigilancePeriodFormset
+
+class VigilanceAreaCreate(VigilancePeriodFormsetMixin, CreateFromTopologyMixin, MapEntityCreate):
     model = VigilanceArea
     form_class = VigilanceAreaForm
 
     # Period formset settings
-    context_name = "vigilanceperiod_formset"
-    formset_class = inlineformset_factory(
-        VigilanceArea, VigilancePeriod, form=VigilancePeriodForm, extra=1
-    )
 
 
-class VigilanceAreaUpdate(FormsetMixin, MapEntityUpdate):
+
+class VigilanceAreaUpdate(VigilancePeriodFormsetMixin, MapEntityUpdate):
     queryset = VigilanceArea.objects.all()
     form_class = VigilanceAreaForm
-
-    # Period formset settings
-    context_name = "vigilanceperiod_formset"
-    formset_class = inlineformset_factory(
-        VigilanceArea, VigilancePeriod, form=VigilancePeriodForm, extra=0
-    )
 
     @same_structure_required("zoning:vigilancearea_detail")
     def dispatch(self, *args, **kwargs):

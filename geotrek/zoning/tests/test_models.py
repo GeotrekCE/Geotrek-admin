@@ -418,10 +418,9 @@ class VigilancePeriodTestCase(TestCase):
         )
         period.clean()
 
-    def test_active_days_and_months_labels(self):
-        period = VigilancePeriodFactory(active_days=[0, 6], active_months=[1, 12])
+    def test_active_days_labels(self):
+        period = VigilancePeriodFactory(active_days=[0, 6])
         self.assertEqual(len(period.active_days_labels), 2)
-        self.assertEqual(len(period.active_months_labels), 2)
 
     def test_period_resume(self):
         today = timezone_today()
@@ -429,17 +428,14 @@ class VigilancePeriodTestCase(TestCase):
             start_date=today,
             end_date=None,
             active_days=[0],
-            active_months=[1],
         )
         self.assertIn(str(today), period_no_end.period_resume)
         self.assertIn("days Monday", period_no_end.period_resume)
-        self.assertIn("months January", period_no_end.period_resume)
 
         period_with_end = VigilancePeriodFactory(
             start_date=today,
             end_date=today + datetime.timedelta(days=10),
             active_days=[],
-            active_months=[],
         )
         self.assertIn(str(today), period_with_end.period_resume)
         self.assertIn(
@@ -467,7 +463,6 @@ class VigilanceAreaModelTest(TestCase):
             start_date=today,
             end_date=None,
             active_days=[0],
-            active_months=[1],
         )
         period_with_end = VigilancePeriodFactory(
             vigilance_area=va,
@@ -488,8 +483,6 @@ class VigilancePeriodAndAreaManagerTest(TestCase):
 
         self.weekday = self.today.weekday()
         self.other_weekday = (self.weekday + 1) % 7
-        self.month = self.today.month
-        self.other_month = (self.month % 12) + 1
 
     def test_manager_ongoing_and_finished(self):
         period_active = VigilancePeriodFactory(start_date=self.yesterday, end_date=None)
@@ -528,42 +521,29 @@ class VigilancePeriodAndAreaManagerTest(TestCase):
             start_date=self.yesterday,
             end_date=None,
             active_days=[self.weekday],
-            active_months=[self.month],
         )
         period_wrong_day = VigilancePeriodFactory(
             start_date=self.yesterday,
             end_date=None,
             active_days=[self.other_weekday],
-            active_months=[self.month],
-        )
-        period_wrong_month = VigilancePeriodFactory(
-            start_date=self.yesterday,
-            end_date=None,
-            active_days=[self.weekday],
-            active_months=[self.other_month],
         )
 
         qs_period = VigilancePeriod.objects.active_today()
         self.assertIn(period_today, qs_period)
         self.assertNotIn(period_wrong_day, qs_period)
-        self.assertNotIn(period_wrong_month, qs_period)
 
         qs_area = VigilanceArea.objects.active_today()
         self.assertIn(period_today.vigilance_area, qs_area)
         self.assertNotIn(period_wrong_day.vigilance_area, qs_area)
-        self.assertNotIn(period_wrong_month.vigilance_area, qs_area)
 
     def test_active_by_dates(self):
         weekday = self.today.weekday()
         other_weekday = (weekday + 1) % 7
-        month = self.today.month
-        other_month = (month % 12) + 1
 
         period_active = VigilancePeriodFactory(
             start_date=self.yesterday,
             end_date=self.tomorrow,
             active_days=[weekday],
-            active_months=[month],
         )
         period_wrong_dates = VigilancePeriodFactory(
             start_date=self.tomorrow,
@@ -573,17 +553,9 @@ class VigilancePeriodAndAreaManagerTest(TestCase):
             start_date=self.yesterday,
             end_date=None,
             active_days=[other_weekday],
-            active_months=[month],
-        )
-        period_wrong_month = VigilancePeriodFactory(
-            start_date=self.yesterday,
-            end_date=None,
-            active_days=[weekday],
-            active_months=[other_month],
         )
 
         qs = VigilanceArea.objects.active_by_dates(self.yesterday, self.today)
         self.assertIn(period_active.vigilance_area, qs)
         self.assertNotIn(period_wrong_dates.vigilance_area, qs)
         self.assertNotIn(period_wrong_day.vigilance_area, qs)
-        self.assertNotIn(period_wrong_month.vigilance_area, qs)
