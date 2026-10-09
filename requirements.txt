@@ -69,7 +69,7 @@ click-plugins==1.1.1.2
     # via
     #   celery
     #   fiona
-click-repl==0.4.0
+click-repl==0.4.1
     # via celery
 cligj==0.7.2
     # via fiona
