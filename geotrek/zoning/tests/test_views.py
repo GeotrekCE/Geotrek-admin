@@ -316,7 +316,6 @@ class VigilanceAreaTestCase(MapEntityTest):
             "periods-0-start_date": "2026-01-01",
             "periods-0-end_date": "2026-12-31",
             "periods-0-active_days": [1, 3, 5],
-            "periods-0-active_months": [6, 7, 8],
             "periods-0-annual": "on",
         }
 
