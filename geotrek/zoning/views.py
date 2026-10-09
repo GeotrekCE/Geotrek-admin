@@ -139,7 +139,6 @@ class AutocompleteMixin:
 
             serializer = self.serializer_autocomplete_class(qs, many=True)
             data = {"results": serializer.data, "pagination": {"more": has_more}}
-
         return Response(data)
 
 
@@ -235,9 +234,9 @@ class VigilanceAreaList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList)
     mandatory_columns = ["id", "name", "ongoing"]
     default_extra_columns = [
         "vigilance_area_type",
-        "practicability",
+        "impracticable",
     ]
-    searchable_columns = ["id", "name", "vigilance_area_type", "practicability"]
+    searchable_columns = ["id", "name", "vigilance_area_type", "impracticable"]
 
 
 class VigilanceAreaFilter(MapEntityFilter):
@@ -253,7 +252,7 @@ class VigilanceAreaFormatList(MapEntityFormat, VigilanceAreaList):
     ]
     default_extra_columns = [
         "vigilance_area_type",
-        "practicability",
+        "impracticable",
         "structure",
         "description",
         "practical_info",
@@ -326,9 +325,13 @@ class VigilanceAreaViewSet(AutocompleteMixin, GeotrekMapentityViewSet):
         forwarded = json.loads(forwarded_str)
         parsed_dict = {}
         for key, value in forwarded.items():
-            values = value if key == "practicability" else [int(x) for x in value]
-            if values:
-                parsed_dict[f"{key}__in"] = values
+            if key == "impracticable":
+                if value in ("true", "false"):
+                    parsed_dict[f"{key}"] = value=="true"
+            else:
+                values = [int(x) for x in value]
+                if values:
+                    parsed_dict[f"{key}__in"] = values
         return parsed_dict
 
     def get_queryset(self):
