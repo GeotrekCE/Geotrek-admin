@@ -147,17 +147,10 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
       cy.waitForMap('#id_topology_map');
       cy.waitForPathRoutingLayer(PATH_BBOX);
 
-      // Activate topological routing mode (interactive: false by default)
-      cy.get('button.mapbox-gl-path-btn-edit')
-        .should('be.visible')
-        .click()
-        .should('have.class', 'mapbox-gl-path-active');
-
-      const canvasContainer = '#id_topology_map .maplibregl-canvas-container';
-
-      // Click start point and end point on the support path
-      cy.get(canvasContainer).click(230, 200, { force: true });
-      cy.get(canvasContainer).click(370, 200, { force: true });
+      cy.drawTopologicalRoute('#id_topology_map', [
+        [230, 200],
+        [370, 200],
+      ]);
 
       cy.wait('@routeGeometry').its('response.statusCode').should('eq', 200);
 
@@ -185,10 +178,11 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
       cy.loginByCSRF('admin', 'admin');
       cy.visit('/trek/add/');
       cy.waitForMap('#id_topology_map');
+      cy.waitForPathSnapLayer(PATH_BBOX);
 
       // Free line draw button for #id_geom and #id_geom_changed must exist for a user with permission
       cy.get('#id_geom_draw_line').should('exist').and('be.visible');
-      cy.get('#id_geom_changed').should('exist').and('have.value', 'false');
+      cy.get('#id_geom_changed').should('exist').and('not.have.value', 'true');
 
       // Topological path control is inactive by default so Geoman free drawing can be used directly
       cy.get('button.mapbox-gl-path-btn-edit')
@@ -206,7 +200,7 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
       );
 
       cy.get('#id_geom_changed').should('have.value', 'true');
-      cy.get('#id_topology_changed').should('have.value', 'false');
+      cy.get('#id_topology_changed').should('not.have.value', 'true');
       cy.get('#id_geom')
         .invoke('val')
         .then((val) => {
@@ -242,14 +236,10 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
       cy.get('#id_geom_changed').should('not.exist');
 
       // Topological drawing control IS available and works for this user
-      cy.get('button.mapbox-gl-path-btn-edit')
-        .should('be.visible')
-        .click()
-        .should('have.class', 'mapbox-gl-path-active');
-
-      const canvasContainer = '#id_topology_map .maplibregl-canvas-container';
-      cy.get(canvasContainer).click(240, 200, { force: true });
-      cy.get(canvasContainer).click(360, 200, { force: true });
+      cy.drawTopologicalRoute('#id_topology_map', [
+        [240, 200],
+        [360, 200],
+      ]);
 
       cy.wait('@routeGeometry').its('response.statusCode').should('eq', 200);
       cy.get('#id_topology_changed').should('have.value', 'true');

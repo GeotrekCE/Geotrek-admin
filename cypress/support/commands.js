@@ -116,13 +116,53 @@ Cypress.Commands.add('waitForPathSnapLayer', (bbox = [[150, 150], [450, 250]]) =
 Cypress.Commands.add('waitForPathRoutingLayer', (bbox = [[150, 150], [450, 250]]) => {
   cy.window().should((win) => {
     const map = getMapInstance(win);
-    const pathLayer = win.pathLayerName || 'layer-path-lines';
+    const pathLayer = win.pathLayerName;
+    expect(pathLayer).to.be.a('string').and.not.be.empty;
     expect(map.getLayer(pathLayer)).to.exist;
-    expect(map.getSource('mapbox-gl-path-source-point-and-line')).to.exist;
+    expect(map.getSource('gl-pathControl-points-and-lines')).to.exist;
+    expect(map.isSourceLoaded('gl-pathControl-points-and-lines')).to.be.true;
+    expect(map.getLayer('gl-pathControl-reference-points-circle')).to.exist;
     const features = map.queryRenderedFeatures(bbox, {
       layers: [pathLayer],
     });
     expect(features.length).to.be.greaterThan(0);
+  });
+});
+
+Cypress.Commands.add('drawTopologicalRoute', (mapSelector, points) => {
+  const canvasContainer = `${mapSelector} .maplibregl-canvas-container`;
+
+  cy.get('button.mapbox-gl-path-btn-edit')
+    .should('be.visible')
+    .click()
+    .should('have.class', 'mapbox-gl-path-active');
+
+  points.forEach(([x, y], index) => {
+    cy.window().should((win) => {
+      const map = getMapInstance(win);
+      expect(map.isSourceLoaded('gl-pathControl-points-and-lines')).to.be.true;
+      const snapFeatures = map.queryRenderedFeatures(
+        [
+          [x - 15, y - 15],
+          [x + 15, y + 15],
+        ],
+        { layers: [win.pathLayerName] }
+      );
+      expect(snapFeatures.length).to.be.greaterThan(0);
+    });
+
+    cy.get(canvasContainer).trigger('mousemove', x, y, { force: true });
+    cy.wait(50);
+    cy.get(canvasContainer).click(x, y, { force: true });
+
+    if (index === 0) {
+      // Wait for the first waypoint's MapboxPathControl.update to fire (setting routingControlFirstUpdate = true)
+      cy.get('#id_topology').should('have.value', '[]');
+      cy.window().should((win) => {
+        const map = getMapInstance(win);
+        expect(map.isSourceLoaded('gl-pathControl-points-and-lines')).to.be.true;
+      });
+    }
   });
 });
 
@@ -134,6 +174,8 @@ Cypress.Commands.add('drawGeomanLine', (mapSelector, points, fieldId = 'id_geom'
   cy.get(drawBtnSelector).should('have.class', 'active');
 
   points.forEach(([x, y]) => {
+    cy.get(canvasContainer).trigger('mousemove', x, y, { force: true });
+    cy.wait(50);
     cy.get(canvasContainer).trigger('mousemove', x, y, { force: true });
     cy.wait(50);
     cy.get(canvasContainer).click(x, y, { force: true });
