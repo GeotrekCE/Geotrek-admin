@@ -300,7 +300,7 @@ pmtiles==3.8.1
     # via django-mapbox-baselayer
 prompt-toolkit==3.0.53
     # via click-repl
-psycopg2==2.9.13
+psycopg==3.3.6
     # via geotrek (setup.py)
 pycparser==3.0
     # via cffi
