@@ -1149,6 +1149,17 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             request = self.context["request"]
             start_date = parse_date(request.GET.get("practicable_from"), today)
             end_date = parse_date(request.GET.get("practicable_to"), today)
+            portals = request.GET.get("portals", "")
+
+            impracticable_vigilance_areas = VigilanceArea.objects.filter(
+                published=True,
+                impracticable=True,
+            ).active_by_dates(start_date, end_date)
+
+            if portals:
+                portals = [int(portal) for portal in portals.split(",")]
+                impracticable_vigilance_areas = impracticable_vigilance_areas.filter(portals__in=portals).distinct()
+
             qs = (
                 obj.children.select_related("topo_object", "difficulty")
                 .prefetch_related(
@@ -1157,11 +1168,9 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 .annotate(
                     geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
                     impracticable=Exists(
-                        VigilanceArea.objects.filter(
-                            published=True,
-                            impracticable=True,
+                        impracticable_vigilance_areas.filter(
                             geom__intersects=OuterRef("geom"),
-                        ).active_by_dates(start_date, end_date)
+                        )
                     ),
                 )
             )

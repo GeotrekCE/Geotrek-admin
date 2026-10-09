@@ -9,6 +9,7 @@ from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.signage.tests.factories import SignageFactory
 
 from .. import models
+from ...common.utils import portals
 
 
 class TrekNetworkFactory(factory.django.DjangoModelFactory):

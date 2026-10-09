@@ -679,7 +679,7 @@ class GeotrekZoningAndThemeFilter(BaseFilterBackend):
                     | Q(description__icontains=q)
                     | Q(description_teaser__icontains=q)
                 )
-        return qs
+        return qs.distinct() # use distinct to avoid duplicated value because of filters on many-to-many
 
     def _get_schema_fields(self, view):
         return (

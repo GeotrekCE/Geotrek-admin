@@ -57,10 +57,19 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         today = datetime.date.today()
-        start_date = api_utils.parse_date(
-            self.request.GET.get("practicable_from"), today
-        )
+        start_date = api_utils.parse_date(self.request.GET.get("practicable_from"), today)
         end_date = api_utils.parse_date(self.request.GET.get("practicable_to"), today)
+        portals = self.request.GET.get("portals", "")
+
+        impracticable_vigilance_areas = VigilanceArea.objects.filter(
+            published=True,
+            impracticable=True,
+        ).active_by_dates(start_date, end_date)
+
+        if portals:
+            portals = [int(portal) for portal in portals.split(",")]
+            impracticable_vigilance_areas = impracticable_vigilance_areas.filter(portals__in=portals).distinct()
+
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
                 tourism_models.TouristicContent.objects.existing()
@@ -80,11 +89,9 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
                 .annotate(
                     geom_transformed=Transform(F("geom"), settings.API_SRID),
                     impracticable=Exists(
-                        VigilanceArea.objects.filter(
-                            published=True,
-                            impracticable=True,
+                        impracticable_vigilance_areas.filter(
                             geom__intersects=OuterRef("geom"),
-                        ).active_by_dates(start_date, end_date)
+                        )
                     ),
                 )
                 .order_by("name")
