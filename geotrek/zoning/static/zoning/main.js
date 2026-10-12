@@ -24,7 +24,7 @@ $(window).on('entity:map', function (e, data) {
         }
         var layer = new L.ObjectsLayer(null, {
             indexing: false,
-            modelname: landLayer.name,
+            modelname: landLayer.id,
             style: style,
         });
         var nameHTML = '<span style="color: ' + style['color'] + ';">&#x2B24;</span>&nbsp;' + landLayer.name;
@@ -35,7 +35,7 @@ $(window).on('entity:map', function (e, data) {
         var options = e.layer.options || { 'modelname': 'None' };
         for (var i = 0; i < landLayers.length; i++) {
             if (!landLayers[i].isActive) {
-                if (options.modelname == landLayers[i].name) {
+                if (options.modelname == landLayers[i].id) {
                     e.layer.load(landLayers[i].url);
                     landLayers[i].isActive = true;
                 }
