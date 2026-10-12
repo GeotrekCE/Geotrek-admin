@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 09:52+0000\n"
+"POT-Creation-Date: 2026-10-12 16:35+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/de/>\n"
@@ -30,15 +30,6 @@ msgstr ""
 msgid "Zoning"
 msgstr "Zonierung"
 
-msgid "Practicable"
-msgstr ""
-
-msgid "Under condition practicable"
-msgstr ""
-
-msgid "Not practicable"
-msgstr ""
-
 msgid "City"
 msgstr "Kommune"
 
@@ -54,7 +45,7 @@ msgstr "Regulatorische Zonierung"
 msgid "Vigilance area type"
 msgstr ""
 
-msgid "Vigilance area Practicability"
+msgid "Vigilance area impracticable"
 msgstr ""
 
 msgid "Vigilance area"
@@ -87,12 +78,6 @@ msgstr ""
 msgid "Days of the week when the vigilance area is active. Empty equals all week."
 msgstr ""
 
-msgid "Active months"
-msgstr ""
-
-msgid "Months of the year when the vigilance area is active. Empty equals all year."
-msgstr ""
-
 msgid "Periods"
 msgstr ""
 
@@ -123,7 +108,7 @@ msgstr ""
 msgid "Description"
 msgstr ""
 
-msgid "Practicability"
+msgid "Impracticable"
 msgstr ""
 
 msgid "Type"
@@ -141,7 +126,10 @@ msgstr ""
 msgid "Sources"
 msgstr ""
 
-msgid "Comment"
+msgid "Private comment"
+msgstr ""
+
+msgid "Always active"
 msgstr ""
 
 msgid "Vigilance areas"
@@ -171,10 +159,6 @@ msgstr ""
 msgid " - days %s"
 msgstr ""
 
-#, python-format
-msgid " - months %s"
-msgstr ""
-
 msgid " (annual)"
 msgstr ""
 
@@ -192,6 +176,9 @@ msgstr "Die Geometrie des Feldes '{src}' ist ungültig."
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
 msgstr "Der Geometrietyp des Feldes '{src}' ist ungültig. Es sollte (Multi)Polygon, nicht {geom_type}"
 
+msgid "Practicable"
+msgstr ""
+
 msgid "None"
 msgstr ""
 
@@ -204,7 +191,7 @@ msgstr ""
 msgid "Every days"
 msgstr ""
 
-msgid "Every months"
+msgid "This area is always active"
 msgstr ""
 
 msgid "Add a new period"

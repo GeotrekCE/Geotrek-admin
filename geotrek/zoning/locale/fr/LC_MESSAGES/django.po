@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 09:52+0000\n"
+"POT-Creation-Date: 2026-10-12 16:34+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/fr/>\n"
@@ -30,15 +30,6 @@ msgstr "Couleur"
 msgid "Zoning"
 msgstr "Zonage"
 
-msgid "Practicable"
-msgstr "Praticable"
-
-msgid "Under condition practicable"
-msgstr "Praticable sous conditions"
-
-msgid "Not practicable"
-msgstr "Non praticable"
-
 msgid "City"
 msgstr "Commune"
 
@@ -54,8 +45,8 @@ msgstr "Zone réglementaire"
 msgid "Vigilance area type"
 msgstr "Type de zone de vigilance"
 
-msgid "Vigilance area Practicability"
-msgstr "Praticabilité de la zone de vigilance"
+msgid "Vigilance area impracticable"
+msgstr "Zone de vigilance impraticable"
 
 msgid "Vigilance area"
 msgstr "Zone de vigilance"
@@ -87,12 +78,6 @@ msgstr "Jours actifs"
 msgid "Days of the week when the vigilance area is active. Empty equals all week."
 msgstr "Jours de la semaine pendant lesquels la zone de vigilance est active. Vide signifie toute la semaine."
 
-msgid "Active months"
-msgstr "Mois actifs"
-
-msgid "Months of the year when the vigilance area is active. Empty equals all year."
-msgstr "Mois de l'année pendant lesquels la zone de vigilance est active. Vide signifie toute l'année."
-
 msgid "Periods"
 msgstr "Périodes"
 
@@ -123,8 +108,8 @@ msgstr "Niveaux de vigilance"
 msgid "Description"
 msgstr "Description"
 
-msgid "Practicability"
-msgstr "Praticabilité"
+msgid "Impracticable"
+msgstr "Impraticable"
 
 msgid "Type"
 msgstr "Type"
@@ -141,8 +126,11 @@ msgstr "Portails"
 msgid "Sources"
 msgstr "Sources"
 
-msgid "Comment"
-msgstr "Commentaire"
+msgid "Private comment"
+msgstr "Commentaire privé"
+
+msgid "Always active"
+msgstr "Toujours actif"
 
 msgid "Vigilance areas"
 msgstr "Zones de vigilance"
@@ -171,10 +159,6 @@ msgstr "À partir du %s"
 msgid " - days %s"
 msgstr " - jours %s "
 
-#, python-format
-msgid " - months %s"
-msgstr " - mois %s"
-
 msgid " (annual)"
 msgstr " (annuelle)"
 
@@ -192,6 +176,9 @@ msgstr "La géométrie du champ '{src}' est invalide"
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
 msgstr "Le type de géométrie du champ '{src}' est invalide. Il devrait être (Multi)Polygon, pas {geom_type}"
 
+msgid "Practicable"
+msgstr "Praticable"
+
 msgid "None"
 msgstr "Aucun(e)"
 
@@ -204,8 +191,8 @@ msgstr "À partir du"
 msgid "Every days"
 msgstr "Tous les jours"
 
-msgid "Every months"
-msgstr "Tous les mois"
+msgid "This area is always active"
+msgstr "Cette zone est toujours active"
 
 msgid "Add a new period"
 msgstr "Ajouter une nouvelle période"
