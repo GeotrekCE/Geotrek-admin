@@ -7,7 +7,5 @@ threads = 2
 timeout = ${TIMEOUT}
 keepalive = 2
 debug = False
-
-# Recyclage des workers pour éviter les fuites de mémoire
 max_requests = 1000
 max_requests_jitter = 50
