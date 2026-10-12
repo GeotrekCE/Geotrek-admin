@@ -58,7 +58,7 @@ setup(
         "django-maintenance-mode",
         "django-flask-authent-backend@git+https://github.com/PnX-SI/django-flask-authent-backend@1.0.0#egg=django-flask-authent-backend",
         # prod,
-        "gunicorn[gevent]",
+        "gunicorn",
         "sentry-sdk",
         "django-embed_video@git+https://github.com/jazzband/django-embed-video.git@master#egg=django-embed-video",  # wait for 1.4.11 release ...
     ],
