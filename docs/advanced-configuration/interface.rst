@@ -1511,6 +1511,17 @@ A field can be hidden only if it meets **all** the following conditions:
           "url",
           "description",
       ]
+      HIDDEN_FORM_FIELDS["vigilance_area"] = [
+          "vigilance_level",
+          "published",
+          "description",
+          "practical_info",
+          "external_info_url",
+          "sources",
+          "portals",
+          "private_comment",
+          "eid",
+      ]
 
 .. note::
 
