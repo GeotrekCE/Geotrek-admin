@@ -17,7 +17,7 @@ bcrypt==5.0.0
     # via django-flask-authent-backend
 beautifulsoup4==4.15.0
     # via mapentity
-billiard==4.3.0
+billiard==4.3.1
     # via celery
 brotli==1.2.0
     # via fonttools
