@@ -128,4 +128,4 @@ USER geotrek
 
 HEALTHCHECK CMD curl --fail http://127.0.0.1:8000/api/settings.json
 
-CMD ["gunicorn", "geotrek.wsgi:application", "--bind=0.0.0.0:8000", "--worker-class=gthread", "--threads=2"]
+CMD ["gunicorn", "geotrek.wsgi:application", "--bind=0.0.0.0:8000", "--worker-class=gthread", "--threads=2", "--max-requests=1000", "--max-requests-jitter=50", "--keep-alive=5"]
