@@ -14,10 +14,6 @@ from ..authent.models import Structure
 from .models import AccessMean, Attachment, FileType, HDViewPoint, License, Organism
 
 
-class TranslatedModelSerializer(rest_serializers.ModelSerializer):
-    pass
-
-
 class PictogramSerializerMixin(rest_serializers.ModelSerializer):
     pictogram = rest_serializers.ReadOnlyField(source="get_pictogram_url")
 
@@ -37,7 +33,7 @@ class BasePublishableSerializerMixin(rest_serializers.ModelSerializer):
         fields = ("published", "published_status", "publication_date")
 
 
-class HDViewPointSerializer(TranslatedModelSerializer):
+class HDViewPointSerializer(rest_serializers.ModelSerializer):
     class Meta:
         model = HDViewPoint
         fields = ("id", "uuid", "author", "title", "legend", "license")
