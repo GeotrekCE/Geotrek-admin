@@ -1276,7 +1276,7 @@ class ServiceMultiActionsViewTest(
         "Type",
     ]
 
-    def test_trekking_views_extra_coverage(self):
+    def test_weblink_create_popup_post_valid(self):
         self.client.force_login(self.user)
         resp = self.client.post(
             reverse("trekking:weblink_add"),
@@ -1285,27 +1285,40 @@ class ServiceMultiActionsViewTest(
         self.assertEqual(resp.status_code, 200)
         self.assertIn("dismissAddAnotherPopup", resp.content.decode())
 
+    def test_poi_format_list_queryset_annotates_treks(self):
         trek = TrekFactory.create(published=True)
         if settings.TREKKING_TOPOLOGY_ENABLED:
-            POIFactory.create(paths=[(trek.paths.first(), 0.5, 0.5)])
+            poi = POIFactory.create(paths=[(trek.paths.first(), 0.5, 0.5)])
         else:
-            POIFactory.create(geom=Point(700000, 6600000))
+            poi = POIFactory.create(geom=Point(700000, 6600000))
         rf = RequestFactory()
         fmt_view = POIFormatList()
         fmt_view.request = rf.get("/")
-        list(fmt_view.get_queryset())
+        qs = list(fmt_view.get_queryset())
+        self.assertIn(poi, qs)
 
+    def test_trek_document_public_context_with_source(self):
+        trek = TrekFactory.create(published=True)
         source = RecordSourceFactory.create(name="Src")
+        rf = RequestFactory()
         with mock.patch.object(Trek, "prepare_map_image"):
-            for qs in (f"?source={source.name}", "?source=unknown"):
-                view = TrekDocumentPublic()
-                view.object = trek
-                view.request = rf.get(f"/{qs}")
-                view.kwargs = {"pk": trek.pk, "slug": trek.slug, "lang": "en"}
-                view.get_context_data(object=trek)
+            view = TrekDocumentPublic()
+            view.object = trek
+            view.request = rf.get(f"/?source={source.name}")
+            view.kwargs = {"pk": trek.pk, "slug": trek.slug, "lang": "en"}
+            ctx = view.get_context_data(object=trek)
+            self.assertEqual(ctx["source"], source)
 
-        trek.published = False
-        trek.save()
+            view_unknown = TrekDocumentPublic()
+            view_unknown.object = trek
+            view_unknown.request = rf.get("/?source=unknown")
+            view_unknown.kwargs = {"pk": trek.pk, "slug": trek.slug, "lang": "en"}
+            ctx_unknown = view_unknown.get_context_data(object=trek)
+            self.assertNotIn("source", ctx_unknown)
+
+    def test_trek_signage_viewset_unpublished_trek_raises_404(self):
+        trek = TrekFactory.create(published=False)
+        rf = RequestFactory()
         vs = TrekSignageViewSet()
         vs.kwargs = {"pk": trek.pk}
         vs.request = rf.get("/")

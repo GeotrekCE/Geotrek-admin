@@ -67,7 +67,7 @@ class DifficultyLevelTest(AuthentFixturesTest):
         self.assertNotEqual(trek.difficulty, self.difficulty)
         self.assertEqual(trek.difficulty_id, 4)
 
-    def test_difficulty_unchanged_id_and_service_type_changelist(self):
+    def test_change_difficulty_without_changing_id(self):
         change_url = reverse(
             "admin:trekking_difficultylevel_change", args=[self.difficulty.pk]
         )
@@ -75,6 +75,8 @@ class DifficultyLevelTest(AuthentFixturesTest):
             change_url, {"id": self.difficulty.id, "difficulty_en": "Renamed"}
         )
         self.assertEqual(response.status_code, 302)
+
+    def test_service_type_admin_changelist_practices_display(self):
         ServiceTypeFactory.create()
         resp = self.client.get(reverse("admin:trekking_servicetype_changelist"))
         self.assertEqual(resp.status_code, 200)

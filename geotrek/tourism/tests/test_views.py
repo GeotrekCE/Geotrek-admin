@@ -337,32 +337,43 @@ class TouristicEventMultiActionsViewTest(
         "Event place",
     ]
 
-    def test_categories_list_and_document_public_source_portal_context(self):
+    def test_touristic_content_list_categories_list(self):
         cat = TouristicContentCategoryFactory.create()
-        content = TouristicContentFactory.create(published=True, category=cat)
+        TouristicContentFactory.create(published=True, category=cat)
         self.assertIn(cat, TouristicContentList().categories_list)
 
+    def test_document_public_context_with_source_and_portal(self):
         source = RecordSourceFactory.create(name="Src")
         portal = TargetPortalFactory.create(name="Prtl")
         rf = RequestFactory()
+        content = TouristicContentFactory.create(published=True)
         event = TouristicEventFactory.create(published=True)
         for view_cls, obj in (
             (TouristicContentDocumentPublic, content),
             (TouristicEventDocumentPublic, event),
         ):
             with mock.patch.object(type(obj), "prepare_map_image"):
-                for qs in (
-                    f"?source={source.name}&portal={portal.name}",
-                    "?source=unknown&portal=unknown",
-                ):
-                    view = view_cls()
-                    view.object = obj
-                    view.request = rf.get(f"/{qs}")
-                    view.kwargs = {"pk": obj.pk, "slug": obj.slug, "lang": "en"}
-                    ctx = view.get_context_data(object=obj)
-                    if "Src" in qs:
-                        self.assertEqual(ctx["source"], source)
-                        self.assertEqual(ctx["portal"], portal)
-                    else:
-                        self.assertNotIn("source", ctx)
-                        self.assertNotIn("portal", ctx)
+                view = view_cls()
+                view.object = obj
+                view.request = rf.get(f"/?source={source.name}&portal={portal.name}")
+                view.kwargs = {"pk": obj.pk, "slug": obj.slug, "lang": "en"}
+                ctx = view.get_context_data(object=obj)
+                self.assertEqual(ctx["source"], source)
+                self.assertEqual(ctx["portal"], portal)
+
+    def test_document_public_context_with_unknown_source_and_portal(self):
+        rf = RequestFactory()
+        content = TouristicContentFactory.create(published=True)
+        event = TouristicEventFactory.create(published=True)
+        for view_cls, obj in (
+            (TouristicContentDocumentPublic, content),
+            (TouristicEventDocumentPublic, event),
+        ):
+            with mock.patch.object(type(obj), "prepare_map_image"):
+                view = view_cls()
+                view.object = obj
+                view.request = rf.get("/?source=unknown&portal=unknown")
+                view.kwargs = {"pk": obj.pk, "slug": obj.slug, "lang": "en"}
+                ctx = view.get_context_data(object=obj)
+                self.assertNotIn("source", ctx)
+                self.assertNotIn("portal", ctx)

@@ -2537,27 +2537,32 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
             "'https://api.wikimedia.org/core/v1/commons/file/Cime_de_Clot__de_Puy_Salié.jpg' is inaccessible (Error 404)",
         )
 
-    def test_common_parsers_extra_coverage(self):
-        class DummyParser(AttachmentParserMixin, Parser):
-            model = Organism
-            eid = "organism"
-            fields = {"organism": ["col1", "col2"], "structure": "struct"}
-            warn_on_missing_fields = True
-            field_options = {
-                "organism": {"mapping": {"sub": "Mapped"}, "partial": True},
-                "structure": {"fk": "structure"},
-            }
 
-            def next_row(self):
-                return []
+class DummyOrganismParser(AttachmentParserMixin, Parser):
+    model = Organism
+    eid = "organism"
+    fields = {"organism": ["col1", "col2"], "structure": "struct"}
+    warn_on_missing_fields = True
+    field_options = {
+        "organism": {"mapping": {"sub": "Mapped"}, "partial": True},
+        "structure": {"fk": "structure"},
+    }
 
-        p = DummyParser()
+    def next_row(self):
+        return []
+
+
+class BaseParserMethodsTests(TestCase):
+    def test_get_val_missing_field_warning_and_partial_mapping(self):
+        p = DummyOrganismParser()
         p.get_val({"col1": "v"}, "organism", ["col1", "col2"])
         self.assertEqual(
             p.get_mapping("organism", "my_sub_val", {"sub": "Mapped"}, True),
             "Mapped",
         )
 
+    def test_filter_fk_with_related_fk_attribute(self):
+        p = DummyOrganismParser()
         struct = StructureFactory.create(name="S1")
         obj = Organism.objects.create(organism="O1", structure=struct)
         p.obj = obj
@@ -2566,19 +2571,17 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
             obj,
         )
 
-        # set_value branches
+    def test_set_value_validation_for_null_and_blank_fields(self):
         poi = POIFactory.build()
-        p_poi = DummyParser()
+        p_poi = DummyOrganismParser()
         p_poi.model = POI
         p_poi.obj = poi
         with self.assertRaises(RowImportError):
             p_poi.set_value("type", "type", None)
         with self.assertRaises(RowImportError):
             p_poi.set_value("name", "name", "")
-        # TextField with null=False, blank=True -> description
         p_poi.set_value("description", "description", None)
         self.assertEqual(poi.description, "")
-
         with (
             mock.patch.object(
                 POI._meta,
@@ -2589,8 +2592,8 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
         ):
             p_poi.set_value("non_text", "non_text", None)
 
-        # get_eid_kwargs branches
-        p_req = DummyParser()
+    def test_get_eid_kwargs_missing_or_invalid_eid_field(self):
+        p_req = DummyOrganismParser()
         p_req.fields = {"organism": "col1"}
         with self.assertRaises(ValueImportError):
             p_req.get_eid_kwargs({})
@@ -2599,24 +2602,25 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
             self.assertRaises(GlobalImportError),
         ):
             p_req.get_eid_kwargs({})
-        p_bad_eid = DummyParser()
+        p_bad_eid = DummyOrganismParser()
         p_bad_eid.fields = {"organism": "col1"}
         p_bad_eid.eid = "missing_field"
         with self.assertRaises(GlobalImportError):
             p_bad_eid.get_eid_kwargs({})
 
-        # parse_row branches
-        with mock.patch.object(
-            p_req, "get_eid_kwargs", side_effect=RowImportError("err")
-        ):
-            p_req.parse_row({})
-
+    def test_parse_row_row_import_error_and_update_only_missing_object(self):
+        p = DummyOrganismParser()
         p.fields = {"organism": "col1"}
+        with mock.patch.object(p, "get_eid_kwargs", side_effect=RowImportError("err")):
+            p.parse_row({})
         p.update_only = True
         p.warn_on_missing_objects = True
         p.parse_row({"COL1": "NonExistent"})
-        p.update_only = False
 
+    def test_parse_row_duplicate_objects_and_different_structure_permission(self):
+        p = DummyOrganismParser()
+        p.fields = {"organism": "col1"}
+        struct = StructureFactory.create(name="S1")
         Organism.objects.create(organism="Dup", structure=struct)
         Organism.objects.create(
             organism="Dup", structure=StructureFactory.create(name="S2")
@@ -2631,8 +2635,8 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
         p.to_delete = set()
         p.parse_row({"COL1": "Owned"})
 
-        # get_to_delete_kwargs empty filters
-        p_empty_del = DummyParser()
+    def test_get_to_delete_kwargs_with_empty_m2m_constant_fields(self):
+        p_empty_del = DummyOrganismParser()
         p_empty_del.model = Trek
         p_empty_del.constant_fields = {}
         p_empty_del.m2m_constant_fields = {"themes": []}
@@ -2640,7 +2644,7 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
         p_empty_del.provider = None
         self.assertEqual(p_empty_del.get_to_delete_kwargs(), {})
 
-        # AtomParser
+    def test_atom_parser_next_row(self):
         class MyAtomParser(AtomParser):
             model = Organism
             fields = {
@@ -2662,7 +2666,8 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
             rows = list(ap.next_row())
             self.assertEqual(len(rows), 1)
 
-        # AttachmentParserMixin
+    def test_attachment_parser_mixin_paperclip_link_and_ftp_size(self):
+        p = DummyOrganismParser()
         p.download_attachments = False
         with (
             override_settings(PAPERCLIP_ENABLE_LINK=False),
@@ -2678,7 +2683,7 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
                 p.has_size_changed("ftp://user:pass@example.com/dir/img.png", att)
             )
 
-        # TourInSoftParser
+    def test_tourinsoft_parser_filters_geom_email_website_and_contact(self):
         class MyTISParser(TourInSoftParser):
             model = POI
             url = "http://example.com"
@@ -2704,7 +2709,7 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
             ),
         )
 
-        # TourismSystemParser
+    def test_tourism_system_parser_attachments_and_next_row(self):
         class MyTSParser(TourismSystemParser):
             model = Organism
             url = "http://example.com"
@@ -2732,7 +2737,7 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
             )
             self.assertEqual(len(list(ts.next_row())), 1)
 
-        # OpenSystemParser
+    def test_open_system_parser_normalize_field_name_and_next_row(self):
         class MyOSParser(OpenSystemParser):
             model = Organism
             url = "http://example.com"
@@ -2752,7 +2757,7 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
         ):
             self.assertEqual(len(list(osp.next_row())), 1)
 
-        # GeotrekParser next_row pagination
+    def test_geotrek_parser_next_row_pagination(self):
         class MyGTParser(GeotrekParser):
             model = POI
             url = "http://example.com"
@@ -2774,7 +2779,7 @@ class OpenStreetMapAttachmentParserMixinTests(TestCase):
             ]
             self.assertEqual(len(list(gtp.next_row())), 2)
 
-        # OpenStreetMapParser get_tag_info
+    def test_open_street_map_parser_get_tag_info(self):
         class MyOSMParser(OpenStreetMapParser):
             model = POI
             tags = [{"amenity": "bench"}]

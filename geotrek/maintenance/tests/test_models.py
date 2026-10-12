@@ -449,12 +449,14 @@ class ProjectModelTest(TestCase):
             project.intervention_contractors, ["contractor1", "contractor2"]
         )
 
-    def test_maintenance_models_extra_coverage(self):
-        s = StructureFactory.create(name="Struct")
+    def test_intervention_without_target_properties(self):
         i = InterventionFactory.create(target=None)
         self.assertIsNone(i.api_geom)
         self.assertEqual(list(i.signages), [])
         self.assertEqual(list(i.infrastructures), [])
+
+    def test_nomenclature_models_str_with_and_without_structure(self):
+        s = StructureFactory.create(name="Struct")
         self.assertEqual(
             str(InterventionStatusFactory.create(status="St", structure=s)),
             "St (Struct)",
@@ -485,6 +487,8 @@ class ProjectModelTest(TestCase):
             str(ContractorFactory.create(contractor="Ct", structure=s)), "Ct (Struct)"
         )
 
+    def test_project_with_targetless_intervention_properties(self):
+        i = InterventionFactory.create(target=None)
         proj = ProjectFactory.create()
         proj.interventions.add(i)
         self.assertIsNone(proj.api_geom)

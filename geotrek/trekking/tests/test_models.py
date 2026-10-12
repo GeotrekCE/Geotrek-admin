@@ -642,7 +642,31 @@ class TrekLabelsTestCase(TestCase):
     def test_published_label_property(self):
         self.assertEqual(self.trek.published_labels, [self.published_label])
 
-    def test_trekking_models_forms_and_serializers_extra_coverage(self):
+    def test_trek_picture_print_from_poi_attachment(self):
+        trek = TrekFactory.create(published=True)
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            poi = POIFactory.create(
+                paths=[(trek.paths.first(), 0.5, 0.5)], published=True
+            )
+        else:
+            poi = POIFactory.create(geom=Point(700000, 6600000), published=True)
+        self.assertIsNone(trek.picture_print)
+        AttachmentFactory.create(
+            content_object=poi, attachment_file=get_dummy_uploaded_image()
+        )
+        self.assertIsNotNone(trek.picture_print)
+
+    def test_trek_empty_display_properties_and_extent(self):
+        trek = TrekFactory.create(published=True)
+        self.assertEqual(trek.networks_display, "")
+        self.assertEqual(trek.information_desks_display, "")
+        self.assertEqual(trek.accessibilities_display, "")
+        self.assertEqual(trek.web_links_display, "")
+        self.assertEqual(trek.portal_display, "")
+        self.assertEqual(trek.source_display, "")
+        self.assertEqual(len(trek.extent), 4)
+
+    def test_published_topology_treks_and_services(self):
         trek = TrekFactory.create(published=True)
         if settings.TREKKING_TOPOLOGY_ENABLED:
             poi = POIFactory.create(
@@ -652,37 +676,31 @@ class TrekLabelsTestCase(TestCase):
         else:
             poi = POIFactory.create(geom=Point(700000, 6600000), published=True)
             srv = ServiceFactory.create(geom=Point(700000, 6600000))
-        self.assertIsNone(trek.picture_print)
-        AttachmentFactory.create(
-            content_object=poi, attachment_file=get_dummy_uploaded_image()
-        )
-        self.assertIsNotNone(trek.picture_print)
-        self.assertEqual(trek.networks_display, "")
-        self.assertEqual(trek.information_desks_display, "")
-        self.assertEqual(trek.accessibilities_display, "")
-        self.assertEqual(trek.web_links_display, "")
-        self.assertEqual(trek.portal_display, "")
-        self.assertEqual(trek.source_display, "")
-        self.assertEqual(len(trek.extent), 4)
         self.assertIn(trek, Trek.published_topology_treks(poi))
-
-        acc = AccessibilityFactory.create(name="Wheelchair")
-        self.assertEqual(acc.slug, "wheelchair")
-        wcat = WebLinkCategoryFactory.create(label="Cat")
-        self.assertEqual(str(wcat), "Cat")
-        self.assertEqual(poi.type_display, str(poi.type))
-        self.assertEqual(len(poi.extent), 4)
-
         srv.type.published = True
         srv.type.save()
         srv.type.practices.add(trek.practice)
         self.assertEqual(srv.type_display, str(srv.type))
         self.assertIn(srv, Service.published_topology_services(trek))
+
+    def test_accessibility_slug_weblink_category_str_and_poi_properties(self):
+        acc = AccessibilityFactory.create(name="Wheelchair")
+        self.assertEqual(acc.slug, "wheelchair")
+        wcat = WebLinkCategoryFactory.create(label="Cat")
+        self.assertEqual(str(wcat), "Cat")
+        poi = POIFactory.create()
+        self.assertEqual(poi.type_display, str(poi.type))
+        self.assertEqual(len(poi.extent), 4)
+
+    def test_trek_serializer_get_length_2d(self):
+        trek = TrekFactory.create()
         self.assertEqual(
             TrekSerializer().get_length_2d(trek), round(trek.length_2d_display)
         )
 
+    def test_trek_form_ordered_children_and_service_type_choices(self):
         ServiceTypeFactory.create(pictogram="upload/picto.png")
+        trek = TrekFactory.create()
         trek2 = TrekFactory.create()
         trek3 = TrekFactory.create()
         user = SuperUserFactory.create()

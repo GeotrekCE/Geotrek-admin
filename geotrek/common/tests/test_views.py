@@ -170,7 +170,7 @@ class DocumentPublicPortalTest(TestCase):
             response, template_name="trekking/trek_public_pdf_base.html"
         )
 
-    def test_trek_document_external_topoguide_debug_and_perm(self):
+    def test_trek_document_public_topoguide_attachment_in_debug_mode(self):
         filetype = FileType.objects.create(type="Topoguide")
         AttachmentFactory.create(
             content_object=self.trek,
@@ -186,6 +186,7 @@ class DocumentPublicPortalTest(TestCase):
             )
             self.assertEqual(response.status_code, 200)
 
+    def test_trek_document_public_unpublished_without_permission_returns_403(self):
         unpub_trek = TrekFactory.create(published=False)
         user = UserFactory.create()
         self.client.force_login(user)

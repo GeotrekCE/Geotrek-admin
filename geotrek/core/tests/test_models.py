@@ -459,10 +459,11 @@ class CertificationTest(TestCase):
             "certification label / certification status", str(certification_trail)
         )
 
-    def test_core_models_extra_coverage(self):
+    def test_path_no_draft_latest_updated_when_empty(self):
         Path.objects.all().delete()
         self.assertIsNone(Path.no_draft_latest_updated())
 
+    def test_path_trails_usages_and_networks_display(self):
         p = PathFactory.create()
         self.assertEqual(p.trails_display, "None")
         self.assertEqual(p.usages_display, "")
@@ -472,6 +473,7 @@ class CertificationTest(TestCase):
             p._trails = [t]
         self.assertIn(t.name, p.trails_display)
 
+    def test_topology_save_sets_kind_and_rejects_topologymixin_kind(self):
         topo = Topology()
         topo.kind = ""
         topo.save()
@@ -484,30 +486,43 @@ class CertificationTest(TestCase):
         ):
             topo2.save()
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            deser1 = Topology.deserialize(
-                [
-                    {"paths": [p.pk], "positions": {"0": [0.5, 0.5]}},
-                    {"paths": [p.pk], "positions": {"0": [0.5, 0.0]}},
-                    {"paths": [p.pk], "positions": {"0": [0.5, 1.0]}},
-                    {
-                        "paths": [p.pk, p.pk],
-                        "positions": {"0": [0.5, 0.0], "1": [0.5, 1.0]},
-                    },
-                    {"paths": [p.pk]},
-                ]
-            )
-            self.assertTrue(deser1.aggregations.exists())
-            w = LineTopologyWidget()
-            self.assertEqual(w.deserialize(t.pk), t.topo_object)
-            rendered = w.render("topology", t.pk)
-            self.assertIn("paths", rendered)
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_topology_deserialize_multiple_subtopologies(self):
+        p = PathFactory.create()
+        deser = Topology.deserialize(
+            [
+                {"paths": [p.pk], "positions": {"0": [0.5, 0.5]}},
+                {"paths": [p.pk], "positions": {"0": [0.5, 0.0]}},
+                {"paths": [p.pk], "positions": {"0": [0.5, 1.0]}},
+                {
+                    "paths": [p.pk, p.pk],
+                    "positions": {"0": [0.5, 0.0], "1": [0.5, 1.0]},
+                },
+                {"paths": [p.pk]},
+            ]
+        )
+        self.assertTrue(deser.aggregations.exists())
 
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_line_topology_widget_deserialize_and_render_with_pk(self):
+        t = TrailFactory.create()
+        w = LineTopologyWidget()
+        self.assertEqual(w.deserialize(t.pk), t.topo_object)
+        rendered = w.render("topology", t.pk)
+        self.assertIn("paths", rendered)
+
+    def test_path_aggregation_start_and_end_meter_when_length_is_nan(self):
+        p = PathFactory.create()
         pa = PathAggregation(path=p, start_position=0.5, end_position=0.5)
         pa.path.length = float("nan")
         self.assertEqual(pa.start_meter, -1)
         self.assertEqual(pa.end_meter, -1)
 
+    def test_network_str_with_and_without_structure(self):
         net = Network.objects.create(network="Net", structure=self.structure)
         self.assertEqual(str(net), f"Net ({self.structure.name})")
         net_no_struct = Network.objects.create(network="Net2", structure=None)

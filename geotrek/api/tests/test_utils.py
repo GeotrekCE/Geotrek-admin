@@ -81,7 +81,7 @@ class IsPublishedTestCase(SimpleTestCase):
                 )
                 self.assertEqual(result, params["expected"])
 
-    def test_build_url_bad_context_and_event_type_none(self):
+    def test_build_url_without_server_name_in_context(self):
         class DummySerializer:
             context = {}
 
@@ -90,6 +90,7 @@ class IsPublishedTestCase(SimpleTestCase):
         ):
             api_utils.build_url(DummySerializer(), "/media/test.png")
 
+    def test_touristic_event_serializer_get_type_none(self):
         self.assertIsNone(
             TouristicEventSerializer().get_type(mock.MagicMock(type=None))
         )

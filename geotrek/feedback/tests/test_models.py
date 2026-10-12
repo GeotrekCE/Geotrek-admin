@@ -84,24 +84,31 @@ class TestFeedbackModel(TestCase):
         s = f"https://geotrek.local/report/{self.report.pk}/"
         self.assertEqual(self.report.full_url, s)
 
-    def test_feedback_model_and_helpers_extra_coverage(self):
+    def test_status_default_returns_nouveau_status_pk(self):
         st = ReportStatusFactory.create(label="Nouveau")
         self.assertEqual(status_default(), st.pk)
 
+    def test_suricate_dates_display_and_distance(self):
         now = timezone.now()
         r = ReportFactory.create(
             created_in_suricate=now,
             last_updated_in_suricate=now,
-            status=st,
         )
         self.assertIsNotNone(r.created_in_suricate_display)
         self.assertIsNotNone(r.last_updated_in_suricate_display)
         self.assertIsNotNone(r.distance(None))
+
+    def test_latest_updated_by_status(self):
+        st = ReportStatusFactory.create(label="Nouveau")
+        ReportFactory.create(status=st)
         self.assertIsNotNone(Report.latest_updated_by_status(st.identifier))
         self.assertEqual(list(Report.latest_updated_by_status("unknown-status")), [])
-        with self.modify_settings(INSTALLED_APPS={"remove": "geotrek.maintenance"}):
-            self.assertIsNone(r.report_interventions())
 
+    def test_report_interventions_without_maintenance_app(self):
+        with self.modify_settings(INSTALLED_APPS={"remove": "geotrek.maintenance"}):
+            self.assertIsNone(self.report.report_interventions())
+
+    def test_suricate_standard_request_manager_ko_response(self):
         mgr = SuricateStandardRequestManager()
         resp = mock.MagicMock(
             status_code=200,
@@ -111,6 +118,7 @@ class TestFeedbackModel(TestCase):
             mgr.check_response_integrity(resp)
         self.assertIn("KO", mgr.print_response_OK_or_KO(resp))
 
+    def test_suricate_gestion_request_manager_get_attachment_without_auth(self):
         gmgr = SuricateGestionRequestManager()
         gmgr.USE_AUTH = False
         with mock.patch("geotrek.feedback.helpers.requests.get") as mget:

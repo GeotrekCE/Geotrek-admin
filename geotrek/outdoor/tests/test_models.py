@@ -299,10 +299,13 @@ class CourseTestCase(TestCase):
         self.assertAlmostEqual(coordinates[1][0], 1.441955564370652)
         self.assertAlmostEqual(coordinates[1][1], 44.443339997352474)
 
-    def test_duration_pretty_and_parents_children_ids(self):
-        c1 = CourseFactory.create(duration=2.5)
+    def test_duration_pretty(self):
+        course = CourseFactory.create(duration=2.5)
+        self.assertEqual(course.duration_pretty, "2 h 30")
+
+    def test_children_id_and_parents_id(self):
+        c1 = CourseFactory.create()
         c2 = CourseFactory.create()
         OrderedCourseChild.objects.create(parent=c1, child=c2, order=0)
-        self.assertEqual(c1.duration_pretty, "2 h 30")
         self.assertEqual(list(c1.children_id), [c2.id])
         self.assertEqual(list(c2.parents_id()), [c1.id])

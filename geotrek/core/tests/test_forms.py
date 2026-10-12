@@ -108,28 +108,34 @@ class PathFormTest(TestCase):
         )
         self.assertFalse(form1.is_valid(), str(form1.errors))
 
-    def test_clean_geom_none_non_simple_and_reverse_save(self):
+    def test_non_simple_geom_path(self):
         user = UserFactory()
-        form_non_simple = PathForm(
+        form = PathForm(
             user=user,
             data={
                 "geom": '{"geom": "LINESTRING(0 0, 2 2, 0 2, 2 0)", "snap": [null, null, null, null]}'
             },
         )
-        self.assertFalse(form_non_simple.is_valid())
-        form_none = PathForm(user=user)
-        form_none.cleaned_data = {"geom": None}
+        self.assertFalse(form.is_valid())
+
+    def test_clean_geom_none_raises_validation_error(self):
+        user = UserFactory()
+        form = PathForm(user=user)
+        form.cleaned_data = {"geom": None}
         with self.assertRaises(ValidationError):
-            form_none.clean_geom()
-        form_rev = PathForm(
+            form.clean_geom()
+
+    def test_reverse_geom_path_save(self):
+        user = UserFactory()
+        form = PathForm(
             user=user,
             data={
                 "geom": '{"geom": "LINESTRING(3 45, 3 46)", "snap": [null, null]}',
                 "reverse_geom": True,
             },
         )
-        self.assertTrue(form_rev.is_valid(), str(form_rev.errors))
-        path = form_rev.save()
+        self.assertTrue(form.is_valid(), str(form.errors))
+        path = form.save()
         self.assertIsNotNone(path.pk)
 
 

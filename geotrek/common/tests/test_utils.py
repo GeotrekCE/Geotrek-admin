@@ -350,7 +350,7 @@ class TestConvertEncodingFiles(TestCase):
         encoding = get_encoding_file(new_file_name)
         self.assertEqual(encoding, "utf-8")
 
-    def test_utils_extra_coverage(self):
+    def test_zip_tiles_builder_format_from_wmts_url(self):
         builder = ZipTilesBuilder(
             None, tiles_url="http://server/wmts?LAYER=foo&FORMAT=image/jpeg&"
         )
@@ -359,15 +359,20 @@ class TestConvertEncodingFiles(TestCase):
             "image/jpeg",
         )
 
+    def test_reify_descriptor_on_class(self):
         descriptor = reify(lambda s: 1)
         self.assertIs(descriptor.__get__(None), descriptor)
+
+    def test_sqlfunction_without_alias(self):
         self.assertEqual(
             sqlfunction("SELECT * FROM generate_series", "1", "2"), [(1,), (2,)]
         )
 
+    def test_is_a_non_svg_image(self):
         self.assertFalse(is_a_non_svg_image(None))
         self.assertTrue(is_a_non_svg_image(get_dummy_uploaded_image()))
 
+    def test_create_tmp_destination_creates_missing_tmp_dir(self):
         new_tmp = os.path.join(settings.TMP_DIR, "missing_tmp_dir")
         if os.path.exists(new_tmp):
             shutil.rmtree(new_tmp)
@@ -376,8 +381,14 @@ class TestConvertEncodingFiles(TestCase):
             self.assertTrue(os.path.exists(new_tmp))
         shutil.rmtree(new_tmp)
 
+    def test_discover_available_parsers_without_var_dir_or_permission(self):
         with override_settings(VAR_DIR="/nonexistent"):
             import_celery.parsers_module = None
             request = mock.MagicMock(LANGUAGE_CODE="en")
             request.user.has_perm.return_value = False
-            import_celery.discover_available_parsers(request)
+            choices, choices_url, classes = import_celery.discover_available_parsers(
+                request
+            )
+            self.assertEqual(choices, [])
+            self.assertEqual(choices_url, [])
+            self.assertIsInstance(classes, list)

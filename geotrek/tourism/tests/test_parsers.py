@@ -1715,8 +1715,7 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         self.assertAlmostEqual(touristic_content.geom[0][0][0], 776475.184, places=2)
         self.assertAlmostEqual(touristic_content.geom[0][0][1], 6469444.353, places=2)
 
-    def test_tourism_parsers_extra_coverage(self):
-        # TouristicContentMixin.get_to_delete_kwargs with type1 non-empty and type2 empty
+    def test_touristic_content_mixin_get_to_delete_kwargs_with_type1(self):
         class CustomTCParser(TouristicContentApidaeParser):
             category = "Foo"
             type1 = ["T1"]
@@ -1729,7 +1728,8 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         kwargs = cp.get_to_delete_kwargs()
         self.assertIn("type1", kwargs)
 
-        # AttachmentApidaeParserMixin.filter_attachments with image filename in legend
+    def test_attachment_apidae_parser_filter_attachments_with_filename_in_legend(self):
+        cp = TouristicContentApidaeParser()
         res = cp.filter_attachments(
             "attachments",
             [
@@ -1748,27 +1748,28 @@ class OpenStreetMapTouristicContentParserTests(TestCase):
         )
         self.assertEqual(res[0][1], "Leg")
 
-        # TouristicEventApidaeParser.filter_duration TypeError
+    def test_touristic_event_apidae_parser_filter_duration_with_none(self):
         ep = TouristicEventApidaeParser()
         self.assertIsNone(ep.filter_duration("duration", (None, None)))
 
-        # HebergementsApidaeParser.filter_type1
+    def test_hebergements_apidae_parser_filter_type1(self):
         hp = HebergementsApidaeParser()
         hp.obj = mock.MagicMock()
         with mock.patch.object(hp, "apply_filter", return_value="T"):
             self.assertEqual(hp.filter_type1("type1", {"libelleFr": "H"}), "T")
 
-        # EspritParcParser.filter_category None
+    def test_esprit_parc_parser_filter_category_none(self):
         epp = EspritParcParser()
         self.assertIsNone(epp.filter_category("category", None))
 
-        # TouristicContentTourInSoftParser & TouristicEventTourInSoftParser
+    def test_touristic_content_tourinsoft_parser_with_themes(self):
         class MyTCTIS(TouristicContentTourInSoftParser):
             themes = ["Theme1"]
 
         tctis = MyTCTIS()
         self.assertEqual(tctis.m2m_constant_fields["themes"], ["Theme1"])
 
+    def test_touristic_event_tourinsoft_parser_with_themes_and_past_dates(self):
         class MyTETIS(TouristicEventTourInSoftParser):
             themes = ["Theme1"]
 

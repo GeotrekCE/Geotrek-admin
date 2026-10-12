@@ -470,12 +470,17 @@ class RegulatorySensitiveAreaShapeParserTest(TestCase):
         self.assertEqual(area.contact, "Contact")
         self.assertEqual(area.description, "Test UTF8 éêè")
 
-    def test_biodiv_filter_geom_point_and_invalid(self):
-        p = BiodivParser()
-        pt = p.filter_geom("geom", {"type": "Point", "coordinates": [3.0, 45.0]})
-        self.assertEqual(pt.geom_type, "Point")
+    def test_biodiv_filter_geom_point(self):
+        parser = BiodivParser()
+        point = parser.filter_geom(
+            "geom", {"type": "Point", "coordinates": [3.0, 45.0]}
+        )
+        self.assertEqual(point.geom_type, "Point")
+
+    def test_biodiv_filter_geom_invalid_linestring_raises_error(self):
+        parser = BiodivParser()
         with self.assertRaises(ValueImportError):
-            p.filter_geom(
+            parser.filter_geom(
                 "geom",
                 {"type": "LineString", "coordinates": [[3.0, 45.0], [3.1, 45.1]]},
             )

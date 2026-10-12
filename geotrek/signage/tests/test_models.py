@@ -141,8 +141,14 @@ class SignageTypeTestCase(TestCase):
             signage_type.get_pictogram_url(), "/static/signage/picto-signage.png"
         )
 
-    def test_line_pretty_none_and_meters_tag(self):
+
+class LineModelTest(TestCase):
+    def test_distance_and_time_pretty_when_none(self):
         line = LineFactory.create(distance=None, time=None)
         self.assertEqual(line.distance_pretty, "")
         self.assertEqual(line.time_pretty, "")
+
+
+class SignageTemplateTagsTest(TestCase):
+    def test_meters_filter_empty_value(self):
         self.assertEqual(meters(""), "")
