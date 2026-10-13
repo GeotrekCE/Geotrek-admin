@@ -42,7 +42,7 @@ This will display a message to users indicating that the application is temporar
 PostgreSQL optimization
 =======================
 
-* Use PGTune to generate a configuration file for your PostgreSQL database : `https://pgtune.leopard.in.ua/#/`_
+* Use `PGTune <https://pgtune.leopard.in.ua/#/>`_ to generate an optimized configuration file for your PostgreSQL database
 * Increase ``shared_buffers`` and ``work_mem`` according to your RAM
 * You can use postgresql pool by overriding your custom.py file with the following content :
 
