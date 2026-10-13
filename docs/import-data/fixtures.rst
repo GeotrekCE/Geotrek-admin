@@ -63,6 +63,7 @@ Common imports
 
                 sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/basic.json
                 sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
+                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/celery-tasks.json
                 cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/upload/ /opt/geotrek-admin/var/media/upload/
 
     .. md-tab-item:: With Docker
@@ -71,6 +72,7 @@ Common imports
 
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/common/fixtures/basic.json
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/common/fixtures/licenses.json
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/common/fixtures/celery-tasks.json
 
 Core imports
 ~~~~~~~~~~~~~~~
