@@ -1158,7 +1158,9 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
 
             if portals:
                 portals = [int(portal) for portal in portals.split(",")]
-                impracticable_vigilance_areas = impracticable_vigilance_areas.filter(portals__in=portals).distinct()
+                impracticable_vigilance_areas = impracticable_vigilance_areas.filter(
+                    portals__in=portals
+                ).distinct()
 
             qs = (
                 obj.children.select_related("topo_object", "difficulty")

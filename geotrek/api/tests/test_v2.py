@@ -68,7 +68,6 @@ from geotrek.trekking.tests import factories as trek_factory
 from geotrek.trekking.tests.base import TrekkingManagerTest
 from geotrek.trekking.tests.factories import PracticeFactory
 from geotrek.zoning import models as zoning_models
-from geotrek.zoning.mixins import ZoningPropertiesMixin
 from geotrek.zoning.tests import factories as zoning_factory
 
 ANNOTATION_CATEGORY_DETAIL_JSON_STRUCTURE = sorted(["id", "label", "pictogram"])
@@ -808,7 +807,7 @@ class BaseApiTest(TestCase):
             published=True,
             impracticable=True,
             periods=[],
-            portals=[cls.portal.pk]
+            portals=[cls.portal.pk],
         )
         cls.vigilance_area3 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure, published=True, periods=[]
@@ -3040,12 +3039,16 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             "practicable": "false",
         }
 
-        response = self.get_touristiccontent_list({**params, "portals": str(self.portal.pk)})
+        response = self.get_touristiccontent_list(
+            {**params, "portals": str(self.portal.pk)}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["count"], 1)
 
         other_portal = common_factory.TargetPortalFactory()
-        response = self.get_touristiccontent_list({**params, "portals": other_portal.pk})
+        response = self.get_touristiccontent_list(
+            {**params, "portals": other_portal.pk}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["count"], 0)
 
