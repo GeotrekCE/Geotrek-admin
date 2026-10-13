@@ -34,7 +34,7 @@ How many workers and thread should I define ?
 
 Ideally, set your number of core / 2 and 2 threads per workers.
 Why ? Because Geotrek-admin is a CPU intensive application, and the number of workers is the number of process that will be created to handle requests. Each worker can handle multiple requests at the same time, thanks to threads.
-Two gunicorn services are running, one for the API and one for the web interface. So if you have 8 cores, you can set 4 workers and 2 threads per worker, which will give you 8 threads in total.
+Two gunicorn services are running, one for the API and one for the web interface. So if you have 8 cores, you can set 4 workers and 2 threads per worker, which will give you 8 threads in total per service.
 If your server handle other services, like PostgreSQL database, NGINX web server, or other applications, you should reduce the number of workers to avoid overloading your server.
 
 .. code-block:: bash
@@ -45,13 +45,13 @@ resulting :
 
      8
 
-With 8 cores, you can set 4 workers and 2 threads per worker, which will give you 8 threads in total.
+With 8 cores, you can set 4 workers and 2 threads per worker, which will give you 8 threads in total by service.
 
-If your database is on the same server, you should reduce the number of workers to avoid overloading your server, for example with 3 workers and 2 threads per worker, which will give you 6 threads in total.
+If your database is on the same server, you should reduce the number of workers to avoid overloading your server, for example with 3 workers and 2 threads per worker.
 
 .. warning::
 
-   If you use docker, adjust the number of workers and threads according to your container's CPU limits, directly with GUNICIORN_CMD_ARGS environment variable (by default in .env file). For example, if you limit your container to 2 CPUs, you can set 1 worker and 2 threads per worker, which will give you 2 threads in total.
+   If you use docker, adjust the number of workers and threads according to your container's CPU limits, directly with GUNICORN_CMD_ARGS environment variable (by default in .env file). For example, if you limit your container to 2 CPUs, you can set 1 worker and 2 threads per worker, which will give you 2 threads in total.
    ``GUNICORN_CMD_ARGS="--workers=1 --threads=2"``
 
 
