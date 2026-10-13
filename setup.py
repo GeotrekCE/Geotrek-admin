@@ -25,7 +25,7 @@ setup(
         "python-dotenv",
         "pymemcache",
         "django-autocomplete-light",
-        "psycopg2",
+        "psycopg[c,pool]",
         "pdfimpose",
         "Pillow",
         "simplekml",
