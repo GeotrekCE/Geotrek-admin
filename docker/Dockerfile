@@ -113,7 +113,7 @@ CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
 FROM ${FRONTEND_IMAGE} AS frontend
 FROM base AS prod
 
-ENV GUNICORN_CMD_ARGS="--workers=1 --threads=2"
+ENV GUNICORN_CMD_ARGS="--workers=1 --threads=1"
 
 COPY --chown=geotrek:geotrek --from=build /opt/venv /opt/venv
 COPY --chown=geotrek:geotrek geotrek/ geotrek/
