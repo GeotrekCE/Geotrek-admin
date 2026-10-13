@@ -57,7 +57,9 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         today = datetime.date.today()
-        start_date = api_utils.parse_date(self.request.GET.get("practicable_from"), today)
+        start_date = api_utils.parse_date(
+            self.request.GET.get("practicable_from"), today
+        )
         end_date = api_utils.parse_date(self.request.GET.get("practicable_to"), today)
         portals = self.request.GET.get("portals", "")
 
@@ -68,7 +70,9 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
 
         if portals:
             portals = [int(portal) for portal in portals.split(",")]
-            impracticable_vigilance_areas = impracticable_vigilance_areas.filter(portals__in=portals).distinct()
+            impracticable_vigilance_areas = impracticable_vigilance_areas.filter(
+                portals__in=portals
+            ).distinct()
 
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
