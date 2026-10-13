@@ -297,6 +297,10 @@ prompt-toolkit==3.0.53
     # via click-repl
 psycopg==3.3.6
     # via geotrek (setup.py)
+psycopg-c==3.3.6
+    # via psycopg
+psycopg-pool==3.3.3
+    # via psycopg
 pycparser==3.11
     # via cffi
 pydyf==0.12.1
@@ -398,6 +402,7 @@ typing-extensions==4.16.0
     #   click-repl
     #   django-modeltranslation
     #   large-image
+    #   psycopg-pool
     #   swagger-spec-validator
 tzdata==2026.5
     # via
