@@ -1,6 +1,6 @@
-from datetime import date
 import importlib
 import sys
+from datetime import date
 from os.path import join
 
 from celery import Task, current_task, shared_task
@@ -131,6 +131,7 @@ def import_datas_from_web(**kwargs):
         "name": current_task.name,
     }
 
+
 @shared_task(name="geotrek.common.update-years")
 def update_annual_vigilance_areas(**kwargs):
     new_year = date.today().year + 1
@@ -146,10 +147,13 @@ def update_annual_vigilance_areas(**kwargs):
         if period.end_date:
             period.end_date = _replace_year(period.end_date, new_year)
 
+    nb_updated_periods = 0
     with transaction.atomic():
-        VigilancePeriod.objects.bulk_update(
+        nb_updated_periods += VigilancePeriod.objects.bulk_update(
             periods, ["start_date", "end_date"], batch_size=500
         )
+
+    return nb_updated_periods
 
 
 def _replace_year(d, year):
@@ -157,4 +161,3 @@ def _replace_year(d, year):
         return d.replace(year=year)
     except ValueError:  # 29 February in a non-leap year.
         return d.replace(year=year, day=28)
-
