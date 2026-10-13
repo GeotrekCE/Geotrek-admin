@@ -1,6 +1,3 @@
-from django.core.exceptions import ValidationError
-
-
 class FormsetMixin:
     context_name = None
     formset_class = None
@@ -20,12 +17,9 @@ class FormsetMixin:
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         if self.request.POST:
-            try:
-                context[self.context_name] = self.formset_class(
-                    self.request.POST, instance=self.object
-                )
-            except ValidationError:
-                pass
+            context[self.context_name] = self.formset_class(
+                self.request.POST, instance=self.object
+            )
         else:
             context[self.context_name] = self.formset_class(instance=self.object)
         return context

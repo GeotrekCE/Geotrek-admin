@@ -1,6 +1,10 @@
+from contextlib import nullcontext, redirect_stdout
+from io import StringIO
+
 from django.apps import apps
 from django.core.management import call_command
 from django.core.management.commands.migrate import Command as BaseCommand
+from django.db import connection
 
 from geotrek.common.utils.postgresql import (
     load_sql_files,
@@ -15,9 +19,19 @@ class Command(BaseCommand):
         for app in apps.get_app_configs():
             move_models_to_schemas(app)
             load_sql_files(app, "pre")
+        connection.register_geometry_adapters(connection.connection, True)
         super().handle(*args, **options)
-        call_command("sync_translation_fields", "--noinput")
-        call_command("update_translation_fields")
+        ctx = redirect_stdout(StringIO()) if options["verbosity"] < 1 else nullcontext()
+        with ctx:
+            call_command(
+                "sync_translation_fields",
+                "--noinput",
+                verbosity=options["verbosity"],
+            )
+            call_command(
+                "update_translation_fields",
+                verbosity=options["verbosity"],
+            )
         for app in apps.get_app_configs():
             move_models_to_schemas(app)
             load_sql_files(app, "post")

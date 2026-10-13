@@ -1,4 +1,5 @@
 from django.core.checks import Error
+from django.core.exceptions import ValidationError
 from django.forms.widgets import HiddenInput
 from django.test import TestCase
 from django.test.utils import override_settings
@@ -66,6 +67,23 @@ class TopologyFormTest(TestCase):
         self.assertIn("core/mapwidget_set_geom_changed.js", widget.media._js)
         self.assertNotIn("core/mapwidget_load_path_layer.js", widget.media._js)
 
+    def test_clean_removes_geom_error(self):
+        user = UserFactory()
+        topo = TrailFactory()
+        form = TrailForm(
+            instance=topo,
+            user=user,
+            data={
+                "name": "t",
+                "structure": topo.structure.pk,
+                "topology": str(topo.pk),
+            },
+        )
+        form.full_clean()
+        form._errors["geom"] = form.error_class(["err"])
+        form.clean()
+        self.assertNotIn("geom", form.errors)
+
 
 class PathFormTest(TestCase):
     def test_overlapping_path(self):
@@ -125,6 +143,36 @@ class PathFormTest(TestCase):
             data={"geom": '{"geom": "LINESTRING(2.5 45.5, 2.5 45.5)"}'},
         )
         self.assertFalse(form1.is_valid(), str(form1.errors))
+
+    def test_non_simple_geom_path(self):
+        user = UserFactory()
+        form = PathForm(
+            user=user,
+            data={
+                "geom": '{"geom": "LINESTRING(0 0, 2 2, 0 2, 2 0)", "snap": [null, null, null, null]}'
+            },
+        )
+        self.assertFalse(form.is_valid())
+
+    def test_clean_geom_none_raises_validation_error(self):
+        user = UserFactory()
+        form = PathForm(user=user)
+        form.cleaned_data = {"geom": None}
+        with self.assertRaises(ValidationError):
+            form.clean_geom()
+
+    def test_reverse_geom_path_save(self):
+        user = UserFactory()
+        form = PathForm(
+            user=user,
+            data={
+                "geom": '{"geom": "LINESTRING(3 45, 3 46)", "snap": [null, null]}',
+                "reverse_geom": True,
+            },
+        )
+        self.assertTrue(form.is_valid(), str(form.errors))
+        path = form.save()
+        self.assertIsNotNone(path.pk)
 
 
 class TrailFormTest(TestCase):

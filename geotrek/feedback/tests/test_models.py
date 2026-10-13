@@ -23,7 +23,11 @@ from geotrek.feedback.admin import (
     WorkflowDistrictAdmin,
     WorkflowManagerAdmin,
 )
-from geotrek.feedback.helpers import SuricateMessenger
+from geotrek.feedback.helpers import (
+    SuricateGestionRequestManager,
+    SuricateMessenger,
+    SuricateStandardRequestManager,
+)
 from geotrek.feedback.models import (
     PendingSuricateAPIRequest,
     PredefinedEmail,
@@ -32,6 +36,7 @@ from geotrek.feedback.models import (
     TimerEvent,
     WorkflowDistrict,
     WorkflowManager,
+    status_default,
 )
 from geotrek.feedback.tests.factories import (
     ReportFactory,
@@ -78,6 +83,48 @@ class TestFeedbackModel(TestCase):
     def test_get_full_url_https(self):
         s = f"https://geotrek.local/report/{self.report.pk}/"
         self.assertEqual(self.report.full_url, s)
+
+    def test_status_default_returns_nouveau_status_pk(self):
+        st = ReportStatusFactory.create(label="Nouveau")
+        self.assertEqual(status_default(), st.pk)
+
+    def test_suricate_dates_display_and_distance(self):
+        now = timezone.now()
+        r = ReportFactory.create(
+            created_in_suricate=now,
+            last_updated_in_suricate=now,
+        )
+        self.assertIsNotNone(r.created_in_suricate_display)
+        self.assertIsNotNone(r.last_updated_in_suricate_display)
+        self.assertIsNotNone(r.distance(None))
+
+    def test_latest_updated_by_status(self):
+        st = ReportStatusFactory.create(label="Nouveau")
+        ReportFactory.create(status=st)
+        self.assertIsNotNone(Report.latest_updated_by_status(st.identifier))
+        self.assertEqual(list(Report.latest_updated_by_status("unknown-status")), [])
+
+    def test_report_interventions_without_maintenance_app(self):
+        with self.modify_settings(INSTALLED_APPS={"remove": "geotrek.maintenance"}):
+            self.assertIsNone(self.report.report_interventions())
+
+    def test_suricate_standard_request_manager_ko_response(self):
+        mgr = SuricateStandardRequestManager()
+        resp = mock.MagicMock(
+            status_code=200,
+            content=b'{"code_ok": "false", "error": {"code": 1, "message": "err"}, "message": "KO"}',
+        )
+        with self.assertRaises(Exception):
+            mgr.check_response_integrity(resp)
+        self.assertIn("KO", mgr.print_response_OK_or_KO(resp))
+
+    def test_suricate_gestion_request_manager_get_attachment_without_auth(self):
+        gmgr = SuricateGestionRequestManager()
+        gmgr.USE_AUTH = False
+        with mock.patch("geotrek.feedback.helpers.requests.get") as mget:
+            mget.return_value = mock.MagicMock(status_code=200)
+            gmgr.get_attachment_from_suricate("http://example.com/a.jpg")
+            mget.assert_called_once_with("http://example.com/a.jpg")
 
 
 @override_settings(SURICATE_MANAGEMENT_SETTINGS=SURICATE_MANAGEMENT_SETTINGS)

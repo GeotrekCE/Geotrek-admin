@@ -4,7 +4,6 @@ from io import BytesIO
 
 import magic
 from django.conf import settings
-from django.db import models as django_db_models
 from django.utils.translation import gettext_lazy as _
 from mapentity.serializers import MapentityGeojsonModelSerializer
 from PIL import Image, UnidentifiedImageError
@@ -13,20 +12,6 @@ from rest_framework_gis.fields import GeometrySerializerMethodField
 
 from ..authent.models import Structure
 from .models import AccessMean, Attachment, FileType, HDViewPoint, License, Organism
-
-
-class TranslatedModelSerializer(rest_serializers.ModelSerializer):
-    def get_field(self, model_field):
-        kwargs = {}
-        if issubclass(
-            model_field.__class__,
-            django_db_models.CharField | django_db_models.TextField,
-        ):
-            if model_field.null:
-                kwargs["allow_none"] = True
-            kwargs["max_length"] = getattr(model_field, "max_length")
-            return rest_serializers.CharField(**kwargs)
-        return super().get_field(model_field)
 
 
 class PictogramSerializerMixin(rest_serializers.ModelSerializer):
@@ -48,7 +33,7 @@ class BasePublishableSerializerMixin(rest_serializers.ModelSerializer):
         fields = ("published", "published_status", "publication_date")
 
 
-class HDViewPointSerializer(TranslatedModelSerializer):
+class HDViewPointSerializer(rest_serializers.ModelSerializer):
     class Meta:
         model = HDViewPoint
         fields = ("id", "uuid", "author", "title", "legend", "license")

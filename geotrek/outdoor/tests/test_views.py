@@ -18,12 +18,13 @@ from geotrek.trekking.tests.factories import POIFactory
 
 
 class SiteCustomViewTests(TestCase):
+    @mock.patch("mapentity.models.MapEntityMixin.prepare_map_image")
     @mock.patch("mapentity.helpers.requests.get")
-    def test_public_document_pdf(self, mocked):
+    def test_public_document_pdf(self, mocked_requests, mocked_prepare):
         site = SiteFactory.create(published=True)
         url = f"/api/en/sites/{site.pk}/slug.pdf"
-        mocked.return_value.status_code = 200
-        mocked.return_value.content = PNG_BLACK_PIXEL
+        mocked_requests.return_value.status_code = 200
+        mocked_requests.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 
@@ -57,12 +58,13 @@ class SiteCustomViewTests(TestCase):
 
 
 class CourseCustomViewTests(TestCase):
+    @mock.patch("mapentity.models.MapEntityMixin.prepare_map_image")
     @mock.patch("mapentity.helpers.requests.get")
-    def test_public_document_pdf(self, mocked):
+    def test_public_document_pdf(self, mocked_requests, mocked_prepare):
         course = CourseFactory.create(published=True)
         url = f"/api/en/courses/{course.pk}/slug.pdf"
-        mocked.return_value.status_code = 200
-        mocked.return_value.content = PNG_BLACK_PIXEL
+        mocked_requests.return_value.status_code = 200
+        mocked_requests.return_value.content = PNG_BLACK_PIXEL
         response = self.client.get(url)
         self.assertEqual(response.status_code, 200)
 

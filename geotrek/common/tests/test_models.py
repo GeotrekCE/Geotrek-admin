@@ -18,12 +18,14 @@ from geotrek.common.mixins.models import ExternalSourceMixin
 from geotrek.common.models import Provider, Theme
 from geotrek.common.tests.factories import (
     AttachmentFactory,
+    FileTypeFactory,
     HDViewPointFactory,
     LabelFactory,
     OrganismFactory,
 )
 from geotrek.signage.models import Blade
 from geotrek.signage.tests.factories import BladeFactory
+from geotrek.trekking.models import Trek
 from geotrek.trekking.tests.factories import TrekFactory
 from geotrek.zoning.tests.factories import CityFactory
 
@@ -558,3 +560,24 @@ class CommonMixinsComprehensiveCoverageTest(TestCase):
     def test_bbox_mixin(self):
         city = CityFactory.create()
         self.assertIsNotNone(city.bbox)
+
+
+class PicturesMixinTest(TestCase):
+    def test_pictures_returns_cached_list(self):
+        trek = TrekFactory.build()
+        trek._pictures = ["cached"]
+        self.assertEqual(trek.pictures, ["cached"])
+
+
+class AddPropertyMixinTest(TestCase):
+    def test_add_property_raises_error_if_attribute_already_exists(self):
+        with self.assertRaisesMessage(
+            AttributeError, f"{Trek} has already an attribute pictures"
+        ):
+            Trek.add_property("pictures", lambda s: None, "Pictures")
+
+
+class FileTypeModelTest(TestCase):
+    def test_str_with_structure(self):
+        filetype = FileTypeFactory.create(structure=default_structure())
+        self.assertEqual(str(filetype), f"{filetype.type} ({filetype.structure.name})")

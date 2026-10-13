@@ -5,7 +5,9 @@ from unittest.mock import patch
 
 from django.contrib.gis.geos import GEOSGeometry
 from django.core.management import call_command
+from django.core.management.base import CommandError
 from django.test import TestCase
+from django.test.utils import override_settings
 
 from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.management.commands.loadpoi import Command
@@ -130,3 +132,15 @@ class LoadPOITest(TestCase):
         geom = GEOSGeometry("POINT(1 1)", srid=4326)
         poi = self.cmd.create_poi(geom, "bridge", "infra", "description")
         self.assertEqual([self.path], list(poi.paths.all()))
+
+    def test_command_fail_file_does_not_exist(self):
+        with self.assertRaisesMessage(
+            CommandError, "File does not exists at: /nonexistent.geojson"
+        ):
+            call_command("loadpoi", "/nonexistent.geojson", type_default="picnic")
+
+    def test_create_poi_non_point_geometry_without_dynamic_segmentation(self):
+        with override_settings(TREKKING_TOPOLOGY_ENABLED=False):
+            geom = GEOSGeometry("LINESTRING(0 0, 1 1)", srid=4326)
+            with self.assertRaises(TypeError):
+                self.cmd.create_poi(geom, "bridge", "infra", "description")
