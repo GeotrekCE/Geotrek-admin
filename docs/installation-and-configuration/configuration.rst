@@ -7,7 +7,7 @@ Configuration
 Basic configuration update
 ===========================
 
-To update basic configuration (server name, database connection, languages, or set workers number or timeout), run:
+To update basic configuration (server name, database connection, languages, or set workers or threads number, or timeout), run:
 
 .. md-tab-set::
     :name: update-configuration-tabs
