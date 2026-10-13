@@ -386,10 +386,6 @@ class Path(
     def name_csv_display(self):
         return str(self)
 
-    @classproperty
-    def trails_verbose_name(cls):
-        return _("Trails")
-
     @property
     def trails_display(self):
         trails = getattr(self, "_trails", self.trails)

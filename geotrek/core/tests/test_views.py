@@ -12,7 +12,7 @@ from django.db import connection
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from mapentity.tests.factories import UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
@@ -2487,11 +2487,9 @@ class TrailViewsTest(CommonTest):
         self.assertEqual(response.status_code, 200)
 
     def test_add_trail_from_existing_topology_does_not_use_pk(self):
-        import bs4
-
         trail = TrailFactory(offset=3.14)
         response = self.client.get(Trail.get_add_url() + f"?topology={trail.pk}")
-        soup = bs4.BeautifulSoup(response.content, features="html.parser")
+        soup = BeautifulSoup(response.content, features="html.parser")
         textarea_field = soup.find(id="id_topology")
         self.assertIn('"kind": "TMP"', textarea_field.text)
         self.assertIn('"offset": 3.14', textarea_field.text)
@@ -2715,3 +2713,12 @@ class TrailMultiActionsViewTest(
         "Related structure",
         "Category",
     ]
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_on_topology_does_not_exist(self):
+        self.client.force_login(SuperUserFactory.create())
+        with self.assertLogs("geotrek.core.views", level="WARNING"):
+            response = self.client.get(f"{Trail.get_add_url()}?topology=999999")
+        self.assertEqual(response.status_code, 200)

@@ -75,6 +75,10 @@ class SnappedLineStringFieldTest(TestCase):
             )
         )
 
+    def test_empty_geom_in_dict(self):
+        with self.assertRaises(ValidationError):
+            self.f.clean('{"geom": ""}')
+
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TopologyFieldTest(TestCase):
@@ -84,3 +88,11 @@ class TopologyFieldTest(TestCase):
 
     def test_validation_fails_if_null_is_submitted(self):
         self.assertRaises(ValidationError, self.f.clean, "null")
+
+    def test_empty_not_required(self):
+        f = TopologyField(required=False)
+        self.assertIsNone(f.clean(""))
+
+    def test_unknown_topology_pk(self):
+        with self.assertRaises(ValidationError):
+            self.f.clean("999999")

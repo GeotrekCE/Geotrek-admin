@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-02 09:42+0000\n"
+"POT-Creation-Date: 2026-10-12 11:21+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/core/fr/>\n"
@@ -165,11 +165,11 @@ msgstr "{obj} a été mis en brouillon"
 msgid "You can't delete this path, some topologies are linked with this path"
 msgstr "Vous ne pouvez pas supprimer ce tronçon, des topologies sont liées à ce tronçon"
 
-msgid "Trails"
-msgstr "Sentiers"
-
 msgid "None"
 msgstr "Aucun(e)"
+
+msgid "Trails"
+msgstr "Sentiers"
 
 msgid "Treks"
 msgstr "Itinéraires"

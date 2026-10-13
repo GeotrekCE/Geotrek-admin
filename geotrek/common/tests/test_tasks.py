@@ -3,11 +3,11 @@ import os
 from io import StringIO
 from unittest.mock import patch
 
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from geotrek.common.models import FileType, Organism
 from geotrek.common.parsers import ExcelParser, GlobalImportError
-from geotrek.common.tasks import import_datas, import_datas_from_web
+from geotrek.common.tasks import get_parser_class, import_datas, import_datas_from_web
 from geotrek.tourism.models import TouristicEvent
 
 
@@ -95,3 +95,8 @@ class TasksTest(TestCase):
         event = TouristicEvent.objects.get()
         self.assertEqual(event.eid, "323154")
         self.assertEqual(task.status, "SUCCESS")
+
+    def test_get_parser_class_from_var_dir(self):
+        with override_settings(VAR_DIR=os.path.join(os.path.dirname(__file__), "data")):
+            parser_cls = get_parser_class("parsers", "CustomParser")
+            self.assertEqual(parser_cls.__name__, "CustomParser")

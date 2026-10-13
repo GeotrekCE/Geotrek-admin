@@ -920,7 +920,7 @@ class AtomParser(Parser):
 
     def flatten_fields(self, fields):
         return reduce(
-            lambda x, y: x + (list(y) if hasattr(y, "__iter__") else [y]),
+            lambda x, y: x + (list(y) if isinstance(y, (list, tuple)) else [y]),
             fields.values(),
             [],
         )

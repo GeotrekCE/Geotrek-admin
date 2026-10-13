@@ -1,12 +1,14 @@
 import os
+import shutil
 from io import StringIO
+from tempfile import mkdtemp
 from unittest import mock
 from unittest.mock import PropertyMock, patch
 
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from easy_thumbnails.models import Thumbnail
 
 from geotrek import __version__
@@ -144,9 +146,16 @@ class CommandAttachmentsTests(TestCase):
         cls.content = POIFactory(geom=f"SRID={settings.SRID};POINT(1 1)")
 
     def setUp(self):
+        self.tmp_media_root = mkdtemp(dir=settings.TMP_DIR)
+        self._override = override_settings(MEDIA_ROOT=self.tmp_media_root)
+        self._override.enable()
         self.picture = AttachmentFactory(
             content_object=self.content, attachment_file=get_dummy_uploaded_image()
         )
+
+    def tearDown(self):
+        self._override.disable()
+        shutil.rmtree(self.tmp_media_root, ignore_errors=True)
 
     def test_remove_thumbnails(self):
         output = StringIO()

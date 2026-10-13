@@ -5,6 +5,11 @@ from django.test.utils import override_settings
 from django.utils.timezone import make_aware
 
 from geotrek.authent.tests.factories import StructureFactory
+from geotrek.cirkwi.models import (
+    CirkwiLocomotion,
+    CirkwiPOICategory,
+    CirkwiTag,
+)
 from geotrek.cirkwi.serializers import timestamp
 from geotrek.common.tests.factories import (
     AttachmentFactory,
@@ -15,7 +20,12 @@ from geotrek.common.tests.factories import (
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking import urls  # NOQA
-from geotrek.trekking.tests.factories import POIFactory, TrekFactory
+from geotrek.trekking.tests.factories import (
+    DifficultyLevelFactory,
+    POIFactory,
+    PracticeFactory,
+    TrekFactory,
+)
 
 
 class CirkwiTests(TestCase):
@@ -363,3 +373,24 @@ class CirkwiTests(TestCase):
             response.content.decode(),
             '<?xml version="1.0" encoding="utf8"?>\n<pois version="2"/>',
         )
+
+    def test_export_circuits_cirkwi_fields(self):
+        cirkwi_tag = CirkwiTag.objects.create(name="Tag", eid=1)
+        cirkwi_loco = CirkwiLocomotion.objects.create(name="Loco", eid=2)
+        cirkwi_cat = CirkwiPOICategory.objects.create(name="Cat", eid=3)
+        self.poi.type.cirkwi = cirkwi_cat
+        self.poi.type.save()
+        self.poi.name = "POI & <1>"
+        self.poi.description = ""
+        self.poi.save()
+        AttachmentFactory.create(
+            content_object=self.poi,
+            attachment_file=get_dummy_uploaded_image(),
+            author="Author",
+        )
+        self.trek.practice = PracticeFactory(cirkwi=cirkwi_loco)
+        self.trek.difficulty = DifficultyLevelFactory(cirkwi_level=2, cirkwi=cirkwi_tag)
+        self.trek.advice = ""
+        self.trek.save()
+        response = self.client.get("/api/cirkwi/circuits.xml")
+        self.assertEqual(response.status_code, 200)
