@@ -1,6 +1,11 @@
 backlog = 2048
 bind = "unix:/tmp/gunicorn-geotrek.sock"
 pidfile = "/opt/geotrek-admin/var/pid/gunicorn-geotrek.pid"
+worker_class = "gthread"
 workers = ${WORKERS}
+threads = ${THREADS}
 timeout = ${TIMEOUT}
+keepalive = 5
 debug = False
+max_requests = 1000
+max_requests_jitter = 50

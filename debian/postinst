@@ -28,6 +28,7 @@ fi
 db_get geotrek-admin/DEFAULT_STRUCTURE; export DEFAULT_STRUCTURE="$RET"
 
 db_get geotrek-admin/WORKERS; export WORKERS="$RET"
+db_get geotrek-admin/THREADS; export THREADS="${RET:-1}"
 db_get geotrek-admin/TIMEOUT; export TIMEOUT="$RET"
 
 export DOLLAR="$"

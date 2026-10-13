@@ -7,7 +7,7 @@ Configuration
 Basic configuration update
 ===========================
 
-To update basic configuration (server name, database connection, languages, or set workers number or timeout), run:
+To update basic configuration (server name, database connection, languages, or set workers or threads number, or timeout), run:
 
 .. md-tab-set::
     :name: update-configuration-tabs
@@ -26,6 +26,34 @@ To update basic configuration (server name, database connection, languages, or s
 
 The basic configuration is stored in ``/opt/geotrek-admin/var/conf/env`` file, not to be changed manually.
 This file also contains the PostgreSQL authentification details, if you need to access your Geotrek-admin database.
+
+.. _workers_and_threads_configuration:
+
+How many workers and thread should I define ?
+=============================================
+
+Ideally, set your number of core / 2 and 2 threads per workers.
+Why ? Because Geotrek-admin is a CPU intensive application, and the number of workers is the number of process that will be created to handle requests. Each worker can handle multiple requests at the same time, thanks to threads.
+Two gunicorn services are running, one for the API and one for the web interface. So if you have 8 cores, you can set 4 workers and 2 threads per worker, which will give you 8 threads in total per service.
+If your server handle other services, like PostgreSQL database, NGINX web server, or other applications, you should reduce the number of workers to avoid overloading your server.
+
+.. code-block:: bash
+
+     nproc
+
+resulting :
+
+     8
+
+With 8 cores, you can set 4 workers and 2 threads per worker, which will give you 8 threads in total by service.
+
+If your database is on the same server, you should reduce the number of workers to avoid overloading your server, for example with 3 workers and 2 threads per worker.
+
+.. warning::
+
+   If you use docker, adjust the number of workers and threads according to your container's CPU limits, directly with GUNICORN_CMD_ARGS environment variable (by default in .env file). For example, if you limit your container to 2 CPUs, you can set 1 worker and 2 threads per worker, which will give you 2 threads in total.
+   ``GUNICORN_CMD_ARGS="--workers=1 --threads=2"``
+
 
 .. _custom-setting-file:
 
