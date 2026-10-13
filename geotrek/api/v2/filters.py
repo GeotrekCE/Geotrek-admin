@@ -299,90 +299,74 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
         return qs.distinct()
 
     def get_schema_fields(self, view):
-        return (
-            Field(
-                name="structures",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Structures"),
-                    description=_(
-                        "Filter by one or more structure id, comma-separated."
-                    ),
+        return [
+            {
+                "name": "structures",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more structure id, comma-separated."
                 ),
-            ),
-            Field(
-                name="portals",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Portals"),
-                    description=_("Filter by one or more portal id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "portals",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more portal id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "practicable",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by practicability status, false=impracticable, true=practicable."
                 ),
-            ),
-            Field(
-                name="practicable",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Practicable"),
-                    description=_(
-                        "Filter by practicability status, false=impracticable, true=practicable."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "vigilance_levels",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more vigilance levels id, comma-separated."
                 ),
-            ),
-            Field(
-                name="vigilance_levels",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Vigilance levels"),
-                    description=_(
-                        "Filter by one or more vigilance levels id, comma-separated."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "types",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more types id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "types_exclude",
+                "required": False,
+                "in": "query",
+                "description": _("Exclude one or more types id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "start_date",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter active vigilance areas for a period. Must be setup with end_date. Format is YYYY-MM-JJ."
                 ),
-            ),
-            Field(
-                name="types",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Types"),
-                    description=_("Filter by one or more types id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "end_date",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter active vigilance areas for a period. Must be setup with start_date. Format is YYYY-MM-JJ."
                 ),
-            ),
-            Field(
-                name="types_exclude",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Types exclusion"),
-                    description=_("Exclude one or more types id, comma-separated."),
-                ),
-            ),
-            Field(
-                name="start_date",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Start date"),
-                    description=_(
-                        "Filter active vigilance areas for a period. Must be setup with end_date. Format is YYYY-MM-JJ."
-                    ),
-                ),
-            ),
-            Field(
-                name="end_date",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("End date"),
-                    description=_(
-                        "Filter active vigilance areas for a period. Must be setup with start_date. Format is YYYY-MM-JJ."
-                    ),
-                ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekPOIFilter(BaseFilterBackend):
@@ -632,7 +616,9 @@ class GeotrekZoningAndThemeFilter(BaseFilterBackend):
                     | Q(description__icontains=q)
                     | Q(description_teaser__icontains=q)
                 )
-        return qs.distinct() # use distinct to avoid duplicated value because of filters on many-to-many
+        return (
+            qs.distinct()
+        )  # use distinct to avoid duplicated value because of filters on many-to-many
 
     def _get_schema_operation_parameters(self, view):
         return [
@@ -988,63 +974,53 @@ class PracticableFilter(BaseFilterBackend):
         return qs
 
     def get_schema_fields(self, view):
-        return (
-            Field(
-                name="practicable",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Practicable"),
-                    description=_(
-                        "Filter by practicability status, true=practicable, false=impracticable."
-                    ),
+        return [
+            {
+                "name": "practicable",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by practicability status, true=practicable, false=impracticable."
                 ),
-            ),
-            Field(
-                name="practicable_from",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Praticable from"),
-                    description=_(
-                        "Filter treks that are practicable during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "practicable_from",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter treks that are practicable during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
                 ),
-            ),
-            Field(
-                name="practicable_to",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Practicable to"),
-                    description=_(
-                        "Filter treks that are practicable during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "practicable_to",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter treks that are practicable during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
                 ),
-            ),
-            Field(
-                name="vigilance_area_types",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Vigilance area types"),
-                    description=_(
-                        "Filter by one or more vigilance area types id related to a trek, comma-separated."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "vigilance_area_types",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more vigilance area types id related to a trek, comma-separated."
                 ),
-            ),
-            Field(
-                name="vigilance_area_types_exclude",
-                required=False,
-                location="query",
-                schema=coreschema.String(
-                    title=_("Vigilance area types exclude"),
-                    description=_(
-                        "Exclude by one or more vigilance area types id related to a trek, comma-separated."
-                    ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "vigilance_area_types_exclude",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Exclude by one or more vigilance area types id related to a trek, comma-separated."
                 ),
-            ),
-        )
+                "schema": {"type": "string"},
+            },
+        ]
 
 
 class GeotrekTrekQueryParamsFilter(BaseFilterBackend):

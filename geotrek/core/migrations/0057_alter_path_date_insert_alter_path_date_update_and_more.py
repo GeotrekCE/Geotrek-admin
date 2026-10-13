@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("core", "0055_pre_generate_pgrouting_graph_topology"),
+        ("core", "0056_auto_20260915_1334"),
     ]
 
     operations = [
