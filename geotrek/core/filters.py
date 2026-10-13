@@ -1,5 +1,7 @@
 from dal import autocomplete
+from django.apps import apps
 from django.conf import settings
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import Count, F, Q
 from django.forms import widgets
 from django.utils.translation import gettext_lazy as _
@@ -104,7 +106,12 @@ class TopologyFilter(RightFilter):
 
         # TODO: This is (amazingly) ugly in terms of OOP. Should refactor overlapping()
         if issubclass(qs.model, maintenance_models.Intervention):
-            return qs.filter(target_id__in=[topo.pk for topo in overlapping])
+            topo_models = [m for m in apps.get_models() if issubclass(m, Topology)]
+            content_types = ContentType.objects.get_for_models(*topo_models).values()
+            return qs.filter(
+                target_id__in=[topo.pk for topo in overlapping],
+                target_type__in=content_types,
+            )
         elif issubclass(qs.model, maintenance_models.Project):
             # Find all interventions overlapping those edges
             interventions = self._topology_filter(
