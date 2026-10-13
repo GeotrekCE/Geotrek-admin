@@ -1045,7 +1045,7 @@ POPUP_CONTENT = {
     "trek": ["practice"],
     "poi": [],
     "service": [],
-    "vigilancearea": ["vigilance_area_type"]
+    "vigilancearea": ["vigilance_area_type"],
 }
 
 # Override with prod/dev/tests/tests_nds settings

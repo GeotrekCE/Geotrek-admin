@@ -51,10 +51,12 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
         if portals:
             portals = [int(portal) for portal in portals.split(",")]
-            impracticable_vigilance_areas = impracticable_vigilance_areas.filter(portals__in=portals).distinct()
+            impracticable_vigilance_areas = impracticable_vigilance_areas.filter(
+                portals__in=portals
+            ).distinct()
 
         with translation.override(self.request.GET.get("language"), deactivate=True):
-            return  (
+            return (
                 trekking_models.Trek.objects.existing()
                 .select_related("topo_object")
                 .prefetch_related(
@@ -175,7 +177,9 @@ class TourViewSet(TrekViewSet):
 
         if portals:
             portals = [int(portal) for portal in portals.split(",")]
-            impracticable_vigilance_areas = impracticable_vigilance_areas.filter(portals__in=portals).distinct()
+            impracticable_vigilance_areas = impracticable_vigilance_areas.filter(
+                portals__in=portals
+            ).distinct()
 
         qs = super().get_queryset()
         qs = (
