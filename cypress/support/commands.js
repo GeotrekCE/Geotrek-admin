@@ -211,5 +211,5 @@ Cypress.Commands.add('drawGeomanPoint', (mapSelector, [x, y], fieldId = 'id_geom
 });
 
 Cypress.Commands.add('submitEntityForm', () => {
-  cy.get('#save_changes, #submit-id-save_changes').first().click();
+  cy.get('#save_changes, #submit-id-save_changes').first().click({ force: true });
 });

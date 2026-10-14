@@ -8680,12 +8680,26 @@ class MapboxPathControl {
                 const nearestPointInLineString = nearestPointOnLine(currentLineString, newPoint);
                 const newLines = lineSplit(currentLineString, nearestPointInLineString);
                 const { features: [from, to = from], } = newLines;
-                const _c = nearestLineString.properties, customProperties = __rest(_c, ["index", "isFollowingDirections", "directionID", "isPhantomJunction", "isDeparture"]);
+                const _c = nearestLineString.properties, customProperties = __rest(_c, ["index", "isFollowingDirections", "directionID", "isPhantomJunction", "isDeparture", "topology"]);
                 this.selectedReferencePointIndex =
                     nearestLineString.properties.index + 1;
                 this.createNewPointAndLine(nearestPointInLineString.geometry.coordinates, nearestLineString.properties.isFollowingDirections, from.geometry.coordinates, to.geometry.coordinates, nearestLineString.properties.index, undefined, snappedFeatureId, customProperties);
                 this.movePointHandler(newPointCoordinates, snappedFeatureId);
+                if (this.changeDirectionsModeOnPreviousLineWithDebounce && typeof this.changeDirectionsModeOnPreviousLineWithDebounce.cancel === "function") {
+                    this.changeDirectionsModeOnPreviousLineWithDebounce.cancel();
+                }
+                if (this.changeDirectionsModeOnNextLineWithDebounce && typeof this.changeDirectionsModeOnNextLineWithDebounce.cancel === "function") {
+                    this.changeDirectionsModeOnNextLineWithDebounce.cancel();
+                }
                 this.syncIndex();
+                if (nearestLineString.properties.isFollowingDirections) {
+                    const prevLine = this.linesBetweenReferencePoints[nearestLineString.properties.index];
+                    const nextLine = this.linesBetweenReferencePoints[nearestLineString.properties.index + 1];
+                    yield Promise.all([
+                        this.changeDirectionsModeOnLine(prevLine, true),
+                        this.changeDirectionsModeOnLine(nextLine, true)
+                    ]);
+                }
                 this.updateSource();
                 return;
             }
@@ -8808,7 +8822,7 @@ class MapboxPathControl {
     movePointHandler(coordinates, snappedFeatureId) {
         let previousLine = this.linesBetweenReferencePoints[this.selectedReferencePointIndex - 1];
         if (!previousLine && this.isLoopTrail) {
-            previousLine = this.linesBetweenReferencePoints[this.referencePoints.length - 1];
+            previousLine = this.linesBetweenReferencePoints[this.linesBetweenReferencePoints.length - 1];
         }
         let nextLine = this.linesBetweenReferencePoints[this.selectedReferencePointIndex];
         if (!nextLine && this.isLoopTrail) {
@@ -8885,6 +8899,12 @@ class MapboxPathControl {
     onUpPoint() {
         this.isDragging = false;
         this.map.off("mousemove", this.onMovePointFunction);
+        if (this.changeDirectionsModeOnPreviousLineWithDebounce && typeof this.changeDirectionsModeOnPreviousLineWithDebounce.flush === "function") {
+            this.changeDirectionsModeOnPreviousLineWithDebounce.flush();
+        }
+        if (this.changeDirectionsModeOnNextLineWithDebounce && typeof this.changeDirectionsModeOnNextLineWithDebounce.flush === "function") {
+            this.changeDirectionsModeOnNextLineWithDebounce.flush();
+        }
         if (this.isSnapping) {
             if (this.map.getZoom() < this.snapMinZoom) {
                 this.handleMapCursor("not-allowed");
@@ -9034,7 +9054,7 @@ class MapboxPathControl {
                 const nearestPoint = nearestPointOnLine(currentLineString, currentPoint);
                 const newLines = lineSplit(currentLineString, nearestPoint);
                 const { features: [from, to = from], } = newLines;
-                const _c = lineUnderMouse[0].properties, { index, isFollowingDirections, directionID, isPhantomJunction, isDeparture } = _c, customProperties = __rest(_c, ["index", "isFollowingDirections", "directionID", "isPhantomJunction", "isDeparture"]);
+                const _c = lineUnderMouse[0].properties, { index, isFollowingDirections, directionID, isPhantomJunction, isDeparture, topology } = _c, customProperties = __rest(_c, ["index", "isFollowingDirections", "directionID", "isPhantomJunction", "isDeparture", "topology"]);
                 this.createNewPointAndLine(nearestPoint.geometry.coordinates, lineUnderMouse[0].properties.isFollowingDirections, from.geometry.coordinates, to.geometry.coordinates, lineUnderMouseIndex, undefined, snappedFeatureId, customProperties);
                 this.syncIndex();
                 if (isFollowingDirections) {
@@ -9157,6 +9177,7 @@ class MapboxPathControl {
             this.isLoopTrail = true;
             yield this.drawNewLine(firstPoint.geometry.coordinates, lastPoint.geometry.coordinates, (_a = lastPoint.properties) === null || _a === void 0 ? void 0 : _a.snapFeatureId);
             this.referencePoints = this.referencePoints.slice(0, -1);
+            this.syncIndex();
             this.updateSource();
             this.actionsPanel.remove();
             this.map.fire("MapboxPathControl.loop", {
@@ -9289,6 +9310,12 @@ class MapboxPathControl {
                 if ((endPoint === null || endPoint === void 0 ? void 0 : endPoint.join()) ===
                     this.referencePoints[0].geometry.coordinates.join()) {
                     this.isLoopTrail = true;
+                    if (this.referencePoints.length > this.linesBetweenReferencePoints.length) {
+                        const lastRefPoint = this.referencePoints[this.referencePoints.length - 1];
+                        if (lastRefPoint.geometry.coordinates.join() === this.referencePoints[0].geometry.coordinates.join()) {
+                            this.referencePoints.pop();
+                        }
+                    }
                 }
             }
         }
