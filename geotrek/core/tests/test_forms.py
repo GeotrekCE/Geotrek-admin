@@ -1,12 +1,17 @@
+from unittest import mock
+
+from django.contrib.gis.geos import LineString
 from django.core.checks import Error
 from django.core.exceptions import ValidationError
 from django.forms.widgets import HiddenInput
 from django.test import TestCase
 from django.test.utils import override_settings
+from mapentity.tests.factories import SuperUserFactory
 
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.core.forms import CertificationTrailFormSet, PathForm, TrailForm
-from geotrek.core.models import CertificationTrail
+from geotrek.core.mixins.forms import PointLineTopologyFormMixin
+from geotrek.core.models import CertificationTrail, Path, Trail
 from geotrek.core.tests.factories import (
     CertificationLabelFactory,
     CertificationStatusFactory,
@@ -68,7 +73,7 @@ class TopologyFormTest(TestCase):
         self.assertNotIn("core/mapwidget_load_path_layer.js", widget.media._js)
 
     def test_clean_removes_geom_error(self):
-        user = UserFactory()
+        user = SuperUserFactory()
         topo = TrailFactory()
         form = TrailForm(
             instance=topo,
@@ -77,12 +82,92 @@ class TopologyFormTest(TestCase):
                 "name": "t",
                 "structure": topo.structure.pk,
                 "topology": str(topo.pk),
+                "topology_changed": True,
             },
         )
         form.full_clean()
         form._errors["geom"] = form.error_class(["err"])
         form.clean()
         self.assertNotIn("geom", form.errors)
+
+        # Also test geom_changed removes topology errors
+        form2 = TrailForm(
+            instance=topo,
+            user=user,
+            data={
+                "name": "t",
+                "structure": topo.structure.pk,
+                "geom": '{"type": "LineString", "coordinates": [[3, 45], [3, 46]]}',
+                "geom_changed": True,
+            },
+        )
+        form2.full_clean()
+        form2._errors["topology"] = form2.error_class(["err"])
+        form2.clean()
+        self.assertNotIn("topology", form2.errors)
+
+    def test_exclusive_inputs_raises_validation_error(self):
+        user = SuperUserFactory()
+        topo = TrailFactory()
+        form = TrailForm(
+            instance=topo,
+            user=user,
+            data={
+                "name": "t",
+                "structure": topo.structure.pk,
+                "geom": '{"type": "LineString", "coordinates": [[3, 45], [3, 46]]}',
+                "geom_changed": True,
+                "topology": str(topo.pk),
+                "topology_changed": True,
+            },
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn(
+            "The geometry can only be drawn on or off the path network, not both.",
+            str(form.errors),
+        )
+
+    def test_off_network_permission_raises_validation_error(self):
+        user = UserFactory()
+        topo = TrailFactory()
+        form = TrailForm(instance=topo, user=user)
+        cleaned_data = {
+            "geom": LineString([(3, 45), (3, 46)]),
+            "geom_changed": True,
+        }
+        with self.assertRaises(ValidationError):
+            form.validate_off_network_permission(cleaned_data)
+
+    @override_settings(PATH_MODEL_ENABLED=False)
+    def test_is_drawing_off_path_network_allowed_when_path_model_disabled(self):
+        user = UserFactory()
+        form = TrailForm(user=user)
+        self.assertTrue(form.is_drawing_off_path_network_allowed())
+
+    def test_point_line_topology_form_reroute_and_exclusive_inputs(self):
+        class DummyPointLineForm(PointLineTopologyFormMixin):
+            class Meta(PointLineTopologyFormMixin.Meta):
+                model = Trail
+
+        user = SuperUserFactory()
+        topo = TrailFactory()
+        form = DummyPointLineForm(instance=topo, user=user)
+        data = {
+            "geom": topo,
+            "geom_changed": True,
+            "topology_changed": False,
+        }
+        form.reroute_point_topology(data)
+        self.assertEqual(data["topology"], topo)
+        self.assertTrue(data["topology_changed"])
+        self.assertFalse(data["geom_changed"])
+
+        form.cleaned_data = {
+            "geom_changed": True,
+            "topology_changed": True,
+        }
+        with self.assertRaises(ValidationError):
+            form.clean()
 
 
 class PathFormTest(TestCase):
@@ -166,13 +251,37 @@ class PathFormTest(TestCase):
         form = PathForm(
             user=user,
             data={
-                "geom": '{"geom": "LINESTRING(3 45, 3 46)", "snap": [null, null]}',
+                "geom": '{"type": "LineString", "coordinates": [[3, 45], [3, 46]]}',
                 "reverse_geom": True,
             },
         )
         self.assertTrue(form.is_valid(), str(form.errors))
         path = form.save()
         self.assertIsNotNone(path.pk)
+
+    def test_clean_geom_not_simple(self):
+        user = UserFactory()
+        form = PathForm(
+            user=user,
+            data={
+                "geom": '{"type": "LineString", "coordinates": [[0, 0], [1, 1], [0, 1], [1, 0]]}',
+            },
+        )
+        self.assertFalse(form.is_valid())
+        self.assertIn("Geometry is not simple.", str(form.errors))
+
+    def test_clean_geom_not_valid(self):
+        user = UserFactory()
+        form = PathForm(user=user)
+        geom = mock.MagicMock()
+        geom.simple = True
+        geom.valid = False
+        form.cleaned_data = {"geom": geom}
+        with (
+            mock.patch.object(Path, "check_path_not_overlap", return_value=True),
+            self.assertRaises(ValidationError),
+        ):
+            form.clean_geom()
 
 
 class TrailFormTest(TestCase):

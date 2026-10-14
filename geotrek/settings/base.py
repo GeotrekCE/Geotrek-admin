@@ -104,7 +104,6 @@ DATABASES = {
                 ",".join(("public", *tuple(set(DATABASE_SCHEMAS.values()))))
             )
         },
-        "CONN_MAX_AGE": 60,
     }
 }
 DEFAULT_AUTO_FIELD = "django.db.models.AutoField"

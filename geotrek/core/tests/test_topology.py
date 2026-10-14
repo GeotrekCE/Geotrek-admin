@@ -9,7 +9,7 @@ from django.test import TestCase
 from geotrek.common.tests.mixins import dictfetchall
 from geotrek.common.tests.utils import LineStringInBounds, PointInBounds
 from geotrek.common.utils import dbnow
-from geotrek.core.models import Path, PathAggregation, Topology
+from geotrek.core.models import Path, PathAggregation, Topology, _get_ewkt
 from geotrek.core.tests.factories import (
     PathAggregationFactory,
     PathFactory,
@@ -1937,3 +1937,193 @@ class LineTopologyPathNetworkCoupling(TestCase):
         self.assertEqual(
             topology2.geom.coords, ((0, 0), (10, 0), (10, 5), (10, 10), (20, 10))
         )
+
+
+class GetEwktTest(TestCase):
+    def test_get_ewkt_none(self):
+        self.assertIsNone(_get_ewkt(None))
+
+    def test_get_ewkt_string(self):
+        wkt = "SRID=2154;POINT(0 0)"
+        self.assertEqual(_get_ewkt(wkt), wkt)
+
+    def test_get_ewkt_geos_geometry(self):
+        pt = Point(0, 0, srid=2154)
+        self.assertEqual(_get_ewkt(pt), pt.ewkt)
+
+    def test_get_ewkt_exception_falls_back_to_str(self):
+        class Dummy:
+            @property
+            def ewkt(self):
+                msg = "No EWKT"
+                raise RuntimeError(msg)
+
+            def __str__(self):
+                return "dummy_str"
+
+        self.assertEqual(_get_ewkt(Dummy()), "dummy_str")
+
+
+class TopologyMethodsCoverageTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory.create(
+            geom=LineString([(0, 0), (10, 0)], srid=settings.SRID)
+        )
+
+    def test_add_path_resurrects_deleted_topology(self):
+        topo = TopologyFactory.create()
+        topo.deleted = True
+        topo.save(update_fields=["deleted"])
+        self.assertTrue(topo.deleted)
+
+        topo.add_path(self.path, start=0.0, end=1.0)
+        topo.refresh_from_db()
+        self.assertFalse(topo.deleted)
+
+    def test_serialize_empty_aggregations(self):
+        topo = Topology(kind="TMP")
+        self.assertEqual(topo.serialize(), "")
+
+    def test_topologypoint_snap_path_not_found(self):
+        with self.assertRaises(ValueError) as cm:
+            Topology._topologypoint(0, 0, snap=999999)
+        self.assertIn(
+            "Invalid serialized point topology: snap path not found", str(cm.exception)
+        )
+
+    def test_check_serialized_topology_none_or_empty(self):
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology(None)
+        self.assertIn("non-empty 'topology' array", str(cm.exception))
+
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology([])
+        self.assertIn("non-empty 'topology' array", str(cm.exception))
+
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology("not-a-list")
+        self.assertIn("non-empty 'topology' array", str(cm.exception))
+
+    def test_check_serialized_topology_missing_or_empty_paths(self):
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology([{"paths": None}])
+        self.assertIn(
+            "Each subtopology should contain a non-empty 'paths' array",
+            str(cm.exception),
+        )
+
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology([{"paths": []}])
+        self.assertIn(
+            "Each subtopology should contain a non-empty 'paths' array",
+            str(cm.exception),
+        )
+
+    def test_check_serialized_topology_invalid_paths(self):
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology([{"paths": ["not-int"]}])
+        self.assertIn(
+            "Path arrays should contain valid path identifiers", str(cm.exception)
+        )
+
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology([{"paths": [999999]}])
+        self.assertIn(
+            "Path arrays should contain valid path identifiers", str(cm.exception)
+        )
+
+    def test_check_serialized_topology_missing_or_empty_positions(self):
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology(
+                [{"paths": [self.path.pk], "positions": None}]
+            )
+        self.assertIn(
+            "Each subtopology should contain a valid 'positions' object",
+            str(cm.exception),
+        )
+
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology(
+                [{"paths": [self.path.pk], "positions": {}}]
+            )
+        self.assertIn(
+            "Each subtopology should contain a valid 'positions' object",
+            str(cm.exception),
+        )
+
+    def test_check_serialized_topology_invalid_positions_format(self):
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology(
+                [{"paths": [self.path.pk], "positions": {"bad_key": [0, 1]}}]
+            )
+        self.assertIn("positions' objects should contain arrays", str(cm.exception))
+
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology(
+                [{"paths": [self.path.pk], "positions": {"0": None}}]
+            )
+        self.assertIn("positions' objects should contain arrays", str(cm.exception))
+
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology(
+                [{"paths": [self.path.pk], "positions": {"0": [0]}}]
+            )
+        self.assertIn("positions' objects should contain arrays", str(cm.exception))
+
+    def test_check_serialized_topology_invalid_fractions(self):
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology(
+                [{"paths": [self.path.pk], "positions": {"0": [-0.1, 1]}}]
+            )
+        self.assertIn(
+            "Positions start and end values should be between 0 and 1",
+            str(cm.exception),
+        )
+
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology(
+                [{"paths": [self.path.pk], "positions": {"0": [0, 1.2]}}]
+            )
+        self.assertIn(
+            "Positions start and end values should be between 0 and 1",
+            str(cm.exception),
+        )
+
+    def test_check_serialized_topology_length_mismatch(self):
+        with self.assertRaises(Exception) as cm:
+            Topology.check_serialized_topology(
+                [{"paths": [self.path.pk, self.path.pk], "positions": {"0": [0, 1]}}]
+            )
+        self.assertIn(
+            "number of paths and positions should be the same", str(cm.exception)
+        )
+
+    def test_check_serialized_topology_valid(self):
+        valid = [{"paths": [self.path.pk], "positions": {"0": [0, 1]}}]
+        # Should not raise
+        Topology.check_serialized_topology(valid)
+
+    def test_deserialize_geosgeometry_transforms_srid(self):
+        pt_api = Point(1.4, 43.6, srid=settings.API_SRID)
+        topo = Topology.deserialize(pt_api)
+        self.assertEqual(topo.geom.srid, settings.SRID)
+        self.assertFalse(topo.coupled)
+
+    def test_deserialize_json_wkt_fallback(self):
+        # Starts with '{' but not coupled and not valid GeoJSON
+        with self.assertRaises(ValueError):
+            Topology.deserialize('{"invalid": "data"}')
+
+    def test_deserialize_wkt_strings(self):
+        topo1 = Topology.deserialize("POINT (1.4 43.6)")
+        self.assertEqual(topo1.geom.geom_type, "Point")
+        self.assertEqual(topo1.geom.srid, settings.SRID)
+
+        topo2 = Topology.deserialize(f"SRID={settings.SRID};LINESTRING (0 0, 10 10)")
+        self.assertEqual(topo2.geom.geom_type, "LineString")
+        self.assertEqual(topo2.geom.srid, settings.SRID)
+
+        # Invalid WKT falls through to json.loads and raises ValueError
+        with self.assertRaises(ValueError):
+            Topology.deserialize("POINT (INVALID)")

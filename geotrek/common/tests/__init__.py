@@ -3,6 +3,7 @@ import shutil
 import tempfile
 from unittest import mock
 
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import Permission, User
 from django.core.files.storage import default_storage

@@ -30,10 +30,12 @@ from geotrek.core.tests.factories import (
     CertificationStatusFactory,
     CertificationTrailFactory,
     ComfortFactory,
+    NetworkFactory,
     PathFactory,
     StakeFactory,
     TrailCategoryFactory,
     TrailFactory,
+    UsageFactory,
 )
 from geotrek.core.widgets import LineTopologyWidget
 
@@ -443,19 +445,21 @@ class CertificationTest(TestCase):
             "certification label / certification status", str(certification_trail)
         )
 
-    def test_path_no_draft_latest_updated_when_empty(self):
-        Path.objects.all().delete()
-        self.assertIsNone(Path.no_draft_latest_updated())
-
     def test_path_trails_usages_and_networks_display(self):
         p = PathFactory.create()
         self.assertEqual(p.trails_display, "None")
+        self.assertEqual(p.trails_csv_display, "None")
         self.assertEqual(p.usages_display, "")
         self.assertEqual(p.networks_display, "")
         t = TrailFactory.create(paths=[p])
-        if not settings.TREKKING_TOPOLOGY_ENABLED:
-            p._trails = [t]
         self.assertIn(t.name, p.trails_display)
+        self.assertIn(str(t), p.trails_csv_display)
+        usage = UsageFactory.create()
+        net = NetworkFactory.create()
+        p.usages.add(usage)
+        p.networks.add(net)
+        self.assertEqual(p.usages_display, str(usage))
+        self.assertEqual(p.networks_display, str(net))
 
     def test_topology_save_sets_kind_and_rejects_topologymixin_kind(self):
         topo = Topology()
@@ -470,9 +474,6 @@ class CertificationTest(TestCase):
         ):
             topo2.save()
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_topology_deserialize_multiple_subtopologies(self):
         p = PathFactory.create()
         deser = Topology.deserialize(
@@ -489,15 +490,15 @@ class CertificationTest(TestCase):
         )
         self.assertTrue(deser.aggregations.exists())
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_line_topology_widget_deserialize_and_render_with_pk(self):
         t = TrailFactory.create()
         w = LineTopologyWidget()
         self.assertEqual(w.deserialize(t.pk), t.topo_object)
+        self.assertIsNone(w.deserialize("invalid"))
         rendered = w.render("topology", t.pk)
         self.assertIn("paths", rendered)
+        rendered_none = w.render("topology", 999999)
+        self.assertNotIn("paths", rendered_none)
 
     def test_path_aggregation_start_and_end_meter_when_length_is_nan(self):
         p = PathFactory.create()

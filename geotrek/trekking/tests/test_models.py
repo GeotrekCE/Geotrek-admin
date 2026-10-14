@@ -524,12 +524,7 @@ class TrekLabelsTestCase(TestCase):
 
     def test_trek_picture_print_from_poi_attachment(self):
         trek = TrekFactory.create(published=True)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            poi = POIFactory.create(
-                paths=[(trek.paths.first(), 0.5, 0.5)], published=True
-            )
-        else:
-            poi = POIFactory.create(geom=Point(700000, 6600000), published=True)
+        poi = POIFactory.create(paths=[(trek.paths.first(), 0.5, 0.5)], published=True)
         self.assertIsNone(trek.picture_print)
         AttachmentFactory.create(
             content_object=poi, attachment_file=get_dummy_uploaded_image()
@@ -548,20 +543,17 @@ class TrekLabelsTestCase(TestCase):
 
     def test_published_topology_treks_and_services(self):
         trek = TrekFactory.create(published=True)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            poi = POIFactory.create(
-                paths=[(trek.paths.first(), 0.5, 0.5)], published=True
-            )
-            srv = ServiceFactory.create(paths=[(trek.paths.first(), 0.5, 0.5)])
-        else:
-            poi = POIFactory.create(geom=Point(700000, 6600000), published=True)
-            srv = ServiceFactory.create(geom=Point(700000, 6600000))
+        poi = POIFactory.create(paths=[(trek.paths.first(), 0.5, 0.5)], published=True)
+        srv = ServiceFactory.create(paths=[(trek.paths.first(), 0.5, 0.5)])
         self.assertIn(trek, Trek.published_topology_treks(poi))
         srv.type.published = True
         srv.type.save()
         srv.type.practices.add(trek.practice)
         self.assertEqual(srv.type_display, str(srv.type))
         self.assertIn(srv, Service.published_topology_services(trek))
+
+        poi_uncoupled = POIFactory.create(geom=Point(700000, 6600000), published=True)
+        self.assertIn(trek, Trek.published_topology_treks(poi_uncoupled))
 
     def test_accessibility_slug_weblink_category_str_and_poi_properties(self):
         acc = AccessibilityFactory.create(name="Wheelchair")
@@ -590,10 +582,6 @@ class TrekLabelsTestCase(TestCase):
             "children": [str(trek2.pk), str(trek3.pk)],
             "hidden_ordered_children": f"invalid,{trek2.pk},",
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = f'{{"paths": [{trek.paths.first().pk}]}}'
-        else:
-            data["geom"] = trek.geom.ewkt
         form = TrekForm(instance=trek, user=user, data=data)
         self.assertTrue(form.is_valid(), form.errors)
         form.save()

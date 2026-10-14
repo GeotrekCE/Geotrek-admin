@@ -1262,10 +1262,7 @@ class ServiceMultiActionsViewTest(
 
     def test_poi_format_list_queryset_annotates_treks(self):
         trek = TrekFactory.create(published=True)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            poi = POIFactory.create(paths=[(trek.paths.first(), 0.5, 0.5)])
-        else:
-            poi = POIFactory.create(geom=Point(700000, 6600000))
+        poi = POIFactory.create(paths=[(trek.paths.first(), 0.5, 0.5)])
         rf = RequestFactory()
         fmt_view = POIFormatList()
         fmt_view.request = rf.get("/")

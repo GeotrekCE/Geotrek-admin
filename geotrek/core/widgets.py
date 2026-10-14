@@ -20,7 +20,11 @@ class BaseTopologyWidget(BaseGeometryWidget):
     is_point_topology = False
 
     def serialize(self, value):
-        return value.serialize() if hasattr(value, "serialize") else ""
+        if hasattr(value, "serialize"):
+            return value.serialize()
+        if isinstance(value, str):
+            return value
+        return ""
 
     def deserialize(self, value):
         if isinstance(value, int):

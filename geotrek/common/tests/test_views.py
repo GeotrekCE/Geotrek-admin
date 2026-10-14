@@ -5,8 +5,8 @@ from copy import deepcopy
 from io import StringIO
 from unittest import mock
 
-import redis
 import mercantile
+import redis
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.contenttypes.models import ContentType

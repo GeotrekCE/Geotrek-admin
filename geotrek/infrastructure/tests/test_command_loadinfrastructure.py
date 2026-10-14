@@ -1,12 +1,15 @@
 import os
 from io import StringIO
 
+from django.contrib.gis.geos import LineString, Point
+from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
 
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.core.tests.factories import PathFactory
+from geotrek.infrastructure.management.commands.loadinfrastructure import Command
 from geotrek.infrastructure.models import Infrastructure
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 
@@ -301,3 +304,44 @@ class InfrastructureCommandTest(TestCase):
             "Structure wrong_structure_default set in options doesn't exist",
             output.getvalue(),
         )
+
+    def test_create_infrastructure_condition_none(self):
+        cmd = Command()
+        cmd.counter = 0
+        structure = StructureFactory.create()
+        geom = Point(1, 1, srid=4326)
+        infra = cmd.create_infrastructure(
+            geometry=geom,
+            name="Test infra without condition",
+            type="Bridge",
+            category="A",
+            use_structure=False,
+            condition=None,
+            structure=structure,
+            description="desc",
+            year=2020,
+            verbosity=0,
+            eid=None,
+        )
+        self.assertEqual(infra.conditions.count(), 0)
+
+    def test_create_infrastructure_invalid_geometry(self):
+        cmd = Command()
+        cmd.counter = 0
+        structure = StructureFactory.create()
+        geom = LineString([(0, 0), (1, 1)], srid=4326)
+        with self.assertRaises(GEOSException) as cm:
+            cmd.create_infrastructure(
+                geometry=geom,
+                name="Test line infra",
+                type="Bridge",
+                category="A",
+                use_structure=False,
+                condition=None,
+                structure=structure,
+                description="desc",
+                year=2020,
+                verbosity=0,
+                eid=None,
+            )
+        self.assertIn("Invalid geometry", str(cm.exception))

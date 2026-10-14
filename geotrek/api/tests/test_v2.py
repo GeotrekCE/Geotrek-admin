@@ -2,7 +2,7 @@ import datetime
 import json
 import re
 from functools import partial
-from unittest import mock, skipIf
+from unittest import mock
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
