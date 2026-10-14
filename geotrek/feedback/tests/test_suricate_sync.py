@@ -73,7 +73,7 @@ class SuricateTests(TestCase):
     """Test Suricate API"""
 
     def build_get_request_patch(
-        self, mocked: MagicMock, cause_JPG_error=False, remove_one_alert=False
+        self, mocked: MagicMock, cause_JPG_error=False, remove_one_alert=False, alerts_json_file=None
     ):
         """Mock get requests to Suricate API"""
 
@@ -101,6 +101,8 @@ class SuricateTests(TestCase):
                 mock_response.status_code = 200
             else:
                 mock_response.status_code = 404
+            if "GetAlerts" in url and alerts_json_file:
+                mock_response.content = mocked_json(alerts_json_file)
             return mock_response
 
         mocked.side_effect = build_response_patch
@@ -285,6 +287,31 @@ class SuricateAPITests(SuricateTests):
         # Comment change was overriden, status change was not
         self.assertEqual(r.status.identifier, "programmed")
         self.assertEqual(r.comment, "Lames cassées")
+
+    @override_settings(SURICATE_WORKFLOW_ENABLED=True)
+    @mock.patch("geotrek.feedback.parsers.logger")
+    @mock.patch("geotrek.feedback.helpers.requests.get")
+    def test_get_alerts_does_not_update_rejected_reports(self, mocked_get, mocked_logger):
+        """
+        Reports that were rejected should not be updated, as they may currently be handled by
+        other organizations.
+        """
+        self.build_get_request_patch(mocked_get, alerts_json_file="suricate_single_alert.json")
+        # Import reports
+        call_command("sync_suricate", verbosity=2)
+        # Set one of them as rejected
+        r = Report.objects.get(external_uuid="E7C73347-5056-AA2B-DDBFDCD9328CD742")
+        self.assertEqual(r.status.identifier, "filed")
+        r.status = ReportStatusFactory(identifier="rejected", label="Rejeté")
+        r.save()
+        r.refresh_from_db()
+        self.assertEqual(r.status.identifier, "rejected")
+        # Sync again. The report is since being handled by another organization (status "waiting").
+        # The report's status should still be "rejected" in Geotrek-admin.
+        self.build_get_request_patch(mocked_get, alerts_json_file="suricate_single_alert_updated_to_waiting.json")
+        call_command("sync_suricate", verbosity=2)
+        r.refresh_from_db()
+        self.assertEqual(r.status.identifier, "rejected")
 
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.ContentFile.__init__")

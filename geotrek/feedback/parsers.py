@@ -101,10 +101,20 @@ class SuricateParser(SuricateGestionRequestManager):
         )
         should_update_status = True
         if settings.SURICATE_WORKFLOW_ENABLED:
+            # Don't update reports that we rejected: they may currently be handled by other organizations
+            try:
+                rejected_report = Report.objects.get(external_uuid=report["uid"])
+                if rejected_report.status.identifier == "rejected":
+                    should_import = False  # Don't update
+                    self.to_delete.discard(rejected_report.pk)  # Don't delete
+            except Report.DoesNotExist:
+                pass
+
+            # Do not override internal statuses with Waiting status
             should_update_status = (
                 rep_status.identifier != "waiting"
                 or report["uid"] not in self.existing_uuids
-            )  # Do not override internal statuses with Waiting status
+            )
 
         if should_import:
             # Parse dates
