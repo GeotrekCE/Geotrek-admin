@@ -95,72 +95,104 @@
         "pk": 1,
         "model": "zoning.vigilanceareatype",
         "fields": {
+            "path": "0001",
+            "depth": 1,
+            "numchild": 0,
             "name": "Pastoralism",
             "name_fr": "Pastoralisme",
-            "name_en": "Pastoralism"
+            "name_en": "Pastoralism",
+            "code": "PAST"
         }
     },
     {
         "pk": 2,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Sensitive natural area",
-            "name_fr": "Zone naturelle sensible",
-            "name_en": "Sensitive natural area"
+            "path": "0002",
+            "depth": 1,
+            "numchild": 0,
+            "name": "Sensitive area",
+            "name_fr": "Espèce sensible",
+            "name_en": "Sensitive area",
+            "code": "ESPS"
         }
     },
     {
         "pk": 3,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Construction",
-            "name_fr": "Travaux",
-            "name_en": "Construction"
+            "path": "0003",
+            "depth": 1,
+            "numchild": 0,
+            "name": "Intervention in progress/Construction",
+            "name_fr": "Intervention en cours/Travaux",
+            "name_en": "Intervention in progress/Construction",
+            "code": "TRAV"
         }
     },
     {
         "pk": 4,
         "model": "zoning.vigilanceareatype",
         "fields": {
+            "path": "0004",
+            "depth": 1,
+            "numchild": 0,
             "name": "Natural risk",
             "name_fr": "Risque naturel",
-            "name_en": "Natural risk"
+            "name_en": "Natural risk",
+            "code": "RISN"
         }
     },
     {
         "pk": 5,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Rugged terrain",
-            "name_fr": "Terrain accidenté",
-            "name_en": "Rugged terrain"
+            "path": "0005",
+            "depth": 1,
+            "numchild": 0,
+            "name": "Incident",
+            "name_fr": "Incident",
+            "name_en": "Incident",
+            "code": "INCI"
         }
     },
     {
         "pk": 6,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Incident",
-            "name_fr": "Incident",
-            "name_en": "Incident"
+            "path": "0006",
+            "depth": 1,
+            "numchild": 0,
+            "name": "Event",
+            "name_fr": "Événementiel",
+            "name_en": "Event",
+            "code": "EVEN"
         }
     },
     {
         "pk": 7,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Event",
-            "name_fr": "Événement",
-            "name_en": "Event"
+            "path": "0007",
+            "depth": 1,
+            "numchild": 0,
+            "name": "Hunting",
+            "name_fr": "Chasse",
+            "name_en": "Hunting",
+            "code": "CHAS"
         }
     },
     {
         "pk": 8,
         "model": "zoning.vigilanceareatype",
         "fields": {
-            "name": "Hunting",
-            "name_fr": "Chasse",
-            "name_en": "Hunting"
+            "path": "0008",
+            "depth": 1,
+            "numchild": 0,
+            "name": "Others",
+            "name_fr": "Autres",
+            "name_en": "Others",
+            "code": "AUTR"
         }
     },
     {
