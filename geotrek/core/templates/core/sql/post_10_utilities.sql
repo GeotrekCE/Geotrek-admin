@@ -279,7 +279,7 @@ BEGIN
 
         -- Check that this aggregation starts where the previous one ended
         IF prev_path_id IS NOT NULL THEN
-            IF NOT ST_Equals(prev_point, current_point) THEN
+            IF NOT ST_Equals(prev_point, current_point) AND NOT ST_DWithin(prev_point, current_point, 0.05) THEN
                 RETURN FALSE;
             END IF;
         END IF;

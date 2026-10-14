@@ -26,7 +26,7 @@
 {% endblock vars %}
 
 <script type="module">
-    import MapboxPathControl from "{% static 'vendor/PATCHED-mapbox-gl-path/PATCHED-mapbox-gl-path.js' %}";
+    import MapboxPathControl from "{% static 'vendor/PATCHED-mapbox-gl-path/PATCHED-mapbox-gl-path.js' %}?v={% now "U" %}";
 
     document.addEventListener('DOMContentLoaded', function () {
         const fieldId = '{{ id }}';
@@ -79,7 +79,10 @@
             return cookieValue;
         }
 
+        let activeRouteRequests = 0;
+
         async function getRoute(coordinates, options) {
+            activeRouteRequests++;
 
             const [fromCoord, toCoord] = coordinates;
             const [fromLng, fromLat] = fromCoord;
@@ -124,6 +127,9 @@
                     return undefined;
                 }
             })
+            .finally(() => {
+                activeRouteRequests--;
+            });
         }
 
         async function initRoutingControl () {
@@ -366,9 +372,12 @@
         map.getMap().on("MapboxPathControl.update", (event) => {
             // Update the stored topology each time the route changes
             const features = event.featureCollection.features;
-            const subRoutes = features.filter(f => f.geometry.type === "LineString" && !f.properties.isPhantomJunction);
+            const subRoutes = features.filter(f => (f.geometry.type === "LineString" || f.geometry.type === "MultiLineString") && !f.properties.isPhantomJunction);
+            subRoutes.sort((a, b) => a.properties.index - b.properties.index);
             const subTopologies = subRoutes.map(route => route.properties.topology);
-            topologyElem.value = JSON.stringify(subTopologies);
+            if (subTopologies.length === 0 || subTopologies.every(t => Boolean(t))) {
+                topologyElem.value = JSON.stringify(subTopologies);
+            }
             if (!routingControlFirstUpdate) {
                 routingControlFirstUpdate = true;
             } else {
@@ -377,6 +386,21 @@
             }
 
         });
+
+        const formElem = topologyElem.closest('form');
+        if (formElem) {
+            formElem.addEventListener('submit', function (e) {
+                if (activeRouteRequests > 0) {
+                    e.preventDefault();
+                    const checkInterval = setInterval(() => {
+                        if (activeRouteRequests === 0) {
+                            clearInterval(checkInterval);
+                            formElem.requestSubmit ? formElem.requestSubmit() : formElem.submit();
+                        }
+                    }, 50);
+                }
+            });
+        }
     });
 </script>
 

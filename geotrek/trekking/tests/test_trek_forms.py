@@ -270,3 +270,163 @@ class TrekFormItinerancyTest(TestCase):
         form.save()
 
         self.assertFalse(self.trek2.trek_children.exists())
+
+
+class TrekFormTopologicalIntermediatePointsTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = UserFactory.create()
+        cls.path1 = PathFactory.create(geom="SRID=2154;LINESTRING(0 0, 10 0)")
+        cls.path2 = PathFactory.create(geom="SRID=2154;LINESTRING(10 0, 20 0)")
+
+    def test_trek_creation_with_intermediate_points_is_coupled(self):
+        data = {
+            "name_en": "Topological Trek with Intermediate Point",
+            "topology": json.dumps(
+                [
+                    {"paths": [self.path1.pk], "positions": {"0": [0.2, 1.0]}},
+                    {"paths": [self.path2.pk], "positions": {"0": [0.0, 0.8]}},
+                ]
+            ),
+            "topology_changed": "true",
+        }
+        form = TrekForm(user=self.user, data=data)
+        self.assertTrue(form.is_valid(), form.errors)
+        trek = form.save()
+        self.assertTrue(trek.coupled)
+
+    def test_trek_update_adding_intermediate_point_remains_coupled(self):
+        # Initial trek on a single path
+        initial_data = {
+            "name_en": "Initial Trek",
+            "topology": json.dumps(
+                [
+                    {"paths": [self.path1.pk], "positions": {"0": [0.2, 0.8]}},
+                ]
+            ),
+            "topology_changed": "true",
+        }
+        form = TrekForm(user=self.user, data=initial_data)
+        self.assertTrue(form.is_valid(), form.errors)
+        trek = form.save()
+        self.assertTrue(trek.coupled)
+
+        # Modify the trek by adding an intermediate point across paths
+        update_data = {
+            "name_en": "Updated Trek With Intermediate Point",
+            "topology": json.dumps(
+                [
+                    {"paths": [self.path1.pk], "positions": {"0": [0.2, 1.0]}},
+                    {"paths": [self.path2.pk], "positions": {"0": [0.0, 0.5]}},
+                ]
+            ),
+            "topology_changed": "true",
+        }
+        update_form = TrekForm(instance=trek, user=self.user, data=update_data)
+        self.assertTrue(update_form.is_valid(), update_form.errors)
+        updated_trek = update_form.save()
+        self.assertTrue(updated_trek.coupled)
+
+    def test_trek_update_moving_intermediate_point_remains_coupled(self):
+        # Initial trek with an intermediate point
+        initial_data = {
+            "name_en": "Initial Trek 3 Points",
+            "topology": json.dumps(
+                [
+                    {"paths": [self.path1.pk], "positions": {"0": [0.1, 0.5]}},
+                    {"paths": [self.path1.pk], "positions": {"0": [0.5, 0.9]}},
+                ]
+            ),
+            "topology_changed": "true",
+        }
+        form = TrekForm(user=self.user, data=initial_data)
+        self.assertTrue(form.is_valid(), form.errors)
+        trek = form.save()
+        self.assertTrue(trek.coupled)
+
+        # Move the intermediate point from 0.5 to 0.7
+        update_data = {
+            "name_en": "Moved Intermediate Point Trek",
+            "topology": json.dumps(
+                [
+                    {"paths": [self.path1.pk], "positions": {"0": [0.1, 0.7]}},
+                    {"paths": [self.path1.pk], "positions": {"0": [0.7, 0.9]}},
+                ]
+            ),
+            "topology_changed": "true",
+        }
+        update_form = TrekForm(instance=trek, user=self.user, data=update_data)
+        self.assertTrue(update_form.is_valid(), update_form.errors)
+        updated_trek = update_form.save()
+        self.assertTrue(updated_trek.coupled)
+
+    def test_loop_trek_creation_and_modification(self):
+        p3 = PathFactory.create(geom="SRID=2154;LINESTRING(20 0, 10 10)")
+        p4 = PathFactory.create(geom="SRID=2154;LINESTRING(10 10, 0 0)")
+
+        # Create loop trek: path1 -> path2 -> p3 -> p4
+        loop_data = {
+            "name_en": "Loop Trek",
+            "topology": json.dumps(
+                [
+                    {"paths": [self.path1.pk], "positions": {"0": [0.0, 1.0]}},
+                    {"paths": [self.path2.pk], "positions": {"0": [0.0, 1.0]}},
+                    {"paths": [p3.pk], "positions": {"0": [0.0, 1.0]}},
+                    {"paths": [p4.pk], "positions": {"0": [0.0, 1.0]}},
+                ]
+            ),
+            "topology_changed": "true",
+        }
+        form = TrekForm(user=self.user, data=loop_data)
+        self.assertTrue(form.is_valid(), form.errors)
+        trek = form.save()
+        self.assertTrue(trek.coupled, f"Loop trek coupled is {trek.coupled}")
+
+        # Modify loop trek: add intermediate point on path1 (split into two subtopologies)
+        update_loop_data = {
+            "name_en": "Updated Loop Trek",
+            "topology": json.dumps(
+                [
+                    {"paths": [self.path1.pk], "positions": {"0": [0.0, 0.5]}},
+                    {"paths": [self.path1.pk], "positions": {"0": [0.5, 1.0]}},
+                    {"paths": [self.path2.pk], "positions": {"0": [0.0, 1.0]}},
+                    {"paths": [p3.pk], "positions": {"0": [0.0, 1.0]}},
+                    {"paths": [p4.pk], "positions": {"0": [0.0, 1.0]}},
+                ]
+            ),
+            "topology_changed": "true",
+        }
+        update_form = TrekForm(instance=trek, user=self.user, data=update_loop_data)
+        self.assertTrue(update_form.is_valid(), update_form.errors)
+        updated_trek = update_form.save()
+        self.assertTrue(
+            updated_trek.coupled, f"Updated loop trek coupled is {updated_trek.coupled}"
+        )
+
+    def test_trek_update_intermediate_point_floating_point_precision_remains_coupled(
+        self,
+    ):
+        # Discrepancy of ~1e-13 between the end of one subtopology and the start of the next
+        data = {
+            "name_en": "Float Precision Trek",
+            "topology": json.dumps(
+                [
+                    {
+                        "paths": [self.path1.pk],
+                        "positions": {"0": [0.0, 0.5444623112099934]},
+                    },
+                    {
+                        "paths": [self.path1.pk],
+                        "positions": {"0": [0.5444623112098738, 1.0]},
+                    },
+                ]
+            ),
+            "topology_changed": "true",
+        }
+        form = TrekForm(user=self.user, data=data)
+        self.assertTrue(form.is_valid(), form.errors)
+        trek = form.save()
+        self.assertTrue(
+            trek.coupled,
+            f"Trek with sub-nanometer floating point difference should remain coupled, got {trek.coupled}",
+        )

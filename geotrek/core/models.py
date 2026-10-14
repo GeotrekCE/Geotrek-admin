@@ -1002,6 +1002,10 @@ class Topology(
         topology = Topology(kind="TMP", offset=offset)
         try:
             counter = 0
+            prev_end_path_id = None
+            prev_end_pos = None
+            first_path_id = None
+            first_start_pos = None
             for j, subtopology in enumerate(objdict):
                 last_topo = j == len(objdict) - 1
                 positions = subtopology.get("positions", {})
@@ -1013,6 +1017,23 @@ class Topology(
                     # Javascript hash keys are parsed as a string
                     idx = str(i)
                     start_position, end_position = positions.get(idx, (0.0, 1.0))
+                    if j == 0 and i == 0:
+                        first_path_id = path
+                        first_start_pos = start_position
+                    elif (
+                        j > 0
+                        and i == 0
+                        and prev_end_path_id == path
+                        and abs(start_position - prev_end_pos) < 1e-4
+                    ):
+                        start_position = prev_end_pos
+                    if (
+                        last_topo
+                        and last_path
+                        and first_path_id == path
+                        and abs(end_position - first_start_pos) < 1e-4
+                    ):
+                        end_position = first_start_pos
                     path = Path.objects.get(pk=path)
                     aggr = PathAggregation(
                         path=path,
@@ -1025,27 +1046,9 @@ class Topology(
                     path.aggregations.add(aggr)
                     if not last_topo and last_path:
                         counter += 1
-                        # Intermediary marker.
-                        # make sure pos will be [X, X]
-                        # [0, X] or [X, 1] or [X, 0] or [1, X] --> X
-                        # [0.0, 0.0] --> 0.0  : marker at beginning of path
-                        # [1.0, 1.0] --> 1.0  : marker at end of path
-                        pos = -1
-                        if start_position == end_position:
-                            pos = start_position
-                        if start_position == 0.0:
-                            pos = end_position
-                        elif start_position == 1.0:
-                            pos = end_position
-                        elif end_position == 0.0:
-                            pos = start_position
-                        elif end_position == 1.0:
-                            pos = start_position
-                        elif len(paths) == 1:
-                            pos = end_position
-                        assert pos >= 0, (
-                            f"Invalid position ({start_position}, {end_position})."
-                        )
+                        # Intermediary marker: marks the junction between this subtopology and the next.
+                        # It is located at the end position of this subtopology's last path.
+                        pos = end_position
                         aggr = PathAggregation(
                             path=path,
                             topo_object=topology,
@@ -1056,6 +1059,9 @@ class Topology(
                         aggrs.append(aggr)
                         path.aggregations.add(aggr)
                     counter += 1
+                if paths:
+                    prev_end_path_id = paths[-1]
+                    prev_end_pos = end_position
                 topology.aggregations.add(*aggrs)
         except (AssertionError, ValueError, KeyError, Path.DoesNotExist) as e:
             msg = f"Invalid serialized topology : {e}"

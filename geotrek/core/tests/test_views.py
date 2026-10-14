@@ -2377,6 +2377,27 @@ class PathRouteViewTestCase(TestCase):
         self.assertEqual(data["features"][1]["geometry"]["type"], "LineString")
         self.assertEqual(data["features"][2]["geometry"]["type"], "Point")
 
+    def test_topology_to_feature_collection_loop_topology(self):
+        p1 = PathFactory.create(geom=LineString((0, 0), (10, 0), srid=settings.SRID))
+        p2 = PathFactory.create(geom=LineString((10, 0), (10, 10), srid=settings.SRID))
+        p3 = PathFactory.create(geom=LineString((10, 10), (0, 0), srid=settings.SRID))
+        payload = {
+            "topology": [
+                {"paths": [p1.pk], "positions": {"0": [0.0, 1.0]}},
+                {"paths": [p2.pk], "positions": {"0": [0.0, 1.0]}},
+                {"paths": [p3.pk], "positions": {"0": [0.0, 1.0]}},
+            ]
+        }
+        response = self.post_topology_to_feature_collection(payload)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["type"], "FeatureCollection")
+        points = [f for f in data["features"] if f["geometry"]["type"] == "Point"]
+        lines = [f for f in data["features"] if f["geometry"]["type"] == "LineString"]
+        # Closed loop should not have a duplicate end point (3 points for 3 lines)
+        self.assertEqual(len(points), 3)
+        self.assertEqual(len(lines), 3)
+
     def test_topology_to_feature_collection_discontinuous_subtopologies(self):
         path1 = PathFactory.create(geom=self.path_geometries["1"])
         path2 = PathFactory.create(geom=self.path_geometries["2"])
