@@ -402,7 +402,7 @@ class VigilanceLevelTestCase(TestCase):
 class VigilancePeriodTestCase(TestCase):
     def test_clean_start_date_after_end_date(self):
         today = timezone_today()
-        period = VigilancePeriodFactory.build(
+        period = VigilancePeriodFactory.create(
             start_date=today,
             end_date=today - datetime.timedelta(days=1),
         )
@@ -412,7 +412,7 @@ class VigilancePeriodTestCase(TestCase):
 
     def test_clean_valid_dates(self):
         today = timezone_today()
-        period = VigilancePeriodFactory.build(
+        period = VigilancePeriodFactory.create(
             start_date=today,
             end_date=today + datetime.timedelta(days=5),
         )

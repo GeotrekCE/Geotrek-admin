@@ -104,6 +104,13 @@ class VigilanceAreaTypeFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: f"Vigilance area type name {n}")
     pictogram = factory.django.ImageField()
+    parent = None
+
+    @classmethod
+    def _create(cls, model_class, *args, parent=None, **kwargs):
+        if parent is None:
+            return model_class.add_root(**kwargs)
+        return parent.add_child(**kwargs)
 
 
 class VigilanceLevelFactory(factory.django.DjangoModelFactory):
