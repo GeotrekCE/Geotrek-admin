@@ -11,6 +11,7 @@ from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.dates import timezone_today
 from mapentity.models import DuplicateMixin
+from treebeard.mp_tree import MP_Node
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
@@ -141,8 +142,11 @@ class District(TimeStampedModelMixin, BBoxMixin, models.Model):
         return self.name
 
 
-class VigilanceAreaType(OptionalPictogramMixin, TimeStampedModelMixin, models.Model):
+class VigilanceAreaType(
+    OptionalPictogramMixin, TimeStampedModelMixin, MP_Node, models.Model
+):
     name = models.CharField(max_length=200, verbose_name=_("Name"))
+    code = models.CharField(max_length=8, blank=True, null=True, verbose_name=_("Code"))
 
     class Meta:
         verbose_name = _("Vigilance area type")
@@ -150,6 +154,18 @@ class VigilanceAreaType(OptionalPictogramMixin, TimeStampedModelMixin, models.Mo
 
     def __str__(self):
         return self.name
+
+    def get_code(self):
+        node = self
+        while node.code is None and not node.is_root():
+            node = node.get_parent()
+        return node.code
+
+    def get_pictogram(self):
+        node = self
+        while not node.pictogram and not node.is_root():
+            node = node.get_parent()
+        return node.pictogram
 
 
 class VigilanceLevel(OptionalPictogramMixin, TimeStampedModelMixin, models.Model):

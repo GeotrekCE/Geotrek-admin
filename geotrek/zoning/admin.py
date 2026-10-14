@@ -3,6 +3,8 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
 from leaflet.admin import LeafletGeoAdmin
+from treebeard.admin import TreeAdmin
+from treebeard.forms import movenodeform_factory
 
 if "modeltranslation" in settings.INSTALLED_APPS:
     from modeltranslation.admin import TabbedTranslationAdmin
@@ -50,9 +52,20 @@ class DistrictAdmin(LeafletGeoAdmin):
     actions = (publish, unpublish)
 
 
-class VigilanceAreaTypeAdmin(TabbedTranslationAdmin):
-    search_fields = ("name", "description")
-    list_display = ("name", "pictogram_img")
+class VigilanceAreaTypeAdmin(TreeAdmin, TabbedTranslationAdmin):
+    search_fields = ("name", "code")
+    list_display = ("name", "code", "pictogram_img")
+    form = movenodeform_factory(zoning_models.VigilanceAreaType)
+
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        form = super().get_form(request, obj=obj, change=change, **kwargs)
+        form.base_fields["code"].help_text = _(
+            "If left empty, the code of the nearest parent that has one is used."
+        )
+        form.base_fields["pictogram"].help_text = _(
+            "If left empty, the pictogram of the nearest parent that has one is used."
+        )
+        return form
 
 
 class VigilanceLevelAdmin(TabbedTranslationAdmin):
