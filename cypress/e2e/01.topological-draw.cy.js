@@ -186,15 +186,17 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
         [370, 200],
       ]);
 
+      // 3 waypoints create 2 segments, wait for both route geometry requests
+      cy.wait('@routeGeometry').its('response.statusCode').should('eq', 200);
       cy.wait('@routeGeometry').its('response.statusCode').should('eq', 200);
 
       cy.get('#id_topology_changed').should('have.value', 'true');
-      cy.get('#id_topology')
-        .invoke('val')
-        .then((val) => {
-          const topology = JSON.parse(val);
-          expect(topology).to.be.an('array').and.have.length(2);
-        });
+      cy.get('#id_topology').should(($input) => {
+        const val = $input.val();
+        expect(val).to.not.be.empty;
+        const topology = JSON.parse(val);
+        expect(topology).to.be.an('array').and.have.length(2);
+      });
 
       cy.get('input[name^="name_"]:visible').first().type('Topological Trek with Intermediate Point E2E');
       cy.submitEntityForm();
