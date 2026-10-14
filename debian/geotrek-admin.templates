@@ -52,6 +52,12 @@ Description: Number of workers
  Number of parallel processes to handle web requests.
  This number will used twice, once for UI requests and once for API requests.
 
+Template: geotrek-admin/THREADS
+Type: string
+Default: 1
+Description: Number of threads
+ Number of threads per worker process to handle web requests.
+
 Template: geotrek-admin/TIMEOUT
 Type: string
 Default: 300

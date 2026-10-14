@@ -11,7 +11,7 @@ from django.db import connection
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
-from mapentity.tests.factories import UserFactory
+from mapentity.tests.factories import SuperUserFactory, UserFactory
 
 from geotrek.authent.tests.base import AuthentFixturesTest
 from geotrek.authent.tests.factories import PathManagerFactory, StructureFactory
@@ -2346,6 +2346,74 @@ class PathRouteViewTestCase(TestCase):
         cursor.execute("SELECT id, source, target FROM core_path")
         self.assertIn((path2.pk, None, None), cursor.fetchall())
 
+    def post_topology_to_feature_collection(self, body):
+        return self.client.post(
+            reverse("core:path-drf-topology-to-feature-collection"),
+            body,
+            content_type="application/json",
+        )
+
+    def test_topology_to_feature_collection_invalid_payload(self):
+        response = self.post_topology_to_feature_collection({})
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.json())
+
+    def test_topology_to_feature_collection_single_subtopology(self):
+        path1 = PathFactory.create(geom=self.path_geometries["1"])
+        payload = {
+            "topology": [
+                {
+                    "paths": [path1.pk],
+                    "positions": {"0": [0.0, 1.0]},
+                }
+            ]
+        }
+        response = self.post_topology_to_feature_collection(payload)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["type"], "FeatureCollection")
+        self.assertEqual(len(data["features"]), 3)
+        self.assertEqual(data["features"][0]["geometry"]["type"], "Point")
+        self.assertEqual(data["features"][1]["geometry"]["type"], "LineString")
+        self.assertEqual(data["features"][2]["geometry"]["type"], "Point")
+
+    def test_topology_to_feature_collection_discontinuous_subtopologies(self):
+        path1 = PathFactory.create(geom=self.path_geometries["1"])
+        path2 = PathFactory.create(geom=self.path_geometries["2"])
+        payload = {
+            "topology": [
+                {
+                    "paths": [path1.pk],
+                    "positions": {"0": [0.0, 0.5]},
+                },
+                {
+                    "paths": [path2.pk],
+                    "positions": {"0": [0.2, 0.8]},
+                },
+            ]
+        }
+        response = self.post_topology_to_feature_collection(payload)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["type"], "FeatureCollection")
+
+    def test_topology_to_feature_collection_internal_error_500(self):
+        path1 = PathFactory.create(geom=self.path_geometries["1"])
+        payload = {
+            "topology": [
+                {
+                    "paths": [path1.pk],
+                    "positions": {"0": [0.0, 1.0]},
+                }
+            ]
+        }
+        with mock.patch(
+            "geotrek.core.views.GEOSGeometry", side_effect=Exception("Geometry failure")
+        ):
+            response = self.post_topology_to_feature_collection(payload)
+            self.assertEqual(response.status_code, 500)
+            self.assertEqual(response.json(), {"error": "Geometry failure"})
+
 
 class PathKmlGPXTest(TestCase):
     @classmethod
@@ -2508,15 +2576,14 @@ class TrailViewsTest(CommonTest):
         response = self.client.get(trail.get_document_url())
         self.assertEqual(response.status_code, 200)
 
-    # TODO: revert this after new draw on path network
-    # def test_add_trail_from_existing_topology_does_not_use_pk(self):
-    #     trail = TrailFactory(offset=3.14)
-    #     response = self.client.get(Trail.get_add_url() + f"?topology={trail.pk}")
-    #     soup = bs4.BeautifulSoup(response.content, features="html.parser")
-    #     textarea_field = soup.find(id="id_topology")
-    #     self.assertIn('"kind": "TMP"', textarea_field.text)
-    #     self.assertIn('"offset": 3.14', textarea_field.text)
-    #     self.assertNotIn(f'"pk": {trail.pk}', textarea_field.text)
+    def test_add_trail_from_existing_topology_does_not_use_pk(self):
+        trail = TrailFactory(offset=3.14)
+        response = self.client.get(Trail.get_add_url() + f"?topology={trail.pk}")
+        soup = BeautifulSoup(response.content, features="html.parser")
+        textarea_field = soup.find(id="id_topology")
+        self.assertIn('"kind": "TRAIL"', textarea_field.text)
+        self.assertIn('"offset": 3.14', textarea_field.text)
+        self.assertNotIn(f'"pk": {trail.pk}', textarea_field.text)
 
     def test_add_trail_from_existing_topology(self):
         trail = TrailFactory()
@@ -2691,3 +2758,9 @@ class TrailMultiActionsViewTest(
         "Related structure",
         "Category",
     ]
+
+    def test_on_topology_does_not_exist(self):
+        self.client.force_login(SuperUserFactory.create())
+        with self.assertLogs("geotrek.core.views", level="WARNING"):
+            response = self.client.get(f"{Trail.get_add_url()}?topology=999999")
+        self.assertEqual(response.status_code, 200)

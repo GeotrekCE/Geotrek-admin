@@ -113,7 +113,7 @@ CMD ["./manage.py", "runserver", "0.0.0.0:8000"]
 FROM ${FRONTEND_IMAGE} AS frontend
 FROM base AS prod
 
-ENV GUNICORN_CMD_ARGS="--workers=1"
+ENV GUNICORN_CMD_ARGS="--workers=1 --threads=1"
 
 COPY --chown=geotrek:geotrek --from=build /opt/venv /opt/venv
 COPY --chown=geotrek:geotrek geotrek/ geotrek/
@@ -128,4 +128,4 @@ USER geotrek
 
 HEALTHCHECK CMD curl --fail http://127.0.0.1:8000/api/settings.json
 
-CMD ["gunicorn", "geotrek.wsgi:application", "--bind=0.0.0.0:8000", "--worker-class=gevent"]
+CMD ["gunicorn", "geotrek.wsgi:application", "--bind=0.0.0.0:8000", "--worker-class=gthread", "--max-requests=1000", "--max-requests-jitter=50", "--keep-alive=5"]

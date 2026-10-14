@@ -5,6 +5,7 @@ from geotrek.common.templatetags.geotrek_tags import duration
 
 class DurationTagTestCase(TestCase):
     def test_duration_lt_1h(self):
+        self.assertEqual("", duration(None))
         self.assertEqual("15 min", duration(0.25))
         self.assertEqual("30 min", duration(0.5))
 

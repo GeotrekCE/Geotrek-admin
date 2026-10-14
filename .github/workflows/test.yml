@@ -194,11 +194,13 @@ jobs:
         coverage combine
         coverage xml -o coverage.xml
 
-    - name: Save coverage
-      uses: actions/upload-artifact@v7
+    - name: Send to Codecov
+      uses: codecov/codecov-action@v7
       with:
-        name: coverage_${{ matrix.os }}_${{ matrix.tests-env }}
-        path: coverage.xml
+          files: ./coverage.xml
+          env_vars: OS,ENV
+          token: ${{ secrets.CODECOV_TOKEN }} # not usually required for public repos
+          fail_ci_if_error: true # optional (default = false)
 
   build_docker_image:
     name: Build docker image

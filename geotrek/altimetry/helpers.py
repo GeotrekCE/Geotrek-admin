@@ -138,8 +138,6 @@ class AltimetryHelper:
         max_resolution = settings.ALTIMETRIC_AREA_MAX_RESOLUTION
         if width / precision > max_resolution:
             precision = int(width / max_resolution)
-        if height / precision > 10000:
-            precision = int(width / max_resolution)
         if height < precision or width < precision:
             precision = min([height, width])
 

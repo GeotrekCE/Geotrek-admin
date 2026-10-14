@@ -4,6 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 
+from geotrek.authent.tests.factories import StructureFactory
 from geotrek.core.models import Topology
 from geotrek.core.tests.factories import (
     PathFactory,
@@ -22,8 +23,12 @@ from geotrek.maintenance.tests.factories import (
     InterventionDisorderFactory,
     InterventionFactory,
     InterventionJobFactory,
+    InterventionStatusFactory,
+    InterventionTypeFactory,
     ManDayFactory,
+    ProjectDomainFactory,
     ProjectFactory,
+    ProjectTypeFactory,
     SignageInterventionFactory,
 )
 from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
@@ -410,3 +415,49 @@ class ProjectModelTest(TestCase):
         self.assertEqual(
             project.intervention_contractors, ["contractor1", "contractor2"]
         )
+
+    def test_intervention_without_target_properties(self):
+        i = InterventionFactory.create(target=None)
+        self.assertIsNone(i.api_geom)
+        self.assertEqual(list(i.signages), [])
+        self.assertEqual(list(i.infrastructures), [])
+
+    def test_nomenclature_models_str_with_and_without_structure(self):
+        s = StructureFactory.create(name="Struct")
+        self.assertEqual(
+            str(InterventionStatusFactory.create(status="St", structure=s)),
+            "St (Struct)",
+        )
+        self.assertEqual(
+            str(InterventionTypeFactory.create(type="Tp", structure=s)), "Tp (Struct)"
+        )
+        self.assertEqual(
+            str(InterventionDisorderFactory.create(disorder="Ds", structure=s)),
+            "Ds (Struct)",
+        )
+        self.assertEqual(
+            str(InterventionJobFactory.create(job="Jb", structure=s)), "Jb (Struct)"
+        )
+        self.assertEqual(
+            str(ProjectTypeFactory.create(type="Pt", structure=s)), "Pt (Struct)"
+        )
+        self.assertEqual(
+            str(ProjectTypeFactory.create(type="Pt", structure=None)), "Pt"
+        )
+        self.assertEqual(
+            str(ProjectDomainFactory.create(domain="Pd", structure=s)), "Pd (Struct)"
+        )
+        self.assertEqual(
+            str(ProjectDomainFactory.create(domain="Pd", structure=None)), "Pd"
+        )
+        self.assertEqual(
+            str(ContractorFactory.create(contractor="Ct", structure=s)), "Ct (Struct)"
+        )
+
+    def test_project_with_targetless_intervention_properties(self):
+        i = InterventionFactory.create(target=None)
+        proj = ProjectFactory.create()
+        proj.interventions.add(i)
+        self.assertIsNone(proj.api_geom)
+        self.assertEqual(len(proj.founders_display), 1)
+        self.assertEqual(list(proj.signage_edges), [])

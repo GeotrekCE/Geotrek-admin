@@ -56,10 +56,7 @@ export default function ListMap() {
 
       if (properties && !properties.cluster) {
         const reference = properties.reference as
-          | "infrastructure"
-          | "intervention"
-          | "signage"
-          | "report"
+          "infrastructure" | "intervention" | "signage" | "report"
 
         handleClick(properties.id, reference)
       }

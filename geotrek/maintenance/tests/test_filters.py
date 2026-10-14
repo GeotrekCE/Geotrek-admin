@@ -11,7 +11,6 @@ from django.test import TestCase
 from geotrek.core.tests.factories import (
     PathFactory,
     TopologyFactory,
-    getRandomLineStringInBounds,
 )
 from geotrek.feedback.tests.factories import ReportFactory
 
@@ -43,7 +42,9 @@ from geotrek.zoning.tests.factories import (
 class InterventionFilteringByBboxTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.seek_path = PathFactory(geom=getRandomLineStringInBounds())
+        cls.seek_path = PathFactory(
+            geom=LineString((700200, 6600200), (700300, 6600300), srid=settings.SRID)
+        )
         seek_topo = TopologyFactory.create(paths=[cls.seek_path])
         cls.seek_inter = InterventionFactory.create(target=seek_topo)
 
@@ -277,7 +278,9 @@ class InterventionFilteringByLandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         p1 = PathFactory()
-        cls.seek_path = PathFactory(geom=getRandomLineStringInBounds())
+        cls.seek_path = PathFactory(
+            geom=LineString((700200, 6600200), (700300, 6600300), srid=settings.SRID)
+        )
 
         topo_1 = TopologyFactory.create(paths=[p1])
         seek_topo = TopologyFactory.create(paths=[cls.seek_path])
@@ -375,7 +378,9 @@ class ProjectFilteringByLandTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         p1 = PathFactory()
-        cls.seek_path = PathFactory(geom=getRandomLineStringInBounds())
+        cls.seek_path = PathFactory(
+            geom=LineString((700200, 6600200), (700300, 6600300), srid=settings.SRID)
+        )
 
         topo_1 = TopologyFactory.create(paths=[p1])
         seek_topo = TopologyFactory.create(paths=[cls.seek_path])

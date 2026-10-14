@@ -17,17 +17,27 @@ from django.test.utils import override_settings
 from geotrek.authent.models import Structure
 from geotrek.authent.tests.factories import StructureFactory, UserFactory
 from geotrek.common.utils import dbnow
-from geotrek.core.models import CertificationTrail, Path, PathAggregation, Trail
+from geotrek.core.models import (
+    CertificationTrail,
+    Network,
+    Path,
+    PathAggregation,
+    Topology,
+    Trail,
+)
 from geotrek.core.tests.factories import (
     CertificationLabelFactory,
     CertificationStatusFactory,
     CertificationTrailFactory,
     ComfortFactory,
+    NetworkFactory,
     PathFactory,
     StakeFactory,
     TrailCategoryFactory,
     TrailFactory,
+    UsageFactory,
 )
+from geotrek.core.widgets import LineTopologyWidget
 
 
 class StakeTest(TestCase):
@@ -434,3 +444,71 @@ class CertificationTest(TestCase):
         self.assertEqual(
             "certification label / certification status", str(certification_trail)
         )
+
+    def test_path_trails_usages_and_networks_display(self):
+        p = PathFactory.create()
+        self.assertEqual(p.trails_display, "None")
+        self.assertEqual(p.trails_csv_display, "None")
+        self.assertEqual(p.usages_display, "")
+        self.assertEqual(p.networks_display, "")
+        t = TrailFactory.create(paths=[p])
+        self.assertIn(t.name, p.trails_display)
+        self.assertIn(str(t), p.trails_csv_display)
+        usage = UsageFactory.create()
+        net = NetworkFactory.create()
+        p.usages.add(usage)
+        p.networks.add(net)
+        self.assertEqual(p.usages_display, str(usage))
+        self.assertEqual(p.networks_display, str(net))
+
+    def test_topology_save_sets_kind_and_rejects_topologymixin_kind(self):
+        topo = Topology()
+        topo.kind = ""
+        topo.save()
+        self.assertEqual(topo.kind, "TOPOLOGY")
+        topo2 = Topology()
+        topo2.kind = ""
+        with (
+            mock.patch.object(Topology, "KIND", "TOPOLOGYMIXIN"),
+            self.assertRaises(Exception),
+        ):
+            topo2.save()
+
+    def test_topology_deserialize_multiple_subtopologies(self):
+        p = PathFactory.create()
+        deser = Topology.deserialize(
+            [
+                {"paths": [p.pk], "positions": {"0": [0.5, 0.5]}},
+                {"paths": [p.pk], "positions": {"0": [0.5, 0.0]}},
+                {"paths": [p.pk], "positions": {"0": [0.5, 1.0]}},
+                {
+                    "paths": [p.pk, p.pk],
+                    "positions": {"0": [0.5, 0.0], "1": [0.5, 1.0]},
+                },
+                {"paths": [p.pk]},
+            ]
+        )
+        self.assertTrue(deser.aggregations.exists())
+
+    def test_line_topology_widget_deserialize_and_render_with_pk(self):
+        t = TrailFactory.create()
+        w = LineTopologyWidget()
+        self.assertEqual(w.deserialize(t.pk), t.topo_object)
+        self.assertIsNone(w.deserialize("invalid"))
+        rendered = w.render("topology", t.pk)
+        self.assertIn("paths", rendered)
+        rendered_none = w.render("topology", 999999)
+        self.assertNotIn("paths", rendered_none)
+
+    def test_path_aggregation_start_and_end_meter_when_length_is_nan(self):
+        p = PathFactory.create()
+        pa = PathAggregation(path=p, start_position=0.5, end_position=0.5)
+        pa.path.length = float("nan")
+        self.assertEqual(pa.start_meter, -1)
+        self.assertEqual(pa.end_meter, -1)
+
+    def test_network_str_with_and_without_structure(self):
+        net = Network.objects.create(network="Net", structure=self.structure)
+        self.assertEqual(str(net), f"Net ({self.structure.name})")
+        net_no_struct = Network.objects.create(network="Net2", structure=None)
+        self.assertEqual(str(net_no_struct), "Net2")

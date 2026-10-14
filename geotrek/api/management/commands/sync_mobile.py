@@ -649,8 +649,7 @@ class Command(BaseCommand):
         )
 
         geom = trek.geom
-        if geom.geom_type == "MultiLineString":
-            geom = geom[0]  # FIXME
+        geom = geom[0] if geom.geom_type == "MultiLineString" else geom
         geom.transform(4326)
 
         for lng, lat in geom.coords:
@@ -774,14 +773,14 @@ class Command(BaseCommand):
             "ignore_errors": True,
             "tiles_dir": settings.MOBILE_TILES_PATH,
         }
-        sync_mobile_tmp_dir = tempfile.TemporaryDirectory(dir=settings.TMP_DIR).name
-        if options["empty_tmp_folder"]:
-            for dir in os.listdir(sync_mobile_tmp_dir):
-                shutil.rmtree(os.path.join(sync_mobile_tmp_dir, dir))
         if not os.path.exists(settings.TMP_DIR):
             os.mkdir(settings.TMP_DIR)
+        sync_mobile_tmp_dir = os.path.join(settings.TMP_DIR, "sync_mobile")
         if not os.path.exists(sync_mobile_tmp_dir):
             os.mkdir(sync_mobile_tmp_dir)
+        if options["empty_tmp_folder"]:
+            for folder in os.listdir(sync_mobile_tmp_dir):
+                shutil.rmtree(os.path.join(sync_mobile_tmp_dir, folder))
 
         with tempfile.TemporaryDirectory(dir=sync_mobile_tmp_dir) as tmp_dir:
             self.tmp_root = tmp_dir
