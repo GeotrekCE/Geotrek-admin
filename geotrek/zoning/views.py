@@ -258,7 +258,7 @@ class VigilanceAreaFormatList(MapEntityFormat, VigilanceAreaList):
         "practical_info",
         "external_info_url",
         "private_comment",
-        "sources"
+        "sources",
     ]
 
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 16:36+0000\n"
+"POT-Creation-Date: 2026-10-14 14:26+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/api/nl/>\n"
@@ -205,46 +205,22 @@ msgstr ""
 msgid "(deprecated) replaced by '%(field)s'."
 msgstr ""
 
-msgid "Structures"
-msgstr ""
-
-msgid "Portals"
-msgstr ""
-
 msgid "Filter by one or more portal id, comma-separated."
-msgstr ""
-
-msgid "Practicable"
 msgstr ""
 
 msgid "Filter by practicability status, false=impracticable, true=practicable."
 msgstr ""
 
-msgid "Vigilance levels"
-msgstr ""
-
 msgid "Filter by one or more vigilance levels id, comma-separated."
-msgstr ""
-
-msgid "Types"
 msgstr ""
 
 msgid "Filter by one or more types id, comma-separated."
 msgstr ""
 
-msgid "Types exclusion"
-msgstr ""
-
 msgid "Exclude one or more types id, comma-separated."
 msgstr ""
 
-msgid "Start date"
-msgstr ""
-
 msgid "Filter active vigilance areas for a period. Must be setup with end_date. Format is YYYY-MM-JJ."
-msgstr ""
-
-msgid "End date"
 msgstr ""
 
 msgid "Filter active vigilance areas for a period. Must be setup with start_date. Format is YYYY-MM-JJ."
@@ -328,22 +304,10 @@ msgstr ""
 msgid "Filter by practicability status, true=practicable, false=impracticable."
 msgstr ""
 
-msgid "Praticable from"
-msgstr ""
-
 msgid "Filter treks that are practicable during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
 msgstr ""
 
-msgid "Practicable to"
-msgstr ""
-
-msgid "Vigilance area types"
-msgstr ""
-
 msgid "Filter by one or more vigilance area types id related to a trek, comma-separated."
-msgstr ""
-
-msgid "Vigilance area types exclude"
 msgstr ""
 
 msgid "Exclude by one or more vigilance area types id related to a trek, comma-separated."

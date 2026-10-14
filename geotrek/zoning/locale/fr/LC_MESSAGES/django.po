@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 16:34+0000\n"
+"POT-Creation-Date: 2026-10-14 14:26+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/fr/>\n"
@@ -23,6 +23,12 @@ msgstr "Publier (visible sur Geotrek-rando)"
 
 msgid "Unpublish (hidden on Geotrek-rando)"
 msgstr "Dépublier (caché sur Geotrek-rando)"
+
+msgid "If left empty, the code of the nearest parent that has one is used."
+msgstr "Si laissé vide, le code du plus proche parent en ayant un est utilisé."
+
+msgid "If left empty, the pictogram of the nearest parent that has one is used."
+msgstr "Si laissé vide, le pictogramme du plus proche parent en ayant un est utilisé."
 
 msgid "Color"
 msgstr "Couleur"
@@ -78,6 +84,9 @@ msgstr "Jours actifs"
 msgid "Days of the week when the vigilance area is active. Empty equals all week."
 msgstr "Jours de la semaine pendant lesquels la zone de vigilance est active. Vide signifie toute la semaine."
 
+msgid "Type"
+msgstr "Type"
+
 msgid "Periods"
 msgstr "Périodes"
 
@@ -110,9 +119,6 @@ msgstr "Description"
 
 msgid "Impracticable"
 msgstr "Impraticable"
-
-msgid "Type"
-msgstr "Type"
 
 msgid "Practical information"
 msgstr "Informations pratiques"
