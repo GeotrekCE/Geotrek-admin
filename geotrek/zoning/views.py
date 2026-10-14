@@ -250,10 +250,15 @@ class VigilanceAreaFormatList(MapEntityFormat, VigilanceAreaList):
     ]
     default_extra_columns = [
         "vigilance_area_type",
+        "vigilance_level",
+        "periods",
         "impracticable",
         "structure",
         "description",
         "practical_info",
+        "external_info_url",
+        "private_comment",
+        "sources"
     ]
 
 

@@ -244,7 +244,7 @@ class VigilanceArea(
 
     @property
     def periods_resume(self):
-        result = "\n - "
+        result = " - "
         if self.periods.count() > 0:
             result += "\n - ".join(
                 [period.period_resume for period in self.periods.all()]
@@ -252,6 +252,10 @@ class VigilanceArea(
         else:
             result += _("Always active")
         return result
+
+    @property
+    def periods_display(self):
+        return self.periods_resume
 
     objects = VigilanceAreaManager()
 
@@ -298,6 +302,9 @@ class VigilancePeriod(DuplicateMixin, models.Model):
         blank=True,
     )
     annual = models.BooleanField(default=False, verbose_name=_("Annual recurrence"))
+
+    def __str__(self):
+        return f"{self.start_date} - {self.end_date or '...'}"
 
     def clean(self):
         if self.start_date and self.end_date:
