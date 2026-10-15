@@ -73,7 +73,11 @@ class SuricateTests(TestCase):
     """Test Suricate API"""
 
     def build_get_request_patch(
-        self, mocked: MagicMock, cause_JPG_error=False, remove_one_alert=False, alerts_json_file=None
+        self,
+        mocked: MagicMock,
+        cause_JPG_error=False,
+        remove_one_alert=False,
+        alerts_json_file=None,
     ):
         """Mock get requests to Suricate API"""
 
@@ -291,12 +295,16 @@ class SuricateAPITests(SuricateTests):
     @override_settings(SURICATE_WORKFLOW_ENABLED=True)
     @mock.patch("geotrek.feedback.parsers.logger")
     @mock.patch("geotrek.feedback.helpers.requests.get")
-    def test_get_alerts_does_not_update_rejected_reports(self, mocked_get, mocked_logger):
+    def test_get_alerts_does_not_update_rejected_reports(
+        self, mocked_get, mocked_logger
+    ):
         """
         Reports that were rejected should not be updated, as they may currently be handled by
         other organizations.
         """
-        self.build_get_request_patch(mocked_get, alerts_json_file="suricate_single_alert.json")
+        self.build_get_request_patch(
+            mocked_get, alerts_json_file="suricate_single_alert.json"
+        )
         # Import reports
         call_command("sync_suricate", verbosity=2)
         # Set one of them as rejected
@@ -308,7 +316,9 @@ class SuricateAPITests(SuricateTests):
         self.assertEqual(r.status.identifier, "rejected")
         # Sync again. The report is since being handled by another organization (status "waiting").
         # The report's status should still be "rejected" in Geotrek-admin.
-        self.build_get_request_patch(mocked_get, alerts_json_file="suricate_single_alert_updated_to_waiting.json")
+        self.build_get_request_patch(
+            mocked_get, alerts_json_file="suricate_single_alert_updated_to_waiting.json"
+        )
         call_command("sync_suricate", verbosity=2)
         r.refresh_from_db()
         self.assertEqual(r.status.identifier, "rejected")
