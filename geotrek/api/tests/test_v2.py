@@ -664,7 +664,7 @@ class BaseApiTest(TestCase):
         cls.network2 = trek_factory.TrekNetworkFactory.create()
         cls.rating = trek_factory.RatingFactory()
         cls.rating2 = trek_factory.RatingFactory()
-        cls.label = common_factory.LabelFactory(id=23)
+        cls.label = common_factory.LabelFactory()
         cls.path = core_factory.PathFactory.create(geom=LineString((0, 0), (0, 10)))
         if settings.TREKKING_TOPOLOGY_ENABLED:
             cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(
@@ -1632,7 +1632,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
                 "accessibility_level": self.accessibility_level.pk,
                 "themes": self.theme2.pk,
                 "portals": self.portal.pk,
-                "labels": "23",
+                "labels": self.label.pk,
                 "routes": "68",
                 "practices": "1",
                 "ratings": self.rating.pk,
@@ -3510,7 +3510,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_vigilanceareatype_detail(self):
         self.check_structure_response(
             self.get_vigilanceareatype_detail(self.vigilance_area_type.pk),
-            sorted(["id", "code", "name", "pictogram"]),
+            sorted(["id", "children", "code", "name", "parent", "pictogram"]),
         )
 
     def test_vigilancelevel_list(self):
