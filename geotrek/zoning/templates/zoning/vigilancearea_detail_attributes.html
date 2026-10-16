@@ -19,9 +19,9 @@
             <th>{{ object|verbose:"impracticable" }}</th>
             <td>
                 {% if object.impracticable %}
-                    <i class="bi bi-x-circle text-danger"></i> {% trans "Impracticable" %}
+                    <i class="bi bi-check-circle text-success"></i> {% trans "Yes" %}
                 {% else %}
-                    <i class="bi bi-check-circle text-success"></i> {% trans "Practicable" %}
+                    <i class="bi bi-x-circle text-danger"></i> {% trans "No" %}
                 {% endif %}
             </td>
         </tr>
@@ -99,19 +99,19 @@
         {% for period in object.periods.all %}
             <tr>
                 <td class="p-0">
-                    <button class="btn btn-block text-left" type="button"
+                    <div class="btn btn-block text-left" type="button"
                             data-toggle="collapse"
                             data-target="#collapse{{ period.id }}"
                             aria-expanded="false"
                             aria-controls="collapse{{ period.id }}">
                         {% if period.end_date %}
                             {{ period.start_date|date:"SHORT_DATE_FORMAT" }}
-                            <i class="bi bi-arrow-right text-muted"></i>
+                            <i class="text-muted">→</i>
                             {{ period.end_date|date:"SHORT_DATE_FORMAT" }}
                         {% else %}
                             {% trans "From" %} {{ period.start_date|date:"SHORT_DATE_FORMAT" }}
                         {% endif %}
-                    </button>
+                    </div>
                 </td>
             </tr>
             <tr>
@@ -121,11 +121,23 @@
                             <table class="table table-striped table-bordered mb-0">
                                 <tr>
                                     <th>{% trans "Ongoing period" %}</th>
-                                    <td><i class="bi {% if period.ongoing %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i></td>
+                                    <td>
+                                        {% if period.ongoing %}
+                                            <i class="bi bi-check-circle text-success"></i> {% trans "Yes" %}
+                                        {% else %}
+                                            <i class="bi bi-x-circle text-danger"></i> {% trans "No" %}
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>{% trans "Active today" %}</th>
-                                    <td><i class="bi {% if period.active_today %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i></td>
+                                    <td>
+                                        {% if period.active_today %}
+                                            <i class="bi bi-check-circle text-success"></i> {% trans "Yes" %}
+                                        {% else %}
+                                            <i class="bi bi-x-circle text-danger"></i> {% trans "No" %}
+                                        {% endif %}
+                                    </td>
                                 </tr>
                                 <tr>
                                     <th>{% trans "Active days" %}</th>
@@ -139,7 +151,13 @@
                                 </tr>
                                 <tr>
                                     <th>{% trans "Annual recurrence" %}</th>
-                                    <td><i class="bi {% if period.annual %}bi-check-circle text-success{% else %}bi-x-circle text-danger{% endif %}"></i></td>
+                                    <td>
+                                        {% if period.annual %}
+                                            <i class="bi bi-check-circle text-success"></i> {% trans "Yes" %}
+                                        {% else %}
+                                            <i class="bi bi-x-circle text-danger"></i> {% trans "No" %}
+                                        {% endif %}
+                                    </td>
                                 </tr>
                             </table>
                         </div>
