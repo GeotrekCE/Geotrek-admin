@@ -213,8 +213,12 @@ geojson==3.3.0
     # via
     #   geotrek (setup.py)
     #   tif2geojson
+gevent==26.9.0
+    # via gunicorn
 gpxpy==1.6.2
     # via mapentity
+greenlet==3.5.6
+    # via gevent
 gunicorn==26.2.0
     # via geotrek (setup.py)
 idna==3.20
@@ -264,6 +268,7 @@ packaging==26.3
     # via
     #   drf-extensions
     #   drf-yasg
+    #   gunicorn
     #   kombu
     #   large-image-source-vips
 palettable==3.3.3
@@ -451,10 +456,13 @@ zodbpickle==4.5
     # via zodb
 zope-deferredimport==6.1.1
     # via persistent
+zope-event==6.2
+    # via gevent
 zope-interface==8.6
     # via
     #   btrees
     #   datetime
+    #   gevent
     #   persistent
     #   transaction
     #   zodb
