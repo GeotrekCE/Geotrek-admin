@@ -3510,7 +3510,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_vigilanceareatype_detail(self):
         self.check_structure_response(
             self.get_vigilanceareatype_detail(self.vigilance_area_type.pk),
-            sorted(["id", "children", "code", "name", "parent", "pictogram"]),
+            sorted(["id", "code", "name", "parent", "pictogram"]),
         )
 
     def test_vigilancelevel_list(self):
