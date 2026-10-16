@@ -11,7 +11,7 @@ from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.dates import timezone_today
 from mapentity.models import DuplicateMixin
-from treebeard.mp_tree import MP_Node
+from treebeard.al_tree import AL_Node
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
@@ -143,10 +143,20 @@ class District(TimeStampedModelMixin, BBoxMixin, models.Model):
 
 
 class VigilanceAreaType(
-    OptionalPictogramMixin, TimeStampedModelMixin, MP_Node, models.Model
+    OptionalPictogramMixin, TimeStampedModelMixin, AL_Node, models.Model
 ):
     name = models.CharField(max_length=200, verbose_name=_("Name"))
     code = models.CharField(max_length=8, blank=True, null=True, verbose_name=_("Code"))
+
+    parent = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        related_name="children_set",
+        db_index=True,
+        on_delete=models.CASCADE,
+    )
+    sib_order = models.PositiveIntegerField(default=0)
 
     class Meta:
         verbose_name = _("Vigilance area type")

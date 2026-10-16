@@ -6,7 +6,6 @@ from django import forms
 from django.conf import settings
 from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
-from treebeard.forms import TreeNodeChoiceField
 
 from geotrek.common.forms import CommonForm
 from geotrek.zoning.choices import WeekdayChoices
@@ -15,7 +14,6 @@ from geotrek.zoning.models import (
     District,
     RestrictedArea,
     VigilanceArea,
-    VigilanceAreaType,
     VigilancePeriod,
 )
 
@@ -110,11 +108,6 @@ VigilancePeriodFormset = inlineformset_factory(
 
 
 class VigilanceAreaForm(CommonForm):
-    vigilance_area_type = TreeNodeChoiceField(
-        queryset=VigilanceAreaType.objects.all().order_by("path"),
-        label=_("Type"),
-    )
-
     geomfields = ["geom"]
     fieldslayout = [
         Div(
