@@ -38,7 +38,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     )
     serializer_class = api_serializers.TrekSerializer
 
-    def get_queryset(self):
+    def get_impracticable_vigilance_areas(self):
         today = datetime.date.today()
         start_date = parse_date(self.request.GET.get("practicable_from"), today)
         end_date = parse_date(self.request.GET.get("practicable_to"), today)
@@ -54,6 +54,11 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
             impracticable_vigilance_areas = impracticable_vigilance_areas.filter(
                 portals__in=portals
             ).distinct()
+
+        return impracticable_vigilance_areas
+
+    def get_queryset(self):
+        impracticable_vigilance_areas = self.get_impracticable_vigilance_areas()
 
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
@@ -165,21 +170,7 @@ class TourViewSet(TrekViewSet):
     serializer_class = api_serializers.TourSerializer
 
     def get_queryset(self):
-        today = datetime.date.today()
-        start_date = parse_date(self.request.GET.get("practicable_from"), today)
-        end_date = parse_date(self.request.GET.get("practicable_to"), today)
-        portals = self.request.GET.get("portals", "")
-
-        impracticable_vigilance_areas = VigilanceArea.objects.filter(
-            published=True,
-            impracticable=True,
-        ).active_by_dates(start_date, end_date)
-
-        if portals:
-            portals = [int(portal) for portal in portals.split(",")]
-            impracticable_vigilance_areas = impracticable_vigilance_areas.filter(
-                portals__in=portals
-            ).distinct()
+        impracticable_vigilance_areas = self.get_impracticable_vigilance_areas()
 
         qs = super().get_queryset()
         qs = (
