@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from django.conf import settings
 from modeltranslation.utils import build_localized_fieldname
 
@@ -79,3 +81,26 @@ def is_published(instance, language=None):
             # one language is specified
             field_name = build_localized_fieldname("published", language)
             return getattr(instance, field_name)
+
+
+def parse_date(value, default):
+    """
+    Parse a date string in ``YYYY-MM-DD`` format.
+
+    Args:
+        value (str | None): The date string to parse, formatted as
+            ``YYYY-MM-DD``. If ``None`` or invalid, the default value is
+            returned.
+        default (datetime.date): The fallback date to return when ``value``
+            is ``None`` or cannot be parsed.
+
+    Returns:
+        datetime.date: The parsed date if ``value`` is valid; otherwise
+        ``default``.
+    """
+    if value is None:
+        return default
+    try:
+        return datetime.strptime(value, "%Y-%m-%d").date()
+    except ValueError:
+        return default

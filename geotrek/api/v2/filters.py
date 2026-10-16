@@ -13,6 +13,7 @@ from modeltranslation.utils import build_localized_fieldname
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
+from geotrek.api.v2.utils import parse_date
 from geotrek.flatpages.models import FlatPage, MenuItem
 from geotrek.tourism.models import (
     TouristicContent,
@@ -23,7 +24,7 @@ from geotrek.tourism.models import (
     TouristicEventType,
 )
 from geotrek.trekking.models import POI, ServiceType, Trek
-from geotrek.zoning.models import City, District
+from geotrek.zoning.models import City, District, VigilanceArea
 
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
@@ -263,6 +264,107 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
                 "description": _("(deprecated) replaced by '%(field)s'.")
                 % {"field": "near_trek"},
                 "schema": {"type": "integer"},
+            },
+        ]
+
+
+class GeotrekVigilanceAreaFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+        structures = request.GET.get("structures")
+        if structures:
+            qs = qs.filter(structure__in=structures.split(","))
+        portals = request.GET.get("portals")
+        if portals:
+            qs = qs.filter(portals__in=portals.split(","))
+        practicable = request.GET.get("practicable")
+        if practicable:
+            qs = qs.filter(impracticable=(practicable == "false"))
+        vigilance_levels = request.GET.get("vigilance_levels")
+        if vigilance_levels:
+            qs = qs.filter(vigilance_level__in=vigilance_levels.split(","))
+        types = request.GET.get("types")
+        if types:
+            qs = qs.filter(vigilance_area_type__in=types.split(","))
+        types_exclude = request.GET.get("types_exclude")
+        if types_exclude:
+            qs = qs.exclude(vigilance_area_type__in=types_exclude.split(","))
+        start_date = request.GET.get("start_date")
+        end_date = request.GET.get("end_date")
+        if start_date and end_date:
+            start_date = datetime.strptime(start_date, "%Y-%m-%d").date()
+            end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
+            qs = qs.active_by_dates(start_date, end_date)
+
+        return qs.distinct()
+
+    def get_schema_fields(self, view):
+        return [
+            {
+                "name": "structures",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more structure id, comma-separated."
+                ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "portals",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more portal id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "practicable",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by practicability status, false=impracticable, true=practicable."
+                ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "vigilance_levels",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more vigilance levels id, comma-separated."
+                ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "types",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more types id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "types_exclude",
+                "required": False,
+                "in": "query",
+                "description": _("Exclude one or more types id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "start_date",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter active vigilance areas for a period. Must be setup with end_date. Format is YYYY-MM-JJ."
+                ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "end_date",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter active vigilance areas for a period. Must be setup with start_date. Format is YYYY-MM-JJ."
+                ),
+                "schema": {"type": "string"},
             },
         ]
 
@@ -514,7 +616,9 @@ class GeotrekZoningAndThemeFilter(BaseFilterBackend):
                     | Q(description__icontains=q)
                     | Q(description_teaser__icontains=q)
                 )
-        return qs
+        return (
+            qs.distinct()
+        )  # use distinct to avoid duplicated value because of filters on many-to-many
 
     def _get_schema_operation_parameters(self, view):
         return [
@@ -820,6 +924,99 @@ class UpdateOrCreateDateFilter(BaseFilterBackend):
                 "in": "query",
                 "description": _(
                     "Filter objects created before or during date, format YYYY-MM-DD"
+                ),
+                "schema": {"type": "string"},
+            },
+        ]
+
+
+class PracticableFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        qs = queryset
+
+        # practicable during the period (practicable_from - practicable_to)
+        practicable = request.GET.get("practicable")
+        if practicable is not None:
+            qs = qs.filter(impracticable=(practicable == "false"))
+
+        today = date.today()
+        practicable_from = parse_date(request.GET.get("practicable_from"), today)
+        practicable_to = parse_date(request.GET.get("practicable_to"), today)
+        if practicable_from and practicable_to:
+            # intersects at least one vigilance area active during the period and with one of the type 'vigilance_area_types'
+            vigilance_area_types = request.GET.get("vigilance_area_types")
+            if vigilance_area_types is not None:
+                types_id = vigilance_area_types.split(",")
+                qs = qs.filter(
+                    Exists(
+                        VigilanceArea.objects.filter(
+                            published=True,
+                            geom__intersects=OuterRef("geom"),
+                            vigilance_area_type__in=types_id,
+                        ).active_by_dates(practicable_from, practicable_to)
+                    )
+                )
+            # does not intersect vigilance areas active during the period and with one of the type 'vigilance_area_types_exclude'
+            vigilance_area_types_exclude = request.GET.get(
+                "vigilance_area_types_exclude"
+            )
+            if vigilance_area_types_exclude is not None:
+                types_id_exclude = vigilance_area_types_exclude.split(",")
+                qs = qs.exclude(
+                    Exists(
+                        VigilanceArea.objects.filter(
+                            published=True,
+                            geom__intersects=OuterRef("geom"),
+                            vigilance_area_type__in=types_id_exclude,
+                        ).active_by_dates(practicable_from, practicable_to)
+                    )
+                )
+        return qs
+
+    def get_schema_fields(self, view):
+        return [
+            {
+                "name": "practicable",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by practicability status, true=practicable, false=impracticable."
+                ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "practicable_from",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter treks that are practicable during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+                ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "practicable_to",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter treks that are practicable during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+                ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "vigilance_area_types",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Filter by one or more vigilance area types id related to a trek, comma-separated."
+                ),
+                "schema": {"type": "string"},
+            },
+            {
+                "name": "vigilance_area_types_exclude",
+                "required": False,
+                "in": "query",
+                "description": _(
+                    "Exclude by one or more vigilance area types id related to a trek, comma-separated."
                 ),
                 "schema": {"type": "string"},
             },
@@ -1473,7 +1670,7 @@ class TreksAndSitesAndTourismRelatedPortalThemeFilter(
         return (set_1 | set_2 | set_3 | set_4).distinct()
 
 
-class TreksAndSitesAndTourismAndFlatpagesRelatedPortalThemeFilter(
+class TreksAndSitesAndTourismAndFlatpagesandVigilanceRelatedPortalThemeFilter(
     RelatedObjectsPublishedNotDeletedByPortalFilter
 ):
     def filter_queryset(self, request, qs, view):
@@ -1518,11 +1715,17 @@ class TreksAndSitesAndTourismAndFlatpagesRelatedPortalThemeFilter(
             .prefetch_related("portal, source")
             .values_list("source__pk", flat=True)
         )
+        vigilancearea_sources = list(
+            VigilanceArea.objects.filter(portals_query, published=True)
+            .prefetch_related("portals, sources")
+            .values_list("sources__pk", flat=True)
+        )
         all_sources_pks = (
             flatpages_sources
             + treks_sources
             + touristiccontent_sources
             + touristicevent_sources
+            + vigilancearea_sources
         )
         if "geotrek.outdoor" in settings.INSTALLED_APPS:
             sites_sources = list(

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 10:08+0000\n"
+"POT-Creation-Date: 2026-10-16 14:40+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/it/>\n"
@@ -22,6 +22,15 @@ msgid "Publish (visible on Geotrek-rando)"
 msgstr ""
 
 msgid "Unpublish (hidden on Geotrek-rando)"
+msgstr ""
+
+msgid "If left empty, the code of the nearest parent that has one is used."
+msgstr ""
+
+msgid "If left empty, the pictogram of the nearest parent that has one is used."
+msgstr ""
+
+msgid "Color"
 msgstr ""
 
 msgid "Zoning"
@@ -39,11 +48,47 @@ msgstr "Tipo di zonizzazione regolatoria"
 msgid "Restricted area"
 msgstr "Zonizzazione normativa"
 
-msgid "Restricted areas"
-msgstr "Zonizzazione normativa"
+msgid "Vigilance area type"
+msgstr ""
+
+msgid "Vigilance area impracticable"
+msgstr ""
+
+msgid "Vigilance area"
+msgstr ""
 
 msgid "Name"
 msgstr "Nome"
+
+msgid "Provider"
+msgstr ""
+
+msgid "Vigilance level"
+msgstr ""
+
+msgid "After"
+msgstr ""
+
+msgid "Before"
+msgstr ""
+
+msgid "Ongoing period"
+msgstr ""
+
+msgid "Active today"
+msgstr ""
+
+msgid "Active days"
+msgstr ""
+
+msgid "Days of the week when the vigilance area is active. Empty equals all week."
+msgstr ""
+
+msgid "Periods"
+msgstr ""
+
+msgid "Restricted areas"
+msgstr "Zonizzazione normativa"
 
 msgid "Published"
 msgstr ""
@@ -60,6 +105,75 @@ msgstr "Comuni"
 msgid "Districts"
 msgstr "Settori"
 
+msgid "Vigilance area types"
+msgstr ""
+
+msgid "Vigilance levels"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Impracticable"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Practical information"
+msgstr ""
+
+msgid "External information URL"
+msgstr ""
+
+msgid "Portals"
+msgstr ""
+
+msgid "Sources"
+msgstr ""
+
+msgid "Private comment"
+msgstr ""
+
+msgid "Always active"
+msgstr ""
+
+msgid "Vigilance areas"
+msgstr ""
+
+msgid "Start date"
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
+msgid "Annual recurrence"
+msgstr ""
+
+msgid "Start date is after end date"
+msgstr ""
+
+#, python-format
+msgid "From %s to %s"
+msgstr ""
+
+#, python-format
+msgid "From %s"
+msgstr ""
+
+#, python-format
+msgid " - days %s"
+msgstr ""
+
+msgid " (annual)"
+msgstr ""
+
+msgid "Vigilance area period"
+msgstr ""
+
+msgid "Vigilance area periods"
+msgstr ""
+
 #, python-brace-format
 msgid "Invalid geometry for field '{src}'"
 msgstr "La geometria del campo '{src}' non è valida"
@@ -67,3 +181,33 @@ msgstr "La geometria del campo '{src}' non è valida"
 #, python-brace-format
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
 msgstr "Il tipo di geometria del campo '{src}' non è valido. Dovrebbe essere (Multi)Polygon, non {geom_type}"
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Thumbnail"
+msgstr ""
+
+msgid "From"
+msgstr ""
+
+msgid "Every days"
+msgstr ""
+
+msgid "This area is always active"
+msgstr ""
+
+msgid "Add a new period"
+msgstr ""
+
+msgid "Delete this period"
+msgstr ""
+
+msgid "Practicable"
+msgstr ""

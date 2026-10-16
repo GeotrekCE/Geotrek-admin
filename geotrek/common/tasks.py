@@ -1,11 +1,15 @@
 import importlib
 import sys
+from datetime import date
 from os.path import join
 
 from celery import Task, current_task, shared_task
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.db import transaction
 from django.utils.translation import gettext_lazy as _
+
+from geotrek.zoning.models import VigilancePeriod
 
 
 class GeotrekImportTask(Task):
@@ -126,3 +130,34 @@ def import_datas_from_web(**kwargs):
         ),
         "name": current_task.name,
     }
+
+
+@shared_task(name="geotrek.common.update-years")
+def update_annual_vigilance_areas(**kwargs):
+    new_year = date.today().year + 1
+
+    periods = list(
+        VigilancePeriod.objects.finished()
+        .filter(annual=True)
+        .only("id", "start_date", "end_date")
+    )
+
+    for period in periods:
+        period.start_date = _replace_year(period.start_date, new_year)
+        if period.end_date:
+            period.end_date = _replace_year(period.end_date, new_year)
+
+    nb_updated_periods = 0
+    with transaction.atomic():
+        nb_updated_periods += VigilancePeriod.objects.bulk_update(
+            periods, ["start_date", "end_date"], batch_size=500
+        )
+
+    return nb_updated_periods
+
+
+def _replace_year(d, year):
+    try:
+        return d.replace(year=year)
+    except ValueError:  # 29 February in a non-leap year.
+        return d.replace(year=year, day=28)

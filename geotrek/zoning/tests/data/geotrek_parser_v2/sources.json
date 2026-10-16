@@ -1,0 +1,19 @@
+{
+    "count": 8,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 1,
+            "name": "source 1",
+            "pictogram": "https://logo.png",
+            "website": "https://website.fr"
+        },
+        {
+            "id": 2,
+            "name": "source 2",
+            "pictogram": "https://logo2.png",
+            "website": "https://website.fr"
+        }
+    ]
+}

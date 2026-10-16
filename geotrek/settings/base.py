@@ -294,6 +294,7 @@ PROJECT_APPS += (
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
     "dal",
     "dal_select2",
     "clearcache",
@@ -315,6 +316,7 @@ PROJECT_APPS += (
     "rest_framework_gis",
     "embed_video",
     "django_celery_results",
+    "django_celery_beat",
     "django_large_image",
     "colorfield",
     "mptt",
@@ -683,6 +685,7 @@ SITE_MODEL_ENABLED = True
 COURSE_MODEL_ENABLED = True
 # This model is necessary for most of the other. Can be add in case if the paths will not be change by anyone.
 PATH_MODEL_ENABLED = True
+VIGILANCE_AREA_MODEL_ENABLED = True
 
 
 TREKKING_TOPOLOGY_ENABLED = True
@@ -1042,6 +1045,7 @@ POPUP_CONTENT = {
     "trek": ["practice"],
     "poi": [],
     "service": [],
+    "vigilancearea": ["vigilance_area_type"],
 }
 
 # Override with prod/dev/tests/tests_nds settings
