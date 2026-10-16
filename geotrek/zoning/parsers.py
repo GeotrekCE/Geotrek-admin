@@ -15,8 +15,8 @@ from geotrek.zoning.models import (
     District,
     RestrictedArea,
     VigilanceArea,
-VigilanceAreaType,
-VigilancePeriod
+    VigilanceAreaType,
+    VigilancePeriod,
 )
 
 
@@ -179,9 +179,7 @@ class GeotrekVigilanceAreaParser(GeotrekParser):
 
         default_lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
 
-        existing_types = set(
-            VigilanceAreaType.objects.values_list(f"name", flat=True)
-        )
+        existing_types = set(VigilanceAreaType.objects.values_list("name", flat=True))
 
         for result in results:
             default_name = result["name"][default_lang]
@@ -199,7 +197,7 @@ class GeotrekVigilanceAreaParser(GeotrekParser):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.init_vigilance_area_type_category()
-        self.fields.pop("uuid") # TEST
+        self.fields.pop("uuid")  # TEST
         self.next_url = f"{self.url}/api/v2/vigilancearea"
 
         self.non_fields["periods"] = "periods"

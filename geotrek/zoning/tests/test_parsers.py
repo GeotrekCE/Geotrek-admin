@@ -212,6 +212,7 @@ class VigilanceAreaGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(periods[1].active_days, [])
         self.assertEqual(periods[1].annual, False)
 
+
 class TestDistrictOpenStreetMapParser(OpenStreetMapDistrictParser):
     provider = "OpenStreetMap"
     tags = [[{"boundary": "administrative"}, {"admin_level": "6"}]]
