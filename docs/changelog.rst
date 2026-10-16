@@ -9,6 +9,10 @@ CHANGELOG
 
 * Fix Filetype association in add-attachment endpoint
 
+**Improvements**
+
+* Prevent conventional no data value (-99999) in raster to be used in altimetry data
+
 **Maintenance**
 
 * Add support for evolution of Suricate API: only lock reports when they are being handled
