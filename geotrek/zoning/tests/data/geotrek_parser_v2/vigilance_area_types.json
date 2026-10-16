@@ -9,6 +9,8 @@
           "fr": "Pastoralisme",
           "en": "Pastoralism"
       },
+      "code": "PAST",
+      "parent": null,
       "pictogram": null
     },
     {
@@ -17,6 +19,8 @@
           "fr": "Risque naturel",
           "en": "Natural risk"
       },
+      "code": "RISN",
+      "parent": null,
       "pictogram": null
     }
   ]
