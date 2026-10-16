@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-14 14:26+0000\n"
+"POT-Creation-Date: 2026-10-16 14:40+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/de/>\n"
@@ -84,9 +84,6 @@ msgstr ""
 msgid "Days of the week when the vigilance area is active. Empty equals all week."
 msgstr ""
 
-msgid "Type"
-msgstr ""
-
 msgid "Periods"
 msgstr ""
 
@@ -118,6 +115,9 @@ msgid "Description"
 msgstr ""
 
 msgid "Impracticable"
+msgstr ""
+
+msgid "Type"
 msgstr ""
 
 msgid "Practical information"
@@ -182,7 +182,10 @@ msgstr "Die Geometrie des Feldes '{src}' ist ungültig."
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
 msgstr "Der Geometrietyp des Feldes '{src}' ist ungültig. Es sollte (Multi)Polygon, nicht {geom_type}"
 
-msgid "Practicable"
+msgid "Yes"
+msgstr ""
+
+msgid "No"
 msgstr ""
 
 msgid "None"
@@ -204,4 +207,7 @@ msgid "Add a new period"
 msgstr ""
 
 msgid "Delete this period"
+msgstr ""
+
+msgid "Practicable"
 msgstr ""
