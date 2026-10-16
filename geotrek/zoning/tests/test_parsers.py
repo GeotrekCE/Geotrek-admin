@@ -1,3 +1,4 @@
+import datetime
 import json
 import os
 from io import StringIO
@@ -91,9 +92,6 @@ class TestGeotrekVigilanceAreaParser(GeotrekVigilanceAreaParser):
     url = "https://test.fr"
 
     field_options = {
-        "vigilance_area_type": {
-            "create": True,
-        },
         "vigilance_level": {
             "create": True,
         },
@@ -122,8 +120,8 @@ class VigilanceAreaGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.mock_json_order = [
             ("zoning", "structure.json"),
             ("zoning", "sources.json"),
-            ("zoning", "vigilance_area_types.json"),
             ("zoning", "vigilance_levels.json"),
+            ("zoning", "vigilance_area_types.json"),
             ("zoning", "vigilance_area_ids.json"),
             ("zoning", "vigilance_area.json"),
         ]
@@ -204,8 +202,15 @@ class VigilanceAreaGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         )
         self.assertEqual(vigilance_types, ["Pastoralism", "Natural risk"])
 
-        # TODO : test periods
-
+        periods = list(vigilance_area.periods.all())
+        self.assertEqual(periods[0].start_date, datetime.date(2026, 8, 4))
+        self.assertEqual(periods[0].end_date, datetime.date(2026, 8, 28))
+        self.assertEqual(periods[0].active_days, [0, 1, 2])
+        self.assertEqual(periods[0].annual, True)
+        self.assertEqual(periods[1].start_date, datetime.date(2026, 8, 4))
+        self.assertEqual(periods[1].end_date, None)
+        self.assertEqual(periods[1].active_days, [])
+        self.assertEqual(periods[1].annual, False)
 
 class TestDistrictOpenStreetMapParser(OpenStreetMapDistrictParser):
     provider = "OpenStreetMap"
