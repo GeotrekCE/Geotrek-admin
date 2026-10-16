@@ -212,24 +212,48 @@ EXECUTE PROCEDURE update_topology_geom_when_offset_changes();
 
 CREATE FUNCTION {{ schema_geotrek }}.topology_elevation_iu() RETURNS trigger SECURITY DEFINER AS $$
 DECLARE
+    geom geometry;
     elevation elevation_infos;
+    length2d float;
+    total_length2d float;
 BEGIN
     IF NEW.coupled IS TRUE THEN
         RETURN NEW;
     END IF;
-    SELECT * FROM ft_elevation_infos(NEW.geom, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
-    -- Update path geometry
-    NEW.geom_3d := elevation.draped;
-    NEW."length" := ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]');
-    NEW.slope := elevation.slope;
-    NEW.min_elevation := elevation.min_elevation;
-    NEW.max_elevation := elevation.max_elevation;
-    NEW.ascent := elevation.positive_gain;
-    NEW.descent := elevation.negative_gain;
+    NEW.geom_3d := NULL;
+    NEW."length" := 0;
+    NEW.slope := 0;
+    NEW.min_elevation := NULL;
+    NEW.max_elevation := NULL;
+    NEW.ascent := 0;
+    NEW.descent := 0;
+    total_length2d := 0;
+    FOR geom IN SELECT (ST_Dump(NEW.geom)).geom LOOP
+        SELECT * FROM ft_elevation_infos(geom, {{ ALTIMETRIC_PROFILE_STEP }}) INTO elevation;
+        -- Update path geometry
+        IF NEW.geom_3d IS NULL THEN
+            NEW.geom_3d := elevation.draped;
+        ELSE
+            NEW.geom_3d := ST_Collect(NEW.geom_3d, elevation.draped);
+        END IF;
+        NEW."length" := NEW."length" + ST_LENGTHSPHEROID(ST_TRANSFORM(elevation.draped, 4326), 'SPHEROID["GRS_1980",6378137,298.257222101]');
+        length2d := ST_Length2D(geom);
+        IF total_length2d + length2d > 0 THEN
+            NEW.slope := (NEW.slope * total_length2d + elevation.slope * length2d) / (total_length2d + length2d);
+        END IF;
+        total_length2d := total_length2d + length2d;
+        NEW.min_elevation := least(NEW.min_elevation, elevation.min_elevation);
+        NEW.max_elevation := greatest(NEW.max_elevation, elevation.max_elevation);
+        NEW.ascent := NEW.ascent + elevation.positive_gain;
+        NEW.descent := NEW.descent + elevation.negative_gain;
+    END LOOP;
+    NEW.geom_3d := coalesce(NEW.geom_3d, ST_Force3DZ(NEW.geom));
+    NEW.min_elevation := coalesce(NEW.min_elevation, 0);
+    NEW.max_elevation := coalesce(NEW.max_elevation, 0);
     RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER core_topology_geom_iu_tgr
-BEFORE INSERT OR UPDATE OF geom ON core_topology
+BEFORE INSERT OR UPDATE OF geom, coupled ON core_topology
 FOR EACH ROW EXECUTE PROCEDURE topology_elevation_iu();
