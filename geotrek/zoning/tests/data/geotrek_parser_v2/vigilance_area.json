@@ -5,19 +5,10 @@
   "results": [
     {
             "id": 108,
-            "active_days": [
-                0,
-                1,
-                2
-            ],
-            "active_months": [
-                8
-            ],
             "description": {
                 "fr": "<p>description 1</p>",
                 "en": "<p>description 1</p>"
             },
-            "end_date": "2026-08-28",
             "external_info_url": "https://test.fr",
             "geometry": {
                 "type": "MultiPolygon",
@@ -55,24 +46,32 @@
             },
             "published": true,
             "sources": [1],
-            "start_date": "2026-08-04",
             "structure": 1,
             "uuid": "43ce926d-9236-4a62-ac7f-799d1c024b5a",
             "vigilance_area_type": 1,
-            "vigilance_level": 2
+            "vigilance_level": 2,
+            "periods": [
+                {
+                  "start_date": "2026-08-04",
+                  "end_date": "2026-08-28",
+                  "active_days": [0, 1, 2],
+                  "annual": true
+                },
+                {
+                  "start_date": "2026-08-04",
+                  "end_date": null,
+                  "active_days": [],
+                  "annual": false
+                }
+            ]
     },
     {
             "id": 127,
-            "active_days": [
-                5,
-                6
-            ],
             "active_months": [],
             "description": {
                 "fr": "<p>description 2</p>",
                 "en": "<p>description 2</p>"
             },
-            "end_date": "2027-07-03",
             "external_info_url": "https://test.fr",
             "geometry": {
                 "type": "MultiPolygon",
@@ -114,11 +113,16 @@
             },
             "published": true,
             "sources": [2],
-            "start_date": "2026-07-03",
             "structure": 3,
             "uuid": "0dce3b07-4e50-42f1-9af9-2d3ea0bcdbbc",
             "vigilance_area_type": 2,
-            "vigilance_level": 1
+            "vigilance_level": 1,
+            "periods": {
+              "start_date": "2026-08-04",
+              "end_date": "2026-08-28",
+              "active_days": [5, 6],
+              "annual": false
+            }
     }
   ]
 }
