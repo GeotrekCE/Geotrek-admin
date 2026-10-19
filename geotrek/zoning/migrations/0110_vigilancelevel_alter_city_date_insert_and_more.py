@@ -408,13 +408,13 @@ class Migration(migrations.Migration):
                     django.contrib.postgres.fields.ArrayField(
                         base_field=models.IntegerField(
                             choices=[
-                                (0, "Lundi"),
-                                (1, "Mardi"),
-                                (2, "Mercredi"),
-                                (3, "Jeudi"),
-                                (4, "Vendredi"),
-                                (5, "Samedi"),
-                                (6, "Dimanche"),
+                                (0, "Monday"),
+                                (1, "Tuesday"),
+                                (2, "Wednesday"),
+                                (3, "Thursday"),
+                                (4, "Friday"),
+                                (5, "Saturday"),
+                                (6, "Sunday"),
                             ]
                         ),
                         blank=True,
