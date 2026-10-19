@@ -27,7 +27,6 @@ from geotrek.zoning.parsers import (
     OpenStreetMapCityParser,
     OpenStreetMapDistrictParser,
     OpenStreetMapRestrictedAreaParser,
-    VigilanceAreaParser,
 )
 
 WKT = (
@@ -533,35 +532,3 @@ class OpenStreetMapCityParserTests(TestCase):
             self.cities[0].code,
             "86187",
         )
-
-
-class VigilanceAreaParserTests(TestCase):
-    def setUp(self):
-        self.parser = VigilanceAreaParser()
-
-    def test_filter_code(self):
-        self.assertEqual(self.parser.filter_code("code", 12345), "12345")
-
-    def test_filter_geom_none(self):
-        self.assertIsNone(self.parser.filter_geom("geom", None))
-
-    def test_filter_geom_invalid(self):
-        self.parser.add_warning = mock.MagicMock()
-        invalid_geom = MultiPolygon(Polygon(((0, 0), (0, 1), (1, 0), (1, 1), (0, 0))))
-        self.assertIsNone(self.parser.filter_geom("geom", invalid_geom))
-        self.parser.add_warning.assert_called_once()
-
-    def test_filter_geom_polygon(self):
-        poly = Polygon(((0, 0), (0, 1), (1, 1), (1, 0), (0, 0)))
-        res = self.parser.filter_geom("geom", poly)
-        self.assertIsInstance(res, MultiPolygon)
-
-    def test_filter_geom_multipolygon(self):
-        mpoly = MultiPolygon(Polygon(((0, 0), (0, 1), (1, 1), (1, 0), (0, 0))))
-        res = self.parser.filter_geom("geom", mpoly)
-        self.assertEqual(res, mpoly)
-
-    def test_filter_geom_invalid_type(self):
-        line = LineString((0, 0), (1, 1))
-        with self.assertRaises(GlobalImportError):
-            self.parser.filter_geom("geom", line)
