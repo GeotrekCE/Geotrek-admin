@@ -43,6 +43,17 @@ class ZoningFilterTest(TestCase):
         cls.area_2 = RestrictedAreaFactory.create(name="area_out", geom=cls.geom_2_wkt)
         cls.area_type_3 = RestrictedAreaTypeFactory.create()
 
+        cls.vigilance_type = VigilanceAreaTypeFactory.create()
+        cls.vigilance_area = VigilanceAreaFactory.create(
+            name="vigilance_area_in",
+            geom=cls.geom_1_wkt,
+            vigilance_area_type=cls.vigilance_type,
+            impracticable=True,
+        )
+        cls.vigilance_area_2 = VigilanceAreaFactory.create(
+            name="vigilance_area_out", geom=cls.geom_2_wkt
+        )
+
         cls.path = PathFactory.create(
             geom="SRID=2154;LINESTRING(200000 300000, 1100000 1200000)"
         )
@@ -124,6 +135,32 @@ class ZoningFilterTest(TestCase):
             data={
                 "area_type": [
                     self.area_type_3,
+                ]
+            }
+        )
+
+        self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_vigilance_area(self):
+        filter = PathFilterSet(
+            data={
+                "vigilance_area_type": [
+                    self.vigilance_type,
+                ]
+            }
+        )
+
+        self.assertIn(self.path, filter.qs)
+        self.assertEqual(len(filter.qs), 1)
+
+        filter = PathFilterSet(data={"vigilance_area_impracticable": False})
+
+        self.assertEqual(len(filter.qs), 0)
+
+        filter = PathFilterSet(
+            data={
+                "vigilance_area": [
+                    self.vigilance_area_2,
                 ]
             }
         )

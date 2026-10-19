@@ -368,7 +368,7 @@ class VigilanceAreaAutocompleteTest(AutocompleteTestMixin, APITestCase):
     layer = "vigilancearea-drf"
     factory_class = VigilanceAreaFactory
 
-    def test_autocomplete_forward(self):
+    def test_autocomplete_forward_type(self):
         area_type_1 = VigilanceAreaTypeFactory()
         area_type_1_areas = VigilanceAreaFactory.create_batch(
             2, vigilance_area_type=area_type_1
@@ -384,6 +384,20 @@ class VigilanceAreaAutocompleteTest(AutocompleteTestMixin, APITestCase):
         self.assertEqual(
             {area["id"] for area in response.json()["results"]},
             {area.pk for area in area_type_1_areas},
+        )
+
+    def test_autocomplete_forward_impracticable(self):
+        impracticable_areas = VigilanceAreaFactory.create_batch(2, impracticable=True)
+        VigilanceAreaFactory.create_batch(2, impracticable=False)
+        url = reverse(f"zoning:{self.layer}-autocomplete")
+        response = self.client.get(
+            url, data={"forward": json.dumps({"impracticable": "true"})}
+        )
+        self.assertEqual(response.status_code, 200, response.json())
+        self.assertEqual(len(response.json()["results"]), 2)
+        self.assertEqual(
+            {area["id"] for area in response.json()["results"]},
+            {area.pk for area in impracticable_areas},
         )
 
     def test_get_queryset_autocomplete_bbox(self):

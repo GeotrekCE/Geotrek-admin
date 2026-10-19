@@ -112,18 +112,16 @@ class VigilanceAreaQuerySet(models.QuerySet):
     def active_today(self):
         return self.filter(self._active_today_expr(timezone_today()))
 
-    def active_by_dates(self, start=None, end=None):
-        if start and end:
-            period_active = Q(start_date__lte=end) & (
-                Q(end_date__isnull=True) | Q(end_date__gte=start)
-            )
-            period_valid = Q(active_days__len=0) | Q(
-                active_days__overlap=weekday_between(start, end)
-            )
-            return self.filter(
-                self._periods_exists(period_active & period_valid) | self._no_periods()
-            )
-        return self
+    def active_by_dates(self, start, end):
+        period_active = Q(start_date__lte=end) & (
+            Q(end_date__isnull=True) | Q(end_date__gte=start)
+        )
+        period_valid = Q(active_days__len=0) | Q(
+            active_days__overlap=weekday_between(start, end)
+        )
+        return self.filter(
+            self._periods_exists(period_active & period_valid) | self._no_periods()
+        )
 
 
 class VigilanceAreaManager(models.Manager.from_queryset(VigilanceAreaQuerySet)):

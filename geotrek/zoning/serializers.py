@@ -98,9 +98,6 @@ class VigilanceAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
     thumbnail = serializers.CharField(source="thumbnail_display")
     ongoing = MapentityDatatableBooleanField()
 
-    def get_practicability(self, obj):
-        return obj.get_practicability_display()
-
     class Meta:
         model = zoning_models.VigilanceArea
         fields = "__all__"

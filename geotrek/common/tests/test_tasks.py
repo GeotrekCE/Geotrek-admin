@@ -10,6 +10,7 @@ from django.test import TestCase, override_settings
 from geotrek.common.models import FileType, Organism
 from geotrek.common.parsers import ExcelParser, GlobalImportError
 from geotrek.common.tasks import (
+    _replace_year,
     get_parser_class,
     import_datas,
     import_datas_from_web,
@@ -110,6 +111,11 @@ class TasksTest(TestCase):
             parser_cls = get_parser_class("parsers", "CustomParser")
             self.assertEqual(parser_cls.__name__, "CustomParser")
 
+    def assert_dates(self, period, expected_start, expected_end):
+        period.refresh_from_db()
+        self.assertEqual(period.start_date, expected_start)
+        self.assertEqual(period.end_date, expected_end)
+
     def test_update_years(self):
         today = datetime.date.today()
         one_day = datetime.timedelta(days=1)
@@ -132,15 +138,18 @@ class TasksTest(TestCase):
 
         self.assertEqual(task.status, "SUCCESS")
 
-        def assert_dates(period, expected_start, expected_end):
-            period.refresh_from_db()
-            self.assertEqual(period.start_date, expected_start)
-            self.assertEqual(period.end_date, expected_end)
-
-        assert_dates(
+        self.assert_dates(
             finished_annual,
             start_date + relativedelta(years=1),
             today - one_day + relativedelta(years=1),
         )
-        assert_dates(ongoing_annual, start_date, today + one_day)
-        assert_dates(finished_not_annual, start_date, today - one_day)
+        self.assert_dates(ongoing_annual, start_date, today + one_day)
+        self.assert_dates(finished_not_annual, start_date, today - one_day)
+
+    def test_replace_date_exception(self):
+        self.assertEqual(
+            _replace_year(datetime.date(2020, 2, 29), 2024), datetime.date(2024, 2, 29)
+        )
+        self.assertEqual(
+            _replace_year(datetime.date(2020, 2, 29), 2023), datetime.date(2023, 2, 28)
+        )

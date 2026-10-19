@@ -181,7 +181,7 @@ class VigilanceAreaType(
 class VigilanceLevel(OptionalPictogramMixin, TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=200, verbose_name=_("Name"))
     color = ColorField(verbose_name=_("Color"), default="#1257A8")
-    level = models.PositiveSmallIntegerField(unique=True, null=True)
+    level = models.PositiveSmallIntegerField(unique=True, null=True, )
 
     class Meta:
         verbose_name = _("Vigilance level")

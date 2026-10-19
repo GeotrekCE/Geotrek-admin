@@ -3513,6 +3513,18 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             sorted(["id", "code", "name", "parent", "pictogram"]),
         )
 
+    def test_vigilanceareatype_pictogram(self):
+        zoning_factory.VigilanceAreaTypeFactory.create(
+            name="without_pictogram", pictogram=None
+        )
+        type_with_pictogram = zoning_factory.VigilanceAreaTypeFactory.create(
+            name="with_pictogram"
+        )
+        response = self.get_vigilanceareatype_list()
+        data = response.json()["results"]
+        self.assertEqual(data[5]["pictogram"], None)
+        self.assertIn(type_with_pictogram.pictogram.url, data[6]["pictogram"])
+
     def test_vigilancelevel_list(self):
         self.check_number_elems_response(
             self.get_vigilancelevel_list(), zoning_models.VigilanceLevel
