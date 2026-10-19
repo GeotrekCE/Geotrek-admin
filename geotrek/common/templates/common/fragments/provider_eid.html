@@ -14,7 +14,7 @@
         <tr>
             <th class="table-active">{{ object|verbose:"provider" }}</th>
             <td>{% if object.provider %}
-                {{ object.provider.name|safe }}
+                {{ object.provider.name }}
             {% else %}
                 <span class="none">{% trans "None" %}</span>
             {% endif %}
@@ -27,7 +27,7 @@
         {% if object.eid2 %}
         <tr>
             <th class="table-active">{% trans "Second external id" %}</th>
-            <td>{% if object.eid2 %}{{ object.eid2|safe }}
+            <td>{% if object.eid2 %}{{ object.eid2 }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
