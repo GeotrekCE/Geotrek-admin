@@ -5,12 +5,11 @@ from io import StringIO
 from unittest import mock
 
 from django.conf import settings
-from django.contrib.gis.geos import LineString, MultiPolygon, Polygon, WKTWriter
+from django.contrib.gis.geos import MultiPolygon, Polygon, WKTWriter
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 
 from geotrek.common.models import FileType
-from geotrek.common.parsers import GlobalImportError
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.zoning.models import (
     City,
