@@ -568,7 +568,9 @@ class Trek(
 
     @classmethod
     def vigilance_area_treks(cls, vigilance_area_object, queryset=None):
-        return intersecting(qs=queryset_or_model(queryset, cls), obj=vigilance_area_object, distance=0)
+        return intersecting(
+            qs=queryset_or_model(queryset, cls), obj=vigilance_area_object, distance=0
+        )
 
     @property
     def parents(self):

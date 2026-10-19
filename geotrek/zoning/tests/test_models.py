@@ -10,6 +10,7 @@ from django.views.generic.dates import timezone_today
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.tests.factories import SignageFactory
+from geotrek.trekking.tests.factories import TrekFactory
 from geotrek.zoning.models import (
     City,
     District,
@@ -498,8 +499,8 @@ class VigilanceAreaModelTest(TestCase):
         self.assertEqual(va.periods_resume, " - Always active")
 
     def test_treks(self):
-        trek = TrekFactory().create()
-        geom = trek.geom.envelope
+        trek = TrekFactory.create()
+        geom = MultiPolygon(trek.geom.envelope)
         vigilance_area = VigilanceAreaFactory.create(geom=geom)
 
         self.assertEqual(vigilance_area.treks.count(), 1)
