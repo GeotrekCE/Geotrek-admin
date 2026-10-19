@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 14:40+0000\n"
+"POT-Creation-Date: 2026-10-19 12:14+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/fr/>\n"
@@ -32,6 +32,9 @@ msgstr "Si laissé vide, le pictogramme du plus proche parent en ayant un est ut
 
 msgid "Color"
 msgstr "Couleur"
+
+msgid "Level 1 is considered the highest vigilance level."
+msgstr "Le niveau 1 est considéré comme le plus fort niveau de vigilance."
 
 msgid "Zoning"
 msgstr "Zonage"
@@ -78,6 +81,9 @@ msgstr "Période en cours"
 msgid "Active today"
 msgstr "Actif aujourd'hui"
 
+msgid "All week"
+msgstr "Toute la semaine"
+
 msgid "Active days"
 msgstr "Jours actifs"
 
@@ -108,6 +114,9 @@ msgstr "Secteurs"
 msgid "Vigilance area types"
 msgstr "Types de zone de vigilance"
 
+msgid "Level"
+msgstr ""
+
 msgid "Vigilance levels"
 msgstr "Niveaux de vigilance"
 
@@ -116,6 +125,9 @@ msgstr "Description"
 
 msgid "Impracticable"
 msgstr "Impraticable"
+
+msgid "Tick this box if the terrain is impracticable due to the vigilance."
+msgstr "Cochez cette case si le terrain est impraticable en raison de la vigilance."
 
 msgid "Type"
 msgstr "Type"
@@ -129,11 +141,14 @@ msgstr "URL d'information externe"
 msgid "Portals"
 msgstr "Portails"
 
+msgid "Public information distribution portals. Leave blank to distribute to all portals, without distinction."
+msgstr "Portails de diffusion publique de l'information. Laisser vide pour diffuser à tous les portails, sans distinction."
+
 msgid "Sources"
 msgstr "Sources"
 
-msgid "Private comment"
-msgstr "Commentaire privé"
+msgid "Private comment (not published)"
+msgstr "Commentaire privé (non publié)"
 
 msgid "Always active"
 msgstr "Toujours actif"
@@ -148,7 +163,7 @@ msgid "End date"
 msgstr "Date de fin"
 
 msgid "Annual recurrence"
-msgstr "Recurrence annuelle"
+msgstr "Récurrence annuelle"
 
 msgid "Start date is after end date"
 msgstr "La date de début est après la date de fin"

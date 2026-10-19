@@ -497,6 +497,14 @@ class VigilanceAreaModelTest(TestCase):
         va = VigilanceAreaFactory(periods=[])
         self.assertEqual(va.periods_resume, " - Always active")
 
+    def test_treks(self):
+        trek = TrekFactory().create()
+        geom = trek.geom.envelope
+        vigilance_area = VigilanceAreaFactory.create(geom=geom)
+
+        self.assertEqual(vigilance_area.treks.count(), 1)
+        self.assertEqual(vigilance_area.treks.first(), trek)
+
 
 class VigilancePeriodAndAreaManagerTest(TestCase):
     def setUp(self):

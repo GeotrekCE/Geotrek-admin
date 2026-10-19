@@ -15,6 +15,7 @@ from treebeard.al_tree import AL_Node
 
 from geotrek.authent.models import StructureRelated
 from geotrek.common.mixins.models import (
+    AddPropertyMixin,
     BBoxMixin,
     ExternalSourceMixin,
     GeotrekMapEntityMixin,
@@ -181,7 +182,11 @@ class VigilanceAreaType(
 class VigilanceLevel(OptionalPictogramMixin, TimeStampedModelMixin, models.Model):
     name = models.CharField(max_length=200, verbose_name=_("Name"))
     color = ColorField(verbose_name=_("Color"), default="#1257A8")
-    level = models.PositiveSmallIntegerField(unique=True, null=True, )
+    level = models.PositiveSmallIntegerField(
+        unique=True,
+        null=True,
+        verbose_name=_("Level")
+    )
 
     class Meta:
         verbose_name = _("Vigilance level")
@@ -192,6 +197,7 @@ class VigilanceLevel(OptionalPictogramMixin, TimeStampedModelMixin, models.Model
 
 
 class VigilanceArea(
+    AddPropertyMixin,
     TimeStampedModelMixin,
     StructureRelated,
     PublishableMixin,
@@ -202,7 +208,13 @@ class VigilanceArea(
 ):
     name = models.CharField(max_length=250, verbose_name=_("Name"), db_index=True)
     description = models.TextField(verbose_name=_("Description"), blank=True)
-    impracticable = models.BooleanField(verbose_name=_("Impracticable"), default=False)
+    impracticable = models.BooleanField(
+        verbose_name=_("Impracticable"),
+        default=False,
+        help_text=_(
+            "Tick this box if the terrain is impracticable due to the vigilance."
+        ),
+    )
     vigilance_level = models.ForeignKey(
         VigilanceLevel,
         on_delete=models.CASCADE,
@@ -228,6 +240,9 @@ class VigilanceArea(
         blank=True,
         related_name="vigilance_areas",
         verbose_name=_("Portals"),
+        help_text=_(
+            "Public information distribution portals. Leave blank to distribute to all portals, without distinction."
+        ),
     )
     sources = models.ManyToManyField(
         "common.RecordSource",
@@ -235,7 +250,7 @@ class VigilanceArea(
         related_name="vigilance_areas",
         verbose_name=_("Sources"),
     )
-    private_comment = models.TextField(verbose_name=_("Private comment"), blank=True)
+    private_comment = models.TextField(verbose_name=_("Private comment (not published)"), blank=True)
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     uuid = models.UUIDField(
         default=uuid.uuid4, editable=False, unique=True, db_default=GenRandomUUID()
