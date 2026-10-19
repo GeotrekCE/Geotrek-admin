@@ -164,9 +164,6 @@ class ZoningFilterTest(TestCase):
         )
         self.assertEqual(len(filter.qs), 0)
 
-        filter = PathFilterSet(data={"vigilance_area": self.vigilance_area})
-        self.assertEqual(len(filter.qs), 1)
-
 
 class VigilanceAreaFilterTest(TestCase):
     @classmethod

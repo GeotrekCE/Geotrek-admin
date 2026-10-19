@@ -99,9 +99,6 @@ class IntersectionFilterVigilanceArea(RightFilter):
         if not value:
             return qs
 
-        if isinstance(value, VigilanceArea):
-            value = [value]
-
         return qs.filter(
             Exists(
                 VigilanceArea.objects.filter(
