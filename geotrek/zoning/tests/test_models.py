@@ -7,6 +7,7 @@ from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.views.generic.dates import timezone_today
 
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.tests.factories import SignageFactory
 from geotrek.zoning.models import (
@@ -392,6 +393,24 @@ class VigilanceAreaTypeTestCase(TestCase):
         vat = VigilanceAreaTypeFactory(name="Warning Type")
         self.assertEqual(str(vat), "Warning Type")
 
+    def test_get_code(self):
+        parent_type = VigilanceAreaTypeFactory(code="CODE")
+        child_type_1 = VigilanceAreaTypeFactory(parent=parent_type, code=None)
+        child_type_2 = VigilanceAreaTypeFactory(parent=parent_type, code="TEST")
+
+        self.assertEqual(child_type_1.get_code(), "CODE")
+        self.assertEqual(child_type_2.get_code(), "TEST")
+
+    def test_get_pictogram(self):
+        parent_type = VigilanceAreaTypeFactory(pictogram=get_dummy_uploaded_image())
+        child_type_1 = VigilanceAreaTypeFactory(parent=parent_type, pictogram=None)
+        child_type_2 = VigilanceAreaTypeFactory(
+            parent=parent_type, pictogram=get_dummy_uploaded_image()
+        )
+
+        self.assertEqual(child_type_1.get_pictogram(), parent_type.pictogram)
+        self.assertEqual(child_type_2.get_pictogram(), child_type_2.pictogram)
+
 
 class VigilanceLevelTestCase(TestCase):
     def test_vigilance_level_str(self):
@@ -436,11 +455,13 @@ class VigilancePeriodTestCase(TestCase):
             start_date=today,
             end_date=today + datetime.timedelta(days=10),
             active_days=[],
+            annual=True,
         )
         self.assertIn(str(today), period_with_end.period_resume)
         self.assertIn(
             str(today + datetime.timedelta(days=10)), period_with_end.period_resume
         )
+        self.assertIn("annual", period_with_end.period_resume)
 
 
 class VigilanceAreaModelTest(TestCase):
@@ -453,8 +474,7 @@ class VigilanceAreaModelTest(TestCase):
         self.assertEqual(str(va.ongoing_verbose_name), "Ongoing period")
         self.assertEqual(str(va.active_today_verbose_name), "Active today")
 
-    # TODO : test period_resume for vigilance area
-    def test_period_resume(self):
+    def test_periods_resume(self):
         today = timezone_today()
         va = VigilanceAreaFactory(periods=[])
 
@@ -472,6 +492,10 @@ class VigilanceAreaModelTest(TestCase):
 
         self.assertIn(f"- {period_no_end.period_resume}", va.periods_resume)
         self.assertIn(f"- {period_with_end.period_resume}", va.periods_resume)
+
+    def test_periods_resume_without_periods(self):
+        va = VigilanceAreaFactory(periods=[])
+        self.assertEqual(va.periods_resume, " - Always active")
 
 
 class VigilancePeriodAndAreaManagerTest(TestCase):

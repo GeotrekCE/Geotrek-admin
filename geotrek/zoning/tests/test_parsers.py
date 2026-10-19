@@ -88,17 +88,9 @@ class FilterGeomTest(TestCase):
 
 class TestGeotrekVigilanceAreaParser(GeotrekVigilanceAreaParser):
     url = "https://test.fr"
+    create_categories = True
 
     field_options = {
-        "vigilance_level": {
-            "create": True,
-        },
-        "structure": {
-            "create": True,
-        },
-        "sources": {
-            "create": True,
-        },
         "geom": {"required": True},
     }
 
