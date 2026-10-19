@@ -76,7 +76,12 @@ class Migration(migrations.Migration):
                         verbose_name="Color",
                     ),
                 ),
-                ("level", models.PositiveSmallIntegerField(null=True, unique=True, verbose_name="Level")),
+                (
+                    "level",
+                    models.PositiveSmallIntegerField(
+                        null=True, unique=True, verbose_name="Level"
+                    ),
+                ),
             ],
             options={
                 "verbose_name": "Vigilance level",
@@ -294,7 +299,9 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "private_comment",
-                    models.TextField(blank=True, verbose_name="Private comment (not published)"),
+                    models.TextField(
+                        blank=True, verbose_name="Private comment (not published)"
+                    ),
                 ),
                 (
                     "geom",

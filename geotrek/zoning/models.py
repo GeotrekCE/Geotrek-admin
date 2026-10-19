@@ -183,9 +183,7 @@ class VigilanceLevel(OptionalPictogramMixin, TimeStampedModelMixin, models.Model
     name = models.CharField(max_length=200, verbose_name=_("Name"))
     color = ColorField(verbose_name=_("Color"), default="#1257A8")
     level = models.PositiveSmallIntegerField(
-        unique=True,
-        null=True,
-        verbose_name=_("Level")
+        unique=True, null=True, verbose_name=_("Level")
     )
 
     class Meta:
@@ -250,7 +248,9 @@ class VigilanceArea(
         related_name="vigilance_areas",
         verbose_name=_("Sources"),
     )
-    private_comment = models.TextField(verbose_name=_("Private comment (not published)"), blank=True)
+    private_comment = models.TextField(
+        verbose_name=_("Private comment (not published)"), blank=True
+    )
     geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
     uuid = models.UUIDField(
         default=uuid.uuid4, editable=False, unique=True, db_default=GenRandomUUID()
