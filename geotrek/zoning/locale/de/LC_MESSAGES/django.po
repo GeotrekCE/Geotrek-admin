@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-16 14:40+0000\n"
+"POT-Creation-Date: 2026-10-19 12:14+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/de/>\n"
@@ -31,6 +31,9 @@ msgid "If left empty, the pictogram of the nearest parent that has one is used."
 msgstr ""
 
 msgid "Color"
+msgstr ""
+
+msgid "Level 1 is considered the highest vigilance level."
 msgstr ""
 
 msgid "Zoning"
@@ -78,6 +81,9 @@ msgstr ""
 msgid "Active today"
 msgstr ""
 
+msgid "All week"
+msgstr ""
+
 msgid "Active days"
 msgstr ""
 
@@ -108,6 +114,9 @@ msgstr "Distrikte"
 msgid "Vigilance area types"
 msgstr ""
 
+msgid "Level"
+msgstr ""
+
 msgid "Vigilance levels"
 msgstr ""
 
@@ -115,6 +124,9 @@ msgid "Description"
 msgstr ""
 
 msgid "Impracticable"
+msgstr ""
+
+msgid "Tick this box if the terrain is impracticable due to the vigilance."
 msgstr ""
 
 msgid "Type"
@@ -129,10 +141,13 @@ msgstr ""
 msgid "Portals"
 msgstr ""
 
+msgid "Public information distribution portals. Leave blank to distribute to all portals, without distinction."
+msgstr ""
+
 msgid "Sources"
 msgstr ""
 
-msgid "Private comment"
+msgid "Private comment (not published)"
 msgstr ""
 
 msgid "Always active"

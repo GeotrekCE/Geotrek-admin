@@ -108,6 +108,14 @@ class ZoningAdminTest(TestCase):
         admin = VigilanceLevelAdmin(VigilanceLevel, AdminSite())
         self.assertEqual(admin.color_markup(vigilance_level), "")
 
+    def test_vigilance_level_form(self):
+        admin = VigilanceLevelAdmin(VigilanceLevel, AdminSite())
+        form = admin.get_form(None)
+        self.assertEqual(
+            form.base_fields["level"].help_text,
+            "Level 1 is considered the highest vigilance level.",
+        )
+
     def test_vigilance_area_types_form(self):
         admin = VigilanceAreaTypeAdmin(VigilanceAreaType, AdminSite())
         form = admin.get_form(None)

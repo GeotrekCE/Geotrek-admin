@@ -80,6 +80,12 @@ class VigilanceLevelAdmin(TabbedTranslationAdmin):
             '<span style="color: {code};">⬤</span> {code}', code=obj.color
         )
 
+    def get_form(self, request, obj=None, change=False, **kwargs):
+        kwargs["help_texts"] = {
+            "level": _("Level 1 is considered the highest vigilance level."),
+        }
+        return super().get_form(request, obj=obj, change=change, **kwargs)
+
 
 admin.site.register(zoning_models.RestrictedAreaType, RestrictedAreaTypeAdmin)
 admin.site.register(zoning_models.RestrictedArea, RestrictedAreaAdmin)

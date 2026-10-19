@@ -63,7 +63,13 @@ class VigilancePeriodForm(forms.ModelForm):
         choices=WeekdayChoices.choices,
         coerce=int,
         required=False,
-        widget=Select2Multiple(choices=WeekdayChoices.choices),
+        widget=Select2Multiple(
+            choices=WeekdayChoices.choices,
+            attrs={
+                "data-placeholder": _("All week"),
+                "data-allow-clear": "true",
+            },
+        ),
         label=_("Active days"),
         help_text=_(
             "Days of the week when the vigilance area is active. Empty equals all week."
@@ -115,9 +121,9 @@ class VigilanceAreaForm(CommonForm):
             "name",
             "impracticable",
             "vigilance_area_type",
-            Fieldset(_("Periods")),
             "vigilance_level",
             "published",
+            Fieldset(_("Periods")),
             "description",
             "practical_info",
             "external_info_url",

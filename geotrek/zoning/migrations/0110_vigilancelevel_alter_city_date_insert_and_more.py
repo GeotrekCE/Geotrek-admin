@@ -76,7 +76,7 @@ class Migration(migrations.Migration):
                         verbose_name="Color",
                     ),
                 ),
-                ("level", models.PositiveSmallIntegerField(null=True, unique=True)),
+                ("level", models.PositiveSmallIntegerField(null=True, unique=True, verbose_name="Level")),
             ],
             options={
                 "verbose_name": "Vigilance level",
@@ -276,7 +276,11 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "impracticable",
-                    models.BooleanField(default=False, verbose_name="Impracticable"),
+                    models.BooleanField(
+                        default=False,
+                        verbose_name="Impracticable",
+                        help_text="Tick this box if the terrain is impracticable due to the vigilance.",
+                    ),
                 ),
                 (
                     "practical_info",
@@ -290,7 +294,7 @@ class Migration(migrations.Migration):
                 ),
                 (
                     "private_comment",
-                    models.TextField(blank=True, verbose_name="Private comment"),
+                    models.TextField(blank=True, verbose_name="Private comment (not published)"),
                 ),
                 (
                     "geom",
@@ -314,6 +318,7 @@ class Migration(migrations.Migration):
                         related_name="vigilance_areas",
                         to="common.targetportal",
                         verbose_name="Portals",
+                        help_text="Public information distribution portals. Leave blank to distribute to all portals, without distinction.",
                     ),
                 ),
                 (

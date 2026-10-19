@@ -444,6 +444,9 @@ MAPENTITY_CONFIG = {
             "fillOpacity": 0.0,
             "dashArray": "12, 12",
         },
+        "vigilancearea": {
+            "color": "#9F5701",
+        },
         "restrictedarea": {
             "weight": 2,
             "color": "red",
