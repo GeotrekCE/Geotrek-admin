@@ -332,9 +332,8 @@ class VigilancePeriod(DuplicateMixin, models.Model):
         return f"{self.start_date} - {self.end_date or '...'}"
 
     def clean(self):
-        if self.start_date and self.end_date:
-            if self.start_date > self.end_date:
-                raise ValidationError({"start_date": _("Start date is after end date")})
+        if self.start_date and self.end_date and self.start_date > self.end_date:
+            raise ValidationError({"start_date": _("Start date is after end date")})
 
     @property
     def active_days_labels(self):
