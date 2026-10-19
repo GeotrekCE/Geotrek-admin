@@ -116,7 +116,7 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"cancellation_reason" }}</th>
-            <td>{% if object.cancellation_reason %}{{ object.cancellation_reason|safe }}
+            <td>{% if object.cancellation_reason %}{{ object.cancellation_reason }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
