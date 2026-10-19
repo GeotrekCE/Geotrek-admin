@@ -420,21 +420,32 @@ class VigilanceLevelTestCase(TestCase):
 
 
 class VigilancePeriodTestCase(TestCase):
-    def test_clean_start_date_after_end_date(self):
-        today = timezone_today()
+    @classmethod
+    def setUpTestData(cls):
+        cls.today = timezone_today()
+
+    def test_str(self):
+        tomorrow = self.today + datetime.timedelta(days=1)
         period = VigilancePeriodFactory.create(
-            start_date=today,
-            end_date=today - datetime.timedelta(days=1),
+            start_date=self.today,
+            end_date=tomorrow,
+        )
+
+        self.assertEqual(str(period), f"{str(self.today)} - {str(tomorrow)}")
+
+    def test_clean_start_date_after_end_date(self):
+        period = VigilancePeriodFactory.create(
+            start_date=self.today,
+            end_date=self.today - datetime.timedelta(days=1),
         )
         with self.assertRaises(ValidationError) as cm:
             period.clean()
         self.assertIn("start_date", cm.exception.error_dict)
 
     def test_clean_valid_dates(self):
-        today = timezone_today()
         period = VigilancePeriodFactory.create(
-            start_date=today,
-            end_date=today + datetime.timedelta(days=5),
+            start_date=self.today,
+            end_date=self.today + datetime.timedelta(days=5),
         )
         period.clean()
 
@@ -443,24 +454,23 @@ class VigilancePeriodTestCase(TestCase):
         self.assertEqual(len(period.active_days_labels), 2)
 
     def test_period_resume(self):
-        today = timezone_today()
         period_no_end = VigilancePeriodFactory(
-            start_date=today,
+            start_date=self.today,
             end_date=None,
             active_days=[0],
         )
-        self.assertIn(str(today), period_no_end.period_resume)
+        self.assertIn(str(self.today), period_no_end.period_resume)
         self.assertIn("days Monday", period_no_end.period_resume)
 
         period_with_end = VigilancePeriodFactory(
-            start_date=today,
-            end_date=today + datetime.timedelta(days=10),
+            start_date=self.today,
+            end_date=self.today + datetime.timedelta(days=10),
             active_days=[],
             annual=True,
         )
-        self.assertIn(str(today), period_with_end.period_resume)
+        self.assertIn(str(self.today), period_with_end.period_resume)
         self.assertIn(
-            str(today + datetime.timedelta(days=10)), period_with_end.period_resume
+            str(self.today + datetime.timedelta(days=10)), period_with_end.period_resume
         )
         self.assertIn("annual", period_with_end.period_resume)
 
