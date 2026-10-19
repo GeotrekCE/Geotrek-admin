@@ -450,7 +450,7 @@ zconfig==4.3
     # via zodb
 zipp==4.1.1
     # via importlib-metadata
-zodb==6.3
+zodb==6.4
     # via appy
 zodbpickle==4.5
     # via zodb
