@@ -253,7 +253,7 @@ lxml==6.1.1
     #   svglib
 mapentity==8.17.3
     # via geotrek (setup.py)
-markdown==3.11
+markdown==3.11.1
     # via geotrek (setup.py)
 mbutil==0.3.0
     # via landez
