@@ -115,7 +115,7 @@ msgid "Vigilance area types"
 msgstr "Types de zone de vigilance"
 
 msgid "Level"
-msgstr ""
+msgstr "Niveau"
 
 msgid "Vigilance levels"
 msgstr "Niveaux de vigilance"
