@@ -234,7 +234,7 @@ class VigilanceAreaList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList)
         "vigilance_area_type",
         "impracticable",
     ]
-    searchable_columns = ["id", "name", "vigilance_area_type", "impracticable"]
+    searchable_columns = ["id", "name"]
 
 
 class VigilanceAreaFilter(MapEntityFilter):
