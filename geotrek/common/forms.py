@@ -388,10 +388,8 @@ class ImportSuricateForm(forms.Form):
 
 
 def get_all_python_encodings():
-    # Récupère tous les alias officiels et nettoie la liste
     aliases = set(encodings.aliases.aliases.values())
 
-    # On trie et on formate sous la forme de tuples (valeur, libellé) requis par Django
     choices = sorted(
         [
             (alias.upper().replace("_", "-"), alias.upper().replace("_", "-"))

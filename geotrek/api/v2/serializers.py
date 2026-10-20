@@ -1,6 +1,5 @@
 import json
 import logging
-from datetime import datetime
 
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -11,6 +10,7 @@ from django.urls import reverse
 from django.utils.html import escape
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
+from django.views.generic.dates import timezone_today
 from drf_dynamic_fields import DynamicFieldsMixin
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
@@ -1145,7 +1145,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             return obj.count_children
 
         def get_steps(self, obj):
-            today = datetime.now().date()
+            today = timezone_today()
             request = self.context["request"]
             start_date = parse_date(request.GET.get("practicable_from"), today)
             end_date = parse_date(request.GET.get("practicable_to"), today)
