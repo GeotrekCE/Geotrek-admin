@@ -158,7 +158,7 @@ fi
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-deconfigure" ] || [ "$1" = "abort-remove" ] ; then
 	if [ -d /run/systemd/system ]; then
 		systemctl --system daemon-reload >/dev/null 2>&1 || true
-		systemctl enable geotrek.service geotrek-ui.service geotrek-api.service geotrek-celery.service >/dev/null 2>&1 || true
+		systemctl enable geotrek.service geotrek-ui.service geotrek-api.service geotrek-celery.service geotrek-celery-beat.service >/dev/null 2>&1 || true
 		systemctl restart geotrek.service >/dev/null 2>&1 || true
 	fi
 fi
