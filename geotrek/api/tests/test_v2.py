@@ -19,6 +19,7 @@ from django.db import connection
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
+from django.views.generic.dates import timezone_today
 from freezegun import freeze_time
 from mapentity.tests.factories import SuperUserFactory
 from paperclip.models import random_suffix_regexp
@@ -793,7 +794,7 @@ class BaseApiTest(TestCase):
         cls.sensitivearea_practice = sensitivity_factory.SportPracticeFactory()
         cls.sensitivearea_species = sensitivity_factory.SpeciesFactory()
 
-        cls.today = datetime.datetime.now().date()
+        cls.today = timezone_today()
         geom = "SRID=4326;MULTIPOLYGON (((-2 -6, -2 -5, 0 -5, 0 -6, -2 -6)))"
         cls.vigilance_area1 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,

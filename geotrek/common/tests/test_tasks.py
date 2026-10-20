@@ -6,6 +6,7 @@ from unittest.mock import patch
 
 from dateutil.relativedelta import relativedelta
 from django.test import TestCase, override_settings
+from django.views.generic.dates import timezone_today
 
 from geotrek.common.models import FileType, Organism
 from geotrek.common.parsers import ExcelParser, GlobalImportError
@@ -117,7 +118,7 @@ class TasksTest(TestCase):
         self.assertEqual(period.end_date, expected_end)
 
     def test_update_years(self):
-        today = datetime.date.today()
+        today = timezone_today()
         one_day = datetime.timedelta(days=1)
         start_date = today - datetime.timedelta(days=30)
         vigilance_area = VigilanceAreaFactory.create()

@@ -1,6 +1,5 @@
 import importlib
 import sys
-from datetime import date
 from os.path import join
 
 from celery import Task, current_task, shared_task
@@ -8,6 +7,7 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.db import transaction
 from django.utils.translation import gettext_lazy as _
+from django.views.generic.dates import timezone_today
 
 from geotrek.zoning.models import VigilancePeriod
 
@@ -134,7 +134,7 @@ def import_datas_from_web(**kwargs):
 
 @shared_task(name="geotrek.common.update-years")
 def update_annual_vigilance_areas(**kwargs):
-    new_year = date.today().year + 1
+    new_year = timezone_today().year + 1
 
     periods = list(
         VigilancePeriod.objects.finished()

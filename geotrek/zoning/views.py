@@ -35,8 +35,8 @@ from geotrek.common.mixins.views import (
 )
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.views import CreateFromTopologyMixin
+from geotrek.trekking.views import FlattenPicturesMixin
 
-from ..trekking.views import FlattenPicturesMixin
 from .filters import VigilanceAreaFilterSet
 from .forms import VigilanceAreaForm, VigilancePeriodFormset
 from .models import (

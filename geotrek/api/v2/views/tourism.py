@@ -1,11 +1,10 @@
-import datetime
-
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Exists, F, OuterRef
 from django.db.models.query import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils import translation
+from django.views.generic.dates import timezone_today
 from rest_framework.response import Response
 
 from geotrek.api.v2 import filters as api_filters
@@ -56,7 +55,7 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.TouristicContentSerializer
 
     def get_queryset(self):
-        today = datetime.date.today()
+        today = timezone_today()
         start_date = api_utils.parse_date(
             self.request.GET.get("practicable_from"), today
         )

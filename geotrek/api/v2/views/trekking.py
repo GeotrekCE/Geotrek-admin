@@ -1,10 +1,9 @@
-import datetime
-
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Exists, F, OuterRef, Prefetch, Q
 from django.db.models.aggregates import Count
 from django.utils import translation
+from django.views.generic.dates import timezone_today
 from modeltranslation.utils import build_localized_fieldname
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -39,7 +38,7 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.TrekSerializer
 
     def get_impracticable_vigilance_areas(self):
-        today = datetime.date.today()
+        today = timezone_today()
         start_date = parse_date(self.request.GET.get("practicable_from"), today)
         end_date = parse_date(self.request.GET.get("practicable_to"), today)
         portals = self.request.GET.get("portals", "")

@@ -167,16 +167,18 @@ class VigilanceAreaType(
         return self.name
 
     def get_code(self):
-        node = self
-        while node.code is None and not node.is_root():
-            node = node.get_parent()
-        return node.code
+        if self.code or self.is_root():
+            return self.code
+        if not self.is_root():
+            parent = self.get_parent()
+            return parent.get_code()
 
     def get_pictogram(self):
-        node = self
-        while not node.pictogram and not node.is_root():
-            node = node.get_parent()
-        return node.pictogram
+        if self.pictogram or self.is_root():
+            return self.pictogram
+        if not self.is_root():
+            parent = self.get_parent()
+            return parent.get_pictogram()
 
 
 class VigilanceLevel(OptionalPictogramMixin, TimeStampedModelMixin, models.Model):
@@ -270,10 +272,9 @@ class VigilanceArea(
     @property
     def periods_resume(self):
         result = " - "
-        if self.periods.count() > 0:
-            result += "\n - ".join(
-                [period.period_resume for period in self.periods.all()]
-            )
+        periods = self.periods.all()
+        if len(periods) > 0:
+            result += "\n - ".join([period.period_resume for period in periods])
         else:
             result += _("Always active")
         return result

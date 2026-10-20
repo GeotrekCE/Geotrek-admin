@@ -6,6 +6,7 @@ from django.contrib.gis.db.models import Collect
 from django.db.models import Exists, Model, OuterRef
 from django.db.models.query_utils import Q
 from django.utils.translation import gettext_lazy as _
+from django.views.generic.dates import timezone_today
 from django_filters import ModelMultipleChoiceFilter
 from django_filters import rest_framework as filters
 from django_filters.widgets import CSVWidget
@@ -939,7 +940,7 @@ class PracticableFilter(BaseFilterBackend):
         if practicable is not None:
             qs = qs.filter(impracticable=(practicable == "false"))
 
-        today = date.today()
+        today = timezone_today()
         practicable_from = parse_date(request.GET.get("practicable_from"), today)
         practicable_to = parse_date(request.GET.get("practicable_to"), today)
         if practicable_from and practicable_to:
