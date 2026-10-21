@@ -3,7 +3,6 @@ from django.contrib.gis.db.models.functions import Transform
 from django.db.models import Exists, F, OuterRef, Prefetch, Q
 from django.db.models.aggregates import Count
 from django.utils import translation
-from django.views.generic.dates import timezone_today
 from modeltranslation.utils import build_localized_fieldname
 from rest_framework.decorators import action
 from rest_framework.generics import get_object_or_404
@@ -14,9 +13,9 @@ from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
 from geotrek.api.v2.renderers import SVGProfileRenderer
+from geotrek.api.v2.utils import get_impracticable_vigilance_areas
 from geotrek.common.models import AccessibilityAttachment, Attachment, HDViewPoint
 from geotrek.trekking import models as trekking_models
-from geotrek.zoning.models import VigilanceArea
 
 
 class WebLinkCategoryViewSet(api_viewsets.GeotrekViewSet):
@@ -36,27 +35,8 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
     )
     serializer_class = api_serializers.TrekSerializer
 
-    def get_impracticable_vigilance_areas(self):
-        today = timezone_today()
-        start_date = self.request.GET.get("practicable_from") or today
-        end_date = self.request.GET.get("practicable_to") or today
-        portals = self.request.GET.get("portals", "")
-
-        impracticable_vigilance_areas = VigilanceArea.objects.filter(
-            published=True,
-            impracticable=True,
-        ).active_by_dates(start_date, end_date)
-
-        if portals:
-            portals = [int(portal) for portal in portals.split(",")]
-            impracticable_vigilance_areas = impracticable_vigilance_areas.filter(
-                portals__in=portals
-            ).distinct()
-
-        return impracticable_vigilance_areas
-
     def get_queryset(self):
-        impracticable_vigilance_areas = self.get_impracticable_vigilance_areas()
+        impracticable_vigilance_areas = get_impracticable_vigilance_areas(self.request)
 
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
@@ -168,7 +148,7 @@ class TourViewSet(TrekViewSet):
     serializer_class = api_serializers.TourSerializer
 
     def get_queryset(self):
-        impracticable_vigilance_areas = self.get_impracticable_vigilance_areas()
+        impracticable_vigilance_areas = get_impracticable_vigilance_areas(self.request)
 
         qs = super().get_queryset()
         qs = (
