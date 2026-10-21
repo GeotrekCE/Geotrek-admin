@@ -31,7 +31,6 @@ from geotrek.api.v2.utils import (
     build_url,
     get_translation_or_dict,
     is_published,
-    parse_date,
 )
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
@@ -1147,8 +1146,8 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         def get_steps(self, obj):
             today = timezone_today()
             request = self.context["request"]
-            start_date = parse_date(request.GET.get("practicable_from"), today)
-            end_date = parse_date(request.GET.get("practicable_to"), today)
+            start_date = request.GET.get("practicable_from") or today
+            end_date = request.GET.get("practicable_to") or today
             portals = request.GET.get("portals", "")
 
             impracticable_vigilance_areas = VigilanceArea.objects.filter(

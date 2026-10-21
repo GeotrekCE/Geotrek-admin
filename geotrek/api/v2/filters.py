@@ -14,7 +14,6 @@ from modeltranslation.utils import build_localized_fieldname
 from rest_framework.filters import BaseFilterBackend
 from rest_framework_gis.filters import DistanceToPointFilter, InBBOXFilter
 
-from geotrek.api.v2.utils import parse_date
 from geotrek.flatpages.models import FlatPage, MenuItem
 from geotrek.tourism.models import (
     TouristicContent,
@@ -941,8 +940,8 @@ class PracticableFilter(BaseFilterBackend):
             qs = qs.filter(impracticable=(practicable == "false"))
 
         today = timezone_today()
-        practicable_from = parse_date(request.GET.get("practicable_from"), today)
-        practicable_to = parse_date(request.GET.get("practicable_to"), today)
+        practicable_from = request.GET.get("practicable_from") or today
+        practicable_to = request.GET.get("practicable_to") or today
         if practicable_from and practicable_to:
             # intersects at least one vigilance area active during the period and with one of the type 'vigilance_area_types'
             vigilance_area_types = request.GET.get("vigilance_area_types")

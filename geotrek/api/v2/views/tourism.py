@@ -9,7 +9,6 @@ from rest_framework.response import Response
 
 from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
-from geotrek.api.v2 import utils as api_utils
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
 from geotrek.common.models import Attachment
@@ -56,10 +55,8 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         today = timezone_today()
-        start_date = api_utils.parse_date(
-            self.request.GET.get("practicable_from"), today
-        )
-        end_date = api_utils.parse_date(self.request.GET.get("practicable_to"), today)
+        start_date = self.request.GET.get("practicable_from") or today
+        end_date = self.request.GET.get("practicable_to") or today
         portals = self.request.GET.get("portals", "")
 
         impracticable_vigilance_areas = VigilanceArea.objects.filter(

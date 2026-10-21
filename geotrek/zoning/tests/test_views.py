@@ -347,7 +347,7 @@ class VigilanceAreaTestCase(MapEntityTest):
         return {
             "id": self.obj.pk,
             "name": f'<a data-pk="{self.obj.pk}" href="/vigilancearea/{self.obj.pk}/" title="{self.obj.name}">{self.obj.name}</a>',
-            "ongoing": '<i class="bi bi-check-circle text-success"></i>',
+            "ongoing": '<i class="bi bi-x-circle text-danger"></i>',
             "impracticable": '<i class="bi bi-x-circle text-danger"></i>',
             "vigilance_area_type": self.obj.vigilance_area_type.name,
         }
