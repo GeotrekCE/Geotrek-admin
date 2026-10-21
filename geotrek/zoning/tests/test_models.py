@@ -5,7 +5,7 @@ from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.core.exceptions import ValidationError
 from django.test import TestCase
-from django.views.generic.dates import timezone_today
+from freezegun import freeze_time
 
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory
@@ -422,10 +422,10 @@ class VigilanceLevelTestCase(TestCase):
 class VigilancePeriodTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.today = timezone_today()
+        cls.today = datetime.date(2026, 10, 20)
 
     def test_str(self):
-        tomorrow = self.today + datetime.timedelta(days=1)
+        tomorrow = datetime.date(2026, 10, 21)
         period = VigilancePeriodFactory.create(
             start_date=self.today,
             end_date=tomorrow,
@@ -436,18 +436,21 @@ class VigilancePeriodTestCase(TestCase):
     def test_clean_start_date_after_end_date(self):
         period = VigilancePeriodFactory.create(
             start_date=self.today,
-            end_date=self.today - datetime.timedelta(days=1),
+            end_date=datetime.date(2026, 10, 19),
         )
         with self.assertRaises(ValidationError) as cm:
             period.clean()
         self.assertIn("start_date", cm.exception.error_dict)
 
     def test_clean_valid_dates(self):
+        end_date = datetime.date(2026, 10, 25)
         period = VigilancePeriodFactory.create(
             start_date=self.today,
-            end_date=self.today + datetime.timedelta(days=5),
+            end_date=end_date,
         )
         period.clean()
+        self.assertEqual(period.start_date, self.today)
+        self.assertEqual(period.end_date, end_date)
 
     def test_active_days_labels(self):
         period = VigilancePeriodFactory(active_days=[0, 6])
@@ -464,14 +467,12 @@ class VigilancePeriodTestCase(TestCase):
 
         period_with_end = VigilancePeriodFactory(
             start_date=self.today,
-            end_date=self.today + datetime.timedelta(days=10),
+            end_date=datetime.date(2026, 10, 30),
             active_days=[],
             annual=True,
         )
         self.assertIn(str(self.today), period_with_end.period_resume)
-        self.assertIn(
-            str(self.today + datetime.timedelta(days=10)), period_with_end.period_resume
-        )
+        self.assertIn("2026-10-30", period_with_end.period_resume)
         self.assertIn("annual", period_with_end.period_resume)
 
 
@@ -486,7 +487,7 @@ class VigilanceAreaModelTest(TestCase):
         self.assertEqual(str(va.active_today_verbose_name), "Active today")
 
     def test_periods_resume(self):
-        today = timezone_today()
+        today = datetime.date(2026, 10, 20)
         va = VigilanceAreaFactory(periods=[])
 
         period_no_end = VigilancePeriodFactory(
@@ -498,7 +499,7 @@ class VigilanceAreaModelTest(TestCase):
         period_with_end = VigilancePeriodFactory(
             vigilance_area=va,
             start_date=today,
-            end_date=today + datetime.timedelta(days=10),
+            end_date=datetime.date(2026, 10, 30),
         )
 
         self.assertIn(f"- {period_no_end.period_resume}", va.periods_resume)
@@ -519,14 +520,15 @@ class VigilanceAreaModelTest(TestCase):
 
 class VigilancePeriodAndAreaManagerTest(TestCase):
     def setUp(self):
-        self.today = timezone_today()
-        self.yesterday = self.today - datetime.timedelta(days=1)
-        self.tomorrow = self.today + datetime.timedelta(days=1)
-        self.last_week = self.today - datetime.timedelta(days=7)
+        self.today = datetime.date(2026, 10, 20)
+        self.yesterday = datetime.date(2026, 10, 19)
+        self.tomorrow = datetime.date(2026, 10, 21)
+        self.last_week = datetime.date(2026, 10, 13)
 
         self.weekday = self.today.weekday()
         self.other_weekday = (self.weekday + 1) % 7
 
+    @freeze_time("2026-10-20")
     def test_manager_ongoing_and_finished(self):
         period_active = VigilancePeriodFactory(start_date=self.yesterday, end_date=None)
         period_active_until_tomorrow = VigilancePeriodFactory(
@@ -559,6 +561,7 @@ class VigilancePeriodAndAreaManagerTest(TestCase):
         self.assertIn(period_finished.vigilance_area, finished_qs_area)
         self.assertNotIn(period_active.vigilance_area, finished_qs_area)
 
+    @freeze_time("2026-10-20")
     def test_manager_active_today(self):
         period_today = VigilancePeriodFactory(
             start_date=self.yesterday,
@@ -580,8 +583,8 @@ class VigilancePeriodAndAreaManagerTest(TestCase):
         self.assertNotIn(period_wrong_day.vigilance_area, qs_area)
 
     def test_active_by_dates(self):
-        weekday = self.today.weekday()
-        other_weekday = (weekday + 1) % 7
+        weekday = 1  # Thusday
+        other_weekday = 2  # Wednesday
 
         period_active = VigilancePeriodFactory(
             start_date=self.yesterday,

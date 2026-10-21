@@ -2,7 +2,7 @@ import datetime
 
 from django.conf import settings
 from django.test import TestCase
-from django.views.generic.dates import timezone_today
+from freezegun import freeze_time
 
 from geotrek.core.models import Path
 from geotrek.core.tests.factories import PathFactory
@@ -145,15 +145,15 @@ class ZoningPropertiesMixinTest(TestCase):
         )
         self.assertEqual(len(path.published_areas), 2)
 
+    @freeze_time("2026-10-20")
     def test_vigilance_areas(self):
-        today = timezone_today()
         period1 = VigilancePeriodFactory.create(
-            start_date=today - datetime.timedelta(days=1),
+            start_date=datetime.date(2026, 10, 19),
             end_date=None,
         )
         period2 = VigilancePeriodFactory.create(
-            start_date=today - datetime.timedelta(days=10),
-            end_date=today - datetime.timedelta(days=1),
+            start_date=datetime.date(2026, 10, 10),
+            end_date=datetime.date(2026, 10, 19),
         )
         va_active = VigilanceAreaFactory.create(
             geom=self.geom_1_wkt,

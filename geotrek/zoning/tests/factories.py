@@ -153,4 +153,4 @@ class VigilancePeriodFactory(factory.django.DjangoModelFactory):
         model = models.VigilancePeriod
 
     vigilance_area = factory.SubFactory(VigilanceAreaFactory, periods=[])
-    start_date = factory.LazyFunction(datetime.date.today)
+    start_date = datetime.date(2026, 10, 20)

@@ -19,7 +19,6 @@ from django.db import connection
 from django.test import RequestFactory, TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
-from django.views.generic.dates import timezone_today
 from freezegun import freeze_time
 from mapentity.tests.factories import SuperUserFactory
 from paperclip.models import random_suffix_regexp
@@ -794,7 +793,6 @@ class BaseApiTest(TestCase):
         cls.sensitivearea_practice = sensitivity_factory.SportPracticeFactory()
         cls.sensitivearea_species = sensitivity_factory.SpeciesFactory()
 
-        cls.today = timezone_today()
         geom = "SRID=4326;MULTIPOLYGON (((-2 -6, -2 -5, 0 -5, 0 -6, -2 -6)))"
         cls.vigilance_area1 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,
@@ -819,24 +817,24 @@ class BaseApiTest(TestCase):
         )
         cls.period1 = zoning_factory.VigilancePeriodFactory.create(
             vigilance_area=cls.vigilance_area1,
-            start_date=cls.today - datetime.timedelta(days=3),
-            end_date=cls.today + datetime.timedelta(days=145),
+            start_date=datetime.date(2026, 10, 17),
+            end_date=datetime.date(2027, 1, 20),
             active_days=[],
         )
         cls.period2 = zoning_factory.VigilancePeriodFactory.create(
             vigilance_area=cls.vigilance_area2,
-            start_date=cls.today - datetime.timedelta(days=3),
+            start_date=datetime.date(2026, 10, 17),
             end_date=None,
             active_days=[
-                (cls.today.weekday() - 1) % 7,
-                cls.today.weekday(),
-                (cls.today.weekday() + 1) % 7,
-            ],  # [Weekday-1, Weekday, Weekday+1]
+                0,
+                1,
+                2,
+            ],  # [Monday, Thusday, Wednesday]
         )
         cls.period3 = zoning_factory.VigilancePeriodFactory.create(
             vigilance_area=cls.vigilance_area3,
-            start_date=cls.today - datetime.timedelta(days=3),
-            end_date=cls.today - datetime.timedelta(days=1),
+            start_date=datetime.date(2026, 10, 17),
+            end_date=datetime.date(2026, 10, 19),
         )
         cls.vigilance_area_type = zoning_factory.VigilanceAreaTypeFactory()
         cls.vigilance_level = zoning_factory.VigilanceLevelFactory()
@@ -2035,8 +2033,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertNotContains(response, str(self.child1.pk))
 
     def test_trek_vigilancearea_filter_period(self):
-        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        start_date = "2026-10-19"
+        end_date = "2026-10-21"
         response = self.get_trek_list(
             params={
                 "practicable_from": start_date,
@@ -2047,8 +2045,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.json()["count"], 17)
 
     def test_trek_vigilancearea_impracticable_depends_on_portal(self):
-        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
+        start_date = "2026-10-19"
+        end_date = "2026-10-21"
         params = {
             "practicable_from": start_date,
             "practicable_to": end_date,
@@ -2071,60 +2069,50 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(response.json()["count"], 1)
 
     def test_trek_vigilancearea_types_filter(self):
-        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
         response = self.get_trek_list(
             params={
-                "practicable_from": start_date,
-                "practicable_to": end_date,
+                "practicable_from": "2026-10-19",
+                "practicable_to": "2026-10-21",
                 "vigilance_area_types": self.vigilance_area2.vigilance_area_type.pk,
             }
         )
         self.assertEqual(response.json()["count"], 17)
 
     def test_trek_vigilancearea_types_filter_other_type(self):
-        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
         response = self.get_trek_list(
             params={
-                "practicable_from": start_date,
-                "practicable_to": end_date,
+                "practicable_from": "2026-10-19",
+                "practicable_to": "2026-10-21",
                 "vigilance_area_types": self.vigilance_area1.vigilance_area_type.pk,
             }
         )
         self.assertEqual(response.json()["count"], 0)
 
     def test_trek_vigilancearea_types_exclude_filter(self):
-        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
         response = self.get_trek_list(
             params={
-                "practicable_from": start_date,
-                "practicable_to": end_date,
+                "practicable_from": "2026-10-19",
+                "practicable_to": "2026-10-21",
                 "vigilance_area_types_exclude": self.vigilance_area2.vigilance_area_type.pk,
             }
         )
         self.assertEqual(response.json()["count"], 2)
 
     def test_trek_vigilancearea_filter_out_of_period(self):
-        start_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
-        end_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
         response = self.get_trek_list(
             params={
-                "practicable_from": start_date,
-                "practicable_to": end_date,
+                "practicable_from": "2026-11-20",
+                "practicable_to": "2026-09-20",
                 "practicable": "false",
             }
         )
         self.assertEqual(response.json()["count"], 0)
 
     def test_trek_vigilancearea_filter_invalid_weekday(self):
-        start_date = (self.today + datetime.timedelta(days=2)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=3)).strftime("%Y-%m-%d")
         response = self.get_trek_list(
             params={
-                "practicable_from": start_date,
-                "practicable_to": end_date,
+                "practicable_from": "2026-10-22",
+                "practicable_to": "2026-10-23",
                 "practicable": "false",
             }
         )
@@ -2171,11 +2159,9 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_tour_vigilancearea_impracticable_depends_on_portal(self):
-        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
         params = {
-            "practicable_from": start_date,
-            "practicable_to": end_date,
+            "practicable_from": "2026-10-19",
+            "practicable_to": "2026-10-21",
             "practicable": "false",
         }
 
@@ -3020,23 +3006,19 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_touristiccontent_list_practicable_filter(self):
-        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
         response = self.get_touristiccontent_list(
             {
-                "practicable_from": start_date,
-                "practicable_to": end_date,
+                "practicable_from": "2026-10-19",
+                "practicable_to": "2026-10-21",
                 "practicable": "false",
             }
         )
         self.assertEqual(len(response.json()["results"]), 2)
 
     def test_touristiccontent_vigilancearea_impracticable_depends_on_portal(self):
-        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
         params = {
-            "practicable_from": start_date,
-            "practicable_to": end_date,
+            "practicable_from": "2026-10-19",
+            "practicable_to": "2026-10-21",
             "practicable": "false",
         }
 
@@ -3450,10 +3432,8 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_vigilancearea_filter_period(self):
-        start_date = (self.today - datetime.timedelta(days=1)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=1)).strftime("%Y-%m-%d")
         response = self.get_vigilancearea_list(
-            params={"start_date": start_date, "end_date": end_date}
+            params={"start_date": "2026-10-19", "end_date": "2026-10-21"}
         )
         self.assertEqual(response.json()["count"], 2)
         self.assertEqual(
@@ -3466,18 +3446,14 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_vigilancearea_filter_invalid_period(self):
-        start_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
-        end_date = (self.today - datetime.timedelta(days=30)).strftime("%Y-%m-%d")
         response = self.get_vigilancearea_list(
-            params={"start_date": start_date, "end_date": end_date}
+            params={"start_date": "2026-09-20", "end_date": "2026-09-20"}
         )
         self.assertEqual(response.json()["count"], 0)
 
     def test_vigilancearea_filter_invalid_weekday(self):
-        start_date = (self.today + datetime.timedelta(days=2)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=3)).strftime("%Y-%m-%d")
         response = self.get_vigilancearea_list(
-            params={"start_date": start_date, "end_date": end_date}
+            params={"start_date": "2026-10-22", "end_date": "2026-10-23"}
         )
         self.assertEqual(response.json()["count"], 1)
         self.assertEqual(
@@ -3486,12 +3462,10 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_vigilancearea_filter_period_limit(self):
-        start_date = (self.today + datetime.timedelta(days=145)).strftime("%Y-%m-%d")
-        end_date = (self.today + datetime.timedelta(days=145)).strftime("%Y-%m-%d")
         response = self.get_vigilancearea_list(
-            params={"start_date": start_date, "end_date": end_date}
+            params={"start_date": "2027-01-20", "end_date": "2027-01-20"}
         )
-        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(response.json()["count"], 2)
         self.assertEqual(
             response.json()["results"][0]["id"],
             self.vigilance_area1.pk,

@@ -2,7 +2,7 @@ import datetime
 
 from django.conf import settings
 from django.test import TestCase
-from django.views.generic.dates import timezone_today
+from freezegun import freeze_time
 
 from geotrek.core.filters import PathFilterSet
 from geotrek.core.tests.factories import PathFactory
@@ -168,9 +168,9 @@ class ZoningFilterTest(TestCase):
 class VigilanceAreaFilterTest(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.today = timezone_today()
-        cls.yesterday = cls.today - datetime.timedelta(days=1)
-        cls.tomorrow = cls.today + datetime.timedelta(days=1)
+        cls.today = datetime.date(2026, 10, 20)
+        cls.yesterday = datetime.date(2026, 10, 19)
+        cls.tomorrow = datetime.date(2026, 10, 21)
         cls.area_type = VigilanceAreaTypeFactory.create()
         cls.vigilance_level = VigilanceLevelFactory.create()
         cls.va = VigilanceAreaFactory.create(
@@ -215,11 +215,13 @@ class VigilanceAreaFilterTest(TestCase):
         )
         self.assertIn(self.va, f.qs)
 
+    @freeze_time("2026-10-20")
     def test_filter_by_ongoing_period(self):
         qs = VigilanceArea.objects.all()
         f = VigilanceAreaFilterSet(data={"ongoing": "true"}, queryset=qs)
         self.assertIn(self.va, f.qs)
 
+    @freeze_time("2026-10-20")
     def test_filter_by_active_today(self):
         qs = VigilanceArea.objects.all()
         f = VigilanceAreaFilterSet(data={"active_today": "true"}, queryset=qs)
@@ -228,11 +230,11 @@ class VigilanceAreaFilterTest(TestCase):
     def test_filter_by_dates(self):
         qs = VigilanceArea.objects.all()
         f = VigilanceAreaFilterSet(
-            data={"before": self.today + datetime.timedelta(days=2)}, queryset=qs
+            data={"before": datetime.date(2026, 10, 22)}, queryset=qs
         )
         self.assertIn(self.va, f.qs)
         f = VigilanceAreaFilterSet(
-            data={"after": self.tomorrow + datetime.timedelta(days=5)}, queryset=qs
+            data={"after": datetime.date(2026, 10, 25)}, queryset=qs
         )
         self.assertNotIn(self.va, f.qs)
 

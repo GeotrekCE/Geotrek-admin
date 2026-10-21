@@ -284,8 +284,6 @@ class VigilanceAreaCreate(
     model = VigilanceArea
     form_class = VigilanceAreaForm
 
-    # Period formset settings
-
 
 class VigilanceAreaUpdate(VigilancePeriodFormsetMixin, MapEntityUpdate):
     queryset = VigilanceArea.objects.all()

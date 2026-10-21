@@ -14,7 +14,6 @@ from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
 from geotrek.api.v2.renderers import SVGProfileRenderer
-from geotrek.api.v2.utils import parse_date
 from geotrek.common.models import AccessibilityAttachment, Attachment, HDViewPoint
 from geotrek.trekking import models as trekking_models
 from geotrek.zoning.models import VigilanceArea
@@ -39,8 +38,8 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_impracticable_vigilance_areas(self):
         today = timezone_today()
-        start_date = parse_date(self.request.GET.get("practicable_from"), today)
-        end_date = parse_date(self.request.GET.get("practicable_to"), today)
+        start_date = self.request.GET.get("practicable_from") or today
+        end_date = self.request.GET.get("practicable_to") or today
         portals = self.request.GET.get("portals", "")
 
         impracticable_vigilance_areas = VigilanceArea.objects.filter(
