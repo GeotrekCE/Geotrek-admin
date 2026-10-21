@@ -228,7 +228,7 @@ msgid "Practicable"
 msgstr "Praticable"
 
 msgid "start date and end date of the period must be configured"
-msgstr ""
+msgstr "La date de début et la date de fin de la période doivent être configurées"
 
 msgid "Date must have format YYYY-MM-DD"
-msgstr ""
+msgstr "La date doit être au format AAAA-MM-JJ"
