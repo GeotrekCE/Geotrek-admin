@@ -10,7 +10,6 @@ from django.urls import reverse
 from django.utils.html import escape
 from django.utils.translation import get_language
 from django.utils.translation import gettext_lazy as _
-from django.views.generic.dates import timezone_today
 from drf_dynamic_fields import DynamicFieldsMixin
 from easy_thumbnails.alias import aliases
 from easy_thumbnails.files import get_thumbnailer
@@ -29,6 +28,7 @@ from geotrek.api.v2.mixins import (
 )
 from geotrek.api.v2.utils import (
     build_url,
+    get_impracticable_vigilance_areas,
     get_translation_or_dict,
     is_published,
 )
@@ -36,7 +36,6 @@ from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
 from geotrek.common.utils import simplify_coords
 from geotrek.flatpages.models import MenuItem
-from geotrek.zoning.models import VigilanceArea
 
 if "geotrek.core" in settings.INSTALLED_APPS:
     from geotrek.core import models as core_models
@@ -1144,22 +1143,9 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             return obj.count_children
 
         def get_steps(self, obj):
-            today = timezone_today()
-            request = self.context["request"]
-            start_date = request.GET.get("practicable_from") or today
-            end_date = request.GET.get("practicable_to") or today
-            portals = request.GET.get("portals", "")
-
-            impracticable_vigilance_areas = VigilanceArea.objects.filter(
-                published=True,
-                impracticable=True,
-            ).active_by_dates(start_date, end_date)
-
-            if portals:
-                portals = [int(portal) for portal in portals.split(",")]
-                impracticable_vigilance_areas = impracticable_vigilance_areas.filter(
-                    portals__in=portals
-                ).distinct()
+            impracticable_vigilance_areas = get_impracticable_vigilance_areas(
+                self.context["request"]
+            )
 
             qs = (
                 obj.children.select_related("topo_object", "difficulty")
