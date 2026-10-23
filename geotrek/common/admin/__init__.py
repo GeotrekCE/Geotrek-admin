@@ -17,7 +17,7 @@ else:
 
 class OrganismAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("organism", "structure")
-    search_fields = ("organism", "structure")
+    search_fields = ("organism", "structure__name")
     list_filter = ("structure",)
     merge_field = "organism"
 
