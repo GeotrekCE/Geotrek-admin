@@ -36,7 +36,7 @@ class Migration(migrations.Migration):
             model_name="touristiccontent",
             name="published",
             field=models.BooleanField(
-                db_default=True,
+                db_default=False,
                 default=False,
                 help_text="Visible on Geotrek-rando",
                 verbose_name="Published",
@@ -46,7 +46,7 @@ class Migration(migrations.Migration):
             model_name="touristicevent",
             name="published",
             field=models.BooleanField(
-                db_default=True,
+                db_default=False,
                 default=False,
                 help_text="Visible on Geotrek-rando",
                 verbose_name="Published",

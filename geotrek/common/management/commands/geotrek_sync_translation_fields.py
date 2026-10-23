@@ -31,7 +31,7 @@ class Command(BaseSyncCommand):
             )
             if not f.null:
                 stmt += " " + style.SQL_KEYWORD("NOT NULL")
-            if f.has_default() and f.db_default:
+            if f.has_db_default():
                 editor = connection.schema_editor()
                 default_value = editor.effective_default(f)
                 stmt += (

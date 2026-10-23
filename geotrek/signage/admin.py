@@ -72,7 +72,7 @@ class SealingAdmin(MergeActionMixin, admin.ModelAdmin):
 
 @admin.register(BladeType)
 class BladeTypeAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ("label", "structure__name")
+    search_fields = ("label", "structure")
     merge_field = "label"
 
     def get_queryset(self, request):
@@ -109,7 +109,7 @@ class BladeTypeAdmin(MergeActionMixin, admin.ModelAdmin):
 
 @admin.register(SignageType)
 class SignageTypeAdmin(MergeActionMixin, admin.ModelAdmin):
-    search_fields = ("label", "structure__name")
+    search_fields = ("label", "structure")
     merge_field = "label"
 
     def get_queryset(self, request):

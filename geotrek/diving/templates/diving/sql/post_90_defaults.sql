@@ -38,7 +38,6 @@ ALTER TABLE diving_dive ALTER COLUMN advice SET DEFAULT '';
 -- source
 -- portal
 ALTER TABLE diving_dive ALTER COLUMN deleted SET DEFAULT FALSE;
-ALTER TABLE diving_dive ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 -- name
 ALTER TABLE diving_dive ALTER COLUMN review SET DEFAULT FALSE;
