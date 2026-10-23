@@ -875,9 +875,9 @@ LOGGING = {
         "": {
             "handlers": ["console"],
         },
-        'weasyprint.progress': {
-            'level': 'WARNING',  # weasyprint progress bar is too verbose, we don't need it in logs
-        }
+        "weasyprint.progress": {
+            "level": "WARNING",  # weasyprint progress bar is too verbose, we don't need it in logs
+        },
     },
 }
 
