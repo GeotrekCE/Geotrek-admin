@@ -61,7 +61,8 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"label_accessibility" }}</th>
-            <td>{{ object.label_accessibility }}</td>
+            <td>{% if object.label_accessibility %}{{ object.label_accessibility }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{% trans "Source" %}</th>

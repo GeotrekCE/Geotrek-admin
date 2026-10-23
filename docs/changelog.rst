@@ -5,6 +5,10 @@ CHANGELOG
 2.126.5+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Remove None display when the field is empty in touristic content and event detail sheet
+
 
 2.126.5         (2026-10-16)
 ----------------------------
