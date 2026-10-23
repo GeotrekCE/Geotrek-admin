@@ -90,5 +90,134 @@
         "fields": {
             "name": "R\u00e9serve int\u00e9grale"
         }
+    },
+    {
+        "pk": 1,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Pastoralism",
+            "name_fr": "Pastoralisme",
+            "name_en": "Pastoralism",
+            "code": "PAST"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Sensitive area",
+            "name_fr": "Espèce sensible",
+            "name_en": "Sensitive area",
+            "code": "ESPS"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Intervention in progress/Construction",
+            "name_fr": "Intervention en cours/Travaux",
+            "name_en": "Intervention in progress/Construction",
+            "code": "TRAV"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Natural risk",
+            "name_fr": "Risque naturel",
+            "name_en": "Natural risk",
+            "code": "RISN"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Incident",
+            "name_fr": "Incident",
+            "name_en": "Incident",
+            "code": "INCI"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Event",
+            "name_fr": "Événementiel",
+            "name_en": "Event",
+            "code": "EVEN"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Hunting",
+            "name_fr": "Chasse",
+            "name_en": "Hunting",
+            "code": "CHAS"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Others",
+            "name_fr": "Autres",
+            "name_en": "Others",
+            "code": "AUTR"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "zoning.vigilancelevel",
+        "fields": {
+            "name": "Danger",
+            "name_fr": "Danger",
+            "name_en": "Danger",
+            "color": "#901A1A",
+            "level": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "zoning.vigilancelevel",
+        "fields": {
+            "name": "Warning",
+            "name_fr": "Mise en garde",
+            "name_en": "Warning",
+            "color": "#955a02",
+            "level": 2
+        }
+    },
+    {
+        "pk": 3,
+        "model": "zoning.vigilancelevel",
+        "fields": {
+            "name": "Advise",
+            "name_fr": "Conseil",
+            "name_en": "Advise",
+            "color": "#1257A8",
+            "level": 3
+        }
     }
 ]

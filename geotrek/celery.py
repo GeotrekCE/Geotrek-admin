@@ -18,5 +18,6 @@ app.conf.update(
     task_time_limit=10800,
     task_soft_time_limit=21600,
     result_backend="django-db",
+    beat_scheduler="django_celery_beat.schedulers:DatabaseScheduler",
 )
 app.autodiscover_tasks()

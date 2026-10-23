@@ -485,16 +485,6 @@ A complete list of attributes that can be used for displaying or exporting colum
           "managers",
           "type",
           "description",
-          "description_teaser",
-          "ambiance",
-          "period",
-          "orientation",
-          "wind",
-          "labels",
-          "themes",
-          "portal",
-          "source",
-          "managers",
           "min_elevation",
           "date_insert",
           "date_update",
@@ -519,6 +509,26 @@ A complete list of attributes that can be used for displaying or exporting colum
           "ratings_description",
           "type",
           "points_reference",
+          "uuid",
+          "last_author",
+          "creator",
+          "authors",
+      ]
+      COLUMNS_LISTS["vigilance_area_view"] = [
+          "structure",
+          "description",
+          "practical_info",
+          "practicability",
+          "vigilance_area_type",
+          "start_date",
+          "end_date",
+          "active_days",
+          "active_months",
+          "external_info_url",
+          "portals",
+          "sources",
+          "provider",
+          "eid",
           "uuid",
           "last_author",
           "creator",
@@ -1157,6 +1167,24 @@ A complete list of attributes that can be used for displaying or exporting colum
           "creator",
           "authors",
       ]
+      COLUMNS_LISTS["vigilance_area_export"] = [
+          "structure",
+          "description",
+          "practical_info",
+          "impracticability",
+          "vigilance_area_type",
+          "vigilance_level",
+          "periods_resume",
+          "external_info_url",
+          "portals",
+          "sources",
+          "provider",
+          "eid",
+          "uuid",
+          "last_author",
+          "creator",
+          "authors",
+      ]
 
 .. note::
   
@@ -1480,6 +1508,17 @@ A field can be hidden only if it meets **all** the following conditions:
           "period12",
           "url",
           "description",
+      ]
+      HIDDEN_FORM_FIELDS["vigilance_area"] = [
+          "vigilance_level",
+          "published",
+          "description",
+          "practical_info",
+          "external_info_url",
+          "sources",
+          "portals",
+          "private_comment",
+          "eid",
       ]
 
 .. note::

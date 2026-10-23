@@ -57,6 +57,7 @@ from geotrek.trekking.managers import (
     TrekOrderedChildManager,
     WebLinkManager,
 )
+from geotrek.zoning import models as zoning_models
 
 logger = logging.getLogger(__name__)
 
@@ -565,6 +566,12 @@ class Trek(
     def tourism_treks(cls, tourism_object, queryset=None):
         return intersecting(qs=queryset_or_model(queryset, cls), obj=tourism_object)
 
+    @classmethod
+    def vigilance_area_treks(cls, vigilance_area_object, queryset=None):
+        return intersecting(
+            qs=queryset_or_model(queryset, cls), obj=vigilance_area_object, distance=0
+        )
+
     @property
     def parents(self):
         return Trek.objects.filter(trek_children__child=self, deleted=False)
@@ -753,6 +760,7 @@ tourism_models.TouristicEvent.add_property(
     lambda self: intersecting(Trek, self).filter(published=True),
     _("Published treks"),
 )
+zoning_models.VigilanceArea.add_property("treks", Trek.vigilance_area_treks, _("Treks"))
 if "geotrek.signage" in settings.INSTALLED_APPS:
     Blade.add_property("treks", lambda self: self.signage.treks, _("Treks"))
     Blade.add_property(

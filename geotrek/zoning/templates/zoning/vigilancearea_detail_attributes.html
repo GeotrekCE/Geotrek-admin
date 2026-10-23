@@ -1,0 +1,180 @@
+{% extends "mapentity/mapentity_detail_attributes.html" %}
+{% load i18n geotrek_tags mapentity_tags %}
+
+{% block attributes %}
+    <table class="table-striped table-bordered table">
+        <tr>
+            <th>{{ object|verbose:"structure" }}</th>
+            <td>{{ object.structure }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"name" }}</th>
+            <td>{{ object.name }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"vigilance_area_type" }}</th>
+            <td>{{ object.vigilance_area_type }}</td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"impracticable" }}</th>
+            <td>
+                {% if object.impracticable %}
+                    <i class="bi bi-check-circle text-success"></i> {% trans "Yes" %}
+                {% else %}
+                    <i class="bi bi-x-circle text-danger"></i> {% trans "No" %}
+                {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"vigilance_level" }}</th>
+            <td>
+            {% if object.vigilance_level %}
+                <i class="bi bi-circle-fill" style="color: {{ object.vigilance_level.color }}"></i> {{ object.vigilance_level.name }}
+            {% else %}
+                <span class="none">{% trans "None" %}</span>
+            {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"sources" }}</th>
+            <td>
+                {% for source in object.sources.all %}
+                    <span class="badge badge-primary">{{ source.name }}</span>
+                    {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"portals" }}</th>
+            <td>
+                {% for portal in object.portals.all %}
+                    <span class="badge badge-primary">{{ portal.name }}</span>
+                    {% empty %}
+                    <span class="none">{% trans "None" %}</span>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"description" }}</th>
+            <td>{% if object.description %}{{ object.description|safe|linebreaks }}
+            {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"practical_info" }}</th>
+            <td>{% if object.practical_info %}{{ object.practical_info|safe|linebreaks }}
+            {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"external_info_url" }}</th>
+            <td>{% if object.external_info_url %}
+                <a class="btn btn-primary" href="{{ object.external_info_url }}" target="_blank"
+                   rel="noopener noreferrer">{{ object.external_info_url }}</a>
+            {% else %}
+                <span class="none">{% trans "None" %}</span>
+            {% endif %}
+            </td>
+        </tr>
+        <tr>
+            <th>{% trans "Thumbnail" %}</th>
+            <td><img src="{{ object.thumbnail.url }}"></td>
+        </tr>
+        <tr>
+            <th>{{ object|verbose:"private_comment" }}</th>
+            <td>{% if object.private_comment %}{{ object.private_comment|safe|linebreaks }}
+            {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
+            </td>
+        </tr>
+    </table>
+
+    <table class="table table-bordered">
+    <thead>
+        <tr class="table-active">
+            <th class="text-center"><i class="bi bi-calendar-week text-danger"></i> {% trans "Periods" %}</th>
+        </tr>
+    </thead>
+    <tbody id="accordionPeriods">
+        {% for period in object.periods.all %}
+            <tr>
+                <td class="p-0">
+                    <div class="btn btn-block text-left" type="button"
+                            data-toggle="collapse"
+                            data-target="#collapse{{ period.id }}"
+                            aria-expanded="false"
+                            aria-controls="collapse{{ period.id }}">
+                        {% if period.end_date %}
+                            {{ period.start_date|date:"SHORT_DATE_FORMAT" }}
+                            <i class="text-muted">→</i>
+                            {{ period.end_date|date:"SHORT_DATE_FORMAT" }}
+                        {% else %}
+                            {% trans "From" %} {{ period.start_date|date:"SHORT_DATE_FORMAT" }}
+                        {% endif %}
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td class="p-0 border-0">
+                    <div id="collapse{{ period.id }}" class="collapse" data-parent="#accordionPeriods">
+                        <div class="p-0">
+                            <table class="table table-striped table-bordered mb-0">
+                                <tr>
+                                    <th>{% trans "Ongoing period" %}</th>
+                                    <td>
+                                        {% if period.ongoing %}
+                                            <i class="bi bi-check-circle text-success"></i> {% trans "Yes" %}
+                                        {% else %}
+                                            <i class="bi bi-x-circle text-danger"></i> {% trans "No" %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{% trans "Active today" %}</th>
+                                    <td>
+                                        {% if period.active_today %}
+                                            <i class="bi bi-check-circle text-success"></i> {% trans "Yes" %}
+                                        {% else %}
+                                            <i class="bi bi-x-circle text-danger"></i> {% trans "No" %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{% trans "Active days" %}</th>
+                                    <td>
+                                        {% for day in period.active_days_labels %}
+                                            <span class="badge badge-secondary">{{ day }}</span>
+                                        {% empty %}
+                                            <span class="text-muted">{% trans "Every days" %}</span>
+                                        {% endfor %}
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>{% trans "Annual recurrence" %}</th>
+                                    <td>
+                                        {% if period.annual %}
+                                            <i class="bi bi-check-circle text-success"></i> {% trans "Yes" %}
+                                        {% else %}
+                                            <i class="bi bi-x-circle text-danger"></i> {% trans "No" %}
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+        {% empty %}
+            <tr>
+                <td>{% trans "This area is always active" %}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    {% include "common/fragments/publication_info.html" %}
+    {% include "common/fragments/provider_eid.html" %}
+    {% include "common/fragments/trackinfo.html" %}
+
+    {{ block.super }}
+{% endblock attributes %}

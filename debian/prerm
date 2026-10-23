@@ -2,7 +2,7 @@
 
 if [ "$1" = "remove" ] || [ "$1" = "upgrade" ] || [ "$1" = "deconfigure" ]; then
 	if [ -d /run/systemd/system ]; then
-		systemctl stop geotrek.service geotrek-ui.service geotrek-api.service geotrek-celery.service >/dev/null 2>&1 || true
+		systemctl stop geotrek.service geotrek-ui.service geotrek-api.service geotrek-celery.service geotrek-celery-beat.service >/dev/null 2>&1 || true
 	fi
 fi
 
