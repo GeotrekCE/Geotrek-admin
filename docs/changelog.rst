@@ -5,6 +5,10 @@ CHANGELOG
 2.126.5+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Fix the search bar in the admin section for signage type and blade type
+
 
 2.126.5         (2026-10-16)
 ----------------------------
