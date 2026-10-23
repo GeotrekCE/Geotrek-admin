@@ -505,9 +505,12 @@ class Site(
         https://github.com/GeotrekCE/Geotrek-admin/issues/5461
         """
         clone = super().duplicate(**kwargs)
-        if clone.parent is None:
-            clone.tree_id = clone.id
-            clone.save(update_fields=["tree_id"])
+        if clone.is_root_node():
+            clone.tree_id = None
+            clone.lft = None
+            clone.rght = None
+            clone.level = None
+            clone.save(update_fields=["tree_id", "lft", "rght", "level"])
         return clone
 
 
