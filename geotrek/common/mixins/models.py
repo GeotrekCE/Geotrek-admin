@@ -229,6 +229,7 @@ class BasePublishableMixin(models.Model):
     published = models.BooleanField(
         verbose_name=_("Published"),
         default=False,
+        db_default=True,
         help_text=_("Visible on Geotrek-rando"),
     )
     publication_date = models.DateField(

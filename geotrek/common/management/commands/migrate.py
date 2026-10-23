@@ -24,7 +24,7 @@ class Command(BaseCommand):
         ctx = redirect_stdout(StringIO()) if options["verbosity"] < 1 else nullcontext()
         with ctx:
             call_command(
-                "sync_translation_fields",
+                "sync_translation_fields_default",
                 "--noinput",
                 verbosity=options["verbosity"],
             )

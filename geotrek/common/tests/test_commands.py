@@ -13,6 +13,7 @@ from easy_thumbnails.models import Thumbnail
 
 from geotrek import __version__
 from geotrek.authent.tests.factories import StructureFactory
+from geotrek.common.management.commands.sync_translation_fields_default import Command as SyncTranslationCommand
 from geotrek.common.models import TargetPortal
 from geotrek.common.tests.factories import AttachmentFactory, TargetPortalFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
@@ -23,6 +24,7 @@ from geotrek.infrastructure.tests.factories import (
     InfrastructureFactory,
     InfrastructureTypeFactory,
 )
+from geotrek.settings import PUBLISHED_BY_LANG
 from geotrek.trekking.tests.factories import POIFactory
 
 
@@ -261,3 +263,31 @@ class CheckVersionsCommandTestCase(TestCase):
             "pgRouting version  : 3.0.0"
         )
         self.assertEqual(self.output.getvalue().strip(), expected_result)
+
+
+class SyncTranslationFieldsCommandTestCase(TestCase):
+    def setUp(self):
+        self.output = StringIO()
+        self.command = SyncTranslationCommand()
+
+    def test_nullable_field(self):
+        sql = self.command.get_sync_sql("name", ["it"], Infrastructure)
+        self.assertEqual(
+            sql,
+            ['ALTER TABLE "infrastructure_infrastructure" ADD COLUMN "name_it" varchar(128);'],
+        )
+
+    def test_not_null_field_with_default(self):
+        sql = self.command.get_sync_sql("published", ["it"], Infrastructure)
+        self.assertEqual(len(sql), 1)
+        self.assertEqual(
+             'ALTER TABLE "infrastructure_infrastructure" ADD COLUMN "published_it" boolean NOT NULL DEFAULT false;',
+             sql[0]
+        )
+
+    def test_multiple_languages(self):
+        sql = self.command.get_sync_sql("name", ["it", "fr"], Infrastructure)
+        self.assertEqual(len(sql), 2)
+
+    def test_no_missing_langs(self):
+        self.assertEqual(self.command.get_sync_sql("name", [], Infrastructure), [])
