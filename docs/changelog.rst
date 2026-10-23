@@ -7,7 +7,7 @@ CHANGELOG
 
 **Bug fixes**
 
-* Fix the search bar in the admin section for signage type and blade type
+* Fix the search bar in the admin section
 
 
 2.126.5         (2026-10-16)

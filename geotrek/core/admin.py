@@ -17,7 +17,7 @@ from geotrek.core.models import (
 @admin.register(PathSource)
 class PathSourceAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("source", "structure")
-    search_fields = ("source", "structure")
+    search_fields = ("source", "structure__name")
     list_filter = ("structure",)
     merge_field = "source"
 
@@ -25,7 +25,7 @@ class PathSourceAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(Stake)
 class StakeAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("stake", "structure")
-    search_fields = ("stake", "structure")
+    search_fields = ("stake", "structure__name")
     list_filter = ("structure",)
     merge_field = "stake"
 
@@ -33,7 +33,7 @@ class StakeAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(Usage)
 class UsageAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("usage", "structure")
-    search_fields = ("usage", "structure")
+    search_fields = ("usage", "structure__name")
     list_filter = ("structure",)
     merge_field = "usage"
 
@@ -41,7 +41,7 @@ class UsageAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(Network)
 class NetworkAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("network", "structure")
-    search_fields = ("network", "structure")
+    search_fields = ("network", "structure__name")
     list_filter = ("structure",)
     merge_field = "network"
 
@@ -49,7 +49,7 @@ class NetworkAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(Comfort)
 class ComfortAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("comfort", "structure")
-    search_fields = ("comfort", "structure")
+    search_fields = ("comfort", "structure__name")
     list_filter = ("structure",)
     merge_field = "comfort"
 
@@ -57,7 +57,7 @@ class ComfortAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(TrailCategory)
 class TrailCategoryAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("label", "structure")
-    search_fields = ("label", "structure")
+    search_fields = ("label", "structure__name")
     list_filter = ("structure",)
     merge_field = "label"
 
@@ -65,7 +65,7 @@ class TrailCategoryAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(CertificationLabel)
 class CertificationLabelAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("label", "structure")
-    search_fields = ("label", "structure")
+    search_fields = ("label", "structure__name")
     list_filter = ("structure",)
     merge_field = "label"
 
@@ -73,7 +73,7 @@ class CertificationLabelAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(CertificationStatus)
 class CertificationStatusAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("label", "structure")
-    search_fields = ("label", "structure")
+    search_fields = ("label", "structure__name")
     list_filter = ("structure",)
     merge_field = "label"
 
