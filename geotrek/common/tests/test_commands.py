@@ -13,7 +13,7 @@ from easy_thumbnails.models import Thumbnail
 
 from geotrek import __version__
 from geotrek.authent.tests.factories import StructureFactory
-from geotrek.common.management.commands.sync_translation_fields_default import (
+from geotrek.common.management.commands.geotrek_sync_translation_fields import (
     Command as SyncTranslationCommand,
 )
 from geotrek.common.models import TargetPortal
