@@ -79,7 +79,6 @@ ALTER TABLE trekking_trek ALTER COLUMN reservation_id SET DEFAULT '';
 -- structure
 -- name
 ALTER TABLE trekking_trek ALTER COLUMN review SET DEFAULT FALSE;
-ALTER TABLE trekking_trek ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 
 
@@ -146,7 +145,6 @@ ALTER TABLE trekking_poi ALTER COLUMN description SET DEFAULT '';
 ALTER TABLE trekking_poi ALTER COLUMN description SET DEFAULT '';
 -- name
 ALTER TABLE trekking_poi ALTER COLUMN review SET DEFAULT FALSE;
-ALTER TABLE trekking_poi ALTER COLUMN published SET DEFAULT FALSE;
 
 -- publication_date
 
@@ -165,7 +163,6 @@ ALTER TABLE trekking_poitype ALTER COLUMN date_update SET DEFAULT now();
 -- pictogram
 -- name
 ALTER TABLE trekking_poi ALTER COLUMN review SET DEFAULT FALSE;
-ALTER TABLE trekking_poi ALTER COLUMN published SET DEFAULT FALSE;
 ALTER TABLE trekking_servicetype ALTER COLUMN date_insert SET DEFAULT now();
 ALTER TABLE trekking_servicetype ALTER COLUMN date_update SET DEFAULT now();
 -- publication_date

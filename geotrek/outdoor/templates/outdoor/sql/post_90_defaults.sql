@@ -104,7 +104,6 @@ ALTER TABLE outdoor_course ALTER COLUMN equipment SET DEFAULT '';
 -- pois_excluded
 -- points_reference
 ALTER TABLE outdoor_course ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
-ALTER TABLE outdoor_course ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 -- name
 ALTER TABLE outdoor_course ALTER COLUMN review SET DEFAULT FALSE;

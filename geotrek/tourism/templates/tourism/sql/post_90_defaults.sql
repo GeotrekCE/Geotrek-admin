@@ -77,7 +77,6 @@ ALTER TABLE tourism_touristiccontent ALTER COLUMN approved SET DEFAULT FALSE;
 ALTER TABLE tourism_touristiccontent ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
 -- name
 ALTER TABLE tourism_touristiccontent ALTER COLUMN review SET DEFAULT FALSE;
-ALTER TABLE tourism_touristiccontent ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 -- structure
 ALTER TABLE tourism_touristiccontent ALTER COLUMN date_insert SET DEFAULT now();
@@ -124,7 +123,6 @@ ALTER TABLE tourism_touristicevent ALTER COLUMN approved SET DEFAULT FALSE;
 ALTER TABLE tourism_touristicevent ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
 -- name
 ALTER TABLE tourism_touristicevent ALTER COLUMN review SET DEFAULT FALSE;
-ALTER TABLE tourism_touristicevent ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 -- structure
 ALTER TABLE tourism_touristiccontent ALTER COLUMN date_insert SET DEFAULT now();

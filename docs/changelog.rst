@@ -9,6 +9,10 @@ CHANGELOG
 
 * Remove None display when the field is empty in touristic content and event detail sheet
 
+**Improvements**
+
+* Adapt sync_translation_fields to allow adding new language
+
 
 2.126.5         (2026-10-16)
 ----------------------------
