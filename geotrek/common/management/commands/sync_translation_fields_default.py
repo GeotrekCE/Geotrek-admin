@@ -34,6 +34,11 @@ class Command(BaseSyncCommand):
             if f.has_default() and f.db_default:
                 editor = connection.schema_editor()
                 default_value = editor.effective_default(f)
-                stmt += " " + style.SQL_KEYWORD("DEFAULT") + " " + editor.quote_value(default_value)
+                stmt += (
+                    " "
+                    + style.SQL_KEYWORD("DEFAULT")
+                    + " "
+                    + editor.quote_value(default_value)
+                )
             sql_output.append(stmt + ";")
         return sql_output
