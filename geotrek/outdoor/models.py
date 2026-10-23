@@ -499,6 +499,20 @@ class Site(
     def tourism_sites(cls, tourism_obj, queryset=None):
         return intersecting(queryset_or_model(queryset, cls), obj=tourism_obj)
 
+    def duplicate(self, **kwargs):
+        """
+        Duplicate the site and ensure that a duplicated root site gets its own tree ID.
+        https://github.com/GeotrekCE/Geotrek-admin/issues/5461
+        """
+        clone = super().duplicate(**kwargs)
+        if clone.is_root_node():
+            clone.tree_id = None
+            clone.lft = None
+            clone.rght = None
+            clone.level = None
+            clone.save(update_fields=["tree_id", "lft", "rght", "level"])
+        return clone
+
 
 Path.add_property("sites", lambda self: intersecting(Site, self), _("Sites"))
 Topology.add_property("sites", Site.topology_sites, _("Sites"))
