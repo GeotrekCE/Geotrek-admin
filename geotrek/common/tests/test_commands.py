@@ -1,10 +1,10 @@
 import os
 import shutil
+from contextlib import redirect_stdout
 from io import StringIO
 from tempfile import mkdtemp
 from unittest import mock
 from unittest.mock import PropertyMock, patch
-from contextlib import redirect_stdout
 
 from django.conf import settings
 from django.core.management import call_command
@@ -284,11 +284,13 @@ class SyncTranslationFieldsCommandTestCase(TestCase):
             build_localized_fieldname("name", lang) for lang in self.extra_langs
         ]
         # should not be deleted by the command
-        self.unrelated_columns = [f"name_short", f"name_html"]
+        self.unrelated_columns = ["name_short", "name_html"]
 
         existing = self.table_columns()
         self.added = {
-            column for column in self.extra_columns + self.unrelated_columns if column not in existing
+            column
+            for column in self.extra_columns + self.unrelated_columns
+            if column not in existing
         }
         with connection.cursor() as cursor:
             for column in self.added:
@@ -325,17 +327,18 @@ class SyncTranslationFieldsCommandTestCase(TestCase):
     # test delete extra translated fields
     def tearDown(self):
         qn = connection.ops.quote_name
-        current_columns = self.table_columns()
         columns_to_clear = self.added & self.table_columns()
         with connection.cursor() as cursor:
             for column in columns_to_clear:
-                    cursor.execute(
-                        f"ALTER TABLE {qn(self.db_table)} DROP COLUMN {qn(column)}"
-                    )
+                cursor.execute(
+                    f"ALTER TABLE {qn(self.db_table)} DROP COLUMN {qn(column)}"
+                )
 
     def table_columns(self):
         with connection.cursor() as cursor:
-            description = connection.introspection.get_table_description(cursor, self.db_table)
+            description = connection.introspection.get_table_description(
+                cursor, self.db_table
+            )
         return {col.name for col in description}
 
     def run_command(self):
@@ -354,7 +357,9 @@ class SyncTranslationFieldsCommandTestCase(TestCase):
         after = self.table_columns()
         for column in self.extra_columns:
             self.assertNotIn(column, after)
-        self.assertIn("Extra languages in \'name\' field from \'infrastructure\' model: ", output)
+        self.assertIn(
+            "Extra languages in 'name' field from 'infrastructure' model: ", output
+        )
         self.assertIn("ur", output)
         self.assertIn("es_ve", output)
 
@@ -365,9 +370,9 @@ class SyncTranslationFieldsCommandTestCase(TestCase):
             self.assertIn(column, after)
 
     def test_available_language_columns_are_kept(self):
-        before = self.table_columns()
         available = {
-            build_localized_fieldname("name", lang) for lang in settings.MODELTRANSLATION_LANGUAGES
+            build_localized_fieldname("name", lang)
+            for lang in settings.MODELTRANSLATION_LANGUAGES
         }
         self.run_command()
         after = self.table_columns()
