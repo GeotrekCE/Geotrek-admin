@@ -30,10 +30,7 @@ class Command(BaseSyncCommand):
             model_name = model._meta.model_name
             opts = translator.get_options_for_model(model)
             for field_name, fields in opts.local_fields.items():
-                try:
-                    field = list(fields)[0]  # Take `db_column` attribute into account
-                except IndexError:
-                    continue
+                field = list(fields)[0]  # Take `db_column` attribute into account
                 column_name = field.db_column if field.db_column else field_name
                 extra_langs = list(self.get_extra_languages(column_name, db_table))
                 if extra_langs:
