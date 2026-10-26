@@ -162,7 +162,7 @@ django-modelcluster==6.5
     # via geotrek (setup.py)
 django-modeltranslation==0.20.6
     # via mapentity
-django-mptt==0.18.0
+django-mptt==0.20.0
     # via geotrek (setup.py)
 django-tinymce==5.0.0
     # via mapentity
