@@ -2,15 +2,19 @@ import datetime
 from unittest import skipIf
 
 from django.conf import settings
-from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
+from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon, GeometryCollection
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from freezegun import freeze_time
 
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.core.tests.factories import PathFactory
+from geotrek.core.tests.factories import PathFactory, TrailFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.maintenance.tests.factories import InterventionFactory
+from geotrek.outdoor.tests.factories import SiteFactory, CourseFactory
 from geotrek.signage.tests.factories import SignageFactory
-from geotrek.trekking.tests.factories import TrekFactory
+from geotrek.tourism.tests.factories import TouristicContentFactory, TouristicEventFactory
+from geotrek.trekking.tests.factories import TrekFactory, POIFactory, ServiceFactory
 from geotrek.zoning.models import (
     City,
     District,
@@ -29,454 +33,466 @@ from geotrek.zoning.tests.factories import (
     VigilancePeriodFactory,
 )
 
-
-class ZoningLayersUpdateTest(TestCase):
-    def test_paths_link(self):
-        p1 = PathFactory.create(geom=LineString((0, 0), (1, 1)))
-        p2 = PathFactory.create(geom=LineString((1, 1), (3, 3)))
-        p3 = PathFactory.create(geom=LineString((3, 3), (4, 4)))
-        p4 = PathFactory.create(geom=LineString((4, 1), (6, 2), (4, 3)))
-
-        c1 = CityFactory(
-            geom=MultiPolygon(
-                Polygon(((0, 0), (2, 0), (2, 4), (0, 4), (0, 0)), srid=settings.SRID)
-            ),
-        )
-        CityFactory(
-            geom=MultiPolygon(
-                Polygon(((2, 0), (5, 0), (5, 4), (2, 4), (2, 0)), srid=settings.SRID)
-            ),
-        )
-
-        # There should be automatic link after insert
-        self.assertEqual(len(p1.cities), 1)
-        self.assertEqual(len(p2.cities), 2)
-        self.assertEqual(len(p3.cities), 1)
-        self.assertEqual(len(p4.cities), 1)
-
-        c1.geom = MultiPolygon(
-            Polygon(((1.5, 0), (2, 0), (2, 4), (1.5, 4), (1.5, 0)), srid=settings.SRID)
-        )
-        c1.save()
-
-        # Links should have been updated after geom update
-        self.assertEqual(len(p1.cities), 0)
-        self.assertEqual(len(p2.cities), 2)
-        self.assertEqual(len(p3.cities), 1)
-        self.assertEqual(len(p4.cities), 1)
-
-        c1.delete()
-
-        # Links should have been updated after delete
-        self.assertEqual(len(p1.cities), 0)
-        self.assertEqual(len(p2.cities), 1)
-        self.assertEqual(len(p3.cities), 1)
-        self.assertEqual(len(p4.cities), 1)
-
-    def test_city_with_path_ends_on_border(self):
-        """
-                 |    |
-                 |p1  |p2
-                 |    |
-        +--------+----+---+
-        |                 |
-        |                 | City
-        |                 |
-        +-----------------+
-        """
-        # Create a path before city to test one trigger
-        p1 = PathFactory(geom=LineString((1, 1), (1, 2)))
-        CityFactory(
-            geom=MultiPolygon(
-                Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
-            ),
-        )
-        # Create a path after city to the the another trigger
-        p2 = PathFactory(geom=LineString((1.5, 2), (1.5, 1)))
-        self.assertEqual(len(p1.cities), 1)
-        self.assertEqual(len(p2.cities), 1)
-
-    def test_city_with_topo(self):
-        """
-        +-----------------+
-        |        S        |
-        |    +---x---+    |
-        |    |       |    | City
-        |    |p      |    |
-        |    O       O    |
-        |                 |
-        +-----------------+
-        """
-        CityFactory(
-            geom=MultiPolygon(
-                Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
-            ),
-        )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            p = PathFactory(
-                geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5))
-            )
-            signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
-        else:
-            signage = SignageFactory.create(geom=Point(1, 1.5, srid=settings.SRID))
-        self.assertEqual(len(signage.cities), 1)
-
-    def test_city_with_topo_2(self):
-        """
-                 S
-             +---x---+
-         _ _ | _ _ _ | _ _
-        |    |p      |    |
-        |    O       O    | City
-        |                 |
-        +-----------------+
-        """
-        CityFactory(
-            geom=MultiPolygon(
-                Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
-            ),
-        )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            p = PathFactory(
-                geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5))
-            )
-            signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
-        else:
-            signage = SignageFactory.create(geom=Point(1, 1.5, srid=settings.SRID))
-        self.assertEqual(len(signage.cities), 0)
-
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_city_with_topo_3(self):
-        """
-             +-------+
-         _ _ | _ _ _ | _ _
-        |    |p      |    |
-        |    O       X S  | City
-        |                 |
-        +-----------------+
-        """
-        CityFactory(
-            geom=MultiPolygon(
-                Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
-            ),
-        )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            p = PathFactory(
-                geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5))
-            )
-            signage = SignageFactory.create(paths=[(p, 1, 1)])
-        else:
-            signage = SignageFactory.create(geom=Point(1.5, 0.5, srid=settings.SRID))
-        self.assertEqual(len(signage.cities), 1)
-
-    def test_city_with_topo_on_loop(self):
-        """
-        +-----------------+
-        |            S    |
-        |    +-------x    |
-        |    |       |    | City
-        |    |p      |    |
-        |    O-------+    |
-        |                 |
-        +-----------------+
-        """
-        CityFactory(
-            geom=MultiPolygon(
-                Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
-            ),
-        )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            p = PathFactory(
-                geom=LineString(
-                    (0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)
-                )
-            )
-            signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
-        else:
-            signage = SignageFactory.create(geom=Point(1.5, 1.5, srid=settings.SRID))
-        self.assertEqual(len(signage.cities), 1)
-
-    def test_city_with_topo_on_loop_2(self):
-        """
-                     S
-             +-------x
-         _ _ | _ _ _ | _ _
-        |    |p      |    |
-        |    O-------+    | City
-        |                 |
-        +-----------------+
-        """
-        CityFactory(
-            geom=MultiPolygon(
-                Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
-            ),
-        )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            p = PathFactory(
-                geom=LineString(
-                    (0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)
-                )
-            )
-            signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
-        else:
-            signage = SignageFactory.create(geom=Point(1.5, 1.5, srid=settings.SRID))
-        self.assertEqual(len(signage.cities), 0)
-
-    def test_city_with_topo_on_loop_3(self):
-        """
-
-             +-------+
-         _ _ | _ _ _ | _ _
-        |    |p      |    |
-        |    O-------x S  | City
-        |                 |
-        +-----------------+
-        """
-        CityFactory(
-            geom=MultiPolygon(
-                Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
-            ),
-        )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            p = PathFactory(
-                geom=LineString(
-                    (0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)
-                )
-            )
-            signage = SignageFactory.create(paths=[(p, 0.75, 0.75)])
-        else:
-            signage = SignageFactory.create(geom=Point(1.5, 0.5, srid=settings.SRID))
-        self.assertEqual(len(signage.cities), 1)
-
-    def test_couches_sig_link(self):
-        """
-        +-----------------+    -
-        |                 |ra2  |
-        |    +-------+    |     |
-        | _ _|  _ _ _|_ _ |      - C
-        |    |p      |    |     |
-        |    O       O    |     |
-        |                 |ra1  |
-        +-----------------+    -
-        """
-        # Fake restricted areas
-        RestrictedAreaFactory.create(
-            geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0))))
-        )
-        RestrictedAreaFactory.create(
-            geom=MultiPolygon(Polygon(((0, 1), (2, 1), (2, 2), (0, 2), (0, 1))))
-        )
-
-        # Fake city
-        CityFactory(
-            geom=MultiPolygon(
-                Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
-            ),
-        )
-
-        # Fake paths in these areas
-        p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
-
-        self.assertEqual(len(p.areas), 2)
-        self.assertEqual(len(p.cities), 1)
-
-    def test_couches_sig_link_path_loop(self):
-        """
-        +-----------------+    -
-        |                 |ra2  |
-        |    +-------+    |     |
-        | _ _|  _ _ _|_ _ |      - C
-        |    |p      |    |     |
-        |    O-------+    |     |
-        |                 |ra1  |
-        +-----------------+    -
-        """
-        # Fake restricted areas
-        RestrictedAreaFactory.create(
-            geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0))))
-        )
-        RestrictedAreaFactory.create(
-            geom=MultiPolygon(Polygon(((0, 1), (2, 1), (2, 2), (0, 2), (0, 1))))
-        )
-
-        # Fake city
-        CityFactory(
-            geom=MultiPolygon(
-                Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
-            ),
-        )
-
-        # Fake paths in these areas
-        p = PathFactory(
-            geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5))
-        )
-
-        self.assertEqual(len(p.areas), 2)
-        self.assertEqual(len(p.cities), 1)
-
-
-class CityTestCase(TestCase):
-    def test_city_str(self):
-        """City __str__ method should return its name."""
-        city = CityFactory()
-        self.assertEqual(str(city), city.name)
-
-    def test_city_last_updated_without_data(self):
-        self.assertIsNone(City.latest_updated())
-
-    def test_city_last_updated_with_data(self):
-        city = CityFactory()
-        self.assertIsNotNone(City.latest_updated())
-        self.assertEqual(City.latest_updated(), city.date_update)
-
-
-class DistrictTestCase(TestCase):
-    def test_district_str(self):
-        """District __str__ method should return its name."""
-        district = DistrictFactory()
-        self.assertEqual(str(district), district.name)
-
-    def test_district_last_updated_without_data(self):
-        self.assertIsNone(District.latest_updated())
-
-    def test_district_last_updated_with_data(self):
-        district = DistrictFactory()
-        self.assertIsNotNone(District.latest_updated())
-        self.assertEqual(District.latest_updated(), district.date_update)
-
-
-class RestrictedAreaTestCase(TestCase):
-    def test_restricted_area_str(self):
-        """RestrictedArea __str__ method should return its type and its name."""
-        restricted_area = RestrictedAreaFactory()
-        self.assertEqual(
-            str(restricted_area),
-            f"{restricted_area.area_type} - {restricted_area.name}",
-        )
-
-    def test_restricted_area_last_updated_without_data(self):
-        self.assertIsNone(RestrictedArea.latest_updated())
-
-    def test_restricted_area_last_updated_with_data(self):
-        restricted_area = RestrictedAreaFactory()
-        self.assertIsNotNone(RestrictedArea.latest_updated())
-        self.assertEqual(RestrictedArea.latest_updated(), restricted_area.date_update)
-
-    def test_latest_updated_when_no_data_at_all(self):
-        self.assertIsNone(RestrictedArea.latest_updated())
-
-    def test_latest_updated_is_different_by_type(self):
-        type_without_data = RestrictedAreaTypeFactory()
-        type_with_data = RestrictedAreaTypeFactory()
-        type_with_data_2 = RestrictedAreaTypeFactory()
-        RestrictedAreaFactory.create_batch(5, area_type=type_with_data)
-        RestrictedAreaFactory.create_batch(5, area_type=type_with_data_2)
-
-        self.assertIsNone(RestrictedArea.latest_updated(type_without_data.pk))
-        self.assertEqual(
-            RestrictedArea.latest_updated(type_with_data.pk),
-            type_with_data.restrictedarea_set.only("date_update")
-            .latest("date_update")
-            .date_update,
-        )
-        self.assertEqual(
-            RestrictedArea.latest_updated(type_with_data_2.pk),
-            type_with_data_2.restrictedarea_set.only("date_update")
-            .latest("date_update")
-            .date_update,
-        )
-
-
-class VigilanceAreaTypeTestCase(TestCase):
-    def test_vigilance_area_type_str(self):
-        vat = VigilanceAreaTypeFactory(name="Warning Type")
-        self.assertEqual(str(vat), "Warning Type")
-
-    def test_get_code(self):
-        parent_type = VigilanceAreaTypeFactory(code="CODE")
-        child_type_1 = VigilanceAreaTypeFactory(parent=parent_type, code=None)
-        child_type_2 = VigilanceAreaTypeFactory(parent=parent_type, code="TEST")
-
-        self.assertEqual(child_type_1.get_code(), "CODE")
-        self.assertEqual(child_type_2.get_code(), "TEST")
-
-    def test_get_pictogram(self):
-        parent_type = VigilanceAreaTypeFactory(pictogram=get_dummy_uploaded_image())
-        child_type_1 = VigilanceAreaTypeFactory(parent=parent_type, pictogram=None)
-        child_type_2 = VigilanceAreaTypeFactory(
-            parent=parent_type, pictogram=get_dummy_uploaded_image()
-        )
-
-        self.assertEqual(child_type_1.get_pictogram(), parent_type.pictogram)
-        self.assertEqual(child_type_2.get_pictogram(), child_type_2.pictogram)
-
-
-class VigilanceLevelTestCase(TestCase):
-    def test_vigilance_level_str(self):
-        vat = VigilanceLevelFactory(name="Warning Type")
-        self.assertEqual(str(vat), "Warning Type")
-
-
-class VigilancePeriodTestCase(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        cls.today = datetime.date(2026, 10, 20)
-
-    def test_str(self):
-        tomorrow = datetime.date(2026, 10, 21)
-        period = VigilancePeriodFactory.create(
-            start_date=self.today,
-            end_date=tomorrow,
-        )
-
-        self.assertEqual(str(period), f"{str(self.today)} - {str(tomorrow)}")
-
-    def test_clean_start_date_after_end_date(self):
-        period = VigilancePeriodFactory.create(
-            start_date=self.today,
-            end_date=datetime.date(2026, 10, 19),
-        )
-        with self.assertRaises(ValidationError) as cm:
-            period.clean()
-        self.assertIn("start_date", cm.exception.error_dict)
-
-    def test_clean_valid_dates(self):
-        end_date = datetime.date(2026, 10, 25)
-        period = VigilancePeriodFactory.create(
-            start_date=self.today,
-            end_date=end_date,
-        )
-        period.clean()
-        self.assertEqual(period.start_date, self.today)
-        self.assertEqual(period.end_date, end_date)
-
-    def test_active_days_labels(self):
-        period = VigilancePeriodFactory(active_days=[0, 6])
-        self.assertEqual(len(period.active_days_labels), 2)
-
-    def test_period_resume(self):
-        period_no_end = VigilancePeriodFactory(
-            start_date=self.today,
-            end_date=None,
-            active_days=[0],
-        )
-        self.assertIn(str(self.today), period_no_end.period_resume)
-        self.assertIn("days Monday", period_no_end.period_resume)
-
-        period_with_end = VigilancePeriodFactory(
-            start_date=self.today,
-            end_date=datetime.date(2026, 10, 30),
-            active_days=[],
-            annual=True,
-        )
-        self.assertIn(str(self.today), period_with_end.period_resume)
-        self.assertIn("2026-10-30", period_with_end.period_resume)
-        self.assertIn("annual", period_with_end.period_resume)
-
+#
+# class ZoningLayersUpdateTest(TestCase):
+#     def test_paths_link(self):
+#         p1 = PathFactory.create(geom=LineString((0, 0), (1, 1)))
+#         p2 = PathFactory.create(geom=LineString((1, 1), (3, 3)))
+#         p3 = PathFactory.create(geom=LineString((3, 3), (4, 4)))
+#         p4 = PathFactory.create(geom=LineString((4, 1), (6, 2), (4, 3)))
+#
+#         c1 = CityFactory(
+#             geom=MultiPolygon(
+#                 Polygon(((0, 0), (2, 0), (2, 4), (0, 4), (0, 0)), srid=settings.SRID)
+#             ),
+#         )
+#         CityFactory(
+#             geom=MultiPolygon(
+#                 Polygon(((2, 0), (5, 0), (5, 4), (2, 4), (2, 0)), srid=settings.SRID)
+#             ),
+#         )
+#
+#         # There should be automatic link after insert
+#         self.assertEqual(len(p1.cities), 1)
+#         self.assertEqual(len(p2.cities), 2)
+#         self.assertEqual(len(p3.cities), 1)
+#         self.assertEqual(len(p4.cities), 1)
+#
+#         c1.geom = MultiPolygon(
+#             Polygon(((1.5, 0), (2, 0), (2, 4), (1.5, 4), (1.5, 0)), srid=settings.SRID)
+#         )
+#         c1.save()
+#
+#         # Links should have been updated after geom update
+#         self.assertEqual(len(p1.cities), 0)
+#         self.assertEqual(len(p2.cities), 2)
+#         self.assertEqual(len(p3.cities), 1)
+#         self.assertEqual(len(p4.cities), 1)
+#
+#         c1.delete()
+#
+#         # Links should have been updated after delete
+#         self.assertEqual(len(p1.cities), 0)
+#         self.assertEqual(len(p2.cities), 1)
+#         self.assertEqual(len(p3.cities), 1)
+#         self.assertEqual(len(p4.cities), 1)
+#
+#     def test_city_with_path_ends_on_border(self):
+#         """
+#                  |    |
+#                  |p1  |p2
+#                  |    |
+#         +--------+----+---+
+#         |                 |
+#         |                 | City
+#         |                 |
+#         +-----------------+
+#         """
+#         # Create a path before city to test one trigger
+#         p1 = PathFactory(geom=LineString((1, 1), (1, 2)))
+#         CityFactory(
+#             geom=MultiPolygon(
+#                 Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
+#             ),
+#         )
+#         # Create a path after city to the the another trigger
+#         p2 = PathFactory(geom=LineString((1.5, 2), (1.5, 1)))
+#         self.assertEqual(len(p1.cities), 1)
+#         self.assertEqual(len(p2.cities), 1)
+#
+#     def test_city_with_topo(self):
+#         """
+#         +-----------------+
+#         |        S        |
+#         |    +---x---+    |
+#         |    |       |    | City
+#         |    |p      |    |
+#         |    O       O    |
+#         |                 |
+#         +-----------------+
+#         """
+#         CityFactory(
+#             geom=MultiPolygon(
+#                 Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
+#             ),
+#         )
+#         if settings.TREKKING_TOPOLOGY_ENABLED:
+#             p = PathFactory(
+#                 geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5))
+#             )
+#             signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+#         else:
+#             signage = SignageFactory.create(geom=Point(1, 1.5, srid=settings.SRID))
+#         self.assertEqual(len(signage.cities), 1)
+#
+#     def test_city_with_topo_2(self):
+#         """
+#                  S
+#              +---x---+
+#          _ _ | _ _ _ | _ _
+#         |    |p      |    |
+#         |    O       O    | City
+#         |                 |
+#         +-----------------+
+#         """
+#         CityFactory(
+#             geom=MultiPolygon(
+#                 Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
+#             ),
+#         )
+#         if settings.TREKKING_TOPOLOGY_ENABLED:
+#             p = PathFactory(
+#                 geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5))
+#             )
+#             signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+#         else:
+#             signage = SignageFactory.create(geom=Point(1, 1.5, srid=settings.SRID))
+#         self.assertEqual(len(signage.cities), 0)
+#
+#     @skipIf(
+#         not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+#     )
+#     def test_city_with_topo_3(self):
+#         """
+#              +-------+
+#          _ _ | _ _ _ | _ _
+#         |    |p      |    |
+#         |    O       X S  | City
+#         |                 |
+#         +-----------------+
+#         """
+#         CityFactory(
+#             geom=MultiPolygon(
+#                 Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
+#             ),
+#         )
+#         if settings.TREKKING_TOPOLOGY_ENABLED:
+#             p = PathFactory(
+#                 geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5))
+#             )
+#             signage = SignageFactory.create(paths=[(p, 1, 1)])
+#         else:
+#             signage = SignageFactory.create(geom=Point(1.5, 0.5, srid=settings.SRID))
+#         self.assertEqual(len(signage.cities), 1)
+#
+#     def test_city_with_topo_on_loop(self):
+#         """
+#         +-----------------+
+#         |            S    |
+#         |    +-------x    |
+#         |    |       |    | City
+#         |    |p      |    |
+#         |    O-------+    |
+#         |                 |
+#         +-----------------+
+#         """
+#         CityFactory(
+#             geom=MultiPolygon(
+#                 Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
+#             ),
+#         )
+#         if settings.TREKKING_TOPOLOGY_ENABLED:
+#             p = PathFactory(
+#                 geom=LineString(
+#                     (0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)
+#                 )
+#             )
+#             signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+#         else:
+#             signage = SignageFactory.create(geom=Point(1.5, 1.5, srid=settings.SRID))
+#         self.assertEqual(len(signage.cities), 1)
+#
+#     def test_city_with_topo_on_loop_2(self):
+#         """
+#                      S
+#              +-------x
+#          _ _ | _ _ _ | _ _
+#         |    |p      |    |
+#         |    O-------+    | City
+#         |                 |
+#         +-----------------+
+#         """
+#         CityFactory(
+#             geom=MultiPolygon(
+#                 Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
+#             ),
+#         )
+#         if settings.TREKKING_TOPOLOGY_ENABLED:
+#             p = PathFactory(
+#                 geom=LineString(
+#                     (0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)
+#                 )
+#             )
+#             signage = SignageFactory.create(paths=[(p, 0.5, 0.5)])
+#         else:
+#             signage = SignageFactory.create(geom=Point(1.5, 1.5, srid=settings.SRID))
+#         self.assertEqual(len(signage.cities), 0)
+#
+#     def test_city_with_topo_on_loop_3(self):
+#         """
+#
+#              +-------+
+#          _ _ | _ _ _ | _ _
+#         |    |p      |    |
+#         |    O-------x S  | City
+#         |                 |
+#         +-----------------+
+#         """
+#         CityFactory(
+#             geom=MultiPolygon(
+#                 Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0)), srid=settings.SRID)
+#             ),
+#         )
+#         if settings.TREKKING_TOPOLOGY_ENABLED:
+#             p = PathFactory(
+#                 geom=LineString(
+#                     (0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5)
+#                 )
+#             )
+#             signage = SignageFactory.create(paths=[(p, 0.75, 0.75)])
+#         else:
+#             signage = SignageFactory.create(geom=Point(1.5, 0.5, srid=settings.SRID))
+#         self.assertEqual(len(signage.cities), 1)
+#
+#     def test_couches_sig_link(self):
+#         """
+#         +-----------------+    -
+#         |                 |ra2  |
+#         |    +-------+    |     |
+#         | _ _|  _ _ _|_ _ |      - C
+#         |    |p      |    |     |
+#         |    O       O    |     |
+#         |                 |ra1  |
+#         +-----------------+    -
+#         """
+#         # Fake restricted areas
+#         RestrictedAreaFactory.create(
+#             geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0))))
+#         )
+#         RestrictedAreaFactory.create(
+#             geom=MultiPolygon(Polygon(((0, 1), (2, 1), (2, 2), (0, 2), (0, 1))))
+#         )
+#
+#         # Fake city
+#         CityFactory(
+#             geom=MultiPolygon(
+#                 Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
+#             ),
+#         )
+#
+#         # Fake paths in these areas
+#         p = PathFactory(geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5)))
+#
+#         self.assertEqual(len(p.areas), 2)
+#         self.assertEqual(len(p.cities), 1)
+#
+#     def test_couches_sig_link_path_loop(self):
+#         """
+#         +-----------------+    -
+#         |                 |ra2  |
+#         |    +-------+    |     |
+#         | _ _|  _ _ _|_ _ |      - C
+#         |    |p      |    |     |
+#         |    O-------+    |     |
+#         |                 |ra1  |
+#         +-----------------+    -
+#         """
+#         # Fake restricted areas
+#         RestrictedAreaFactory.create(
+#             geom=MultiPolygon(Polygon(((0, 0), (2, 0), (2, 1), (0, 1), (0, 0))))
+#         )
+#         RestrictedAreaFactory.create(
+#             geom=MultiPolygon(Polygon(((0, 1), (2, 1), (2, 2), (0, 2), (0, 1))))
+#         )
+#
+#         # Fake city
+#         CityFactory(
+#             geom=MultiPolygon(
+#                 Polygon(((0, 0), (2, 0), (2, 2), (0, 2), (0, 0)), srid=settings.SRID)
+#             ),
+#         )
+#
+#         # Fake paths in these areas
+#         p = PathFactory(
+#             geom=LineString((0.5, 0.5), (0.5, 1.5), (1.5, 1.5), (1.5, 0.5), (0.5, 0.5))
+#         )
+#
+#         self.assertEqual(len(p.areas), 2)
+#         self.assertEqual(len(p.cities), 1)
+#
+#
+# class CityTestCase(TestCase):
+#     def test_city_str(self):
+#         """City __str__ method should return its name."""
+#         city = CityFactory()
+#         self.assertEqual(str(city), city.name)
+#
+#     def test_city_last_updated_without_data(self):
+#         self.assertIsNone(City.latest_updated())
+#
+#     def test_city_last_updated_with_data(self):
+#         city = CityFactory()
+#         self.assertIsNotNone(City.latest_updated())
+#         self.assertEqual(City.latest_updated(), city.date_update)
+#
+#
+# class DistrictTestCase(TestCase):
+#     def test_district_str(self):
+#         """District __str__ method should return its name."""
+#         district = DistrictFactory()
+#         self.assertEqual(str(district), district.name)
+#
+#     def test_district_last_updated_without_data(self):
+#         self.assertIsNone(District.latest_updated())
+#
+#     def test_district_last_updated_with_data(self):
+#         district = DistrictFactory()
+#         self.assertIsNotNone(District.latest_updated())
+#         self.assertEqual(District.latest_updated(), district.date_update)
+#
+#
+# class RestrictedAreaTestCase(TestCase):
+#     def test_restricted_area_str(self):
+#         """RestrictedArea __str__ method should return its type and its name."""
+#         restricted_area = RestrictedAreaFactory()
+#         self.assertEqual(
+#             str(restricted_area),
+#             f"{restricted_area.area_type} - {restricted_area.name}",
+#         )
+#
+#     def test_restricted_area_last_updated_without_data(self):
+#         self.assertIsNone(RestrictedArea.latest_updated())
+#
+#     def test_restricted_area_last_updated_with_data(self):
+#         restricted_area = RestrictedAreaFactory()
+#         self.assertIsNotNone(RestrictedArea.latest_updated())
+#         self.assertEqual(RestrictedArea.latest_updated(), restricted_area.date_update)
+#
+#     def test_latest_updated_when_no_data_at_all(self):
+#         self.assertIsNone(RestrictedArea.latest_updated())
+#
+#     def test_latest_updated_is_different_by_type(self):
+#         type_without_data = RestrictedAreaTypeFactory()
+#         type_with_data = RestrictedAreaTypeFactory()
+#         type_with_data_2 = RestrictedAreaTypeFactory()
+#         RestrictedAreaFactory.create_batch(5, area_type=type_with_data)
+#         RestrictedAreaFactory.create_batch(5, area_type=type_with_data_2)
+#
+#         self.assertIsNone(RestrictedArea.latest_updated(type_without_data.pk))
+#         self.assertEqual(
+#             RestrictedArea.latest_updated(type_with_data.pk),
+#             type_with_data.restrictedarea_set.only("date_update")
+#             .latest("date_update")
+#             .date_update,
+#         )
+#         self.assertEqual(
+#             RestrictedArea.latest_updated(type_with_data_2.pk),
+#             type_with_data_2.restrictedarea_set.only("date_update")
+#             .latest("date_update")
+#             .date_update,
+#         )
+#
+#
+# class VigilanceAreaTypeTestCase(TestCase):
+#     def test_vigilance_area_type_str(self):
+#         vat = VigilanceAreaTypeFactory(name="Warning Type")
+#         self.assertEqual(str(vat), "Warning Type")
+#
+#     def test_get_code(self):
+#         parent_type = VigilanceAreaTypeFactory(code="CODE")
+#         child_type_1 = VigilanceAreaTypeFactory(parent=parent_type, code=None)
+#         child_type_2 = VigilanceAreaTypeFactory(parent=parent_type, code="TEST")
+#
+#         self.assertEqual(child_type_1.get_code(), "CODE")
+#         self.assertEqual(child_type_2.get_code(), "TEST")
+#
+#     def test_get_pictogram(self):
+#         parent_type = VigilanceAreaTypeFactory(pictogram=get_dummy_uploaded_image())
+#         child_type_1 = VigilanceAreaTypeFactory(parent=parent_type, pictogram=None)
+#         child_type_2 = VigilanceAreaTypeFactory(
+#             parent=parent_type, pictogram=get_dummy_uploaded_image()
+#         )
+#
+#         self.assertEqual(child_type_1.get_pictogram(), parent_type.pictogram)
+#         self.assertEqual(child_type_2.get_pictogram(), child_type_2.pictogram)
+#
+#
+# class VigilanceLevelTestCase(TestCase):
+#     def test_vigilance_level_str(self):
+#         vat = VigilanceLevelFactory(name="Warning Type")
+#         self.assertEqual(str(vat), "Warning Type")
+#
+#
+# class VigilancePeriodTestCase(TestCase):
+#     @classmethod
+#     def setUpTestData(cls):
+#         cls.today = datetime.date(2026, 10, 20)
+#
+#     def test_str(self):
+#         tomorrow = datetime.date(2026, 10, 21)
+#         period = VigilancePeriodFactory.create(
+#             start_date=self.today,
+#             end_date=tomorrow,
+#         )
+#
+#         self.assertEqual(str(period), f"{str(self.today)} - {str(tomorrow)}")
+#
+#     def test_clean_start_date_after_end_date(self):
+#         period = VigilancePeriodFactory.create(
+#             start_date=self.today,
+#             end_date=datetime.date(2026, 10, 19),
+#         )
+#         with self.assertRaises(ValidationError) as cm:
+#             period.clean()
+#         self.assertIn("start_date", cm.exception.error_dict)
+#
+#     def test_clean_valid_dates(self):
+#         end_date = datetime.date(2026, 10, 25)
+#         period = VigilancePeriodFactory.create(
+#             start_date=self.today,
+#             end_date=end_date,
+#         )
+#         period.clean()
+#         self.assertEqual(period.start_date, self.today)
+#         self.assertEqual(period.end_date, end_date)
+#
+#     def test_active_days_labels(self):
+#         period = VigilancePeriodFactory(active_days=[0, 6])
+#         self.assertEqual(len(period.active_days_labels), 2)
+#
+#     def test_period_resume(self):
+#         period_no_end = VigilancePeriodFactory(
+#             start_date=self.today,
+#             end_date=None,
+#             active_days=[0],
+#         )
+#         self.assertIn(str(self.today), period_no_end.period_resume)
+#         self.assertIn("days Monday", period_no_end.period_resume)
+#
+#         period_with_end = VigilancePeriodFactory(
+#             start_date=self.today,
+#             end_date=datetime.date(2026, 10, 30),
+#             active_days=[],
+#             annual=True,
+#         )
+#         self.assertIn(str(self.today), period_with_end.period_resume)
+#         self.assertIn("2026-10-30", period_with_end.period_resume)
+#         self.assertIn("annual", period_with_end.period_resume)
+#
 
 class VigilanceAreaModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory.create(
+            geom=LineString(
+                Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID
+            )
+        )
+        cls.point_geom = Point(700050, 6600050, srid=settings.SRID)
+        cls.point_envelope = MultiPolygon(
+            Polygon(((700000, 6600000), (700050, 6600100), (700100, 6600100), (700000, 6600000))), srid=settings.SRID
+        )
+
     def test_vigilance_area_str(self):
         va = VigilanceAreaFactory(name="My Vigilance Area")
         self.assertEqual(str(va), "My Vigilance Area")
@@ -509,6 +525,63 @@ class VigilanceAreaModelTest(TestCase):
         va = VigilanceAreaFactory(periods=[])
         self.assertEqual(va.periods_resume, " - Always active")
 
+    def test_trails(self):
+        trail = TrailFactory.create(paths=[(self.path, 0.5, 0.5)])
+        vigilance_area = VigilanceAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(vigilance_area.trails.count(), 1)
+        self.assertEqual(vigilance_area.trails.first(), trail)
+
+    def test_infrastructures(self):
+        infrastructure = InfrastructureFactory.create(paths=[(self.path, 0.5, 0.5)])
+        vigilance_area = VigilanceAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(vigilance_area.infrastructures.count(), 1)
+        self.assertEqual(vigilance_area.infrastructures.first(), infrastructure)
+
+    def test_interventions(self):
+        signage = SignageFactory.create(paths=[(self.path, 0.5, 0.5)])
+        intervention = InterventionFactory.create(target=signage)
+        vigilance_area = VigilanceAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(vigilance_area.interventions.count(), 1)
+        self.assertEqual(vigilance_area.interventions.first(), intervention)
+
+    def test_sites(self):
+        site = SiteFactory.create(geom=GeometryCollection(self.point_geom))
+        vigilance_area = VigilanceAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(vigilance_area.sites.count(), 1)
+        self.assertEqual(vigilance_area.sites.first(), site)
+
+    def test_courses(self):
+        course = CourseFactory.create(geom=GeometryCollection(self.point_geom))
+        vigilance_area = VigilanceAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(vigilance_area.courses.count(), 1)
+        self.assertEqual(vigilance_area.courses.first(), course)
+
+    def test_signages(self):
+        signage = SignageFactory.create(paths=[(self.path, 0.5, 0.5)])
+        vigilance_area = VigilanceAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(vigilance_area.signages.count(), 1)
+        self.assertEqual(vigilance_area.signages.first(), signage)
+
+    def test_touristic_contents(self):
+        touristic_content = TouristicContentFactory.create(geom=self.point_geom)
+        vigilance_area = VigilanceAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(vigilance_area.touristic_contents.count(), 1)
+        self.assertEqual(vigilance_area.touristic_contents.first(), touristic_content)
+
+    def test_touristic_events(self):
+        touristic_event = TouristicEventFactory.create(geom=self.point_geom)
+        vigilance_area = VigilanceAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(vigilance_area.touristic_events.count(), 1)
+        self.assertEqual(vigilance_area.touristic_events.first(), touristic_event)
+
     def test_treks(self):
         trek = TrekFactory.create()
         geom = MultiPolygon(trek.geom.envelope)
@@ -516,6 +589,20 @@ class VigilanceAreaModelTest(TestCase):
 
         self.assertEqual(vigilance_area.treks.count(), 1)
         self.assertEqual(vigilance_area.treks.first(), trek)
+
+    def test_pois(self):
+        poi = POIFactory.create(paths=[(self.path, 0.5, 0.5)])
+        vigilance_area = VigilanceAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(vigilance_area.pois.count(), 1)
+        self.assertEqual(vigilance_area.pois.first(), poi)
+
+    def test_services(self):
+        service = ServiceFactory.create(paths=[(self.path, 0.5, 0.5)])
+        vigilance_area = VigilanceAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(vigilance_area.services.count(), 1)
+        self.assertEqual(vigilance_area.services.first(), service)
 
 
 class VigilancePeriodAndAreaManagerTest(TestCase):

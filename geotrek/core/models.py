@@ -33,7 +33,7 @@ from geotrek.common.mixins.models import (
     TimeStampedModelMixin,
 )
 from geotrek.common.signals import log_cascade_deletion
-from geotrek.common.utils import classproperty, simplify_coords, sqlfunction, uniquify
+from geotrek.common.utils import classproperty, simplify_coords, sqlfunction, uniquify, intersecting
 from geotrek.core.managers import (
     PathAggregationManager,
     PathInvisibleManager,
@@ -42,6 +42,7 @@ from geotrek.core.managers import (
     TrailManager,
 )
 from geotrek.zoning.mixins import ZoningPropertiesMixin
+from geotrek.zoning.models import VigilanceArea
 
 logger = logging.getLogger(__name__)
 
@@ -1287,3 +1288,4 @@ def log_cascade_deletion_from_certificationtrail_trail(
 
 Path.add_property("trails", lambda self: Trail.path_trails(self), _("Trails"))
 Topology.add_property("trails", lambda self: Trail.overlapping(self), _("Trails"))
+VigilanceArea.add_property("trails", lambda self: intersecting(Trail, self, distance=0), _("Trails"))

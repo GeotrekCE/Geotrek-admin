@@ -44,6 +44,7 @@ from geotrek.tourism.managers import (
     TouristicEventManager,
 )
 from geotrek.zoning.mixins import ZoningPropertiesMixin
+from geotrek.zoning.models import VigilanceArea
 
 logger = logging.getLogger(__name__)
 
@@ -482,6 +483,11 @@ TouristicContent.add_property("signages", Signage.tourism_signages, _("Signages"
 TouristicContent.add_property(
     "infrastructures", Infrastructure.tourism_infrastructures, _("Infrastructures")
 )
+VigilanceArea.add_property(
+    "touristic_contents",
+    lambda self: intersecting(TouristicContent, self, distance=0),
+    _("Touristic contents"),
+)
 
 
 class TouristicEventType(TimeStampedModelMixin, OptionalPictogramMixin):
@@ -796,6 +802,9 @@ Topology.add_property(
     "published_touristic_events",
     TouristicEvent.topology_published_touristic_events,
     _("Published touristic events"),
+)
+VigilanceArea.add_property(
+    "touristic_events", lambda self: intersecting(TouristicEvent, self, distance=0), _("Touristic events")
 )
 TouristicContent.add_property(
     "touristic_events", TouristicEvent.tourism_touristic_events, _("Touristic events")
