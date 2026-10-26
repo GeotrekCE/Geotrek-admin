@@ -383,7 +383,7 @@ soupsieve==3.0.3
     # via beautifulsoup4
 sqlparse==0.6.0
     # via django
-svglib==2.3.0
+svglib==2.3.1
     # via easy-thumbnails
 swagger-spec-validator==3.0.4
     # via drf-yasg
