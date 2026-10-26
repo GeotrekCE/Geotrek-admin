@@ -25,11 +25,13 @@ from geotrek.common.utils import (
     queryset_or_all_objects,
     queryset_or_model,
     spatial_reference,
+intersecting
 )
 from geotrek.core.models import Path, Topology
 from geotrek.infrastructure.models import BaseInfrastructure
 from geotrek.signage.managers import BladeManager, SignageGISManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
+from geotrek.zoning.models import VigilanceArea
 
 
 class Sealing(TimeStampedModelMixin, StructureOrNoneRelated):
@@ -233,6 +235,7 @@ Topology.add_property(
     lambda self: Signage.published_topology_signages(self),
     _("Published Signages"),
 )
+VigilanceArea.add_property("signages", lambda self: intersecting(Signage, self, distance=0), _("Signages"))
 
 
 class Direction(TimeStampedModelMixin, models.Model):
