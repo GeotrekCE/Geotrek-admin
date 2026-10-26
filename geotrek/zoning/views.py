@@ -8,12 +8,44 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import get_language
 from mapentity.decorators import view_cache_latest, view_cache_response_content
 from mapentity.renderers import GeoJSONRenderer
+from mapentity.views import (
+    MapEntityCreate,
+    MapEntityDelete,
+    MapEntityDetail,
+    MapEntityFilter,
+    MapEntityFormat,
+    MapEntityList,
+    MapEntityMultiDelete,
+    MapEntityMultiUpdate,
+    MapEntityUpdate,
+)
 from rest_framework import permissions, viewsets
 from rest_framework.decorators import action
+from rest_framework.renderers import JSONRenderer
 from rest_framework.response import Response
 
-from ..common.functions import SimplifyPreserveTopology
-from .models import City, District, RestrictedArea, RestrictedAreaType
+from geotrek.authent.decorators import same_structure_required
+from geotrek.common.functions import SimplifyPreserveTopology
+from geotrek.common.mixins.forms import FormsetMixin
+from geotrek.common.mixins.views import (
+    BelongStructureMixin,
+    CompletenessMixin,
+    CustomColumnsMixin,
+    PublishedFieldMixin,
+)
+from geotrek.common.viewsets import GeotrekMapentityViewSet
+from geotrek.core.views import CreateFromTopologyMixin
+from geotrek.trekking.views import FlattenPicturesMixin
+
+from .filters import VigilanceAreaFilterSet
+from .forms import VigilanceAreaForm, VigilancePeriodFormset
+from .models import (
+    City,
+    District,
+    RestrictedArea,
+    RestrictedAreaType,
+    VigilanceArea,
+)
 from .serializers import (
     CityAutoCompleteBBoxSerializer,
     CityAutoCompleteSerializer,
@@ -24,6 +56,9 @@ from .serializers import (
     RestrictedAreaAutoCompleteBBoxSerializer,
     RestrictedAreaAutoCompleteSerializer,
     RestrictedAreaSerializer,
+    VigilanceAreaAutoCompleteSerializer,
+    VigilanceAreaGeojsonSerializer,
+    VigilanceAreaSerializer,
 )
 
 
@@ -71,10 +106,12 @@ class AutocompleteMixin:
         forwarded = json.loads(forwarded_str)
         parsed_dict = {}
         for key, value in forwarded.items():
-            parsed_dict[f"{key}__in"] = [int(x) for x in value]
+            values = [int(x) for x in value]
+            if values:
+                parsed_dict[f"{key}__in"] = values
         return parsed_dict
 
-    @action(detail=False)
+    @action(detail=False, renderer_classes=[JSONRenderer])
     def autocomplete(self, request, *args, **kwargs):
         qs = self.get_queryset_autocomplete()
         identifier = self.request.query_params.get(
@@ -100,7 +137,6 @@ class AutocompleteMixin:
 
             serializer = self.serializer_autocomplete_class(qs, many=True)
             data = {"results": serializer.data, "pagination": {"more": has_more}}
-
         return Response(data)
 
 
@@ -189,3 +225,130 @@ class CityViewSet(
 
     def get_queryset_autocomplete_bbox(self):
         return self.model.objects.only("name", "code", "envelope")
+
+
+class VigilanceAreaList(CustomColumnsMixin, FlattenPicturesMixin, MapEntityList):
+    queryset = VigilanceArea.objects.all()
+    mandatory_columns = ["id", "name", "ongoing"]
+    default_extra_columns = [
+        "vigilance_area_type",
+        "impracticable",
+    ]
+    searchable_columns = ["id", "name"]
+
+
+class VigilanceAreaFilter(MapEntityFilter):
+    model = VigilanceArea
+    filterset_class = VigilanceAreaFilterSet
+
+
+class VigilanceAreaFormatList(MapEntityFormat, VigilanceAreaList):
+    filterset_class = VigilanceAreaFilterSet
+    mandatory_columns = [
+        "id",
+        "name",
+    ]
+    default_extra_columns = [
+        "vigilance_area_type",
+        "vigilance_level",
+        "periods",
+        "impracticable",
+        "structure",
+        "description",
+        "practical_info",
+        "external_info_url",
+        "private_comment",
+        "sources",
+    ]
+
+
+class VigilanceAreaDetail(CompletenessMixin, MapEntityDetail):
+    queryset = VigilanceArea.objects.all().select_related(
+        "vigilance_area_type", "structure"
+    )
+
+    def get_context_data(self, *args, **kwargs):
+        context = super().get_context_data(*args, **kwargs)
+        context["can_edit"] = self.get_object().same_structure(self.request.user)
+        return context
+
+
+class VigilancePeriodFormsetMixin(FormsetMixin):
+    context_name = "vigilanceperiod_formset"
+    formset_class = VigilancePeriodFormset
+
+
+class VigilanceAreaCreate(
+    VigilancePeriodFormsetMixin, CreateFromTopologyMixin, MapEntityCreate
+):
+    model = VigilanceArea
+    form_class = VigilanceAreaForm
+
+
+class VigilanceAreaUpdate(VigilancePeriodFormsetMixin, MapEntityUpdate):
+    queryset = VigilanceArea.objects.all()
+    form_class = VigilanceAreaForm
+
+    @same_structure_required("zoning:vigilancearea_detail")
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+
+class VigilanceAreaDelete(MapEntityDelete):
+    model = VigilanceArea
+
+    @same_structure_required("zoning:vigilancearea_detail")
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
+
+
+class VigilanceAreaViewSet(AutocompleteMixin, GeotrekMapentityViewSet):
+    model = VigilanceArea
+    serializer_class = VigilanceAreaSerializer
+    serializer_autocomplete_class = VigilanceAreaAutoCompleteSerializer
+    geojson_serializer_class = VigilanceAreaGeojsonSerializer
+    filterset_class = VigilanceAreaFilterSet
+    mapentity_list_class = VigilanceAreaList
+    autocomplete_search_fields = [
+        "name",
+    ]
+
+    def get_queryset_autocomplete(self):
+        return self.model.objects.only("name", "id")
+
+    def get_queryset_autocomplete_bbox(self):
+        return self.model.objects.only("name", "id")
+
+    def _parse_forwarded(self, forwarded_str):
+        forwarded = json.loads(forwarded_str)
+        parsed_dict = {}
+        for key, value in forwarded.items():
+            if key == "impracticable":
+                if value in ("true", "false"):
+                    parsed_dict[f"{key}"] = value == "true"
+            else:
+                values = [int(x) for x in value]
+                if values:
+                    parsed_dict[f"{key}__in"] = values
+        return parsed_dict
+
+    def get_queryset(self):
+        qs = self.model.objects.all()
+        if self.format_kwarg == "geojson":
+            qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+            qs = qs.only("id", "name", "published")
+        else:
+            qs = qs.select_related("vigilance_area_type").prefetch_related(
+                "attachments"
+            )
+        return qs
+
+
+class VigilanceAreaMultiDelete(BelongStructureMixin, MapEntityMultiDelete):
+    model = VigilanceArea
+
+
+class VigilanceAreaMultiUpdate(
+    PublishedFieldMixin, BelongStructureMixin, MapEntityMultiUpdate
+):
+    model = VigilanceArea

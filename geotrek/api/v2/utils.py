@@ -1,5 +1,8 @@
 from django.conf import settings
+from django.views.generic.dates import timezone_today
 from modeltranslation.utils import build_localized_fieldname
+
+from geotrek.zoning.models import VigilanceArea
 
 
 def get_translation_or_dict(model_field_name, serializer, instance):
@@ -79,3 +82,23 @@ def is_published(instance, language=None):
             # one language is specified
             field_name = build_localized_fieldname("published", language)
             return getattr(instance, field_name)
+
+
+def get_impracticable_vigilance_areas(request):
+    today = timezone_today()
+    start_date = request.GET.get("practicable_from") or today
+    end_date = request.GET.get("practicable_to") or today
+    portals = request.GET.get("portals", "")
+
+    impracticable_vigilance_areas = VigilanceArea.objects.filter(
+        published=True,
+        impracticable=True,
+    ).active_by_dates(start_date, end_date)
+
+    if portals:
+        portals = [int(portal) for portal in portals.split(",")]
+        impracticable_vigilance_areas = impracticable_vigilance_areas.filter(
+            portals__in=portals
+        ).distinct()
+
+    return impracticable_vigilance_areas

@@ -2,32 +2,9 @@
 ---------------------
 -- label
 ALTER TABLE infrastructure_infrastructuretype ALTER COLUMN type SET DEFAULT 'A';
-ALTER TABLE infrastructure_infrastructuretype ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE infrastructure_infrastructuretype ALTER COLUMN date_update SET DEFAULT now();
 -- structure
 -- pictogram
 
--- InfrastructureCondition
---------------------------
--- label
--- structure
-ALTER TABLE infrastructure_infrastructurecondition ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE infrastructure_infrastructurecondition ALTER COLUMN date_update SET DEFAULT now();
-
-
--- InfrastructureMaintenanceDifficultyLevel
--------------------------------------------
--- label
--- structure
-ALTER TABLE infrastructure_infrastructuremaintenancedifficultylevel ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE infrastructure_infrastructuremaintenancedifficultylevel ALTER COLUMN date_update SET DEFAULT now();
-
--- InfrastructureUsageDifficultyLevel
--------------------------------------
--- label
--- structure
-ALTER TABLE infrastructure_infrastructureusagedifficultylevel ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE infrastructure_infrastructureusagedifficultylevel ALTER COLUMN date_update SET DEFAULT now();
 
 -- Infrastructure
 -----------------

@@ -25,10 +25,11 @@ from geotrek.common.mixins.models import (
 )
 from geotrek.common.models import AccessMean, Organism
 from geotrek.common.signals import log_cascade_deletion
-from geotrek.common.utils import classproperty
+from geotrek.common.utils import classproperty, intersecting
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.maintenance.managers import InterventionManager, ProjectManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
+from geotrek.zoning.models import VigilanceArea
 
 if "geotrek.signage" in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
@@ -396,6 +397,10 @@ class Intervention(
     def blade_interventions(cls, blade):
         return cls.get_interventions(blade.signage)
 
+    @classmethod
+    def vigilance_area_interventions(cls, vigilance_area):
+        return cls.get_interventions(vigilance_area)
+
     @property
     def signages(self):
         if hasattr(self.target, "signages"):
@@ -449,6 +454,9 @@ if "geotrek.signage" in settings.INSTALLED_APPS:
         lambda self: Intervention.blade_interventions(self),
         _("Interventions"),
     )
+VigilanceArea.add_property(
+    "interventions", lambda self: Intervention.vigilance_area_interventions(self), _("Interventions")
+)
 
 
 class InterventionStatus(StructureOrNoneRelated):

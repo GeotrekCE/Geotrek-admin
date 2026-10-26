@@ -45,6 +45,7 @@ from geotrek.signage.models import Blade, Signage
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
+from geotrek.zoning.models import VigilanceArea
 
 
 class AltimetryMixin(BaseAltimetryMixin):
@@ -506,6 +507,8 @@ TouristicContent.add_property("sites", Site.tourism_sites, _("Sites"))
 TouristicEvent.add_property("sites", Site.tourism_sites, _("Sites"))
 Blade.add_property("sites", lambda self: intersecting(Site, self), _("Sites"))
 Intervention.add_property("sites", lambda self: intersecting(Site, self), _("Sites"))
+VigilanceArea.add_property("sites", lambda self: intersecting(Site, self, distance=0), _("Sites"))
+
 
 Site.add_property("sites", Site.outdoor_sites, _("Sites"))
 Site.add_property("treks", Trek.outdoor_treks, _("Treks"))
@@ -723,6 +726,7 @@ Blade.add_property("courses", lambda self: intersecting(Course, self), _("Course
 Intervention.add_property(
     "courses", lambda self: intersecting(Course, self), _("Courses")
 )
+VigilanceArea.add_property("courses", lambda self: intersecting(Course, self, distance=0), _("Courses"))
 
 Course.add_property("sites", Site.outdoor_sites, _("Sites"))
 Course.add_property("courses", Course.outdoor_courses, _("Courses"))

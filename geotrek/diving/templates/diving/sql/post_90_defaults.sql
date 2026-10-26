@@ -3,9 +3,6 @@
 -- name
 -- order
 ALTER TABLE diving_practice ALTER COLUMN color SET DEFAULT '#444444';
-ALTER TABLE diving_practice ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE diving_practice ALTER COLUMN date_update SET DEFAULT now();
-
 
 -- Difficulty
 -------------

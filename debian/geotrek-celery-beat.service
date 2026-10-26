@@ -1,0 +1,16 @@
+[Unit]
+Description=Geotrek-admin periodic tasks
+PartOf=geotrek.service
+After=geotrek-celery.service
+StartLimitIntervalSec=30
+StartLimitBurst=2
+
+[Service]
+ExecStart=/opt/geotrek-admin/bin/celery -A geotrek beat -l warning
+Restart=on-failure
+User=geotrek
+Group=geotrek
+UMask=002
+
+[Install]
+WantedBy=geotrek.service
