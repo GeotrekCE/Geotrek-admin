@@ -12,6 +12,7 @@ CHANGELOG
 **Improvements**
 
 * Adapt sync_translation_fields to allow adding new language
+* Add a command to remove language from MODELTRANSLATION_LANGUAGES
 
 
 2.126.5         (2026-10-16)
