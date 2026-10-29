@@ -42,6 +42,5 @@ ALTER TABLE infrastructure_infrastructure ALTER COLUMN description SET DEFAULT '
 -- condition
 -- implantation_year
 -- eid
-ALTER TABLE infrastructure_infrastructure ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 -- structure

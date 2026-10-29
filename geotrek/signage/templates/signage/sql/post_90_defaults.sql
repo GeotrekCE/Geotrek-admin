@@ -26,7 +26,6 @@ ALTER TABLE signage_signage ALTER COLUMN description SET DEFAULT '';
 -- condition
 -- implantation_year
 -- eid
-ALTER TABLE signage_signage ALTER COLUMN published SET DEFAULT FALSE;
 -- publication_date
 -- structure
 
