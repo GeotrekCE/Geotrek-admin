@@ -21,6 +21,7 @@ import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import type { ListSearchParams } from "../routes/{-$locale}/_authenticated/index"
 import { Badge } from "@/components/ui/badge"
 import { m } from "@/paraglide/messages"
+import { usePermission } from "@/hook/useSettingsQuery"
 
 export default function ListFilters({
   filters = {},
@@ -53,6 +54,7 @@ export default function ListFilters({
     },
   })
 
+  const permissions = usePermission()
   const hasTypeFilter = filters.type && filters.type.length > 0
 
   return (
@@ -139,30 +141,38 @@ export default function ListFilters({
                     }
                     multiple
                   >
-                    <ToggleGroupItem
-                      className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground data-pressed:bg-primary data-pressed:text-primary-foreground"
-                      value="signage"
-                    >
-                      {m["content.signage"]()}
-                    </ToggleGroupItem>
-                    <ToggleGroupItem
-                      className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground data-pressed:bg-primary data-pressed:text-primary-foreground"
-                      value="intervention"
-                    >
-                      {m["content.intervention"]()}
-                    </ToggleGroupItem>
-                    <ToggleGroupItem
-                      className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground data-pressed:bg-primary data-pressed:text-primary-foreground"
-                      value="report"
-                    >
-                      {m["content.report"]()}
-                    </ToggleGroupItem>
-                    <ToggleGroupItem
-                      className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground data-pressed:bg-primary data-pressed:text-primary-foreground"
-                      value="infrastructure"
-                    >
-                      {m["content.infrastructure"]()}
-                    </ToggleGroupItem>
+                    {permissions.signage.read && (
+                      <ToggleGroupItem
+                        className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground data-pressed:bg-primary data-pressed:text-primary-foreground"
+                        value="signage"
+                      >
+                        {m["content.signage"]()}
+                      </ToggleGroupItem>
+                    )}
+                    {permissions.intervention.read && (
+                      <ToggleGroupItem
+                        className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground data-pressed:bg-primary data-pressed:text-primary-foreground"
+                        value="intervention"
+                      >
+                        {m["content.intervention"]()}
+                      </ToggleGroupItem>
+                    )}
+                    {permissions.report.read && (
+                      <ToggleGroupItem
+                        className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground data-pressed:bg-primary data-pressed:text-primary-foreground"
+                        value="report"
+                      >
+                        {m["content.report"]()}
+                      </ToggleGroupItem>
+                    )}
+                    {permissions.infrastructure.read && (
+                      <ToggleGroupItem
+                        className="bg-primary/20 text-primary hover:bg-primary hover:text-primary-foreground data-pressed:bg-primary data-pressed:text-primary-foreground"
+                        value="infrastructure"
+                      >
+                        {m["content.infrastructure"]()}
+                      </ToggleGroupItem>
+                    )}
                   </ToggleGroup>
                 )}
               />

@@ -18,6 +18,7 @@ import type {
 } from "@/schemas/references"
 import { UpdateDataWarning } from "@/components/update-data-warning"
 import { m } from "@/paraglide/messages"
+import { usePermission } from "@/hook/useSettingsQuery"
 
 export const Route = createFileRoute("/{-$locale}/_authenticated/create")({
   beforeLoad: UpdateDataWarning,
@@ -33,6 +34,9 @@ function RouteComponent() {
       "infrastructure",
     ])
   )
+
+  const permissions = usePermission()
+
   const [intervention, signage, report, infrastructure] =
     (references as
       | [
@@ -50,26 +54,30 @@ function RouteComponent() {
           type: "intervention",
           description: "",
           pictogram: intervention?.pictogram,
+          hasRight: permissions.intervention.create,
         },
         {
           label: m["content.signage"](),
           type: "signage",
           description: "",
           pictogram: signage?.pictogram,
+          hasRight: permissions.signage.create,
         },
         {
           label: m["content.report"](),
           type: "report",
           description: "",
           pictogram: report?.pictogram,
+          hasRight: permissions.report.create,
         },
         {
           label: m["content.infrastructure"](),
           type: "infrastructure",
           description: "",
           pictogram: infrastructure?.pictogram,
+          hasRight: permissions.infrastructure.create,
         },
-      ]
+      ].filter((item) => item.hasRight)
     : []
   return (
     <div className="flex grow flex-col p-4">

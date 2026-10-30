@@ -15,6 +15,7 @@ import type {
   ReportReferencesSchemaProps,
   SignageReferencesSchemaProps,
 } from "@/schemas/references"
+import { usePermission } from "./useSettingsQuery"
 
 export function useStoredData({ q, type }: ListSearchParams) {
   const references = useLiveQuery(() =>
@@ -35,24 +36,32 @@ export function useStoredData({ q, type }: ListSearchParams) {
         ]
       | undefined) || []
 
+  const permissions = usePermission()
+
   const queries = useLiveQuery(() => {
     const results = []
-    if (!type || type?.includes("signage")) {
+    if (!type || (type?.includes("signage") && permissions.signage.read)) {
       results.push({ collection: db.signageData, reference: signage })
     }
-    if (!type || type?.includes("intervention")) {
+    if (
+      !type ||
+      (type?.includes("intervention") && permissions.intervention.read)
+    ) {
       results.push({
         collection: db.interventionData,
         reference: intervention,
       })
     }
-    if (!type || type?.includes("infrastructure")) {
+    if (
+      !type ||
+      (type?.includes("infrastructure") && permissions.infrastructure.read)
+    ) {
       results.push({
         collection: db.infrastructureData,
         reference: infrastructure,
       })
     }
-    if (!type || type?.includes("report")) {
+    if (!type || (type?.includes("report") && permissions.report.read)) {
       results.push({ collection: db.reportData, reference: report })
     }
     return Promise.all(
