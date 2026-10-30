@@ -9,29 +9,29 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as Char123LocaleChar125LoginRouteImport } from './routes/{-$locale}/login'
 import { Route as Char123LocaleChar125AuthenticatedRouteImport } from './routes/{-$locale}/_authenticated'
+import { Route as Char123LocaleChar125LoginRouteImport } from './routes/{-$locale}/login'
 import { Route as Char123LocaleChar125AuthenticatedIndexRouteImport } from './routes/{-$locale}/_authenticated/index'
-import { Route as Char123LocaleChar125AuthenticatedSettingsRouteImport } from './routes/{-$locale}/_authenticated/settings'
 import { Route as Char123LocaleChar125AuthenticatedCreateRouteImport } from './routes/{-$locale}/_authenticated/create'
+import { Route as Char123LocaleChar125AuthenticatedSettingsRouteImport } from './routes/{-$locale}/_authenticated/settings'
 import { Route as Char123LocaleChar125AuthenticatedSyncIndexRouteImport } from './routes/{-$locale}/_authenticated/sync/index'
-import { Route as Char123LocaleChar125AuthenticatedSyncUploadRouteImport } from './routes/{-$locale}/_authenticated/sync/upload'
-import { Route as Char123LocaleChar125AuthenticatedSyncMapRouteImport } from './routes/{-$locale}/_authenticated/sync/map'
 import { Route as Char123LocaleChar125AuthenticatedSyncDataRouteImport } from './routes/{-$locale}/_authenticated/sync/data'
+import { Route as Char123LocaleChar125AuthenticatedSyncMapRouteImport } from './routes/{-$locale}/_authenticated/sync/map'
+import { Route as Char123LocaleChar125AuthenticatedSyncUploadRouteImport } from './routes/{-$locale}/_authenticated/sync/upload'
 import { Route as Char123LocaleChar125AuthenticatedDataTypeCreateRouteImport } from './routes/{-$locale}/_authenticated/data/$type/create'
 import { Route as Char123LocaleChar125AuthenticatedDataTypeIdIndexRouteImport } from './routes/{-$locale}/_authenticated/data/$type/$id/index'
 import { Route as Char123LocaleChar125AuthenticatedDataTypeIdEditRouteImport } from './routes/{-$locale}/_authenticated/data/$type/$id/edit'
 
-const Char123LocaleChar125LoginRoute =
-  Char123LocaleChar125LoginRouteImport.update({
-    id: '/{-$locale}/login',
-    path: '/{-$locale}/login',
-    getParentRoute: () => rootRouteImport,
-  } as any)
 const Char123LocaleChar125AuthenticatedRoute =
   Char123LocaleChar125AuthenticatedRouteImport.update({
     id: '/{-$locale}/_authenticated',
     path: '/{-$locale}',
+    getParentRoute: () => rootRouteImport,
+  } as any)
+const Char123LocaleChar125LoginRoute =
+  Char123LocaleChar125LoginRouteImport.update({
+    id: '/{-$locale}/login',
+    path: '/{-$locale}/login',
     getParentRoute: () => rootRouteImport,
   } as any)
 const Char123LocaleChar125AuthenticatedIndexRoute =
@@ -40,16 +40,16 @@ const Char123LocaleChar125AuthenticatedIndexRoute =
     path: '/',
     getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
   } as any)
-const Char123LocaleChar125AuthenticatedSettingsRoute =
-  Char123LocaleChar125AuthenticatedSettingsRouteImport.update({
-    id: '/settings',
-    path: '/settings',
-    getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
-  } as any)
 const Char123LocaleChar125AuthenticatedCreateRoute =
   Char123LocaleChar125AuthenticatedCreateRouteImport.update({
     id: '/create',
     path: '/create',
+    getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
+  } as any)
+const Char123LocaleChar125AuthenticatedSettingsRoute =
+  Char123LocaleChar125AuthenticatedSettingsRouteImport.update({
+    id: '/settings',
+    path: '/settings',
     getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
   } as any)
 const Char123LocaleChar125AuthenticatedSyncIndexRoute =
@@ -58,10 +58,10 @@ const Char123LocaleChar125AuthenticatedSyncIndexRoute =
     path: '/sync/',
     getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
   } as any)
-const Char123LocaleChar125AuthenticatedSyncUploadRoute =
-  Char123LocaleChar125AuthenticatedSyncUploadRouteImport.update({
-    id: '/sync/upload',
-    path: '/sync/upload',
+const Char123LocaleChar125AuthenticatedSyncDataRoute =
+  Char123LocaleChar125AuthenticatedSyncDataRouteImport.update({
+    id: '/sync/data',
+    path: '/sync/data',
     getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
   } as any)
 const Char123LocaleChar125AuthenticatedSyncMapRoute =
@@ -70,10 +70,10 @@ const Char123LocaleChar125AuthenticatedSyncMapRoute =
     path: '/sync/map',
     getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
   } as any)
-const Char123LocaleChar125AuthenticatedSyncDataRoute =
-  Char123LocaleChar125AuthenticatedSyncDataRouteImport.update({
-    id: '/sync/data',
-    path: '/sync/data',
+const Char123LocaleChar125AuthenticatedSyncUploadRoute =
+  Char123LocaleChar125AuthenticatedSyncUploadRouteImport.update({
+    id: '/sync/upload',
+    path: '/sync/upload',
     getParentRoute: () => Char123LocaleChar125AuthenticatedRoute,
   } as any)
 const Char123LocaleChar125AuthenticatedDataTypeCreateRoute =
@@ -188,18 +188,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/{-$locale}/login': {
-      id: '/{-$locale}/login'
-      path: '/{-$locale}/login'
-      fullPath: '/{-$locale}/login'
-      preLoaderRoute: typeof Char123LocaleChar125LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/{-$locale}/_authenticated': {
       id: '/{-$locale}/_authenticated'
       path: '/{-$locale}'
       fullPath: '/{-$locale}'
       preLoaderRoute: typeof Char123LocaleChar125AuthenticatedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/{-$locale}/login': {
+      id: '/{-$locale}/login'
+      path: '/{-$locale}/login'
+      fullPath: '/{-$locale}/login'
+      preLoaderRoute: typeof Char123LocaleChar125LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/{-$locale}/_authenticated/': {
@@ -209,18 +209,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125AuthenticatedIndexRouteImport
       parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
     }
-    '/{-$locale}/_authenticated/settings': {
-      id: '/{-$locale}/_authenticated/settings'
-      path: '/settings'
-      fullPath: '/{-$locale}/settings'
-      preLoaderRoute: typeof Char123LocaleChar125AuthenticatedSettingsRouteImport
-      parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
-    }
     '/{-$locale}/_authenticated/create': {
       id: '/{-$locale}/_authenticated/create'
       path: '/create'
       fullPath: '/{-$locale}/create'
       preLoaderRoute: typeof Char123LocaleChar125AuthenticatedCreateRouteImport
+      parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
+    }
+    '/{-$locale}/_authenticated/settings': {
+      id: '/{-$locale}/_authenticated/settings'
+      path: '/settings'
+      fullPath: '/{-$locale}/settings'
+      preLoaderRoute: typeof Char123LocaleChar125AuthenticatedSettingsRouteImport
       parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
     }
     '/{-$locale}/_authenticated/sync/': {
@@ -230,11 +230,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125AuthenticatedSyncIndexRouteImport
       parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
     }
-    '/{-$locale}/_authenticated/sync/upload': {
-      id: '/{-$locale}/_authenticated/sync/upload'
-      path: '/sync/upload'
-      fullPath: '/{-$locale}/sync/upload'
-      preLoaderRoute: typeof Char123LocaleChar125AuthenticatedSyncUploadRouteImport
+    '/{-$locale}/_authenticated/sync/data': {
+      id: '/{-$locale}/_authenticated/sync/data'
+      path: '/sync/data'
+      fullPath: '/{-$locale}/sync/data'
+      preLoaderRoute: typeof Char123LocaleChar125AuthenticatedSyncDataRouteImport
       parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
     }
     '/{-$locale}/_authenticated/sync/map': {
@@ -244,11 +244,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof Char123LocaleChar125AuthenticatedSyncMapRouteImport
       parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
     }
-    '/{-$locale}/_authenticated/sync/data': {
-      id: '/{-$locale}/_authenticated/sync/data'
-      path: '/sync/data'
-      fullPath: '/{-$locale}/sync/data'
-      preLoaderRoute: typeof Char123LocaleChar125AuthenticatedSyncDataRouteImport
+    '/{-$locale}/_authenticated/sync/upload': {
+      id: '/{-$locale}/_authenticated/sync/upload'
+      path: '/sync/upload'
+      fullPath: '/{-$locale}/sync/upload'
+      preLoaderRoute: typeof Char123LocaleChar125AuthenticatedSyncUploadRouteImport
       parentRoute: typeof Char123LocaleChar125AuthenticatedRoute
     }
     '/{-$locale}/_authenticated/data/$type/create': {
