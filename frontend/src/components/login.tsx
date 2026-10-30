@@ -94,7 +94,11 @@ export default function Login() {
           </CardContent>
           <CardFooter>
             <Field orientation="horizontal">
-              <form.SubmitButton type="submit" className="w-full" size="lg">
+              <form.SubmitButton
+                type="submit"
+                className="h-12 w-full"
+                size="lg"
+              >
                 <LogIn aria-hidden /> {m["login.form.submit"]()}
               </form.SubmitButton>
             </Field>

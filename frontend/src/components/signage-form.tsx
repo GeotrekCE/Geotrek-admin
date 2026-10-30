@@ -197,7 +197,7 @@ export default function SignageForm({
 
           <FormUploadGallery />
 
-          <Button type="submit">
+          <Button type="submit" className="h-12">
             {isEdit
               ? m["form.edit"]()
               : `${m["form.create"]()} ${m["content.signage"]().toLowerCase()}`}
@@ -212,6 +212,7 @@ export default function SignageForm({
               }}
               type="reset"
               variant="destructive"
+              className="h-12"
             >
               {m["form.reset"]()}
             </Button>

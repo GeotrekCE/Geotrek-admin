@@ -306,7 +306,7 @@ export default function InterventionForm({
 
           <FormUploadGallery />
 
-          <Button type="submit">
+          <Button type="submit" className="h-12">
             {isEdit
               ? m["form.edit"]()
               : `${m["form.create"]()} ${m["content.intervention"]().toLowerCase()}`}
@@ -321,6 +321,7 @@ export default function InterventionForm({
               }}
               type="reset"
               variant="destructive"
+              className="h-12"
             >
               {m["form.reset"]()}
             </Button>
