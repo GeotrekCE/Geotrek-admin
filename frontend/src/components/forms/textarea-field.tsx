@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form-context"
 import Required from "@/components/forms/required"
 import { RichTextEditor } from "@/components/rich-text-editor"
+import { cn } from "cn"
 
 interface TextareaFieldProps extends Omit<
   React.ComponentProps<"textarea">,
@@ -63,7 +64,7 @@ export function TextareaField({
             onChange={(e) => field.handleChange(e.target.value)}
             maxLength={maxLength}
             aria-invalid={isTouched && !isValid}
-            className={className}
+            className={cn("text-lg", className)}
             data-testid={`field-${field.name}`}
             name={field.name}
             {...textareaProps}
