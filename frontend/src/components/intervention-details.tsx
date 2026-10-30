@@ -188,6 +188,23 @@ export default function InterventionDetail(params: {
 
         <section className="my-8">
           <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+            {m["content.disorders"]()}
+          </h3>
+          {detail.disorders ? (
+            <div className="flex flex-wrap gap-2">
+              {detail.disorders.map((c) => (
+                <Badge key={c.id} variant="outline">
+                  {c.name}
+                </Badge>
+              ))}
+            </div>
+          ) : (
+            <p className="italic">{m["content.no-disorders"]()}</p>
+          )}
+        </section>
+
+        <section className="my-8">
+          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
             {m["content.status"]()}
           </h3>
           <p>{detail.status.name}</p>

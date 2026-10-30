@@ -208,7 +208,7 @@ export default function InterventionForm({
 
           <FormSelectField
             name="disorders"
-            label={m["form.state"]()}
+            label={m["form.disorders"]()}
             list={interventiondisorder}
             multiple
           />
