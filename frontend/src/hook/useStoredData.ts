@@ -16,6 +16,7 @@ import type {
   SignageReferencesSchemaProps,
 } from "@/schemas/references"
 import { usePermission } from "./useSettingsQuery"
+import { removeDiacritics } from "@/lib/string"
 
 export function useStoredData({ q, type }: ListSearchParams) {
   const references = useLiveQuery(() =>
@@ -82,7 +83,7 @@ export function useStoredData({ q, type }: ListSearchParams) {
             | ReportReferencesSchemaProps
             | InfrastructureReferencesSchemaProps
         }) => {
-          if (collection.name === "reportData") {
+          if (collection.name === "reportData" && !q) {
             return collection.toArray((data) =>
               data.map((item) => ({
                 ...item,
@@ -110,8 +111,12 @@ export function useStoredData({ q, type }: ListSearchParams) {
           )
             .filter(
               (data) =>
-                data.name.toLowerCase().includes(q.toLowerCase()) ||
-                data.description.toLowerCase().includes(q.toLowerCase())
+                removeDiacritics(data.name)
+                  .toLowerCase()
+                  .includes(removeDiacritics(q.toLowerCase())) ||
+                removeDiacritics(data.description)
+                  .toLowerCase()
+                  .includes(removeDiacritics(q.toLowerCase()))
             )
             .toArray((data) =>
               data.map((item) => ({
