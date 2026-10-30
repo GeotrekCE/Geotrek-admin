@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/form-context"
 import { Spinner } from "@/components/ui/spinner"
 import Required from "./required"
+import { cn } from "cn"
 
 interface TextFieldProps extends Omit<
   React.ComponentProps<"input">,
@@ -58,7 +59,7 @@ export function TextField({
               }
             }}
             aria-invalid={isTouched && !isValid}
-            className={className}
+            className={cn("h-12 text-lg", className)}
             data-testid={`field-${field.name}`}
             name={field.name}
             {...inputProps}

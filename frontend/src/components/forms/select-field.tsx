@@ -143,7 +143,7 @@ export function SelectField({
             <SelectTrigger
               id={id}
               aria-invalid={isTouched && !isValid}
-              className={className}
+              className={cn("h-12!", className)}
               data-testid={`field-${field.name}`}
               name={field.name}
             >
