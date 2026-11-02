@@ -12,6 +12,7 @@ CHANGELOG
 **Bug fixes**
 
 * Remove None display when the field is empty in touristic content and event detail sheet
+* Fix site duplication so that the tree ID change if the original site doesn't have a parent (refs #5461)
 
 **Improvements**
 
