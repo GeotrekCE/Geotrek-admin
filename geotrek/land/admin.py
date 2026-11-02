@@ -8,7 +8,7 @@ from .models import AuthorizationType, CirculationType, LandType, PhysicalType
 @admin.register(PhysicalType)
 class PhysicalTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("name", "structure")
-    search_fields = ("name", "structure")
+    search_fields = ("name", "structure__name")
     list_filter = ("structure",)
     merge_field = "name"
 
@@ -19,7 +19,7 @@ class LandTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         "name",
         "right_of_way",
     )
-    search_fields = ("name", "structure")
+    search_fields = ("name", "structure__name")
     list_filter = ("structure",)
     merge_field = "name"
 
@@ -30,7 +30,7 @@ class CirculationTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         "name",
         "structure",
     )
-    search_fields = ("name", "structure")
+    search_fields = ("name", "structure__name")
     list_filter = ("structure",)
     merge_field = "name"
 
@@ -41,6 +41,6 @@ class AuthorizationTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         "name",
         "structure",
     )
-    search_fields = ("name", "structure")
+    search_fields = ("name", "structure__name")
     list_filter = ("structure",)
     merge_field = "name"

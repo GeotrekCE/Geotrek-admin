@@ -5,6 +5,10 @@ CHANGELOG
 2.126.6+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Fix the search bar in the admin section
+
 
 2.126.6         (2026-10-29)
 ----------------------------
