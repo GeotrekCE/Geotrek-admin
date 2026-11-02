@@ -102,7 +102,6 @@ django==5.2.18
     #   django-embed-video
     #   django-filter
     #   django-flask-authent-backend
-    #   django-js-asset
     #   django-large-image
     #   django-leaflet
     #   django-maintenance-mode
@@ -155,8 +154,6 @@ django-filter==26.2
     #   mapentity
 django-flask-authent-backend @ git+https://github.com/PnX-SI/django-flask-authent-backend@7aa95d5ce5fd4f5aa4bf29af03dfbd1de4d924ca#egg=django-flask-authent-backend
     # via geotrek (setup.py)
-django-js-asset==4.2.0
-    # via django-mptt
 django-large-image==0.10.5
     # via geotrek (setup.py)
 django-leaflet==0.19.post11
@@ -169,8 +166,6 @@ django-modelcluster==6.5
     # via geotrek (setup.py)
 django-modeltranslation==0.20.6
     # via mapentity
-django-mptt==0.18.0
-    # via geotrek (setup.py)
 django-timezone-field==7.2.2
     # via django-celery-beat
 django-tinymce==5.0.0

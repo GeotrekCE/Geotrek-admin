@@ -32,7 +32,6 @@ setup(
         "pygal",
         "paperclip",
         "django-modelcluster",
-        "django-mptt",
         "geojson",
         "tif2geojson",
         "drf-dynamic-fields",
