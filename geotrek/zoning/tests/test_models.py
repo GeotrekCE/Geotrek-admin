@@ -8,7 +8,7 @@ from django.test import TestCase
 from freezegun import freeze_time
 
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.core.tests.factories import PathFactory, TrailFactory
+from geotrek.core.tests.factories import PathFactory, TrailFactory, TopologyFactory
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.maintenance.tests.factories import InterventionFactory
 from geotrek.outdoor.tests.factories import SiteFactory, CourseFactory
@@ -540,12 +540,13 @@ class VigilanceAreaModelTest(TestCase):
         self.assertEqual(vigilance_area.infrastructures.first(), infrastructure)
 
     def test_interventions(self):
-        signage = SignageFactory.create(paths=[(self.path, 0.5, 0.5)])
-        intervention = InterventionFactory.create(target=signage)
         vigilance_area = VigilanceAreaFactory.create(geom=self.point_envelope)
+        intervention_target = InterventionFactory.create(target=vigilance_area)
+        topology = TopologyFactory.create(paths=[(self.path, 0.5, 0.6)])
+        intervention_topology = InterventionFactory.create(target=topology)
 
-        self.assertEqual(vigilance_area.interventions.count(), 1)
-        self.assertEqual(vigilance_area.interventions.first(), intervention)
+        self.assertEqual(vigilance_area.interventions.count(), 2)
+        self.assertEqual(list(vigilance_area.interventions.order_by("pk")), [intervention_target, intervention_topology])
 
     def test_sites(self):
         site = SiteFactory.create(geom=GeometryCollection(self.point_geom))

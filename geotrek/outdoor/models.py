@@ -470,6 +470,7 @@ class Site(
             site_content_type,
             ContentType.objects.get_for_model(Course),
             ContentType.objects.get_for_model(Blade),
+            ContentType.objects.get_for_model(VigilanceArea)
         ]
         qs |= Q(target_id__in=topologies) & ~Q(
             target_type__in=not_topology_content_types
@@ -700,6 +701,7 @@ class Course(
             ContentType.objects.get_for_model(Site),
             course_content_type,
             ContentType.objects.get_for_model(Blade),
+            ContentType.objects.get_for_model(VigilanceArea)
         ]
         qs |= Q(target_id__in=topologies) & ~Q(
             target_type__in=not_topology_content_types

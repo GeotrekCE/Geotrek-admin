@@ -342,6 +342,10 @@ class Intervention(
                 ContentType.objects.get_by_natural_key("outdoor", "site"),
                 ContentType.objects.get_by_natural_key("outdoor", "course"),
             ]
+        if "geotrek.zoning" in settings.INSTALLED_APPS:
+            non_topology_content_types += [
+                ContentType.objects.get_by_natural_key("zoning", "vigilancearea"),
+            ]
         if settings.TREKKING_TOPOLOGY_ENABLED:
             topologies = list(Topology.overlapping(obj).values_list("pk", flat=True))
         else:
@@ -399,7 +403,27 @@ class Intervention(
 
     @classmethod
     def vigilance_area_interventions(cls, vigilance_area):
-        return cls.get_interventions(vigilance_area)
+        # Intervention on vigilance area
+        area_content_type = ContentType.objects.get_for_model(VigilanceArea)
+        qs = Q(target_type=area_content_type, target_id=vigilance_area.id)
+        # Interventions on topologies
+        topologies = (
+            Topology.objects.existing()
+            .filter(
+                geom__intersects=vigilance_area.geom
+            )
+            .values_list("pk", flat=True)
+        )
+        not_topology_content_types = [
+            area_content_type,
+            ContentType.objects.get_by_natural_key("outdoor", "site"),
+            ContentType.objects.get_by_natural_key("outdoor", "course"),
+            ContentType.objects.get_by_natural_key("signage", "blade"),
+        ]
+        qs |= Q(target_id__in=topologies) & ~Q(
+            target_type__in=not_topology_content_types
+        )
+        return Intervention.objects.existing().filter(qs).distinct("pk")
 
     @property
     def signages(self):
