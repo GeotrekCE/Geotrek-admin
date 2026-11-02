@@ -121,10 +121,10 @@
         "fields": {
             "parent": null,
             "sib_order": 1,
-            "name": "Intervention in progress/Construction",
-            "name_fr": "Intervention en cours/Travaux",
-            "name_en": "Intervention in progress/Construction",
-            "code": "TRAV"
+            "name": "Sports event",
+            "name_fr": "Manifestation sportive",
+            "name_en": "Sports event",
+            "code": "MASP"
         }
     },
     {
@@ -133,10 +133,10 @@
         "fields": {
             "parent": null,
             "sib_order": 1,
-            "name": "Natural risk",
-            "name_fr": "Risque naturel",
-            "name_en": "Natural risk",
-            "code": "RISN"
+            "name": "Fire",
+            "name_fr": "Incendie",
+            "name_en": "Fire",
+            "code": "INCE"
         }
     },
     {
@@ -145,10 +145,10 @@
         "fields": {
             "parent": null,
             "sib_order": 1,
-            "name": "Incident",
-            "name_fr": "Incident",
-            "name_en": "Incident",
-            "code": "INCI"
+            "name": "Landslide",
+            "name_fr": "Éboulement",
+            "name_en": "Landslide",
+            "code": "EBOU"
         }
     },
     {
@@ -157,10 +157,10 @@
         "fields": {
             "parent": null,
             "sib_order": 1,
-            "name": "Event",
-            "name_fr": "Événementiel",
-            "name_en": "Event",
-            "code": "EVEN"
+            "name": "Avalanche",
+            "name_fr": "Avalanche",
+            "name_en": "Avalanche",
+            "code": "AVAL"
         }
     },
     {
@@ -169,10 +169,10 @@
         "fields": {
             "parent": null,
             "sib_order": 1,
-            "name": "Hunting",
-            "name_fr": "Chasse",
-            "name_en": "Hunting",
-            "code": "CHAS"
+            "name": "Flood",
+            "name_fr": "Crue",
+            "name_en": "Flood",
+            "code": "CRUE"
         }
     },
     {
@@ -181,10 +181,22 @@
         "fields": {
             "parent": null,
             "sib_order": 1,
-            "name": "Others",
-            "name_fr": "Autres",
-            "name_en": "Others",
-            "code": "AUTR"
+            "name": "Slash-and-burn",
+            "name_fr": "Écobuage",
+            "name_en": "Slash-and-burn",
+            "code": "ECOB"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Hunting",
+            "name_fr": "Chasse",
+            "name_en": "Hunting",
+            "code": "CHAS"
         }
     },
     {
