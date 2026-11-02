@@ -1,4 +1,5 @@
 import datetime
+from unittest import skipIf
 
 from django.conf import settings
 from django.contrib.gis.geos import (
@@ -8,9 +9,11 @@ from django.contrib.gis.geos import (
     Point,
     Polygon,
 )
+from django.core.exceptions import ValidationError
 from django.test import TestCase
 from freezegun import freeze_time
 
+from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.core.tests.factories import PathFactory, TopologyFactory, TrailFactory
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.maintenance.tests.factories import InterventionFactory
@@ -22,11 +25,20 @@ from geotrek.tourism.tests.factories import (
 )
 from geotrek.trekking.tests.factories import POIFactory, ServiceFactory, TrekFactory
 from geotrek.zoning.models import (
+    City,
+    District,
+    RestrictedArea,
     VigilanceArea,
     VigilancePeriod,
 )
 from geotrek.zoning.tests.factories import (
+    CityFactory,
+    DistrictFactory,
+    RestrictedAreaFactory,
+    RestrictedAreaTypeFactory,
     VigilanceAreaFactory,
+    VigilanceAreaTypeFactory,
+    VigilanceLevelFactory,
     VigilancePeriodFactory,
 )
 
@@ -475,7 +487,6 @@ class VigilancePeriodTestCase(TestCase):
         self.assertIn(str(self.today), period_with_end.period_resume)
         self.assertIn("2026-10-30", period_with_end.period_resume)
         self.assertIn("annual", period_with_end.period_resume)
-
 
 
 class VigilanceAreaModelTest(TestCase):
