@@ -116,14 +116,14 @@ class SiteTest(TestCase):
         self.site_1 = SiteFactory.create(name="parent_site")
         self.site_2 = SiteFactory.create(name="child_site", parent=self.site_1)
         clone = self.site_1.duplicate()
-        self.assertNotEqual(clone.tree_id, self.site_1.tree_id)
+        self.assertNotEqual(clone.get_root(), self.site_1)
         self.assertEqual(list(self.site_2.get_ancestors()), [self.site_1])
 
     def test_duplicate_child_site_duplicate_tree_id(self):
         self.site_1 = SiteFactory.create(name="parent_site")
         self.site_2 = SiteFactory.create(name="child_site", parent=self.site_1)
         clone = self.site_2.duplicate()
-        self.assertEqual(clone.tree_id, self.site_2.tree_id)
+        self.assertEqual(clone.get_root(), self.site_2.get_root())
         self.assertEqual(list(self.site_2.get_ancestors()), [self.site_1])
 
 
