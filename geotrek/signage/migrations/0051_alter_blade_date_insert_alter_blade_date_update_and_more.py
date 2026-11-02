@@ -6,12 +6,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("infrastructure", "0042_auto_20250611_1044"),
+        ("signage", "0050_alter_signage_published"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="infrastructureaccessmean",
+            model_name="blade",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="infrastructureaccessmean",
+            model_name="blade",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="infrastructurecondition",
+            model_name="bladecondition",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="infrastructurecondition",
+            model_name="bladecondition",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="infrastructuremaintenancedifficultylevel",
+            model_name="bladetype",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="infrastructuremaintenancedifficultylevel",
+            model_name="bladetype",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="infrastructuretype",
+            model_name="color",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -77,7 +77,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="infrastructuretype",
+            model_name="color",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -87,7 +87,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="infrastructureusagedifficultylevel",
+            model_name="direction",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -96,7 +96,83 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="infrastructureusagedifficultylevel",
+            model_name="direction",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                db_index=True,
+                verbose_name="Update date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="linepictogram",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                verbose_name="Insertion date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="linepictogram",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                db_index=True,
+                verbose_name="Update date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="sealing",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                verbose_name="Insertion date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="sealing",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                db_index=True,
+                verbose_name="Update date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="signagecondition",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                verbose_name="Insertion date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="signagecondition",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                db_index=True,
+                verbose_name="Update date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="signagetype",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                verbose_name="Insertion date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="signagetype",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,

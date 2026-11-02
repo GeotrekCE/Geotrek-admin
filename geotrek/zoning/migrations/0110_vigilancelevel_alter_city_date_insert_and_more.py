@@ -241,6 +241,7 @@ class Migration(migrations.Migration):
                     "published",
                     models.BooleanField(
                         default=False,
+                        db_default=False,
                         help_text="Visible on Geotrek-rando",
                         verbose_name="Published",
                     ),

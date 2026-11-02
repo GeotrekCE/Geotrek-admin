@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("flatpages", "0016_alter_flatpage_content_alter_menuitem_target_type"),
+        ("flatpages", "0017_alter_flatpage_published_alter_menuitem_published"),
     ]
 
     operations = [

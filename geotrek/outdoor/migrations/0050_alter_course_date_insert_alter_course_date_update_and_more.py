@@ -6,12 +6,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("signage", "0049_remove_blade_deleted"),
+        ("outdoor", "0049_alter_course_published_alter_site_published"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="blade",
+            model_name="course",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="blade",
+            model_name="course",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="bladecondition",
+            model_name="coursetype",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -39,7 +39,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="bladecondition",
+            model_name="coursetype",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -49,7 +49,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="bladetype",
+            model_name="practice",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -58,7 +58,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="bladetype",
+            model_name="practice",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -68,7 +68,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="color",
+            model_name="rating",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -77,7 +77,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="color",
+            model_name="rating",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -87,7 +87,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="direction",
+            model_name="ratingscale",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -96,7 +96,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="direction",
+            model_name="ratingscale",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -106,7 +106,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="linepictogram",
+            model_name="sector",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -115,7 +115,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="linepictogram",
+            model_name="sector",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -125,7 +125,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="sealing",
+            model_name="site",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -134,7 +134,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="sealing",
+            model_name="site",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -144,7 +144,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="signagecondition",
+            model_name="sitetype",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -153,26 +153,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="signagecondition",
-            name="date_update",
-            field=models.DateTimeField(
-                auto_now=True,
-                db_default=django.db.models.functions.datetime.Now(),
-                db_index=True,
-                verbose_name="Update date",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="signagetype",
-            name="date_insert",
-            field=models.DateTimeField(
-                auto_now_add=True,
-                db_default=django.db.models.functions.datetime.Now(),
-                verbose_name="Insertion date",
-            ),
-        ),
-        migrations.AlterField(
-            model_name="signagetype",
+            model_name="sitetype",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,

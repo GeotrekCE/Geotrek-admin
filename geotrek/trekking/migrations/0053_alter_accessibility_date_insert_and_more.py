@@ -6,12 +6,12 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("outdoor", "0048_site_outdoor_site_tree_id_lft_idx"),
+        ("trekking", "0052_alter_poi_published_alter_servicetype_published_and_more"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="course",
+            model_name="accessibility",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="course",
+            model_name="accessibility",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -30,7 +30,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="coursetype",
+            model_name="accessibilitylevel",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -39,7 +39,45 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="coursetype",
+            model_name="accessibilitylevel",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                db_index=True,
+                verbose_name="Update date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="difficultylevel",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                verbose_name="Insertion date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="difficultylevel",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                db_index=True,
+                verbose_name="Update date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="poitype",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                verbose_name="Insertion date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="poitype",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -106,7 +144,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="sector",
+            model_name="route",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -115,7 +153,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="sector",
+            model_name="route",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -125,7 +163,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="site",
+            model_name="servicetype",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -134,7 +172,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="site",
+            model_name="servicetype",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -144,7 +182,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="sitetype",
+            model_name="treknetwork",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -153,7 +191,26 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="sitetype",
+            model_name="treknetwork",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                db_index=True,
+                verbose_name="Update date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="weblinkcategory",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                verbose_name="Insertion date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="weblinkcategory",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,

@@ -6,12 +6,15 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("trekking", "0051_alter_poi_eid_alter_service_eid_alter_trek_eid"),
+        (
+            "tourism",
+            "0059_alter_touristiccontent_published_and_more",
+        ),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name="accessibility",
+            model_name="cancellationreason",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -20,7 +23,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="accessibility",
+            model_name="cancellationreason",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -30,7 +33,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="accessibilitylevel",
+            model_name="informationdesk",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -39,7 +42,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="accessibilitylevel",
+            model_name="informationdesk",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -49,7 +52,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="difficultylevel",
+            model_name="informationdesktype",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -58,7 +61,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="difficultylevel",
+            model_name="informationdesktype",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -68,7 +71,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="poitype",
+            model_name="labelaccessibility",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -77,7 +80,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="poitype",
+            model_name="labelaccessibility",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -87,7 +90,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="practice",
+            model_name="touristiccontent",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -96,7 +99,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="practice",
+            model_name="touristiccontent",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -106,7 +109,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="rating",
+            model_name="touristiccontentcategory",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -115,7 +118,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="rating",
+            model_name="touristiccontentcategory",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -125,7 +128,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="ratingscale",
+            model_name="touristicevent",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -134,7 +137,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="ratingscale",
+            model_name="touristicevent",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -144,7 +147,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="route",
+            model_name="touristiceventorganizer",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -153,7 +156,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="route",
+            model_name="touristiceventorganizer",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -163,7 +166,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="servicetype",
+            model_name="touristiceventparticipantcategory",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -172,7 +175,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="servicetype",
+            model_name="touristiceventparticipantcategory",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -182,7 +185,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="treknetwork",
+            model_name="touristiceventparticipantcount",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -191,7 +194,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="treknetwork",
+            model_name="touristiceventparticipantcount",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,
@@ -201,7 +204,7 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="weblinkcategory",
+            model_name="touristiceventplace",
             name="date_insert",
             field=models.DateTimeField(
                 auto_now_add=True,
@@ -210,7 +213,26 @@ class Migration(migrations.Migration):
             ),
         ),
         migrations.AlterField(
-            model_name="weblinkcategory",
+            model_name="touristiceventplace",
+            name="date_update",
+            field=models.DateTimeField(
+                auto_now=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                db_index=True,
+                verbose_name="Update date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="touristiceventtype",
+            name="date_insert",
+            field=models.DateTimeField(
+                auto_now_add=True,
+                db_default=django.db.models.functions.datetime.Now(),
+                verbose_name="Insertion date",
+            ),
+        ),
+        migrations.AlterField(
+            model_name="touristiceventtype",
             name="date_update",
             field=models.DateTimeField(
                 auto_now=True,

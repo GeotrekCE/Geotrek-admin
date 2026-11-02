@@ -6,7 +6,7 @@ from django.db import migrations, models
 
 class Migration(migrations.Migration):
     dependencies = [
-        ("diving", "0009_alter_practice_color"),
+        ("diving", "0010_alter_dive_published"),
     ]
 
     operations = [
