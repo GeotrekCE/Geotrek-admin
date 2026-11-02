@@ -22,7 +22,6 @@ from geotrek.common.utils import (
     intersecting,
     queryset_or_all_objects,
     queryset_or_model,
-intersecting
 )
 from geotrek.core.models import Path, Topology
 from geotrek.infrastructure.managers import InfrastructureGISManager
@@ -304,5 +303,7 @@ Topology.add_property(
     _("Published Infrastructures"),
 )
 VigilanceArea.add_property(
-    "infrastructures", lambda self: intersecting(Infrastructure, self, distance=0), _("Infrastructures")
+    "infrastructures",
+    lambda self: intersecting(Infrastructure, self, distance=0),
+    _("Infrastructures"),
 )

@@ -1,35 +1,32 @@
 import datetime
-from unittest import skipIf
 
 from django.conf import settings
-from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon, GeometryCollection
-from django.core.exceptions import ValidationError
+from django.contrib.gis.geos import (
+    GeometryCollection,
+    LineString,
+    MultiPolygon,
+    Point,
+    Polygon,
+)
 from django.test import TestCase
 from freezegun import freeze_time
 
-from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.core.tests.factories import PathFactory, TrailFactory, TopologyFactory
+from geotrek.core.tests.factories import PathFactory, TopologyFactory, TrailFactory
 from geotrek.infrastructure.tests.factories import InfrastructureFactory
 from geotrek.maintenance.tests.factories import InterventionFactory
-from geotrek.outdoor.tests.factories import SiteFactory, CourseFactory
+from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
 from geotrek.signage.tests.factories import SignageFactory
-from geotrek.tourism.tests.factories import TouristicContentFactory, TouristicEventFactory
-from geotrek.trekking.tests.factories import TrekFactory, POIFactory, ServiceFactory
+from geotrek.tourism.tests.factories import (
+    TouristicContentFactory,
+    TouristicEventFactory,
+)
+from geotrek.trekking.tests.factories import POIFactory, ServiceFactory, TrekFactory
 from geotrek.zoning.models import (
-    City,
-    District,
-    RestrictedArea,
     VigilanceArea,
     VigilancePeriod,
 )
 from geotrek.zoning.tests.factories import (
-    CityFactory,
-    DistrictFactory,
-    RestrictedAreaFactory,
-    RestrictedAreaTypeFactory,
     VigilanceAreaFactory,
-    VigilanceAreaTypeFactory,
-    VigilanceLevelFactory,
     VigilancePeriodFactory,
 )
 
@@ -480,6 +477,7 @@ from geotrek.zoning.tests.factories import (
 #         self.assertIn("annual", period_with_end.period_resume)
 #
 
+
 class VigilanceAreaModelTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -490,7 +488,15 @@ class VigilanceAreaModelTest(TestCase):
         )
         cls.point_geom = Point(700050, 6600050, srid=settings.SRID)
         cls.point_envelope = MultiPolygon(
-            Polygon(((700000, 6600000), (700050, 6600100), (700100, 6600100), (700000, 6600000))), srid=settings.SRID
+            Polygon(
+                (
+                    (700000, 6600000),
+                    (700050, 6600100),
+                    (700100, 6600100),
+                    (700000, 6600000),
+                )
+            ),
+            srid=settings.SRID,
         )
 
     def test_vigilance_area_str(self):
@@ -546,7 +552,10 @@ class VigilanceAreaModelTest(TestCase):
         intervention_topology = InterventionFactory.create(target=topology)
 
         self.assertEqual(vigilance_area.interventions.count(), 2)
-        self.assertEqual(list(vigilance_area.interventions.order_by("pk")), [intervention_target, intervention_topology])
+        self.assertEqual(
+            list(vigilance_area.interventions.order_by("pk")),
+            [intervention_target, intervention_topology],
+        )
 
     def test_sites(self):
         site = SiteFactory.create(geom=GeometryCollection(self.point_geom))

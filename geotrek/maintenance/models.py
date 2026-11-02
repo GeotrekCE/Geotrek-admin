@@ -25,7 +25,7 @@ from geotrek.common.mixins.models import (
 )
 from geotrek.common.models import AccessMean, Organism
 from geotrek.common.signals import log_cascade_deletion
-from geotrek.common.utils import classproperty, intersecting
+from geotrek.common.utils import classproperty
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.maintenance.managers import InterventionManager, ProjectManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
@@ -409,9 +409,7 @@ class Intervention(
         # Interventions on topologies
         topologies = (
             Topology.objects.existing()
-            .filter(
-                geom__intersects=vigilance_area.geom
-            )
+            .filter(geom__intersects=vigilance_area.geom)
             .values_list("pk", flat=True)
         )
         not_topology_content_types = [
@@ -479,7 +477,9 @@ if "geotrek.signage" in settings.INSTALLED_APPS:
         _("Interventions"),
     )
 VigilanceArea.add_property(
-    "interventions", lambda self: Intervention.vigilance_area_interventions(self), _("Interventions")
+    "interventions",
+    lambda self: Intervention.vigilance_area_interventions(self),
+    _("Interventions"),
 )
 
 

@@ -754,7 +754,9 @@ tourism_models.TouristicEvent.add_property(
     lambda self: intersecting(Trek, self).filter(published=True),
     _("Published treks"),
 )
-zoning_models.VigilanceArea.add_property("treks", lambda self: intersecting(Trek, self, distance=0), _("Treks"))
+zoning_models.VigilanceArea.add_property(
+    "treks", lambda self: intersecting(Trek, self, distance=0), _("Treks")
+)
 if "geotrek.signage" in settings.INSTALLED_APPS:
     Blade.add_property("treks", lambda self: self.signage.treks, _("Treks"))
     Blade.add_property(
@@ -1048,7 +1050,9 @@ tourism_models.TouristicEvent.add_property(
     lambda self: intersecting(POI, self).filter(published=True),
     _("Published POIs"),
 )
-zoning_models.VigilanceArea.add_property("pois", lambda self: intersecting(POI, self, distance=0), _("POIs"))
+zoning_models.VigilanceArea.add_property(
+    "pois", lambda self: intersecting(POI, self, distance=0), _("POIs")
+)
 if "geotrek.signage" in settings.INSTALLED_APPS:
     Blade.add_property("pois", lambda self: self.signage.pois, _("POIs"))
     Blade.add_property(
@@ -1203,7 +1207,9 @@ tourism_models.TouristicEvent.add_property(
     lambda self: intersecting(Service, self).filter(published=True),
     _("Published Services"),
 )
-zoning_models.VigilanceArea.add_property("services", lambda self: intersecting(Service, self, distance=0), _("Services"))
+zoning_models.VigilanceArea.add_property(
+    "services", lambda self: intersecting(Service, self, distance=0), _("Services")
+)
 
 if "geotrek.signage" in settings.INSTALLED_APPS:
     Blade.add_property("services", lambda self: self.signage.services, _("Services"))

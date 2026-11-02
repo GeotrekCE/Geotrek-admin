@@ -804,7 +804,9 @@ Topology.add_property(
     _("Published touristic events"),
 )
 VigilanceArea.add_property(
-    "touristic_events", lambda self: intersecting(TouristicEvent, self, distance=0), _("Touristic events")
+    "touristic_events",
+    lambda self: intersecting(TouristicEvent, self, distance=0),
+    _("Touristic events"),
 )
 TouristicContent.add_property(
     "touristic_events", TouristicEvent.tourism_touristic_events, _("Touristic events")
