@@ -306,7 +306,7 @@ psycopg-c==3.3.6
     # via psycopg
 psycopg-pool==3.3.3
     # via psycopg
-pycparser==3.11
+pycparser==3.12
     # via cffi
 pydyf==0.12.1
     # via weasyprint
