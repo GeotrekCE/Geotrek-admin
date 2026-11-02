@@ -541,7 +541,9 @@ class Site(
         elif self.children_courses.exists():
             raise ChildCoursesExistError()
         else:
-            super().delete(*args, **kwargs)
+            res = super().delete(*args, **kwargs)
+            setattr(self, self._meta.pk.attname, None)
+            return res
 
     @classmethod
     def outdoor_sites(cls, outdoor_obj, queryset=None):
