@@ -114,7 +114,6 @@
                 {{ intervention.area|stringformat:".1f" }}m&sup2;
             </td>
         </tr>
-        {% include "altimetry/elevationinfo_fragment.html" %}
         <tr>
             <th>{{ intervention|verbose:"description" }}</th>
             <td>{% if intervention.description %}{{ intervention.description|safe }}
@@ -131,7 +130,9 @@
             <th>{{ intervention|verbose:"structure" }}</th>
             <td>{{ intervention.structure }}</td>
         </tr>
-        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
+    {% include "altimetry/elevationinfo_fragment.html" %}
+    {% include "common/fragments/provider_eid.html" %}
+    {% include "common/fragments/trackinfo.html" %}
     {{ block.super }}
 {% endblock detailspanel %}

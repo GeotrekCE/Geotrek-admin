@@ -3,9 +3,11 @@
     MapEntity.i18n['Zoning'] = "{% trans "Zoning" %}";
     MapEntity.i18n['Districts'] = "{% trans "Districts" %}";
     MapEntity.i18n['Cities'] = "{% trans "Cities" %}";
+    MapEntity.i18n['Vigilance areas'] = "{% trans "Vigilance areas" %}";
 
     window.SETTINGS.urls['city_layer'] = "{% url "zoning:city-list" format='geojson' %}";
     window.SETTINGS.urls['district_layer'] = "{% url "zoning:district-list" format='geojson' %}";
+    window.SETTINGS.urls['vigilancearea_layer'] = "{% url "zoning:vigilancearea-drf-list" format='geojson' %}";
 
     {% restricted_area_types as all_area_types %}
     window.SETTINGS.map['restricted_area_types'] = {{ all_area_types|safe }};

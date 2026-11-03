@@ -25,6 +25,7 @@ from geotrek.common.utils import (
 )
 from geotrek.core.models import Path, Topology
 from geotrek.infrastructure.managers import InfrastructureGISManager
+from geotrek.zoning.models import VigilanceArea
 
 
 class InfrastructureTypeChoices(TextChoices):
@@ -300,4 +301,9 @@ Topology.add_property(
     "published_infrastructures",
     Infrastructure.published_topology_infrastructure,
     _("Published Infrastructures"),
+)
+VigilanceArea.add_property(
+    "infrastructures",
+    lambda self: intersecting(Infrastructure, self, distance=0),
+    _("Infrastructures"),
 )

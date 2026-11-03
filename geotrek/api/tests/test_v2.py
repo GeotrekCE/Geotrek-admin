@@ -116,6 +116,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "cities",
         "city_codes",
         "create_datetime",
+        "impracticable",
         "departure",
         "departure_geom",
         "descent",
@@ -152,6 +153,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "public_transport",
         "provider",
         "published",
+        "published_vigilance_areas",
         "ratings",
         "ratings_description",
         "reservation_system",
@@ -227,6 +229,7 @@ TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted(
         "category",
         "cities",
         "city_codes",
+        "impracticable",
         "contact",
         "create_datetime",
         "description",
@@ -245,6 +248,7 @@ TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted(
         "practical_info",
         "provider",
         "published",
+        "published_vigilance_areas",
         "reservation_id",
         "reservation_system",
         "source",
@@ -611,6 +615,38 @@ HDVIEWPOINT_DETAIL_JSON_STRUCTURE = sorted(
     ]
 )
 
+VIGILANCE_AREA_PROPERTIES_GEOJSON_STRUCTURE = sorted(
+    [
+        "id",
+        "attachments",
+        "description",
+        "external_info_url",
+        "geometry",
+        "name",
+        "impracticable",
+        "vigilance_level",
+        "periods",
+        "practical_info",
+        "published",
+        "sources",
+        "structure",
+        "uuid",
+        "vigilance_area_type",
+        "date_insert",
+        "date_update",
+    ]
+)
+
+VIGILANCE_PERIOD_PROPERTIES_GEOJSON_STRUCTURE = sorted(
+    [
+        "id",
+        "start_date",
+        "end_date",
+        "active_days",
+        "annual",
+    ]
+)
+
 
 class BaseApiTest(TestCase):
     """Base TestCase for all API profiles"""
@@ -628,7 +664,7 @@ class BaseApiTest(TestCase):
         cls.network2 = trek_factory.TrekNetworkFactory.create()
         cls.rating = trek_factory.RatingFactory()
         cls.rating2 = trek_factory.RatingFactory()
-        cls.label = common_factory.LabelFactory(id=23)
+        cls.label = common_factory.LabelFactory()
         cls.path = core_factory.PathFactory.create(geom=LineString((0, 0), (0, 10)))
         if settings.TREKKING_TOPOLOGY_ENABLED:
             cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(
@@ -756,6 +792,52 @@ class BaseApiTest(TestCase):
         cls.sensitivearea = sensitivity_factory.SensitiveAreaFactory()
         cls.sensitivearea_practice = sensitivity_factory.SportPracticeFactory()
         cls.sensitivearea_species = sensitivity_factory.SpeciesFactory()
+
+        geom = "SRID=4326;MULTIPOLYGON (((-2 -6, -2 -5, 0 -5, 0 -6, -2 -6)))"
+        cls.vigilance_area1 = zoning_factory.VigilanceAreaFactory(
+            structure=cls.structure,
+            published=True,
+            impracticable=True,
+            periods=[],
+        )
+        cls.vigilance_area2 = zoning_factory.VigilanceAreaFactory(
+            structure=cls.structure,
+            geom=geom,
+            published=True,
+            impracticable=True,
+            periods=[],
+            portals=[cls.portal.pk],
+        )
+        cls.vigilance_area3 = zoning_factory.VigilanceAreaFactory(
+            structure=cls.structure, published=True, periods=[]
+        )
+        cls.vigilance_area4 = zoning_factory.VigilanceAreaFactory(
+            structure=cls.structure,
+            published=False,
+        )
+        cls.period1 = zoning_factory.VigilancePeriodFactory.create(
+            vigilance_area=cls.vigilance_area1,
+            start_date=datetime.date(2026, 10, 17),
+            end_date=datetime.date(2027, 1, 20),
+            active_days=[],
+        )
+        cls.period2 = zoning_factory.VigilancePeriodFactory.create(
+            vigilance_area=cls.vigilance_area2,
+            start_date=datetime.date(2026, 10, 17),
+            end_date=None,
+            active_days=[
+                0,
+                1,
+                2,
+            ],  # [Monday, Thusday, Wednesday]
+        )
+        cls.period3 = zoning_factory.VigilancePeriodFactory.create(
+            vigilance_area=cls.vigilance_area3,
+            start_date=datetime.date(2026, 10, 17),
+            end_date=datetime.date(2026, 10, 19),
+        )
+        cls.vigilance_area_type = zoning_factory.VigilanceAreaTypeFactory()
+        cls.vigilance_level = zoning_factory.VigilanceLevelFactory()
         cls.parent = trek_factory.TrekFactory.create(
             published=True,
             name="Parent",
@@ -1185,6 +1267,36 @@ class BaseApiTest(TestCase):
             reverse("apiv2:species-detail", args=(id_sensitivearea_species,)), params
         )
 
+    def get_vigilancearea_list(self, params=None):
+        return self.client.get(reverse("apiv2:vigilancearea-list"), params)
+
+    def get_vigilancearea_detail(self, id_vigilancearea, params=None):
+        return self.client.get(
+            reverse("apiv2:vigilancearea-detail", args=(id_vigilancearea,)), params
+        )
+
+    def get_vigilanceareatype_list(self, params=None):
+        return self.client.get(reverse("apiv2:vigilancearea_type-list"), params)
+
+    def get_vigilanceareatype_detail(self, id_vigilanceareatype, params=None):
+        return self.client.get(
+            reverse("apiv2:vigilancearea_type-detail", args=(id_vigilanceareatype,)),
+            params,
+        )
+
+    def get_vigilancelevel_list(self, params=None):
+        return self.client.get(
+            reverse("apiv2:vigilancearea-vigilancelevel-list"), params
+        )
+
+    def get_vigilancelevel_detail(self, id_vigilancelevel, params=None):
+        return self.client.get(
+            reverse(
+                "apiv2:vigilancearea-vigilancelevel-detail", args=(id_vigilancelevel,)
+            ),
+            params,
+        )
+
     def get_config(self, params=None):
         return self.client.get(reverse("apiv2:config", params))
 
@@ -1519,7 +1631,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
                 "accessibility_level": self.accessibility_level.pk,
                 "themes": self.theme2.pk,
                 "portals": self.portal.pk,
-                "labels": "23",
+                "labels": self.label.pk,
                 "routes": "68",
                 "practices": "1",
                 "ratings": self.rating.pk,
@@ -1920,6 +2032,92 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         response = self.get_trek_list({"fields": "id"})
         self.assertNotContains(response, str(self.child1.pk))
 
+    def test_trek_vigilancearea_filter_period(self):
+        start_date = "2026-10-19"
+        end_date = "2026-10-21"
+        response = self.get_trek_list(
+            params={
+                "practicable_from": start_date,
+                "practicable_to": end_date,
+                "practicable": "false",
+            }
+        )
+        self.assertEqual(response.json()["count"], 17)
+
+    def test_trek_vigilancearea_impracticable_depends_on_portal(self):
+        start_date = "2026-10-19"
+        end_date = "2026-10-21"
+        params = {
+            "practicable_from": start_date,
+            "practicable_to": end_date,
+            "practicable": "false",
+        }
+
+        response = self.get_trek_list({**params, "portals": str(self.portal.pk)})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+
+        other_portal = common_factory.TargetPortalFactory()
+        response = self.get_trek_list({**params, "portals": other_portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 0)
+
+        response = self.get_trek_list(
+            {**params, "portals": f"{self.portal.pk},{other_portal.pk}"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+
+    def test_trek_vigilancearea_types_filter(self):
+        response = self.get_trek_list(
+            params={
+                "practicable_from": "2026-10-19",
+                "practicable_to": "2026-10-21",
+                "vigilance_area_types": self.vigilance_area2.vigilance_area_type.pk,
+            }
+        )
+        self.assertEqual(response.json()["count"], 17)
+
+    def test_trek_vigilancearea_types_filter_other_type(self):
+        response = self.get_trek_list(
+            params={
+                "practicable_from": "2026-10-19",
+                "practicable_to": "2026-10-21",
+                "vigilance_area_types": self.vigilance_area1.vigilance_area_type.pk,
+            }
+        )
+        self.assertEqual(response.json()["count"], 0)
+
+    def test_trek_vigilancearea_types_exclude_filter(self):
+        response = self.get_trek_list(
+            params={
+                "practicable_from": "2026-10-19",
+                "practicable_to": "2026-10-21",
+                "vigilance_area_types_exclude": self.vigilance_area2.vigilance_area_type.pk,
+            }
+        )
+        self.assertEqual(response.json()["count"], 2)
+
+    def test_trek_vigilancearea_filter_out_of_period(self):
+        response = self.get_trek_list(
+            params={
+                "practicable_from": "2026-11-20",
+                "practicable_to": "2026-09-20",
+                "practicable": "false",
+            }
+        )
+        self.assertEqual(response.json()["count"], 0)
+
+    def test_trek_vigilancearea_filter_invalid_weekday(self):
+        response = self.get_trek_list(
+            params={
+                "practicable_from": "2026-10-22",
+                "practicable_to": "2026-10-23",
+                "practicable": "false",
+            }
+        )
+        self.assertEqual(response.json()["count"], 0)
+
     def test_tour_list(self):
         response = self.get_tour_list()
         #  test response code
@@ -1959,6 +2157,28 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.assertEqual(
             json_response.get("features")[1].get("properties").get("count_children"), 1
         )
+
+    def test_tour_vigilancearea_impracticable_depends_on_portal(self):
+        params = {
+            "practicable_from": "2026-10-19",
+            "practicable_to": "2026-10-21",
+            "practicable": "false",
+        }
+
+        response = self.get_tour_list({**params, "portals": str(self.portal.pk)})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+
+        other_portal = common_factory.TargetPortalFactory()
+        response = self.get_tour_list({**params, "portals": other_portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 0)
+
+        response = self.get_tour_list(
+            {**params, "portals": f"{self.portal.pk},{other_portal.pk}"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
 
     @override_settings(ONLY_EXTERNAL_PUBLIC_PDF=True)
     def test_trek_external_pdf(self):
@@ -2785,6 +3005,42 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             f"http://testserver/api/en/touristiccontents/{self.content.pk}/touristic-content.pdf",
         )
 
+    def test_touristiccontent_list_practicable_filter(self):
+        response = self.get_touristiccontent_list(
+            {
+                "practicable_from": "2026-10-19",
+                "practicable_to": "2026-10-21",
+                "practicable": "false",
+            }
+        )
+        self.assertEqual(len(response.json()["results"]), 2)
+
+    def test_touristiccontent_vigilancearea_impracticable_depends_on_portal(self):
+        params = {
+            "practicable_from": "2026-10-19",
+            "practicable_to": "2026-10-21",
+            "practicable": "false",
+        }
+
+        response = self.get_touristiccontent_list(
+            {**params, "portals": str(self.portal.pk)}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+
+        other_portal = common_factory.TargetPortalFactory()
+        response = self.get_touristiccontent_list(
+            {**params, "portals": other_portal.pk}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 0)
+
+        response = self.get_touristiccontent_list(
+            {**params, "portals": f"{self.portal.pk},{other_portal.pk}"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+
     def test_labels_accessibility_detail(self):
         self.check_structure_response(
             self.get_labelaccessibility_detail(self.label_accessibility.pk),
@@ -3070,6 +3326,189 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_sensitiveareaspecies_detail(self.sensitivearea_species.pk),
             SENSITIVE_AREA_SPECIES_PROPERTIES_JSON_STRUCTURE,
+        )
+
+    def test_vigilancearea_list(self):
+        response = self.get_vigilancearea_list()
+        self.assertEqual(response.status_code, 200)
+
+        json_response = response.json()
+
+        self.assertEqual(len(json_response.get("results")), 2)
+
+        results = json_response.get("results")[0]
+        self.assertEqual(
+            sorted(results.keys()),
+            VIGILANCE_AREA_PROPERTIES_GEOJSON_STRUCTURE,
+        )
+        self.assertEqual(
+            sorted(results.get("periods")[0].keys()),
+            VIGILANCE_PERIOD_PROPERTIES_GEOJSON_STRUCTURE,
+        )
+
+    def test_vigilancearea_filter_structure(self):
+        other_structure = StructureFactory.create(name="other")
+        vigilancearea_other_structure = zoning_factory.VigilanceAreaFactory.create(
+            structure=other_structure,
+            published=True,
+        )
+        response = self.get_vigilancearea_list(
+            params={"structures": other_structure.pk}
+        )
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            vigilancearea_other_structure.id,
+        )
+
+    def test_vigilancearea_filter_portal(self):
+        other_portal = common_factory.TargetPortalFactory.create(name="other")
+        vigilancearea_other_portal = zoning_factory.VigilanceAreaFactory.create(
+            published=True,
+        )
+        vigilancearea_other_portal.portals.set([other_portal])
+        response = self.get_vigilancearea_list(params={"portals": other_portal.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            vigilancearea_other_portal.id,
+        )
+
+    def test_vigilancearea_filter_practicability(self):
+        vigilancearea_other_practicability = zoning_factory.VigilanceAreaFactory.create(
+            published=True,
+            impracticable=False,
+        )
+        response = self.get_vigilancearea_list(params={"practicable": "true"})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            vigilancearea_other_practicability.id,
+        )
+
+    def test_vigilancearea_filter_vigilance_level(self):
+        other_vigilance_level = zoning_factory.VigilanceLevelFactory.create(
+            name="other"
+        )
+        vigilancearea_other_vigilance_level = (
+            zoning_factory.VigilanceAreaFactory.create(
+                published=True,
+                vigilance_level=other_vigilance_level,
+            )
+        )
+        response = self.get_vigilancearea_list(
+            params={"vigilance_levels": other_vigilance_level.pk}
+        )
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            vigilancearea_other_vigilance_level.id,
+        )
+
+    def test_vigilancearea_filter_type(self):
+        other_type = zoning_factory.VigilanceAreaTypeFactory.create(name="other")
+        vigilancearea_other_type = zoning_factory.VigilanceAreaFactory.create(
+            published=True,
+            vigilance_area_type=other_type,
+        )
+        response = self.get_vigilancearea_list(params={"types": other_type.pk})
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            vigilancearea_other_type.id,
+        )
+
+    def test_vigilancearea_filter_type_exclude(self):
+        other_type = zoning_factory.VigilanceAreaTypeFactory.create(name="other")
+        vigilancearea_other_type = zoning_factory.VigilanceAreaFactory.create(
+            published=True,
+            vigilance_area_type=other_type,
+        )
+        response = self.get_vigilancearea_list(params={"types_exclude": other_type.pk})
+        self.assertEqual(response.json()["count"], 2)
+        self.assertNotEqual(
+            response.json()["results"][0]["id"],
+            vigilancearea_other_type.id,
+        )
+
+    def test_vigilancearea_filter_period(self):
+        response = self.get_vigilancearea_list(
+            params={"start_date": "2026-10-19", "end_date": "2026-10-21"}
+        )
+        self.assertEqual(response.json()["count"], 2)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            self.vigilance_area1.pk,
+        )
+        self.assertEqual(
+            response.json()["results"][1]["id"],
+            self.vigilance_area2.pk,
+        )
+
+    def test_vigilancearea_filter_invalid_period(self):
+        response = self.get_vigilancearea_list(
+            params={"start_date": "2026-09-20", "end_date": "2026-09-20"}
+        )
+        self.assertEqual(response.json()["count"], 0)
+
+    def test_vigilancearea_filter_invalid_weekday(self):
+        response = self.get_vigilancearea_list(
+            params={"start_date": "2026-10-22", "end_date": "2026-10-23"}
+        )
+        self.assertEqual(response.json()["count"], 1)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            self.vigilance_area1.pk,
+        )
+
+    def test_vigilancearea_filter_period_limit(self):
+        response = self.get_vigilancearea_list(
+            params={"start_date": "2027-01-20", "end_date": "2027-01-20"}
+        )
+        self.assertEqual(response.json()["count"], 2)
+        self.assertEqual(
+            response.json()["results"][0]["id"],
+            self.vigilance_area1.pk,
+        )
+
+    def test_vigilancearea_detail(self):
+        self.check_structure_response(
+            self.get_vigilancearea_detail(self.vigilance_area1.pk),
+            VIGILANCE_AREA_PROPERTIES_GEOJSON_STRUCTURE,
+        )
+
+    def test_vigilanceareatype_list(self):
+        self.check_number_elems_response(
+            self.get_vigilanceareatype_list(), zoning_models.VigilanceAreaType
+        )
+
+    def test_vigilanceareatype_detail(self):
+        self.check_structure_response(
+            self.get_vigilanceareatype_detail(self.vigilance_area_type.pk),
+            sorted(["id", "code", "name", "parent", "pictogram"]),
+        )
+
+    def test_vigilanceareatype_pictogram(self):
+        zoning_factory.VigilanceAreaTypeFactory.create(
+            name="without_pictogram", pictogram=None
+        )
+        type_with_pictogram = zoning_factory.VigilanceAreaTypeFactory.create(
+            name="with_pictogram"
+        )
+        response = self.get_vigilanceareatype_list()
+        data = response.json()["results"]
+        self.assertEqual(data[5]["pictogram"], None)
+        self.assertIn(type_with_pictogram.pictogram.url, data[6]["pictogram"])
+
+    def test_vigilancelevel_list(self):
+        self.check_number_elems_response(
+            self.get_vigilancelevel_list(), zoning_models.VigilanceLevel
+        )
+
+    def test_vigilancelevel_detail(self):
+        self.check_structure_response(
+            self.get_vigilancelevel_detail(self.vigilance_level.pk),
+            sorted(["id", "name", "color", "level", "pictogram"]),
         )
 
     def test_config(self):
@@ -4032,20 +4471,20 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(response.json()["results"][0]["title"]["en"], "AAA")
 
     def test_filter_sources_by_portal(self):
-        # 5 queries for 5 related objects
+        # 6 queries for 6 related objects
         # 1 query for select on IDs
         # 1 count query
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get("/api/v2/source/", {"portals": self.portal.pk})
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()["count"], 1)
             self.assertEqual(response.json()["results"][0]["name"], self.source.name)
 
     def test_filter_sources_by_lang(self):
-        # 5 queries for 5 related objects
+        # 6 queries for 6 related objects
         # 1 query for select on IDs
         # 1 count query
-        with self.assertNumQueries(7):
+        with self.assertNumQueries(8):
             response = self.client.get("/api/v2/source/", {"language": "fr"})
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()["count"], 1)
@@ -6509,7 +6948,6 @@ class AltimetryCacheTests(BaseApiTest):
         self.assertEqual(response["Content-Type"], "application/json")
 
     def test_cache_is_used_when_getting_trek_profile(self):
-        # There are 8 queries to get trek profile
         with self.assertNumQueries(10):
             response = self.client.get(
                 reverse("apiv2:trek-profile", args=(self.trek.pk,))

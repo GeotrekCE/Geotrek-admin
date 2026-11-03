@@ -125,6 +125,7 @@ if [ "$MANAGE_DB" = "true" ] && [ -z "$2" ]; then
 	geotrek loaddata -v0 basic || true
 	geotrek loaddata -v0 licenses || true
 	geotrek loaddata -v0 circulations || true
+	geotrek loaddata -v0 vigilancearea || true
 	for dir in `ls -d /opt/geotrek-admin/lib/python3*/site-packages/geotrek/*/fixtures/upload`; do
 		cd $dir > /dev/null
 		cp -r * /opt/geotrek-admin/var/media/upload/
@@ -158,7 +159,7 @@ fi
 if [ "$1" = "configure" ] || [ "$1" = "abort-upgrade" ] || [ "$1" = "abort-deconfigure" ] || [ "$1" = "abort-remove" ] ; then
 	if [ -d /run/systemd/system ]; then
 		systemctl --system daemon-reload >/dev/null 2>&1 || true
-		systemctl enable geotrek.service geotrek-ui.service geotrek-api.service geotrek-celery.service >/dev/null 2>&1 || true
+		systemctl enable geotrek.service geotrek-ui.service geotrek-api.service geotrek-celery.service geotrek-celery-beat.service >/dev/null 2>&1 || true
 		systemctl restart geotrek.service >/dev/null 2>&1 || true
 	fi
 fi

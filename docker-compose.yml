@@ -48,7 +48,7 @@ services:
       redis:
         condition: service_started
 
-    command: celery -A geotrek worker -c 1
+    command: celery -A geotrek worker -B -c 1 -E
 
   web:
     <<: [ *django ]

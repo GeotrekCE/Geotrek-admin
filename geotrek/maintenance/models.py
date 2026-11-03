@@ -29,6 +29,7 @@ from geotrek.common.utils import classproperty
 from geotrek.core.models import Path, Topology, Trail
 from geotrek.maintenance.managers import InterventionManager, ProjectManager
 from geotrek.zoning.mixins import ZoningPropertiesMixin
+from geotrek.zoning.models import VigilanceArea
 
 if "geotrek.signage" in settings.INSTALLED_APPS:
     from geotrek.signage.models import Blade
@@ -341,6 +342,10 @@ class Intervention(
                 ContentType.objects.get_by_natural_key("outdoor", "site"),
                 ContentType.objects.get_by_natural_key("outdoor", "course"),
             ]
+        if "geotrek.zoning" in settings.INSTALLED_APPS:
+            non_topology_content_types += [
+                ContentType.objects.get_by_natural_key("zoning", "vigilancearea"),
+            ]
         if settings.TREKKING_TOPOLOGY_ENABLED:
             topologies = list(Topology.overlapping(obj).values_list("pk", flat=True))
         else:
@@ -396,6 +401,28 @@ class Intervention(
     def blade_interventions(cls, blade):
         return cls.get_interventions(blade.signage)
 
+    @classmethod
+    def vigilance_area_interventions(cls, vigilance_area):
+        # Intervention on vigilance area
+        area_content_type = ContentType.objects.get_for_model(VigilanceArea)
+        qs = Q(target_type=area_content_type, target_id=vigilance_area.id)
+        # Interventions on topologies
+        topologies = (
+            Topology.objects.existing()
+            .filter(geom__intersects=vigilance_area.geom)
+            .values_list("pk", flat=True)
+        )
+        not_topology_content_types = [
+            area_content_type,
+            ContentType.objects.get_by_natural_key("outdoor", "site"),
+            ContentType.objects.get_by_natural_key("outdoor", "course"),
+            ContentType.objects.get_by_natural_key("signage", "blade"),
+        ]
+        qs |= Q(target_id__in=topologies) & ~Q(
+            target_type__in=not_topology_content_types
+        )
+        return Intervention.objects.existing().filter(qs).distinct("pk")
+
     @property
     def signages(self):
         if hasattr(self.target, "signages"):
@@ -449,6 +476,11 @@ if "geotrek.signage" in settings.INSTALLED_APPS:
         lambda self: Intervention.blade_interventions(self),
         _("Interventions"),
     )
+VigilanceArea.add_property(
+    "interventions",
+    lambda self: Intervention.vigilance_area_interventions(self),
+    _("Interventions"),
+)
 
 
 class InterventionStatus(StructureOrNoneRelated):

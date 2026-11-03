@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-06 09:03+0000\n"
+"POT-Creation-Date: 2026-10-14 14:26+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/api/de/>\n"
@@ -205,6 +205,27 @@ msgstr ""
 msgid "(deprecated) replaced by '%(field)s'."
 msgstr ""
 
+msgid "Filter by one or more portal id, comma-separated."
+msgstr ""
+
+msgid "Filter by practicability status, false=impracticable, true=practicable."
+msgstr ""
+
+msgid "Filter by one or more vigilance levels id, comma-separated."
+msgstr ""
+
+msgid "Filter by one or more types id, comma-separated."
+msgstr ""
+
+msgid "Exclude one or more types id, comma-separated."
+msgstr ""
+
+msgid "Filter active vigilance areas for a period. Must be setup with end_date. Format is YYYY-MM-JJ."
+msgstr ""
+
+msgid "Filter active vigilance areas for a period. Must be setup with start_date. Format is YYYY-MM-JJ."
+msgstr ""
+
 msgid "Filter by one or more type id, comma-separated."
 msgstr ""
 
@@ -236,9 +257,6 @@ msgid "Filter by one or more district id, comma-separated."
 msgstr ""
 
 msgid "Filter by one or more themes id, comma-separated."
-msgstr ""
-
-msgid "Filter by one or more portal id, comma-separated."
 msgstr ""
 
 msgid "Filter by some case-insensitive text contained in name, description teaser or description."
@@ -281,6 +299,18 @@ msgid "Filter objects created after or during date, format YYYY-MM-DD"
 msgstr ""
 
 msgid "Filter objects created before or during date, format YYYY-MM-DD"
+msgstr ""
+
+msgid "Filter by practicability status, true=practicable, false=impracticable."
+msgstr ""
+
+msgid "Filter treks that are practicable during the specified period. Expected date format: YYYY-MM-DD. By default, the period used is the current day."
+msgstr ""
+
+msgid "Filter by one or more vigilance area types id related to a trek, comma-separated."
+msgstr ""
+
+msgid "Exclude by one or more vigilance area types id related to a trek, comma-separated."
 msgstr ""
 
 msgid "Filter by minimum duration (hours)."

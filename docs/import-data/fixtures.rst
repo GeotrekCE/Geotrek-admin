@@ -63,6 +63,7 @@ Common imports
 
                 sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/basic.json
                 sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/licenses.json
+                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/celery-tasks.json
                 cp -r /opt/geotrek-admin/lib/python*/site-packages/geotrek/common/fixtures/upload/ /opt/geotrek-admin/var/media/upload/
 
     .. md-tab-item:: With Docker
@@ -71,6 +72,7 @@ Common imports
 
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/common/fixtures/basic.json
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/common/fixtures/licenses.json
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/common/fixtures/celery-tasks.json
 
 Core imports
 ~~~~~~~~~~~~~~~
@@ -236,12 +238,14 @@ Zoning imports
          .. code-block:: bash
 
                 sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/zoning/fixtures/basic.json
+                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/zoning/fixtures/vigilancearea.json
 
     .. md-tab-item:: With Docker
 
          .. code-block:: python
 
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/zoning/fixtures/basic.json
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/zoning/fixtures/vigilancearea.json
 
 Import after initial installation
 ----------------------------------

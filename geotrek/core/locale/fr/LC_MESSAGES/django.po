@@ -300,9 +300,6 @@ msgstr "KML"
 msgid "Not validated"
 msgstr "Non validé"
 
-msgid "External id"
-msgstr "ID externe"
-
 msgid "Draft mode"
 msgstr "Mode brouillon"
 

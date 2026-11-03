@@ -99,6 +99,9 @@ class CustomColumnsMixin:
         "CourseList": "outdoor_course_view",
         "CourseJsonList": "outdoor_course_view",
         "CourseFormatList": "outdoor_course_export",
+        "VigilanceAreaList": "vigilance_area_view",
+        "VigilanceAreaJsonList": "vigilance_area_view",
+        "VigilanceAreaFormatList": "vigilance_area_export",
     }
 
     @classmethod

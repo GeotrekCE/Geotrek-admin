@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 10:08+0000\n"
+"POT-Creation-Date: 2026-10-21 07:57+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -22,6 +22,18 @@ msgid "Publish (visible on Geotrek-rando)"
 msgstr ""
 
 msgid "Unpublish (hidden on Geotrek-rando)"
+msgstr ""
+
+msgid "If left empty, the code of the nearest parent that has one is used."
+msgstr ""
+
+msgid "If left empty, the pictogram of the nearest parent that has one is used."
+msgstr ""
+
+msgid "Color"
+msgstr ""
+
+msgid "Level 1 is considered the highest vigilance level."
 msgstr ""
 
 msgid "Zoning"
@@ -39,10 +51,49 @@ msgstr ""
 msgid "Restricted area"
 msgstr ""
 
-msgid "Restricted areas"
+msgid "Vigilance area type"
+msgstr ""
+
+msgid "Vigilance area impracticable"
+msgstr ""
+
+msgid "Vigilance area"
 msgstr ""
 
 msgid "Name"
+msgstr ""
+
+msgid "Provider"
+msgstr ""
+
+msgid "Vigilance level"
+msgstr ""
+
+msgid "After"
+msgstr ""
+
+msgid "Before"
+msgstr ""
+
+msgid "Ongoing period"
+msgstr ""
+
+msgid "Active today"
+msgstr ""
+
+msgid "All week"
+msgstr ""
+
+msgid "Active days"
+msgstr ""
+
+msgid "Days of the week when the vigilance area is active. Empty equals all week."
+msgstr ""
+
+msgid "Periods"
+msgstr ""
+
+msgid "Restricted areas"
 msgstr ""
 
 msgid "Published"
@@ -60,10 +111,124 @@ msgstr ""
 msgid "Districts"
 msgstr ""
 
+msgid "Vigilance area types"
+msgstr ""
+
+msgid "Level"
+msgstr ""
+
+msgid "Vigilance levels"
+msgstr ""
+
+msgid "Description"
+msgstr ""
+
+msgid "Impracticable"
+msgstr ""
+
+msgid "Tick this box if the terrain is impracticable due to the vigilance."
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Practical information"
+msgstr ""
+
+msgid "External information URL"
+msgstr ""
+
+msgid "Portals"
+msgstr ""
+
+msgid "Public information distribution portals. Leave blank to distribute to all portals, without distinction."
+msgstr ""
+
+msgid "Sources"
+msgstr ""
+
+msgid "Private comment (not published)"
+msgstr ""
+
+msgid "Always active"
+msgstr ""
+
+msgid "Vigilance areas"
+msgstr ""
+
+msgid "Start date"
+msgstr ""
+
+msgid "End date"
+msgstr ""
+
+msgid "Annual recurrence"
+msgstr ""
+
+msgid "Start date is after end date"
+msgstr ""
+
+#, python-format
+msgid "From %s to %s"
+msgstr ""
+
+#, python-format
+msgid "From %s"
+msgstr ""
+
+#, python-format
+msgid " - days %s"
+msgstr ""
+
+msgid " (annual)"
+msgstr ""
+
+msgid "Vigilance area period"
+msgstr ""
+
+msgid "Vigilance area periods"
+msgstr ""
+
 #, python-brace-format
 msgid "Invalid geometry for field '{src}'"
 msgstr ""
 
 #, python-brace-format
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
+msgstr ""
+
+msgid "Yes"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Thumbnail"
+msgstr ""
+
+msgid "From"
+msgstr ""
+
+msgid "Every days"
+msgstr ""
+
+msgid "This area is always active"
+msgstr ""
+
+msgid "Add a new period"
+msgstr ""
+
+msgid "Delete this period"
+msgstr ""
+
+msgid "Practicable"
+msgstr ""
+
+msgid "start date and end date of the period must be configured"
+msgstr ""
+
+msgid "Date must have format YYYY-MM-DD"
 msgstr ""

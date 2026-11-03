@@ -44,6 +44,7 @@ setup(
         "celery",
         "redis",
         "django-celery-results",
+        "django-celery-beat",
         "drf-extensions",
         "django-colorfield",
         "Fiona",

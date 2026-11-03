@@ -1,0 +1,143 @@
+[
+    {
+        "pk": 1,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Pastoralism",
+            "name_fr": "Pastoralisme",
+            "name_en": "Pastoralism",
+            "code": "PAST"
+        }
+    },
+    {
+        "pk": 2,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Sensitive area",
+            "name_fr": "Espèce sensible",
+            "name_en": "Sensitive area",
+            "code": "ESPS"
+        }
+    },
+    {
+        "pk": 3,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Sports event",
+            "name_fr": "Manifestation sportive",
+            "name_en": "Sports event",
+            "code": "MASP"
+        }
+    },
+    {
+        "pk": 4,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Fire",
+            "name_fr": "Incendie",
+            "name_en": "Fire",
+            "code": "INCE"
+        }
+    },
+    {
+        "pk": 5,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Landslide",
+            "name_fr": "Éboulement",
+            "name_en": "Landslide",
+            "code": "EBOU"
+        }
+    },
+    {
+        "pk": 6,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Avalanche",
+            "name_fr": "Avalanche",
+            "name_en": "Avalanche",
+            "code": "AVAL"
+        }
+    },
+    {
+        "pk": 7,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Flood",
+            "name_fr": "Crue",
+            "name_en": "Flood",
+            "code": "CRUE"
+        }
+    },
+    {
+        "pk": 8,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Slash-and-burn",
+            "name_fr": "Écobuage",
+            "name_en": "Slash-and-burn",
+            "code": "ECOB"
+        }
+    },
+    {
+        "pk": 9,
+        "model": "zoning.vigilanceareatype",
+        "fields": {
+            "parent": null,
+            "sib_order": 1,
+            "name": "Hunting",
+            "name_fr": "Chasse",
+            "name_en": "Hunting",
+            "code": "CHAS"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "zoning.vigilancelevel",
+        "fields": {
+            "name": "Danger",
+            "name_fr": "Danger",
+            "name_en": "Danger",
+            "color": "#901A1A",
+            "level": 1
+        }
+    },
+    {
+        "pk": 2,
+        "model": "zoning.vigilancelevel",
+        "fields": {
+            "name": "Warning",
+            "name_fr": "Mise en garde",
+            "name_en": "Warning",
+            "color": "#955a02",
+            "level": 2
+        }
+    },
+    {
+        "pk": 3,
+        "model": "zoning.vigilancelevel",
+        "fields": {
+            "name": "Advise",
+            "name_fr": "Conseil",
+            "name_en": "Advise",
+            "color": "#1257A8",
+            "level": 3
+        }
+    }
+]

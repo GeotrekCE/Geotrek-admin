@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-02-12 10:08+0000\n"
+"POT-Creation-Date: 2026-10-21 07:57+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/fr/>\n"
@@ -24,6 +24,18 @@ msgstr "Publier (visible sur Geotrek-rando)"
 msgid "Unpublish (hidden on Geotrek-rando)"
 msgstr "Dépublier (caché sur Geotrek-rando)"
 
+msgid "If left empty, the code of the nearest parent that has one is used."
+msgstr "Si laissé vide, le code du plus proche parent en ayant un est utilisé."
+
+msgid "If left empty, the pictogram of the nearest parent that has one is used."
+msgstr "Si laissé vide, le pictogramme du plus proche parent en ayant un est utilisé."
+
+msgid "Color"
+msgstr "Couleur"
+
+msgid "Level 1 is considered the highest vigilance level."
+msgstr "Le niveau 1 est considéré comme le plus fort niveau de vigilance."
+
 msgid "Zoning"
 msgstr "Zonage"
 
@@ -39,11 +51,50 @@ msgstr "Type de zonage"
 msgid "Restricted area"
 msgstr "Zone réglementaire"
 
-msgid "Restricted areas"
-msgstr "Zones réglementaires"
+msgid "Vigilance area type"
+msgstr "Type de zone de vigilance"
+
+msgid "Vigilance area impracticable"
+msgstr "Zone de vigilance impraticable"
+
+msgid "Vigilance area"
+msgstr "Zone de vigilance"
 
 msgid "Name"
 msgstr "Nom"
+
+msgid "Provider"
+msgstr "Fournisseur"
+
+msgid "Vigilance level"
+msgstr "Niveau de vigilance"
+
+msgid "After"
+msgstr "Après"
+
+msgid "Before"
+msgstr "Avant"
+
+msgid "Ongoing period"
+msgstr "Période en cours"
+
+msgid "Active today"
+msgstr "Actif aujourd'hui"
+
+msgid "All week"
+msgstr "Toute la semaine"
+
+msgid "Active days"
+msgstr "Jours actifs"
+
+msgid "Days of the week when the vigilance area is active. Empty equals all week."
+msgstr "Jours de la semaine pendant lesquels la zone de vigilance est active. Vide signifie toute la semaine."
+
+msgid "Periods"
+msgstr "Périodes"
+
+msgid "Restricted areas"
+msgstr "Zones réglementaires"
 
 msgid "Published"
 msgstr "Publié"
@@ -60,6 +111,84 @@ msgstr "Communes"
 msgid "Districts"
 msgstr "Secteurs"
 
+msgid "Vigilance area types"
+msgstr "Types de zone de vigilance"
+
+msgid "Level"
+msgstr "Niveau"
+
+msgid "Vigilance levels"
+msgstr "Niveaux de vigilance"
+
+msgid "Description"
+msgstr "Description"
+
+msgid "Impracticable"
+msgstr "Impraticable"
+
+msgid "Tick this box if the terrain is impracticable due to the vigilance."
+msgstr "Cochez cette case si le terrain est impraticable en raison de la vigilance."
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Practical information"
+msgstr "Informations pratiques"
+
+msgid "External information URL"
+msgstr "URL d'information externe"
+
+msgid "Portals"
+msgstr "Portails"
+
+msgid "Public information distribution portals. Leave blank to distribute to all portals, without distinction."
+msgstr "Portails de diffusion publique de l'information. Laisser vide pour diffuser à tous les portails, sans distinction."
+
+msgid "Sources"
+msgstr "Sources"
+
+msgid "Private comment (not published)"
+msgstr "Commentaire privé (non publié)"
+
+msgid "Always active"
+msgstr "Toujours actif"
+
+msgid "Vigilance areas"
+msgstr "Zones de vigilance"
+
+msgid "Start date"
+msgstr "Date de début"
+
+msgid "End date"
+msgstr "Date de fin"
+
+msgid "Annual recurrence"
+msgstr "Récurrence annuelle"
+
+msgid "Start date is after end date"
+msgstr "La date de début est après la date de fin"
+
+#, python-format
+msgid "From %s to %s"
+msgstr "Du %s au %s"
+
+#, python-format
+msgid "From %s"
+msgstr "À partir du %s"
+
+#, python-format
+msgid " - days %s"
+msgstr " - jours %s "
+
+msgid " (annual)"
+msgstr " (annuelle)"
+
+msgid "Vigilance area period"
+msgstr "Période de la zone de vigilance"
+
+msgid "Vigilance area periods"
+msgstr "Périodes de la zone de vigilance"
+
 #, python-brace-format
 msgid "Invalid geometry for field '{src}'"
 msgstr "La géométrie du champ '{src}' est invalide"
@@ -67,3 +196,39 @@ msgstr "La géométrie du champ '{src}' est invalide"
 #, python-brace-format
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
 msgstr "Le type de géométrie du champ '{src}' est invalide. Il devrait être (Multi)Polygon, pas {geom_type}"
+
+msgid "Yes"
+msgstr "Oui"
+
+msgid "No"
+msgstr "Non"
+
+msgid "None"
+msgstr "Aucun(e)"
+
+msgid "Thumbnail"
+msgstr "Miniature"
+
+msgid "From"
+msgstr "À partir du"
+
+msgid "Every days"
+msgstr "Tous les jours"
+
+msgid "This area is always active"
+msgstr "Cette zone est toujours active"
+
+msgid "Add a new period"
+msgstr "Ajouter une nouvelle période"
+
+msgid "Delete this period"
+msgstr "Supprimer cette période"
+
+msgid "Practicable"
+msgstr "Praticable"
+
+msgid "start date and end date of the period must be configured"
+msgstr "La date de début et la date de fin de la période doivent être configurées"
+
+msgid "Date must have format YYYY-MM-DD"
+msgstr "La date doit être au format AAAA-MM-JJ"

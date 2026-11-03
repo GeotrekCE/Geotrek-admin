@@ -23,8 +23,6 @@ ALTER TABLE core_path ALTER COLUMN descent SET DEFAULT 0;
 ALTER TABLE core_path ALTER COLUMN min_elevation SET DEFAULT 0;
 ALTER TABLE core_path ALTER COLUMN max_elevation SET DEFAULT 0;
 ALTER TABLE core_path ALTER COLUMN slope SET DEFAULT 0.0;
-ALTER TABLE core_path ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE core_path ALTER COLUMN date_update SET DEFAULT now();
 
 -- structure
 
@@ -44,8 +42,6 @@ ALTER TABLE core_topology ALTER COLUMN descent SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN min_elevation SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN max_elevation SET DEFAULT 0;
 ALTER TABLE core_topology ALTER COLUMN slope SET DEFAULT 0.0;
-ALTER TABLE core_topology ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE core_topology ALTER COLUMN date_update SET DEFAULT now();
 ALTER TABLE core_topology ALTER COLUMN deleted SET DEFAULT False;
 
 
