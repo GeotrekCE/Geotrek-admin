@@ -11,6 +11,12 @@ from geotrek.outdoor.tests.factories import CourseFactory, RatingFactory, SiteFa
 class SiteFormTest(TestCase):
     def test_ratings_save(self):
         user = UserFactory()
+        root = SiteFactory(name="Root")
+        child = SiteFactory(name="Child", parent=root)
+        form = SiteForm(user=user)
+        self.assertEqual(form.fields["parent"].label_from_instance(root), " Root")
+        self.assertEqual(form.fields["parent"].label_from_instance(child), "--- Child")
+        user = UserFactory()
         rating = RatingFactory()
         site = SiteFactory(practice=rating.scale.practice)
         form = SiteForm(
