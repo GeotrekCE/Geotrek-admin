@@ -13,6 +13,7 @@ CHANGELOG
 
 * Add module Vigilance area
   * After an upgrade, run the command ``geotrek loaddata vigilancearea`` to load the initial data for this module. (or refer to documentation for docker alternative)
+  * Docker user should read install/docker/docker-compose.yml and add beat container manually
 
 
 2.126.6         (2026-10-29)
