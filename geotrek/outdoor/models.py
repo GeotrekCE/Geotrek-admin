@@ -341,23 +341,9 @@ class Site(
         return self.name
 
     @property
-    def level(self):
-        return (self.depth - 1) if self.depth else 0
-
-    def is_root_node(self):
-        return self.is_root()
-
-    def get_ancestors(self, include_self=False):
-        qs = super().get_ancestors()
-        if include_self:
-            return self.__class__.objects.filter(
-                models.Q(pk=self.pk) | models.Q(pk__in=qs)
-            )
-        return qs
-
-    @property
     def name_display(self):
-        return "- " * self.level + super().name_display
+        indent = (self.depth - 1) if self.depth else 0
+        return "- " * indent + super().name_display
 
     def distance(self, to_cls):
         """Distance to associate this site to another class"""
@@ -498,9 +484,9 @@ class Site(
 
         if not self.path:
             if self.parent:
-                Site.objects.add_child(self.parent, instance=self)
+                self.parent.add_child(instance=self)
             else:
-                Site.objects.add_root(instance=self)
+                Site.add_root(instance=self)
             self.refresh_from_db()
             return
 
@@ -514,20 +500,16 @@ class Site(
                 new_parent_id = self.parent_id
                 new_parent = self.parent
                 if self.parent:
-                    Site.objects.move(
-                        self,
+                    self.move(
                         self.parent,
-                        pos="sorted-child" if self.node_order_by else "last-child",
+                        pos="sorted-child",
                     )
                 else:
                     first_root = Site.get_first_root_node()
                     if first_root and first_root.pk != self.pk:
-                        Site.objects.move(
-                            self,
+                        self.move(
                             first_root,
-                            pos="sorted-sibling"
-                            if self.node_order_by
-                            else "first-sibling",
+                            pos="sorted-sibling",
                         )
                 self.parent_id = new_parent_id
                 self.parent = new_parent
@@ -556,13 +538,6 @@ class Site(
     @classmethod
     def tourism_sites(cls, tourism_obj, queryset=None):
         return intersecting(queryset_or_model(queryset, cls), obj=tourism_obj)
-
-    def duplicate(self, **kwargs):
-        """
-        Duplicate the site and ensure that a duplicated root site gets its own tree.
-        https://github.com/GeotrekCE/Geotrek-admin/issues/5461
-        """
-        return super().duplicate(**kwargs)
 
 
 Path.add_property("sites", lambda self: intersecting(Site, self), _("Sites"))

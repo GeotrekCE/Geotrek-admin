@@ -127,34 +127,27 @@ class SiteTest(TestCase):
         self.assertEqual(clone.get_root(), self.site_2.get_root())
         self.assertEqual(list(self.site_2.get_ancestors()), [self.site_1])
 
-    def test_site_tree_level_and_is_root(self):
+    def test_site_tree_depth_and_is_root(self):
         root = SiteFactory.create(name="Root")
         child = SiteFactory.create(name="Child", parent=root)
-        self.assertEqual(root.level, 0)
-        self.assertTrue(root.is_root_node())
-        self.assertEqual(child.level, 1)
-        self.assertFalse(child.is_root_node())
-        unsaved = Site()
-        self.assertEqual(unsaved.level, 0)
+        self.assertEqual(root.depth, 1)
+        self.assertTrue(root.is_root())
+        self.assertEqual(child.depth, 2)
+        self.assertFalse(child.is_root())
 
     def test_site_get_ancestors(self):
         root = SiteFactory.create(name="Root")
         child = SiteFactory.create(name="Child", parent=root)
         grandchild = SiteFactory.create(name="Grandchild", parent=child)
-        self.assertEqual(
-            list(grandchild.get_ancestors(include_self=False)), [root, child]
-        )
-        self.assertEqual(
-            list(grandchild.get_ancestors(include_self=True)), [root, child, grandchild]
-        )
+        self.assertEqual(list(grandchild.get_ancestors()), [root, child])
 
     def test_site_move_to_root(self):
         root = SiteFactory.create(name="Root")
         child = SiteFactory.create(name="Child", parent=root)
         child.parent = None
         child.save()
-        self.assertTrue(child.is_root_node())
-        self.assertEqual(child.level, 0)
+        self.assertTrue(child.is_root())
+        self.assertEqual(child.depth, 1)
         self.assertIsNone(child.parent)
 
     def test_site_move_to_another_parent(self):
@@ -164,7 +157,7 @@ class SiteTest(TestCase):
         child.parent = root2
         child.save()
         self.assertEqual(child.parent, root2)
-        self.assertEqual(child.level, 1)
+        self.assertEqual(child.depth, 2)
         self.assertEqual(list(child.get_ancestors()), [root2])
 
     def test_site_delete_resets_pk(self):
