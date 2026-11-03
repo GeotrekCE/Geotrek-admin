@@ -10,6 +10,7 @@ from django.db import IntegrityError, connection
 from django.test import TestCase, override_settings
 
 from geotrek.authent.models import Structure
+from geotrek.core.management.commands.loadpaths import Command as LoadPathsCommand
 from geotrek.core.models import Path, PathAggregation
 from geotrek.core.tests.factories import PathFactory, TopologyFactory
 from geotrek.trekking.tests.factories import POIFactory, TrekFactory
@@ -266,6 +267,12 @@ class LoadPathsCommandTest(TestCase):
         value = Path.objects.first()
         self.assertEqual(value.name, "lulu")
         self.assertEqual(value.structure, self.structure)
+
+    def test_check_srid_geos_geometry_without_srid(self):
+        cmd = LoadPathsCommand()
+        geom = LineString((0, 0), (1, 1))
+        cmd.check_srid(2154, geom)
+        self.assertEqual(geom.srid, 2154)
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")

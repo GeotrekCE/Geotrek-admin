@@ -920,7 +920,7 @@ class AtomParser(Parser):
 
     def flatten_fields(self, fields):
         return reduce(
-            lambda x, y: x + (list(y) if hasattr(y, "__iter__") else [y]),
+            lambda x, y: x + (list(y) if isinstance(y, (list, tuple)) else [y]),
             fields.values(),
             [],
         )
@@ -1589,6 +1589,7 @@ class GeotrekAggregatorParser:
         ),
         "Site": ("geotrek.outdoor.parsers", "GeotrekSiteParser"),
         "Course": ("geotrek.outdoor.parsers", "GeotrekCourseParser"),
+        "VigilanceArea": ("geotrek.zoning.parsers", "GeotrekVigilanceAreaParser"),
     }
 
     invalid_model_topology = ["Trek", "POI", "Service", "Signage", "Infrastructure"]

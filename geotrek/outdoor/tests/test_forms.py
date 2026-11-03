@@ -195,3 +195,30 @@ class CourseItinerancyTestCase(TestCase):
             "Cannot add children because this course is itself a child.",
         ):
             form.clean_children_course()
+
+    def test_save_ordered_children_and_delete_removed(self):
+        site = SiteFactory()
+        parent = CourseFactory(name="P")
+        parent.parent_sites.set([site])
+        OrderedCourseChild.objects.create(parent=parent, child=self.course1, order=0)
+        form = CourseForm(
+            instance=parent,
+            user=self.user,
+            data={
+                "name_en": "P",
+                "geom": '{"type": "GeometryCollection", "geometries": [{"type": "Point", "coordinates": [3, 45]}]}',
+                "parent_sites": [str(site.pk)],
+                "children_course": [str(self.course2.pk), str(self.course3.pk)],
+                "hidden_ordered_children": f"{self.course2.pk},{self.course3.pk}",
+            },
+        )
+        self.assertTrue(form.is_valid(), form.errors)
+        form.save()
+        self.assertEqual(
+            list(
+                parent.course_children.order_by("order").values_list(
+                    "child_id", flat=True
+                )
+            ),
+            [self.course2.pk, self.course3.pk],
+        )

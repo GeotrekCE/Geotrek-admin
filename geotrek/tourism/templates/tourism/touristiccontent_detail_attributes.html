@@ -61,7 +61,8 @@
         </tr>
         <tr>
             <th>{{ object|verbose:"label_accessibility" }}</th>
-            <td>{{ object.label_accessibility }}</td>
+            <td>{% if object.label_accessibility %}{{ object.label_accessibility }}
+                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}</td>
         </tr>
         <tr>
             <th>{% trans "Source" %}</th>
@@ -73,16 +74,6 @@
             <th>{% trans "Portal" %}</th>
             <td>
                 {% valuelist object.portal.all %}
-            </td>
-        </tr>
-        <tr>
-            <th>{% trans "External id" %}</th>
-            <td>{{ object.get_eid }}</td>
-        </tr>
-        <tr>
-            <th>{% trans "Provider" %}</th>
-            <td>{% if object.provider %}{{ object.provider.name|safe }}
-                {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
         </tr>
         <tr>
@@ -101,9 +92,9 @@
             	{% endif %}
             </td>
         </tr>
-        {% include "common/publication_info_fragment.html" %}
-        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
-
+    {% include "common/fragments/publication_info.html" %}
+    {% include "common/fragments/provider_eid.html" %}
+    {% include "common/fragments/trackinfo.html" %}
     {{ block.super }}
 {% endblock attributes %}

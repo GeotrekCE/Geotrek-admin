@@ -675,3 +675,21 @@ class ReduceSaveSettingsTestCase(TestCase):
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(AccessibilityAttachment.objects.count(), 1)
+
+    @mock.patch("paperclip.validators.FileMimetypeValidator.__call__")
+    def test_attachment_deleted_without_new_file(self, mock_validator):
+        self.client.force_login(self.superuser)
+        attachment = AttachmentAccessibilityFactory.create(content_object=self.object)
+        os.remove(attachment.attachment_accessibility_file.path)
+        response = self.client.post(
+            update_url_for_obj(attachment),
+            data={
+                "creator": self.superuser,
+                "title": "A title",
+                "author": "newauthor",
+                "legend": "A legend",
+                "info_accessibility": "slope",
+                "next": f"{self.object.get_detail_url()}?tab=attachments",
+            },
+        )
+        self.assertEqual(response.status_code, 302)

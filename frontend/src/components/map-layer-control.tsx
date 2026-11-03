@@ -36,7 +36,7 @@ export default function MapLayerControl({
       activeStyleId={activeStyleId}
       theme={theme === "system" ? "auto" : theme}
       position={position ?? "top-right"}
-      onBeforeStyleChange={(from, to) => {
+      onBeforeStyleChange={async (from, to) => {
         if (!map.current) return
         if (!from.styleUrl.startsWith("offline-pmtiles://")) {
           map.current.getMap().setStyle({
@@ -46,10 +46,24 @@ export default function MapLayerControl({
           })
         }
         if (from.styleUrl.startsWith("offline-pmtiles://")) {
-          offlineManager.unloadMap(map.current.getMap(), from.id)
+          offlineManager.toggleMap(map.current.getMap(), from.id, false)
         }
         if (to.styleUrl.startsWith("offline-pmtiles://")) {
-          offlineManager.loadMap(map.current.getMap(), to.id)
+          await offlineManager.loadMap(map.current.getMap(), to.id)
+          const offlineLayer = map.current
+            .getMap()
+            .getStyle()
+            .layers.find((item) =>
+              [`${to.id}-raster`, `${to.id}-vector`].includes(item.id)
+            )?.id
+          if (offlineLayer) {
+            map.current
+              .getMap()
+              .moveLayer(
+                offlineLayer,
+                map.current.getMap().getStyle().layers[0].id
+              )
+          }
         }
         if (!to.styleUrl.startsWith("offline-pmtiles://")) {
           map.current.getMap().setStyle(to.styleUrl)

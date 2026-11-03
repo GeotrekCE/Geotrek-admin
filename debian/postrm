@@ -5,7 +5,7 @@
 
 if [ "$1" = "purge" ]; then
 	rm -rf /opt/geotrek-admin
-	deluser --quiet geotrek || true
+	userdel geotrek 2>/dev/null || deluser --quiet geotrek 2>/dev/null || true
 fi
 
 if [ "$1" = "remove" ] || [ "$1" = "purge" ]; then
@@ -28,7 +28,7 @@ fi
 
 if [ "$1" = "purge" ]; then
 	if which deb-systemd-helper >/dev/null 2>&1; then
-		for unit in geotrek.service geotrek-ui.service geotrek-api.service geotrek-celery.service; do
+		for unit in geotrek.service geotrek-ui.service geotrek-api.service geotrek-celery.service geotrek-celery-beat.service; do
 			deb-systemd-helper purge "$unit" >/dev/null 2>&1 || true
 		done
 	fi
@@ -36,6 +36,11 @@ fi
 
 if [ -d /run/systemd/system ]; then
 	systemctl --system daemon-reload >/dev/null 2>&1 || true
+fi
+
+if [ "$1" = "purge" ] && [ -e /usr/share/debconf/confmodule ]; then
+	. /usr/share/debconf/confmodule
+	db_purge
 fi
 
 exit 0

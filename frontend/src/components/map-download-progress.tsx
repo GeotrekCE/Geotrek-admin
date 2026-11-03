@@ -1,7 +1,7 @@
 import * as React from "react"
 import type { Dispatch, SetStateAction } from "react"
 import { Check, Download, X } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 import type { SettingsSchemaProps } from "@/schemas/settings"
 import { Progress } from "@/components/ui/progress"
 import { Sheet, SheetContent, SheetFooter } from "@/components/ui/sheet"

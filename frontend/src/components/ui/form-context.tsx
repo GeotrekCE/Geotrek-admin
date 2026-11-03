@@ -31,7 +31,7 @@ import {
   FieldSet as DefaultFieldSet,
   fieldVariants,
 } from "@/components/ui/field"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 // ---------------------------------------------------------------------------
 // 1. Contexts
@@ -41,8 +41,21 @@ const {
   fieldContext,
   formContext,
   useFieldContext: _useFieldContext,
-  useFormContext,
+  useFormContext: _useFormContext,
 } = createFormHookContexts()
+
+type AppFieldRenderProps = {
+  name: string
+  mode?: "value" | "array"
+  children: (field: AnyFieldApi) => React.ReactNode
+}
+
+type AppFormContext = ReturnType<typeof _useFormContext> & {
+  AppField: React.ComponentType<AppFieldRenderProps>
+  AppForm: React.ComponentType<React.PropsWithChildren>
+}
+
+const useFormContext = () => _useFormContext() as AppFormContext
 
 type FormItemContextValue = {
   id: string

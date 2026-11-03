@@ -29,7 +29,7 @@ export function CheckboxField({ label, description }: CheckboxFieldProps) {
           id={field.id ?? id}
           checked={value}
           onCheckedChange={(checked) => {
-            field.handleChange(checked as boolean)
+            field.handleChange(checked)
             field.handleBlur()
           }}
           aria-invalid={isTouched && !isValid}

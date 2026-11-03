@@ -22,6 +22,7 @@ from geotrek.altimetry.models import AltimetryMixin
 from geotrek.authent.decorators import same_structure_required
 from geotrek.common.mixins.forms import FormsetMixin
 from geotrek.common.mixins.views import (
+    AttachmentsMixin,
     BelongStructureMixin,
     CustomColumnsMixin,
     ReferencesMixin,
@@ -232,7 +233,7 @@ class InterventionDelete(MapEntityDelete):
         return super().dispatch(*args, **kwargs)
 
 
-class InterventionViewSet(GeotrekMapentityViewSet):
+class InterventionViewSet(AttachmentsMixin, GeotrekMapentityViewSet):
     model = Intervention
     serializer_class = InterventionSerializer
     geojson_serializer_class = InterventionGeojsonSerializer

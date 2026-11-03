@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router"
 import { buttonVariants } from "@/components/ui/button"
 import Header from "@/components/header"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 
 export default function NotFound() {
   return (

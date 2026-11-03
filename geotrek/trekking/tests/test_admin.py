@@ -7,7 +7,12 @@ from geotrek.authent.tests.factories import TrekkingManagerFactory
 
 from ..admin import RatingAdmin
 from ..models import Rating, Trek
-from .factories import DifficultyLevelFactory, RatingFactory, TrekFactory
+from .factories import (
+    DifficultyLevelFactory,
+    RatingFactory,
+    ServiceTypeFactory,
+    TrekFactory,
+)
 
 
 class DifficultyLevelTest(AuthentFixturesTest):
@@ -61,6 +66,20 @@ class DifficultyLevelTest(AuthentFixturesTest):
         trek = Trek.objects.get(pk=self.trek.pk)
         self.assertNotEqual(trek.difficulty, self.difficulty)
         self.assertEqual(trek.difficulty_id, 4)
+
+    def test_change_difficulty_without_changing_id(self):
+        change_url = reverse(
+            "admin:trekking_difficultylevel_change", args=[self.difficulty.pk]
+        )
+        response = self.client.post(
+            change_url, {"id": self.difficulty.id, "difficulty_en": "Renamed"}
+        )
+        self.assertEqual(response.status_code, 302)
+
+    def test_service_type_admin_changelist_practices_display(self):
+        ServiceTypeFactory.create()
+        resp = self.client.get(reverse("admin:trekking_servicetype_changelist"))
+        self.assertEqual(resp.status_code, 200)
 
 
 class DeleteObjectTest(AuthentFixturesTest):

@@ -2,8 +2,68 @@
 CHANGELOG
 =========
 
-2.126.2+dev     (XXXX-XX-XX)
+2.127.0+dev     (XXXX-XX-XX)
 ----------------------------
+
+
+2.127.0         (2026-11-03)
+----------------------------
+
+**Bug fixes**
+
+* Fix the search bar in the admin section
+
+**Features**
+
+* Add module Vigilance area
+  * After an upgrade, run the command ``geotrek loaddata vigilancearea`` to load the initial data for this module. (or refer to documentation for docker alternative)
+  * Docker user should read install/docker/docker-compose.yml and add beat container manually
+
+
+2.126.6         (2026-10-29)
+----------------------------
+
+**Bug fixes**
+
+* Remove None display when the field is empty in touristic content and event detail sheet
+* Fix site duplication so that the tree ID change if the original site doesn't have a parent (refs #5461)
+
+**Improvements**
+
+* Adapt sync_translation_fields to allow adding new language
+
+
+2.126.5         (2026-10-16)
+----------------------------
+
+**Bug fixes**
+
+* Fix Filetype association in add-attachment endpoint
+
+**Improvements**
+
+* Prevent conventional no data value (-99999) in raster to be used in altimetry data
+
+**Maintenance**
+
+* Add support for evolution of Suricate API: only lock reports when they are being handled
+
+
+2.126.4         (2026-10-07)
+----------------------------
+
+
+2.126.3         (2026-10-06)
+----------------------------
+
+**Improvements**
+
+* GTAM: Display the extent based on the GTA configuration and inform users of
+  the extent of the embedded data
+* GTAM: Users can upload photo attachments
+* GTAM: Added cluster layers and refactored the layer display mechanism
+* GTAM: Display of linear geometries
+* Allow to add multiple blades from signage form
 
 **Bug fixes**
 

@@ -1,7 +1,10 @@
+from unittest import mock
+
 from django.db.models import BooleanField
 from django.test import SimpleTestCase
 
 from geotrek.api.v2 import utils as api_utils
+from geotrek.api.v2.serializers import TouristicEventSerializer
 
 
 class FakeNotTranslatedPublishableModel:
@@ -77,3 +80,17 @@ class IsPublishedTestCase(SimpleTestCase):
                     instance, language=params.get("language")
                 )
                 self.assertEqual(result, params["expected"])
+
+    def test_build_url_without_server_name_in_context(self):
+        class DummySerializer:
+            context = {}
+
+        with self.assertRaisesMessage(
+            Exception, "Bad context. No server variable found in the request !"
+        ):
+            api_utils.build_url(DummySerializer(), "/media/test.png")
+
+    def test_touristic_event_serializer_get_type_none(self):
+        self.assertIsNone(
+            TouristicEventSerializer().get_type(mock.MagicMock(type=None))
+        )

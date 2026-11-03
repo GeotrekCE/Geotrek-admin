@@ -1,3 +1,4 @@
+import encodings
 import logging
 from copy import deepcopy
 
@@ -23,7 +24,6 @@ from modeltranslation.utils import build_localized_fieldname
 from geotrek.authent.models import (
     StructureOrNoneRelated,
     StructureRelated,
-    default_structure,
 )
 from geotrek.common.mixins.models import PublishableMixin
 from geotrek.common.models import (
@@ -68,6 +68,7 @@ class CommonForm(MapEntityForm):
         "RegulatorySensitiveAreaForm": "sensitivity_regulatory",
         "BladeForm": "blade",
         "ReportForm": "report",
+        "VigilanceAreaForm": "vigilance_area",
     }
 
     def deep_remove(self, fieldslayout, name):
@@ -312,10 +313,8 @@ class CommonForm(MapEntityForm):
             pass
         elif "structure" in self.fields:
             pass  # The form contains the structure field. Let django use its value.
-        elif self.user:
-            self.instance.structure = self.user.profile.structure
         else:
-            self.instance.structure = default_structure()
+            self.instance.structure = self.user.profile.structure
         return super().save(commit)
 
     @classmethod
@@ -388,11 +387,27 @@ class ImportSuricateForm(forms.Form):
         )
 
 
+def get_all_python_encodings():
+    aliases = set(encodings.aliases.aliases.values())
+
+    choices = sorted(
+        [
+            (alias.upper().replace("_", "-"), alias.upper().replace("_", "-"))
+            for alias in aliases
+        ]
+    )
+    return choices
+
+
 class ImportDatasetFormWithFile(ImportDatasetForm):
     file = forms.FileField(label=_("File"), required=True, widget=forms.FileInput)
     encoding = forms.ChoiceField(
         label=_("Encoding"),
-        choices=(("Windows-1252", "Windows-1252"), ("UTF-8", "UTF-8")),
+        choices=get_all_python_encodings(),
+        initial="UTF-8",
+        help_text=_(
+            "Try another encoding if special caracters are malformed. (ex: CP1252)"
+        ),
     )
 
     def __init__(self, *args, **kwargs):

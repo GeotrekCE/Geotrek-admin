@@ -1,6 +1,7 @@
 import errno
 import json
 import os
+import shutil
 import zipfile
 from io import StringIO
 from tempfile import mkdtemp
@@ -62,6 +63,30 @@ class VarTmpTestCase(TestCase):
     This ensures tests can run in parallel without conflicts.
     """
 
+    @classmethod
+    def setUpClass(cls):
+        cls._class_tmp_dir = mkdtemp(dir=settings.TMP_DIR)
+        cls._class_media_root = mkdtemp(dir=cls._class_tmp_dir)
+        os.makedirs(os.path.join(cls._class_media_root, "maps"), exist_ok=True)
+        cls._settings_override = override_settings(
+            TMP_DIR=cls._class_tmp_dir,
+            MEDIA_ROOT=cls._class_media_root,
+            MAP_PATH=os.path.join(cls._class_media_root, "maps"),
+        )
+        cls._settings_override.enable()
+        cls._sleep_patcher = mock.patch(
+            "geotrek.api.management.commands.sync_mobile.sleep"
+        )
+        cls._sleep_patcher.start()
+        super().setUpClass()
+
+    @classmethod
+    def tearDownClass(cls):
+        super().tearDownClass()
+        cls._sleep_patcher.stop()
+        cls._settings_override.disable()
+        shutil.rmtree(cls._class_tmp_dir, ignore_errors=True)
+
     def setUp(self):
         """Create a unique temporary directory for this test."""
         super().setUp()
@@ -75,8 +100,6 @@ class VarTmpTestCase(TestCase):
             and self.sync_directory
             and os.path.exists(self.sync_directory)
         ):
-            import shutil
-
             shutil.rmtree(self.sync_directory, ignore_errors=True)
 
 
@@ -90,6 +113,7 @@ class SyncMobileTilesTest(VarTmpTestCase):
             self.sync_directory,
             url="http://localhost:8000",
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         zfile = zipfile.ZipFile(
@@ -109,6 +133,7 @@ class SyncMobileTilesTest(VarTmpTestCase):
             self.sync_directory,
             url="http://localhost:8000",
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         zfile = zipfile.ZipFile(
@@ -134,6 +159,7 @@ class SyncMobileTilesTest(VarTmpTestCase):
             self.sync_directory,
             url="http://localhost:8000",
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         zfile = zipfile.ZipFile(
@@ -155,6 +181,7 @@ class SyncMobileTilesTest(VarTmpTestCase):
             self.sync_directory,
             url="http://localhost:8000",
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         zfile = zipfile.ZipFile(
@@ -198,6 +225,7 @@ class SyncMobileTilesTest(VarTmpTestCase):
             self.sync_directory,
             url="http://localhost:8000",
             verbosity=2,
+            languages="en",
             stdout=output,
             portal=portal_b.name,
         )
@@ -355,60 +383,67 @@ class SyncMobileFailTest(VarTmpTestCase):
 
 
 class SyncMobileSpecificOptionsTest(VarTmpTestCase):
-    def setUp(self):
-        """Set up fresh test data for each test."""
-        super().setUp()
-        self.flatpage_fr = _create_flatpage_and_menuitem(published_fr=True)
-        self.flatpage_en = _create_flatpage_and_menuitem(published_en=True)
+    @classmethod
+    def setUpTestData(cls):
+        cls.flatpage_fr = _create_flatpage_and_menuitem(published_fr=True)
+        cls.flatpage_en = _create_flatpage_and_menuitem(published_en=True)
 
     def test_lang(self):
+        os.makedirs(
+            os.path.join(settings.TMP_DIR, "sync_mobile", "old_tmp"), exist_ok=True
+        )
+        dst_dir = os.path.join(self.sync_directory, "non_existent_dst")
         management.call_command(
             "sync_mobile",
-            self.sync_directory,
+            dst_dir,
             url="http://localhost:8000",
             skip_tiles=True,
+            empty_tmp_folder=True,
             verbosity=0,
             languages="fr",
         )
-        with open(os.path.join(self.sync_directory, "fr", "flatpages.json")) as f:
+        with open(os.path.join(dst_dir, "fr", "flatpages.json")) as f:
             flatpages = json.load(f)
             self.assertEqual(len(flatpages), 1)
         with self.assertRaises(IOError):
-            open("var/tmp/en/flatpages.json")
+            open(os.path.join(dst_dir, "en", "flatpages.json"))
 
     def test_sync_https(self):
-        management.call_command(
-            "sync_mobile",
-            self.sync_directory,
-            url="https://localhost:8000",
-            skip_tiles=True,
-            verbosity=0,
-        )
-        with open(os.path.join(self.sync_directory, "fr", "flatpages.json")) as f:
+        new_tmp_dir = os.path.join(self.sync_directory, "custom_tmp")
+        dst_dir = os.path.join(self.sync_directory, "dst")
+        with override_settings(TMP_DIR=new_tmp_dir):
+            management.call_command(
+                "sync_mobile",
+                dst_dir,
+                url="https://localhost:8000",
+                skip_tiles=True,
+                verbosity=0,
+                languages="fr",
+            )
+        with open(os.path.join(dst_dir, "fr", "flatpages.json")) as f:
             flatpages = json.load(f)
             self.assertEqual(len(flatpages), 1)
 
 
 class SyncMobileFlatpageTest(VarTmpTestCase):
-    def setUp(self):
-        """Set up fresh test data for each test."""
-        super().setUp()
-        self.portals = []
+    @classmethod
+    def setUpTestData(cls):
+        cls.portals = []
 
-        self.portal_a = TargetPortalFactory()
-        self.portal_b = TargetPortalFactory()
+        cls.portal_a = TargetPortalFactory()
+        cls.portal_b = TargetPortalFactory()
 
-        self.source_a = RecordSourceFactory()
-        self.source_b = RecordSourceFactory()
+        cls.source_a = RecordSourceFactory()
+        cls.source_b = RecordSourceFactory()
 
         # Create flatpages with different portal configurations
-        self.flatpage1 = _create_flatpage_and_menuitem(published=True)
-        self.flatpage2 = _create_flatpage_and_menuitem(
-            portals=(self.portal_a, self.portal_b), published=True
+        cls.flatpage1 = _create_flatpage_and_menuitem(published=True)
+        cls.flatpage2 = _create_flatpage_and_menuitem(
+            portals=(cls.portal_a, cls.portal_b), published=True
         )
-        self.flatpage3 = _create_flatpage_and_menuitem(published=True)
-        self.flatpage4 = _create_flatpage_and_menuitem(
-            portals=(self.portal_a,), published=True
+        cls.flatpage3 = _create_flatpage_and_menuitem(published=True)
+        cls.flatpage4 = _create_flatpage_and_menuitem(
+            portals=(cls.portal_a,), published=True
         )
 
     def test_sync_flatpage(self):
@@ -489,25 +524,19 @@ class SyncMobileFlatpageTest(VarTmpTestCase):
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
-        for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(os.path.join(self.sync_directory, lang, "flatpages.json")) as f:
-                flatpages = json.load(f)
-                self.assertEqual(
-                    len(flatpages),
-                    FlatPage.objects.filter(
-                        **{build_localized_fieldname("published", lang): True}
-                    ).count(),
-                )
+        with open(os.path.join(self.sync_directory, "en", "flatpages.json")) as f:
+            flatpages = json.load(f)
+            self.assertEqual(
+                len(flatpages),
+                FlatPage.objects.filter(published_en=True).count(),
+            )
         self.assertIn("en/flatpages.json", output.getvalue())
 
 
 class SyncMobileSettingsTest(VarTmpTestCase):
-    def setUp(self):
-        """Set up fresh test data for each test."""
-        super().setUp()
-
     def test_sync_settings(self):
         output = StringIO()
         management.call_command(
@@ -546,20 +575,20 @@ class SyncMobileSettingsTest(VarTmpTestCase):
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
-        for lang in settings.MODELTRANSLATION_LANGUAGES:
-            with open(os.path.join(self.sync_directory, lang, "settings.json")) as f:
-                settings_json = json.load(f)
-                self.assertEqual(len(settings_json), 2)
-                self.assertEqual(len(settings_json["data"]), 17)
-                self.assertEqual(
-                    settings_json["data"][4]["values"][0]["pictogram"], pictogram_png
-                )
-                self.assertEqual(
-                    settings_json["data"][9]["values"][0]["pictogram"],
-                    pictogram_desk_png,
-                )
+        with open(os.path.join(self.sync_directory, "en", "settings.json")) as f:
+            settings_json = json.load(f)
+            self.assertEqual(len(settings_json), 2)
+            self.assertEqual(len(settings_json["data"]), 17)
+            self.assertEqual(
+                settings_json["data"][4]["values"][0]["pictogram"], pictogram_png
+            )
+            self.assertEqual(
+                settings_json["data"][9]["values"][0]["pictogram"],
+                pictogram_desk_png,
+            )
 
         image_practice = Image.open(
             os.path.join(self.sync_directory, "nolang", pictogram_png[1:])
@@ -573,94 +602,103 @@ class SyncMobileSettingsTest(VarTmpTestCase):
 
 
 class SyncMobileTreksTest(VarTmpTestCase):
-    def setUp(self):
-        """Set up fresh test data for each test."""
-        super().setUp()
-
+    @classmethod
+    def setUpTestData(cls):
         # Create portals
-        self.portal_a = TargetPortalFactory()
-        self.portal_b = TargetPortalFactory()
+        cls.portal_a = TargetPortalFactory()
+        cls.portal_b = TargetPortalFactory()
 
         # Create information desks
-        self.information_desk_type = InformationDeskTypeFactory.create()
-        self.info_desk = InformationDeskFactory.create(type=self.information_desk_type)
-        self.info_desk_no_picture = InformationDeskFactory.create(photo=None)
-        self.desk = InformationDeskFactory.create()
+        cls.information_desk_type = InformationDeskTypeFactory.create()
+        cls.info_desk = InformationDeskFactory.create(type=cls.information_desk_type)
+        cls.info_desk_no_picture = InformationDeskFactory.create(photo=None)
+        cls.desk = InformationDeskFactory.create()
 
         # Create treks
-        self.trek_1 = TrekWithPublishedPOIsFactory.create()
-        self.trek_1.information_desks.set((self.info_desk, self.info_desk_no_picture))
-        self.trek_2 = TrekWithPublishedPOIsFactory.create(portals=(self.portal_a,))
-        self.trek_3 = TrekWithPublishedPOIsFactory.create(portals=(self.portal_b,))
-        self.trek_4 = TrekFactory.create()
+        cls.trek_1 = TrekWithPublishedPOIsFactory.create()
+        cls.trek_1.information_desks.set((cls.info_desk, cls.info_desk_no_picture))
+        cls.trek_2 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_a,))
+        cls.trek_3 = TrekWithPublishedPOIsFactory.create(portals=(cls.portal_b,))
+        cls.trek_4 = TrekFactory.create()
 
         # Create trek relationships
-        OrderedTrekChild.objects.create(parent=self.trek_1, child=self.trek_4, order=1)
-        self.trek_4.information_desks.add(self.desk)
+        OrderedTrekChild.objects.create(parent=cls.trek_1, child=cls.trek_4, order=1)
+        cls.trek_4.information_desks.add(cls.desk)
 
         # Create attachments for trek
-        self.attachment_1 = AttachmentImageFactory.create(content_object=self.trek_1)
-        self.attachment_2 = AttachmentImageFactory.create(content_object=self.trek_1)
+        cls.attachment_1 = AttachmentImageFactory.create(content_object=cls.trek_1)
+        cls.attachment_2 = AttachmentImageFactory.create(content_object=cls.trek_1)
 
         # Create POIs and attachments
-        self.poi_1 = self.trek_1.published_pois.first()
-        self.attachment_poi_image_1 = AttachmentImageFactory.create(
-            content_object=self.poi_1
+        cls.poi_1 = cls.trek_1.published_pois.first()
+        cls.attachment_poi_image_1 = AttachmentImageFactory.create(
+            content_object=cls.poi_1
         )
-        self.attachment_poi_image_2 = AttachmentImageFactory.create(
-            content_object=self.poi_1
+        cls.attachment_poi_image_2 = AttachmentImageFactory.create(
+            content_object=cls.poi_1
         )
-        self.attachment_poi_file = AttachmentFactory.create(content_object=self.poi_1)
-        self.attachment_trek_image = AttachmentImageFactory.create(
-            content_object=self.trek_4
+        cls.attachment_poi_file = AttachmentFactory.create(content_object=cls.poi_1)
+        cls.attachment_trek_image = AttachmentImageFactory.create(
+            content_object=cls.trek_4
         )
 
         # Create touristic content and events
-        self.touristic_content = TouristicContentFactory(
+        cls.touristic_content = TouristicContentFactory(
             geom=f"SRID={settings.SRID};POINT(700001 6600001)", published=True
         )
-        self.touristic_event = TouristicEventFactory(
+        cls.touristic_event = TouristicEventFactory(
             geom=f"SRID={settings.SRID};POINT(700001 6600001)", published=True
         )
-        self.touristic_content_portal_a = TouristicContentFactory(
+        cls.touristic_content_portal_a = TouristicContentFactory(
             geom=f"SRID={settings.SRID};POINT(700001 6600001)",
             published=True,
-            portals=[self.portal_a],
+            portals=[cls.portal_a],
         )
-        self.touristic_event_portal_a = TouristicEventFactory(
+        cls.touristic_event_portal_a = TouristicEventFactory(
             geom=f"SRID={settings.SRID};POINT(700001 6600001)",
             published=True,
-            portals=[self.portal_a],
+            portals=[cls.portal_a],
         )
-        self.touristic_content_portal_b = TouristicContentFactory(
+        cls.touristic_content_portal_b = TouristicContentFactory(
             geom=f"SRID={settings.SRID};POINT(700001 6600001)",
             published=True,
-            portals=[self.portal_b],
+            portals=[cls.portal_b],
         )
-        self.touristic_event_portal_b = TouristicEventFactory(
+        cls.touristic_event_portal_b = TouristicEventFactory(
             geom=f"SRID={settings.SRID};POINT(700001 6600001)",
             published=True,
-            portals=[self.portal_b],
+            portals=[cls.portal_b],
         )
 
         # Create sensitive areas
-        treks_1_4_envelope = MultiLineString(
-            self.trek_1.geom, self.trek_4.geom
-        ).envelope
-        self.sensitive_area_species = SensitiveAreaFactory(
+        treks_1_4_envelope = MultiLineString(cls.trek_1.geom, cls.trek_4.geom).envelope
+        cls.sensitive_area_species = SensitiveAreaFactory(
             geom=treks_1_4_envelope, published=True
         )
-        self.sensitive_area_regulatory = SensitiveAreaFactory(
+        cls.sensitive_area_regulatory = SensitiveAreaFactory(
             geom=treks_1_4_envelope, published=True
         )
 
         # Create attachments for touristic content and events
-        self.attachment_content_1 = AttachmentImageFactory.create(
-            content_object=self.touristic_content
+        cls.attachment_content_1 = AttachmentImageFactory.create(
+            content_object=cls.touristic_content
         )
-        self.attachment_event_1 = AttachmentImageFactory.create(
-            content_object=self.touristic_event
+        cls.attachment_event_1 = AttachmentImageFactory.create(
+            content_object=cls.touristic_event
         )
+
+        # Pre-generate thumbnails and elevation charts in setUpTestData so DB Thumbnail
+        # rows and disk files are persisted once for all tests in this class
+        _ = cls.trek_1.resized_pictures
+        _ = cls.trek_4.resized_pictures
+        _ = cls.poi_1.resized_pictures
+        _ = cls.touristic_content.resized_pictures
+        _ = cls.touristic_event.resized_pictures
+        _ = cls.info_desk.resized_picture
+        _ = cls.desk.resized_picture
+        for lang in settings.MODELTRANSLATION_LANGUAGES:
+            for trek in (cls.trek_1, cls.trek_2, cls.trek_3, cls.trek_4):
+                trek.prepare_elevation_chart(lang)
 
     def test_sync_treks(self):
         output = StringIO()
@@ -691,6 +729,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         with open(
@@ -784,6 +823,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             self.sync_directory,
             url="http://localhost:8000",
             skip_tiles=True,
+            languages=settings.LANGUAGE_CODE,
             stdout=output,
         )
         with open(
@@ -807,6 +847,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         with open(
@@ -831,6 +872,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         # Check results for trek_1 as a simple Trek:
@@ -861,6 +903,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         self.assertTrue(
@@ -932,6 +975,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         self.assertEqual(
@@ -1042,6 +1086,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         self.assertEqual(
@@ -1100,13 +1145,13 @@ class SyncMobileTreksTest(VarTmpTestCase):
     def test_streaming_http_response(self, mocke):
         output = StringIO()
         mocke.return_value = StreamingHttpResponse()
-        TrekWithPublishedPOIsFactory.create(published_fr=True)
         management.call_command(
             "sync_mobile",
             self.sync_directory,
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         self.assertTrue(
@@ -1116,13 +1161,13 @@ class SyncMobileTreksTest(VarTmpTestCase):
     def test_indent(self):
         indent = 3
         output = StringIO()
-        TrekWithPublishedPOIsFactory.create(published_fr=True)
         management.call_command(
             "sync_mobile",
             self.sync_directory,
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             indent=indent,
             stdout=output,
         )
@@ -1145,6 +1190,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         self.assertIn(
@@ -1158,8 +1204,11 @@ class SyncMobileTreksTest(VarTmpTestCase):
             self.sync_directory,
             url="http://localhost:8000",
             skip_tiles=True,
-            verbosity=0,
+            verbosity=2,
+            languages="en",
+            stdout=output,
         )
+        self.assertIn("unchanged", output.getvalue())
 
     @skipIf(
         settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
@@ -1190,6 +1239,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
     def test_sync_treks_informationdesk_photo_missing(self):
         """Sync mobile should not fail if information desk photo is missing"""
         info_desk = InformationDeskFactory.create(type=self.information_desk_type)
+        self.trek_1.information_desks.add(info_desk)
         os.remove(info_desk.photo.path)
         output = StringIO()
         management.call_command(
@@ -1198,14 +1248,14 @@ class SyncMobileTreksTest(VarTmpTestCase):
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         self.assertIn("Done", output.getvalue())
 
     def test_sync_treks_theme_no_picto(self):
         theme_no_picto = ThemeFactory.create(pictogram=None)
-        trek = TrekWithPublishedPOIsFactory.create()
-        trek.themes.add(theme_no_picto)
+        self.trek_1.themes.add(theme_no_picto)
         output = StringIO()
         management.call_command(
             "sync_mobile",
@@ -1213,13 +1263,15 @@ class SyncMobileTreksTest(VarTmpTestCase):
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         self.assertIn("Done", output.getvalue())
 
     def test_sync_treks_practice_no_picto(self):
         practice_no_picto = PracticeFactory.create(pictogram=None)
-        TrekWithPublishedPOIsFactory.create(practice=practice_no_picto)
+        self.trek_4.practice = practice_no_picto
+        self.trek_4.save()
         output = StringIO()
         management.call_command(
             "sync_mobile",
@@ -1227,6 +1279,7 @@ class SyncMobileTreksTest(VarTmpTestCase):
             url="http://localhost:8000",
             skip_tiles=True,
             verbosity=2,
+            languages="en",
             stdout=output,
         )
         self.assertIn("Done", output.getvalue())

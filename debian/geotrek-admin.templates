@@ -15,7 +15,7 @@ Description: Geotrek-rando server name(s)
 
 Template: geotrek-admin/MANAGE_DB
 Type: boolean
-Default: yes
+Default: true
 Description: Create a PostgreSQL database?
  Choose yes to let Geotrek create a local user and database for you.
  Choose no to specify your own database connexion settings.
@@ -51,6 +51,12 @@ Default: 4
 Description: Number of workers
  Number of parallel processes to handle web requests.
  This number will used twice, once for UI requests and once for API requests.
+
+Template: geotrek-admin/THREADS
+Type: string
+Default: 1
+Description: Number of threads
+ Number of threads per worker process to handle web requests.
 
 Template: geotrek-admin/TIMEOUT
 Type: string

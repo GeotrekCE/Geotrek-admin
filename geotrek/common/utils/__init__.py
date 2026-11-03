@@ -32,10 +32,7 @@ class reify:
 
     def __init__(self, wrapped):
         self.wrapped = wrapped
-        try:
-            self.__doc__ = wrapped.__doc__
-        except AttributeError:
-            pass
+        self.__doc__ = getattr(wrapped, "__doc__", None)
 
     def __get__(self, inst, objtype=None):
         if inst is None:

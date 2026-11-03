@@ -1,4 +1,5 @@
 import * as React from "react"
+import { cn } from "cn"
 import { useSelector } from "@tanstack/react-form"
 import {
   Select,
@@ -27,7 +28,7 @@ import {
   createFormField,
 } from "@/components/ui/form-context"
 import Required from "./required"
-import { cn, itemToOption, listToOptions } from "@/lib/utils"
+import { itemToOption, listToOptions } from "@/lib/utils"
 import { ChevronDown } from "lucide-react"
 import { m } from "@/paraglide/messages"
 

@@ -22,7 +22,10 @@ from geotrek.outdoor.models import (
     Site,
     SiteType,
 )
-from geotrek.outdoor.parsers import OpenStreetMapOutdoorSiteParser
+from geotrek.outdoor.parsers import (
+    GeotrekOutdoorParser,
+    OpenStreetMapOutdoorSiteParser,
+)
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
@@ -773,3 +776,18 @@ class OpenStreetMapOutdoorSiteParserTests(TestCase):
 
         outdoor_site = self.objects.get(eid="N1001")
         self.assertEqual(outdoor_site.parent, None)
+
+    @mock.patch("geotrek.common.parsers.GeotrekParser.request_or_retry")
+    def test_outdoor_parser_update_mapping_obsolete_key(self, mock_req):
+        class DummyOutdoorParser(GeotrekOutdoorParser):
+            model = Site
+
+        mock_req.return_value.json.return_value = {"results": []}
+        parser = DummyOutdoorParser()
+        parser.field_options = {
+            "practice": {"mapping": {"OldKey": "SameVal"}},
+        }
+        parser.update_mapping("practice", "NewKey", "SameVal")
+        self.assertEqual(
+            parser.field_options["practice"]["mapping"], {"NewKey": "SameVal"}
+        )

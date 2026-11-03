@@ -57,6 +57,7 @@ from geotrek.trekking.managers import (
     TrekOrderedChildManager,
     WebLinkManager,
 )
+from geotrek.zoning import models as zoning_models
 
 logger = logging.getLogger(__name__)
 
@@ -728,14 +729,15 @@ def log_cascade_deletion_from_trek_topology(sender, instance, using, **kwargs):
 
 Path.add_property("treks", Trek.path_treks, _("Treks"))
 Topology.add_property("treks", Trek.topology_treks, _("Treks"))
-if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES:
-    Topology.add_property("published_treks", lambda self: [], _("Published treks"))
-else:
-    Topology.add_property(
-        "published_treks",
-        lambda self: intersecting(Trek, self).filter(published=True),
-        _("Published treks"),
-    )
+Topology.add_property(
+    "published_treks",
+    lambda self: (
+        []
+        if settings.HIDE_PUBLISHED_TREKS_IN_TOPOLOGIES
+        else intersecting(Trek, self).filter(published=True)
+    ),
+    _("Published treks"),
+)
 Intervention.add_property(
     "treks", lambda self: self.target.treks if self.target else [], _("Treks")
 )
@@ -751,6 +753,9 @@ tourism_models.TouristicEvent.add_property(
     "published_treks",
     lambda self: intersecting(Trek, self).filter(published=True),
     _("Published treks"),
+)
+zoning_models.VigilanceArea.add_property(
+    "treks", lambda self: intersecting(Trek, self, distance=0), _("Treks")
 )
 if "geotrek.signage" in settings.INSTALLED_APPS:
     Blade.add_property("treks", lambda self: self.signage.treks, _("Treks"))
@@ -1045,6 +1050,9 @@ tourism_models.TouristicEvent.add_property(
     lambda self: intersecting(POI, self).filter(published=True),
     _("Published POIs"),
 )
+zoning_models.VigilanceArea.add_property(
+    "pois", lambda self: intersecting(POI, self, distance=0), _("POIs")
+)
 if "geotrek.signage" in settings.INSTALLED_APPS:
     Blade.add_property("pois", lambda self: self.signage.pois, _("POIs"))
     Blade.add_property(
@@ -1199,6 +1207,10 @@ tourism_models.TouristicEvent.add_property(
     lambda self: intersecting(Service, self).filter(published=True),
     _("Published Services"),
 )
+zoning_models.VigilanceArea.add_property(
+    "services", lambda self: intersecting(Service, self, distance=0), _("Services")
+)
+
 if "geotrek.signage" in settings.INSTALLED_APPS:
     Blade.add_property("services", lambda self: self.signage.services, _("Services"))
     Blade.add_property(

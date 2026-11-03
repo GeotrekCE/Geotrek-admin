@@ -6,10 +6,7 @@ from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
 from geotrek.authent.serializers import StructureSerializer
-from geotrek.common.serializers import (
-    PictogramSerializerMixin,
-    TranslatedModelSerializer,
-)
+from geotrek.common.serializers import PictogramSerializerMixin
 
 from . import models as trekking_models
 
@@ -46,7 +43,7 @@ class TrekGeojsonSerializer(MapentityGeojsonModelSerializer):
         fields = ("id", "name", "published")
 
 
-class POITypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+class POITypeSerializer(PictogramSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = trekking_models.POIType
         fields = ("id", "pictogram", "label")
@@ -82,7 +79,7 @@ class TrekPOIAPIGeojsonSerializer(GeoFeatureModelSerializer):
         )
 
 
-class ServiceTypeSerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+class ServiceTypeSerializer(PictogramSerializerMixin, serializers.ModelSerializer):
     class Meta:
         model = trekking_models.ServiceType
         fields = ("id", "pictogram", "name")

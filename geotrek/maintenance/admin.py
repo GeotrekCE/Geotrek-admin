@@ -15,7 +15,7 @@ from geotrek.maintenance.models import (
 @admin.register(Contractor)
 class ContractorAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("contractor", "structure")
-    search_fields = ("contractor", "structure")
+    search_fields = ("contractor", "structure__name")
     list_filter = ("structure",)
     merge_field = "contractor"
 
@@ -23,7 +23,7 @@ class ContractorAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(InterventionStatus)
 class InterventionStatusAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("status", "order", "structure")
-    search_fields = ("status", "order", "structure")
+    search_fields = ("status", "order", "structure__name")
     list_filter = ("structure",)
     merge_field = "status"
 
@@ -31,7 +31,7 @@ class InterventionStatusAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(InterventionType)
 class InterventionTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("type", "structure")
-    search_fields = ("type", "structure")
+    search_fields = ("type", "structure__name")
     list_filter = ("structure",)
     merge_field = "type"
 
@@ -39,7 +39,7 @@ class InterventionTypeAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(InterventionDisorder)
 class InterventionDisorderAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("disorder", "structure")
-    search_fields = ("disorder", "structure")
+    search_fields = ("disorder", "structure__name")
     list_filter = ("structure",)
     merge_field = "disorder"
 
@@ -47,7 +47,7 @@ class InterventionDisorderAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(InterventionJob)
 class InterventionJobAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("job", "cost", "structure", "active")
-    search_fields = ("job", "structure")
+    search_fields = ("job", "structure__name")
     list_filter = ("structure", "active")
     merge_field = "job"
 
@@ -55,7 +55,7 @@ class InterventionJobAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(ProjectType)
 class ProjectTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("type", "structure")
-    search_fields = ("type", "structure")
+    search_fields = ("type", "structure__name")
     list_filter = ("structure",)
     merge_field = "type"
 
@@ -63,6 +63,6 @@ class ProjectTypeAdmin(MergeActionMixin, admin.ModelAdmin):
 @admin.register(ProjectDomain)
 class ProjectDomainAdmin(MergeActionMixin, admin.ModelAdmin):
     list_display = ("domain", "structure")
-    search_fields = ("domain", "structure")
+    search_fields = ("domain", "structure__name")
     list_filter = ("structure",)
     merge_field = "domain"

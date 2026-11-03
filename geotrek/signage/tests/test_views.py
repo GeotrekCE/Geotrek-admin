@@ -5,7 +5,8 @@ from io import StringIO
 
 from django.conf import settings
 from django.contrib.auth.models import Permission, User
-from django.test import TestCase
+from django.contrib.contenttypes.models import ContentType
+from django.test import RequestFactory, TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
 from django.utils.translation import gettext
@@ -23,6 +24,7 @@ from geotrek.common.tests import (
     CommonTest,
 )
 from geotrek.common.tests.factories import AccessMeanFactory, OrganismFactory
+from geotrek.common.tests.mixins import AttachmentTestMixin
 from geotrek.core.tests.factories import PathFactory
 from geotrek.signage.models import (
     Blade,
@@ -48,6 +50,7 @@ from geotrek.signage.tests.factories import (
     SignageFactory,
     SignageTypeFactory,
 )
+from geotrek.signage.views import BladeCreate
 
 
 class SignageTest(TestCase):
@@ -1123,7 +1126,7 @@ class BladeTemplatesTest(TestCase):
         self.assertContains(response, "A direction on the line")
 
 
-class SignageViewsTest(CommonTest):
+class SignageViewsTest(AttachmentTestMixin, CommonTest):
     model = Signage
     modelfactory = SignageFactory
     userfactory = PathManagerFactory
@@ -1225,6 +1228,13 @@ class SignageViewsTest(CommonTest):
             response, "This order number is already used by another blade."
         )
 
+    def test_add_attachment(self):
+        target = SignageFactory.create()
+        content_type = ContentType.objects.get_for_model(target)
+        self.validate_attachment_creation(
+            "signage:signage-drf-add-attachment", target, content_type
+        )
+
 
 class SignageMultiActionsViewTest(
     CommonMultiActionsViewsPublishedMixin,
@@ -1274,3 +1284,9 @@ class BladeMultiActionsViewTest(
 
         self.assertNotContains(response, "Blades\n")
         self.assertNotContains(response, "Signage\n")
+
+    def test_blade_create_with_unknown_signage_404(self):
+        view = BladeCreate()
+        view.request = RequestFactory().get("/?signage=999999")
+        with self.assertLogs("geotrek.signage.views", level="WARNING"):
+            self.assertIsNone(view.get_signage())

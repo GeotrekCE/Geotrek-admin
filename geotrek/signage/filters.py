@@ -10,19 +10,9 @@ from geotrek.authent.filters import StructureRelatedFilterSet
 from geotrek.authent.models import Structure
 from geotrek.common.models import Organism, Provider
 from geotrek.core.filters import TopologyFilterTrail, ValidTopologyFilterSet
-from geotrek.core.models import Topology
 from geotrek.maintenance.models import Intervention
 from geotrek.signage.models import Blade, Signage
 from geotrek.zoning.filters import ZoningFilterSet
-
-
-class PolygonTopologyFilter(PolygonFilter):
-    def filter(self, qs, value):
-        if not value:
-            return qs
-        lookup = self.lookup_expr
-        inner_qs = Topology.objects.filter(**{f"geom__{lookup}": value})
-        return qs.filter(**{f"{self.field_name}__in": inner_qs})
 
 
 class SignageFilterSet(

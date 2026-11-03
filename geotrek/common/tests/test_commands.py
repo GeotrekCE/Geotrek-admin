@@ -1,16 +1,21 @@
 import os
+import shutil
 from io import StringIO
+from tempfile import mkdtemp
 from unittest import mock
 from unittest.mock import PropertyMock, patch
 
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
-from django.test import TestCase
+from django.test import TestCase, override_settings
 from easy_thumbnails.models import Thumbnail
 
 from geotrek import __version__
 from geotrek.authent.tests.factories import StructureFactory
+from geotrek.common.management.commands.geotrek_sync_translation_fields import (
+    Command as SyncTranslationCommand,
+)
 from geotrek.common.models import TargetPortal
 from geotrek.common.tests.factories import AttachmentFactory, TargetPortalFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
@@ -144,9 +149,16 @@ class CommandAttachmentsTests(TestCase):
         cls.content = POIFactory(geom=f"SRID={settings.SRID};POINT(1 1)")
 
     def setUp(self):
+        self.tmp_media_root = mkdtemp(dir=settings.TMP_DIR)
+        self._override = override_settings(MEDIA_ROOT=self.tmp_media_root)
+        self._override.enable()
         self.picture = AttachmentFactory(
             content_object=self.content, attachment_file=get_dummy_uploaded_image()
         )
+
+    def tearDown(self):
+        self._override.disable()
+        shutil.rmtree(self.tmp_media_root, ignore_errors=True)
 
     def test_remove_thumbnails(self):
         output = StringIO()
@@ -252,3 +264,33 @@ class CheckVersionsCommandTestCase(TestCase):
             "pgRouting version  : 3.0.0"
         )
         self.assertEqual(self.output.getvalue().strip(), expected_result)
+
+
+class SyncTranslationFieldsCommandTestCase(TestCase):
+    def setUp(self):
+        self.output = StringIO()
+        self.command = SyncTranslationCommand()
+
+    def test_nullable_field(self):
+        sql = self.command.get_sync_sql("name", ["it"], Infrastructure)
+        self.assertEqual(
+            sql,
+            [
+                'ALTER TABLE "infrastructure_infrastructure" ADD COLUMN "name_it" varchar(128);'
+            ],
+        )
+
+    def test_not_null_field_with_default(self):
+        sql = self.command.get_sync_sql("published", ["it"], Infrastructure)
+        self.assertEqual(len(sql), 1)
+        self.assertEqual(
+            'ALTER TABLE "infrastructure_infrastructure" ADD COLUMN "published_it" boolean NOT NULL DEFAULT false;',
+            sql[0],
+        )
+
+    def test_multiple_languages(self):
+        sql = self.command.get_sync_sql("name", ["it", "fr"], Infrastructure)
+        self.assertEqual(len(sql), 2)
+
+    def test_no_missing_langs(self):
+        self.assertEqual(self.command.get_sync_sql("name", [], Infrastructure), [])

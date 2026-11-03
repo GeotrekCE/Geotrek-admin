@@ -1,14 +1,23 @@
+import datetime
+
 from django.conf import settings
 from django.test import TestCase
+from freezegun import freeze_time
 
 from geotrek.core.filters import PathFilterSet
 from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.tests.factories import TrekFactory
+from geotrek.zoning.filters import VigilanceAreaFilterSet
+from geotrek.zoning.models import VigilanceArea
 from geotrek.zoning.tests.factories import (
     CityFactory,
     DistrictFactory,
     RestrictedAreaFactory,
     RestrictedAreaTypeFactory,
+    VigilanceAreaFactory,
+    VigilanceAreaTypeFactory,
+    VigilanceLevelFactory,
+    VigilancePeriodFactory,
 )
 
 
@@ -33,6 +42,17 @@ class ZoningFilterTest(TestCase):
         cls.area = RestrictedAreaFactory.create(name="area_in", geom=cls.geom_1_wkt)
         cls.area_2 = RestrictedAreaFactory.create(name="area_out", geom=cls.geom_2_wkt)
         cls.area_type_3 = RestrictedAreaTypeFactory.create()
+
+        cls.vigilance_type = VigilanceAreaTypeFactory.create()
+        cls.vigilance_area = VigilanceAreaFactory.create(
+            name="vigilance_area_in",
+            geom=cls.geom_1_wkt,
+            vigilance_area_type=cls.vigilance_type,
+            impracticable=True,
+        )
+        cls.vigilance_area_2 = VigilanceAreaFactory.create(
+            name="vigilance_area_out", geom=cls.geom_2_wkt
+        )
 
         cls.path = PathFactory.create(
             geom="SRID=2154;LINESTRING(200000 300000, 1100000 1200000)"
@@ -120,3 +140,121 @@ class ZoningFilterTest(TestCase):
         )
 
         self.assertEqual(len(filter.qs), 0)
+
+    def test_filter_vigilance_area(self):
+        filter = PathFilterSet(
+            data={
+                "vigilance_area_type": [
+                    self.vigilance_type,
+                ]
+            }
+        )
+        self.assertIn(self.path, filter.qs)
+        self.assertEqual(len(filter.qs), 1)
+
+        filter = PathFilterSet(data={"vigilance_area_impracticable": False})
+        self.assertEqual(len(filter.qs), 0)
+
+        filter = PathFilterSet(
+            data={
+                "vigilance_area": [
+                    self.vigilance_area_2,
+                ]
+            }
+        )
+        self.assertEqual(len(filter.qs), 0)
+
+
+class VigilanceAreaFilterTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.today = datetime.date(2026, 10, 20)
+        cls.yesterday = datetime.date(2026, 10, 19)
+        cls.tomorrow = datetime.date(2026, 10, 21)
+        cls.area_type = VigilanceAreaTypeFactory.create()
+        cls.vigilance_level = VigilanceLevelFactory.create()
+        cls.va = VigilanceAreaFactory.create(
+            name="Alpha Area",
+            vigilance_area_type=cls.area_type,
+            vigilance_level=cls.vigilance_level,
+            impracticable=True,
+            published=True,
+            periods=None,
+        )
+        cls.period = VigilancePeriodFactory.create(
+            start_date=cls.today,
+            end_date=cls.tomorrow,
+            vigilance_area=cls.va,
+        )
+
+    def test_filter_by_name(self):
+        qs = VigilanceArea.objects.all()
+        f = VigilanceAreaFilterSet(data={"name": "Alpha"}, queryset=qs)
+        self.assertIn(self.va, f.qs)
+        f = VigilanceAreaFilterSet(data={"name": "Beta"}, queryset=qs)
+        self.assertNotIn(self.va, f.qs)
+
+    def test_filter_by_impracticability(self):
+        qs = VigilanceArea.objects.all()
+        f = VigilanceAreaFilterSet(data={"impracticable": "true"}, queryset=qs)
+        self.assertIn(self.va, f.qs)
+        f = VigilanceAreaFilterSet(data={"impracticable": "false"}, queryset=qs)
+        self.assertNotIn(self.va, f.qs)
+
+    def test_filter_by_vigilance_level(self):
+        qs = VigilanceArea.objects.all()
+        f = VigilanceAreaFilterSet(
+            data={"vigilance_level": [self.vigilance_level.pk]}, queryset=qs
+        )
+        self.assertIn(self.va, f.qs)
+
+    def test_filter_by_vigilance_area_type(self):
+        qs = VigilanceArea.objects.all()
+        f = VigilanceAreaFilterSet(
+            data={"vigilance_area_type": [self.area_type.pk]}, queryset=qs
+        )
+        self.assertIn(self.va, f.qs)
+
+    @freeze_time("2026-10-20")
+    def test_filter_by_ongoing_period(self):
+        qs = VigilanceArea.objects.all()
+        f = VigilanceAreaFilterSet(data={"ongoing": "true"}, queryset=qs)
+        self.assertIn(self.va, f.qs)
+
+    @freeze_time("2026-10-20")
+    def test_filter_by_active_today(self):
+        qs = VigilanceArea.objects.all()
+        f = VigilanceAreaFilterSet(data={"active_today": "true"}, queryset=qs)
+        self.assertIn(self.va, f.qs)
+
+    def test_filter_by_dates(self):
+        qs = VigilanceArea.objects.all()
+        f = VigilanceAreaFilterSet(
+            data={"before": datetime.date(2026, 10, 22)}, queryset=qs
+        )
+        self.assertIn(self.va, f.qs)
+        f = VigilanceAreaFilterSet(
+            data={"after": datetime.date(2026, 10, 25)}, queryset=qs
+        )
+        self.assertNotIn(self.va, f.qs)
+
+    def test_filter_by_vigilance_area_practicability(self):
+        from geotrek.zoning.filters import (
+            IntersectionFilterVigilanceAreaImpracticable,
+        )
+
+        qs = VigilanceArea.objects.all()
+        fltr = IntersectionFilterVigilanceAreaImpracticable()
+        self.assertEqual(fltr.filter(qs, None), qs)
+        self.assertEqual(len(fltr.filter(qs, True)), 1)
+
+    def test_filter_by_vigilance_area(self):
+        from geotrek.zoning.filters import (
+            IntersectionFilterVigilanceArea,
+        )
+
+        qs = VigilanceArea.objects.all()
+        fltr = IntersectionFilterVigilanceArea()
+        self.assertEqual(fltr.filter(qs, None), qs)
+        self.assertEqual(fltr.filter(qs, []), qs)
+        self.assertEqual(len(fltr.filter(qs, [self.va])), 1)

@@ -15,6 +15,9 @@ from geotrek.core.tests.factories import (
     PathFactory,
     TopologyFactory,
 )
+from geotrek.land.models import LandEdge
+from geotrek.land.tests.factories import LandEdgeFactory
+from geotrek.trekking.models import Trek
 
 
 @skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
@@ -59,9 +62,6 @@ class TopologyTest(TestCase):
         self.assertEqual(topology.length_2d, 0)
 
     def test_kind(self):
-        from geotrek.land.models import LandEdge
-        from geotrek.land.tests.factories import LandEdgeFactory
-
         # Test with a concrete inheritance of Topology : LandEdge
         self.assertEqual("TOPOLOGY", Topology.KIND)
         self.assertEqual(0, Topology.objects.filter(kind="LANDEDGE").count())
@@ -1036,7 +1036,5 @@ class TopologyOverlappingTest(TestCase):
         )
 
     def test_overlapping_does_not_fail_if_no_records(self):
-        from geotrek.trekking.models import Trek
-
         overlaps = Topology.overlapping(Trek.objects.all())
         self.assertEqual(list(overlaps), [])

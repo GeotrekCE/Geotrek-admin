@@ -9,9 +9,8 @@ import {
   FormFieldError,
   createFormField,
 } from "@/components/ui/form-context"
-import Required from "./required"
-import { RichTextEditor } from "../rich-text-editor"
-import { m } from "@/paraglide/messages"
+import Required from "@/components/forms/required"
+import { RichTextEditor } from "@/components/rich-text-editor"
 
 interface TextareaFieldProps extends Omit<
   React.ComponentProps<"textarea">,
@@ -76,13 +75,7 @@ export function TextareaField({
             {maxLength ? ` / ${maxLength}` : ""}
           </div>
         )}
-        {description ||
-          (isRTE && (
-            <FieldDescription>
-              {isRTE && m["form.description-RTE"]()}
-              {description && ` ${description}`}
-            </FieldDescription>
-          ))}
+        {description && <FieldDescription>{description}</FieldDescription>}
       </FormField>
       <FormFieldError />
     </FormFieldSet>

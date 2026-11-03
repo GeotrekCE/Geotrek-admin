@@ -147,7 +147,7 @@ BEGIN
         FROM altimetry_dem
         WHERE ST_Intersects(rast, geom)
     ) sub
-    WHERE val IS NOT NULL AND val <> 0
+    WHERE val IS NOT NULL AND val <> 0 AND val <> -99999
     LIMIT 1;
 
     IF NOT FOUND OR ele IS NULL THEN

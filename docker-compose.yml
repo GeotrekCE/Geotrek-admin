@@ -24,7 +24,7 @@ services:
       timeout: 5s
 
   redis:
-    image: redis:5.0-alpine
+    image: redis:8-alpine
     volumes:
       - redis:/data
 
@@ -48,7 +48,7 @@ services:
       redis:
         condition: service_started
 
-    command: celery -A geotrek worker -c 1
+    command: celery -A geotrek worker -B -c 1 -E
 
   web:
     <<: [ *django ]

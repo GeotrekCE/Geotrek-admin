@@ -184,9 +184,6 @@ msgstr "Ajouter une ligne"
 msgid "Remove"
 msgstr "Supprimer"
 
-msgid "External id"
-msgstr "ID externe"
-
 msgid "Conditions"
 msgstr "États"
 

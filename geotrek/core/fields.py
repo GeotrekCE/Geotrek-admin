@@ -72,9 +72,6 @@ class SnappedLineStringField(LineStringField):
 
             # Geometry is like usual
             geom = fromstr(geom)
-            if geom is None:
-                msg = "Invalid geometry in JSON"
-                raise ValueError(msg)
             geom.srid = settings.API_SRID
             geom.transform(settings.SRID)
 

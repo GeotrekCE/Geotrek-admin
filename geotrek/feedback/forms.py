@@ -201,8 +201,6 @@ class ReportForm(CommonForm):
                 report.assigned_handler = report.current_user
                 report.status = waiting_status
                 report.save()
-                report.lock_in_suricate()
-                TimerEvent.objects.create(step=waiting_status, report=report)
             # Self-assign report without moderation step
             elif (
                 self.old_status.identifier in ["filed"]
@@ -212,7 +210,6 @@ class ReportForm(CommonForm):
                 report.current_user = self.user
                 report.assigned_handler = self.user
                 report.save()
-                TimerEvent.objects.create(step=waiting_status, report=report)
             # Reassign report through moderation step
             elif (
                 self.old_status.identifier in ["waiting"]
@@ -244,6 +241,12 @@ class ReportForm(CommonForm):
                 )
             if (
                 self.old_status.identifier != report.status.identifier
+                and report.status.identifier == "waiting"
+            ):
+                report.lock_in_suricate()
+                TimerEvent.objects.create(step=waiting_status, report=report)
+            if (
+                self.old_status.identifier != report.status.identifier
                 and report.status.identifier in ["classified", "rejected"]
             ):
                 report.unlock_in_suricate()
@@ -254,29 +257,44 @@ class ReportForm(CommonForm):
                 "late_intervention",
                 "late_resolution",
                 "solved_intervention",
-            ]:  # geom cannot change for statuses 'rejected', 'classified' or 'solved'
-                force_gps = False
+            ]:  # Geom cannot change for statuses 'rejected', 'classified' or 'solved'.
+                # Statuses from 'waiting' all the way through 'solved': status was already set to be "waiting" in Suricate thanks to previous workflow steps
+                relocate_outside = not WorkflowDistrict.objects.filter(
+                    district__geom__covers=report.geom
+                )
+
                 if (
                     self.old_status.identifier == "filed"
                     and report.status.identifier == "filed"
-                    and not WorkflowDistrict.objects.filter(
-                        district__geom__covers=report.geom
-                    )
                 ):
-                    # from 'filed' to 'filed': set to 'waiting' in suricate
-                    # Status needs to be 'waiting' for position to change in Suricate
-                    relocated_message = settings.SURICATE_WORKFLOW_SETTINGS.get(
-                        "SURICATE_RELOCATED_REPORT_MESSAGE"
-                    )
+                    # From 'filed' to 'filed': lock and set to 'waiting' in suricate.
+                    # Status needs to be 'waiting' and report must be locked for position to change in Suricate.
+                    relocated_message = None
+                    if relocate_outside:
+                        relocated_message = settings.SURICATE_WORKFLOW_SETTINGS.get(
+                            "SURICATE_RELOCATED_REPORT_MESSAGE"
+                        )
+                        rejected_status = ReportStatus.objects.get(
+                            identifier="rejected"
+                        )
+                        report.status = rejected_status
+                        report.save()
+
+                    report.lock_in_suricate()
                     report.update_status_in_suricate("waiting", relocated_message)
-                    rejected_status = ReportStatus.objects.get(identifier="rejected")
-                    report.status = rejected_status
-                    report.save()
-                    # 'force' argument needs to be passed to relocate outside of workflow district
-                    force_gps = True
-                # from 'filed' to 'waiting' : status was already set to be "waiting" in Suricate thanks to code above line 126
-                # statuses from 'waiting' al the way through 'solved'  : status was already set to be "waiting" in Suricate thanks to previous workflow steps
-                report.change_position_in_suricate(force=force_gps)
+
+                # From 'filed' to 'filed': status was already set to be 'waiting' in Suricate thanks to the code above.
+                # Statuses from 'waiting' all the way through 'solved': status was already set to be 'waiting' in Suricate thanks to previous workflow steps.
+                report.change_position_in_suricate(force=relocate_outside)
+
+                if (
+                    self.old_status.identifier == "filed"
+                    and report.status.identifier == "filed"
+                    and not relocate_outside
+                ):
+                    # After relocating outside our perimeter, we can no longer update the report. It will be automatically unlocked by Suricate.
+                    report.unlock_in_suricate()
+
         elif (
             report.status
             and report.uses_timers

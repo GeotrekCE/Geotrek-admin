@@ -1,6 +1,6 @@
 from django.contrib.gis.geos import LineString
 from django.db import connection
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from geotrek import settings
 from geotrek.authent.tests.factories import UserFactory
@@ -34,6 +34,13 @@ class ProfileViewsTest(TestCase):
         trek = TrekFactory.create(name="Trek", published=True)
         response = self.client.get(f"/media/profiles/trek-{trek.pk}.png")
         self.assertEqual(response.status_code, 200)
+
+    def test_profile_object_public_debug(self):
+        self.client.force_login(user=self.user)
+        trek = TrekFactory.create(name="Trek", published=True)
+        with override_settings(DEBUG=True):
+            response = self.client.get(f"/media/profiles/trek-{trek.pk}.png")
+            self.assertEqual(response.status_code, 200)
 
 
 class ProfileCacheTests(TestCase):

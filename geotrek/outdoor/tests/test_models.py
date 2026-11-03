@@ -12,6 +12,7 @@ from geotrek.outdoor.models import (
     ChildCoursesExistError,
     ChildSitesExistError,
     CourseType,
+    OrderedCourseChild,
     Rating,
     RatingScale,
     Site,
@@ -110,6 +111,20 @@ class SiteTest(TestCase):
         self.site_1.duplicate()
         # Means that only the parent_site is duplicated and not his child
         self.assertEqual(Site.objects.count(), 3)
+
+    def test_duplicate_root_site_doesnt_duplicate_tree_id(self):
+        self.site_1 = SiteFactory.create(name="parent_site")
+        self.site_2 = SiteFactory.create(name="child_site", parent=self.site_1)
+        clone = self.site_1.duplicate()
+        self.assertNotEqual(clone.tree_id, self.site_1.tree_id)
+        self.assertEqual(list(self.site_2.get_ancestors()), [self.site_1])
+
+    def test_duplicate_child_site_duplicate_tree_id(self):
+        self.site_1 = SiteFactory.create(name="parent_site")
+        self.site_2 = SiteFactory.create(name="child_site", parent=self.site_1)
+        clone = self.site_2.duplicate()
+        self.assertEqual(clone.tree_id, self.site_2.tree_id)
+        self.assertEqual(list(self.site_2.get_ancestors()), [self.site_1])
 
 
 class SiteSuperTest(TestCase):
@@ -297,3 +312,14 @@ class CourseTestCase(TestCase):
         self.assertAlmostEqual(coordinates[0][1], 44.449222490604605)
         self.assertAlmostEqual(coordinates[1][0], 1.441955564370652)
         self.assertAlmostEqual(coordinates[1][1], 44.443339997352474)
+
+    def test_duration_pretty(self):
+        course = CourseFactory.create(duration=2.5)
+        self.assertEqual(course.duration_pretty, "2 h 30")
+
+    def test_children_id_and_parents_id(self):
+        c1 = CourseFactory.create()
+        c2 = CourseFactory.create()
+        OrderedCourseChild.objects.create(parent=c1, child=c2, order=0)
+        self.assertEqual(list(c1.children_id), [c2.id])
+        self.assertEqual(list(c2.parents_id()), [c1.id])

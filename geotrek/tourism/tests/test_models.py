@@ -48,6 +48,11 @@ class InformationDeskTest(TestCase):
         self.information_desk.save()
         self.assertIsNone(self.information_desk.thumbnail)
 
+    def test_photo_url_no_photo(self):
+        self.information_desk.photo = None
+        self.information_desk.save()
+        self.assertIsNone(self.information_desk.photo_url)
+
     def test_thumbnail_photo(self):
         self.assertIsNotNone(self.information_desk.thumbnail)
 
@@ -212,6 +217,10 @@ class TouristicContentModelTest(TestCase):
         """Touristic content city attribute return None if not saved"""
         content = TouristicContent()
         self.assertIsNone(content.city)
+
+    def test_extent(self):
+        content = tourism_factories.TouristicContentFactory.create()
+        self.assertEqual(len(content.extent), 4)
 
 
 class TouristicEventCancellationReasonModelTest(TestCase):

@@ -7,7 +7,7 @@ from django.apps import apps
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db import connection
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 from geotrek.authent.tests.factories import UserFactory
 from geotrek.common.models import (
@@ -16,7 +16,7 @@ from geotrek.common.models import (
     Label,
 )
 from geotrek.common.tests.factories import FileTypeFactory
-from geotrek.common.utils.postgresql import load_sql_files
+from geotrek.common.utils.postgresql import load_sql_files, move_models_to_schemas
 from geotrek.trekking.tests.factories import TrekFactory
 
 
@@ -142,3 +142,11 @@ class ExtraSQLTest(TestCase):
     def tearDownClass(cls):
         super().tearDownClass()
         shutil.rmtree(os.path.join(settings.VAR_DIR, "conf", "extra_sql"))
+
+    def test_move_models_to_schemas(self):
+        with (
+            override_settings(DATABASE_SCHEMAS={"geotrek.cirkwi": "cirkwi_schema"}),
+            self.assertLogs("geotrek.common.utils.postgresql", "INFO") as cm,
+        ):
+            move_models_to_schemas(apps.get_app_config("cirkwi"))
+        self.assertTrue(any("Moved cirkwi_" in msg for msg in cm.output))

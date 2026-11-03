@@ -1,8 +1,6 @@
 import * as React from "react"
-import { useLiveQuery } from "dexie-react-hooks"
 import { useSelector } from "@tanstack/react-form"
 import Map from "@/components/map"
-import type { LngLatBoundsLike } from "maplibre-gl"
 import { FieldDescription, FieldLabel } from "@/components/ui/field"
 import {
   useFieldContext,
@@ -12,41 +10,46 @@ import {
   createFormField,
 } from "@/components/ui/form-context"
 import Required from "@/components/forms/required"
-import { Marker } from "react-map-gl/maplibre"
-import { cn } from "@/lib/utils"
-import { MapPin } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { db } from "@/lib/db"
 import { m } from "@/paraglide/messages"
 import { Alert, AlertTitle } from "@/components/ui/alert"
 import * as z from "zod"
 import type { geometrySchema } from "@/schemas/data"
+import MapBboxDataLayer from "@/components/map-bbox-data-layer"
+import useBounds from "@/hook/useBounds"
+import MapElementsLayer from "../map-elements-layer"
 
 type GeomFieldProps = {
   label: string
   description?: string
   required?: boolean
-  icon?: { url?: string }
+  reference: "signage" | "report" | "intervention" | "infrastructure"
+  pictogram: { url?: string }
 }
 
 export function GeomField({
   label,
   description,
   required,
-  icon,
+  reference,
+  pictogram,
 }: GeomFieldProps) {
   const id = React.useId()
   const field = useFieldContext()
   const value = useSelector(field.store, (s) => s.value) as z.infer<
     typeof geometrySchema
   >
-  const [lng, lat] = (value.type === "Point" && value.coordinates) || []
-  const appSync = useLiveQuery(() => db.appSync.get("data"))
-  const { bounds } = appSync || {}
+  const isPoint = value.type === "Point"
+  const hasPoint = isPoint && value.coordinates.length > 0
+
+  const [lng, lat] = (isPoint && value.coordinates) || []
+
+  const bounds = useBounds(!isPoint ? value : undefined)
 
   const [isEditing, setEditing] = React.useState(false)
 
-  const isPoint = value.type === "Point"
+  const isEditingPoint = hasPoint && isEditing
+
   return (
     <FormFieldSet>
       <FormField>
@@ -63,14 +66,20 @@ export function GeomField({
           >
             {isEditing
               ? m["form.geom-action-cancel"]()
-              : m["form.geom-action-select"]()}
+              : hasPoint
+                ? m["form.geom-action-edit"]()
+                : m["form.geom-action-select"]()}
           </Button>
         )}
 
         <Map
           className="aspect-square"
-          initialViewState={{ bounds: bounds as LngLatBoundsLike }}
-          maxBounds={bounds as LngLatBoundsLike}
+          initialViewState={{
+            bounds: bounds && !hasPoint ? bounds : undefined,
+            longitude: hasPoint ? value.coordinates[0] : undefined,
+            latitude: hasPoint ? value.coordinates[1] : undefined,
+            zoom: 12,
+          }}
           onClick={({ lngLat }) => {
             if (isEditing) {
               field.handleChange({
@@ -81,29 +90,20 @@ export function GeomField({
             }
           }}
         >
-          {isPoint && typeof lng === "number" && typeof lat === "number" && (
-            <Marker longitude={lng} latitude={lat} anchor="bottom">
-              <div className="grid items-center justify-center">
-                <MapPin
-                  className={cn(
-                    "col-start-1 row-start-1 fill-white stroke-1 [&>circle]:hidden",
-                    isEditing ? "size-12 fill-white/60" : "size-10"
-                  )}
-                />
-                {icon?.url && (
-                  <img
-                    loading="lazy"
-                    src={icon.url}
-                    alt=""
-                    className={cn(
-                      "col-start-1 row-start-1 m-auto",
-                      isEditing ? "size-8" : "size-6"
-                    )}
-                  />
-                )}
-              </div>
-            </Marker>
-          )}
+          <MapBboxDataLayer />
+          <MapElementsLayer
+            active={{ reference, id: 1 }}
+            elements={[
+              {
+                reference,
+                geom: value as Parameters<
+                  typeof MapElementsLayer
+                >[0]["elements"][number]["geom"],
+                pictogram,
+                id: isEditingPoint ? 1 : undefined,
+              },
+            ]}
+          />
         </Map>
         {isPoint && typeof lng === "number" && typeof lat === "number" && (
           <FieldDescription className="text-end text-xs">

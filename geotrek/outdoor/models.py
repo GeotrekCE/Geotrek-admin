@@ -45,6 +45,7 @@ from geotrek.signage.models import Blade, Signage
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
+from geotrek.zoning.models import VigilanceArea
 
 
 class AltimetryMixin(BaseAltimetryMixin):
@@ -469,6 +470,7 @@ class Site(
             site_content_type,
             ContentType.objects.get_for_model(Course),
             ContentType.objects.get_for_model(Blade),
+            ContentType.objects.get_for_model(VigilanceArea),
         ]
         qs |= Q(target_id__in=topologies) & ~Q(
             target_type__in=not_topology_content_types
@@ -499,6 +501,20 @@ class Site(
     def tourism_sites(cls, tourism_obj, queryset=None):
         return intersecting(queryset_or_model(queryset, cls), obj=tourism_obj)
 
+    def duplicate(self, **kwargs):
+        """
+        Duplicate the site and ensure that a duplicated root site gets its own tree ID.
+        https://github.com/GeotrekCE/Geotrek-admin/issues/5461
+        """
+        clone = super().duplicate(**kwargs)
+        if clone.is_root_node():
+            clone.tree_id = None
+            clone.lft = None
+            clone.rght = None
+            clone.level = None
+            clone.save(update_fields=["tree_id", "lft", "rght", "level"])
+        return clone
+
 
 Path.add_property("sites", lambda self: intersecting(Site, self), _("Sites"))
 Topology.add_property("sites", Site.topology_sites, _("Sites"))
@@ -506,6 +522,10 @@ TouristicContent.add_property("sites", Site.tourism_sites, _("Sites"))
 TouristicEvent.add_property("sites", Site.tourism_sites, _("Sites"))
 Blade.add_property("sites", lambda self: intersecting(Site, self), _("Sites"))
 Intervention.add_property("sites", lambda self: intersecting(Site, self), _("Sites"))
+VigilanceArea.add_property(
+    "sites", lambda self: intersecting(Site, self, distance=0), _("Sites")
+)
+
 
 Site.add_property("sites", Site.outdoor_sites, _("Sites"))
 Site.add_property("treks", Trek.outdoor_treks, _("Treks"))
@@ -683,6 +703,7 @@ class Course(
             ContentType.objects.get_for_model(Site),
             course_content_type,
             ContentType.objects.get_for_model(Blade),
+            ContentType.objects.get_for_model(VigilanceArea),
         ]
         qs |= Q(target_id__in=topologies) & ~Q(
             target_type__in=not_topology_content_types
@@ -722,6 +743,9 @@ TouristicEvent.add_property("courses", Course.tourism_courses, _("Courses"))
 Blade.add_property("courses", lambda self: intersecting(Course, self), _("Courses"))
 Intervention.add_property(
     "courses", lambda self: intersecting(Course, self), _("Courses")
+)
+VigilanceArea.add_property(
+    "courses", lambda self: intersecting(Course, self, distance=0), _("Courses")
 )
 
 Course.add_property("sites", Site.outdoor_sites, _("Sites"))

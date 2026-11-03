@@ -53,8 +53,6 @@ if "geotrek.core" in settings.INSTALLED_APPS:
     urlpatterns.append(path("", include("geotrek.core.urls")))
 if "geotrek.land" in settings.INSTALLED_APPS:
     urlpatterns.append(path("", include("geotrek.land.urls")))
-if "geotrek.zoning" in settings.INSTALLED_APPS:
-    urlpatterns.append(path("", include("geotrek.zoning.urls")))
 if "geotrek.infrastructure" in settings.INSTALLED_APPS:
     urlpatterns.append(path("", include("geotrek.infrastructure.urls")))
 if "geotrek.signage" in settings.INSTALLED_APPS:
@@ -75,6 +73,8 @@ if "geotrek.feedback" in settings.INSTALLED_APPS:
     urlpatterns.append(path("", include("geotrek.feedback.urls")))
 if "geotrek.sensitivity" in settings.INSTALLED_APPS:
     urlpatterns.append(path("", include("geotrek.sensitivity.urls")))
+if "geotrek.zoning" in settings.INSTALLED_APPS:
+    urlpatterns.append(path("", include("geotrek.zoning.urls")))
 if "geotrek.flatpages" in settings.INSTALLED_APPS:
     urlpatterns.append(path("flatpages/", include("geotrek.flatpages.urls")))
 if "geotrek.api" in settings.INSTALLED_APPS:

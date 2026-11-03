@@ -4,31 +4,28 @@ from rest_framework import serializers as rest_serializers
 from rest_framework_gis import fields as rest_gis_fields
 from rest_framework_gis.serializers import GeoFeatureModelSerializer
 
-from geotrek.common.serializers import (
-    PictogramSerializerMixin,
-    TranslatedModelSerializer,
-)
+from geotrek.common.serializers import PictogramSerializerMixin
 
 from . import models as tourism_models
 
 
-class LabelAccessibilitySerializer(PictogramSerializerMixin, TranslatedModelSerializer):
+class LabelAccessibilitySerializer(
+    PictogramSerializerMixin, rest_serializers.ModelSerializer
+):
     class Meta:
         model = tourism_models.LabelAccessibility
         fields = ("id", "pictogram", "label")
 
 
 class InformationDeskTypeSerializer(
-    PictogramSerializerMixin, TranslatedModelSerializer
+    PictogramSerializerMixin, rest_serializers.ModelSerializer
 ):
     class Meta:
         model = tourism_models.InformationDeskType
         fields = ("id", "pictogram", "label")
 
 
-class TrekInformationDeskGeojsonSerializer(
-    TranslatedModelSerializer, GeoFeatureModelSerializer
-):
+class TrekInformationDeskGeojsonSerializer(GeoFeatureModelSerializer):
     type = InformationDeskTypeSerializer()
     label_accessibility = LabelAccessibilitySerializer()
     # Annotated geom field with API_SRID

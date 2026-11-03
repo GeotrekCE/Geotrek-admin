@@ -1,6 +1,6 @@
 import { Link } from "@tanstack/react-router"
 import { Check } from "lucide-react"
-import { cn } from "@/lib/utils"
+import { cn } from "cn"
 import { useAppSettings } from "@/hook/useAppSettings"
 import CardSync from "@/components/card-sync"
 import { buttonVariants } from "@/components/ui/button"

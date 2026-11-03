@@ -22,8 +22,7 @@ ALTER TABLE maintenance_intervention ALTER COLUMN min_elevation SET DEFAULT 0;
 ALTER TABLE maintenance_intervention ALTER COLUMN max_elevation SET DEFAULT 0;
 ALTER TABLE maintenance_intervention ALTER COLUMN ascent SET DEFAULT 0;
 ALTER TABLE maintenance_intervention ALTER COLUMN descent SET DEFAULT 0;
-ALTER TABLE maintenance_intervention ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE maintenance_intervention ALTER COLUMN date_update SET DEFAULT now();
+
 -- structure
 -- deleted
 
@@ -77,8 +76,6 @@ ALTER TABLE maintenance_project ALTER COLUMN comments SET DEFAULT '';
 -- project_manager
 -- founders
 -- eid
-ALTER TABLE maintenance_project ALTER COLUMN date_insert SET DEFAULT now();
-ALTER TABLE maintenance_project ALTER COLUMN date_update SET DEFAULT now();
 -- structure
 -- deleted
 

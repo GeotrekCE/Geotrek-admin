@@ -1,7 +1,7 @@
 from django.test import TestCase, override_settings
 
 from geotrek.authent.models import default_structure_pk
-from geotrek.authent.tests.factories import StructureFactory
+from geotrek.authent.tests.factories import StructureFactory, UserProfileFactory
 
 
 class StructureModelTestCase(TestCase):
@@ -25,3 +25,7 @@ class StructureModelTestCase(TestCase):
             default_structure_pk()
             default_structure_pk()
             default_structure_pk()
+
+    def test_user_profile_str(self):
+        profile = UserProfileFactory(user__username="john")
+        self.assertEqual(str(profile), "Profile for john")

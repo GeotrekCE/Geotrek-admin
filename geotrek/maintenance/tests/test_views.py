@@ -31,6 +31,7 @@ from geotrek.common.tests import (
     CommonTest,
 )
 from geotrek.common.tests.factories import AccessMeanFactory, OrganismFactory
+from geotrek.common.tests.mixins import AttachmentTestMixin
 from geotrek.core.models import PathAggregation, Stake
 from geotrek.core.tests.factories import PathFactory, StakeFactory, TopologyFactory
 from geotrek.infrastructure.models import Infrastructure
@@ -78,7 +79,7 @@ from geotrek.signage.tests.factories import (
 from geotrek.trekking.tests.factories import POIFactory, ServiceFactory, TrekFactory
 
 
-class InterventionViewsTest(CommonTest):
+class InterventionViewsTest(AttachmentTestMixin, CommonTest):
     model = Intervention
     modelfactory = InterventionFactory
     userfactory = PathManagerFactory
@@ -578,6 +579,13 @@ class InterventionViewsTest(CommonTest):
     def test_duplicate(self):
         super().test_duplicate()
         self.assertEqual(ManDay.objects.count(), 2)
+
+    def test_add_attachment(self):
+        target = InterventionFactory.create()
+        content_type = ContentType.objects.get_for_model(target)
+        self.validate_attachment_creation(
+            "maintenance:intervention-drf-add-attachment", target, content_type
+        )
 
 
 class InterventionReferencesTest(TestCase):
