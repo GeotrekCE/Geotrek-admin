@@ -169,7 +169,7 @@ django-modelcluster==6.5
     # via geotrek (setup.py)
 django-modeltranslation==0.20.6
     # via mapentity
-django-mptt==0.18.0
+django-mptt==0.21.0
     # via geotrek (setup.py)
 django-timezone-field==7.2.2
     # via django-celery-beat
