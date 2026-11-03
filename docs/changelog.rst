@@ -9,9 +9,10 @@ CHANGELOG
 
 * Fix the search bar in the admin section
 
-** Feature **
+**Features**
 
 * Add module Vigilance area
+  * After an upgrade, run the command ``geotrek loaddata vigilancearea`` to load the initial data for this module. (or refer to documentation for docker alternative)
 
 
 2.126.6         (2026-10-29)

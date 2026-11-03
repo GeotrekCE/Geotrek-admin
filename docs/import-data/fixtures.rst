@@ -238,12 +238,14 @@ Zoning imports
          .. code-block:: bash
 
                 sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/zoning/fixtures/basic.json
+                sudo geotrek loaddata /opt/geotrek-admin/lib/python*/site-packages/geotrek/zoning/fixtures/vigilancearea.json
 
     .. md-tab-item:: With Docker
 
          .. code-block:: python
 
                 docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/zoning/fixtures/basic.json
+                docker compose run --rm web ./manage.py loaddata /opt/geotrek-admin/geotrek/zoning/fixtures/vigilancearea.json
 
 Import after initial installation
 ----------------------------------
