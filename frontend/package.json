@@ -70,6 +70,6 @@
     "serwist": "^9.5.11",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.59.2",
-    "vite": "^8.1.5"
+    "vite": "^8.3.5"
   }
 }
