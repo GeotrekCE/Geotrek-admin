@@ -973,7 +973,7 @@ class PracticableFilter(BaseFilterBackend):
                 )
         return qs
 
-    def get_schema_fields(self, view):
+    def get_schema_operation_parameters(self, view):
         return [
             {
                 "name": "practicable",
