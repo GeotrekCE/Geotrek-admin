@@ -104,13 +104,18 @@
                             data-target="#collapse{{ period.id }}"
                             aria-expanded="false"
                             aria-controls="collapse{{ period.id }}">
-                        {% if period.end_date %}
-                            {{ period.start_date|date:"SHORT_DATE_FORMAT" }}
-                            <i class="text-muted">→</i>
-                            {{ period.end_date|date:"SHORT_DATE_FORMAT" }}
-                        {% else %}
-                            {% trans "From" %} {{ period.start_date|date:"SHORT_DATE_FORMAT" }}
-                        {% endif %}
+
+                        <i class="bi bi-chevron-down text-muted collapse-arrow"></i>
+
+                        <span>
+                            {% if period.end_date %}
+                                {{ period.start_date|date:"SHORT_DATE_FORMAT" }}
+                                <i class="text-muted">→</i>
+                                {{ period.end_date|date:"SHORT_DATE_FORMAT" }}
+                            {% else %}
+                                {% trans "From" %} {{ period.start_date|date:"SHORT_DATE_FORMAT" }}
+                            {% endif %}
+                        </span>
                     </div>
                 </td>
             </tr>
