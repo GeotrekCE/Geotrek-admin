@@ -9,6 +9,10 @@ CHANGELOG
 
 * Fix the search bar in the admin section
 
+** Feature **
+
+* Add module Vigilance area
+
 
 2.126.6         (2026-10-29)
 ----------------------------
