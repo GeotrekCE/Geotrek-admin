@@ -341,10 +341,7 @@ pyxdg==0.28
 pyyaml==6.0.3
     # via drf-spectacular
 rcssmin==1.3.0
-    # via
-    #   django-compressor
-    #   drf-spectacular
-    #   swagger-spec-validator
+    # via django-compressor
 redis==8.1.0
     # via geotrek (setup.py)
 referencing==0.37.0
@@ -405,12 +402,12 @@ typing-extensions==4.16.0
     #   click-repl
     #   django-modeltranslation
     #   large-image
+    #   psycopg-pool
 tzdata==2026.5
+    # via
     #   django-celery-beat
     #   kombu
     #   mapentity
-    #   psycopg-pool
-    #   swagger-spec-validator
 tzlocal==5.4.4
     # via celery
 uritemplate==4.2.0
