@@ -476,44 +476,48 @@ class Site(
         )
         return Intervention.objects.existing().filter(qs).distinct("pk")
 
-    def save(self, *args, **kwargs):
+    def _prepare_clone_or_new(self):
         if not self.pk:
             self._state.adding = True
             if self.path and Site.objects.filter(path=self.path).exists():
                 self.path = ""
 
+    def _insert_in_tree(self):
+        if self.parent:
+            self.parent.add_child(instance=self)
+        else:
+            Site.add_root(instance=self)
+        self.refresh_from_db()
+
+    def _move_to_new_parent(self):
+        if self.parent:
+            self.move(self.parent, pos="sorted-child")
+        else:
+            first_root = Site.get_first_root_node()
+            if first_root and first_root.pk != self.pk:
+                self.move(first_root, pos="sorted-sibling")
+
+    def _handle_parent_change(self):
+        if not self.pk:
+            return
+        orig_parent_id = (
+            Site.objects.filter(pk=self.pk).values_list("parent_id", flat=True).first()
+        )
+        if self.parent_id != orig_parent_id:
+            new_parent_id = self.parent_id
+            new_parent = self.parent
+            self._move_to_new_parent()
+            self.parent_id = new_parent_id
+            self.parent = new_parent
+
+    def save(self, *args, **kwargs):
+        self._prepare_clone_or_new()
+
         if not self.path:
-            if self.parent:
-                self.parent.add_child(instance=self)
-            else:
-                Site.add_root(instance=self)
-            self.refresh_from_db()
+            self._insert_in_tree()
             return
 
-        if self.pk:
-            orig_parent_id = (
-                Site.objects.filter(pk=self.pk)
-                .values_list("parent_id", flat=True)
-                .first()
-            )
-            if self.parent_id != orig_parent_id:
-                new_parent_id = self.parent_id
-                new_parent = self.parent
-                if self.parent:
-                    self.move(
-                        self.parent,
-                        pos="sorted-child",
-                    )
-                else:
-                    first_root = Site.get_first_root_node()
-                    if first_root and first_root.pk != self.pk:
-                        self.move(
-                            first_root,
-                            pos="sorted-sibling",
-                        )
-                self.parent_id = new_parent_id
-                self.parent = new_parent
-
+        self._handle_parent_change()
         super().save(*args, **kwargs)
         self.refresh_from_db()
 
