@@ -298,7 +298,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
 
         return qs.distinct()
 
-    def get_schema_operation_parameters(self, view):(self, view):
+    def get_schema_operation_parameters(self, view):
         return [
             {
                 "name": "structures",
