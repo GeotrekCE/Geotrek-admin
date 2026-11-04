@@ -1,9 +1,32 @@
 from django.conf import settings
+from django.contrib.gis.geos import (
+    GeometryCollection,
+    LineString,
+    Point,
+    Polygon,
+)
 from django.test import TestCase
 from django.test.utils import override_settings
 from freezegun import freeze_time
 
-from geotrek.trekking.tests.factories import TrekFactory
+from geotrek.core.tests.factories import PathFactory, TopologyFactory, TrailFactory
+from geotrek.infrastructure.tests.factories import InfrastructureFactory
+from geotrek.land.tests.factories import (
+    CirculationEdgeFactory,
+    CompetenceEdgeFactory,
+    LandEdgeFactory,
+    PhysicalEdgeFactory,
+    SignageManagementEdgeFactory,
+    WorkManagementEdgeFactory,
+)
+from geotrek.maintenance.tests.factories import InterventionFactory
+from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
+from geotrek.signage.tests.factories import SignageFactory
+from geotrek.tourism.tests.factories import (
+    TouristicContentFactory,
+    TouristicEventFactory,
+)
+from geotrek.trekking.tests.factories import POIFactory, ServiceFactory, TrekFactory
 
 from .factories import RuleFactory, SensitiveAreaFactory, SpeciesFactory
 
@@ -15,6 +38,25 @@ class RuleTesCase(TestCase):
 
 
 class SensitiveAreaModelTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.path = PathFactory.create(
+            geom=LineString(
+                Point(700000, 6600000), Point(700100, 6600100), srid=settings.SRID
+            )
+        )
+        cls.point_geom = Point(700050, 6600050, srid=settings.SRID)
+        cls.point_envelope = Polygon(
+            (
+                (700000, 6600000),
+                (700000, 6600100),
+                (700100, 6600100),
+                (700100, 6600000),
+                (700000, 6600000),
+            ),
+            srid=settings.SRID,
+        )
+
     def test_specific_radius(self):
         specie = SpeciesFactory.create(radius=50)
         sensitive_area = SensitiveAreaFactory.create(species=specie)
@@ -155,3 +197,125 @@ class SensitiveAreaModelTest(TestCase):
         """Geom buffered could be created and updated in instance after creation"""
         area = SensitiveAreaFactory()
         self.assertIsNotNone(area.geom_buffered)
+
+    def test_trails(self):
+        trail = TrailFactory.create(paths=[(self.path, 0.5, 0.5)])
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.trails.count(), 1)
+        self.assertEqual(sensitive_area.trails.first(), trail)
+
+    def test_physical_edges(self):
+        physical_edges = PhysicalEdgeFactory.create(paths=[(self.path, 0.5, 0.5)])
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.physical_edges.count(), 1)
+        self.assertEqual(sensitive_area.physical_edges.first(), physical_edges)
+
+    def test_land_edges(self):
+        land_edges = LandEdgeFactory.create(paths=[(self.path, 0.5, 0.5)])
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.land_edges.count(), 1)
+        self.assertEqual(sensitive_area.land_edges.first(), land_edges)
+
+    def test_competence_edges(self):
+        competence_edges = CompetenceEdgeFactory.create(paths=[(self.path, 0.5, 0.5)])
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.competence_edges.count(), 1)
+        self.assertEqual(sensitive_area.competence_edges.first(), competence_edges)
+
+    def test_work_edges(self):
+        work_edges = WorkManagementEdgeFactory.create(paths=[(self.path, 0.5, 0.5)])
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.work_edges.count(), 1)
+        self.assertEqual(sensitive_area.work_edges.first(), work_edges)
+
+    def test_signage_edges(self):
+        signage_edges = SignageManagementEdgeFactory.create(
+            paths=[(self.path, 0.5, 0.5)]
+        )
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.signage_edges.count(), 1)
+        self.assertEqual(sensitive_area.signage_edges.first(), signage_edges)
+
+    def test_circulation_edges(self):
+        circulation_edges = CirculationEdgeFactory.create(paths=[(self.path, 0.5, 0.5)])
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.circulation_edges.count(), 1)
+        self.assertEqual(sensitive_area.circulation_edges.first(), circulation_edges)
+
+    def test_infrastructures(self):
+        infrastructure = InfrastructureFactory.create(paths=[(self.path, 0.5, 0.5)])
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.infrastructures.count(), 1)
+        self.assertEqual(sensitive_area.infrastructures.first(), infrastructure)
+
+    def test_interventions(self):
+        topology = TopologyFactory.create(paths=[(self.path, 0.5, 0.6)])
+        intervention = InterventionFactory.create(target=topology)
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.interventions.count(), 1)
+        self.assertEqual(sensitive_area.interventions.first(), intervention)
+
+    def test_sites(self):
+        site = SiteFactory.create(geom=GeometryCollection(self.point_geom))
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.sites.count(), 1)
+        self.assertEqual(sensitive_area.sites.first(), site)
+
+    def test_courses(self):
+        course = CourseFactory.create(geom=GeometryCollection(self.point_geom))
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.courses.count(), 1)
+        self.assertEqual(sensitive_area.courses.first(), course)
+
+    def test_signages(self):
+        signage = SignageFactory.create(paths=[(self.path, 0.5, 0.5)])
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.signages.count(), 1)
+        self.assertEqual(sensitive_area.signages.first(), signage)
+
+    def test_touristic_contents(self):
+        touristic_content = TouristicContentFactory.create(geom=self.point_geom)
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.touristic_contents.count(), 1)
+        self.assertEqual(sensitive_area.touristic_contents.first(), touristic_content)
+
+    def test_touristic_events(self):
+        touristic_event = TouristicEventFactory.create(geom=self.point_geom)
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.touristic_events.count(), 1)
+        self.assertEqual(sensitive_area.touristic_events.first(), touristic_event)
+
+    def test_treks(self):
+        trek = TrekFactory.create()
+        sensitive_area = SensitiveAreaFactory.create(geom=trek.geom.envelope)
+
+        self.assertEqual(sensitive_area.treks.count(), 1)
+        self.assertEqual(sensitive_area.treks.first(), trek)
+
+    def test_pois(self):
+        poi = POIFactory.create(paths=[(self.path, 0.5, 0.5)])
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.pois.count(), 1)
+        self.assertEqual(sensitive_area.pois.first(), poi)
+
+    def test_services(self):
+        service = ServiceFactory.create(paths=[(self.path, 0.5, 0.5)])
+        sensitive_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+
+        self.assertEqual(sensitive_area.services.count(), 1)
+        self.assertEqual(sensitive_area.services.first(), service)
