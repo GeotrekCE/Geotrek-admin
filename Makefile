@@ -137,7 +137,10 @@ clean_data:
 	rm -rf var/log/*
 	rm -rf var/mobile/*
 
-flush: clean_data update load_data
+create_superuser:
+	$(docker_compose) run web ./manage.py shell -c "from django.contrib.auth.models import User; User.objects.create_superuser('admin', 'admin@example.com', 'admin')"
+
+flush: clean_data update load_data create_superuser
 
 %.pdf:
 	$(docker_compose) up postgres -d
