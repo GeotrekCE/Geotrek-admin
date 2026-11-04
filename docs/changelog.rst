@@ -5,6 +5,10 @@ CHANGELOG
 2.127.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Fix cities ordering in infrastructure list
+
 
 2.127.0         (2026-11-03)
 ----------------------------
