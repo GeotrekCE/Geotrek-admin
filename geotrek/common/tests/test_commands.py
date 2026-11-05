@@ -1,5 +1,6 @@
 import os
 import shutil
+from contextlib import redirect_stdout
 from io import StringIO
 from tempfile import mkdtemp
 from unittest import mock
@@ -8,8 +9,10 @@ from unittest.mock import PropertyMock, patch
 from django.conf import settings
 from django.core.management import call_command
 from django.core.management.base import CommandError
+from django.db import connection
 from django.test import TestCase, override_settings
 from easy_thumbnails.models import Thumbnail
+from modeltranslation.utils import build_localized_fieldname
 
 from geotrek import __version__
 from geotrek.authent.tests.factories import StructureFactory
@@ -268,9 +271,35 @@ class CheckVersionsCommandTestCase(TestCase):
 
 class SyncTranslationFieldsCommandTestCase(TestCase):
     def setUp(self):
+        # add missing translated fields
         self.output = StringIO()
         self.command = SyncTranslationCommand()
 
+        # delete extra translated fields
+        self.db_table = Infrastructure._meta.db_table
+
+        qn = connection.ops.quote_name
+        self.extra_langs = [code for code in ("ur", "es-ve")]
+        self.extra_columns = [
+            build_localized_fieldname("name", lang) for lang in self.extra_langs
+        ]
+        # should not be deleted by the command
+        self.unrelated_columns = ["name_short", "name_html"]
+
+        existing = self.table_columns()
+        self.added = {
+            column
+            for column in self.extra_columns + self.unrelated_columns
+            if column not in existing
+        }
+        with connection.cursor() as cursor:
+            for column in self.added:
+                cursor.execute(
+                    f"ALTER TABLE {qn(self.db_table)} "
+                    f"ADD COLUMN {qn(column)} varchar(255) NULL"
+                )
+
+    # test add missing translated fields
     def test_nullable_field(self):
         sql = self.command.get_sync_sql("name", ["it"], Infrastructure)
         self.assertEqual(
@@ -294,3 +323,64 @@ class SyncTranslationFieldsCommandTestCase(TestCase):
 
     def test_no_missing_langs(self):
         self.assertEqual(self.command.get_sync_sql("name", [], Infrastructure), [])
+
+    # test delete extra translated fields
+    def tearDown(self):
+        qn = connection.ops.quote_name
+        columns_to_clear = self.added & self.table_columns()
+        with connection.cursor() as cursor:
+            for column in columns_to_clear:
+                cursor.execute(
+                    f"ALTER TABLE {qn(self.db_table)} DROP COLUMN {qn(column)}"
+                )
+
+    def table_columns(self):
+        with connection.cursor() as cursor:
+            description = connection.introspection.get_table_description(
+                cursor, self.db_table
+            )
+        return {col.name for col in description}
+
+    def run_command(self):
+        out = StringIO()
+        with redirect_stdout(out):
+            call_command("geotrek_sync_translation_fields", stdout=out)
+        return out.getvalue()
+
+    def test_extra_language_columns_are_dropped(self):
+        columns_before = self.table_columns()
+        for column in self.extra_columns:
+            self.assertIn(column, columns_before)
+
+        output = self.run_command()
+
+        after = self.table_columns()
+        for column in self.extra_columns:
+            self.assertNotIn(column, after)
+        self.assertIn(
+            "Extra languages in 'name' field from 'infrastructure' model: ", output
+        )
+        self.assertIn("ur", output)
+        self.assertIn("es_ve", output)
+
+    def test_unrelated_columns_are_kept(self):
+        self.run_command()
+        after = self.table_columns()
+        for column in self.unrelated_columns:
+            self.assertIn(column, after)
+
+    def test_available_language_columns_are_kept(self):
+        available = {
+            build_localized_fieldname("name", lang)
+            for lang in settings.MODELTRANSLATION_LANGUAGES
+        }
+        self.run_command()
+        after = self.table_columns()
+        for column in available:
+            self.assertIn(column, after)
+        self.assertIn("name", after)
+
+    def test_second_run_does_nothing(self):
+        self.run_command()
+        output = self.run_command()
+        self.assertIn("No old translatable fields detected", output)
