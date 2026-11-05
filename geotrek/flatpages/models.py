@@ -34,7 +34,6 @@ class FlatPage(BasePublishableMixin, TimeStampedModelMixin, MP_Node):
     class Meta:
         verbose_name = _("Flat page")
         verbose_name_plural = _("Flat pages")
-        permissions = (("read_flatpage", "Can read FlatPage"),)
 
     def __str__(self):
         return self.title

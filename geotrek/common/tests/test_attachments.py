@@ -75,7 +75,7 @@ class EntityAttachmentTestCase(TestCase):
 
     def test_list_attachments_in_details(self):
         self.createAttachmentAccessibility(self.object)
-        self.user.user_permissions.add(Permission.objects.get(codename="read_trek"))
+        self.user.user_permissions.add(Permission.objects.get(codename="view_trek"))
         self.user.user_permissions.add(
             Permission.objects.get(codename="read_attachment")
         )
@@ -104,7 +104,7 @@ class EntityAttachmentTestCase(TestCase):
     @override_settings(ACCESSIBILITY_ATTACHMENTS_ENABLED=False)
     def test_list_attachments_not_in_details_attachments_accessibility_disabled(self):
         self.createAttachmentAccessibility(self.object)
-        self.user.user_permissions.add(Permission.objects.get(codename="read_trek"))
+        self.user.user_permissions.add(Permission.objects.get(codename="view_trek"))
         self.user.user_permissions.add(
             Permission.objects.get(codename="read_attachment")
         )
@@ -153,7 +153,7 @@ class EntityAttachmentTestCase(TestCase):
 
         user = UserFactory()
         user.has_perm = mock.MagicMock(side_effect=user_perms)
-        user.user_permissions.add(Permission.objects.get(codename="read_trek"))
+        user.user_permissions.add(Permission.objects.get(codename="view_trek"))
         user.user_permissions.add(Permission.objects.get(codename="read_attachment"))
         self.client.force_login(user)
         response = self.client.get(self.object.get_detail_url())
@@ -222,7 +222,7 @@ class EntityAttachmentTestCase(TestCase):
         self.createAttachment(self.object)
         user = UserFactory()
         user.has_perm = mock.MagicMock(side_effect=user_perms)
-        user.user_permissions.add(Permission.objects.get(codename="read_trek"))
+        user.user_permissions.add(Permission.objects.get(codename="view_trek"))
         user.user_permissions.add(Permission.objects.get(codename="read_attachment"))
         self.client.force_login(user)
         response = self.client.get(self.object.get_detail_url())

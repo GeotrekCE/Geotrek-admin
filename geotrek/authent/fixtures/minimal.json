@@ -5,27 +5,27 @@
         "fields": {
             "name": "Lecteurs",
             "permissions": [
-                ["read_path", "core", "path"],
-                ["read_trail", "core", "trail"],
+                ["view_path", "core", "path"],
+                ["view_trail", "core", "trail"],
 
-                ["read_signage", "signage", "signage"],
-                ["read_infrastructure", "infrastructure", "infrastructure"],
+                ["view_signage", "signage", "signage"],
+                ["view_infrastructure", "infrastructure", "infrastructure"],
 
-                ["read_intervention", "maintenance", "intervention"],
-                ["read_project", "maintenance", "project"],
+                ["view_intervention", "maintenance", "intervention"],
+                ["view_project", "maintenance", "project"],
 
-                ["read_competenceedge", "land", "competenceedge"],
-                ["read_landedge", "land", "landedge"],
-                ["read_physicaledge", "land", "physicaledge"],
-                ["read_circulationedge", "land", "circulationedge"],
-                ["read_signagemanagementedge", "land", "signagemanagementedge"],
-                ["read_workmanagementedge", "land", "workmanagementedge"],
+                ["view_competenceedge", "land", "competenceedge"],
+                ["view_landedge", "land", "landedge"],
+                ["view_physicaledge", "land", "physicaledge"],
+                ["view_circulationedge", "land", "circulationedge"],
+                ["view_signagemanagementedge", "land", "signagemanagementedge"],
+                ["view_workmanagementedge", "land", "workmanagementedge"],
 
-                ["read_trek", "trekking", "trek"],
-                ["read_poi", "trekking", "poi"],
+                ["view_trek", "trekking", "trek"],
+                ["view_poi", "trekking", "poi"],
 
                 ["add_report", "feedback", "report"],
-                ["read_report", "feedback", "report"]
+                ["view_report", "feedback", "report"]
             ]
         }
     }

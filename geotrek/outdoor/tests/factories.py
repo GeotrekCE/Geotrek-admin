@@ -95,7 +95,7 @@ class OutdoorManagerFactory(UserFactory):
     def create_outdoor_manager(obj, create, extracted, **kwargs):
         for model in (Site, Course):
             content_type = ContentType.objects.get_for_model(model)
-            for action in ("add", "change", "delete", "read", "export"):
+            for action in ("add", "change", "delete", "view", "export"):
                 codename = f"{action}_{model.__name__.lower()}"
                 permission = Permission.objects.get(
                     content_type=content_type, codename=codename

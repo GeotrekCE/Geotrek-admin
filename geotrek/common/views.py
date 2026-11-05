@@ -458,7 +458,7 @@ class ServeAttachmentAccessibility(View):
             ):
                 raise PermissionDenied
             if not request.user.has_perm(
-                f"{obj._meta.app_label}.read_{obj._meta.model_name}"
+                f"{obj._meta.app_label}.view_{obj._meta.model_name}"
             ):
                 raise PermissionDenied
 
@@ -600,6 +600,7 @@ class ConfigView(APIView):
         "change_geom": "update_geom",
         "delete": "delete",
         "read": "read",
+        "view": "read",
     }
 
     pmtiles_folder = pathlib.Path(os.path.join(settings.MEDIA_ROOT, "pmtiles"))

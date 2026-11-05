@@ -406,8 +406,8 @@ class SuricateViewPermissions(AuthentFixturesMixin, TestCase):
             current_user=cls.workflow_manager_user, status=cls.classified_status
         )
         feedback_factories.ReportFactory(status=cls.classified_status)
-        permission = Permission.objects.get(name__contains="Can read Report")
-        permission_export = Permission.objects.get(name__contains="Can export Report")
+        permission = Permission.objects.get(codename="view_report")
+        permission_export = Permission.objects.get(codename="export_report")
         cls.workflow_manager_user.user_permissions.add(permission)
         cls.workflow_manager_user.user_permissions.add(permission_export)
         cls.normal_user.user_permissions.add(permission)

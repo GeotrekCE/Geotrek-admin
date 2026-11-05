@@ -496,7 +496,7 @@ class HDViewPointViewTest(TestCase):
         # Create user with proper permissions
         cls.user_perm = UserFactory.create()
         add_perm = Permission.objects.get(codename="add_hdviewpoint")
-        read_perm = Permission.objects.get(codename="read_hdviewpoint")
+        read_perm = Permission.objects.get(codename="view_hdviewpoint")
         update_perm = Permission.objects.get(codename="change_hdviewpoint")
         delete_perm = Permission.objects.get(codename="delete_hdviewpoint")
         cls.user_perm.user_permissions.add(
@@ -660,7 +660,7 @@ class ConfigViewTest(AuthentFixturesMixin, TestCase):
         perm_delete_intervention = Permission.objects.get(
             codename="delete_intervention"
         )
-        perm_view_report = Permission.objects.get(codename="read_report")
+        perm_view_report = Permission.objects.get(codename="view_report")
         cls.user.user_permissions.add(perm_add_signage)
         cls.user.user_permissions.add(perm_change_geom_infrastructure)
         cls.user.user_permissions.add(perm_delete_intervention)

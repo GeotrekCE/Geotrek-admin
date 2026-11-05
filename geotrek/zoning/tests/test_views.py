@@ -416,7 +416,7 @@ class VigilanceAreaDetailViewTest(AuthentFixturesTest):
         cls.user = profile.user
         cls.user.groups.add(Group.objects.get(name="Référents communication"))
         cls.user.user_permissions.add(
-            Permission.objects.get(codename="read_vigilancearea")
+            Permission.objects.get(codename="view_vigilancearea")
         )
         cls.area_same_struct = VigilanceAreaFactory(
             structure=cls.user.profile.structure

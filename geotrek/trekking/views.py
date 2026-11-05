@@ -500,7 +500,7 @@ class TrekPOIViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         pk = self.kwargs["pk"]
         trek = get_object_or_404(Trek.objects.existing(), pk=pk)
-        if not self.request.user.has_perm("trekking.read_poi") and not trek.is_public():
+        if not self.request.user.has_perm("trekking.view_poi") and not trek.is_public():
             raise Http404
         return (
             trek.pois.filter(published=True)
@@ -520,7 +520,7 @@ class TrekSignageViewSet(viewsets.ModelViewSet):
         pk = self.kwargs["pk"]
         trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         if (
-            not self.request.user.has_perm("trekking.read_signage")
+            not self.request.user.has_perm("trekking.view_signage")
             and not trek.is_public()
         ):
             raise Http404
@@ -538,7 +538,7 @@ class TrekInfrastructureViewSet(viewsets.ModelViewSet):
         pk = self.kwargs["pk"]
         trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         if (
-            not self.request.user.has_perm("infrastructure.read_infrastructure")
+            not self.request.user.has_perm("infrastructure.view_infrastructure")
             and not trek.is_public()
         ):
             raise Http404
@@ -628,7 +628,7 @@ class TrekServiceViewSet(viewsets.ModelViewSet):
         pk = self.kwargs["pk"]
         trek = get_object_or_404(Trek.objects.existing(), pk=pk)
         if (
-            not self.request.user.has_perm("trekking.read_service")
+            not self.request.user.has_perm("trekking.view_service")
             and not trek.is_public()
         ):
             raise Http404

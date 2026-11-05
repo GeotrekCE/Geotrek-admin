@@ -33,7 +33,7 @@ class SensitiveAreaViewsSameStructureTests(AuthentFixturesTest):
             Permission.objects.get(codename="delete_sensitivearea")
         )
         cls.user.user_permissions.add(
-            Permission.objects.get(codename="read_sensitivearea")
+            Permission.objects.get(codename="view_sensitivearea")
         )
         cls.user.user_permissions.add(
             Permission.objects.get(codename="export_sensitivearea")

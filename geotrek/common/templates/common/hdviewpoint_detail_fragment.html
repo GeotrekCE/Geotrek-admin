@@ -8,7 +8,7 @@
     {% trans "You are not allowed to modify attachments on this object, this object is not from the same structure." %}
 </div>
 {% else %}
-    {% if perms.common.read_hdviewpoint %}
+    {% if perms.common.view_hdviewpoint %}
         {% if perms.common.add_hdviewpoint %}
             <p class="autohide" style="text-align: right;">
                 <a href="{% url 'common:hdviewpoint_add' %}?object_id={{ object.pk }}&content_type={{ object.get_content_type_id }}" class="btn btn-sm btn-success">

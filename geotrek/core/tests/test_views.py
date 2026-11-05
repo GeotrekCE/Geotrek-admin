@@ -144,7 +144,7 @@ class PathViewsTest(CommonTest):
         perm_add_draft_path = Permission.objects.get(codename="add_draft_path")
         perm_delete_draft_path = Permission.objects.get(codename="delete_draft_path")
         perm_change_draft_path = Permission.objects.get(codename="change_draft_path")
-        perm_read_path = Permission.objects.get(codename="read_path")
+        perm_read_path = Permission.objects.get(codename="view_path")
         user.user_permissions.add(perm_delete_draft_path)
         user.user_permissions.add(perm_read_path)
         user.user_permissions.add(perm_change_draft_path)

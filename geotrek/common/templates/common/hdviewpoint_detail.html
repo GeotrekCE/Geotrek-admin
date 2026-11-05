@@ -128,7 +128,7 @@
           {% endif %}
           </tbody>
         </table>
-        {% if 'mapentity.read_logentry' in perms %}
+        {% if 'mapentity.view_logentry' in perms %}
         <a href="{% url 'mapentity:logentry_list' %}?content_type={{ object.get_content_type_id }}&object_id={{ object.pk }}" class="btn btn-light">
             {% trans "Full history" %}
         </a>

@@ -17,7 +17,7 @@ setup(
     scripts=["manage.py"],
     install_requires=[
         "Django==5.2.*",
-        "mapentity",
+        "mapentity@git+https://github.com/makinacorpus/django-mapentity.git@v8_read_perm#egg=mapentity",
         "django-mapbox-baselayer",
         "chardet",
         "cairosvg",

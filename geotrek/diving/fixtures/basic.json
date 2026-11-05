@@ -75,7 +75,7 @@
     "fields": {
         "name": "Diving",
         "permissions": [
-            ["read_dive", "diving", "dive"],
+            ["view_dive", "diving", "dive"],
             ["add_dive", "diving", "dive"],
             ["publish_dive", "diving", "dive"],
             ["change_dive", "diving", "dive"],
