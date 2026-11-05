@@ -146,36 +146,34 @@ msgid "Published sensitive areas"
 msgstr "Zones sensibles publiées"
 
 msgid "Trails"
-msgstr ""
+msgstr "Sentiers"
 
 msgid "Infrastructures"
-msgstr ""
+msgstr "Aménagements"
 
 msgid "Signages"
-msgstr ""
+msgstr "Signalétiques"
 
 msgid "Interventions"
-msgstr ""
+msgstr "Interventions"
 
 msgid "Physical edges"
-msgstr ""
+msgstr "Types de voie"
 
 msgid "Land edges"
-msgstr ""
+msgstr "Types fonciers"
 
 msgid "Competence edges"
-msgstr ""
+msgstr "Compétences sentiers"
 
 msgid "Work management edges"
-msgstr ""
+msgstr "Gestionnaires travaux"
 
 msgid "Signage management edges"
-msgstr ""
+msgstr "Gestionnaires signalétique"
 
-#, fuzzy
-#| msgid "Publication date"
 msgid "Circulation edges"
-msgstr "Date de publication"
+msgstr "Circulations"
 
 msgid "POIs"
 msgstr "POIs"
