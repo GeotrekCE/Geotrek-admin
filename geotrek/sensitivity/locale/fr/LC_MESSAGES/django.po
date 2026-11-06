@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-28 17:56+0200\n"
+"POT-Creation-Date: 2026-11-04 17:24+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/sensitivity/fr/>\n"
@@ -144,6 +144,36 @@ msgstr "Pratiques"
 
 msgid "Published sensitive areas"
 msgstr "Zones sensibles publiées"
+
+msgid "Trails"
+msgstr "Sentiers"
+
+msgid "Infrastructures"
+msgstr "Aménagements"
+
+msgid "Signages"
+msgstr "Signalétiques"
+
+msgid "Interventions"
+msgstr "Interventions"
+
+msgid "Physical edges"
+msgstr "Types de voie"
+
+msgid "Land edges"
+msgstr "Types fonciers"
+
+msgid "Competence edges"
+msgstr "Compétences sentiers"
+
+msgid "Work management edges"
+msgstr "Gestionnaires travaux"
+
+msgid "Signage management edges"
+msgstr "Gestionnaires signalétique"
+
+msgid "Circulation edges"
+msgstr "Circulations"
 
 msgid "POIs"
 msgstr "POIs"

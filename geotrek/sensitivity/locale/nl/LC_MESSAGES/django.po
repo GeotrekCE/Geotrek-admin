@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-28 17:56+0200\n"
+"POT-Creation-Date: 2026-11-04 17:24+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/sensitivity/nl/>\n"
@@ -143,6 +143,36 @@ msgid "Practices"
 msgstr ""
 
 msgid "Published sensitive areas"
+msgstr ""
+
+msgid "Trails"
+msgstr ""
+
+msgid "Infrastructures"
+msgstr ""
+
+msgid "Signages"
+msgstr ""
+
+msgid "Interventions"
+msgstr ""
+
+msgid "Physical edges"
+msgstr ""
+
+msgid "Land edges"
+msgstr ""
+
+msgid "Competence edges"
+msgstr ""
+
+msgid "Work management edges"
+msgstr ""
+
+msgid "Signage management edges"
+msgstr ""
+
+msgid "Circulation edges"
 msgstr ""
 
 msgid "POIs"

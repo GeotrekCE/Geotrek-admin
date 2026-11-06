@@ -8,6 +8,7 @@ CHANGELOG
 **Bug fixes**
 
 * Fix cities ordering in infrastructure list (#5830, #3961)
+* Fix linked objects to sensitive areas
 
 
 2.127.0         (2026-11-03)
