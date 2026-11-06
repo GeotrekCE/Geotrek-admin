@@ -34,7 +34,7 @@
                 </ul>
             {% endif %}
         </li>
-        {% if site == original_site and not site.is_root_node %}
+        {% if site == original_site and not site.is_root %}
             <li style="list-style-type: circle">
                 <a href="{% url 'outdoor:site_add' %}?parent_sites={{ site.parent.pk }}">
                     + <i>{% trans "Add a brother site" %}</i>

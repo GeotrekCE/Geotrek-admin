@@ -15,7 +15,7 @@ from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from modeltranslation.utils import build_localized_fieldname
-from mptt.models import MPTTModel, TreeForeignKey
+from treebeard.mp_tree import MP_Node
 
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
@@ -199,7 +199,7 @@ class Site(
     StructureRelated,
     AltimetryMixin,
     TimeStampedModelMixin,
-    MPTTModel,
+    MP_Node,
     ExcludedPOIsMixin,
     ExternalSourceMixin,
 ):
@@ -227,7 +227,7 @@ class Site(
     geom = models.GeometryCollectionField(
         verbose_name=_("Location"), srid=settings.SRID
     )
-    parent = TreeForeignKey(
+    parent = models.ForeignKey(
         "Site",
         related_name="children",
         on_delete=models.PROTECT,
@@ -327,6 +327,7 @@ class Site(
     check_structure_in_forms = False
 
     objects = SiteManager()
+    node_order_by = ["name"]
 
     class Meta:
         verbose_name = _("Outdoor site")
@@ -336,15 +337,13 @@ class Site(
             GistIndex(name="site_geom_3d_gist_idx", fields=["geom_3d"]),
         ]
 
-    class MPTTMeta:
-        order_insertion_by = ["name"]
-
     def __str__(self):
         return self.name
 
     @property
     def name_display(self):
-        return "- " * self.level + super().name_display
+        indent = (self.depth - 1) if self.depth else 0
+        return "- " * indent + super().name_display
 
     def distance(self, to_cls):
         """Distance to associate this site to another class"""
@@ -477,7 +476,48 @@ class Site(
         )
         return Intervention.objects.existing().filter(qs).distinct("pk")
 
+    def _prepare_clone_or_new(self):
+        if not self.pk:
+            self._state.adding = True
+            if self.path and Site.objects.filter(path=self.path).exists():
+                self.path = ""
+
+    def _insert_in_tree(self):
+        if self.parent:
+            self.parent.add_child(instance=self)
+        else:
+            Site.add_root(instance=self)
+        self.refresh_from_db()
+
+    def _move_to_new_parent(self):
+        if self.parent:
+            self.move(self.parent, pos="sorted-child")
+        else:
+            first_root = Site.get_first_root_node()
+            if first_root and first_root.pk != self.pk:
+                self.move(first_root, pos="sorted-sibling")
+
+    def _handle_parent_change(self):
+        if not self.pk:
+            return
+        orig_parent_id = (
+            Site.objects.filter(pk=self.pk).values_list("parent_id", flat=True).first()
+        )
+        if self.parent_id != orig_parent_id:
+            new_parent_id = self.parent_id
+            new_parent = self.parent
+            self._move_to_new_parent()
+            self.parent_id = new_parent_id
+            self.parent = new_parent
+
     def save(self, *args, **kwargs):
+        self._prepare_clone_or_new()
+
+        if not self.path:
+            self._insert_in_tree()
+            return
+
+        self._handle_parent_change()
         super().save(*args, **kwargs)
         self.refresh_from_db()
 
@@ -487,7 +527,9 @@ class Site(
         elif self.children_courses.exists():
             raise ChildCoursesExistError()
         else:
-            super().delete(*args, **kwargs)
+            res = super().delete(*args, **kwargs)
+            setattr(self, self._meta.pk.attname, None)
+            return res
 
     @classmethod
     def outdoor_sites(cls, outdoor_obj, queryset=None):
@@ -500,20 +542,6 @@ class Site(
     @classmethod
     def tourism_sites(cls, tourism_obj, queryset=None):
         return intersecting(queryset_or_model(queryset, cls), obj=tourism_obj)
-
-    def duplicate(self, **kwargs):
-        """
-        Duplicate the site and ensure that a duplicated root site gets its own tree ID.
-        https://github.com/GeotrekCE/Geotrek-admin/issues/5461
-        """
-        clone = super().duplicate(**kwargs)
-        if clone.is_root_node():
-            clone.tree_id = None
-            clone.lft = None
-            clone.rght = None
-            clone.level = None
-            clone.save(update_fields=["tree_id", "lft", "rght", "level"])
-        return clone
 
 
 Path.add_property("sites", lambda self: intersecting(Site, self), _("Sites"))

@@ -14,6 +14,10 @@ CHANGELOG
 * Fix cities ordering in infrastructure list (#5830, #3961)
 * Fix linked objects to sensitive areas
 
+**Maintenance**
+
+* Replace ``django-mptt`` with ``django-treebeard`` for outdoor sites
+
 
 2.127.0         (2026-11-03)
 ----------------------------

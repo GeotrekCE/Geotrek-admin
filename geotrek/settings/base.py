@@ -319,7 +319,6 @@ PROJECT_APPS += (
     "django_celery_beat",
     "django_large_image",
     "colorfield",
-    "mptt",
     "treebeard",
     "maintenance_mode",
 )
