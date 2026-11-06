@@ -5,6 +5,9 @@ CHANGELOG
 2.127.0+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+* Add impracticability information on site and course API v2 endpoints
 
 2.127.0         (2026-11-03)
 ----------------------------
