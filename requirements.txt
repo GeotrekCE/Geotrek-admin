@@ -345,7 +345,7 @@ pyphen==0.18.1
     # via weasyprint
 python-crontab==3.4.0
     # via django-celery-beat
-python-dateutil==2.9.0.post0
+python-dateutil==4.0.0
     # via celery
 python-dotenv==1.2.4
     # via geotrek (setup.py)
