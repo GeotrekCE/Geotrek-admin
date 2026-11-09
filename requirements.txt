@@ -335,7 +335,7 @@ pymemcache==4.0.0
     # via geotrek (setup.py)
 pymupdf==2.0
     # via pdfimpose
-pymupdf-layout==2.1
+pymupdf-layout==2.0
     # via pymupdf
 pymupdf4llm==2.0
     # via pymupdf
