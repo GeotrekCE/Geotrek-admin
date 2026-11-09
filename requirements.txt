@@ -37,7 +37,7 @@ celery==5.6.3
     #   geotrek (setup.py)
     #   django-celery-beat
     #   django-celery-results
-certifi==2026.10.18
+certifi==2026.10.23
     # via
     #   django-mapbox-baselayer
     #   fiona
