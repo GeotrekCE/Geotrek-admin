@@ -25,13 +25,17 @@ lxml==6.1.1
     # via
     #   -c requirements.txt
     #   -r requirements-dev.in
-python-dateutil==4.0.0
+python-dateutil==2.9.0.post0
     # via
     #   -c requirements.txt
     #   faker
     #   freezegun
 ruff==0.17.3
     # via -r requirements-dev.in
+six==1.17.0
+    # via
+    #   -c requirements.txt
+    #   python-dateutil
 sqlparse==0.6.1
     # via
     #   -c requirements.txt
@@ -39,7 +43,3 @@ sqlparse==0.6.1
     #   django-debug-toolbar
 tblib==3.2.2
     # via -r requirements-dev.in
-tzdata==2026.6
-    # via
-    #   -c requirements.txt
-    #   python-dateutil
