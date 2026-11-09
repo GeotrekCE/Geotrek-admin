@@ -375,7 +375,7 @@ referencing==0.37.0
     # via
     #   jsonschema
     #   jsonschema-specifications
-reportlab==5.0.1
+reportlab==5.1.0
     # via
     #   easy-thumbnails
     #   svglib
