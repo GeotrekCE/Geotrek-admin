@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 * Add impracticability information on site and course API v2 endpoints
+* Add a geo file parser for vigilance areas
 
 **Bug fixes**
 
