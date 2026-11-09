@@ -205,7 +205,7 @@ Geo file requirements for importing vigilance areas
 To import vigilance areas from a geo file (Geojson, Geopackage), make sure that:
 
 - Field names exactly match the names listed below (they are case-sensitive).
-- Any ``type`` or ``level`` you reference already exists in Geotrek-admin.
+- All referenced ``types`` and ``levels`` must already exist in Geotrek-admin.
 
 **Required fields**
 
