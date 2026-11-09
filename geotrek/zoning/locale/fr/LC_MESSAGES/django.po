@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 07:57+0000\n"
+"POT-Creation-Date: 2026-11-09 11:08+0000\n"
 "PO-Revision-Date: 2025-10-10 18:37+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/zoning/fr/>\n"
@@ -195,6 +195,16 @@ msgstr "La géométrie du champ '{src}' est invalide"
 
 #, python-brace-format
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
+msgstr "Le type de géométrie du champ '{src}' est invalide. Il devrait être (Multi)Polygon, pas {geom_type}"
+
+#, fuzzy, python-format
+#| msgid "Invalid geometry for field '{src}'"
+msgid "Invalid geometry for field '%(src)s'"
+msgstr "La géométrie du champ '{src}' est invalide"
+
+#, fuzzy, python-format
+#| msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
+msgid "Invalid geometry type for field '%(src)s'. Should be (Multi)Polygon, not %(geom_type)s"
 msgstr "Le type de géométrie du champ '{src}' est invalide. Il devrait être (Multi)Polygon, pas {geom_type}"
 
 msgid "Yes"

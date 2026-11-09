@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-21 07:57+0000\n"
+"POT-Creation-Date: 2026-11-09 11:08+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -195,6 +195,14 @@ msgstr ""
 
 #, python-brace-format
 msgid "Invalid geometry type for field '{src}'. Should be (Multi)Polygon, not {geom_type}"
+msgstr ""
+
+#, python-format
+msgid "Invalid geometry for field '%(src)s'"
+msgstr ""
+
+#, python-format
+msgid "Invalid geometry type for field '%(src)s'. Should be (Multi)Polygon, not %(geom_type)s"
 msgstr ""
 
 msgid "Yes"
