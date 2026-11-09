@@ -8,6 +8,7 @@ CHANGELOG
 **Improvements**
 
 * Add impracticability information on site and course API v2 endpoints
+* Add the published vigilance areas that intersect the sites and courses on their respective API v2 endpoints
 
 **Bug fixes**
 
