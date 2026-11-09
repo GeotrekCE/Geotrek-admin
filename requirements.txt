@@ -439,7 +439,7 @@ typing-extensions==4.16.0
     #   large-image
     #   psycopg-pool
     #   swagger-spec-validator
-tzdata==2026.5
+tzdata==2026.6
     # via
     #   django-celery-beat
     #   mapentity
