@@ -146,7 +146,7 @@ The following parsers are available via the web interface and the command line, 
 +-----------------+--------------------------------------------+---------------------+--------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | Sensitive areas | When the ``sensitivity`` module is enabled | Shapefile           | Shapefile species sensitive area           | ``geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser`` and ``geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser`` |
 +-----------------+--------------------------------------------+---------------------+--------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
-| Vigilance areas | Always                                     | Geopackage          | Vigilance areas (Geopackage)               | ``geotrek.zoning.parsers.VigilanceAreaGeoFileParser``                                                                                  |
+| Vigilance areas | Always                                     | Geo file            | Vigilance areas (Geo file)                 | ``geotrek.zoning.parsers.VigilanceAreaGeoFileParser``                                                                                  |
 +-----------------+--------------------------------------------+---------------------+--------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 
 .. note::
@@ -199,10 +199,10 @@ Regulatory sensitive areas
 
 .. _import-vigilance-areas:
 
-Geopackage requirements for importing vigilance areas
+Geo file requirements for importing vigilance areas
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-To import vigilance areas from a GeoPackage, make sure that:
+To import vigilance areas from a geo file (Geojson, Geopackage), make sure that:
 
 - Field names exactly match the names listed below (they are case-sensitive).
 - Any ``type`` or ``level`` you reference already exists in Geotrek-admin.
@@ -228,6 +228,7 @@ To import vigilance areas from a GeoPackage, make sure that:
 .. warning::
 
    - Re-importing the same file will create duplicates.
+   - Shapefile are not supported
 
 
 Custom parsers

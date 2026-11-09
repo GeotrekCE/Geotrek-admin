@@ -225,9 +225,9 @@ class GeotrekVigilanceAreaParser(GeotrekParser):
 class VigilanceAreaGeoFileParser(ShapeParser):
     model = VigilanceArea
 
-    label = "Vigilance areas (Geopackage)"
-    label_fr = "Zones de vigilance (Geopackage)"
-    label_en = "Vigilance areas (Geopackage)"
+    label = "Vigilance areas (Geo file)"
+    label_fr = "Zones de vigilance (Fichier géographique)"
+    label_en = "Vigilance areas (Geo file)"
 
     separator = ","
     delete = False
