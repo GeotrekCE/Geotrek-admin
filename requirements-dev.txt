@@ -32,7 +32,7 @@ python-dateutil==4.0.0
     #   freezegun
 ruff==0.17.3
     # via -r requirements-dev.in
-sqlparse==0.6.0
+sqlparse==0.6.1
     # via
     #   -c requirements.txt
     #   django
