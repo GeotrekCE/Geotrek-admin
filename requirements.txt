@@ -317,9 +317,9 @@ protobuf==7.36.2
     # via onnxruntime
 psutil==7.2.2
     # via pymupdf
-psycopg==3.3.6
+psycopg==3.3.8
     # via geotrek (setup.py)
-psycopg-c==3.3.6
+psycopg-c==3.3.8
     # via psycopg
 psycopg-pool==3.3.3
     # via psycopg
