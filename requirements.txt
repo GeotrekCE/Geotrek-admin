@@ -444,7 +444,7 @@ tzdata==2026.5
     #   django-celery-beat
     #   mapentity
     #   python-dateutil
-tzlocal==5.4.4
+tzlocal==5.4.5
     # via celery
 uritemplate==4.2.0
     # via
