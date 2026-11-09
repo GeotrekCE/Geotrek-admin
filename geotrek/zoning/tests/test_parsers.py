@@ -216,7 +216,7 @@ class VigilanceAreaParserTest(TestCase):
 
     def test_good_data(self):
         filename = os.path.join(
-            os.path.dirname(__file__), "data", "vigilance_area.gpkg"
+            os.path.dirname(__file__), "data", "vigilance_area.geojson"
         )
         call_command(
             "import",

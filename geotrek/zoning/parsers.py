@@ -290,11 +290,12 @@ class VigilanceAreaGeoFileParser(ShapeParser):
         if val is None or not val.valid:
             msg = _("Invalid geometry for field '%(src)s'") % {"src": src}
             raise RowImportError(msg)
+        # Geometry has already been reprojected to settings.SRID by ShapeParser.next_row
+        val.srid = settings.SRID
         if val.geom_type == "MultiPolygon":
-            return val.transform(settings.SRID, clone=True)
+            return val
         elif val.geom_type == "Polygon":
-            geom = MultiPolygon(val)
-            return geom.transform(settings.SRID, clone=True)
+            return MultiPolygon(val, srid=settings.SRID)
 
         msg = _(
             "Invalid geometry type for field '%(src)s'. Should be (Multi)Polygon, not %(geom_type)s"
