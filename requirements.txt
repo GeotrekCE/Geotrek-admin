@@ -76,7 +76,7 @@ cligj==0.7.2
     # via fiona
 crispy-bootstrap4==2026.2
     # via mapentity
-cron-descriptor==2.2.1
+cron-descriptor==1.4.5
     # via django-celery-beat
 cssselect2==0.10.1
     # via
