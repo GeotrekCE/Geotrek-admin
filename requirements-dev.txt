@@ -39,7 +39,7 @@ sqlparse==0.6.0
     #   django-debug-toolbar
 tblib==3.2.2
     # via -r requirements-dev.in
-tzdata==2026.5
+tzdata==2026.6
     # via
     #   -c requirements.txt
     #   python-dateutil
