@@ -238,16 +238,16 @@ class VigilanceAreaGeoFileParser(ShapeParser):
     }
 
     fields = {
-        'eid': 'id',
-        'name': 'name',
-        'description': 'description',
-        'impracticable': 'impracticable',
-        'vigilance_level': 'level',
-        'vigilance_area_type': 'type',
-        'practical_info': 'info',
-        'external_info_url': 'url',
-        'private_comment': 'comment',
-        'geom': 'geom',
+        "eid": "id",
+        "name": "name",
+        "description": "description",
+        "impracticable": "impracticable",
+        "vigilance_level": "level",
+        "vigilance_area_type": "type",
+        "practical_info": "info",
+        "external_info_url": "url",
+        "private_comment": "comment",
+        "geom": "geom",
     }
 
     m2m_fields = {
@@ -296,7 +296,7 @@ class VigilanceAreaGeoFileParser(ShapeParser):
             geom = MultiPolygon(val)
             return geom.transform(settings.SRID, clone=True)
 
-        msg = (_("Invalid geometry type for field '%(src)s'. Should be (Multi)Polygon, not %(geom_type)s")
-               % {"src": src, "geom_type": val.geom_type})
+        msg = _(
+            "Invalid geometry type for field '%(src)s'. Should be (Multi)Polygon, not %(geom_type)s"
+        ) % {"src": src, "geom_type": val.geom_type}
         raise RowImportError(msg)
-

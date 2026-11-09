@@ -5,7 +5,7 @@ from io import StringIO
 from unittest import mock
 
 from django.conf import settings
-from django.contrib.gis.geos import MultiPolygon, Polygon, WKTWriter, Point
+from django.contrib.gis.geos import MultiPolygon, Point, Polygon, WKTWriter
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 
@@ -25,10 +25,10 @@ from geotrek.zoning.models import (
 from geotrek.zoning.parsers import (
     CityParser,
     GeotrekVigilanceAreaParser,
-    VigilanceAreaGeoFileParser,
     OpenStreetMapCityParser,
     OpenStreetMapDistrictParser,
     OpenStreetMapRestrictedAreaParser,
+    VigilanceAreaGeoFileParser,
 )
 
 WKT = (
@@ -215,16 +215,19 @@ class VigilanceAreaParserTest(TestCase):
         RecordSourceFactory.create(name="source 2")
 
     def test_good_data(self):
-        filename = os.path.join(os.path.dirname(__file__), "data", "vigilance_area.gpkg")
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "vigilance_area.gpkg"
+        )
         call_command(
-            "import", "geotrek.zoning.parsers.VigilanceAreaGeoFileParser", filename, verbosity=0
+            "import",
+            "geotrek.zoning.parsers.VigilanceAreaGeoFileParser",
+            filename,
+            verbosity=0,
         )
         vigilance_area = VigilanceArea.objects.first()
         self.assertEqual(vigilance_area.name, "area 2")
         self.assertEqual(vigilance_area.description, "description")
-        self.assertEqual(
-            vigilance_area.practical_info, "ceci est une info pratique"
-        )
+        self.assertEqual(vigilance_area.practical_info, "ceci est une info pratique")
         self.assertEqual(vigilance_area.published, True)
         self.assertEqual(str(vigilance_area.vigilance_area_type), "Ecobuage")
         self.assertEqual(str(vigilance_area.vigilance_level), "Alerte")
@@ -256,7 +259,6 @@ class VigilanceAreaParserTest(TestCase):
         with self.assertRaises(RowImportError):
             point = Point(0, 0, settings.SRID)
             parser.filter_geom("geom", point)
-
 
 
 class TestDistrictOpenStreetMapParser(OpenStreetMapDistrictParser):
