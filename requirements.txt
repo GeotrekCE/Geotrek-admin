@@ -170,7 +170,7 @@ django-timezone-field==7.2.2
     # via django-celery-beat
 django-tinymce==5.0.0
     # via mapentity
-django-treebeard==7.0.2
+django-treebeard==7.0.3
     # via geotrek (setup.py)
 django-weasyprint==2.6.0
     # via
