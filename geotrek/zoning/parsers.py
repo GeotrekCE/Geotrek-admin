@@ -49,7 +49,8 @@ class CityParser(ShapeParser):
         raise GlobalImportError(
             _(
                 "Invalid geometry type for field '%(src)s'. Should be (Multi)Polygon, not %(geom_type)s"
-            ) % {"src": src, "geom_type": val.geom_type}
+            )
+            % {"src": src, "geom_type": val.geom_type}
         )
 
 
