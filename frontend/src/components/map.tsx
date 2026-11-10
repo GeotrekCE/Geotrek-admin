@@ -19,6 +19,7 @@ import { db } from "@/lib/db"
 import { useAppSettings } from "@/hook/useAppSettings"
 import useLayers from "@/hook/useLayers"
 import LayerControl from "@/components/map-layer-control"
+import { moveOfflineLayersBelowOtherLayers } from "@/lib/map"
 
 OfflinePlugin.registerProtocol(maplibregl)
 
@@ -90,17 +91,12 @@ export default function Map({
             ?.classList.remove("maplibregl-compact-show")
           if (currentLayerSettings.styleUrl.startsWith("offline-pmtiles://")) {
             await offlineManager.loadMap(map, currentLayerSettings.id)
-            const offlineLayer = map
-              .getStyle()
-              .layers.find((item) =>
-                [
-                  `${currentLayerSettings.id}-raster`,
-                  `${currentLayerSettings.id}-vector`,
-                ].includes(item.id)
-              )?.id
-            if (offlineLayer) {
-              map.moveLayer(offlineLayer, map.getStyle().layers[0].id)
-            }
+            const offlineMapIds = layers
+              .filter((layer) =>
+                layer.styleUrl.startsWith("offline-pmtiles://")
+              )
+              .map((layer) => layer.id)
+            moveOfflineLayersBelowOtherLayers(map, offlineMapIds)
           } else {
             map.setStyle(currentLayerSettings.styleUrl)
           }
