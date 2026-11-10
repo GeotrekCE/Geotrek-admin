@@ -6,6 +6,7 @@ import { useMap } from "react-map-gl/maplibre"
 import { useTheme } from "@/components/theme-provider"
 import { useAppSettings } from "@/hook/useAppSettings"
 import useLayers from "@/hook/useLayers"
+import { moveOfflineLayersBelowOtherLayers } from "@/lib/map"
 
 const offlineManager = new OfflinePlugin()
 
@@ -38,35 +39,33 @@ export default function MapLayerControl({
       position={position ?? "top-right"}
       onBeforeStyleChange={async (from, to) => {
         if (!map.current) return
+
+        const mapInstance = map.current.getMap()
+
         if (!from.styleUrl.startsWith("offline-pmtiles://")) {
-          map.current.getMap().setStyle({
+          mapInstance.setStyle({
             version: 8,
             sources: {},
             layers: [],
           })
         }
         if (from.styleUrl.startsWith("offline-pmtiles://")) {
-          offlineManager.toggleMap(map.current.getMap(), from.id, false)
+          offlineManager.toggleMap(mapInstance, from.id, false)
         }
         if (to.styleUrl.startsWith("offline-pmtiles://")) {
-          await offlineManager.loadMap(map.current.getMap(), to.id)
-          const offlineLayer = map.current
-            .getMap()
-            .getStyle()
-            .layers.find((item) =>
-              [`${to.id}-raster`, `${to.id}-vector`].includes(item.id)
-            )?.id
-          if (offlineLayer) {
-            map.current
-              .getMap()
-              .moveLayer(
-                offlineLayer,
-                map.current.getMap().getStyle().layers[0].id
-              )
+          const isLoaded = Boolean(mapInstance.getSource(`${to.id}-source`))
+          if (isLoaded) {
+            offlineManager.toggleMap(mapInstance, to.id, true)
+          } else {
+            await offlineManager.loadMap(mapInstance, to.id)
           }
+          const offlineMapIds = layers
+            .filter((layer) => layer.styleUrl.startsWith("offline-pmtiles://"))
+            .map((layer) => layer.id)
+          moveOfflineLayersBelowOtherLayers(mapInstance, offlineMapIds)
         }
         if (!to.styleUrl.startsWith("offline-pmtiles://")) {
-          map.current.getMap().setStyle(to.styleUrl)
+          mapInstance.setStyle(to.styleUrl)
         }
         setActiveStyleId(to.id)
         setData({ currentLayer: to.id })
