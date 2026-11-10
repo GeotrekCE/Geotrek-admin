@@ -1,4 +1,3 @@
-import path from "path"
 import { serwist } from "@serwist/vite"
 import { paraglideVitePlugin } from "@inlang/paraglide-js"
 import tailwindcss from "@tailwindcss/vite"
@@ -55,7 +54,7 @@ export default defineConfig(({ mode }) => {
     ],
     resolve: {
       alias: {
-        "@": path.resolve(__dirname, "./src"),
+        "@": import.meta.dirname + "/src",
       },
     },
     server: {
