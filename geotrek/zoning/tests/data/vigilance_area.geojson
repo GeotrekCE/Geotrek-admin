@@ -1,7 +1,84 @@
 {
-"type": "FeatureCollection",
-"name": "vigilance_area",
-"features": [
-{ "type": "Feature", "properties": { "id": 1, "name": "area 2", "description": "description", "impracticable": true, "level": "Alerte", "type": "Ecobuage", "info": "ceci est une info pratique", "url": "https://url.com", "comment": "ceci est un commentaire privé", "portals": "portail 1", "sources": "source 2", "start": "2026-11-03", "end": "2026-11-25", "annual": true, "active_days": "0,1,2,3,4" }, "geometry": { "type": "Polygon", "coordinates": [ [ [ -0.2286192, 44.5449901 ], [ 0.5143932, 44.1772278 ], [ -0.3429288, 43.2407877 ], [ 2.724379, 43.7934068 ], [ 1.1811993, 46.5722731 ], [ -0.2286192, 44.5449901 ] ] ] } }
-]
+    "type": "FeatureCollection",
+    "name": "vigilance_area",
+    "features": [
+        {
+            "type": "Feature",
+            "properties":
+            {
+                "id": 1,
+                "name": "area 2",
+                "description": "description",
+                "impracticable": true,
+                "level": "Alerte",
+                "type": "Ecobuage",
+                "info": "ceci est une info pratique",
+                "url": "https://url.com",
+                "comment": "ceci est un commentaire privé",
+                "portals": "portail 1",
+                "sources": "source 2",
+                "start": "2026-11-03",
+                "end": "2026-11-25",
+                "annual": true,
+                "active_days": "0,1,2,3,4"
+            },
+            "geometry":
+            {
+                "type": "Polygon",
+                "coordinates":
+                [
+                    [
+                        [ -0.2286192, 44.5449901 ],
+                        [ 0.5143932, 44.1772278 ],
+                        [ -0.3429288, 43.2407877 ],
+                        [ 2.724379, 43.7934068 ],
+                        [ 1.1811993, 46.5722731 ],
+                        [ -0.2286192, 44.5449901 ]
+                    ]
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties":
+            {
+                "id": 2,
+                "name": "area",
+                "description": null,
+                "impracticable": false,
+                "level": null,
+                "type": "Ecobuage",
+                "info": null,
+                "url": null,
+                "comment": null,
+                "portals": null,
+                "sources": null,
+                "start": "2026-11-08",
+                "end": null,
+                "annual": false,
+                "active_days": null
+            },
+            "geometry":
+            {
+                "type": "MultiPolygon",
+                "coordinates":
+                [
+                    [
+                        [ -0.2286192, 44.5449901 ],
+                        [ 0.5143932, 44.1772278 ],
+                        [ -0.3429288, 43.2407877 ],
+                        [ 2.724379, 43.7934068 ],
+                        [ 1.1811993, 46.5722731 ],
+                        [ -0.2286192, 44.5449901 ]
+                    ],
+                    [
+                        [ -1, 44 ],
+                        [ -1, 46],
+                        [ 1, 46 ],
+                        [ -1, 44 ]
+                    ]
+                ]
+            }
+        }
+    ]
 }

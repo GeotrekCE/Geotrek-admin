@@ -224,7 +224,7 @@ class VigilanceAreaParserTest(TestCase):
             filename,
             verbosity=0,
         )
-        vigilance_area = VigilanceArea.objects.first()
+        vigilance_area = VigilanceArea.objects.get(eid="1")
         self.assertEqual(vigilance_area.name, "area 2")
         self.assertEqual(vigilance_area.description, "description")
         self.assertEqual(vigilance_area.practical_info, "ceci est une info pratique")
@@ -248,6 +248,9 @@ class VigilanceAreaParserTest(TestCase):
         self.assertEqual(period.end_date, datetime.date(2026, 11, 25))
         self.assertEqual(period.active_days, [0, 1, 2, 3, 4])
         self.assertEqual(period.annual, True)
+
+        vigilance_area = VigilanceArea.objects.get(eid="2")
+        self.assertEqual(vigilance_area.geom.geom_type, "MultiPolygon")
 
     def test_geom_null(self):
         parser = VigilanceAreaGeoFileParser()
