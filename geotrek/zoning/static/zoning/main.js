@@ -5,7 +5,7 @@ $(window).on('entity:map', function (e, data) {
     var landLayers = [
         { url: window.SETTINGS.urls.district_layer, name: tr("Districts"), id: 'district' },
         { url: window.SETTINGS.urls.city_layer, name: tr("Cities"), id: 'city' },
-        { url: window.SETTINGS.urls.vigilancearea_layer, name: tr("Vigilance areas"), id: 'vigilancearea' }
+        { url: window.SETTINGS.urls.vigilancearea_layer, name: tr("Vigilance areas"), id: 'vigilancearea', clickable: true }
     ];
 
     landLayers = landLayers.concat(
@@ -16,7 +16,7 @@ $(window).on('entity:map', function (e, data) {
         landLayer.isActive = false;
 
         var style = L.Util.extend(
-            { clickable: true },
+            {clickable: landLayer.clickable ?? false},
             window.SETTINGS.map.styles[landLayer.id] || {}
         );
         var colorspools = L.Util.extend(
@@ -29,14 +29,18 @@ $(window).on('entity:map', function (e, data) {
             var color = colorspool[(i < 2 ? i : i - 2) % colorspool.length];
             style['color'] = color;
         }
+        var modelname = landLayer.id;
+        if (modelname === "restrictedarea") {
+            modelname = landLayer.name
+        }
 
         var layer = new L.ObjectsLayer(null, {
             indexing: false,
-            modelname: landLayer.id,
+            modelname: modelname,
             style: style,
         });
 
-        if (data.modelname != landLayer.id) {
+        if (data.modelname != modelname) {
             var nameHTML = '<span style="color: ' +
                 style['color'] +
                 ';">&#x2B24;</span>&nbsp;' +
@@ -56,9 +60,13 @@ $(window).on('entity:map', function (e, data) {
             };
 
             if (!landLayer.isActive) {
+                var landLayerModelname = landLayer.id;
+                if (landLayerModelname === "restrictedarea") {
+                    landLayerModelname = landLayer.name
+                }
 
                 if (
-                    options.modelname == landLayer.id &&
+                    options.modelname == landLayerModelname &&
                     options.modelname != data.modelname
                 ) {
                     e.layer.load(landLayer.url);
