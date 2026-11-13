@@ -235,6 +235,11 @@ msgstr "Filtrer par un ou plusieurs identifiants de site. Il affichera uniquemen
 msgid "Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas."
 msgstr "Filtrer par un ou plusieurs identifiants de cours. Il n'affichera que les POIliés à ce parcours outdoor. S'il s'agit de plusieurs cours, ils doivent être séparés par des virgules. "
 
+#, fuzzy
+#| msgid "Filter by one or multiple Course id. It will show only the POIs related to this outdoor Course. If multiple courses, they should be separated by commas."
+msgid "Filter by one or multiple course id. It will show only the POIs related to this outdoor course. If multiple courses, they should be separated by commas."
+msgstr "Filtrer par un ou plusieurs identifiants de cours. Il n'affichera que les POIliés à ce parcours outdoor. S'il s'agit de plusieurs cours, ils doivent être séparés par des virgules. "
+
 msgid "Filter by a trek id. It will only show the contents related to this trek."
 msgstr ""
 
