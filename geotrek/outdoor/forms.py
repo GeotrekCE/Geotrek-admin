@@ -85,6 +85,9 @@ class SiteForm(CommonForm):
     def __init__(self, site=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields["parent"].initial = site
+        self.fields["parent"].label_from_instance = lambda obj: (
+            f"{'---' * ((obj.depth - 1) if obj.depth else 0)} {obj.name}"
+        )
         if self.instance.pk:
             descendants = self.instance.get_descendants(include_self=True).values_list(
                 "pk", flat=True

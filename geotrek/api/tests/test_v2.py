@@ -338,6 +338,7 @@ SITE_PROPERTIES_JSON_STRUCTURE = sorted(
         "eid",
         "geometry",
         "id",
+        "impracticable",
         "information_desks",
         "labels",
         "managers",
@@ -433,6 +434,7 @@ COURSE_PROPERTIES_JSON_STRUCTURE = sorted(
         "geometry",
         "height",
         "id",
+        "impracticable",
         "length",
         "name",
         "ratings",
@@ -779,6 +781,7 @@ class BaseApiTest(TestCase):
         cls.treks[0].reservation_system = cls.reservation_system
         cls.site = outdoor_factory.SiteFactory(managers=[cls.organism])
         cls.site.pois_excluded.add(poi_excluded)
+        cls.site.portal.set([cls.portal])
         cls.label_accessibility = tourism_factory.LabelAccessibilityFactory()
         cls.category = tourism_factory.TouristicContentCategoryFactory()
         cls.content2.category = cls.category
@@ -793,7 +796,7 @@ class BaseApiTest(TestCase):
         cls.sensitivearea_practice = sensitivity_factory.SportPracticeFactory()
         cls.sensitivearea_species = sensitivity_factory.SpeciesFactory()
 
-        geom = "SRID=4326;MULTIPOLYGON (((-2 -6, -2 -5, 0 -5, 0 -6, -2 -6)))"
+        geom = "SRID=4326;MULTIPOLYGON (((-2 -6, -2 5, 1 5, 1 -6, -2 -6)))"
         cls.vigilance_area1 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,
             published=True,
@@ -3193,6 +3196,28 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         #  test response code
         self.assertEqual(response.status_code, 200)
 
+    def test_site_vigilancearea_impracticable_depends_on_portal(self):
+        params = {
+            "practicable_from": "2026-10-19",
+            "practicable_to": "2026-10-21",
+            "practicable": "false",
+        }
+
+        response = self.get_site_list({**params, "portals": str(self.portal.pk)})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 2)
+
+        other_portal = common_factory.TargetPortalFactory()
+        response = self.get_tour_list({**params, "portals": other_portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 0)
+
+        response = self.get_site_list(
+            {**params, "portals": f"{self.portal.pk},{other_portal.pk}"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 2)
+
     def test_course_list(self):
         self.check_number_elems_response(self.get_course_list(), outdoor_models.Course)
 
@@ -3200,6 +3225,28 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_structure_response(
             self.get_course_detail(self.course.pk), COURSE_PROPERTIES_JSON_STRUCTURE
         )
+
+    def test_course_vigilancearea_impracticable_depends_on_portal(self):
+        params = {
+            "practicable_from": "2026-10-19",
+            "practicable_to": "2026-10-21",
+            "practicable": "false",
+        }
+
+        response = self.get_course_list({"portals": str(self.portal.pk)})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
+
+        other_portal = common_factory.TargetPortalFactory()
+        response = self.get_course_list({**params, "portals": other_portal.pk})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 0)
+
+        response = self.get_course_list(
+            {**params, "portals": f"{self.portal.pk},{other_portal.pk}"}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json()["count"], 1)
 
     def test_coursetype_list(self):
         self.check_number_elems_response(

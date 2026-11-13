@@ -1,4 +1,5 @@
 import json
+from unittest import mock
 
 from django.contrib.admin.models import DELETION, LogEntry
 from django.contrib.contenttypes.models import ContentType
@@ -116,15 +117,105 @@ class SiteTest(TestCase):
         self.site_1 = SiteFactory.create(name="parent_site")
         self.site_2 = SiteFactory.create(name="child_site", parent=self.site_1)
         clone = self.site_1.duplicate()
-        self.assertNotEqual(clone.tree_id, self.site_1.tree_id)
+        self.assertNotEqual(clone.get_root(), self.site_1)
         self.assertEqual(list(self.site_2.get_ancestors()), [self.site_1])
 
     def test_duplicate_child_site_duplicate_tree_id(self):
         self.site_1 = SiteFactory.create(name="parent_site")
         self.site_2 = SiteFactory.create(name="child_site", parent=self.site_1)
         clone = self.site_2.duplicate()
-        self.assertEqual(clone.tree_id, self.site_2.tree_id)
+        self.assertEqual(clone.get_root(), self.site_2.get_root())
         self.assertEqual(list(self.site_2.get_ancestors()), [self.site_1])
+
+    def test_site_tree_depth_and_is_root(self):
+        root = SiteFactory.create(name="Root")
+        child = SiteFactory.create(name="Child", parent=root)
+        self.assertEqual(root.depth, 1)
+        self.assertTrue(root.is_root())
+        self.assertEqual(child.depth, 2)
+        self.assertFalse(child.is_root())
+
+    def test_site_get_ancestors(self):
+        root = SiteFactory.create(name="Root")
+        child = SiteFactory.create(name="Child", parent=root)
+        grandchild = SiteFactory.create(name="Grandchild", parent=child)
+        self.assertEqual(list(grandchild.get_ancestors()), [root, child])
+
+    def test_site_move_to_root(self):
+        root = SiteFactory.create(name="Root")
+        child = SiteFactory.create(name="Child", parent=root)
+        child.parent = None
+        child.save()
+        self.assertTrue(child.is_root())
+        self.assertEqual(child.depth, 1)
+        self.assertIsNone(child.parent)
+
+    def test_site_move_to_another_parent(self):
+        root1 = SiteFactory.create(name="Root 1")
+        root2 = SiteFactory.create(name="Root 2")
+        child = SiteFactory.create(name="Child", parent=root1)
+        child.parent = root2
+        child.save()
+        self.assertEqual(child.parent, root2)
+        self.assertEqual(child.depth, 2)
+        self.assertEqual(list(child.get_ancestors()), [root2])
+
+    def test_site_delete_resets_pk(self):
+        site = SiteFactory.create(name="Site to delete")
+        site_pk = site.pk
+        site.delete()
+        self.assertIsNone(site.pk)
+        self.assertFalse(Site.objects.filter(pk=site_pk).exists())
+
+    def test_site_queryset_get_ancestors(self):
+        from geotrek.outdoor.managers import SiteQuerySet
+
+        root = SiteFactory.create(name="Root")
+        child = SiteFactory.create(name="Child", parent=root)
+        grandchild = SiteFactory.create(name="Grandchild", parent=child)
+
+        # Empty queryset returns none()
+        self.assertEqual(list(Site.objects.none().get_ancestors()), [])
+
+        # Root node with include_self=False returns none()
+        self.assertEqual(
+            list(Site.objects.filter(pk=root.pk).get_ancestors(include_self=False)), []
+        )
+
+        # Root node with include_self=True returns root
+        self.assertEqual(
+            list(Site.objects.filter(pk=root.pk).get_ancestors(include_self=True)),
+            [root],
+        )
+
+        # Grandchild with include_self=False returns [root, child]
+        self.assertEqual(
+            list(
+                Site.objects.filter(pk=grandchild.pk).get_ancestors(include_self=False)
+            ),
+            [root, child],
+        )
+
+        # Grandchild with include_self=True returns [root, child, grandchild]
+        self.assertEqual(
+            list(
+                Site.objects.filter(pk=grandchild.pk).get_ancestors(include_self=True)
+            ),
+            [root, child, grandchild],
+        )
+
+        # Test empty/None path in paths list
+        with mock.patch.object(
+            SiteQuerySet, "values_list", return_value=["", None, grandchild.path]
+        ):
+            self.assertEqual(
+                list(
+                    Site.objects.filter(pk=grandchild.pk).get_ancestors(
+                        include_self=False
+                    )
+                ),
+                [root, child],
+            )
 
 
 class SiteSuperTest(TestCase):

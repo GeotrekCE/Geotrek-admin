@@ -66,6 +66,15 @@ os.makedirs(SESSION_FILE_PATH)
 LOGGING['loggers']['']['handlers'] = ('log_file', )
 LOGGING['handlers']['log_file']['level'] = 'INFO'
 LOGGING['handlers']['log_file']['filename'] = os.path.join(TMP_DIR, 'geotrek.log')
+LOGGING['handlers']['console'] = {
+    'class': 'logging.NullHandler',
+}
+LOGGING['handlers']['django.server'] = {
+    'class': 'logging.NullHandler',
+}
+
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning, module="drf_dynamic_fields")
 MEDIA_ROOT = TemporaryDirectory(dir=TMP_DIR).name  # media files
 MAP_PATH = os.path.join(MEDIA_ROOT, 'maps')  # map files
 os.makedirs(MAP_PATH)

@@ -336,7 +336,7 @@ class SensitiveArea(
 
 
 if "geotrek.core" in settings.INSTALLED_APPS:
-    from geotrek.core.models import Topology
+    from geotrek.core.models import Topology, Trail
 
     Topology.add_property(
         "sensitive_areas", SensitiveArea.topology_sensitive_areas, _("Sensitive areas")
@@ -345,6 +345,79 @@ if "geotrek.core" in settings.INSTALLED_APPS:
         "published_sensitive_areas",
         SensitiveArea.topology_published_sensitive_areas,
         _("Published sensitive areas"),
+    )
+    SensitiveArea.add_property(
+        "trails", lambda self: intersecting(Trail, self, distance=0), _("Trails")
+    )
+
+if "geotrek.infrastructure" in settings.INSTALLED_APPS:
+    from geotrek.infrastructure.models import Infrastructure
+
+    SensitiveArea.add_property(
+        "infrastructures",
+        lambda self: intersecting(Infrastructure, self, distance=0),
+        _("Infrastructures"),
+    )
+
+if "geotrek.signage" in settings.INSTALLED_APPS:
+    from geotrek.signage.models import Signage
+
+    SensitiveArea.add_property(
+        "signages", lambda self: intersecting(Signage, self, distance=0), _("Signages")
+    )
+
+if "geotrek.maintenance" in settings.INSTALLED_APPS:
+    from geotrek.maintenance.models import Intervention
+
+    SensitiveArea.add_property(
+        "interventions",
+        lambda self: intersecting(Intervention, self, distance=0, field="geom_3d"),
+        _("Interventions"),
+    )
+
+if "geotrek.land" in settings.INSTALLED_APPS:
+    from geotrek.land.models import (
+        CirculationEdge,
+        CompetenceEdge,
+        LandEdge,
+        PhysicalEdge,
+        SignageManagementEdge,
+        WorkManagementEdge,
+    )
+
+    SensitiveArea.add_property(
+        "physical_edges",
+        lambda self: intersecting(PhysicalEdge, self, distance=0, field="geom_3d"),
+        _("Physical edges"),
+    )
+    SensitiveArea.add_property(
+        "land_edges",
+        lambda self: intersecting(LandEdge, self, distance=0, field="geom_3d"),
+        _("Land edges"),
+    )
+    SensitiveArea.add_property(
+        "competence_edges",
+        lambda self: intersecting(CompetenceEdge, self, distance=0, field="geom_3d"),
+        _("Competence edges"),
+    )
+    SensitiveArea.add_property(
+        "work_edges",
+        lambda self: intersecting(
+            WorkManagementEdge, self, distance=0, field="geom_3d"
+        ),
+        _("Work management edges"),
+    )
+    SensitiveArea.add_property(
+        "signage_edges",
+        lambda self: intersecting(
+            SignageManagementEdge, self, distance=0, field="geom_3d"
+        ),
+        _("Signage management edges"),
+    )
+    SensitiveArea.add_property(
+        "circulation_edges",
+        lambda self: intersecting(CirculationEdge, self, distance=0, field="geom_3d"),
+        _("Circulation edges"),
     )
 
 if "geotrek.trekking" in settings.INSTALLED_APPS:

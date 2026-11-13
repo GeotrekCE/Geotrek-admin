@@ -134,7 +134,7 @@ LANGUAGES = (
     ("it", _("Italian")),
     ("es", _("Spanish")),
 )
-LANGUAGE_CODE = os.getenv("LANGUAGE_CODE") or "fr"
+LANGUAGE_CODE = os.getenv("LANGUAGE_CODE", "en")
 
 MODELTRANSLATION_LANGUAGES = tuple((os.getenv("LANGUAGES") or "fr en").split(" "))
 
@@ -319,7 +319,6 @@ PROJECT_APPS += (
     "django_celery_beat",
     "django_large_image",
     "colorfield",
-    "mptt",
     "treebeard",
     "maintenance_mode",
 )

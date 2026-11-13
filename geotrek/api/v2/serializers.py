@@ -1652,6 +1652,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         web_links = WebLinkSerializer(many=True)
         view_points = HDViewPointSerializer(many=True)
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
+        impracticable = serializers.BooleanField()
 
         def get_name(self, obj):
             return get_translation_or_dict("name", self, obj)
@@ -1737,6 +1738,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "districts",
                 "eid",
                 "geometry",
+                "impracticable",
                 "information_desks",
                 "labels",
                 "managers",
@@ -1796,6 +1798,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         city_codes = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
+        impracticable = serializers.BooleanField()
 
         def get_name(self, obj):
             return get_translation_or_dict("name", self, obj)
@@ -1909,6 +1912,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "gear",
                 "geometry",
                 "height",
+                "impracticable",
                 "length",
                 "max_elevation",
                 "min_elevation",
