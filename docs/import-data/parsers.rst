@@ -146,6 +146,8 @@ The following parsers are available via the web interface and the command line, 
 +-----------------+--------------------------------------------+---------------------+--------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 | Sensitive areas | When the ``sensitivity`` module is enabled | Shapefile           | Shapefile species sensitive area           | ``geotrek.sensitivity.parsers.SpeciesSensitiveAreaShapeParser`` and ``geotrek.sensitivity.parsers.RegulatorySensitiveAreaShapeParser`` |
 +-----------------+--------------------------------------------+---------------------+--------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
+| Vigilance areas | Always                                     | Geo file            | Vigilance areas (Geo file)                 | ``geotrek.zoning.parsers.VigilanceAreaGeoFileParser``                                                                                  |
++-----------------+--------------------------------------------+---------------------+--------------------------------------------+----------------------------------------------------------------------------------------------------------------------------------------+
 
 .. note::
     If no data appears after the Biodiv'Sports parser has run, Biodiv'Sports might not have data for your region. Consider adding your data directly to Biodiv'Sports for shared access across users.
@@ -194,6 +196,40 @@ Regulatory sensitive areas
 
    - Re-importing the same file will create duplicates.
    - Shapefile field names are limited to 10 characters (e.g. ``descriptio``).
+
+.. _import-vigilance-areas:
+
+Geo file requirements for importing vigilance areas
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+To import vigilance areas from a geo file (Geojson, Geopackage), make sure that:
+
+- Field names exactly match the names listed below (they are case-sensitive).
+- All referenced ``types`` and ``levels`` must already exist in Geotrek-admin.
+
+**Required fields**
+
+- ``name``: Name of the vigilance area (text).
+- ``type``: Type of the vigilance area (text). The type must already exist in Geotrek-admin.
+- ``geom``: Geometry of the vigilance area. It must be a ``Polygon`` or a ``MultiPolygon``.
+
+**Optional fields**
+
+- ``description``: Description of the area (text or HTML).
+- ``impracticable``: Whether the area is impracticable (boolean).
+- ``level``: Vigilance level (text). The level must already exist in Geotrek-admin.
+- ``info``: Practical information (text or HTML).
+- ``url``: URL of an external information page (text).
+- ``comment``: Private comment (text or HTML).
+- ``start``, ``end``, ``active_days``, ``annual``: Period definition. Only one period can be defined.
+- ``portals``: Target portals (text). To set several portals, separate them with commas.
+- ``sources``: Record sources (text). To set several sources, separate them with commas.
+
+.. warning::
+
+   - Re-importing the same file will create duplicates.
+   - Shapefile are not supported
+
 
 Custom parsers
 ---------------

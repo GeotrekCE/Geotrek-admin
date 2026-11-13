@@ -40,7 +40,7 @@ class CityParser(ShapeParser):
         if val is None:
             return None
         if not val.valid:
-            self.add_warning(_("Invalid geometry for field '{src}'").format(src=src))
+            self.add_warning(_("Invalid geometry for field '%(src)s'") % {"src": src})
             return None
         if val.geom_type == "MultiPolygon":
             return val
@@ -48,9 +48,9 @@ class CityParser(ShapeParser):
             return MultiPolygon(val)
         raise GlobalImportError(
             _(
-                "Invalid geometry type for field '{src}'. "
-                "Should be (Multi)Polygon, not {geom_type}"
-            ).format(src=src, geom_type=val.geom_type)
+                "Invalid geometry type for field '%(src)s'. Should be (Multi)Polygon, not %(geom_type)s"
+            )
+            % {"src": src, "geom_type": val.geom_type}
         )
 
 
@@ -221,3 +221,83 @@ class GeotrekVigilanceAreaParser(GeotrekParser):
     def save_periods(self, src, val):
         self.filter_periods(src, val)
         return True
+
+
+class VigilanceAreaGeoFileParser(ShapeParser):
+    model = VigilanceArea
+
+    label = "Vigilance areas (Geo file)"
+    label_fr = "Zones de vigilance (Fichier géographique)"
+    label_en = "Vigilance areas (Geo file)"
+
+    separator = ","
+    delete = False
+
+    constant_fields = {
+        "published": True,
+    }
+
+    fields = {
+        "eid": "id",
+        "name": "name",
+        "description": "description",
+        "impracticable": "impracticable",
+        "vigilance_level": "level",
+        "vigilance_area_type": "type",
+        "practical_info": "info",
+        "external_info_url": "url",
+        "private_comment": "comment",
+        "geom": "geom",
+    }
+
+    m2m_fields = {
+        "portals": "portals",
+        "sources": "sources",
+    }
+
+    non_fields = {
+        "periods": ("start", "end", "active_days", "annual"),  # only one period allowed
+    }
+
+    natural_keys = {
+        "vigilance_level": "name",
+        "vigilance_area_type": "name",
+        "portals": "name",
+        "sources": "name",
+    }
+
+    field_options = {
+        "geom": {"required": True},
+        "name": {"required": True},
+        "vigilance_area_type": {"required": True},
+    }
+
+    def normalize_field_name(self, name):
+        return name
+
+    def save_periods(self, src, val):
+        start_date, end_date, active_days, annual = val
+        period = VigilancePeriod.objects.create(
+            vigilance_area=self.obj,
+            start_date=start_date,
+            end_date=end_date or None,
+            active_days=active_days.split(self.separator),
+            annual=annual,
+        )
+        return [period]
+
+    def filter_geom(self, src, val):
+        if val is None or not val.valid:
+            msg = _("Invalid geometry for field '%(src)s'") % {"src": src}
+            raise RowImportError(msg)
+        # Geometry has already been reprojected to settings.SRID by ShapeParser.next_row
+        val.srid = settings.SRID
+        if val.geom_type == "MultiPolygon":
+            return val
+        elif val.geom_type == "Polygon":
+            return MultiPolygon(val, srid=settings.SRID)
+
+        msg = _(
+            "Invalid geometry type for field '%(src)s'. Should be (Multi)Polygon, not %(geom_type)s"
+        ) % {"src": src, "geom_type": val.geom_type}
+        raise RowImportError(msg)
