@@ -13,6 +13,7 @@ CHANGELOG
 
 * Fix cities ordering in infrastructure list (#5830, #3961)
 * Fix linked objects to sensitive areas
+* Fix parsers based on PointTopologyParserMixin
 
 **Maintenance**
 

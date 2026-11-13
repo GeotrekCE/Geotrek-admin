@@ -1,3 +1,4 @@
+import json
 import os
 from io import StringIO
 from unittest import skipIf
@@ -19,7 +20,7 @@ class PointTopologyTestModelParser(PointTopologyParserMixin, JSONParser):
     fields = {"name": "name", "geom": "geometry"}
 
     def build_geos_geometry(self, src, val):
-        return GEOSGeometry(str(val))
+        return GEOSGeometry(json.dumps(val))
 
 
 class PointTopologyTestModelParserMissingMethod(PointTopologyParserMixin, JSONParser):

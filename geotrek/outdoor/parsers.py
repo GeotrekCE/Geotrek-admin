@@ -1,3 +1,5 @@
+import json
+
 from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiPolygon, Point, Polygon
 from django.contrib.gis.geos.collections import GeometryCollection
@@ -280,7 +282,7 @@ class GeotrekCourseParser(GeotrekOutdoorParser):
 
     def filter_points_reference(self, src, val):
         if val:
-            return str(val)
+            return json.dumps(val)
         return None
 
     def start(self):
