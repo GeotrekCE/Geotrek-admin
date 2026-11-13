@@ -5,11 +5,13 @@ from io import StringIO
 from unittest import mock
 
 from django.conf import settings
-from django.contrib.gis.geos import MultiPolygon, Polygon, WKTWriter
+from django.contrib.gis.geos import MultiPolygon, Point, Polygon, WKTWriter
 from django.core.management import call_command
 from django.test import TestCase, override_settings
 
 from geotrek.common.models import FileType
+from geotrek.common.parsers import RowImportError
+from geotrek.common.tests.factories import RecordSourceFactory, TargetPortalFactory
 from geotrek.common.tests.mixins import GeotrekParserTestMixin
 from geotrek.zoning.models import (
     City,
@@ -26,6 +28,7 @@ from geotrek.zoning.parsers import (
     OpenStreetMapCityParser,
     OpenStreetMapDistrictParser,
     OpenStreetMapRestrictedAreaParser,
+    VigilanceAreaGeoFileParser,
 )
 
 WKT = (
@@ -201,6 +204,64 @@ class VigilanceAreaGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(periods[1].end_date, None)
         self.assertEqual(periods[1].active_days, [])
         self.assertEqual(periods[1].annual, False)
+
+
+class VigilanceAreaParserTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        VigilanceAreaType.objects.create(name="Ecobuage")
+        VigilanceLevel.objects.create(name="Alerte")
+        TargetPortalFactory.create(name="portail 1")
+        RecordSourceFactory.create(name="source 2")
+
+    def test_good_data(self):
+        filename = os.path.join(
+            os.path.dirname(__file__), "data", "vigilance_area.geojson"
+        )
+        call_command(
+            "import",
+            "geotrek.zoning.parsers.VigilanceAreaGeoFileParser",
+            filename,
+            verbosity=0,
+        )
+        vigilance_area = VigilanceArea.objects.get(eid="1")
+        self.assertEqual(vigilance_area.name, "area 2")
+        self.assertEqual(vigilance_area.description, "description")
+        self.assertEqual(vigilance_area.practical_info, "ceci est une info pratique")
+        self.assertEqual(vigilance_area.published, True)
+        self.assertEqual(str(vigilance_area.vigilance_area_type), "Ecobuage")
+        self.assertEqual(str(vigilance_area.vigilance_level), "Alerte")
+        self.assertEqual(vigilance_area.impracticable, True)
+        self.assertEqual(str(vigilance_area.portals.first()), "portail 1")
+        self.assertEqual(str(vigilance_area.sources.first()), "source 2")
+        self.assertEqual(str(vigilance_area.vigilance_level), "Alerte")
+        self.assertEqual(str(vigilance_area.vigilance_area_type), "Ecobuage")
+        self.assertEqual(vigilance_area.external_info_url, "https://url.com")
+
+        self.assertEqual(vigilance_area.geom.geom_type, "MultiPolygon")
+        self.assertEqual(vigilance_area.geom.srid, settings.SRID)
+
+        self.assertEqual(vigilance_area.periods.count(), 1)
+
+        period = vigilance_area.periods.first()
+        self.assertEqual(period.start_date, datetime.date(2026, 11, 3))
+        self.assertEqual(period.end_date, datetime.date(2026, 11, 25))
+        self.assertEqual(period.active_days, [0, 1, 2, 3, 4])
+        self.assertEqual(period.annual, True)
+
+        vigilance_area = VigilanceArea.objects.get(eid="2")
+        self.assertEqual(vigilance_area.geom.geom_type, "MultiPolygon")
+
+    def test_geom_null(self):
+        parser = VigilanceAreaGeoFileParser()
+        with self.assertRaises(RowImportError):
+            parser.filter_geom("geom", None)
+
+    def test_wrong_geom(self):
+        parser = VigilanceAreaGeoFileParser()
+        with self.assertRaises(RowImportError):
+            point = Point(0, 0, settings.SRID)
+            parser.filter_geom("geom", point)
 
 
 class TestDistrictOpenStreetMapParser(OpenStreetMapDistrictParser):
