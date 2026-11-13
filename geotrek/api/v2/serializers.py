@@ -1631,7 +1631,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         description = serializers.SerializerMethodField()
         description_teaser = serializers.SerializerMethodField()
         published = serializers.SerializerMethodField()
-        published_vigilance_areas = serializers.SerializerMethodField()
+        vigilance_areas = serializers.SerializerMethodField()
         period = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name="apiv2:site-detail")
         geometry = geo_serializers.GeometryField(
@@ -1676,7 +1676,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         def get_period(self, obj):
             return get_translation_or_dict("period", self, obj)
 
-        def get_published_vigilance_areas(self, obj):
+        def get_vigilance_areas(self, obj):
             return [area.id for area in obj.published_vigilance_areas]
 
         def get_cities(self, obj):
@@ -1755,7 +1755,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "portal",
                 "practice",
                 "provider",
-                "published_vigilance_areas",
+                "vigilance_areas",
                 "ratings",
                 "sector",
                 "source",
@@ -1789,7 +1789,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         parents = serializers.SerializerMethodField()
         parents_uuids = serializers.SerializerMethodField()
         published = serializers.SerializerMethodField()
-        published_vigilance_areas = serializers.SerializerMethodField()
+        vigilance_areas = serializers.SerializerMethodField()
         children_uuids = serializers.SerializerMethodField()
         accessibility = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True, source="sorted_attachments")
@@ -1833,7 +1833,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         def get_published(self, obj):
             return get_translation_or_dict("published", self, obj)
 
-        def get_published_vigilance_areas(self, obj):
+        def get_vigilance_areas(self, obj):
             return [area.id for area in obj.published_vigilance_areas]
 
         def get_gear(self, obj):
@@ -1932,7 +1932,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "points_reference",
                 "provider",
                 "published",
-                "published_vigilance_areas",
+                "vigilance_areas",
                 "ratings",
                 "ratings_description",
                 "sites",
