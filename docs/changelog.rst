@@ -17,6 +17,7 @@ CHANGELOG
 * Fix linked objects to sensitive areas
 * Fix restricted areas additional layers
 * Fix parsers based on PointTopologyParserMixin
+* Rename published_vigilance_areas as vigilance_areas in API v2
 
 **Maintenance**
 
