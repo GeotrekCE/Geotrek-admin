@@ -552,12 +552,12 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
         impracticable = serializers.BooleanField()
         departure_city = serializers.SerializerMethodField()
         departure_city_code = serializers.SerializerMethodField()
-        published_vigilance_areas = serializers.SerializerMethodField()
+        vigilance_areas = serializers.SerializerMethodField()
         types = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name="apiv2:touristiccontent-detail")
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
-        def get_published_vigilance_areas(self, obj):
+        def get_vigilance_areas(self, obj):
             return [area.id for area in obj.published_vigilance_areas]
 
         class Meta(TimeStampedSerializer.Meta):
@@ -587,7 +587,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
                 "portal",
                 "provider",
                 "published",
-                "published_vigilance_areas",
+                "vigilance_areas",
                 "source",
                 "structure",
                 "themes",
@@ -864,7 +864,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         advice = serializers.SerializerMethodField()
         advised_parking = serializers.SerializerMethodField()
         parking_location = serializers.SerializerMethodField()
-        published_vigilance_areas = serializers.SerializerMethodField()
+        vigilance_areas = serializers.SerializerMethodField()
         ratings_description = serializers.SerializerMethodField()
         children = serializers.ReadOnlyField(source="children_id")
         parents = serializers.ReadOnlyField(source="parents_id")
@@ -893,7 +893,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         def get_published(self, obj):
             return get_translation_or_dict("published", self, obj)
 
-        def get_published_vigilance_areas(self, obj):
+        def get_vigilance_areas(self, obj):
             return [area.id for area in obj.published_vigilance_areas]
 
         def get_name(self, obj):
@@ -1119,7 +1119,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 "previous",
                 "public_transport",
                 "published",
-                "published_vigilance_areas",
+                "vigilance_areas",
                 "reservation_system",
                 "reservation_id",
                 "route",
