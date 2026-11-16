@@ -1,6 +1,6 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import F
+from django.db.models import Exists, F, OuterRef
 from django.db.models.query import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils import translation
@@ -10,6 +10,7 @@ from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
+from geotrek.api.v2.utils import get_impracticable_vigilance_areas
 from geotrek.common.models import Attachment
 from geotrek.tourism import models as tourism_models
 
@@ -47,10 +48,13 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.GeotrekTouristicContentFilter,
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
+        api_filters.PracticableFilter,
     )
     serializer_class = api_serializers.TouristicContentSerializer
 
     def get_queryset(self):
+        impracticable_vigilance_areas = get_impracticable_vigilance_areas(self.request)
+
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
                 tourism_models.TouristicContent.objects.existing()
@@ -67,7 +71,14 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
                         ).order_by("starred", "-date_insert"),
                     ),
                 )
-                .annotate(geom_transformed=Transform(F("geom"), settings.API_SRID))
+                .annotate(
+                    geom_transformed=Transform(F("geom"), settings.API_SRID),
+                    impracticable=Exists(
+                        impracticable_vigilance_areas.filter(
+                            geom__intersects=OuterRef("geom"),
+                        )
+                    ),
+                )
                 .order_by("name")
             )  # Required for reliable pagination
 

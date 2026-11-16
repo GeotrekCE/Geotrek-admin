@@ -68,6 +68,12 @@ warnings.filterwarnings("ignore")
 LOGGING['loggers']['']['handlers'] = ('log_file', )
 LOGGING['handlers']['log_file']['level'] = 'INFO'
 LOGGING['handlers']['log_file']['filename'] = os.path.join(TMP_DIR, 'geotrek.log')
+LOGGING['handlers']['console'] = {
+    'class': 'logging.NullHandler',
+}
+LOGGING['handlers']['django.server'] = {
+    'class': 'logging.NullHandler',
+}
 
 # Silence all console / stream handlers to avoid cluttering test outputs
 for handler in LOGGING.get('handlers', {}).values():

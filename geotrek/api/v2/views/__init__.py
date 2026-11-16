@@ -85,7 +85,13 @@ from .trekking import (
     TrekViewSet,  # noqa
     WebLinkCategoryViewSet,  # noqa
 )
-from .zoning import CityViewSet, DistrictViewSet  # noqa
+from .zoning import (
+    CityViewSet,  # noqa
+    DistrictViewSet,  # noqa
+    VigilanceAreaTypeViewSet,  # noqa
+    VigilanceAreaViewSet,  # noqa
+    VigilanceLevelViewSet,  # noqa
+)
 
 if "drf_yasg" in settings.INSTALLED_APPS:
     from .swagger import schema_view  # noqa

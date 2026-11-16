@@ -1,22 +1,38 @@
 {% load i18n mapentity_tags %}
-{% if object.length %}
-<tr>
-    <th>{% trans "Length" %}</th>
-    <td>
-    {# ``length`` attribute comes from AltimetryMixin and triggers #}
-    <span title="{% trans "3D" %}">&#8605; {{ object.length|floatformat }} m</span>
-    {# ``geom.length`` is 2D and is computed by GEOS #}
-    <span title="{% trans "2D" %}">(&#8594; {{ object.length_2d|floatformat }} m)</span></td>
-</tr>
-{% endif %}
-{% if object.slope %}
-<tr>
-    <th>{% trans "Slope" %}</th>
-    <td>{{ object.descent|floatformat }}m  +{{ object.ascent|floatformat }}m ({{ object.slope|floatformat }})</td>
-</tr>
-{% endif %}
-<tr>
-    <th>{% trans "Elevation" %}</th>
-    <td>
-        Min: {{ object.min_elevation|floatformat }} m{% if not object.ispoint %}, Max: {{ object.max_elevation|floatformat }} m{% endif %}</td>
-</tr>
+<table class="table table-bordered">
+    <thead>
+    <tr class="table-active">
+        <th colspan="2" class="text-center">
+            <i class="bi bi-graph-up text-warning"></i> {% trans "Elevation infos" %}
+        </th>
+    </tr>
+    </thead>
+    <tbody>
+    {% if object.length %}
+        <tr>
+            <th class="table-active">{% trans "Length" %}</th>
+            <td>
+                {# ``length`` attribute comes from AltimetryMixin and triggers #}
+                <span title="{% trans "3D" %}">&#8605; {{ object.length|floatformat }} m</span>
+                {# ``geom.length`` is 2D and is computed by GEOS #}
+                <span title="{% trans "2D" %}">(&#8594; {{ object.length_2d|floatformat }} m)</span>
+            </td>
+        </tr>
+    {% endif %}
+    {% if object.slope %}
+        <tr>
+            <th class="table-active">{% trans "Slope" %}</th>
+            <td>
+                {{ object.descent|floatformat }}m +{{ object.ascent|floatformat }}m ({{ object.slope|floatformat }})
+            </td>
+        </tr>
+    {% endif %}
+    <tr>
+        <th class="table-active">{% trans "Elevation" %}</th>
+        <td>
+            Min: {{ object.min_elevation|floatformat }} m{% if not object.ispoint %}, Max:
+            {{ object.max_elevation|floatformat }} m{% endif %}
+        </td>
+    </tr>
+    </tbody>
+</table>

@@ -1,3 +1,5 @@
+import json
+
 from django.contrib.gis.geos import GEOSGeometry, Point
 from django.core.exceptions import ImproperlyConfigured
 from django.utils.translation import gettext as _
@@ -77,7 +79,7 @@ class ApidaeInfrastructureParser(PointTopologyParserMixin, ApidaeBaseParser):
             raise ImproperlyConfigured(msg)
 
     def build_geos_geometry(self, src, val):
-        return GEOSGeometry(str(val))
+        return GEOSGeometry(json.dumps(val))
 
     def filter_description(self, src, val):
         short_descr, detailed_descr = val

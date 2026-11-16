@@ -49,6 +49,7 @@ class InfrastructureList(CustomColumnsMixin, MapEntityList):
     mandatory_columns = ["id", "name"]
     default_extra_columns = ["type", "conditions", "cities"]
     searchable_columns = ["id", "name"]
+    unorderable_columns = ["cities"]
 
 
 class InfrastructureFilter(MapEntityFilter):

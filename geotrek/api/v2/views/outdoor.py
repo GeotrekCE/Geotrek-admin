@@ -1,12 +1,13 @@
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
-from django.db.models import F
+from django.db.models import Exists, F, OuterRef
 from django.db.models.query import Prefetch
 from django.utils import translation
 
 from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
+from geotrek.api.v2.utils import get_impracticable_vigilance_areas
 from geotrek.common.models import Attachment, HDViewPoint
 from geotrek.outdoor import models as outdoor_models
 
@@ -18,10 +19,13 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
         api_filters.GeotrekRatingsFilter,
+        api_filters.PracticableFilter,
     )
     serializer_class = api_serializers.SiteSerializer
 
     def get_queryset(self):
+        impracticable_vigilance_areas = get_impracticable_vigilance_areas(self.request)
+
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
                 outdoor_models.Site.objects.annotate(
@@ -54,6 +58,13 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
                     "web_links",
                 )
                 .order_by("name")
+                .annotate(
+                    impracticable=Exists(
+                        impracticable_vigilance_areas.filter(
+                            geom__intersects=OuterRef("geom"),
+                        )
+                    ),
+                )
             )  # Required for reliable pagination
 
 
@@ -127,10 +138,13 @@ class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.NearbyContentFilter,
         api_filters.UpdateOrCreateDateFilter,
         api_filters.GeotrekRatingsFilter,
+        api_filters.PracticableFilter,
     )
     serializer_class = api_serializers.CourseSerializer
 
     def get_queryset(self):
+        impracticable_vigilance_areas = get_impracticable_vigilance_areas(self.request)
+
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
                 outdoor_models.Course.objects.annotate(
@@ -161,4 +175,11 @@ class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
                     "ratings",
                 )
                 .order_by("name")
+                .annotate(
+                    impracticable=Exists(
+                        impracticable_vigilance_areas.filter(
+                            geom__intersects=OuterRef("geom"),
+                        )
+                    ),
+                )
             )  # Required for reliable pagination

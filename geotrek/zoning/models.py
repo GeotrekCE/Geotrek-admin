@@ -1,17 +1,33 @@
-"""
+import uuid
 
-Zoning models
-(not MapEntity : just layers, on which intersections with objects is done in triggers)
-
-"""
-
+from colorfield.fields import ColorField
 from django.conf import settings
 from django.contrib.gis.db import models
-from django.contrib.postgres.indexes import GistIndex
+from django.contrib.postgres.fields.array import ArrayField
+from django.contrib.postgres.indexes import GinIndex, GistIndex
+from django.core.exceptions import ValidationError
 from django.db.models import Index
+from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
+from django.views.generic.dates import timezone_today
+from mapentity.models import DuplicateMixin
+from treebeard.al_tree import AL_Node
 
-from geotrek.common.mixins.models import BBoxMixin, TimeStampedModelMixin
+from geotrek.authent.models import StructureRelated
+from geotrek.common.mixins.models import (
+    AddPropertyMixin,
+    BBoxMixin,
+    ExternalSourceMixin,
+    GeotrekMapEntityMixin,
+    OptionalPictogramMixin,
+    PicturesMixin,
+    PublishableMixin,
+    TimeStampedModelMixin,
+)
+
+from ..common.functions import GenRandomUUID
+from .choices import WeekdayChoices
+from .managers import VigilanceAreaManager, VigilancePeriodManager
 
 
 class RestrictedAreaType(models.Model):
@@ -125,3 +141,226 @@ class District(TimeStampedModelMixin, BBoxMixin, models.Model):
 
     def __str__(self):
         return self.name
+
+
+class VigilanceAreaType(
+    OptionalPictogramMixin, TimeStampedModelMixin, AL_Node, models.Model
+):
+    name = models.CharField(max_length=200, verbose_name=_("Name"))
+    code = models.CharField(max_length=8, blank=True, null=True, verbose_name=_("Code"))
+
+    parent = models.ForeignKey(
+        "self",
+        null=True,
+        blank=True,
+        related_name="children_set",
+        db_index=True,
+        on_delete=models.CASCADE,
+    )
+    sib_order = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        verbose_name = _("Vigilance area type")
+        verbose_name_plural = _("Vigilance area types")
+
+    def __str__(self):
+        return self.name
+
+    def get_code(self):
+        if self.code or self.is_root():
+            return self.code
+        if not self.is_root():
+            parent = self.get_parent()
+            return parent.get_code()
+
+    def get_pictogram(self):
+        if self.pictogram or self.is_root():
+            return self.pictogram
+        if not self.is_root():
+            parent = self.get_parent()
+            return parent.get_pictogram()
+
+
+class VigilanceLevel(OptionalPictogramMixin, TimeStampedModelMixin, models.Model):
+    name = models.CharField(max_length=200, verbose_name=_("Name"))
+    color = ColorField(verbose_name=_("Color"), default="#1257A8")
+    level = models.PositiveSmallIntegerField(
+        unique=True, null=True, verbose_name=_("Level")
+    )
+
+    class Meta:
+        verbose_name = _("Vigilance level")
+        verbose_name_plural = _("Vigilance levels")
+
+    def __str__(self):
+        return self.name
+
+
+class VigilanceArea(
+    AddPropertyMixin,
+    TimeStampedModelMixin,
+    StructureRelated,
+    PublishableMixin,
+    GeotrekMapEntityMixin,
+    ExternalSourceMixin,
+    PicturesMixin,
+    models.Model,
+):
+    name = models.CharField(max_length=250, verbose_name=_("Name"), db_index=True)
+    description = models.TextField(verbose_name=_("Description"), blank=True)
+    impracticable = models.BooleanField(
+        verbose_name=_("Impracticable"),
+        default=False,
+        help_text=_(
+            "Tick this box if the terrain is impracticable due to the vigilance."
+        ),
+    )
+    vigilance_level = models.ForeignKey(
+        VigilanceLevel,
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+        verbose_name=_("Vigilance level"),
+        related_name="vigilance_areas",
+    )
+    vigilance_area_type = models.ForeignKey(
+        VigilanceAreaType,
+        on_delete=models.CASCADE,
+        verbose_name=_("Type"),
+        related_name="vigilance_areas",
+    )
+    practical_info = models.TextField(
+        verbose_name=_("Practical information"), blank=True
+    )
+    external_info_url = models.URLField(
+        verbose_name=_("External information URL"), blank=True, default=""
+    )
+    portals = models.ManyToManyField(
+        "common.TargetPortal",
+        blank=True,
+        related_name="vigilance_areas",
+        verbose_name=_("Portals"),
+        help_text=_(
+            "Public information distribution portals. Leave blank to distribute to all portals, without distinction."
+        ),
+    )
+    sources = models.ManyToManyField(
+        "common.RecordSource",
+        blank=True,
+        related_name="vigilance_areas",
+        verbose_name=_("Sources"),
+    )
+    private_comment = models.TextField(
+        verbose_name=_("Private comment (not published)"), blank=True
+    )
+    geom = models.MultiPolygonField(srid=settings.SRID, spatial_index=False)
+    uuid = models.UUIDField(
+        default=uuid.uuid4, editable=False, unique=True, db_default=GenRandomUUID()
+    )
+
+    def __str__(self):
+        return self.name
+
+    @property
+    def ongoing_verbose_name(self):
+        return _("Ongoing period")
+
+    @property
+    def active_today_verbose_name(self):
+        return _("Active today")
+
+    @property
+    def periods_resume(self):
+        result = " - "
+        periods = self.periods.all()
+        if len(periods) > 0:
+            result += "\n - ".join([period.period_resume for period in periods])
+        else:
+            result += _("Always active")
+        return result
+
+    @property
+    def periods_display(self):
+        return self.periods_resume
+
+    objects = VigilanceAreaManager()
+
+    class Meta:
+        verbose_name = _("Vigilance area")
+        verbose_name_plural = _("Vigilance areas")
+        ordering = ["name"]
+        indexes = [
+            GistIndex(name="vigilance_area_geom_gist_idx", fields=["geom"]),
+        ]
+        constraints = [
+            models.CheckConstraint(
+                check=models.Q(geom__isvalid=True),
+                name="%(app_label)s_%(class)s_geom_is_valid",
+            ),
+        ]
+
+
+class VigilancePeriod(DuplicateMixin, models.Model):
+    vigilance_area = models.ForeignKey(
+        VigilanceArea,
+        on_delete=models.CASCADE,
+        verbose_name=_("Vigilance level"),
+        related_name="periods",
+    )
+    start_date = models.DateField(
+        verbose_name=_("Start date"),
+        default=timezone_today,
+        db_default=Now(),
+        db_index=True,
+    )
+    end_date = models.DateField(
+        verbose_name=_("End date"), blank=True, null=True, db_index=True
+    )
+    active_days = ArrayField(
+        models.IntegerField(
+            choices=WeekdayChoices.choices,
+        ),
+        verbose_name=_("Active days"),
+        help_text=_(
+            "Days of the week when the vigilance area is active. Empty equals all week."
+        ),
+        default=list,
+        blank=True,
+    )
+    annual = models.BooleanField(default=False, verbose_name=_("Annual recurrence"))
+
+    def __str__(self):
+        return f"{self.start_date} - {self.end_date or '...'}"
+
+    def clean(self):
+        if self.start_date and self.end_date and self.start_date > self.end_date:
+            raise ValidationError({"start_date": _("Start date is after end date")})
+
+    @property
+    def active_days_labels(self):
+        # Mapping des entiers vers les labels textuels
+        choices_map = dict(WeekdayChoices.choices)
+        return [choices_map.get(day) for day in self.active_days]
+
+    @property
+    def period_resume(self):
+        if self.end_date:
+            result = _("From %s to %s") % (self.start_date, self.end_date)
+        else:
+            result = _("From %s") % self.start_date
+
+        if self.active_days:
+            result += _(" - days %s") % (",".join(self.active_days_labels))
+        if self.annual:
+            result += _(" (annual)")
+        return result
+
+    objects = VigilancePeriodManager()
+
+    class Meta:
+        verbose_name = _("Vigilance area period")
+        verbose_name_plural = _("Vigilance area periods")
+        ordering = ["start_date", "end_date"]
+        indexes = [
+            GinIndex(name="va_active_days_gin_idx", fields=["active_days"]),
+        ]

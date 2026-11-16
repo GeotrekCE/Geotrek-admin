@@ -335,9 +335,6 @@ msgstr ""
 msgid "Not validated"
 msgstr ""
 
-msgid "External id"
-msgstr ""
-
 msgid "Draft mode"
 msgstr ""
 

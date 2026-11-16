@@ -1,9 +1,21 @@
+from crispy_forms.helper import FormHelper
+from crispy_forms.layout import Column, Div, Fieldset, Layout, Row
 from dal import autocomplete
+from dal_select2.widgets import Select2Multiple
 from django import forms
 from django.conf import settings
+from django.forms.models import inlineformset_factory
 from django.utils.translation import gettext_lazy as _
 
-from geotrek.zoning.models import City, District, RestrictedArea
+from geotrek.common.forms import CommonForm
+from geotrek.zoning.choices import WeekdayChoices
+from geotrek.zoning.models import (
+    City,
+    District,
+    RestrictedArea,
+    VigilanceArea,
+    VigilancePeriod,
+)
 
 
 class MapFilterForm(forms.Form):
@@ -44,3 +56,100 @@ class MapFilterForm(forms.Form):
                 ),
                 required=False,
             )
+
+
+class VigilancePeriodForm(forms.ModelForm):
+    active_days = forms.TypedMultipleChoiceField(
+        choices=WeekdayChoices.choices,
+        coerce=int,
+        required=False,
+        widget=Select2Multiple(
+            choices=WeekdayChoices.choices,
+            attrs={
+                "data-placeholder": _("All week"),
+                "data-allow-clear": "true",
+            },
+        ),
+        label=_("Active days"),
+        help_text=_(
+            "Days of the week when the vigilance area is active. Empty equals all week."
+        ),
+    )
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        fields_for_layout = [
+            "id",
+            Row(
+                Column("start_date"),
+                Column("end_date"),
+                css_class="border-0 p-0",
+            ),
+            "active_days",
+            "annual",
+        ]
+
+        self.helper = FormHelper()
+        self.helper.form_tag = False
+        self.helper.layout = Layout(*fields_for_layout)
+
+    class Meta:
+        fields = (
+            "id",
+            "start_date",
+            "end_date",
+            "active_days",
+            "annual",
+        )
+        widgets = {
+            "start_date": forms.TextInput(attrs={"type": "date"}),
+            "end_date": forms.TextInput(attrs={"type": "date"}),
+        }
+
+
+VigilancePeriodFormset = inlineformset_factory(
+    VigilanceArea, VigilancePeriod, form=VigilancePeriodForm, extra=1
+)
+
+
+class VigilanceAreaForm(CommonForm):
+    geomfields = ["geom"]
+    fieldslayout = [
+        Div(
+            "structure",
+            "name",
+            "impracticable",
+            "vigilance_area_type",
+            "vigilance_level",
+            "published",
+            Fieldset(_("Periods")),
+            "description",
+            "practical_info",
+            "external_info_url",
+            "sources",
+            "portals",
+            "private_comment",
+            "eid",
+        )
+    ]
+
+    class Meta(CommonForm.Meta):
+        model = VigilanceArea
+        fields = [
+            *CommonForm.Meta.fields,
+            "name",
+            "structure",
+            "description",
+            "eid",
+            "vigilance_area_type",
+            "external_info_url",
+            "impracticable",
+            "vigilance_level",
+            "practical_info",
+            "sources",
+            "portals",
+            "published",
+            "private_comment",
+            "geom",
+        ]

@@ -10,7 +10,7 @@ if settings.LANDEDGE_MODEL_ENABLED:
     @admin.register(PhysicalType)
     class PhysicalTypeAdmin(MergeActionMixin, admin.ModelAdmin):
         list_display = ("name", "structure")
-        search_fields = ("name", "structure")
+        search_fields = ("name", "structure__name")
         list_filter = ("structure",)
         merge_field = "name"
 
@@ -20,7 +20,7 @@ if settings.LANDEDGE_MODEL_ENABLED:
             "name",
             "right_of_way",
         )
-        search_fields = ("name", "structure")
+        search_fields = ("name", "structure__name")
         list_filter = ("structure",)
         merge_field = "name"
 
@@ -30,7 +30,7 @@ if settings.LANDEDGE_MODEL_ENABLED:
             "name",
             "structure",
         )
-        search_fields = ("name", "structure")
+        search_fields = ("name", "structure__name")
         list_filter = ("structure",)
         merge_field = "name"
 
@@ -40,6 +40,6 @@ if settings.LANDEDGE_MODEL_ENABLED:
             "name",
             "structure",
         )
-        search_fields = ("name", "structure")
+        search_fields = ("name", "structure__name")
         list_filter = ("structure",)
         merge_field = "name"

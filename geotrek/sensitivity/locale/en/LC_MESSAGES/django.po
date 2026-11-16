@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-11-17 09:32+0000\n"
+"POT-Creation-Date: 2026-11-04 17:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -145,6 +145,36 @@ msgstr ""
 msgid "Published sensitive areas"
 msgstr ""
 
+msgid "Trails"
+msgstr ""
+
+msgid "Infrastructures"
+msgstr ""
+
+msgid "Signages"
+msgstr ""
+
+msgid "Interventions"
+msgstr ""
+
+msgid "Physical edges"
+msgstr ""
+
+msgid "Land edges"
+msgstr ""
+
+msgid "Competence edges"
+msgstr ""
+
+msgid "Work management edges"
+msgstr ""
+
+msgid "Signage management edges"
+msgstr ""
+
+msgid "Circulation edges"
+msgstr ""
+
 msgid "POIs"
 msgstr ""
 
@@ -170,9 +200,6 @@ msgid "Touristic events"
 msgstr ""
 
 msgid "Published touristic events"
-msgstr ""
-
-msgid "None"
 msgstr ""
 
 msgid "Add"

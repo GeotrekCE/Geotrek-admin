@@ -4,12 +4,20 @@ from django.utils.translation import gettext as _
 
 from geotrek.common.parsers import (
     DownloadImportError,
+    GeotrekParser,
     GlobalImportError,
     OpenStreetMapParser,
     RowImportError,
     ShapeParser,
 )
-from geotrek.zoning.models import City, District, RestrictedArea
+from geotrek.zoning.models import (
+    City,
+    District,
+    RestrictedArea,
+    VigilanceArea,
+    VigilanceAreaType,
+    VigilancePeriod,
+)
 
 
 # Data: https://www.data.gouv.fr/fr/datasets/decoupage-administratif-communal-francais-issu-d-openstreetmap/
@@ -32,7 +40,7 @@ class CityParser(ShapeParser):
         if val is None:
             return None
         if not val.valid:
-            self.add_warning(_("Invalid geometry for field '{src}'").format(src=src))
+            self.add_warning(_("Invalid geometry for field '%(src)s'") % {"src": src})
             return None
         if val.geom_type == "MultiPolygon":
             return val
@@ -40,9 +48,9 @@ class CityParser(ShapeParser):
             return MultiPolygon(val)
         raise GlobalImportError(
             _(
-                "Invalid geometry type for field '{src}'. "
-                "Should be (Multi)Polygon, not {geom_type}"
-            ).format(src=src, geom_type=val.geom_type)
+                "Invalid geometry type for field '%(src)s'. Should be (Multi)Polygon, not %(geom_type)s"
+            )
+            % {"src": src, "geom_type": val.geom_type}
         )
 
 
@@ -132,3 +140,164 @@ class OpenStreetMapCityParser(OpenStreetMapZoningParserMixin):
         super().__init__(*args, **kwargs)
         if self.code_tag:
             self.fields["code"] = f"tags.{self.code_tag}"
+
+
+class GeotrekVigilanceAreaParser(GeotrekParser):
+    """Geotrek parser for Geotrek vigilance areas"""
+
+    fill_empty_translated_fields = True
+    url = None
+    model = VigilanceArea
+    replace_fields = {"eid": "uuid", "geom": "geometry"}
+    url_categories = {
+        "structure": "structure",
+        "sources": "source",
+        "vigilance_level": "vigilancearea_vigilancelevel",
+    }
+    categories_keys_api_v2 = {
+        "structure": "name",
+        "sources": "name",
+        "vigilance_area_type": "name",
+        "vigilance_level": "name",
+    }
+    natural_keys = {
+        "structure": "name",
+        "sources": "name",
+        "vigilance_area_type": "name",
+        "vigilance_level": "name",
+    }
+
+    def init_vigilance_area_type_category(self):
+        field = "vigilance_area_type"
+        response = self.request_or_retry(f"{self.url}/api/v2/vigilancearea_type")
+        results = response.json().get("results", [])
+
+        field_options = self.field_options.setdefault(field, {})
+        field_options.setdefault("mapping", {})
+        if self.create_categories:
+            field_options["create"] = True
+
+        default_lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
+
+        existing_types = set(VigilanceAreaType.objects.values_list("name", flat=True))
+
+        for result in results:
+            default_name = result["name"][default_lang]
+            mapped_name = self.replace_mapping(default_name, field)
+            self.field_options[field]["mapping"][result["id"]] = mapped_name
+
+            if mapped_name not in existing_types:
+                fields = {
+                    "code": result.get("code"),
+                    "name": mapped_name,
+                }
+                VigilanceAreaType.objects.add_root(fields)
+                existing_types.add(mapped_name)
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.init_vigilance_area_type_category()
+        self.fields.pop("uuid")  # TEST
+        self.next_url = f"{self.url}/api/v2/vigilancearea"
+
+        self.non_fields["periods"] = "periods"
+
+    def filter_periods(self, src, val):
+        periods = []
+        self.obj.periods.all().delete()
+
+        for period in val:
+            new_period = VigilancePeriod.objects.create(
+                vigilance_area=self.obj,
+                start_date=period.get("start_date"),
+                end_date=period.get("end_date"),
+                active_days=period.get("active_days"),
+                annual=period.get("annual"),
+            )
+            periods.append(new_period)
+
+        return periods
+
+    def save_periods(self, src, val):
+        self.filter_periods(src, val)
+        return True
+
+
+class VigilanceAreaGeoFileParser(ShapeParser):
+    model = VigilanceArea
+
+    label = "Vigilance areas (Geo file)"
+    label_fr = "Zones de vigilance (Fichier géographique)"
+    label_en = "Vigilance areas (Geo file)"
+
+    separator = ","
+    delete = False
+
+    constant_fields = {
+        "published": True,
+    }
+
+    fields = {
+        "eid": "id",
+        "name": "name",
+        "description": "description",
+        "impracticable": "impracticable",
+        "vigilance_level": "level",
+        "vigilance_area_type": "type",
+        "practical_info": "info",
+        "external_info_url": "url",
+        "private_comment": "comment",
+        "geom": "geom",
+    }
+
+    m2m_fields = {
+        "portals": "portals",
+        "sources": "sources",
+    }
+
+    non_fields = {
+        "periods": ("start", "end", "active_days", "annual"),  # only one period allowed
+    }
+
+    natural_keys = {
+        "vigilance_level": "name",
+        "vigilance_area_type": "name",
+        "portals": "name",
+        "sources": "name",
+    }
+
+    field_options = {
+        "geom": {"required": True},
+        "name": {"required": True},
+        "vigilance_area_type": {"required": True},
+    }
+
+    def normalize_field_name(self, name):
+        return name
+
+    def save_periods(self, src, val):
+        start_date, end_date, active_days, annual = val
+        period = VigilancePeriod.objects.create(
+            vigilance_area=self.obj,
+            start_date=start_date,
+            end_date=end_date or None,
+            active_days=active_days.split(self.separator),
+            annual=annual,
+        )
+        return [period]
+
+    def filter_geom(self, src, val):
+        if val is None or not val.valid:
+            msg = _("Invalid geometry for field '%(src)s'") % {"src": src}
+            raise RowImportError(msg)
+        # Geometry has already been reprojected to settings.SRID by ShapeParser.next_row
+        val.srid = settings.SRID
+        if val.geom_type == "MultiPolygon":
+            return val
+        elif val.geom_type == "Polygon":
+            return MultiPolygon(val, srid=settings.SRID)
+
+        msg = _(
+            "Invalid geometry type for field '%(src)s'. Should be (Multi)Polygon, not %(geom_type)s"
+        ) % {"src": src, "geom_type": val.geom_type}
+        raise RowImportError(msg)

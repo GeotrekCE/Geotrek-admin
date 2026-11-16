@@ -22,11 +22,22 @@ from geotrek.common.mixins.models import (
     get_uuid_duplication,
 )
 from geotrek.common.utils import classproperty, intersecting, queryset_or_model
-from geotrek.core.models import Topology, simplify_coords
+from geotrek.core.models import Topology, Trail, simplify_coords
 from geotrek.diving.models import Dive
+from geotrek.infrastructure.models import Infrastructure
+from geotrek.land.models import (
+    CirculationEdge,
+    CompetenceEdge,
+    LandEdge,
+    PhysicalEdge,
+    SignageManagementEdge,
+    WorkManagementEdge,
+)
+from geotrek.maintenance.models import Intervention
 from geotrek.outdoor import models as outdoor_models
 from geotrek.sensitivity.helpers import openair_atimes_concat
 from geotrek.sensitivity.managers import SensitiveAreaManager
+from geotrek.signage.models import Signage
 from geotrek.tourism import models as tourism_models
 from geotrek.trekking import models as trekking_models
 
@@ -346,6 +357,52 @@ Topology.add_property(
     "published_sensitive_areas",
     SensitiveArea.topology_published_sensitive_areas,
     _("Published sensitive areas"),
+)
+SensitiveArea.add_property(
+    "trails", lambda self: intersecting(Trail, self, distance=0), _("Trails")
+)
+SensitiveArea.add_property(
+    "infrastructures",
+    lambda self: intersecting(Infrastructure, self, distance=0),
+    _("Infrastructures"),
+)
+SensitiveArea.add_property(
+    "signages", lambda self: intersecting(Signage, self, distance=0), _("Signages")
+)
+SensitiveArea.add_property(
+    "interventions",
+    lambda self: intersecting(Intervention, self, distance=0, field="geom_3d"),
+    _("Interventions"),
+)
+SensitiveArea.add_property(
+    "physical_edges",
+    lambda self: intersecting(PhysicalEdge, self, distance=0, field="geom_3d"),
+    _("Physical edges"),
+)
+SensitiveArea.add_property(
+    "land_edges",
+    lambda self: intersecting(LandEdge, self, distance=0, field="geom_3d"),
+    _("Land edges"),
+)
+SensitiveArea.add_property(
+    "competence_edges",
+    lambda self: intersecting(CompetenceEdge, self, distance=0, field="geom_3d"),
+    _("Competence edges"),
+)
+SensitiveArea.add_property(
+    "work_edges",
+    lambda self: intersecting(WorkManagementEdge, self, distance=0, field="geom_3d"),
+    _("Work management edges"),
+)
+SensitiveArea.add_property(
+    "signage_edges",
+    lambda self: intersecting(SignageManagementEdge, self, distance=0, field="geom_3d"),
+    _("Signage management edges"),
+)
+SensitiveArea.add_property(
+    "circulation_edges",
+    lambda self: intersecting(CirculationEdge, self, distance=0, field="geom_3d"),
+    _("Circulation edges"),
 )
 
 

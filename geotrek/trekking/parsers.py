@@ -1295,7 +1295,7 @@ class ApidaePOIParser(
         return self.apply_filter(dst="type", src=src, val=type_label)
 
     def build_geos_geometry(self, src, val):
-        return GEOSGeometry(str(val))
+        return GEOSGeometry(json.dumps(val))
 
     def filter_attachments(self, src, val):
         translation_src = self._get_default_translation_src()
@@ -1344,7 +1344,7 @@ class ApidaeServiceParser(PointTopologyParserMixin, ApidaeBaseParser):
             )
 
     def build_geos_geometry(self, src, val):
-        return GEOSGeometry(str(val))
+        return GEOSGeometry(json.dumps(val))
 
 
 class SchemaRandonneeParser(AttachmentParserMixin, Parser):
