@@ -25,7 +25,7 @@ INSTALLED_APPS += (
     'geotrek.diving',
     'geotrek.sensitivity',
     'geotrek.outdoor',
-    'drf_yasg',
+    'drf_spectacular',
 )
 
 INTERNAL_IPS = type(str('c'), (), {'__contains__': lambda *a: True})()
