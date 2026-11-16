@@ -1,8 +1,11 @@
+import datetime
 import itertools
 
 import factory
 from django.conf import settings
 from django.contrib.gis.geos import MultiPolygon, Polygon
+
+from geotrek.authent.tests.factories import StructureFactory
 
 from .. import models
 
@@ -93,3 +96,61 @@ class RestrictedAreaFactory(factory.django.DjangoModelFactory):
         )
     )
     area_type = factory.SubFactory(RestrictedAreaTypeFactory)
+
+
+class VigilanceAreaTypeFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.VigilanceAreaType
+
+    name = factory.Sequence(lambda n: f"Vigilance area type name {n}")
+    pictogram = factory.django.ImageField()
+    parent = None
+
+    @classmethod
+    def _create(cls, model_class, *args, parent=None, **kwargs):
+        if parent is None:
+            return model_class.add_root(**kwargs)
+        return parent.add_child(**kwargs)
+
+
+class VigilanceLevelFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.VigilanceLevel
+
+    name = factory.Sequence(lambda n: f"Vigilance level name {n}")
+    color = factory.Faker("color")
+    pictogram = factory.django.ImageField()
+    level = factory.Sequence(lambda n: n)
+
+
+class VigilanceAreaFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.VigilanceArea
+
+    structure = factory.SubFactory(StructureFactory)
+    name = factory.Sequence(lambda n: f"Vigilance area name {n}")
+    vigilance_area_type = factory.SubFactory(VigilanceAreaTypeFactory)
+    vigilance_level = factory.SubFactory(VigilanceLevelFactory)
+    geom = "SRID=4326;MULTIPOLYGON(((-0.3142392 -1.0870745, -0.4442674 1.9698002, 2.6553568 2.0446445, 2.6683833 -1.0177449, -0.3142392 -1.0870745)))"
+
+    @factory.post_generation
+    def portals(obj, create, extracted=None, **kwargs):
+        if create and extracted:
+            obj.portals.set(extracted)
+
+    @factory.post_generation
+    def periods(obj, create, extracted=None, **kwargs):
+        if not create:
+            return
+        if extracted is not None:
+            obj.periods.set(extracted)
+        else:
+            VigilancePeriodFactory.create(vigilance_area=obj, **kwargs)
+
+
+class VigilancePeriodFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = models.VigilancePeriod
+
+    vigilance_area = factory.SubFactory(VigilanceAreaFactory, periods=[])
+    start_date = datetime.date(2026, 10, 20)

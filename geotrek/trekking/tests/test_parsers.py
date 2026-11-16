@@ -1088,7 +1088,6 @@ class POIGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(poi.name_en, "Peak of the Three Lords")
         self.assertEqual(poi.name_it, "Picco dei Tre Signori")
         self.assertEqual(poi.name_es, "Peak of the Three Lords")
-        self.assertEqual(poi.name_es, "Peak of the Three Lords")
         self.assertEqual(poi.published, False)
         self.assertEqual(poi.published_fr, True)
         self.assertEqual(poi.published_en, False)

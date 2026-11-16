@@ -1936,8 +1936,8 @@ class GeotrekAggregatorParserTest(GeotrekParserTestMixin, TestCase):
         self.assertIn("Render\n", stdout_parser)
         self.assertIn("(URL_1) (00%)", stdout_parser)
         self.assertIn("(URL_1) (100%)", stdout_parser)
-        # Trek, POI, Service, InformationDesk, TouristicContent, TouristicEvent, Signage, Infrastructure
-        self.assertEqual(10, mocked_import_module.call_count)
+        # Trek, POI, Service, InformationDesk, TouristicContent, TouristicEvent, Signage, Infrastructure, Site, Course, VigilanceArea
+        self.assertEqual(11, mocked_import_module.call_count)
 
     @mock.patch(
         "geotrek.common.parsers.importlib.import_module", return_value=mock.MagicMock()

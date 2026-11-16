@@ -1590,6 +1590,7 @@ class GeotrekAggregatorParser:
         ),
         "Site": ("geotrek.outdoor.parsers", "GeotrekSiteParser"),
         "Course": ("geotrek.outdoor.parsers", "GeotrekCourseParser"),
+        "VigilanceArea": ("geotrek.zoning.parsers", "GeotrekVigilanceAreaParser"),
     }
 
     def __init__(self, progress_cb=None, user=None, encoding="utf8"):

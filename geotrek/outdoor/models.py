@@ -15,7 +15,7 @@ from django.dispatch import receiver
 from django.utils.html import escape
 from django.utils.translation import gettext_lazy as _
 from modeltranslation.utils import build_localized_fieldname
-from mptt.models import MPTTModel, TreeForeignKey
+from treebeard.mp_tree import MP_Node
 
 from geotrek.altimetry.models import AltimetryMixin as BaseAltimetryMixin
 from geotrek.authent.models import StructureRelated
@@ -45,6 +45,7 @@ from geotrek.signage.models import Blade, Signage
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.trekking.models import POI, Service, Trek
 from geotrek.zoning.mixins import ZoningPropertiesMixin
+from geotrek.zoning.models import VigilanceArea
 
 
 class AltimetryMixin(BaseAltimetryMixin):
@@ -198,7 +199,7 @@ class Site(
     StructureRelated,
     AltimetryMixin,
     TimeStampedModelMixin,
-    MPTTModel,
+    MP_Node,
     ExcludedPOIsMixin,
     ExternalSourceMixin,
 ):
@@ -226,7 +227,7 @@ class Site(
     geom = models.GeometryCollectionField(
         verbose_name=_("Location"), srid=settings.SRID
     )
-    parent = TreeForeignKey(
+    parent = models.ForeignKey(
         "Site",
         related_name="children",
         on_delete=models.PROTECT,
@@ -326,6 +327,7 @@ class Site(
     check_structure_in_forms = False
 
     objects = SiteManager()
+    node_order_by = ["name"]
 
     class Meta:
         verbose_name = _("Outdoor site")
@@ -335,15 +337,13 @@ class Site(
             GistIndex(name="site_geom_3d_gist_idx", fields=["geom_3d"]),
         ]
 
-    class MPTTMeta:
-        order_insertion_by = ["name"]
-
     def __str__(self):
         return self.name
 
     @property
     def name_display(self):
-        return "- " * self.level + super().name_display
+        indent = (self.depth - 1) if self.depth else 0
+        return "- " * indent + super().name_display
 
     def distance(self, to_cls):
         """Distance to associate this site to another class"""
@@ -469,13 +469,55 @@ class Site(
             site_content_type,
             ContentType.objects.get_for_model(Course),
             ContentType.objects.get_for_model(Blade),
+            ContentType.objects.get_for_model(VigilanceArea),
         ]
         qs |= Q(target_id__in=topologies) & ~Q(
             target_type__in=not_topology_content_types
         )
         return Intervention.objects.existing().filter(qs).distinct("pk")
 
+    def _prepare_clone_or_new(self):
+        if not self.pk:
+            self._state.adding = True
+            if self.path and Site.objects.filter(path=self.path).exists():
+                self.path = ""
+
+    def _insert_in_tree(self):
+        if self.parent:
+            self.parent.add_child(instance=self)
+        else:
+            Site.add_root(instance=self)
+        self.refresh_from_db()
+
+    def _move_to_new_parent(self):
+        if self.parent:
+            self.move(self.parent, pos="sorted-child")
+        else:
+            first_root = Site.get_first_root_node()
+            if first_root and first_root.pk != self.pk:
+                self.move(first_root, pos="sorted-sibling")
+
+    def _handle_parent_change(self):
+        if not self.pk:
+            return
+        orig_parent_id = (
+            Site.objects.filter(pk=self.pk).values_list("parent_id", flat=True).first()
+        )
+        if self.parent_id != orig_parent_id:
+            new_parent_id = self.parent_id
+            new_parent = self.parent
+            self._move_to_new_parent()
+            self.parent_id = new_parent_id
+            self.parent = new_parent
+
     def save(self, *args, **kwargs):
+        self._prepare_clone_or_new()
+
+        if not self.path:
+            self._insert_in_tree()
+            return
+
+        self._handle_parent_change()
         super().save(*args, **kwargs)
         self.refresh_from_db()
 
@@ -485,7 +527,9 @@ class Site(
         elif self.children_courses.exists():
             raise ChildCoursesExistError()
         else:
-            super().delete(*args, **kwargs)
+            res = super().delete(*args, **kwargs)
+            setattr(self, self._meta.pk.attname, None)
+            return res
 
     @classmethod
     def outdoor_sites(cls, outdoor_obj, queryset=None):
@@ -506,6 +550,10 @@ TouristicContent.add_property("sites", Site.tourism_sites, _("Sites"))
 TouristicEvent.add_property("sites", Site.tourism_sites, _("Sites"))
 Blade.add_property("sites", lambda self: intersecting(Site, self), _("Sites"))
 Intervention.add_property("sites", lambda self: intersecting(Site, self), _("Sites"))
+VigilanceArea.add_property(
+    "sites", lambda self: intersecting(Site, self, distance=0), _("Sites")
+)
+
 
 Site.add_property("sites", Site.outdoor_sites, _("Sites"))
 Site.add_property("treks", Trek.outdoor_treks, _("Treks"))
@@ -683,6 +731,7 @@ class Course(
             ContentType.objects.get_for_model(Site),
             course_content_type,
             ContentType.objects.get_for_model(Blade),
+            ContentType.objects.get_for_model(VigilanceArea),
         ]
         qs |= Q(target_id__in=topologies) & ~Q(
             target_type__in=not_topology_content_types
@@ -722,6 +771,9 @@ TouristicEvent.add_property("courses", Course.tourism_courses, _("Courses"))
 Blade.add_property("courses", lambda self: intersecting(Course, self), _("Courses"))
 Intervention.add_property(
     "courses", lambda self: intersecting(Course, self), _("Courses")
+)
+VigilanceArea.add_property(
+    "courses", lambda self: intersecting(Course, self, distance=0), _("Courses")
 )
 
 Course.add_property("sites", Site.outdoor_sites, _("Sites"))

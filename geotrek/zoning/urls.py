@@ -1,6 +1,7 @@
+from mapentity.registry import registry
 from rest_framework.routers import DefaultRouter
 
-from . import views
+from . import entities, models, views
 
 app_name = "zoning"
 
@@ -21,3 +22,6 @@ router.register(
 urlpatterns = []
 
 urlpatterns += router.urls
+urlpatterns += registry.register(
+    models.VigilanceArea, options=entities.VigilanceAreaEntityOptions
+)

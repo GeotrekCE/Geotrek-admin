@@ -1,0 +1,41 @@
+{% extends "mapentity/mapentity_form.html" %}
+{% load i18n crispy_forms_tags %}
+
+{% block mainform %}
+    <form id="mainform" action="{% if object.pk %}{{ object.get_update_url }}{% else %}{{ object.get_add_url }}{% endif %}" class="form-horizontal" method="POST">
+
+    {% crispy form %}
+
+    <fieldset class="formset">
+        {{ vigilanceperiod_formset.non_form_errors }}
+        {{ vigilanceperiod_formset.management_form }}
+        {% for vigilanceperiod_form in vigilanceperiod_formset.forms %}
+            <div class="form-group inline controls controls-row {{ vigilanceperiod_form.prefix }} border p-2">
+                {% if vigilanceperiod_form.instance.pk %}{{ vigilanceperiod_form.DELETE }}{% endif %}
+                {% crispy vigilanceperiod_form %}
+            </div>
+        {% endfor %}
+    </fieldset>
+    </form>
+{% endblock mainform %}
+
+
+{% block extrabody %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(window).ready(function () {
+            $("fieldset.formset").detach().appendTo('#mainform fieldset');
+
+            $(".clearfix").removeClass("clearfix");
+
+            $('.form-group.inline').formset({
+                prefix: '{{ vigilanceperiod_formset.prefix }}',
+                keepFieldValues: "[name='csrfmiddlewaretoken']",
+                addCssClass: 'btn btn-success add-row',
+                deleteCssClass: 'delete-row',
+                addText: '{% trans "Add a new period" %}',
+                deleteText: '{% trans "Delete this period" %}',
+            });
+        });
+    </script>
+{% endblock extrabody %}

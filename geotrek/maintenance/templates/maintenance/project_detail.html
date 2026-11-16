@@ -91,8 +91,9 @@
             <th>{{ project|verbose:"structure" }}</th>
             <td>{{ project.structure }}</td>
         </tr>
-        {% include "mapentity/trackinfo_fragment.html" %}
     </table>
+    {% include "common/fragments/provider_eid.html" %}
+    {% include "common/fragments/trackinfo.html" %}
     {{ block.super }}
 {% endblock detailspanel %}
 

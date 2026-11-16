@@ -108,6 +108,7 @@ class CommonTest(AuthentFixturesTest, MapEntityTest):
                 "date_update",
                 "name",
                 "name_en",
+                "path",
             ]
             if not field.related_model and field.name not in fields_name_different:
                 self.assertEqual(
@@ -173,6 +174,8 @@ class CommonTest(AuthentFixturesTest, MapEntityTest):
             "date_update",
             "name",
             "name_en",
+            # intervention
+            "path",
             "target_id",
             "target",
         ]

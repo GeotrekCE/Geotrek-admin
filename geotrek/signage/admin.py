@@ -70,7 +70,7 @@ if settings.SIGNAGE_MODEL_ENABLED:
 
     @admin.register(BladeType)
     class BladeTypeAdmin(MergeActionMixin, admin.ModelAdmin):
-        search_fields = ("label", "structure")
+        search_fields = ("label", "structure__name")
         merge_field = "label"
 
         def get_queryset(self, request):
@@ -106,7 +106,7 @@ if settings.SIGNAGE_MODEL_ENABLED:
 
     @admin.register(SignageType)
     class SignageTypeAdmin(MergeActionMixin, admin.ModelAdmin):
-        search_fields = ("label", "structure")
+        search_fields = ("label", "structure__name")
         merge_field = "label"
 
         def get_queryset(self, request):

@@ -168,9 +168,22 @@ if settings.SENSITIVE_AREA_MODEL_ENABLED:
     router.register(
         "sensitivearea_species", api_views.SpeciesViewSet, basename="species"
     )
-
 router.register("city", api_views.CityViewSet, basename="city")
 router.register("district", api_views.DistrictViewSet, basename="district")
+if settings.VIGILANCE_AREA_MODEL_ENABLED:
+    router.register(
+        "vigilancearea", api_views.VigilanceAreaViewSet, basename="vigilancearea"
+    )
+    router.register(
+        "vigilancearea_type",
+        api_views.VigilanceAreaTypeViewSet,
+        basename="vigilancearea_type",
+    )
+    router.register(
+        "vigilancearea_vigilancelevel",
+        api_views.VigilanceLevelViewSet,
+        basename="vigilancearea-vigilancelevel",
+    )
 
 if settings.COURSE_MODEL_ENABLED:
     router.register("outdoor_course", api_views.CourseViewSet, basename="course")

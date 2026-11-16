@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 from django.conf import settings
 from django.contrib.gis.db.models.functions import Transform
 from django.contrib.gis.geos import GEOSGeometry
-from django.db.models import F
+from django.db.models import Exists, F, OuterRef
 from django.urls import reverse
 from django.utils.html import escape
 from django.utils.translation import get_language
@@ -26,7 +26,12 @@ from geotrek.api.v2.mixins import (
     PDFSerializerMixin,
     PublishedRelatedObjectsSerializerMixin,
 )
-from geotrek.api.v2.utils import build_url, get_translation_or_dict, is_published
+from geotrek.api.v2.utils import (
+    build_url,
+    get_impracticable_vigilance_areas,
+    get_translation_or_dict,
+    is_published,
+)
 from geotrek.authent import models as authent_models
 from geotrek.common import models as common_models
 from geotrek.common.utils import simplify_coords
@@ -541,11 +546,16 @@ class TouristicModelSerializer(
 
 class TouristicContentSerializer(TouristicModelSerializer):
     attachments = AttachmentSerializer(many=True, source="sorted_attachments")
+    impracticable = serializers.BooleanField()
     departure_city = serializers.SerializerMethodField()
     departure_city_code = serializers.SerializerMethodField()
+    published_vigilance_areas = serializers.SerializerMethodField()
     types = serializers.SerializerMethodField()
     url = HyperlinkedIdentityField(view_name="apiv2:touristiccontent-detail")
     provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
+
+    def get_published_vigilance_areas(self, obj):
+        return [area.id for area in obj.published_vigilance_areas]
 
     class Meta(TimeStampedSerializer.Meta):
         model = tourism_models.TouristicContent
@@ -568,11 +578,13 @@ class TouristicContentSerializer(TouristicModelSerializer):
             "city_codes",
             "districts",
             "external_id",
+            "impracticable",
             "name",
             "pdf",
             "portal",
             "provider",
             "published",
+            "published_vigilance_areas",
             "source",
             "structure",
             "themes",
@@ -826,6 +838,7 @@ class TrekSerializer(
     accessibility_slope = serializers.SerializerMethodField()
     accessibility_width = serializers.SerializerMethodField()
     ambiance = serializers.SerializerMethodField()
+    impracticable = serializers.BooleanField()
     description = serializers.SerializerMethodField()
     description_teaser = serializers.SerializerMethodField()
     departure = serializers.SerializerMethodField()
@@ -845,6 +858,7 @@ class TrekSerializer(
     advice = serializers.SerializerMethodField()
     advised_parking = serializers.SerializerMethodField()
     parking_location = serializers.SerializerMethodField()
+    published_vigilance_areas = serializers.SerializerMethodField()
     ratings_description = serializers.SerializerMethodField()
     children = serializers.ReadOnlyField(source="children_id")
     parents = serializers.ReadOnlyField(source="parents_id")
@@ -870,6 +884,9 @@ class TrekSerializer(
 
     def get_published(self, obj):
         return get_translation_or_dict("published", self, obj)
+
+    def get_published_vigilance_areas(self, obj):
+        return [area.id for area in obj.published_vigilance_areas]
 
     def get_name(self, obj):
         return get_translation_or_dict("name", self, obj)
@@ -1069,6 +1086,7 @@ class TrekSerializer(
             "gear",
             "geometry",
             "gpx",
+            "impracticable",
             "information_desks",
             "kml",
             "labels",
@@ -1091,6 +1109,7 @@ class TrekSerializer(
             "previous",
             "public_transport",
             "published",
+            "published_vigilance_areas",
             "reservation_system",
             "reservation_id",
             "route",
@@ -1115,6 +1134,10 @@ class TourSerializer(TrekSerializer):
         return obj.count_children
 
     def get_steps(self, obj):
+        impracticable_vigilance_areas = get_impracticable_vigilance_areas(
+            self.context["request"]
+        )
+
         qs = (
             obj.children.select_related("topo_object", "difficulty")
             .prefetch_related(
@@ -1122,6 +1145,11 @@ class TourSerializer(TrekSerializer):
             )
             .annotate(
                 geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
+                impracticable=Exists(
+                    impracticable_vigilance_areas.filter(
+                        geom__intersects=OuterRef("geom"),
+                    )
+                ),
             )
         )
         FinalClass = override_serializer(
@@ -1436,6 +1464,90 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
             model = zoning_models.District
             fields = ("id", "geometry", "name", "published")
 
+    class VigilanceAreaTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField()
+        code = serializers.SerializerMethodField()
+        parent = serializers.IntegerField(source="parent_id")
+        pictogram = serializers.SerializerMethodField()
+
+        def get_name(self, obj):
+            return get_translation_or_dict("name", self, obj)
+
+        def get_code(self, obj):
+            return obj.get_code()
+
+        def get_pictogram(self, obj):
+            pictogram = obj.get_pictogram()
+            if pictogram:
+                return self.context["request"].build_absolute_uri(pictogram.url)
+            return None
+
+        class Meta:
+            model = zoning_models.VigilanceAreaType
+            fields = ("id", "name", "code", "parent", "pictogram")
+
+    class VigilanceLevelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField()
+
+        def get_name(self, obj):
+            return get_translation_or_dict("name", self, obj)
+
+        class Meta:
+            model = zoning_models.VigilanceLevel
+            fields = ("id", "name", "color", "level", "pictogram")
+
+    class VigilancePeriodSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        class Meta:
+            model = zoning_models.VigilancePeriod
+            fields = (
+                "id",
+                "start_date",
+                "end_date",
+                "active_days",
+                "annual",
+            )
+
+    class VigilanceAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        geometry = geo_serializers.GeometryField(
+            read_only=True, source="geom_transformed", precision=7
+        )
+        name = serializers.SerializerMethodField()
+        description = serializers.SerializerMethodField()
+        practical_info = serializers.SerializerMethodField()
+        attachments = AttachmentSerializer(many=True, source="sorted_attachments")
+        periods = VigilancePeriodSerializer(many=True)
+
+        def get_name(self, obj):
+            return get_translation_or_dict("name", self, obj)
+
+        def get_description(self, obj):
+            return get_translation_or_dict("description", self, obj)
+
+        def get_practical_info(self, obj):
+            return get_translation_or_dict("practical_info", self, obj)
+
+        class Meta:
+            model = zoning_models.VigilanceArea
+            fields = (
+                "id",
+                "attachments",
+                "date_insert",
+                "date_update",
+                "description",
+                "external_info_url",
+                "geometry",
+                "impracticable",
+                "name",
+                "periods",
+                "practical_info",
+                "published",
+                "sources",
+                "structure",
+                "uuid",
+                "vigilance_area_type",
+                "vigilance_level",
+            )
+
 
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
 
@@ -1516,6 +1628,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         description = serializers.SerializerMethodField()
         description_teaser = serializers.SerializerMethodField()
         published = serializers.SerializerMethodField()
+        vigilance_areas = serializers.SerializerMethodField()
         period = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name="apiv2:site-detail")
         geometry = geo_serializers.GeometryField(
@@ -1537,6 +1650,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         web_links = WebLinkSerializer(many=True)
         view_points = HDViewPointSerializer(many=True)
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
+        impracticable = serializers.BooleanField()
 
         def get_name(self, obj):
             return get_translation_or_dict("name", self, obj)
@@ -1558,6 +1672,9 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
 
         def get_period(self, obj):
             return get_translation_or_dict("period", self, obj)
+
+        def get_vigilance_areas(self, obj):
+            return [area.id for area in obj.published_vigilance_areas]
 
         def get_cities(self, obj):
             return [city.id for city in obj.published_cities]
@@ -1622,6 +1739,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "districts",
                 "eid",
                 "geometry",
+                "impracticable",
                 "information_desks",
                 "labels",
                 "managers",
@@ -1634,6 +1752,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "portal",
                 "practice",
                 "provider",
+                "vigilance_areas",
                 "ratings",
                 "sector",
                 "source",
@@ -1667,6 +1786,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         parents = serializers.SerializerMethodField()
         parents_uuids = serializers.SerializerMethodField()
         published = serializers.SerializerMethodField()
+        vigilance_areas = serializers.SerializerMethodField()
         children_uuids = serializers.SerializerMethodField()
         accessibility = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True, source="sorted_attachments")
@@ -1681,6 +1801,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         city_codes = serializers.SerializerMethodField()
         districts = serializers.SerializerMethodField()
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
+        impracticable = serializers.BooleanField()
 
         def get_name(self, obj):
             return get_translation_or_dict("name", self, obj)
@@ -1708,6 +1829,9 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
 
         def get_published(self, obj):
             return get_translation_or_dict("published", self, obj)
+
+        def get_vigilance_areas(self, obj):
+            return [area.id for area in obj.published_vigilance_areas]
 
         def get_gear(self, obj):
             return get_translation_or_dict("gear", self, obj)
@@ -1794,6 +1918,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "gear",
                 "geometry",
                 "height",
+                "impracticable",
                 "length",
                 "max_elevation",
                 "min_elevation",
@@ -1802,8 +1927,9 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "parents_uuids",
                 "pdf",
                 "points_reference",
-                "published",
                 "provider",
+                "published",
+                "vigilance_areas",
                 "ratings",
                 "ratings_description",
                 "sites",

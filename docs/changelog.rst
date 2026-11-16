@@ -2,7 +2,7 @@
 CHANGELOG
 =========
 
-3.0.0-rc2       (2026-07-30)
+3.0.0-rc3       (2026-11-16)
 ----------------------------
 
 **Breaking changes**
@@ -27,6 +27,67 @@ CHANGELOG
 * Don't break the geometry of a topology when it's decoupled from the path network
 * Strengthen the "invalid topology" filter criteria
 * Remove the "invalid geometry" filter
+* Add impracticability information on site and course API v2 endpoints
+* Add the published vigilance areas that intersect the sites and courses on their respective API v2 endpoints
+* Add a geo file parser for vigilance areas
+
+**Bug fixes**
+
+* Fix cities ordering in infrastructure list (#5830, #3961)
+* Fix linked objects to sensitive areas
+* Fix restricted areas additional layers
+* Fix parsers based on PointTopologyParserMixin
+
+**Maintenance**
+
+* Replace ``django-mptt`` with ``django-treebeard`` for outdoor sites
+
+
+2.127.0         (2026-11-03)
+----------------------------
+
+**Bug fixes**
+
+* Fix the search bar in the admin section
+
+**Features**
+
+* Add module Vigilance area
+  * After an upgrade, run the command ``geotrek loaddata vigilancearea`` to load the initial data for this module. (or refer to documentation for docker alternative)
+  * Docker user should read install/docker/docker-compose.yml and add beat container manually
+
+
+2.126.6         (2026-10-29)
+----------------------------
+
+**Bug fixes**
+
+* Remove None display when the field is empty in touristic content and event detail sheet
+* Fix site duplication so that the tree ID change if the original site doesn't have a parent (refs #5461)
+
+**Improvements**
+
+* Adapt sync_translation_fields to allow adding new language
+
+
+2.126.5         (2026-10-16)
+----------------------------
+
+**Bug fixes**
+
+* Fix Filetype association in add-attachment endpoint
+
+**Improvements**
+
+* Prevent conventional no data value (-99999) in raster to be used in altimetry data
+
+**Maintenance**
+
+* Add support for evolution of Suricate API: only lock reports when they are being handled
+
+
+2.126.4         (2026-10-07)
+----------------------------
 
 
 2.126.3         (2026-10-06)

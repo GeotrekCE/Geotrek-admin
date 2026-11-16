@@ -12,12 +12,14 @@ override_dh_installinit:
 	dh_installinit --name=geotrek-ui debian/geotrek-ui.service
 	dh_installinit --name=geotrek-api debian/geotrek-api.service
 	dh_installinit --name=geotrek-celery debian/geotrek-celery.service
+	dh_installinit --name=geotrek-celery-beat debian/geotrek-celery-beat.service
 
 override_dh_systemd_enable:
 	dh_systemd_enable --name=geotrek debian/geotrek.service
 	dh_systemd_enable --name=geotrek-ui debian/geotrek-ui.service
 	dh_systemd_enable --name=geotrek-api debian/geotrek-api.service
 	dh_systemd_enable --name=geotrek-celery debian/geotrek-celery.service
+	dh_systemd_enable --name=geotrek-celery-beat debian/geotrek-celery-beat.service
 
 override_dh_systemd_start:
 	dh_systemd_start --name=geotrek debian/geotrek.service

@@ -1,0 +1,21 @@
+[
+    {
+        "pk": 1,
+        "model": "django_celery_beat.intervalschedule",
+        "fields": {
+            "every": 1,
+            "period": "days"
+        }
+    },
+    {
+        "pk": 1,
+        "model": "django_celery_beat.periodictask",
+        "fields": {
+            "interval": 1,
+            "name": "Update annual vigilance periods years",
+            "task": "geotrek.common.tasks.update_annual_vigilance_areas",
+            "enabled": true,
+            "date_changed": "2026-10-13"
+        }
+    }
+]
