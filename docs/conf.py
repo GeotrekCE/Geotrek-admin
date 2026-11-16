@@ -9,6 +9,8 @@ extensions = [
     "sphinx_design",
 ]
 
+sd_card_legacy_separators = False
+
 html_theme = 'sphinx_immaterial'
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
