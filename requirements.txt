@@ -247,7 +247,7 @@ kombu==5.7.0
     # via celery
 landez==2.5.1
     # via geotrek (setup.py)
-large-image==1.35.7
+large-image==1.36.0
     # via
     #   django-large-image
     #   large-image-source-vips
