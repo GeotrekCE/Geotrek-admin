@@ -1119,7 +1119,6 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 "previous",
                 "public_transport",
                 "published",
-                "vigilance_areas",
                 "reservation_system",
                 "reservation_id",
                 "route",
@@ -1131,6 +1130,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 "url",
                 "uuid",
                 "view_points",
+                "vigilance_areas",
                 "web_links",
             )
 
@@ -1755,7 +1755,6 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "portal",
                 "practice",
                 "provider",
-                "vigilance_areas",
                 "ratings",
                 "sector",
                 "source",
@@ -1768,6 +1767,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "uuid",
                 "courses",
                 "courses_uuids",
+                "vigilance_areas",
                 "web_links",
                 "wind",
             )
@@ -1932,7 +1932,6 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "points_reference",
                 "provider",
                 "published",
-                "vigilance_areas",
                 "ratings",
                 "ratings_description",
                 "sites",
@@ -1941,6 +1940,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
                 "type",
                 "url",
                 "uuid",
+                "vigilance_areas",
             )
 
 

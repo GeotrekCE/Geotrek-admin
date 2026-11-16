@@ -153,7 +153,6 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "public_transport",
         "provider",
         "published",
-        "vigilance_areas",
         "ratings",
         "ratings_description",
         "reservation_system",
@@ -167,6 +166,7 @@ TREK_PROPERTIES_GEOJSON_STRUCTURE = sorted(
         "url",
         "uuid",
         "view_points",
+        "vigilance_areas",
         "web_links",
     ]
 )
@@ -248,7 +248,6 @@ TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted(
         "practical_info",
         "provider",
         "published",
-        "vigilance_areas",
         "reservation_id",
         "reservation_system",
         "source",
@@ -258,6 +257,7 @@ TOURISTIC_CONTENT_DETAIL_JSON_STRUCTURE = sorted(
         "update_datetime",
         "url",
         "uuid",
+        "vigilance_areas",
         "website",
     ]
 )
@@ -350,7 +350,6 @@ SITE_PROPERTIES_JSON_STRUCTURE = sorted(
         "portal",
         "practice",
         "provider",
-        "vigilance_areas",
         "pdf",
         "ratings",
         "sector",
@@ -362,6 +361,7 @@ SITE_PROPERTIES_JSON_STRUCTURE = sorted(
         "uuid",
         "view_points",
         "published",
+        "vigilance_areas",
         "wind",
         "web_links",
     ]
@@ -454,12 +454,12 @@ COURSE_PROPERTIES_JSON_STRUCTURE = sorted(
         "pdf",
         "points_reference",
         "published",
-        "vigilance_areas",
         "children",
         "children_uuids",
         "duration",
         "gear",
         "uuid",
+        "vigilance_areas",
     ]
 )
 
