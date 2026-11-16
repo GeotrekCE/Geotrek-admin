@@ -22,7 +22,7 @@ charset-normalizer==3.5.2
     # via
     #   -c ../requirements.txt
     #   requests
-click==8.5.0
+click==8.5.1
     # via
     #   -c ../requirements.txt
     #   sphinx-intl
@@ -78,7 +78,7 @@ sphinx-autobuild==2024.10.3
     # via -r requirements.in
 sphinx-design==0.8.0
     # via -r requirements.in
-sphinx-immaterial==0.13.9
+sphinx-immaterial==0.13.11
     # via -r requirements.in
 sphinx-intl==2.4.0
     # via -r requirements.in
