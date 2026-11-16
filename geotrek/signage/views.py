@@ -106,6 +106,7 @@ class SignageFormatList(MapEntityFormat, SignageList):
         "access",
         "manager",
         "uuid",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
@@ -368,6 +369,7 @@ class BladeViewSet(GeotrekMapentityViewSet):
     geojson_serializer_class = BladeGeojsonSerializer
     filterset_class = BladeFilterSet
     mapentity_list_class = BladeList
+    vector_tiles_fields = ("id", "number")
 
     def get_queryset(self):
         qs = self.model.objects.existing()

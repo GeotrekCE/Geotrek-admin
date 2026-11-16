@@ -2,6 +2,7 @@ import os
 import tempfile
 from io import StringIO
 
+from django.contrib.gis.geos import LineString
 from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
 from django.core.management.base import CommandError
@@ -10,8 +11,9 @@ from django.test import TestCase
 from geotrek.authent.tests.factories import StructureFactory
 from geotrek.common.tests.utils import update_gis
 from geotrek.core.tests.factories import PathFactory
+from geotrek.signage.management.commands.loadsignage import Command
 from geotrek.signage.models import Signage
-from geotrek.signage.tests.factories import SignageFactory
+from geotrek.signage.tests.factories import SignageFactory, SignageTypeFactory
 
 
 class SignageCommandTest(TestCase):
@@ -312,22 +314,6 @@ class SignageCommandTest(TestCase):
                 f"Field '{element}' not found in data source", output.getvalue()
             )
 
-    def test_no_line_fail_rolling_back(self):
-        self.path.delete()
-        StructureFactory.create(name="structure")
-        filename = os.path.join(os.path.dirname(__file__), "data", "line.geojson")
-        output = StringIO()
-        with self.assertRaises(GEOSException):
-            call_command(
-                "loadsignage",
-                filename,
-                type_default="label",
-                name_default="name",
-                stdout=output,
-            )
-        self.assertIn("An error occured, rolling back operations.", output.getvalue())
-        self.assertEqual(Signage.objects.count(), 0)
-
     def test_update_same_eid(self):
         output = StringIO()
         filename = os.path.join(os.path.dirname(__file__), "data", "signage.shp")
@@ -363,3 +349,20 @@ class SignageCommandTest(TestCase):
             "Structure wrong_structure_default set in options doesn't exist",
             output.getvalue(),
         )
+
+    def test_create_signage_invalid_geometry(self):
+        cmd = Command()
+        cmd.counter = 0
+        structure = StructureFactory.create()
+        signage_type = SignageTypeFactory.create()
+        fields_to_integrate = {
+            "name": "Test Signage",
+            "type": signage_type,
+            "structure": structure,
+            "conditions": [],
+            "eid": "",
+        }
+        geom = LineString([(0, 0), (1, 1)], srid=4326)
+        with self.assertRaises(GEOSException) as cm:
+            cmd.create_signage(geom, fields_to_integrate, verbosity=0)
+        self.assertIn("Invalid geometry", str(cm.exception))

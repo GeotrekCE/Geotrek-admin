@@ -1,5 +1,4 @@
-from geotrek.core.forms import TopologyForm
-from geotrek.core.widgets import LineTopologyWidget
+from geotrek.core.mixins.forms import LineTopologyFormMixin
 
 from .models import (
     CirculationEdge,
@@ -11,47 +10,46 @@ from .models import (
 )
 
 
-class EdgeForm(TopologyForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        modifiable = self.fields["topology"].widget.modifiable
-        self.fields["topology"].widget = LineTopologyWidget()
-        self.fields["topology"].widget.modifiable = modifiable
-
-
-class PhysicalEdgeForm(EdgeForm):
-    class Meta(EdgeForm.Meta):
+class PhysicalEdgeForm(LineTopologyFormMixin):
+    class Meta(LineTopologyFormMixin.Meta):
         model = PhysicalEdge
-        fields = [*EdgeForm.Meta.fields, "physical_type"]
+        fields = [*LineTopologyFormMixin.Meta.fields, "physical_type"]
 
 
-class LandEdgeForm(EdgeForm):
-    class Meta(EdgeForm.Meta):
+class LandEdgeForm(LineTopologyFormMixin):
+    class Meta(LineTopologyFormMixin.Meta):
         model = LandEdge
-        fields = [*EdgeForm.Meta.fields, "land_type", "owner", "agreement"]
+        fields = [
+            *LineTopologyFormMixin.Meta.fields,
+            "land_type",
+            "owner",
+            "agreement",
+        ]
 
 
-class CirculationEdgeForm(EdgeForm):
-    class Meta(EdgeForm.Meta):
+class CirculationEdgeForm(LineTopologyFormMixin):
+    class Meta(LineTopologyFormMixin.Meta):
         model = CirculationEdge
-        fields = [*EdgeForm.Meta.fields, "circulation_type", "authorization_type"]
+        fields = [
+            *LineTopologyFormMixin.Meta.fields,
+            "circulation_type",
+            "authorization_type",
+        ]
 
 
-class OrganismForm(EdgeForm):
-    class Meta(EdgeForm.Meta):
-        fields = [*EdgeForm.Meta.fields, "organization"]
-
-
-class CompetenceEdgeForm(OrganismForm):
-    class Meta(OrganismForm.Meta):
+class CompetenceEdgeForm(LineTopologyFormMixin):
+    class Meta(LineTopologyFormMixin.Meta):
         model = CompetenceEdge
+        fields = [*LineTopologyFormMixin.Meta.fields, "organization"]
 
 
-class WorkManagementEdgeForm(OrganismForm):
-    class Meta(OrganismForm.Meta):
+class WorkManagementEdgeForm(LineTopologyFormMixin):
+    class Meta(LineTopologyFormMixin.Meta):
         model = WorkManagementEdge
+        fields = [*LineTopologyFormMixin.Meta.fields, "organization"]
 
 
-class SignageManagementEdgeForm(OrganismForm):
-    class Meta(OrganismForm.Meta):
+class SignageManagementEdgeForm(LineTopologyFormMixin):
+    class Meta(LineTopologyFormMixin.Meta):
         model = SignageManagementEdge
+        fields = [*LineTopologyFormMixin.Meta.fields, "organization"]

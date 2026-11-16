@@ -1,4 +1,4 @@
-from unittest import SkipTest, skipIf
+from unittest import SkipTest
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString, MultiLineString, Point
@@ -8,7 +8,7 @@ from django.test import TestCase
 from geotrek.altimetry.helpers import AltimetryHelper
 from geotrek.common.tests.utils import LineStringInBounds
 from geotrek.core.models import Path, Topology
-from geotrek.core.tests.factories import TopologyFactory
+from geotrek.core.tests.factories import TopologyFactory, TopologyUncoupledFactory
 
 
 class ElevationTest(TestCase):
@@ -34,12 +34,8 @@ class ElevationTest(TestCase):
                         "UPDATE altimetry_dem SET rast = ST_SetValue(rast, %s, %s, %s::float)",
                         [x + 1, y + 1, demvalues[y][x]],
                     )
-            if settings.TREKKING_TOPOLOGY_ENABLED:
-                cls.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
+            cls.path = Path.objects.create(geom=LineString((78, 117), (3, 17)))
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_elevation_path(self):
         self.assertEqual(self.path.ascent, 16)
         self.assertEqual(self.path.descent, 0)
@@ -47,9 +43,6 @@ class ElevationTest(TestCase):
         self.assertEqual(self.path.max_elevation, 22)
         self.assertEqual(len(self.path.geom_3d.coords), 7)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_elevation_profile(self):
         profile = self.path.get_elevation_profile()
         self.assertAlmostEqual(len(profile), 7)
@@ -63,17 +56,11 @@ class ElevationTest(TestCase):
         self.assertAlmostEqual(profile[5][3], 20.0)
         self.assertAlmostEqual(profile[6][3], 22.0)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_elevation_limits(self):
         limits = self.path.get_elevation_limits()
         self.assertEqual(limits[0], 1106)
         self.assertEqual(limits[1], -94)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_elevation_topology_line(self):
         topo = TopologyFactory.create(paths=[(self.path, 0.2, 0.8)])
         topo.save()
@@ -84,14 +71,13 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.max_elevation, 17)
         self.assertEqual(len(topo.geom_3d.coords), 5)
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_elevation_topology_line_nds(self):
+    def test_elevation_uncoupled_topology_line(self):
         """
         No reason for this changements
         """
-        topo = TopologyFactory.create(geom="SRID=2154;LINESTRING(63 97, 18 37)")
+        topo = TopologyUncoupledFactory.create(
+            geom="SRID=2154;LINESTRING(63 97, 18 37)"
+        )
         topo.get_elevation_profile()
         self.assertEqual(topo.ascent, 5)
         self.assertEqual(topo.descent, 0)
@@ -99,20 +85,14 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.max_elevation, 17)
         self.assertEqual(len(topo.geom_3d.coords), 5)
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_elevation_topology_point(self):
-        topo = TopologyFactory.create(geom="SRID=2154;POINT(33 57)")
+    def test_elevation_uncoupled_topology_point(self):
+        topo = TopologyUncoupledFactory.create(geom="SRID=2154;POINT(33 57)")
         self.assertEqual(topo.geom_3d.coords[2], 15)
         self.assertEqual(topo.ascent, 0)
         self.assertEqual(topo.descent, 0)
         self.assertEqual(topo.min_elevation, 15)
         self.assertEqual(topo.max_elevation, 15)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_elevation_topology_point_offset(self):
         topo = TopologyFactory.create(paths=[(self.path, 0.5, 0.5)], offset=1)
         self.assertEqual(topo.geom_3d.coords[2], 15)
@@ -122,11 +102,17 @@ class ElevationTest(TestCase):
         self.assertEqual(topo.max_elevation, 15)
 
     def test_elevation_topology_outside_dem(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            outside_path = Path.objects.create(geom=LineString((200, 200), (300, 300)))
-            topo = TopologyFactory.create(paths=[(outside_path, 0.5, 0.5)])
-        else:
-            topo = TopologyFactory.create(geom="SRID=2154;POINT(250 250)")
+        outside_path = Path.objects.create(geom=LineString((200, 200), (300, 300)))
+        topo = TopologyFactory.create(paths=[(outside_path, 0.5, 0.5)])
+
+        self.assertEqual(topo.geom_3d.coords[2], 0)
+        self.assertEqual(topo.ascent, 0)
+        self.assertEqual(topo.descent, 0)
+        self.assertEqual(topo.min_elevation, 0)
+        self.assertEqual(topo.max_elevation, 0)
+
+    def test_elevation_uncoupled_topology_outside_dem(self):
+        topo = TopologyUncoupledFactory.create(geom="SRID=2154;POINT(250 250)")
         self.assertEqual(topo.geom_3d.coords[2], 0)
         self.assertEqual(topo.ascent, 0)
         self.assertEqual(topo.descent, 0)
@@ -332,7 +318,6 @@ class ElevationRightOrderAreaTest(TestCase):
         )
 
 
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
 class LengthTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -370,7 +355,6 @@ class LengthTest(TestCase):
         self.assertEqual(self.path.length, 83.2)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SamplingTestPath(TestCase):
     model = Path
     step = settings.ALTIMETRIC_PROFILE_PRECISION
@@ -467,7 +451,6 @@ class SamplingTestPath(TestCase):
         self.assertEqual(len(path.geom_3d.coords), 7)
 
 
-@skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
 class SamplingTestTopology(TestCase):
     model = Topology
     step = settings.ALTIMETRIC_PROFILE_PRECISION

@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.contrib import admin
+from django.contrib.gis.admin import GISModelAdmin
 from django.utils.html import format_html
 from django.utils.translation import gettext as _
-from leaflet.admin import LeafletGeoAdmin
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
@@ -31,21 +31,21 @@ class RestrictedAreaTypeAdmin(MergeActionMixin, admin.ModelAdmin):
     merge_field = "name"
 
 
-class CityAdmin(LeafletGeoAdmin):
+class CityAdmin(GISModelAdmin):
     search_fields = ("code", "name")
     list_display = ("name", "code", "published")
     list_filter = ("published",)
     actions = (publish, unpublish)
 
 
-class RestrictedAreaAdmin(LeafletGeoAdmin):
+class RestrictedAreaAdmin(GISModelAdmin):
     search_fields = ("name",)
     list_display = ("name", "area_type", "published")
     list_filter = ("area_type", "published")
     actions = (publish, unpublish)
 
 
-class DistrictAdmin(LeafletGeoAdmin):
+class DistrictAdmin(GISModelAdmin):
     search_fields = ("name",)
     list_display = ("name", "published")
     list_filter = ("published",)
@@ -91,5 +91,6 @@ admin.site.register(zoning_models.RestrictedAreaType, RestrictedAreaTypeAdmin)
 admin.site.register(zoning_models.RestrictedArea, RestrictedAreaAdmin)
 admin.site.register(zoning_models.City, CityAdmin)
 admin.site.register(zoning_models.District, DistrictAdmin)
-admin.site.register(zoning_models.VigilanceAreaType, VigilanceAreaTypeAdmin)
-admin.site.register(zoning_models.VigilanceLevel, VigilanceLevelAdmin)
+if settings.VIGILANCE_AREA_MODEL_ENABLED:
+    admin.site.register(zoning_models.VigilanceAreaType, VigilanceAreaTypeAdmin)
+    admin.site.register(zoning_models.VigilanceLevel, VigilanceLevelAdmin)

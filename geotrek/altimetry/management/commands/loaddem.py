@@ -136,11 +136,12 @@ class Command(BaseCommand):
                 if "geom" in [
                     field.name for field in model._meta.get_fields()
                 ] and issubclass(model, AltimetryMixin):
-                    if settings.TREKKING_TOPOLOGY_ENABLED:
-                        if not issubclass(model, Topology):
-                            model.objects.all().update(geom=F("geom"))
-                    else:
+                    if not issubclass(model, Topology):
+                        # Only non-topology models are updated
                         model.objects.all().update(geom=F("geom"))
+                    else:
+                        # Topology models are only updated when not coupled. If coupled, they are updated by Path / PathAggregation update
+                        model.objects.filter(coupled=False).update(geom=F("geom"))
         return
 
     def call_command_system(self, cmd, **kwargs):

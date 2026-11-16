@@ -81,7 +81,7 @@ Paths
 
 
 .. important::
-    With :ref:`dynamic segmentation <configuration-dynamic-segmentation>`, importing paths is very risky if paths are already present in the same area in Geotrek,
+    Importing paths is very risky if paths are already present in the same area in Geotrek,
     it is only safe for an area where no path is already created.
 
     Indeed, if you import paths where there are existing paths, treks, POIs or trails linked topology might be impacted.

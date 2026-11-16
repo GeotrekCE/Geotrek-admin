@@ -7,6 +7,7 @@
             <th>{{ physicaledge|verbose:"physical_type" }}</th>
             <td>{{ physicaledge.physical_type }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=physicaledge %}
     </table>
     {% include "altimetry/elevationinfo_fragment.html" %}
     {% include "common/fragments/provider_eid.html" %}

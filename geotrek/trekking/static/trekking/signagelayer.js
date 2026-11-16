@@ -1,3 +1,4 @@
+/*
 var SignagesLayer = L.GeoJSON.extend({
 
     initialize: function (signagesData, options) {
@@ -41,3 +42,5 @@ var SignagesLayer = L.GeoJSON.extend({
         return marker;
     }
 });
+
+ */

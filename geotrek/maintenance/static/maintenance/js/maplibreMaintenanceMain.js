@@ -1,0 +1,62 @@
+//
+// Maintenance / interventions
+//
+// window.addEventListener("entity:map", () => {
+//     const map = window.MapEntity.currentMap.map;
+//     const modelname = 'intervention';
+//     const layername = 'intervention_layer';
+//     const layerUrl = window.SETTINGS.urls[layername];
+//
+//     const style = window.SETTINGS.map.styles[modelname] ?? window.SETTINGS.map.styles['others'];
+//
+//     const nameHTML = tr('Intervention');
+//     const category = tr('Maintenance');
+//     const primaryKey = generateUniqueId();
+//
+//     const objectsLayer = new MaplibreObjectsLayer(null, {
+//         style: style,
+//         modelname: modelname,
+//         readonly: true,
+//         nameHTML: nameHTML,
+//         category: category,
+//         primaryKey: primaryKey,
+//         dataUrl: layerUrl,
+//         isLazy: true
+//     });
+//
+//     objectsLayer.initialize(map.getMap());
+//     objectsLayer.registerLazyLayer(modelname, category, nameHTML, primaryKey, layerUrl);
+// });
+
+// Date picker with placeholder on input
+function setDatePickerConfig(idList) {
+    $(idList).datepicker({
+        autoclose: true,
+        language: window.SETTINGS.languages.default,
+        format: window.SETTINGS.date_format
+    });
+}
+
+window.addEventListener('entity:view:add', function (e) {
+    var data = e.detail;
+    console.log('entity:view:add', data);
+    if (data && data.modelname === "intervention"){
+        setDatePickerConfig('#id_begin_date, #id_end_date');
+    };
+});
+
+window.addEventListener('entity:view:filter', function (e) {
+    var data = e.detail;
+    console.log('entity:view:filter', data);
+    if (data && data.modelname === "intervention"){
+        setDatePickerConfig('#id_begin_date_0, #id_begin_date_1, #id_end_date_0, #id_end_date_1');
+    };
+});
+
+window.addEventListener('entity:view:update', function (e) {
+    var data = e.detail;
+    console.log('entity:view:update', data);
+    if (data && data.modelname === "intervention"){
+        setDatePickerConfig('#id_begin_date, #id_end_date');
+    };
+});

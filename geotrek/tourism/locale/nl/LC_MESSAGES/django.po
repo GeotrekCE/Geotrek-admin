@@ -403,15 +403,6 @@ msgstr ""
 msgid "Add a new touristic event"
 msgstr ""
 
-msgid "Data sources"
-msgstr ""
-
-msgid "No result"
-msgstr ""
-
-msgid "Choose value(s)"
-msgstr ""
-
 msgid "Public print"
 msgstr ""
 

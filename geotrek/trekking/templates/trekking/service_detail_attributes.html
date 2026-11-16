@@ -12,6 +12,7 @@
             <th>{{ service|verbose:"type" }}</th>
             <td>{{ service.type }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=service %}
     </table>
     {% include "altimetry/elevationinfo_fragment.html" %}
     {% include "common/fragments/provider_eid.html" %}

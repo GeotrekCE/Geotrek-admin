@@ -7,6 +7,7 @@
             <th>{{ landedge|verbose:"land_type" }}</th>
             <td>{{ landedge.land_type }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=landedge %}
         <tr>
             <th>{{ landedge|verbose:"owner" }}</th>
             <td>{{ landedge.owner|safe }}</td>

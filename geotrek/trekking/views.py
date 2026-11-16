@@ -54,7 +54,12 @@ from geotrek.signage.serializers import SignageAPIGeojsonSerializer
 from geotrek.zoning.models import City, District, RestrictedArea
 
 from .filters import POIFilterSet, ServiceFilterSet, TrekFilterSet
-from .forms import POIForm, ServiceForm, TrekForm, WebLinkCreateFormPopup
+from .forms import (
+    POIForm,
+    ServiceForm,
+    TrekForm,
+    WebLinkCreateFormPopup,
+)
 from .models import POI, Service, Trek, WebLink
 from .serializers import (
     POIGeojsonSerializer,
@@ -155,6 +160,7 @@ class TrekFormatList(MapEntityFormat, TrekList):
         "portal",
         "length_2d",
         "uuid",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
@@ -371,6 +377,7 @@ class POIFormatList(MapEntityFormat, POIList):
         "districts",
         "areas",
         "uuid",
+        "coupled",
         *AltimetryMixin.COLUMNS,
     ]
 
@@ -562,7 +569,14 @@ class ServiceFilter(MapEntityFilter):
 class ServiceFormatList(MapEntityFormat, ServiceList):
     filterset_class = ServiceFilterSet
     mandatory_columns = ["id"]
-    default_extra_columns = ["id", "eid", "type", "uuid", *AltimetryMixin.COLUMNS]
+    default_extra_columns = [
+        "id",
+        "eid",
+        "type",
+        "uuid",
+        "coupled",
+        *AltimetryMixin.COLUMNS,
+    ]
 
 
 class ServiceDetail(MapEntityDetail):
@@ -602,6 +616,7 @@ class ServiceViewSet(GeotrekMapentityViewSet):
     geojson_serializer_class = ServiceGeojsonSerializer
     filterset_class = ServiceFilterSet
     mapentity_list_class = ServiceList
+    vector_tiles_fields = ("id",)
 
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("type")

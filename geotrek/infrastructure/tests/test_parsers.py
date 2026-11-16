@@ -1,13 +1,12 @@
 import json
 import os
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 
 from django.conf import settings
 from django.contrib.gis.geos import LineString
 from django.core.exceptions import ImproperlyConfigured
 from django.core.management import call_command
-from django.core.management.base import CommandError
 from django.test import TestCase
 from django.test.utils import override_settings
 
@@ -96,8 +95,7 @@ class TestApidaeInfrastructureParserMissingType(ApidaeInfrastructureParser):
 class ApidaeInfrastructureParserTests(TestCase):
     @classmethod
     def setUpTestData(cls):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.path = PathFactory.create()
+        cls.path = PathFactory.create()
 
     @staticmethod
     def make_dummy_get(apidae_data_file):
@@ -113,24 +111,6 @@ class ApidaeInfrastructureParserTests(TestCase):
             "An infrastructure type must be specified in the parser configuration.",
         ):
             TestApidaeInfrastructureParserMissingType()
-
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    @mock.patch("requests.get")
-    def test_import_cmd_raises_error_when_no_path(self, mocked_get):
-        mocked_get.side_effect = self.make_dummy_get("infrastructure_minimal.json")
-
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'Infrastructure' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.infrastructure.tests.test_parsers.TestApidaeInfrastructureParser",
-                verbosity=0,
-            )
 
     @mock.patch("requests.get")
     def test_skip_row_and_continue_when_wrong_geometry(self, mocked_get):
@@ -201,10 +181,9 @@ class ApidaeInfrastructureParserTests(TestCase):
         self.assertEqual(infra.name, "Un objet avec un minimum de données")
         self.assertEqual(infra.type.label, "Foo")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            infra_path = infra.topo_object.paths.get()
-            self.assertEqual(infra_path, self.path)
-            self.assertEqual(infra.topo_object.kind, "INFRASTRUCTURE")
+        infra_path = infra.topo_object.paths.get()
+        self.assertEqual(infra_path, self.path)
+        self.assertEqual(infra.topo_object.kind, "INFRASTRUCTURE")
         self.assertEqual(infra.geom.geom_type, "Point")
         self.assertEqual(infra.geom.srid, settings.SRID)
         self.assertAlmostEqual(infra.geom.coords[0], 813833.6, delta=0.1)
@@ -286,21 +265,6 @@ class OpenStreetMapInfrastructureParserTests(TestCase):
         cls.import_Infrastructure()
         cls.objects = Infrastructure.objects.all()
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_import_cmd_raises_error_when_no_path(self):
-        self.path.delete()
-        with self.assertRaisesRegex(
-            CommandError,
-            "You need to add a network of paths before importing 'Infrastructure' objects",
-        ):
-            call_command(
-                "import",
-                "geotrek.infrastructure.tests.test_parsers.TestInfrastructureOpenStreetMapParser",
-                verbosity=0,
-            )
-
     def test_create_Infrastructure_OSM(self):
         self.assertEqual(self.objects.count(), 4)
 
@@ -323,14 +287,11 @@ class OpenStreetMapInfrastructureParserTests(TestCase):
     def test_topology_point(self):
         infrastructure = self.objects.get(eid="N1")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertAlmostEqual(
-                infrastructure.topo_object.offset, 27225.536, places=2
-            )
-            self.assertEqual(infrastructure.topo_object.paths.count(), 1)
-            infrastructure_path = infrastructure.topo_object.paths.get()
-            self.assertEqual(infrastructure_path, self.path)
-            self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
+        self.assertAlmostEqual(infrastructure.topo_object.offset, 27225.536, places=2)
+        self.assertEqual(infrastructure.topo_object.paths.count(), 1)
+        infrastructure_path = infrastructure.topo_object.paths.get()
+        self.assertEqual(infrastructure_path, self.path)
+        self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
 
         self.assertEqual(infrastructure.geom.geom_type, "Point")
         self.assertEqual(infrastructure.geom.srid, settings.SRID)
@@ -340,13 +301,10 @@ class OpenStreetMapInfrastructureParserTests(TestCase):
     def test_topology_way(self):
         infrastructure = self.objects.get(eid="W2")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertAlmostEqual(
-                infrastructure.topo_object.offset, -31942.149, places=2
-            )
-            infrastructure_path = infrastructure.topo_object.paths.get()
-            self.assertEqual(infrastructure_path, self.path)
-            self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
+        self.assertAlmostEqual(infrastructure.topo_object.offset, -31942.149, places=2)
+        infrastructure_path = infrastructure.topo_object.paths.get()
+        self.assertEqual(infrastructure_path, self.path)
+        self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
 
         self.assertEqual(infrastructure.geom.geom_type, "Point")
         self.assertEqual(infrastructure.geom.srid, settings.SRID)
@@ -356,13 +314,10 @@ class OpenStreetMapInfrastructureParserTests(TestCase):
     def test_topology_polygon(self):
         infrastructure = self.objects.get(eid="W3")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertAlmostEqual(
-                infrastructure.topo_object.offset, 48632.872, places=2
-            )
-            infrastructure_path = infrastructure.topo_object.paths.get()
-            self.assertEqual(infrastructure_path, self.path)
-            self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
+        self.assertAlmostEqual(infrastructure.topo_object.offset, 48632.872, places=2)
+        infrastructure_path = infrastructure.topo_object.paths.get()
+        self.assertEqual(infrastructure_path, self.path)
+        self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
 
         self.assertEqual(infrastructure.geom.geom_type, "Point")
         self.assertEqual(infrastructure.geom.srid, settings.SRID)
@@ -372,13 +327,10 @@ class OpenStreetMapInfrastructureParserTests(TestCase):
     def test_topology_relation(self):
         infrastructure = self.objects.get(eid="R4")
 
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertAlmostEqual(
-                infrastructure.topo_object.offset, -31942.149, places=2
-            )
-            infrastructure_path = infrastructure.topo_object.paths.get()
-            self.assertEqual(infrastructure_path, self.path)
-            self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
+        self.assertAlmostEqual(infrastructure.topo_object.offset, -31942.149, places=2)
+        infrastructure_path = infrastructure.topo_object.paths.get()
+        self.assertEqual(infrastructure_path, self.path)
+        self.assertEqual(infrastructure.topo_object.kind, "INFRASTRUCTURE")
 
         self.assertEqual(infrastructure.geom.geom_type, "Point")
         self.assertEqual(infrastructure.geom.srid, settings.SRID)

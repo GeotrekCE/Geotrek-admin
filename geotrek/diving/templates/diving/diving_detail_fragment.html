@@ -1,5 +1,8 @@
 {% load i18n geotrek_tags mapentity_tags %}
 
+{% settings_value "DIVE_MODEL_ENABLED" as dive_enabled %}
+
+{% if dive_enabled %}
 <h3>{% trans "Diving" %}</h3>
 <table class="table">
     <tr>
@@ -15,3 +18,4 @@
         </td>
     </tr>
 </table>
+{% endif %}

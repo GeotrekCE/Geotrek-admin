@@ -1,6 +1,6 @@
 import math
 import os
-from unittest import mock, skipIf
+from unittest import mock
 
 from django.apps import apps
 from django.conf import settings
@@ -30,15 +30,16 @@ from geotrek.core.tests.factories import (
     CertificationStatusFactory,
     CertificationTrailFactory,
     ComfortFactory,
+    NetworkFactory,
     PathFactory,
     StakeFactory,
     TrailCategoryFactory,
     TrailFactory,
+    UsageFactory,
 )
 from geotrek.core.widgets import LineTopologyWidget
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class StakeTest(TestCase):
     def test_comparison(self):
         low = StakeFactory.create()
@@ -56,7 +57,6 @@ class StakeTest(TestCase):
         self.assertFalse(low == high)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathTest(TestCase):
     def test_paths_bystructure(self):
         user = UserFactory()
@@ -140,9 +140,6 @@ class PathTest(TestCase):
         p1.save()
         self.assertEqual(len(mail.outbox), 0)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_delete_allow_path_trigger(self):
         p1 = PathFactory.create()
         p2 = PathFactory.create()
@@ -153,9 +150,6 @@ class PathTest(TestCase):
         cur.execute(f"DELETE FROM core_path WHERE id = {p2.pk}")
         self.assertEqual(Path.objects.count(), 0)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     @override_settings(ALLOW_PATH_DELETION_TOPOLOGY=False)
     def test_delete_protected_allow_path_trigger(self):
         p1 = PathFactory.create()
@@ -187,9 +181,6 @@ class PathTest(TestCase):
 
         self.assertEqual(Path.objects.count(), 1)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_delete_protected_allow_path(self):
         p1 = PathFactory.create()
         p2 = PathFactory.create()
@@ -216,7 +207,6 @@ class PathTest(TestCase):
         self.assertEqual(t.aggregations.count(), 1)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class InterpolateTest(TestCase):
     def test_interpolate_not_saved(self):
         p = Path()
@@ -230,7 +220,6 @@ class InterpolateTest(TestCase):
         self.assertEqual(p.interpolate(Point(3, 46.5, srid=4326)), (0, 0))
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class SnapTest(TestCase):
     def test_snap_not_saved(self):
         p = Path()
@@ -244,7 +233,6 @@ class SnapTest(TestCase):
         self.assertEqual(snap.y, 6600000)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class TrailTest(TestCase):
     def test_no_trail_csv(self):
         p1 = PathFactory.create()
@@ -288,7 +276,6 @@ class TrailTestDisplay(TestCase):
         self.assertEqual(entry.action_flag, DELETION)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathVisibilityTest(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -310,7 +297,6 @@ class PathVisibilityTest(TestCase):
         self.assertEqual(Path.objects.count(), 3)
 
 
-@skipIf(not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only")
 class PathGeometryTest(TestCase):
     def test_self_intersection_raises_integrity_error(self):
         # Create path with self-intersection
@@ -459,19 +445,21 @@ class CertificationTest(TestCase):
             "certification label / certification status", str(certification_trail)
         )
 
-    def test_path_no_draft_latest_updated_when_empty(self):
-        Path.objects.all().delete()
-        self.assertIsNone(Path.no_draft_latest_updated())
-
     def test_path_trails_usages_and_networks_display(self):
         p = PathFactory.create()
         self.assertEqual(p.trails_display, "None")
+        self.assertEqual(p.trails_csv_display, "None")
         self.assertEqual(p.usages_display, "")
         self.assertEqual(p.networks_display, "")
         t = TrailFactory.create(paths=[p])
-        if not settings.TREKKING_TOPOLOGY_ENABLED:
-            p._trails = [t]
         self.assertIn(t.name, p.trails_display)
+        self.assertIn(str(t), p.trails_csv_display)
+        usage = UsageFactory.create()
+        net = NetworkFactory.create()
+        p.usages.add(usage)
+        p.networks.add(net)
+        self.assertEqual(p.usages_display, str(usage))
+        self.assertEqual(p.networks_display, str(net))
 
     def test_topology_save_sets_kind_and_rejects_topologymixin_kind(self):
         topo = Topology()
@@ -486,9 +474,6 @@ class CertificationTest(TestCase):
         ):
             topo2.save()
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_topology_deserialize_multiple_subtopologies(self):
         p = PathFactory.create()
         deser = Topology.deserialize(
@@ -505,15 +490,15 @@ class CertificationTest(TestCase):
         )
         self.assertTrue(deser.aggregations.exists())
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_line_topology_widget_deserialize_and_render_with_pk(self):
         t = TrailFactory.create()
         w = LineTopologyWidget()
         self.assertEqual(w.deserialize(t.pk), t.topo_object)
+        self.assertIsNone(w.deserialize("invalid"))
         rendered = w.render("topology", t.pk)
         self.assertIn("paths", rendered)
+        rendered_none = w.render("topology", 999999)
+        self.assertNotIn("paths", rendered_none)
 
     def test_path_aggregation_start_and_end_meter_when_length_is_nan(self):
         p = PathFactory.create()

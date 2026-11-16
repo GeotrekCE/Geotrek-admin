@@ -1,0 +1,85 @@
+.mapbox-gl-path-popup-button {
+  appearance: none;
+  cursor: pointer;
+  display: block;
+  border: none;
+  margin: 0.3rem 0;
+  background: transparent;
+}
+
+.mapbox-gl-path-popup-button:hover:not(:disabled),
+.mapbox-gl-path-popup-button:focus:not(:disabled) {
+  color: skyblue;
+  text-decoration: underline;
+}
+
+.mapbox-gl-path-popup-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.mapbox-gl-path-popup-button::before {
+  display: inline-block;
+  margin-right: 0.2rem;
+}
+
+.mapbox-gl-path-popup-delete::before {
+  content: "❌";
+}
+
+.mapbox-gl-path-popup-createPointOnLine::before {
+  content: "󠀫➕";
+}
+
+.mapbox-gl-path-popup-createIntermediatePointOnLine::before {
+  content: "󠀫➗";
+}
+
+.mapbox-gl-path-popup-loop::before {
+  content: "󠀫🔄";
+}
+
+.mapbox-gl-path-popup-oneWay::before {
+  content: "󠀫↪️";
+}
+
+.mapbox-gl-path-popup-disableFollowDirectionMode::before {
+  content: "󠀫—";
+}
+
+.mapbox-gl-path-popup-enableFollowDirectionMode::before {
+  content: "󠀫〰️";
+}
+
+/* Mapbox/Maplibre native control buttons */
+.mapboxgl-ctrl button.mapbox-gl-path-btn-edit,
+.maplibregl-ctrl button.mapbox-gl-path-btn-edit {
+  background-image: url("/static/core/images/linetopology-control.png");
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+.mapboxgl-ctrl button.mapbox-gl-path-btn-edit.mapbox-gl-path-active,
+.maplibregl-ctrl button.mapbox-gl-path-btn-edit.mapbox-gl-path-active {
+  background-color: rgba(0, 0, 0, 0.1);
+  background-image: url("/static/core/images/linetopology-control.png");
+}
+
+.mapboxgl-ctrl button.mapbox-gl-path-btn-theme,
+.maplibregl-ctrl button.mapbox-gl-path-btn-theme,
+.mapboxgl-ctrl button.mapbox-gl-path-btn-snap,
+.maplibregl-ctrl button.mapbox-gl-path-btn-snap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
+  line-height: 1;
+}
+
+.mapboxgl-ctrl button.mapbox-gl-path-btn-theme.mapbox-gl-path-active,
+.maplibregl-ctrl button.mapbox-gl-path-btn-theme.mapbox-gl-path-active,
+.mapboxgl-ctrl button.mapbox-gl-path-btn-snap.mapbox-gl-path-active,
+.maplibregl-ctrl button.mapbox-gl-path-btn-snap.mapbox-gl-path-active {
+  background-color: rgba(0, 0, 0, 0.05);
+  box-shadow: inset 0 0 0 2px #0D47A1;
+}

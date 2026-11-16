@@ -3,7 +3,7 @@ import json
 from collections import OrderedDict
 from io import StringIO
 
-from django.conf import settings
+import mercantile
 from django.contrib.auth.models import Permission, User
 from django.contrib.contenttypes.models import ContentType
 from django.test import RequestFactory, TestCase
@@ -56,13 +56,8 @@ from geotrek.signage.views import BladeCreate
 class SignageTest(TestCase):
     def test_helpers(self):
         p = PathFactory.create()
-
         self.assertEqual(len(p.signages), 0)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            sign = SignageFactory.create(paths=[(p, 0.5, 0.5)])
-        else:
-            sign = SignageFactory.create(geom="SRID=2154;POINT (700050 6600050)")
-
+        sign = SignageFactory.create(paths=[(p, 0.5, 0.5)])
         self.assertCountEqual(p.signages, [sign])
 
 
@@ -911,14 +906,10 @@ class BladeViewsTest(CommonTest):
             "lines-1-id": "",
             "lines-1-DELETE": "",
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            signage = SignageFactory.create()
-            good_data["topology"] = '{"lat": 5.1, "lng": 6.6}'
-            good_data["signage"] = signage.pk
-        else:
-            signage = SignageFactory.create(geom="SRID=2154;POINT(5.1 6.6)")
-            good_data["signage"] = signage.pk
-            good_data["topology"] = signage.geom.ewkt
+        signage = SignageFactory.create()
+        good_data["topology"] = '{"lat": 5.1, "lng": 6.6}'
+        good_data["signage"] = signage.pk
+
         return good_data
 
     def get_expected_popup_content(self):
@@ -1082,6 +1073,27 @@ class BladeViewsTest(CommonTest):
         self.assertIn("Direction 1", lines[0])
         self.assertIn("Line direction", lines[1])
 
+    def test_vector_tiles(self):
+        BladeFactory.create()
+        tile = mercantile.tile(3.0, 46.5, 10)
+        mvt_url = reverse(
+            "signage:blade-drf-mvt", kwargs={"z": tile.z, "x": tile.x, "y": tile.y}
+        )
+        response = self.client.get(mvt_url)
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(response.content), 0)
+
+        empty_mvt_url = reverse(
+            "signage:blade-drf-mvt", kwargs={"z": 10, "x": 0, "y": 0}
+        )
+        empty_response = self.client.get(empty_mvt_url)
+        self.assertEqual(empty_response.status_code, 200)
+        self.assertEqual(empty_response.content, b"")
+
+        tilejson_url = reverse("signage:blade-drf-tilejson")
+        tilejson_response = self.client.get(tilejson_url)
+        self.assertEqual(tilejson_response.status_code, 200)
+
 
 class BladeTemplatesTest(TestCase):
     def setUp(self):
@@ -1178,12 +1190,14 @@ class SignageViewsTest(AttachmentTestMixin, CommonTest):
                 [str(condition.pk) for condition in blade.conditions.all()]
             ),
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = PathFactory.create()
-            good_data["topology"] = f'{{"paths": [{path.pk}]}}'
-        else:
-            good_data["geom"] = "POINT(0.42 0.666)"
+        PathFactory.create()
+        good_data["geom"] = '{"type":"Point","coordinates":[3.0,46.5]}'
+        good_data["geom_changed"] = "true"
+
         return good_data
+
+    def get_bad_data(self):
+        return {"geom": "doh!"}, gettext("Topology is not valid.")
 
     def get_expected_popup_content(self):
         return (
@@ -1195,6 +1209,9 @@ class SignageViewsTest(AttachmentTestMixin, CommonTest):
             f'    <a id="detail-btn" href="/signage/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
     def test_content_in_detail_page(self):
         signa = SignageFactory.create(description="<b>Beautiful !</b>")

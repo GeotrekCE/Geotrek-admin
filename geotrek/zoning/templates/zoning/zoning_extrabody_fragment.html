@@ -1,9 +1,9 @@
 {% load static i18n zoning_tags %}
 <script type="text/javascript">
-    MapEntity.i18n['Zoning'] = "{% trans "Zoning" %}";
-    MapEntity.i18n['Districts'] = "{% trans "Districts" %}";
-    MapEntity.i18n['Cities'] = "{% trans "Cities" %}";
-    MapEntity.i18n['Vigilance areas'] = "{% trans "Vigilance areas" %}";
+    {#MapEntity.i18n['Zoning'] = "{% trans "Zoning" %}";#}
+    {#MapEntity.i18n['Districts'] = "{% trans "Districts" %}";#}
+    {#MapEntity.i18n['Cities'] = "{% trans "Cities" %}";#}
+    {#MapEntity.i18n['Vigilance areas'] = "{% trans "Vigilance areas" %}";#}
 
     window.SETTINGS.urls['city_layer'] = "{% url "zoning:city-list" format='geojson' %}";
     window.SETTINGS.urls['district_layer'] = "{% url "zoning:district-list" format='geojson' %}";
@@ -12,4 +12,5 @@
     {% restricted_area_types as all_area_types %}
     window.SETTINGS.map['restricted_area_types'] = {{ all_area_types|safe }};
 </script>
-<script type="text/javascript" src="{% static "zoning/main.js" %}"></script>
+<script type="text/javascript" src="{% static "zoning/js/maplibreZoningMain.js" %}"></script>
+

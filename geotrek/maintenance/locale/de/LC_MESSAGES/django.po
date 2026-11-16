@@ -123,17 +123,13 @@ msgstr ""
 msgid "Mandays"
 msgstr ""
 
-#, python-format
-msgid "On: %(target)s"
-msgstr ""
-
-msgid "Paths"
-msgstr ""
-
 msgid "Begin date is after end date"
 msgstr ""
 
 msgid "End date is required."
+msgstr ""
+
+msgid "A geometry must be provided."
 msgstr ""
 
 msgid "Fundings"
@@ -206,6 +202,9 @@ msgid "Intervention"
 msgstr ""
 
 msgid "Interventions"
+msgstr ""
+
+msgid "Paths"
 msgstr ""
 
 msgid "Deleted"

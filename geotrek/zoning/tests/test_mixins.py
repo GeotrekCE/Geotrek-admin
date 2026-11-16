@@ -1,6 +1,5 @@
 import datetime
 
-from django.conf import settings
 from django.test import TestCase
 from freezegun import freeze_time
 
@@ -35,13 +34,7 @@ class ZoningPropertiesMixinTest(TestCase):
         self.path = PathFactory.create(
             geom="SRID=2154;LINESTRING(200000 300000, 1100000 1200000)"
         )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.trek = TrekFactory.create(paths=[self.path], published=False)
-        else:
-            self.trek = TrekFactory.create(
-                geom="SRID=2154;LINESTRING(200000 300000, 1100000 1200000)",
-                published=False,
-            )
+        self.trek = TrekFactory.create(paths=[self.path], published=False)
 
     def test_cities(self):
         city = CityFactory.create(published=False, geom=self.geom_2_wkt)

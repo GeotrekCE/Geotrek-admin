@@ -21,11 +21,6 @@ def class_name(value):
 
 
 @register.simple_tag
-def blades_enabled():
-    return settings.BLADE_ENABLED
-
-
-@register.simple_tag
 def lines_enabled():
     return settings.LINE_ENABLED
 

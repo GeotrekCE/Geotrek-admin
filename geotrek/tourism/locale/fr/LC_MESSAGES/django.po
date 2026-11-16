@@ -406,15 +406,6 @@ msgstr "Ajouter un contenu touristique"
 msgid "Add a new touristic event"
 msgstr "Ajouter un évènement touristique"
 
-msgid "Data sources"
-msgstr "Sources de données externes"
-
-msgid "No result"
-msgstr "Pas de résultat"
-
-msgid "Choose value(s)"
-msgstr "Choisir valeur(s)"
-
 msgid "Public print"
 msgstr "Impression grand-public"
 

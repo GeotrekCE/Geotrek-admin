@@ -1,9 +1,13 @@
 {% load i18n geotrek_tags mapentity_tags %}
 
-{% if modelname != "intervention" %}
+{% settings_value "INTERVENTION_MODEL_ENABLED" as intervention_enabled %}
+{% settings_value "PROJECT_MODEL_ENABLED" as project_enabled %}
 
+{% if modelname != "intervention" %}
+{% if project_enabled or intervention_enabled %}
 <h3>{% trans "Works" %}</h3>
 <table class="table">
+    {% if intervention_enabled %}
     <tr>
         <td colspan="3">
         <strong>{% trans "Interventions" %}</strong>
@@ -31,8 +35,8 @@
 
         </td>
     </tr>
-
-    {% if modelname != "project" %}
+    {% endif %}
+    {% if modelname != "project" and project_enabled %}
     <tr>
         <th colspan="3">{% trans "Projects" %}<br/></th>
     </tr>
@@ -63,4 +67,5 @@
 
 </table>
 
+{% endif %}
 {% endif %}

@@ -2,7 +2,7 @@ import datetime
 import json
 import re
 from functools import partial
-from unittest import mock, skipIf
+from unittest import mock
 
 from dateutil.relativedelta import relativedelta
 from django.conf import settings
@@ -670,16 +670,9 @@ class BaseApiTest(TestCase):
         cls.rating2 = trek_factory.RatingFactory()
         cls.label = common_factory.LabelFactory()
         cls.path = core_factory.PathFactory.create(geom=LineString((0, 0), (0, 10)))
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(
-                cls.nb_treks, paths=[(cls.path, 0, 1)], geom=cls.path.geom
-            )
-        else:
-            cls.treks = trek_factory.TrekFactory.create_batch(
-                cls.nb_treks, geom=cls.path.geom
-            )
-            trek_factory.POIFactory.create_batch(cls.nb_treks, geom=Point(0, 4))
-            trek_factory.POIFactory.create_batch(cls.nb_treks, geom=Point(0, 5))
+        cls.treks = trek_factory.TrekWithPOIsFactory.create_batch(
+            cls.nb_treks, paths=[(cls.path, 0, 1)], geom=cls.path.geom
+        )
         html_content_with_imgs = (
             "<p>Some HTML content with images</p>"
             '<img src="/media/upload/steep_descent.svg" alt="Descent">'
@@ -767,16 +760,13 @@ class BaseApiTest(TestCase):
         cls.practice = trek_factory.PracticeFactory()
         cls.difficulty = trek_factory.DifficultyLevelFactory()
         cls.network = trek_factory.TrekNetworkFactory()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            cls.poi = trek_factory.POIFactory(
-                paths=[(cls.treks[0].paths.first(), 0.5, 0.5)]
-            )
-            poi_excluded = trek_factory.POIFactory(
-                paths=[(cls.treks[0].paths.first(), 0.5, 0.5)]
-            )
-        else:
-            cls.poi = trek_factory.POIFactory(geom="SRID=2154;POINT(0 5)")
-            poi_excluded = trek_factory.POIFactory(geom="SRID=2154;POINT(0 5)")
+        cls.poi = trek_factory.POIFactory(
+            paths=[(cls.treks[0].paths.first(), 0.5, 0.5)]
+        )
+        poi_excluded = trek_factory.POIFactory(
+            paths=[(cls.treks[0].paths.first(), 0.5, 0.5)]
+        )
+
         cls.treks[0].pois_excluded.add(poi_excluded)
         cls.source = common_factory.RecordSourceFactory()
         cls.reservation_system = common_factory.ReservationSystemFactory()
@@ -1746,10 +1736,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             code="03000",
             geom="SRID=2154;MULTIPOLYGON(((-10 -10, -10 -9, -9 -9, -9 -10, -10 -10)))",
         )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
-        else:
-            trek_factory.TrekFactory.create(geom="SRID=2154;LINESTRING(-10 -9, -9 -9)")
+        trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
         response = self.get_trek_list({"cities": city3.pk})
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -1767,10 +1754,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         dist3 = zoning_factory.DistrictFactory(
             geom="SRID=2154;MULTIPOLYGON(((-10 -10, -10 -9, -9 -9, -9 -10, -10 -10)))"
         )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
-        else:
-            trek_factory.TrekFactory.create(geom="SRID=2154;LINESTRING(-10 -9, -9 -9)")
+        trek_factory.TrekFactory.create(paths=[(path, 0, 1)])
         response = self.get_trek_list({"districts": dist3.pk})
         #  test response code
         self.assertEqual(response.status_code, 200)
@@ -2635,34 +2619,21 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.launch_tests_excluded_pois(self.site, "sites")
 
     def test_poi_list_filtered_by_near_trek(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            trek = trek_factory.TrekFactory()
-            trek_factory.POIFactory(
-                paths=[(trek.paths.first(), 0.5, 0.5)], name="a POI near trek"
-            )
-            far_away_coords = [[n + 2000 for n in c] for c in trek.geom.coords]
-            far_away_path = core_factory.PathFactory(
-                geom=LineString(far_away_coords, srid=settings.SRID)
-            )
-            trek_factory.POIFactory(
-                paths=[far_away_path, 0.5, 0.5], name="a POI far from trek"
-            )
-            near_excluded_poi = trek_factory.POIFactory(
-                paths=[(trek.paths.first(), 0.2, 0.2)]
-            )
-        else:
-            trek = trek_factory.TrekFactory(
-                geom=LineString(Point(500, 600), Point(550, 800), srid=settings.SRID)
-            )
-            trek_factory.POIFactory(
-                geom=Point(525, 700, srid=settings.SRID), name="a POI near trek"
-            )
-            trek_factory.POIFactory(
-                geom=Point(2500, 3000, srid=settings.SRID), name="a POI far from trek"
-            )
-            near_excluded_poi = trek_factory.POIFactory(
-                geom=Point(510, 620, srid=settings.SRID)
-            )
+        trek = trek_factory.TrekFactory()
+        trek_factory.POIFactory(
+            paths=[(trek.paths.first(), 0.5, 0.5)], name="a POI near trek"
+        )
+        far_away_coords = [[n + 2000 for n in c] for c in trek.geom.coords]
+        far_away_path = core_factory.PathFactory(
+            geom=LineString(far_away_coords, srid=settings.SRID)
+        )
+        trek_factory.POIFactory(
+            paths=[far_away_path, 0.5, 0.5], name="a POI far from trek"
+        )
+        near_excluded_poi = trek_factory.POIFactory(
+            paths=[(trek.paths.first(), 0.2, 0.2)]
+        )
+
         trek.pois_excluded.add(near_excluded_poi)
 
         for filtername in ["near_trek", "trek"]:
@@ -3314,19 +3285,13 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         nearby_dist = settings.SENSITIVE_AREA_INTERSECTION_MARGIN // 2
         far_away_dist = settings.SENSITIVE_AREA_INTERSECTION_MARGIN * 2
         trek_x = 24800
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            trek_path = core_factory.PathFactory(
-                geom=LineString(
-                    Point(trek_x, 7800), Point(trek_x, 7900), srid=settings.SRID
-                )
+        trek_path = core_factory.PathFactory(
+            geom=LineString(
+                Point(trek_x, 7800), Point(trek_x, 7900), srid=settings.SRID
             )
-            trek = trek_factory.TrekFactory(paths=[(trek_path, 0, 1)])
-        else:
-            trek = trek_factory.TrekFactory(
-                geom=LineString(
-                    Point(trek_x, 7800), Point(trek_x, 7900), srid=settings.SRID
-                )
-            )
+        )
+        trek = trek_factory.TrekFactory(paths=[(trek_path, 0, 1)])
+
         # a sensitive area near it
         near_area_x1 = trek_x + nearby_dist
         near_area_x2 = trek_x + nearby_dist + 1000
@@ -3579,17 +3544,13 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_sensitivearea_distance_list(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            p1 = core_factory.PathFactory.create(
-                geom=LineString((605600, 6650000), (605604, 6650004), srid=2154)
-            )
-            trek = trek_factory.TrekFactory.create(
-                published=True, name="Parent", paths=[p1]
-            )
-        else:
-            trek = trek_factory.TrekFactory.create(
-                geom=LineString((605600, 6650000), (605604, 6650004), srid=2154)
-            )
+        p1 = core_factory.PathFactory.create(
+            geom=LineString((605600, 6650000), (605604, 6650004), srid=2154)
+        )
+        trek = trek_factory.TrekFactory.create(
+            published=True, name="Parent", paths=[p1]
+        )
+
         specy = sensitivity_factory.SpeciesFactory.create(period01=True)
         sensitivity_factory.SensitiveAreaFactory.create(
             geom="SRID=2154;POLYGON((605600 6650000, 605600 6650004, 605604 6650004, 605604 6650000, 605600 6650000))",
@@ -6964,9 +6925,6 @@ class AltimetryCacheTests(BaseApiTest):
         )
         cls.trek = trek_factory.TrekFactory.create(paths=[cls.path])
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_cache_is_used_when_getting_trek_DEM(self):
         with self.assertNumQueries(10):
             response = self.client.get(reverse("apiv2:trek-dem", args=(self.trek.pk,)))
@@ -6978,9 +6936,6 @@ class AltimetryCacheTests(BaseApiTest):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response["Content-Type"], "application/json")
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     def test_cache_is_used_when_getting_trek_DEM_nds(self):
         trek = trek_factory.TrekFactory.create(
             geom=LineString((1, 101), (81, 101), (81, 99))

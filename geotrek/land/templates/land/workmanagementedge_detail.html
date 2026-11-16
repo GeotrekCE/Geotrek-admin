@@ -7,6 +7,7 @@
             <th>{{ workmanagementedge|verbose:"organization" }}</th>
             <td>{{ workmanagementedge.organization }}</td>
         </tr>
+        {% include "core/networkcoupling_fragment.html" with topo_object=workmanagementedge %}
     </table>
     {% include "altimetry/elevationinfo_fragment.html" %}
     {% include "common/fragments/provider_eid.html" %}

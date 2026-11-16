@@ -5,10 +5,10 @@ import shutil
 import zipfile
 from io import StringIO
 from tempfile import mkdtemp
-from unittest import mock, skipIf
+from unittest import mock
 
 from django.conf import settings
-from django.contrib.gis.geos import LineString, MultiLineString, Point
+from django.contrib.gis.geos import LineString, MultiLineString
 from django.core import management
 from django.core.management.base import CommandError
 from django.db.models import Q
@@ -201,25 +201,19 @@ class SyncMobileTilesTest(VarTmpTestCase):
         trek_not_same_portal = TrekWithPublishedPOIsFactory.create(
             published=True, portals=(portal_a,)
         )
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
-            trek_multi = TrekFactory.create(
-                published=True, paths=[(p, 0, 0.1), (p, 0.2, 0.3)]
-            )
-            trek_point = TrekFactory.create(
-                published=True,
-                paths=[
-                    (p, 0, 0),
-                ],
-            )
-        else:
-            trek_multi = TrekFactory.create(
-                published=True,
-                geom=MultiLineString(
-                    LineString((0, 0), (0, 1)), LineString((0, 2), (0, 3))
-                ),
-            )
-            trek_point = TrekFactory.create(published=True, geom=Point(0, 0))
+        p = PathFactory.create(geom=LineString((0, 0), (0, 10)))
+
+        trek_multi = TrekFactory.create(published=True)
+        trek_multi.geom = "SRID=2154;MULTILINESTRING ((0 0, 0 1), (0 2, 0 3))"
+        trek_multi.save()
+
+        trek_point = TrekFactory.create(
+            published=True,
+            paths=[
+                (p, 0, 0),
+            ],
+        )
+
         management.call_command(
             "sync_mobile",
             self.sync_directory,
@@ -856,10 +850,10 @@ class SyncMobileTreksTest(VarTmpTestCase):
             ),
         ) as f:
             trek_geojson = json.load(f)
-            if settings.TREKKING_TOPOLOGY_ENABLED:
+            if self.trek_1.coupled:
                 self.assertEqual(len(trek_geojson["features"]), 2)
             else:
-                # Without dynamic segmentation it used a buffer so we get all the pois normally linked
+                # When not coupled, a buffer is used, so we get all the pois normally linked
                 # with the other treks.
                 self.assertEqual(len(trek_geojson["features"]), 6)
         self.assertIn(f"en/{self.trek_1.pk!s}/pois.geojson", output.getvalue())
@@ -1210,9 +1204,6 @@ class SyncMobileTreksTest(VarTmpTestCase):
         )
         self.assertIn("unchanged", output.getvalue())
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
     def test_multilinestring(self):
         TrekFactory.create(
             geom=MultiLineString(

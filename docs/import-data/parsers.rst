@@ -21,10 +21,6 @@ Parsers can be used in two ways:
 * **Through the web interface**, using the *Imports* section in the admin panel.
 * **Via the command line**, using a dedicated ``import`` command.
 
-.. warning::
-
-  Not all parsers support dynamic segmentation. For instance, trek parsers can only be used if ``TREKKING_TOPOLOGY_ENABLED``` is set to ``False``.
-
 
 Parser import methods
 =====================

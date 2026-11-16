@@ -1,6 +1,7 @@
-{% load static tourism_tags %}
+{% load static tourism_tags geotrek_tags %}
 
-{% is_tourism_enabled as enabled %}
+{% settings_value "TOURISM_ENABLED" as enabled %}
+
 {% if enabled %}
-<script type="text/javascript" src="{% static 'tourism/main.js' %}"></script>
+<script type="text/javascript" src="{% static 'tourism/js/main.js' %}"></script>
 {% endif %}

@@ -1,14 +1,13 @@
 import os
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 from unittest.mock import patch
 
-from django.conf import settings
 from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos.error import GEOSException
 from django.core.management import call_command
 from django.core.management.base import CommandError
 from django.test import TestCase
-from django.test.utils import override_settings
 
 from geotrek.core.tests.factories import PathFactory
 from geotrek.trekking.management.commands.loadpoi import Command
@@ -129,9 +128,6 @@ class LoadPOITest(TestCase):
         after = len(POI.objects.all())
         self.assertEqual(after - before, 1)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
     def test_pois_are_attached_to_paths(self):
         geom = GEOSGeometry("POINT(1 1)", srid=4326)
         poi = self.cmd.create_poi(geom, "bridge", "infra", "description")
@@ -143,8 +139,7 @@ class LoadPOITest(TestCase):
         ):
             call_command("loadpoi", "/nonexistent.geojson", type_default="picnic")
 
-    def test_create_poi_non_point_geometry_without_dynamic_segmentation(self):
-        with override_settings(TREKKING_TOPOLOGY_ENABLED=False):
-            geom = GEOSGeometry("LINESTRING(0 0, 1 1)", srid=4326)
-            with self.assertRaises(TypeError):
-                self.cmd.create_poi(geom, "bridge", "infra", "description")
+    def test_create_poi_non_point_geometry(self):
+        geom = GEOSGeometry("LINESTRING(0 0, 1 1)", srid=4326)
+        with self.assertRaises(GEOSException):
+            self.cmd.create_poi(geom, "bridge", "infra", "description")

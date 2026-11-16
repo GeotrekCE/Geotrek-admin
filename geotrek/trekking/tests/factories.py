@@ -1,5 +1,4 @@
 import factory
-from django.conf import settings
 from django.contrib.gis.geos import Point
 
 from geotrek.common.tests.factories import ReservationSystemFactory
@@ -153,95 +152,64 @@ class TrekFactory(TopologyFactory):
 class TrekWithPOIsFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_poi(obj, create, extracted, **kwargs):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = obj.paths.first()
+        path = obj.paths.first()
+        if path:
             POIFactory.create(paths=[(path, 0.5, 0.5)])
             POIFactory.create(paths=[(path, 0.4, 0.4)])
-            if create:
-                obj.save()
-        else:
-            POIFactory.create(geom="SRID=2154;POINT (700040 6600040)")
-            POIFactory.create(geom="SRID=2154;POINT (700050 6600050)")
+        if create:
+            obj.save()
 
 
 class TrekWithPublishedPOIsFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_poi(obj, create, extracted, **kwargs):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = obj.paths.all()[0]
-            POIFactory.create(
-                paths=[(path, 0.5, 0.5)],
-                published=True,
-                published_en=True,
-                published_fr=True,
-            )
-            POIFactory.create(
-                paths=[(path, 0.4, 0.4)],
-                published=True,
-                published_en=True,
-                published_fr=True,
-            )
-            if create:
-                obj.save()
-        else:
-            POIFactory.create(
-                geom="SRID=2154;POINT (700040 6600040)",
-                published=True,
-                published_en=True,
-                published_fr=True,
-            )
-            POIFactory.create(
-                geom="SRID=2154;POINT (700050 6600050)",
-                published=True,
-                published_en=True,
-                published_fr=True,
-            )
+        path = obj.paths.all()[0]
+        POIFactory.create(
+            paths=[(path, 0.5, 0.5)],
+            published=True,
+            published_en=True,
+            published_fr=True,
+        )
+        POIFactory.create(
+            paths=[(path, 0.4, 0.4)],
+            published=True,
+            published_en=True,
+            published_fr=True,
+        )
+        if create:
+            obj.save()
 
 
 class TrekWithInfrastructuresFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_infrastructures(obj, create, extracted, **kwargs):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = obj.paths.all()[0]
-            InfrastructureFactory.create(paths=[(path, 0.5, 0.5)])
-            InfrastructureFactory.create(paths=[(path, 0.4, 0.4)])
-            if create:
-                obj.save()
-        else:
-            InfrastructureFactory.create(geom="SRID=2154;POINT (700040 6600040)")
-            InfrastructureFactory.create(geom="SRID=2154;POINT (700050 6600050)")
+        path = obj.paths.all()[0]
+        InfrastructureFactory.create(paths=[(path, 0.5, 0.5)])
+        InfrastructureFactory.create(paths=[(path, 0.4, 0.4)])
+        if create:
+            obj.save()
 
 
 class TrekWithSignagesFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_infrastructures(obj, create, extracted, **kwargs):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = obj.paths.all()[0]
-            SignageFactory.create(paths=[(path, 0.5, 0.5)])
-            SignageFactory.create(paths=[(path, 0.4, 0.4)])
-            if create:
-                obj.save()
-        else:
-            SignageFactory.create(geom="SRID=2154;POINT (700040 6600040)")
-            SignageFactory.create(geom="SRID=2154;POINT (700050 6600050)")
+        path = obj.paths.all()[0]
+        SignageFactory.create(paths=[(path, 0.5, 0.5)])
+        SignageFactory.create(paths=[(path, 0.4, 0.4)])
+        if create:
+            obj.save()
 
 
 class TrekWithServicesFactory(TrekFactory):
     @factory.post_generation
     def create_trek_with_services(obj, create, extracted, **kwargs):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path = obj.paths.all()[0]
-            service1 = ServiceFactory.create(paths=[(path, 0.5, 0.5)])
-            service1.type.practices.add(obj.practice)
-            service2 = ServiceFactory.create(paths=[(path, 0.4, 0.4)])
-            service2.type.practices.add(obj.practice)
-            if create:
-                obj.save()
-        else:
-            service1 = ServiceFactory.create(geom="SRID=2154;POINT (700040 6600040)")
-            service1.type.practices.add(obj.practice)
-            service2 = ServiceFactory.create(geom="SRID=2154;POINT (700050 6600050)")
-            service2.type.practices.add(obj.practice)
+        path = obj.paths.all()[0]
+        service1 = ServiceFactory.create(paths=[(path, 0.5, 0.5)])
+        service1.type.practices.add(obj.practice)
+        service2 = ServiceFactory.create(paths=[(path, 0.4, 0.4)])
+        service2.type.practices.add(obj.practice)
+        if create:
+            obj.save()
 
 
 class POITypeFactory(factory.django.DjangoModelFactory):

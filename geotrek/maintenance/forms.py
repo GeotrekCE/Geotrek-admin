@@ -5,18 +5,16 @@ from django import forms
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import Q
-from django.forms import FloatField
+from django.forms import FloatField, ValidationError
 from django.forms.models import inlineformset_factory
-from django.templatetags.static import static
-from django.utils.safestring import mark_safe
 from django.utils.translation import gettext_lazy as _
 
 from geotrek.common.forms import CommonForm
-from geotrek.core.fields import TopologyField
+from geotrek.common.models import Organism
+from geotrek.core.mixins.forms import LineTopologyFormMixin, PointLineTopologyFormMixin
 from geotrek.core.models import Topology
 from geotrek.feedback.models import WorkflowManager
 
-from ..common.models import Organism
 from .models import Intervention, InterventionJob, InterventionStatus, ManDay, Project
 
 if "geotrek.feedback" in settings.INSTALLED_APPS:
@@ -75,10 +73,9 @@ FundingFormSet = inlineformset_factory(
 )
 
 
-class InterventionForm(CommonForm):
+class InterventionForm(PointLineTopologyFormMixin):
     """An intervention can be a Point or a Line"""
 
-    topology = TopologyField(label="")
     length = FloatField(required=False, label=_("Length"))
     project = forms.ModelChoiceField(
         required=False, label=_("Project"), queryset=Project.objects.existing()
@@ -89,7 +86,6 @@ class InterventionForm(CommonForm):
         label=_("End date"),
     )
 
-    geomfields = ["topology"]
     leftpanel_scrollable = False
 
     fieldslayout = [
@@ -118,10 +114,10 @@ class InterventionForm(CommonForm):
         ),
     ]
 
-    class Meta(CommonForm.Meta):
+    class Meta(PointLineTopologyFormMixin.Meta):
         model = Intervention
-        fields = [
-            *CommonForm.Meta.fields,
+        # Intervention's geom is not editable and is generated from target's geom
+        fields = [f for f in PointLineTopologyFormMixin.Meta.fields if f != "geom"] + [
             "structure",
             "name",
             "begin_date",
@@ -141,7 +137,6 @@ class InterventionForm(CommonForm):
             "material_cost",
             "heliport_cost",
             "contractor_cost",
-            "topology",
         ]
 
     def __init__(self, *args, target_type=None, target_id=None, **kwargs):
@@ -163,22 +158,22 @@ class InterventionForm(CommonForm):
         # Else: existing intervention. Target is already set
 
         self.fields["topology"].initial = self.instance.target
+        self.fields["geom"].initial = self.instance.target.geom
 
-        if self.instance.target.__class__ == Topology:
-            # Intervention has its own topology
-            title = _("On: %(target)s") % {"target": _("Paths")}
-            self.fields["topology"].label = mark_safe(
-                f'<img src="{static("images/path-16.png")}" title="{title}" />{title}'
-            )
-        else:
+        if self.instance.target.__class__ != Topology:
             # Intervention on an existing topology
-            icon = self.instance.target._meta.model_name
-            title = _("On: %(target)s") % {"target": str(self.instance.target)}
-            self.fields["topology"].label = mark_safe(
-                f'<img src="{static(f"images/{icon}-16.png")}" title="{title}" /><a href="{self.instance.target.get_detail_url()}">{title}</a>'
-            )
-            # Topology is readonly
-            del self.fields["topology"]
+            self.geomfields = [
+                "geom"
+            ]  # Default value set by MapEntityForm's __init__ when geomfields is None
+            self.fields.pop("topology", None)
+            self.fields.pop("geom", None)
+            self.fields.pop("topology_changed", None)
+            self.fields.pop("geom_changed", None)
+            self.deep_remove(self.fieldslayout, "topology")
+            self.deep_remove(self.fieldslayout, "geom")
+            self.deep_remove(self.fieldslayout, "topology_changed")
+            self.deep_remove(self.fieldslayout, "geom_changed")
+            self._init_layout()
 
         # Length is not editable in AltimetryMixin
         self.fields["length"].initial = self.instance.length
@@ -227,6 +222,19 @@ class InterventionForm(CommonForm):
                     self.add_error("end_date", _("End date is required."))
         return clean_data
 
+    def validate_creation_requires_input(self, data):
+        """
+        At creation, if target is not an existing Topology object, geometry and topology
+        cannot both be left empty.
+        """
+        if (
+            self.instance.pk is None
+            and self.instance.target.__class__ == Topology
+            and not data.get("geom_changed")
+            and not data.get("topology_changed")
+        ):
+            raise ValidationError(_("A geometry must be provided."))
+
     def save(self, *args, **kwargs):
         target = self.instance.target
         if (
@@ -263,10 +271,16 @@ class InterventionForm(CommonForm):
                     WorkflowManager.objects.first().notify_report_to_solve(target)
         if not target.pk:
             target.save()
+        # Bypass the save method of PointLineTopologyFormMixin/LineTopologyFormMixin in order
+        # to save the topology as target
         topology = self.cleaned_data.get("topology")
-        if topology and topology.pk != target.pk:
+        geom = self.cleaned_data.get("geom")
+        if topology and self.cleaned_data.get("topology_changed"):
             target.mutate(topology)
-        intervention = super().save(*args, **kwargs, commit=False)
+        if geom and self.cleaned_data.get("geom_changed"):
+            target.geom = geom
+            target.save()
+        intervention = super(LineTopologyFormMixin, self).save(commit=False)
         intervention.target = target
         intervention.save()
         self.save_m2m()

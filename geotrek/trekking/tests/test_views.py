@@ -2,7 +2,7 @@ import csv
 import os
 from collections import OrderedDict
 from io import StringIO
-from unittest import mock, skipIf
+from unittest import mock
 
 from bs4 import BeautifulSoup
 from django.conf import settings
@@ -103,12 +103,14 @@ class POIViewsTest(CommonTest):
             "description_en": "here",
             "type": POITypeFactory.create().pk,
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            PathFactory.create()
-            good_data["topology"] = '{"lat": 5.1, "lng": 6.6}'
-        else:
-            good_data["geom"] = "POINT(5.1 6.6)"
+        PathFactory.create()
+        good_data["geom"] = '{"type":"Point","coordinates":[6.6,5.1]}'
+        good_data["geom_changed"] = "true"
+
         return good_data
+
+    def get_bad_data(self):
+        return {"geom": "doh!"}, translation.gettext("Topology is not valid.")
 
     def get_expected_popup_content(self):
         return (
@@ -117,6 +119,9 @@ class POIViewsTest(CommonTest):
             f'    <a id="detail-btn" href="/poi/{self.obj.pk}/" class="btn btn-sm btn-info mt-2">Detail sheet</a>\n'
             f"</div>"
         )
+
+    def _check_update_geom_permission(self, response):
+        pass
 
     def test_status_only_review(self):
         element_not_published = self.modelfactory.create(published=False, review=True)
@@ -159,19 +164,14 @@ class POIViewsTest(CommonTest):
         element_not_published.save()
         self.assertEqual(len(mail.outbox), 0)
 
-    def test_empty_topology(self):
+    def test_empty_geom(self):
         data = self.get_good_data()
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            data["topology"] = ""
-        else:
-            data["geom"] = ""
+        data["geom"] = ""
+
         response = self.client.post(self.model.get_add_url(), data)
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            self.assertEqual(form.errors, {"topology": ["Topology is empty."]})
-        else:
-            self.assertEqual(form.errors, {"geom": ["No geometry value provided."]})
+        self.assertEqual(form.errors, {"geom": ["Topology is empty."]})
 
     def test_listing_number_queries(self):
         # Create many instances
@@ -324,14 +324,10 @@ class TrekViewsTest(CommonTest):
             "web_links": WebLinkFactory.create().pk,
             "information_desks": tourism_factories.InformationDeskFactory.create().pk,
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            good_data["topology"] = f'{{"paths": [{self.path.pk}]}}'
-            good_data["pois_excluded"] = POIFactory.create(paths=[self.path]).pk
-        else:
-            good_data["geom"] = "SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)"
-            good_data["pois_excluded"] = POIFactory.create(
-                geom="SRID=2154;POINT (700000 6600000)"
-            ).pk
+        good_data["topology"] = f'{{"paths": [{self.path.pk}]}}'
+        good_data["topology_changed"] = "true"
+        good_data["pois_excluded"] = POIFactory.create(paths=[self.path]).pk
+
         return good_data
 
     def get_expected_popup_content(self):
@@ -351,7 +347,7 @@ class TrekViewsTest(CommonTest):
 
     def test_badfield_goodgeom(self):
         bad_data, form_error = self.get_bad_data()
-        bad_data["parking_location"] = "POINT (1.0 1.0)"  # good data
+        bad_data["parking_location"] = "SRID=4326;POINT (1.0 1.0)"  # good data
 
         url = self.model.get_add_url()
         response = self.client.post(url, bad_data)
@@ -374,21 +370,18 @@ class TrekViewsTest(CommonTest):
         self.assertNotContains(response, "pois_excluded")
 
     def test_pois_detached_update(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
-            trek = TrekFactory.create(paths=[p1])
-            poi = POIFactory.create(paths=[(p1, 0.6, 0.6)])
-        else:
-            trek = TrekFactory.create(geom="SRID=4326;LINESTRING (0.0 0.0, 1.0 1.0)")
-            poi = POIFactory.create(geom="SRID=4326;POINT (0.6 0.6)")
+        p1 = PathFactory.create(geom=LineString((0, 0), (4, 4)))
+        trek = TrekFactory.create(paths=[p1])
+        poi = POIFactory.create(paths=[(p1, 0.6, 0.6)])
+
         good_data = self.get_good_data()
         good_data["pois_excluded"] = poi.pk
         self.client.post(self.model.get_update_url(trek), good_data)
         self.assertIn(poi, trek.pois_excluded.all())
 
-    def test_detail_lother_language(self):
+    def test_detail_other_language(self):
         bad_data, form_error = self.get_bad_data()
-        bad_data["parking_location"] = "POINT (1.0 1.0)"  # good data
+        bad_data["parking_location"] = "SRID=4326;POINT (1.0 1.0)"  # good data
 
         url = self.model.get_add_url()
         response = self.client.post(url, bad_data)
@@ -412,15 +405,8 @@ class TrekViewsTest(CommonTest):
             ),
             "parking_location": Point(0, 0, srid=settings.SRID),
         }
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            path1 = PathFactory.create(
-                geom=f"SRID={settings.SRID};LINESTRING(0 0, 1 0)"
-            )
-            self.trek = TrekFactory.create(paths=[path1], **trek_args)
-        else:
-            self.trek = TrekFactory.create(
-                geom=f"SRID={settings.SRID};LINESTRING(0 0, 1 0)", **trek_args
-            )
+        path1 = PathFactory.create(geom=f"SRID={settings.SRID};LINESTRING(0 0, 1 0)")
+        self.trek = TrekFactory.create(paths=[path1], **trek_args)
         fmt = "csv"
         response = self.client.get(self.model.get_format_list_url() + "?format=" + fmt)
         self.assertEqual(response.status_code, 200)
@@ -677,13 +663,15 @@ class TrekPointsReferenceTest(TrekkingManagerTest):
     def test_points_reference_editable_as_hidden_input(self):
         url = self.trek.get_update_url()
         response = self.client.get(url)
-        self.assertContains(response, 'name="points_reference"')
+        self.assertContains(response, 'name="points_reference"', count=1)
+        self.assertContains(response, 'name="parking_location"', count=1)
 
     @override_settings(TREK_POINTS_OF_REFERENCE_ENABLED=False)
     def test_points_reference_is_marked_as_disabled_when_disabled(self):
         url = self.trek.get_update_url()
         response = self.client.get(url)
         self.assertNotContains(response, 'name="points_reference"')
+        self.assertContains(response, 'name="parking_location"', count=1)
 
 
 class TrekGPXTest(TrekkingManagerTest):
@@ -988,17 +976,15 @@ class ServiceViewsTest(CommonTest):
         }
 
     def get_good_data(self):
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            PathFactory.create()
-            return {
-                "type": ServiceTypeFactory.create().pk,
-                "topology": '{"lat": 5.1, "lng": 6.6}',
-            }
-        else:
-            return {
-                "type": ServiceTypeFactory.create().pk,
-                "geom": "POINT(5.1 6.6)",
-            }
+        PathFactory.create()
+        return {
+            "type": ServiceTypeFactory.create().pk,
+            "geom": '{"type":"Point","coordinates":[6.6,5.1]}',
+            "geom_changed": "true",
+        }
+
+    def get_bad_data(self):
+        return {"geom": "doh!"}, translation.gettext("Topology is not valid.")
 
     def get_expected_popup_content(self):
         return (
@@ -1008,27 +994,16 @@ class ServiceViewsTest(CommonTest):
             f"</div>"
         )
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_empty_topology(self):
-        data = self.get_good_data()
-        data["topology"] = ""
-        response = self.client.post(self.model.get_add_url(), data)
-        self.assertEqual(response.status_code, 200)
-        form = self.get_form(response)
-        self.assertEqual(form.errors, {"topology": ["Topology is empty."]})
+    def _check_update_geom_permission(self, response):
+        pass
 
-    @skipIf(
-        settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only"
-    )
-    def test_empty_topology_nds(self):
+    def test_empty_geom(self):
         data = self.get_good_data()
         data["geom"] = ""
         response = self.client.post(self.model.get_add_url(), data)
         self.assertEqual(response.status_code, 200)
         form = self.get_form(response)
-        self.assertEqual(form.errors, {"geom": ["No geometry value provided."]})
+        self.assertEqual(form.errors, {"geom": ["Topology is empty."]})
 
     def test_listing_number_queries(self):
         # Create many instances
@@ -1287,10 +1262,7 @@ class ServiceMultiActionsViewTest(
 
     def test_poi_format_list_queryset_annotates_treks(self):
         trek = TrekFactory.create(published=True)
-        if settings.TREKKING_TOPOLOGY_ENABLED:
-            poi = POIFactory.create(paths=[(trek.paths.first(), 0.5, 0.5)])
-        else:
-            poi = POIFactory.create(geom=Point(700000, 6600000))
+        poi = POIFactory.create(paths=[(trek.paths.first(), 0.5, 0.5)])
         rf = RequestFactory()
         fmt_view = POIFormatList()
         fmt_view.request = rf.get("/")

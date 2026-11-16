@@ -103,7 +103,6 @@ django==5.2.19
     #   django-filter
     #   django-flask-authent-backend
     #   django-large-image
-    #   django-leaflet
     #   django-maintenance-mode
     #   django-mapbox-baselayer
     #   django-modelcluster
@@ -111,6 +110,7 @@ django==5.2.19
     #   django-timezone-field
     #   django-tinymce
     #   django-treebeard
+    #   django-vectortiles
     #   django-weasyprint
     #   djangorestframework
     #   djangorestframework-gis
@@ -156,12 +156,12 @@ django-flask-authent-backend @ git+https://github.com/PnX-SI/django-flask-authen
     # via geotrek (setup.py)
 django-large-image==0.10.5
     # via geotrek (setup.py)
-django-leaflet==0.19.post11
-    # via mapentity
 django-maintenance-mode==0.23.0
     # via geotrek (setup.py)
 django-mapbox-baselayer==1.5.2
-    # via geotrek (setup.py)
+    # via
+    #   geotrek (setup.py)
+    #   mapentity
 django-modelcluster==6.5
     # via geotrek (setup.py)
 django-modeltranslation==0.20.6
@@ -172,6 +172,8 @@ django-tinymce==5.0.0
     # via mapentity
 django-treebeard==7.0.3
     # via geotrek (setup.py)
+django-vectortiles==1.0.2
+    # via mapentity
 django-weasyprint==2.6.0
     # via
     #   geotrek (setup.py)
@@ -259,14 +261,17 @@ lxml==6.1.1
     # via
     #   mapentity
     #   svglib
-mapentity==8.17.4
+mapentity==9.0.3
     # via geotrek (setup.py)
 markdown==3.11.3
     # via geotrek (setup.py)
 mbutil==0.3.0
     # via landez
 mercantile==1.2.1
-    # via django-mapbox-baselayer
+    # via
+    #   django-mapbox-baselayer
+    #   django-vectortiles
+    #   mapentity
 networkx==3.7
     # via pymupdf
 numpy==2.5.4
