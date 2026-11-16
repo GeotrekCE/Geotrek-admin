@@ -14,30 +14,38 @@ Geotrek-admin's documentation
         :link-type: ref
         :link-alt: what is Geotrek
 
-        🏞️ **About Geotrek (fr)**
-        ^^^
+        .. card-header::
+
+            🏞️ **About Geotrek (fr)**
+
         Discover Geotrek’s main features and ecosystem.
 
         - Components & profiles
         - Community & governance
         - Open-source stack
-        +++
-        Introduction
+
+        .. card-footer::
+
+            Introduction
 
     .. grid-item-card:: Use Geotrek
         :link: user-manual
         :link-type: ref
         :link-alt: user manual
 
-        🚀 **User manual (fr)**
-        ^^^
+        .. card-header::
+
+            🚀 **User manual (fr)**
+
         Step-by-step guide for all users.
 
         - Modules & views
         - Data & media
         - API & menus
-        +++
-        Functional docs
+
+        .. card-footer::
+
+            Functional docs
 
 .. grid:: 2
     :gutter: 2
@@ -47,31 +55,39 @@ Geotrek-admin's documentation
         :link-type: ref
         :link-alt: visualize your data in Qgis
 
-        💡 **Tutorials (fr)**
-        ^^^
+        .. card-header::
+
+            💡 **Tutorials (fr)**
+
         Hands-on guides to learn by doing.
 
         - QGIS connection
         - Basemaps setup
         - Fix topology
-        +++
-        Learn by doing
+
+        .. card-footer::
+
+            Learn by doing
 
     .. grid-item-card:: Install & Configure
         :link: installation
         :link-type: ref
         :link-alt: basic configuration
 
-        🔧 **Installation**
-        ^^^
+        .. card-header::
+
+            🔧 **Installation**
+
         Set up and adapt Geotrek.
 
         - Ubuntu install
         - Backup & restore
         - Config & users
         - Maintenance
-        +++
-        Technical setup
+
+        .. card-footer::
+
+            Technical setup
 
 .. grid:: 2
     :gutter: 2
@@ -81,30 +97,38 @@ Geotrek-admin's documentation
         :link-type: ref
         :link-alt: application settings
 
-        ⚙️ **Advanced config**
-        ^^^
+        .. card-header::
+
+            ⚙️ **Advanced config**
+
         Fine-tune Geotrek’s settings.
 
         - Maps & APIs
         - UI & PDF
         - Mobile sync
-        +++
-        Power options
+
+        .. card-footer::
+
+            Power options
 
     .. grid-item-card:: Import data
         :link: minimal-initial-data
         :link-type: ref
         :link-alt: minimal initial data
 
-        🗃️ **Import data**
-        ^^^
+        .. card-header::
+
+            🗃️ **Import data**
+
         Import, update, and manage data.
 
         - Import data
         - Touristic data systems
         - Aggregator
-        +++
-        Data management
+
+        .. card-footer::
+
+            Data management
 
 .. grid:: 2
     :gutter: 2
@@ -114,30 +138,38 @@ Geotrek-admin's documentation
         :link-type: ref
         :link-alt: contributing
 
-        ✨ **Contribute**
-        ^^^
+        .. card-header::
+
+            ✨ **Contribute**
+
         Improve Geotrek together.
 
         - Code & docs
         - Translations
         - Guidelines
-        +++
-        Community
+
+        .. card-footer::
+
+            Community
 
     .. grid-item-card:: Extra
         :link: troubleshooting
         :link-type: ref
         :link-alt: troubleshooting
 
-        📝 **Others**
-        ^^^
+        .. card-header::
+
+            📝 **Others**
+
         Tips, fixes, and credits.
 
         - Troubleshooting
         - Authors
         - Changelog
-        +++
-        Resources
+
+        .. card-footer::
+
+            Resources
 
 
 **Geotrek-admin** is a web application designed to manage, centralize, and structure geographical and touristic information for your territory. It is the back-office application of the Geotrek ecosystem.
