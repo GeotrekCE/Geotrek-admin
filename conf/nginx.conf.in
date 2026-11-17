@@ -27,6 +27,11 @@ server {
 
     client_max_body_size 200M;
 
+    location = /robots.txt {
+        add_header Content-Type text/plain;
+        return 200 "User-agent: *\nDisallow: /\n";
+    }
+
     location /static {
         expires 1d;
         alias /opt/geotrek-admin/var/static;
