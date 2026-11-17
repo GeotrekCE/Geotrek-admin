@@ -7,6 +7,7 @@ import Map from "@/components/map"
 import MapBboxDataLayer from "./map-bbox-data-layer"
 import MapElementsLayer, { MAP_ELEMENTS_LAYER_IDS } from "./map-elements-layer"
 import useBounds from "@/hook/useBounds"
+import type { SyncReference } from "@/lib/sync"
 
 export default function ListMap() {
   const navigate = useNavigate()
@@ -33,17 +34,16 @@ export default function ListMap() {
 
   const handleClick = React.useCallback(
     (
-      id: number,
-      reference: "infrastructure" | "intervention" | "signage" | "report"
+      focusOn: {
+        id: number
+        reference: SyncReference
+      }[]
     ) => {
       navigate({
         to: ".",
         search: {
           ...filters,
-          focusOn: {
-            id,
-            reference,
-          },
+          focusOn,
         },
       })
     },
@@ -55,10 +55,25 @@ export default function ListMap() {
       const properties = event?.features?.[0]?.properties
 
       if (properties && !properties.cluster) {
-        const reference = properties.reference as
-          "infrastructure" | "intervention" | "signage" | "report"
-
-        handleClick(properties.id, reference)
+        const members = properties.members as
+          | {
+              id: number
+              reference: SyncReference
+            }[]
+          | undefined
+        if (members?.length) {
+          handleClick(members)
+        } else if (
+          typeof properties.id === "number" &&
+          typeof properties.reference === "string"
+        ) {
+          handleClick([
+            {
+              id: properties.id,
+              reference: properties.reference as SyncReference,
+            },
+          ])
+        }
       }
     },
     [handleClick]
