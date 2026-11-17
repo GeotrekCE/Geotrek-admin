@@ -73,7 +73,6 @@ export function FileUploadField({
                 className={cn("sr-only", className)}
                 data-testid={`field-${field.name}`}
                 name={field.name}
-                capture="environment"
                 {...inputProps}
               />
             </span>
