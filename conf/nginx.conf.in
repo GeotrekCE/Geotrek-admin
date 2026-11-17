@@ -6,9 +6,20 @@ upstream api_server {
     server unix:/tmp/gunicorn-geotrek_api.sock fail_timeout=0;
 }
 
+map ${DOLLAR}uri ${DOLLAR}pdf_limit_key {
+    default "";
+    ~*\.pdf${DOLLAR} ${DOLLAR}server_name;
+}
+limit_conn_zone ${DOLLAR}pdf_limit_key zone=pdf_concurrency:10m;
+
 map ${DOLLAR}http_origin ${DOLLAR}allow_origin {
     "~${RANDO_SERVER_NAME_PIPE}" ${DOLLAR}http_origin;
     default "";
+}
+
+map $http_user_agent $is_indexer {
+    default 0;
+    ~*(bot|crawler|spider|slurp|meta-externalagent|meta-webindexer|facebookexternalhit|Bytespider|Amazonbot|RiverBot|Brightbot|PetalBot|DotBot|MJ12bot|SemrushBot|AhrefsBot|Baiduspider|GoogleOther|GiantCrawler|SeznamBot|ia_archiver|GoogleBot) 1;
 }
 
 server {
@@ -85,6 +96,19 @@ server {
 
     location = /m {
         return 307 /m/;
+    }
+
+    location ~* ^/api/.*\.(pdf|kml|gpx)${DOLLAR} {
+        if (${DOLLAR}is_indexer) { return 403; }
+
+        limit_conn pdf_concurrency 2;
+        limit_conn_status 503;
+
+        add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
+        add_header Access-Control-Allow-Origin ${DOLLAR}allow_origin always;
+
+        proxy_read_timeout 120s;
+        proxy_pass http://api_server;
     }
 
     location / {
