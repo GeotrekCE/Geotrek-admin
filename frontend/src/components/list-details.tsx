@@ -16,7 +16,7 @@ import {
 import { Badge } from "@/components/ui/badge"
 import { m } from "@/paraglide/messages"
 
-function ListDetailContent({
+function ListDetailItem({
   element,
 }: {
   element: {
@@ -32,21 +32,21 @@ function ListDetailContent({
 
   if (!detail) {
     return (
-      <SheetContent side="bottom" className="pb-22">
+      <div>
         <SheetHeader>
           <SheetTitle>{m["common.not-found"]()}</SheetTitle>
           <SheetDescription>
             {m["common.not-found-description"]()}
           </SheetDescription>
         </SheetHeader>
-      </SheetContent>
+      </div>
     )
   }
 
   const name = "name" in detail ? detail.name : `Signalement (id: ${detail.id})`
 
   return (
-    <SheetContent side="bottom" className="pb-22">
+    <div>
       <SheetHeader className="pb-0">
         <SheetTitle className="flex items-center gap-2" render={<div />}>
           {reference && "pictogram" in reference && reference.pictogram.url && (
@@ -93,7 +93,7 @@ function ListDetailContent({
           {m["common.view-details"]()}
         </Link>
       </SheetFooter>
-    </SheetContent>
+    </div>
   )
 }
 
@@ -117,8 +117,20 @@ export default function ListDetail() {
   }
 
   return (
-    <Sheet open={focusOn !== undefined} onOpenChange={handleChange}>
-      {focusOn && <ListDetailContent element={focusOn} />}
+    <Sheet open={Boolean(focusOn?.length)} onOpenChange={handleChange}>
+      <SheetContent
+        side="bottom"
+        className="max-h-[80vh] overflow-y-auto pb-22"
+      >
+        <div className="space-y-6">
+          {focusOn?.map((element) => (
+            <ListDetailItem
+              key={`${element.reference}-${element.id}`}
+              element={element}
+            />
+          ))}
+        </div>
+      </SheetContent>
     </Sheet>
   )
 }
