@@ -210,7 +210,7 @@
     "geom-description": "Les interventions de type linéaire ne sont pas encore modifiables.",
     "geom-linear-not-supported": "La géométrie de cet objet n'est pas un point et les linéaires ne sont pas encore modifiables.",
     "reset": "Annuler la saisie en cours",
-    "attachments-photo-title": "Envoyer des photos",
+    "attachments-photo-title": "Ajouter des photos",
     "attachments-photo-item": "Photo",
     "attachments-photo-add": "Ajouter une photo"
   },
