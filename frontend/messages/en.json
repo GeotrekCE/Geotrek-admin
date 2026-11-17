@@ -210,7 +210,7 @@
     "geom-description": "Linear interventions are not yet editable.",
     "geom-linear-not-supported": "The geometry of this object is not a point, and linear objects are not yet editable.",
     "reset": "Reset",
-    "attachments-photo-title": "Send photos",
+    "attachments-photo-title": "Add photos",
     "attachments-photo-item": "Photo",
     "attachments-photo-add": "Add a photo"
   },
