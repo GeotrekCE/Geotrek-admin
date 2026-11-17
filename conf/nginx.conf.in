@@ -29,7 +29,7 @@ server {
 
     location = /robots.txt {
         add_header Content-Type text/plain;
-        return 200 "User-agent: *\nDisallow: /\n";
+        return 200 "User-agent: *\nAllow: /media/\nDisallow: /\n";
     }
 
     location /static {
@@ -39,6 +39,11 @@ server {
     }
 
     location ~ ^/mobile/(.*)$ {
+        if ($is_indexer) {
+            return 403;
+        }
+
+        add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
         add_header Vary "Accept-Language";
 	    add_header Access-Control-Allow-Origin "*";
         add_header Access-Control-Allow-Methods "GET, OPTIONS";
@@ -83,6 +88,12 @@ server {
     }
 
     location / {
+        if ($is_indexer) {
+            return 403;
+        }
+
+        add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
+
         proxy_set_header X-Forwarded-Proto ${DOLLAR}scheme;
         proxy_set_header X-Forwarded-Host ${DOLLAR}host;
         proxy_set_header X-Forwarded-Server ${DOLLAR}host;
