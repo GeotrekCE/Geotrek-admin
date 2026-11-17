@@ -17,7 +17,7 @@ map ${DOLLAR}http_origin ${DOLLAR}allow_origin {
     default "";
 }
 
-map $http_user_agent $is_indexer {
+map ${DOLLAR}http_user_agent ${DOLLAR}is_indexer {
     default 0;
     ~*(bot|crawler|spider|slurp|meta-externalagent|meta-webindexer|facebookexternalhit|Bytespider|Amazonbot|RiverBot|Brightbot|PetalBot|DotBot|MJ12bot|SemrushBot|AhrefsBot|Baiduspider|GoogleOther|GiantCrawler|SeznamBot|ia_archiver|GoogleBot) 1;
 }
@@ -50,7 +50,7 @@ server {
     }
 
     location ~ ^/mobile/(.*)$ {
-        if ($is_indexer) {
+        if (${DOLLAR}is_indexer) {
             return 403;
         }
 
@@ -112,7 +112,7 @@ server {
     }
 
     location / {
-        if ($is_indexer) {
+        if (${DOLLAR}is_indexer) {
             return 403;
         }
 
