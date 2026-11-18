@@ -19,7 +19,7 @@ map ${DOLLAR}http_origin ${DOLLAR}allow_origin {
 
 map ${DOLLAR}http_user_agent ${DOLLAR}is_indexer {
     default 0;
-    ~*(bot|crawler|spider|slurp|meta-externalagent|meta-webindexer|facebookexternalhit|Bytespider|Amazonbot|RiverBot|Brightbot|PetalBot|DotBot|MJ12bot|SemrushBot|AhrefsBot|Baiduspider|GoogleOther|GiantCrawler|SeznamBot|ia_archiver|GoogleBot) 1;
+    ~*(bot|crawler|spider|slurp|meta-externalagent|meta-webindexer|facebookexternalhit|Bytespider|Amazonbot|RiverBot|Brightbot|PetalBot|DotBot|MJ12bot|SemrushBot|AhrefsBot|Baiduspider|GoogleOther|GiantCrawler|SeznamBot|ia_archiver) 1;
 }
 
 server {
@@ -28,8 +28,8 @@ server {
     server_name_in_redirect on;
     server_tokens off;
     gzip             on;
-    gzip_vary on;
-    gzip_proxied any;
+    gzip_vary        on;
+    gzip_proxied     any;
     gzip_comp_level  4;
     gzip_types       application/json application/geo+json;
 
@@ -37,6 +37,19 @@ server {
     error_log /var/log/nginx/geotrek_error.log;
 
     client_max_body_size 200M;
+
+    proxy_set_header X-Forwarded-Proto ${DOLLAR}scheme;
+    proxy_set_header X-Forwarded-Host ${DOLLAR}host;
+    proxy_set_header X-Forwarded-Server ${DOLLAR}host;
+    proxy_set_header X-Forwarded-For ${DOLLAR}proxy_add_x_forwarded_for;
+    proxy_set_header X-Real-IP ${DOLLAR}remote_addr;
+    proxy_set_header Host ${DOLLAR}http_host;
+    proxy_redirect off;
+    keepalive_timeout 0;
+
+    proxy_buffer_size 128k;
+    proxy_buffers 8 512k;
+    proxy_busy_buffers_size 512k;
 
     location = /robots.txt {
         add_header Content-Type text/plain;
@@ -49,6 +62,19 @@ server {
         add_header Access-Control-Allow-Origin ${DOLLAR}allow_origin;
     }
 
+    location /media {
+        expires 1d;
+        alias /opt/geotrek-admin/var/media;
+        add_header Access-Control-Allow-Origin ${DOLLAR}allow_origin;
+    }
+
+    location /media_secure {
+        internal;
+        expires 1d;
+        alias /opt/geotrek-admin/var/media;
+    }
+
+    # 3. Flux Geotrek-mobile v2 et PWA /m
     location ~ ^/mobile/(.*)$ {
         if (${DOLLAR}is_indexer) {
             return 403;
@@ -56,7 +82,7 @@ server {
 
         add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
         add_header Vary "Accept-Language";
-	    add_header Access-Control-Allow-Origin "*";
+        add_header Access-Control-Allow-Origin "*";
         add_header Access-Control-Allow-Methods "GET, OPTIONS";
         root /opt/geotrek-admin/var/mobile/;
         try_files /${DOLLAR}http_accept_language/$1 /nolang/$1 =404;
@@ -70,19 +96,8 @@ server {
         }
     }
 
-    location /media {
-        expires 1d;
-        alias /opt/geotrek-admin/var/media ;
-        add_header Access-Control-Allow-Origin ${DOLLAR}allow_origin;
-    }
-
-    location /media_secure {
-        internal;
-        expires 1d;
-        alias /opt/geotrek-admin/var/media;
-    }
-
     location ~ ^/m/(?<remaining_path>.*)$ {
+        add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
         root /;
         try_files /opt/geotrek-admin/var/frontend/dist/${DOLLAR}remaining_path /opt/geotrek-admin/var/frontend/dist/index.html =404;
     }
@@ -98,6 +113,7 @@ server {
         return 307 /m/;
     }
 
+    # PDF, KML & GPX
     location ~* ^/api/.*\.(pdf|kml|gpx)${DOLLAR} {
         if (${DOLLAR}is_indexer) { return 403; }
 
@@ -106,35 +122,31 @@ server {
 
         add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
         add_header Access-Control-Allow-Origin ${DOLLAR}allow_origin always;
+        add_header X-Cache-Status ${DOLLAR}upstream_cache_status always;
 
-        proxy_read_timeout 120s;
+        proxy_read_timeout ${TIMEOUT}s;
         proxy_pass http://api_server;
     }
 
+    # API
+    location ~ ^/api {
+        if (${DOLLAR}is_indexer) { return 403; }
+
+        add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
+        add_header Access-Control-Allow-Origin ${DOLLAR}allow_origin always;
+        add_header X-Cache-Status ${DOLLAR}upstream_cache_status always;
+        proxy_read_timeout ${TIMEOUT}s;
+        proxy_pass http://api_server;
+    }
+
+    # Backoffice Geotrek-admin
     location / {
         if (${DOLLAR}is_indexer) {
             return 403;
         }
 
         add_header X-Robots-Tag "noindex, nofollow, noarchive" always;
-
-        proxy_set_header X-Forwarded-Proto ${DOLLAR}scheme;
-        proxy_set_header X-Forwarded-Host ${DOLLAR}host;
-        proxy_set_header X-Forwarded-Server ${DOLLAR}host;
-        proxy_set_header X-Forwarded-For ${DOLLAR}proxy_add_x_forwarded_for;
-
-        proxy_set_header Host ${DOLLAR}http_host;
-        proxy_redirect off;
-
-        keepalive_timeout 0;
-
-        location ~ ^/api {
-            proxy_pass http://api_server;
-            proxy_read_timeout ${TIMEOUT}s;
-            add_header Access-Control-Allow-Origin ${DOLLAR}allow_origin always;
-        }
-
-        proxy_pass http://ui_server;
         proxy_read_timeout ${TIMEOUT}s;
+        proxy_pass http://ui_server;
     }
 }
