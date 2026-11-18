@@ -4,4 +4,4 @@ from django.utils.translation import gettext_lazy as _
 
 class FlatpagesConfig(AppConfig):
     name = "geotrek.flatpages"
-    verbose_name = _("Flatpages")
+    verbose_name = _("Editorial content")
