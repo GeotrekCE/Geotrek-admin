@@ -22,3 +22,13 @@ class MenuItemTO(TranslationOptions):
 
 
 translator.register(flatpages_models.MenuItem, MenuItemTO)
+
+
+class PopupTO(TranslationOptions):
+    fields = (
+        "name",
+        "content",
+    ) + (("published",) if settings.PUBLISHED_BY_LANG else tuple())
+
+
+translator.register(flatpages_models.Popup, PopupTO)
