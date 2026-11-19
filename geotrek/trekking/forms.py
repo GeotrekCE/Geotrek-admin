@@ -186,10 +186,6 @@ class TrekForm(BaseTrekForm):
                 "data-width": "75%",
             },
         )
-        # Make sure (force) that name is required, in default language only
-        self.fields[
-            build_localized_fieldname("name", settings.LANGUAGE_CODE)
-        ].required = True
 
         if not settings.TREK_POINTS_OF_REFERENCE_ENABLED:
             self.fields.pop("points_reference")
