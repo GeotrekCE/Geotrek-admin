@@ -8,7 +8,10 @@ from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
 from geotrek.flatpages.models import Banner, FlatPage, MenuItem, Popup
-from geotrek.flatpages.tests.factories import FlatPageFactory, MenuItemFactory
+from geotrek.flatpages.tests.factories import (
+    FlatPageFactory,
+    MenuItemFactory,
+)
 
 
 def _flatten(fieldsets):

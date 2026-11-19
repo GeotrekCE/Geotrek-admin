@@ -114,8 +114,6 @@ class Popup(BasePublishableMixin, TimeStampedModelMixin):
         verbose_name = _("Popup")
         verbose_name_plural = _("Popups")
 
-    # TODO: add clean function for portals
-
     def __str__(self):
         return self.name
 

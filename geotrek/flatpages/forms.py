@@ -5,11 +5,10 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from modeltranslation.utils import build_localized_fieldname
-from tinymce.widgets import AdminTinyMCE
 from treebeard.forms import MoveNodeForm
 
 from geotrek.common.models import Attachment, FileType
-from geotrek.flatpages.models import FlatPage, MenuItem, Popup
+from geotrek.flatpages.models import Banner, FlatPage, MenuItem, Popup
 from geotrek.flatpages.widgets import FlatPageTinyMCE
 
 
@@ -158,17 +157,57 @@ class MenuItemForm(MoveNodeForm):
                 )
 
 
-class PopupForm(forms.ModelForm):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+class UniquePublicationPerPortalFormMixin:
+    """Ensures that only one object of the form's model is published per portal (and per language
+    if PUBLISHED_BY_LANG is enabled). Objects without portal are considered as a distinct group.
 
-        # Content translation fields' widgets are replaced with the TinyMCE widget, original widget attrs
-        # are passed along as they contain modeltranslation CSS classes.
-        for fieldname, formfield in self.fields.items():
-            if fieldname.startswith("content_"):
-                self.fields[fieldname].widget = AdminTinyMCE(
-                    attrs=self.fields[fieldname].widget.attrs
-                )
+    Forms using this mixin must define `conflict_error_message`, a translatable string containing
+    the `%(conflicts)s` placeholder, which is replaced by the list of conflicting objects.
+    """
+
+    conflict_error_message = None
+
+    def check_conflicts(self, own_portals, published_field):
+        conflicts = self._meta.model.objects.filter(**{published_field: True})
+        if own_portals:
+            conflicts = conflicts.filter(portals__in=own_portals)
+        else:
+            conflicts = conflicts.filter(portals__isnull=True)
+        if self.instance.pk:
+            conflicts = conflicts.exclude(pk=self.instance.pk)
+        conflicts = conflicts.distinct()
+
+        if conflicts.exists():
+            lines = []
+            for obj in conflicts.prefetch_related("portals"):
+                portals_names = ", ".join(
+                    portal.name for portal in obj.portals.filter(pk__in=own_portals)
+                ) or _("no portal")
+                lines.append(f"{obj.name} ({portals_names})")
+            raise ValidationError(
+                self.conflict_error_message,
+                params={"conflicts": ", ".join(lines)},
+            )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        portals = cleaned_data.get("portals")
+
+        if settings.PUBLISHED_BY_LANG:
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                field = build_localized_fieldname("published", lang)
+                if cleaned_data.get(field):
+                    self.check_conflicts(portals, field)
+        elif cleaned_data.get("published"):
+            self.check_conflicts(portals, "published")
+
+        return cleaned_data
+
+
+class PopupForm(UniquePublicationPerPortalFormMixin, forms.ModelForm):
+    conflict_error_message = _(
+        "Each platform (rando, widget, mobile instance) can only have one popup. The following popups are already published on the selected platforms: %(conflicts)s"
+    )
 
     class Meta:
         model = Popup
@@ -178,3 +217,13 @@ class PopupForm(forms.ModelForm):
             "published",
             "content",
         )
+
+
+class BannerForm(UniquePublicationPerPortalFormMixin, forms.ModelForm):
+    conflict_error_message = _(
+        "Each platform (rando, widget, mobile instance) can only have one banner. The following banners are already published on the selected platforms: %(conflicts)s"
+    )
+
+    class Meta:
+        model = Banner
+        fields = ("name", "portals", "published", "content")

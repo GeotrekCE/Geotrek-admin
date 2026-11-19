@@ -7,7 +7,7 @@ from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from geotrek.flatpages import models as flatpages_models
-from geotrek.flatpages.forms import FlatPageForm, MenuItemForm
+from geotrek.flatpages.forms import BannerForm, FlatPageForm, MenuItemForm, PopupForm
 
 if "modeltranslation" in settings.INSTALLED_APPS:
     from modeltranslation.admin import TabbedTranslationAdmin
@@ -178,6 +178,8 @@ class PopupAdmin(TabbedTranslationAdmin):
         models.TextField: {"widget": TinyMCE},
     }
 
+    form = PopupForm
+
     fields = (
         "name",
         "portals",
@@ -201,6 +203,8 @@ class BannerAdmin(TabbedTranslationAdmin):
         ("portals", admin.filters.RelatedOnlyFieldListFilter),
     )
     search_fields = ("name",)
+
+    form = BannerForm
 
     fields = (
         "name",
