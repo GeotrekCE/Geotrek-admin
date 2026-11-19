@@ -32,3 +32,13 @@ class PopupTO(TranslationOptions):
 
 
 translator.register(flatpages_models.Popup, PopupTO)
+
+
+class BannerTO(TranslationOptions):
+    fields = (
+        "name",
+        "content",
+    ) + (("published",) if settings.PUBLISHED_BY_LANG else tuple())
+
+
+translator.register(flatpages_models.Banner, BannerTO)

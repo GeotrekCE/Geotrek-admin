@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
-from django.db.models import Q
 from django.db.models.enums import TextChoices
 from django.utils.translation import gettext_lazy as _
 from treebeard.mp_tree import MP_Node
@@ -103,9 +102,10 @@ class Popup(BasePublishableMixin, TimeStampedModelMixin):
         verbose_name=_("Content"),
         help_text=_("Content of the popup"),
     )
+    # If no portal is specified in the request, the published popup that have no associated portal is returned
     portals = models.ManyToManyField(
         "common.TargetPortal",
-        blank=True, # If no portal is specified in the request, the popup that have no associated portal is returned
+        blank=True,
         related_name="popup",
         verbose_name=_("Portals"),
     )
@@ -115,6 +115,28 @@ class Popup(BasePublishableMixin, TimeStampedModelMixin):
         verbose_name_plural = _("Popups")
 
     # TODO: add clean function for portals
+
+    def __str__(self):
+        return self.name
+
+
+class Banner(BasePublishableMixin, TimeStampedModelMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    content = models.TextField(
+        verbose_name=_("Content"),
+        help_text=_("Content of the banner"),
+    )
+    # If no portal is specified in the request, the published banner that have no associated portal is returned
+    portals = models.ManyToManyField(
+        "common.TargetPortal",
+        blank=True,
+        related_name="banner",
+        verbose_name=_("Portals"),
+    )
+
+    class Meta:
+        verbose_name = _("Banner")
+        verbose_name_plural = _("Banners")
 
     def __str__(self):
         return self.name
