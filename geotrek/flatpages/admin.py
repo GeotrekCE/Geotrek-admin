@@ -190,4 +190,29 @@ class PopupAdmin(TabbedTranslationAdmin):
         return ", ".join([portal.name for portal in obj.portals.all()])
 
 
+class BannerAdmin(TabbedTranslationAdmin):
+    list_display = (
+        "name",
+        "portals_for_display",
+        "published",
+    )
+    list_filter = (
+        "published",
+        ("portals", admin.filters.RelatedOnlyFieldListFilter),
+    )
+    search_fields = ("name",)
+
+    fields = (
+        "name",
+        "portals",
+        "published",
+        "content",
+    )
+
+    @admin.display(description=_("Portals"))
+    def portals_for_display(self, obj):
+        return ", ".join([portal.name for portal in obj.portals.all()])
+
+
 admin.site.register(flatpages_models.Popup, PopupAdmin)
+admin.site.register(flatpages_models.Banner, BannerAdmin)

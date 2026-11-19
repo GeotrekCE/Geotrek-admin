@@ -7,7 +7,7 @@ from mapentity.tests.factories import SuperUserFactory
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.flatpages.models import FlatPage, MenuItem, Popup
+from geotrek.flatpages.models import Banner, FlatPage, MenuItem, Popup
 from geotrek.flatpages.tests.factories import FlatPageFactory, MenuItemFactory
 
 
@@ -377,3 +377,27 @@ class PopupAdminTest(TestCase):
 
         self.client.post(reverse("admin:flatpages_popup_add"), post_data)
         self.assertEqual(Popup.objects.get().name_en, "Popup en")
+
+
+class BannerAdminTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+        cls.portal = TargetPortalFactory.create(name="portal")
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_creation(self):
+        post_data = {
+            "name_fr": "Banner fr",
+            "name_en": "Banner en",
+            "portals": [self.portal.id],
+            "published_fr": True,
+            "published_en": True,
+            "content_fr": "Content fr",
+            "content_en": "Content en",
+        }
+
+        self.client.post(reverse("admin:flatpages_banner_add"), post_data)
+        self.assertEqual(Banner.objects.get().name_en, "Banner en")
