@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-18 13:06+0000\n"
+"POT-Creation-Date: 2026-11-19 09:51+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/flatpages/fr/>\n"
@@ -86,6 +86,27 @@ msgstr "Élément menu"
 
 msgid "Menu items"
 msgstr "Éléments menu"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Content of the popup"
+msgstr "Contenu de la popup"
+
+msgid "Popup"
+msgstr "Popup"
+
+msgid "Popups"
+msgstr "Popups"
+
+msgid "Content of the banner"
+msgstr "Contenu de la bannière"
+
+msgid "Banner"
+msgstr "Bannière"
+
+msgid "Banners"
+msgstr "Bannières"
 
 msgid "Button Link"
 msgstr "Lien bouton"

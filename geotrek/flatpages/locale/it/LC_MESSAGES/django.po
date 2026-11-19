@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-18 13:06+0000\n"
+"POT-Creation-Date: 2026-11-19 09:51+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Italian <https://weblate.makina-corpus.net/projects/geotrek-admin/flatpages/it/>\n"
@@ -85,6 +85,27 @@ msgid "Menu item"
 msgstr ""
 
 msgid "Menu items"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Content of the popup"
+msgstr ""
+
+msgid "Popup"
+msgstr ""
+
+msgid "Popups"
+msgstr ""
+
+msgid "Content of the banner"
+msgstr ""
+
+msgid "Banner"
+msgstr ""
+
+msgid "Banners"
 msgstr ""
 
 msgid "Button Link"
