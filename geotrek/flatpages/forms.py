@@ -5,10 +5,11 @@ from django.core import validators
 from django.core.exceptions import ValidationError
 from django.utils.translation import gettext_lazy as _
 from modeltranslation.utils import build_localized_fieldname
+from tinymce.widgets import AdminTinyMCE
 from treebeard.forms import MoveNodeForm
 
 from geotrek.common.models import Attachment, FileType
-from geotrek.flatpages.models import FlatPage, MenuItem
+from geotrek.flatpages.models import FlatPage, MenuItem, Popup
 from geotrek.flatpages.widgets import FlatPageTinyMCE
 
 
@@ -155,3 +156,25 @@ class MenuItemForm(MoveNodeForm):
                 raise ValidationError(
                     {link_url_loc_fieldname: "This field is required."}
                 )
+
+
+class PopupForm(forms.ModelForm):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        # Content translation fields' widgets are replaced with the TinyMCE widget, original widget attrs
+        # are passed along as they contain modeltranslation CSS classes.
+        for fieldname, formfield in self.fields.items():
+            if fieldname.startswith("content_"):
+                self.fields[fieldname].widget = AdminTinyMCE(
+                    attrs=self.fields[fieldname].widget.attrs
+                )
+
+    class Meta:
+        model = Popup
+        fields = (
+            "name",
+            "portals",
+            "published",
+            "content",
+        )
