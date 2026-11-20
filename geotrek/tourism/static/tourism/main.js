@@ -169,6 +169,5 @@ function update_touristiccontent_types(n) {
             .prop('selected', selected.indexOf(type_id) >= 0)
             .appendTo($select);
     }
-    $select.trigger('chosen:updated');
 }
 */

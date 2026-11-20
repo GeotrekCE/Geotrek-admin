@@ -278,8 +278,7 @@
             objectsLayer.initialize(map.getMap());
 
             // Initialize additional layers
-            let pathLayerSettings = null;
-            window.SETTINGS.layers.forEach((model) => {
+            for (const model of window.SETTINGS.layers) {
                 const nameHTML = model.name;
                 const additionalModelname = model.id;
                 const category = model.category;
@@ -308,15 +307,11 @@
 
                 // Paths are displayed by default - load its layer
                 if (additionalModelname === 'path') {
-                    if (tilejsonUrl) {
-                        additionalObjectsLayer.loadMVT(additionalTilejsonUrl);
-                    } else {
-                        additionalObjectsLayer.load(additionalLayerUrl);
-                    }
+                    await layerManager.toggleLazyOverlay(category, primaryKey, true);
                     window.pathLayerName = "layer-" + additionalObjectsLayer.primaryKey + "-lines";
                 }
 
-            });
+            }
 
             const layerControl = new MaplibreLayerControl(layerManager);
             map.getMap().addControl(layerControl, 'top-right');

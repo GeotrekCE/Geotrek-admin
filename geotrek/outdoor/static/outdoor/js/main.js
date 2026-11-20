@@ -44,7 +44,6 @@ function refresh_selector_with_types($select, types, selected) {
             .prop('selected', selected.indexOf(type_id) >= 0)
             .appendTo($select);
     }
-    $select.trigger('chosen:updated');
 }
 
 function update_cotations(category) {
