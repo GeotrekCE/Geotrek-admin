@@ -900,6 +900,96 @@ class TopologyDeserialization(TestCase):
         self.assertEqual(topology.aggregations.all()[2].start_position, 0.0)
         self.assertEqual(topology.aggregations.all()[2].end_position, 0.7)
 
+    def test_deserialize_multiple_subtopologies_intermediate_points_coupling(self):
+        p1 = PathFactory.create(geom=LineString((0, 0), (10, 0), srid=settings.SRID))
+        p2 = PathFactory.create(geom=LineString((10, 0), (20, 0), srid=settings.SRID))
+        p3 = PathFactory.create(geom=LineString((20, 0), (30, 0), srid=settings.SRID))
+
+        # Test case 1: Intermediate point on the same path
+        deser1 = Topology.deserialize(
+            [
+                {"paths": [p1.pk], "positions": {"0": [0.2, 0.5]}},
+                {"paths": [p1.pk], "positions": {"0": [0.5, 0.8]}},
+            ]
+        )
+        t1 = Topology.objects.create()
+        t1.mutate(deser1)
+        self.assertTrue(t1.coupled)
+
+        # Test case 2: Intermediate point across path vertex (p1 end at 1.0, p2 start at 0.0)
+        deser2 = Topology.deserialize(
+            [
+                {"paths": [p1.pk], "positions": {"0": [0.2, 1.0]}},
+                {"paths": [p2.pk], "positions": {"0": [0.0, 0.5]}},
+            ]
+        )
+        t2 = Topology.objects.create()
+        t2.mutate(deser2)
+        self.assertTrue(t2.coupled)
+
+        # Test case 3: Intermediate point in middle of multi-path subtopology
+        deser3 = Topology.deserialize(
+            [
+                {
+                    "paths": [p1.pk, p2.pk],
+                    "positions": {"0": [0.3, 1.0], "1": [0.0, 0.7]},
+                },
+                {
+                    "paths": [p2.pk, p3.pk],
+                    "positions": {"0": [0.7, 1.0], "1": [0.0, 0.5]},
+                },
+            ]
+        )
+        t3 = Topology.objects.create()
+        t3.mutate(deser3)
+        self.assertTrue(t3.coupled)
+
+        # Test case 4: Reverse traversal
+        deser4 = Topology.deserialize(
+            [
+                {
+                    "paths": [p3.pk, p2.pk],
+                    "positions": {"0": [0.8, 0.0], "1": [1.0, 0.4]},
+                },
+                {
+                    "paths": [p2.pk, p1.pk],
+                    "positions": {"0": [0.4, 0.0], "1": [1.0, 0.2]},
+                },
+            ]
+        )
+        t4 = Topology.objects.create()
+        t4.mutate(deser4)
+        self.assertTrue(t4.coupled)
+
+    def test_deserialize_loop_topologies(self):
+        # Triangular loop
+        p1 = PathFactory.create(geom=LineString((0, 0), (10, 0), srid=settings.SRID))
+        p2 = PathFactory.create(geom=LineString((10, 0), (10, 10), srid=settings.SRID))
+        p3 = PathFactory.create(geom=LineString((10, 10), (0, 0), srid=settings.SRID))
+
+        # 3 subtopologies forming a closed loop
+        deser_triangle = Topology.deserialize(
+            [
+                {"paths": [p1.pk], "positions": {"0": [0.0, 1.0]}},
+                {"paths": [p2.pk], "positions": {"0": [0.0, 1.0]}},
+                {"paths": [p3.pk], "positions": {"0": [0.0, 1.0]}},
+            ]
+        )
+        t_tri = Topology.objects.create()
+        t_tri.mutate(deser_triangle)
+        self.assertTrue(t_tri.coupled, f"Triangle loop coupled is {t_tri.coupled}")
+
+        # Out-and-back (Aller-retour) on same path
+        deser_out_back = Topology.deserialize(
+            [
+                {"paths": [p1.pk], "positions": {"0": [0.0, 1.0]}},
+                {"paths": [p1.pk], "positions": {"0": [1.0, 0.0]}},
+            ]
+        )
+        t_ob = Topology.objects.create()
+        t_ob.mutate(deser_out_back)
+        self.assertTrue(t_ob.coupled, f"Out and back coupled is {t_ob.coupled}")
+
     def test_deserialize_point(self):
         PathFactory.create()
         # Take a point

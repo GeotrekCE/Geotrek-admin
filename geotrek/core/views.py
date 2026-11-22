@@ -6,7 +6,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import permission_required
 from django.contrib.gis.db.models.functions import Transform
-from django.contrib.gis.geos import GEOSGeometry
+from django.contrib.gis.geos import GEOSGeometry, Point
 from django.db import connection
 from django.db.models import Prefetch, Sum
 from django.http.response import HttpResponse, HttpResponseRedirect
@@ -525,9 +525,20 @@ class PathViewSet(GeotrekMapentityViewSet):
                 linestr.transform(settings.API_SRID)
                 features.append(make_linestring_feature(linestr, path_array, pos))
 
-                # If this is the last subtopology, its endpoint should be added too.
+                # If this is the last subtopology, its endpoint should be added too,
+                # except for a closed loop where the endpoint is identical to the first point of the route.
+                # In that case, adding a duplicate point would break mapbox-gl-path loop handling.
                 if i == len(topology) - 1:
-                    features.append(make_point_feature(end_point, end_path_id))
+                    first_point = features[0]["geometry"]["coordinates"]
+                    is_loop = len(topology) > 1 and (
+                        end_point.coords == tuple(first_point)
+                        or end_point.distance(
+                            Point(first_point, srid=settings.API_SRID)
+                        )
+                        < 1e-7
+                    )
+                    if not is_loop:
+                        features.append(make_point_feature(end_point, end_path_id))
 
             geojson = {"type": "FeatureCollection", "features": features}
             return Response(geojson, 200)

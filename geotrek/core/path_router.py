@@ -240,6 +240,7 @@ class PathRouter:
                         WHERE edge != -1
                 )
                 SELECT
+                    path_seq,
                     CASE
                         WHEN source = next_node THEN ST_Reverse(edge_geom)
                         ELSE edge_geom
@@ -255,7 +256,8 @@ class PathRouter:
                         WHEN next_node = source THEN 0
                         ELSE 1  -- next_node = target
                         END AS fraction_end
-                FROM pgr;
+                FROM pgr
+                ORDER BY path_seq;
 
             END $$;
         """
@@ -270,6 +272,7 @@ class PathRouter:
                     fraction_start,
                     fraction_end
                 FROM route
+                ORDER BY path_seq
                 """
             )
 
