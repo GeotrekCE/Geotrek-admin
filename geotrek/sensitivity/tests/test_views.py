@@ -1,6 +1,7 @@
 import datetime
 import json
 
+import mercantile
 from django.conf import settings
 from django.contrib.auth.models import Permission
 from django.contrib.gis.geos import GEOSGeometry, Point
@@ -107,6 +108,21 @@ class SensitiveAreaTemplatesTest(TestCase):
         geom = GEOSGeometry(json.dumps(data["geometry"]), srid=settings.API_SRID)
         geom.transform(settings.SRID)
         self.assertAlmostEqual(geom.area, 3.14159265 * 400**2, delta=15000)
+
+    def test_mvt_endpoint_serves_buffered_point_circle(self):
+        species = SpeciesFactory.create(radius=300)
+        point_area = SensitiveAreaFactory.create(
+            geom=Point(700000, 6600000, srid=settings.SRID), species=species
+        )
+        point_wgs84 = point_area.geom.transform(4326, clone=True)
+        tile_coords = mercantile.tile(point_wgs84.x, point_wgs84.y, 12)
+        url = reverse(
+            "sensitivity:sensitivearea-drf-mvt",
+            kwargs={"z": tile_coords.z, "x": tile_coords.x, "y": tile_coords.y},
+        )
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        self.assertGreater(len(response.content), 0)
 
     def test_create_view_includes_radii_and_default_radius(self):
         species = SpeciesFactory.create(radius=250)

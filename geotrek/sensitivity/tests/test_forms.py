@@ -154,3 +154,14 @@ class SensitiveAreaWidgetTest(TestCase):
         self.assertEqual(
             regulatory_form.fields["geom"].widget.allowed_types, ["POLYGON"]
         )
+
+    def test_bubble_and_polygon_widget_custom_allowed_types(self):
+        bubble_explicit = BubbleMapWidget(allowed_types=["POINT"])
+        bubble_attrs = BubbleMapWidget(attrs={"allowed_types": ["POLYGON"]})
+        polygon_explicit = PolygonMapWidget(allowed_types=["POLYGON"])
+        polygon_attrs = PolygonMapWidget(attrs={"allowed_types": ["POINT"]})
+
+        self.assertEqual(bubble_explicit.allowed_types, ["POINT"])
+        self.assertEqual(bubble_attrs.allowed_types, ["POLYGON"])
+        self.assertEqual(polygon_explicit.allowed_types, ["POLYGON"])
+        self.assertEqual(polygon_attrs.allowed_types, ["POINT"])

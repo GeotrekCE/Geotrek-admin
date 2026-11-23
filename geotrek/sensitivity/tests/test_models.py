@@ -21,6 +21,7 @@ from geotrek.land.tests.factories import (
 )
 from geotrek.maintenance.tests.factories import InterventionFactory
 from geotrek.outdoor.tests.factories import CourseFactory, SiteFactory
+from geotrek.sensitivity.models import SensitiveArea
 from geotrek.signage.tests.factories import SignageFactory
 from geotrek.tourism.tests.factories import (
     TouristicContentFactory,
@@ -329,10 +330,42 @@ class SensitiveAreaModelTest(TestCase):
         self.assertAlmostEqual(extent[2], 700050 + 500, delta=1)
         self.assertAlmostEqual(extent[3], 6600050 + 500, delta=1)
 
+    def test_get_map_image_extent_none_and_zero_radius_and_polygon(self):
+        species = SpeciesFactory.create(radius=0)
+        point_area = SensitiveAreaFactory.create(geom=self.point_geom, species=species)
+        self.assertEqual(
+            point_area.get_map_image_extent(srid=settings.SRID),
+            (700050.0, 6600050.0, 700050.0, 6600050.0),
+        )
+
+        poly_area = SensitiveAreaFactory.create(geom=self.point_envelope)
+        self.assertEqual(
+            poly_area.get_map_image_extent(srid=settings.SRID),
+            self.point_envelope.extent,
+        )
+
+        unsaved_area = SensitiveArea(geom=None, species=species)
+        self.assertIsNone(unsaved_area.get_map_image_extent())
+
+    def test_latest_updated_with_count_ignores_tile_coords(self):
+        area = SensitiveAreaFactory.create(geom=self.point_geom)
+        latest_all, count_all = SensitiveArea.latest_updated_with_count()
+        latest_tile, count_tile = SensitiveArea.latest_updated_with_count(
+            z=20, x=0, y=0
+        )
+        self.assertEqual(latest_all, area.date_update)
+        self.assertEqual(latest_tile, latest_all)
+        self.assertEqual(count_tile, count_all)
+
     def test_species_radius_change_updates_sensitivearea_date_update(self):
         species = SpeciesFactory.create(radius=100)
         area = SensitiveAreaFactory.create(geom=self.point_geom, species=species)
         old_date = area.date_update
+
+        species.name = "Updated name"
+        species.save()
+        area.refresh_from_db()
+        self.assertEqual(area.date_update, old_date)
 
         species.radius = 500
         species.save()
