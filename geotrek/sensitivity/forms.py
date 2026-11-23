@@ -14,11 +14,17 @@ logger = logging.getLogger(__name__)
 
 
 class BubbleMapWidget(MapWidget):
-    geometry_field_class = "bubbleGeometryField"
+    def __init__(self, attrs=None, geom_type=None, allowed_types=None):
+        if allowed_types is None and not (attrs and "allowed_types" in attrs):
+            allowed_types = ["POINT", "POLYGON"]
+        super().__init__(attrs=attrs, geom_type=geom_type, allowed_types=allowed_types)
 
 
 class PolygonMapWidget(MapWidget):
-    geometry_field_class = "polygonGeometryField"
+    def __init__(self, attrs=None, geom_type=None, allowed_types=None):
+        if allowed_types is None and not (attrs and "allowed_types" in attrs):
+            allowed_types = ["POLYGON"]
+        super().__init__(attrs=attrs, geom_type=geom_type, allowed_types=allowed_types)
 
 
 class SensitiveAreaForm(CommonForm):

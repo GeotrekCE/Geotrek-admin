@@ -1,3 +1,11 @@
+function assertPathsLayerChecked(mapSelector) {
+  cy.get(`${mapSelector} .layer-switcher-btn`).click();
+  cy.get(`${mapSelector} .layer-switcher-menu`).should('be.visible');
+  cy.contains(`${mapSelector} .layer-switcher-menu label`, /^\s*Path\s*$/)
+    .find('input[type="checkbox"]')
+    .should('be.checked');
+}
+
 describe('v3 Topological and Free Drawing E2E Tests', () => {
   const PATH_START = [200, 200];
   const PATH_END = [400, 200];
@@ -121,9 +129,12 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
       cy.contains('POI without snapping');
 
       // Verify on the edit page that the unsnapped coordinates were preserved (offset != 0)
+      // and that the Paths layer checkbox is checked by default
       cy.url().then((detailUrl) => {
         const pk = detailUrl.match(/\/poi\/(\d+)\//)[1];
         cy.visit(`/poi/edit/${pk}/`);
+        cy.waitForMap('#id_geom_map');
+        assertPathsLayerChecked('#id_geom_map');
         cy.get('#id_geom')
           .invoke('val')
           .then((val) => {
@@ -172,6 +183,14 @@ describe('v3 Topological and Free Drawing E2E Tests', () => {
       cy.contains('Topological Trek E2E');
       // Topological trek is coupled to the path network
       cy.get('i.bi-check-circle.text-success').should('be.visible');
+
+      // Verify on the edit page that the Paths layer checkbox is checked by default
+      cy.url().then((detailUrl) => {
+        const pk = detailUrl.match(/\/trek\/(\d+)\//)[1];
+        cy.visit(`/trek/edit/${pk}/`);
+        cy.waitForMap('#id_topology_map');
+        assertPathsLayerChecked('#id_topology_map');
+      });
     });
 
     it('allows free drawing (off-path network) when the user has core.can_draw_off_path_network permission', () => {
