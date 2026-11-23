@@ -60,7 +60,7 @@ setup(
         # prod,
         "gunicorn[gevent]",
         "sentry-sdk",
-        "django-embed_video@git+https://github.com/jazzband/django-embed-video.git@master#egg=django-embed-video",  # wait for 1.4.11 release ...
+        "django-embed_video",
     ],
     include_package_data=True,
     license="BSD, see LICENSE file.",
