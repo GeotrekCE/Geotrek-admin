@@ -78,7 +78,7 @@ sphinx-autobuild==2024.10.3
     # via -r requirements.in
 sphinx-design==0.8.0
     # via -r requirements.in
-sphinx-immaterial==0.13.11
+sphinx-immaterial==0.13.12
     # via -r requirements.in
 sphinx-intl==2.4.0
     # via -r requirements.in
