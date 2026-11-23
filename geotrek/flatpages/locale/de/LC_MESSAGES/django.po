@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-19 09:51+0000\n"
+"POT-Creation-Date: 2026-11-23 14:01+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/flatpages/de/>\n"
@@ -37,6 +37,17 @@ msgid "Cover image author"
 msgstr ""
 
 msgid "Thumbnail"
+msgstr ""
+
+msgid "no portal"
+msgstr ""
+
+#, python-format
+msgid "Each platform (rando, widget, mobile instance) can only have one popup. The following popups are already published on the selected platforms: %(conflicts)s"
+msgstr ""
+
+#, python-format
+msgid "Each platform (rando, widget, mobile instance) can only have one banner. The following banners are already published on the selected platforms: %(conflicts)s"
 msgstr ""
 
 msgid "Title"
