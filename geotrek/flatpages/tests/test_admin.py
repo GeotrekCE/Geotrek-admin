@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.admin.sites import AdminSite
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.urls import reverse
@@ -7,10 +8,13 @@ from mapentity.tests.factories import SuperUserFactory
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
+from geotrek.flatpages.admin import BannerAdmin, PopupAdmin
 from geotrek.flatpages.models import Banner, FlatPage, MenuItem, Popup
 from geotrek.flatpages.tests.factories import (
+    BannerFactory,
     FlatPageFactory,
     MenuItemFactory,
+    PopupFactory,
 )
 
 
@@ -381,6 +385,16 @@ class PopupAdminTest(TestCase):
         self.client.post(reverse("admin:flatpages_popup_add"), post_data)
         self.assertEqual(Popup.objects.get().name_en, "Popup en")
 
+    def test_portals_display_as_list(self):
+        portal1 = TargetPortalFactory(name="Portal1")
+        portal2 = TargetPortalFactory(name="Portal2")
+        popup = PopupFactory.create(portals=[portal1, portal2])
+
+        admin = PopupAdmin(Popup, AdminSite())
+        portals = admin.portals_for_display(popup)
+
+        self.assertEqual(portals, "Portal1, Portal2")
+
 
 class BannerAdminTest(TestCase):
     @classmethod
@@ -404,3 +418,13 @@ class BannerAdminTest(TestCase):
 
         self.client.post(reverse("admin:flatpages_banner_add"), post_data)
         self.assertEqual(Banner.objects.get().name_en, "Banner en")
+
+    def test_portals_display_as_list(self):
+        portal1 = TargetPortalFactory(name="Portal1")
+        portal2 = TargetPortalFactory(name="Portal2")
+        banner = BannerFactory.create(portals=[portal1, portal2])
+
+        admin = BannerAdmin(Banner, AdminSite())
+        portals = admin.portals_for_display(banner)
+
+        self.assertEqual(portals, "Portal1, Portal2")
