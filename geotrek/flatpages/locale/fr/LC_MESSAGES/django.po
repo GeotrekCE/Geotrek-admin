@@ -39,18 +39,16 @@ msgstr "Auteur image couverture"
 msgid "Thumbnail"
 msgstr "Miniature"
 
-#, fuzzy
-#| msgid "Portals"
 msgid "no portal"
-msgstr "Portails"
+msgstr "Pas de portail"
 
 #, python-format
 msgid "Each platform (rando, widget, mobile instance) can only have one popup. The following popups are already published on the selected platforms: %(conflicts)s"
-msgstr ""
+msgstr "Chaque plateforme (instance rando, widget, mobile) ne peut comporter qu'une seule popup. Les popups suivantes sont déjà publiées sur les plateformes sélectionnées : %(conflicts)s"
 
 #, python-format
 msgid "Each platform (rando, widget, mobile instance) can only have one banner. The following banners are already published on the selected platforms: %(conflicts)s"
-msgstr ""
+msgstr "Chaque plateforme (instance rando, widget, mobile) ne peut comporter qu'une seule bannière. Les bannières suivantes sont déjà publiées sur les plateformes sélectionnées : %(conflicts)s"
 
 msgid "Title"
 msgstr "Titre"
