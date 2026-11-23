@@ -3,7 +3,6 @@ import logging
 from datetime import datetime
 
 from django.conf import settings
-from django.contrib.gis.db.models.functions import Transform
 from django.http import HttpResponse
 from django.utils.translation import gettext_lazy as _
 from django.views.generic import ListView
@@ -26,6 +25,7 @@ from geotrek.common.viewsets import GeotrekMapentityViewSet
 
 from .filters import SensitiveAreaFilterSet
 from .forms import RegulatorySensitiveAreaForm, SensitiveAreaForm
+from .helpers import annotate_display_geom
 from .models import SensitiveArea, Species, SportPractice
 from .serializers import SensitiveAreaGeojsonSerializer, SensitiveAreaSerializer
 from .vector_layers import SensitivityVectorLayer
@@ -79,6 +79,7 @@ class SensitiveAreaRadiiMixin:
                 for s in species
             }
         )
+        context["default_radius"] = settings.SENSITIVITY_DEFAULT_RADIUS
         return context
 
 
@@ -122,7 +123,9 @@ class SensitiveAreaViewSet(GeotrekMapentityViewSet):
     def get_queryset(self):
         qs = self.model.objects.existing().select_related("species")
         if self.format_kwarg == "geojson":
-            qs = qs.annotate(api_geom=Transform("geom", settings.API_SRID))
+            qs = annotate_display_geom(
+                qs, field_name="api_geom", srid=settings.API_SRID
+            )
             qs = qs.only("id", "species")
         return qs
 

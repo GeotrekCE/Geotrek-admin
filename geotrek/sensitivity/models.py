@@ -6,6 +6,7 @@ from django.conf import settings
 from django.contrib.gis.db import models
 from django.contrib.gis.geos import GEOSGeometry, Polygon
 from django.db.models import IntegerChoices
+from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
 from django.utils.translation import pgettext_lazy
 from mapentity.serializers import plain_text
@@ -126,6 +127,20 @@ class Species(TimeStampedModelMixin, OptionalPictogramMixin):
 
     def pretty_practices(self):
         return ", ".join([str(practice) for practice in self.practices.all()])
+
+    def save(self, *args, **kwargs):
+        radius_changed = False
+        if self.pk:
+            old_radius = (
+                Species.objects.filter(pk=self.pk)
+                .values_list("radius", flat=True)
+                .first()
+            )
+            radius_changed = old_radius != self.radius
+        super().save(*args, **kwargs)
+        if radius_changed:
+            # Invalidate MVT/GeoJSON caches when species radius changes
+            SensitiveArea.objects.filter(species=self).update(date_update=Now())
 
 
 class SensitiveArea(
@@ -248,6 +263,22 @@ class SensitiveArea(
             if self.geom
             else None
         )
+
+    @classmethod
+    def latest_updated_with_count(cls, **kwargs):
+        # Point buffers can extend into neighboring tiles beyond the raw point's tile.
+        return super().latest_updated_with_count()
+
+    def get_map_image_extent(self, srid=settings.API_SRID):
+        geom = self.get_geom()
+        if geom is None:
+            return None
+        if geom.geom_type == "Point" and self.radius > 0:
+            geom = geom.buffer(self.radius, 16)
+        else:
+            geom = geom.clone()
+        geom.transform(srid)
+        return geom.extent
 
     def kml(self):
         """Exports sensitivearea into KML format"""

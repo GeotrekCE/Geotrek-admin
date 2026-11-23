@@ -319,3 +319,23 @@ class SensitiveAreaModelTest(TestCase):
 
         self.assertEqual(sensitive_area.services.count(), 1)
         self.assertEqual(sensitive_area.services.first(), service)
+
+    def test_get_map_image_extent_point_uses_radius(self):
+        species = SpeciesFactory.create(radius=500)
+        area = SensitiveAreaFactory.create(geom=self.point_geom, species=species)
+        extent = area.get_map_image_extent(srid=settings.SRID)
+        self.assertAlmostEqual(extent[0], 700050 - 500, delta=1)
+        self.assertAlmostEqual(extent[1], 6600050 - 500, delta=1)
+        self.assertAlmostEqual(extent[2], 700050 + 500, delta=1)
+        self.assertAlmostEqual(extent[3], 6600050 + 500, delta=1)
+
+    def test_species_radius_change_updates_sensitivearea_date_update(self):
+        species = SpeciesFactory.create(radius=100)
+        area = SensitiveAreaFactory.create(geom=self.point_geom, species=species)
+        old_date = area.date_update
+
+        species.radius = 500
+        species.save()
+        area.refresh_from_db()
+
+        self.assertGreater(area.date_update, old_date)

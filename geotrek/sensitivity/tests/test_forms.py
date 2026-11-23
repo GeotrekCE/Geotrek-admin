@@ -2,7 +2,12 @@ from django.test import TestCase
 from mapentity.tests import SuperUserFactory
 
 from ...authent.models import default_structure
-from ..forms import RegulatorySensitiveAreaForm
+from ..forms import (
+    BubbleMapWidget,
+    PolygonMapWidget,
+    RegulatorySensitiveAreaForm,
+    SensitiveAreaForm,
+)
 from .factories import RegulatorySensitiveAreaFactory, SportPracticeFactory
 
 
@@ -134,3 +139,18 @@ class RegulatorySensitiveAreaFormTest(TestCase):
         for p in range(1, 13):
             fieldname = f"period{p:02}"
             self.assertEqual(getattr(area.species, fieldname), form_data[fieldname])
+
+
+class SensitiveAreaWidgetTest(TestCase):
+    def test_bubble_and_polygon_widget_allowed_types(self):
+        user = SuperUserFactory()
+        bubble_form = SensitiveAreaForm(user=user)
+        regulatory_form = RegulatorySensitiveAreaForm(user=user)
+        self.assertIsInstance(bubble_form.fields["geom"].widget, BubbleMapWidget)
+        self.assertEqual(
+            bubble_form.fields["geom"].widget.allowed_types, ["POINT", "POLYGON"]
+        )
+        self.assertIsInstance(regulatory_form.fields["geom"].widget, PolygonMapWidget)
+        self.assertEqual(
+            regulatory_form.fields["geom"].widget.allowed_types, ["POLYGON"]
+        )

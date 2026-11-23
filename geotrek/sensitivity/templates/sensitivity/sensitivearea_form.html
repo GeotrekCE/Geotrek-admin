@@ -5,83 +5,174 @@
 
 {% block extrabody %}
     {{ block.super }}
-{#    <script type="text/javascript">#}
-{#        var sensitiveareaRadii = JSON.parse('{{ radii|safe }}');#}
-{#        var sensitiveareaCurrentFeature = null;#}
-{#        var sensitiveareaCurrentRadius;#}
-{#        if ($('#id_species').val()) {#}
-{#            sensitiveareaCurrentRadius = sensitiveareaRadii[$('#id_species').val()];#}
-{#        } else {#}
-{#            sensitiveareaCurrentRadius = 50;#}
-{#        }#}
-{##}
-{#        $("#id_species").change(function() {#}
-{#            sensitiveareaCurrentRadius = sensitiveareaRadii[$(this).val()];#}
-{#            if (sensitiveareaCurrentFeature && sensitiveareaCurrentFeature.setRadius) {#}
-{#                sensitiveareaCurrentFeature.setRadius(sensitiveareaCurrentRadius);#}
-{#            }#}
-{#        });#}
-{##}
-{#        polygonGeometryField = MapEntity.GeometryField.extend({#}
-{#            _controlDrawOptions: function () {#}
-{#                return {#}
-{#                    edit: {#}
-{#                        featureGroup: this.drawnItems#}
-{#                    },#}
-{#                    draw: {#}
-{#                        circlemarker: false,#}
-{#                        polyline: false,#}
-{#                        rectangle: false,#}
-{#                        circle: false,#}
-{#                        marker: false#}
-{#                    }#}
-{#                };#}
-{#            }#}
-{##}
-{#        });#}
-{##}
-{#        bubbleGeometryField = MapEntity.GeometryField.extend({#}
-{#            load: function() {#}
-{#                self = this;#}
-{#                this._map.on('draw:created', function (e) {#}
-{#                    if (e.layer.setRadius) {#}
-{#                        e.layer.setRadius(sensitiveareaCurrentRadius);#}
-{#                    }#}
-{#                    sensitiveareaCurrentFeature = e.layer;#}
-{#                });#}
-{#                var value = (this.store.formfield.value || '');#}
-{#                if (/^\s*$/.test(value)) {#}
-{#                    return null;#}
-{#                }#}
-{#                var geometry = L.GeoJSON.geometryToLayer(JSON.parse(value), function (geojson, latlng) {#}
-{#                    if (geojson.type === "Point") {#}
-{#                        sensitiveareaCurrentFeature = new L.Circle(latlng, sensitiveareaCurrentRadius);#}
-{#                        return sensitiveareaCurrentFeature;#}
-{#                    }#}
-{#                    return new L.CircleMarker(latlng);#}
-{#                });#}
-{#                if (geometry) {#}
-{#                    // Add initial geometry to the map#}
-{#                    geometry.addTo(this._map);#}
-{#                    this.drawnItems.addLayer(geometry);#}
-{#                }#}
-{#                this._setView();#}
-{#                return geometry;#}
-{#            },#}
-{#            _controlDrawOptions: function () {#}
-{#                return {#}
-{#                    edit: {#}
-{#                        featureGroup: this.drawnItems#}
-{#                    },#}
-{#                    draw: {#}
-{#                        circlemarker: {radius: function() { return sensitiveareaCurrentRadius; }},#}
-{#                        polyline: false,#}
-{#                        rectangle: false,#}
-{#                        circle: false,#}
-{#                        marker: false#}
-{#                    }#}
-{#                };#}
-{#            }#}
-{#        });#}
-{#    </script>#}
+    {% if radii %}
+    <script id="sensitivearea-radii" type="application/json">{{ radii|safe }}</script>
+    <script type="text/javascript">
+        (function () {
+            const radiiEl = document.getElementById('sensitivearea-radii');
+            const speciesSelect = document.getElementById('id_species');
+            const geomInput = document.getElementById('id_geom');
+            if (!radiiEl || !speciesSelect || !geomInput) return;
+
+            const sensitiveareaRadii = JSON.parse(radiiEl.textContent);
+            const defaultRadius = {{ default_radius|default:100 }};
+            const SOURCE_ID = 'sensitivity-bubble-circle';
+            const FILL_LAYER_ID = 'sensitivity-bubble-circle-fill';
+            const STROKE_LAYER_ID = 'sensitivity-bubble-circle-stroke';
+            const EMPTY_FC = { type: 'FeatureCollection', features: [] };
+
+            let formMap = null;
+            let lastPointCoords = null;
+            let lastRadius = null;
+
+            function getCurrentRadius() {
+                const speciesId = speciesSelect.value;
+                if (speciesId && Object.prototype.hasOwnProperty.call(sensitiveareaRadii, speciesId)) {
+                    return sensitiveareaRadii[speciesId];
+                }
+                return defaultRadius;
+            }
+
+            function extractPointCoords(geojson) {
+                if (!geojson) return null;
+                if (geojson.type === 'Point' && Array.isArray(geojson.coordinates)) {
+                    return geojson.coordinates;
+                }
+                if (geojson.type === 'Feature') {
+                    return extractPointCoords(geojson.geometry);
+                }
+                if (geojson.type === 'FeatureCollection' && Array.isArray(geojson.features)) {
+                    for (const feature of geojson.features) {
+                        const coords = extractPointCoords(feature);
+                        if (coords) return coords;
+                    }
+                }
+                return null;
+            }
+
+            function getPointCoordsFromFormInput() {
+                const raw = (geomInput.value || '').trim();
+                if (!raw) return null;
+                try {
+                    return extractPointCoords(JSON.parse(raw));
+                } catch (e) {
+                    return null;
+                }
+            }
+
+            function getLivePointCoords(map) {
+                if (!map) return getPointCoordsFromFormInput();
+                const source = map.getSource('gm_main');
+                const data = source?._data;
+                const features = data?.geojson?.features || data?.features;
+                if (Array.isArray(features) && features.length > 0) {
+                    return extractPointCoords({ type: 'FeatureCollection', features });
+                }
+                return getPointCoordsFromFormInput();
+            }
+
+            function ensureBubbleLayers(map) {
+                if (!map.getSource(SOURCE_ID)) {
+                    map.addSource(SOURCE_ID, { type: 'geojson', data: EMPTY_FC });
+                }
+                const firstGeomanLayer = (map.getStyle()?.layers || []).find(
+                    (l) => l.id.startsWith('gm_') || l.id.startsWith('gm-') || l.id.startsWith('geoman')
+                );
+                const beforeId = firstGeomanLayer ? firstGeomanLayer.id : undefined;
+
+                if (!map.getLayer(FILL_LAYER_ID)) {
+                    map.addLayer({
+                        id: FILL_LAYER_ID,
+                        type: 'fill',
+                        source: SOURCE_ID,
+                        paint: {
+                            'fill-color': '#3388ff',
+                            'fill-opacity': 0.2,
+                        },
+                    }, beforeId);
+                }
+                if (!map.getLayer(STROKE_LAYER_ID)) {
+                    map.addLayer({
+                        id: STROKE_LAYER_ID,
+                        type: 'line',
+                        source: SOURCE_ID,
+                        paint: {
+                            'line-color': '#3388ff',
+                            'line-width': 2,
+                            'line-opacity': 1,
+                        },
+                    }, beforeId);
+                }
+            }
+
+            function buildCircleFeatureCollection(coords, radiusMeters) {
+                if (!coords || !radiusMeters || radiusMeters <= 0 || typeof turf === 'undefined') {
+                    return EMPTY_FC;
+                }
+                const circle = turf.circle(coords, radiusMeters / 1000, {
+                    steps: 64,
+                    units: 'kilometers',
+                });
+                return { type: 'FeatureCollection', features: [circle] };
+            }
+
+            function updateCircle(coords) {
+                if (!formMap || !formMap.getSource(SOURCE_ID)) return;
+                const radius = getCurrentRadius();
+                const sameCoords =
+                    (coords === null && lastPointCoords === null) ||
+                    (Array.isArray(coords) && Array.isArray(lastPointCoords) &&
+                        coords[0] === lastPointCoords[0] && coords[1] === lastPointCoords[1]);
+                if (sameCoords && radius === lastRadius) return;
+
+                lastPointCoords = coords ? [...coords] : null;
+                lastRadius = radius;
+                formMap.getSource(SOURCE_ID).setData(buildCircleFeatureCollection(coords, radius));
+            }
+
+            function fitMapToCircle(map, coords, radiusMeters) {
+                const fc = buildCircleFeatureCollection(coords, radiusMeters);
+                if (fc.features.length === 0) return;
+                const bbox = turf.bbox(fc);
+                map.fitBounds(
+                    [[bbox[0], bbox[1]], [bbox[2], bbox[3]]],
+                    { padding: 50, maxZoom: 18, animate: false }
+                );
+            }
+
+            window.addEventListener('map:init', function (e) {
+                if (e.detail.fieldId !== 'id_geom') return;
+                formMap = e.detail.map;
+                ensureBubbleLayers(formMap);
+
+                const initialCoords = getPointCoordsFromFormInput();
+                updateCircle(initialCoords);
+                if (initialCoords) {
+                    const radius = getCurrentRadius();
+                    setTimeout(() => fitMapToCircle(formMap, initialCoords, radius), 400);
+                }
+
+                ['gm:create', 'gm:editend', 'gm:dragend', 'gm:remove'].forEach((eventName) => {
+                    formMap.on(eventName, () => {
+                        setTimeout(() => updateCircle(getPointCoordsFromFormInput()), 0);
+                    });
+                });
+
+                formMap.on('render', () => {
+                    updateCircle(getLivePointCoords(formMap));
+                });
+            });
+
+            if (window.jQuery) {
+                window.jQuery('#id_species').on('change', function () {
+                    updateCircle(getLivePointCoords(formMap));
+                });
+            } else {
+                speciesSelect.addEventListener('change', function () {
+                    updateCircle(getLivePointCoords(formMap));
+                });
+            }
+        })();
+    </script>
+    {% endif %}
 {% endblock extrabody %}

@@ -1,6 +1,45 @@
 from calendar import monthrange
 from datetime import date
 
+from django.conf import settings
+from django.contrib.gis.db import models
+from django.contrib.gis.db.models.functions import Transform
+from django.db.models import Case, F, Value, When
+from django.db.models.functions import Coalesce
+
+from geotrek.common.functions import Buffer, GeometryType
+
+
+def annotate_display_geom(qs, field_name="geom_display", srid=None):
+    """Annotate queryset so Point geometries become circle polygons of their species radius."""
+    effective_radius = Coalesce(
+        F("species__radius"), Value(settings.SENSITIVITY_DEFAULT_RADIUS)
+    )
+    point_geom = F("geom")
+    circle_geom = Buffer(F("geom"), effective_radius, 16)
+    default_geom = F("geom")
+    if srid is not None:
+        point_geom = Transform(point_geom, srid)
+        circle_geom = Transform(circle_geom, srid)
+        default_geom = Transform(default_geom, srid)
+    output_srid = srid if srid is not None else settings.SRID
+    return qs.alias(geom_type=GeometryType(F("geom"))).annotate(
+        **{
+            field_name: Case(
+                When(
+                    geom_type="POINT",
+                    then=Case(
+                        When(species__radius__lte=0, then=point_geom),
+                        default=circle_geom,
+                        output_field=models.GeometryField(srid=output_srid),
+                    ),
+                ),
+                default=default_geom,
+                output_field=models.GeometryField(srid=output_srid),
+            )
+        }
+    )
+
 
 def openair_atimes(month: int) -> str:
     """Format month number to OpenAir ATime item

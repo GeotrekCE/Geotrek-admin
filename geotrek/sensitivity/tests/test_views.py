@@ -1,6 +1,9 @@
 import datetime
+import json
 
+from django.conf import settings
 from django.contrib.auth.models import Permission
+from django.contrib.gis.geos import GEOSGeometry, Point
 from django.test import TestCase
 from django.test.utils import override_settings
 from django.urls import reverse
@@ -89,6 +92,32 @@ class SensitiveAreaTemplatesTest(TestCase):
         url = reverse("sensitivity:sensitivearea_detail", kwargs={"pk": self.area.pk})
         response = self.client.get(url)
         self.assertContains(response, self.area.species.name)
+
+    def test_geojson_detail_buffers_point_by_species_radius(self):
+        species = SpeciesFactory.create(radius=400)
+        point_area = SensitiveAreaFactory.create(
+            geom=Point(700000, 6600000, srid=settings.SRID), species=species
+        )
+        url = point_area.get_geojson_detail_url()
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        data = response.json()
+        self.assertEqual(data["geometry"]["type"], "Polygon")
+        self.assertEqual(data["properties"]["radius"], 400)
+        geom = GEOSGeometry(json.dumps(data["geometry"]), srid=settings.API_SRID)
+        geom.transform(settings.SRID)
+        self.assertAlmostEqual(geom.area, 3.14159265 * 400**2, delta=15000)
+
+    def test_create_view_includes_radii_and_default_radius(self):
+        species = SpeciesFactory.create(radius=250)
+        url = reverse("sensitivity:sensitivearea_add")
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, 200)
+        radii = json.loads(response.context["radii"])
+        self.assertEqual(radii[str(species.pk)], 250)
+        self.assertEqual(
+            response.context["default_radius"], settings.SENSITIVITY_DEFAULT_RADIUS
+        )
 
 
 class SensitiveAreaOpenAirViewsTest(TestCase):
