@@ -1,8 +1,7 @@
 function assertPathsLayerChecked(mapSelector) {
   cy.get(`${mapSelector} .layer-switcher-btn`).click();
   cy.get(`${mapSelector} .layer-switcher-menu`).should('be.visible');
-  cy.get(`${mapSelector} .layer-switcher-menu label`)
-    .contains('Paths')
+  cy.contains(`${mapSelector} .layer-switcher-menu label`, /^\s*Path\s*$/)
     .find('input[type="checkbox"]')
     .should('be.checked');
 }
