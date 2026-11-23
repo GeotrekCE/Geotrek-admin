@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db.models.query import Prefetch
+from django.utils import translation
 from rest_framework import renderers
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.generics import GenericAPIView, RetrieveAPIView
@@ -13,7 +14,6 @@ from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.filters import GeotrekPublishedFilter
 from geotrek.common.models import Attachment
 from geotrek.flatpages import models as flatpages_models
-from geotrek.flatpages.models import MenuItem
 
 
 class FlatPageViewSet(api_viewsets.GeotrekViewSet):
@@ -63,7 +63,7 @@ class MenuItemTreeView(GenericAPIView):
     # from https://stackoverflow.com/questions/21112302/how-to-serialize-hierarchical-relationship-in-django-rest
     serializer_class = api_serializers.MenuItemSerializer
     queryset = flatpages_models.MenuItem.objects.filter(depth=1).exclude(
-        platform=MenuItem.PlatformChoices.MOBILE
+        platform=flatpages_models.MenuItem.PlatformChoices.MOBILE
     )
     filter_backends = (
         GeotrekPublishedFilter,
@@ -110,7 +110,9 @@ class MenuItemTreeView(GenericAPIView):
     def _recursive_node_to_dict(self, node):
         result = self.get_serializer(instance=node).data
         children_qs = self.filter_queryset(
-            node.get_children().exclude(platform=MenuItem.PlatformChoices.MOBILE)
+            node.get_children().exclude(
+                platform=flatpages_models.MenuItem.PlatformChoices.MOBILE
+            )
         )
         children = [
             self._recursive_node_to_dict(c)
@@ -119,3 +121,35 @@ class MenuItemTreeView(GenericAPIView):
         ]
         result["children"] = children
         return result
+
+
+class PopupViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.PopupSerializer
+    filter_backends = (
+        GeotrekPublishedFilter,
+        api_filters.EditorialContentFilter,
+    )
+
+    def get_queryset(self):
+        with translation.override(self.request.GET.get("language"), deactivate=True):
+            return (
+                flatpages_models.Popup.objects.all()
+                .prefetch_related("portals")
+                .order_by("pk")
+            )
+
+
+class BannerViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.BannerSerializer
+    filter_backends = (
+        GeotrekPublishedFilter,
+        api_filters.EditorialContentFilter,
+    )
+
+    def get_queryset(self):
+        with translation.override(self.request.GET.get("language"), deactivate=True):
+            return (
+                flatpages_models.Banner.objects.all()
+                .prefetch_related("portals")
+                .order_by("pk")
+            )

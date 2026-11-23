@@ -4980,6 +4980,126 @@ class MenuItemTestCase(TestCase):
         self.assertEqual(menu_item_repr["parent"], None)
 
 
+class PopupTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.portal = common_factory.TargetPortalFactory.create()
+        cls.other_portal = common_factory.TargetPortalFactory.create()
+        cls.popup = flatpages_factory.PopupFactory.create(
+            portals=[cls.portal], published=True
+        )
+        cls.other_popup = flatpages_factory.PopupFactory.create(
+            portals=[cls.other_portal], published=True
+        )
+        cls.popup_without_portal = flatpages_factory.PopupFactory.create(published=True)
+
+    def test_list(self):
+        response = self.client.get("/api/v2/popup/")
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        results = json_response.get("results")
+
+        self.assertEqual(
+            sorted(results[0].keys()), ["content", "date_update", "id", "name"]
+        )
+
+    def test_detail(self):
+        response = self.client.get(f"/api/v2/popup/{self.popup.pk}/")
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+
+        self.assertEqual(
+            sorted(result.keys()), ["content", "date_update", "id", "name"]
+        )
+
+    def test_filter_portals(self):
+        response = self.client.get("/api/v2/popup/", {"portals": self.portal.pk})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(json_response.get("count"), 1)
+        popup_content = json_response.get("results")[0]
+        self.assertEqual(popup_content["id"], self.popup.pk)
+
+    def test_filter_multiple_portals(self):
+        portals = [str(self.portal.pk), str(self.other_portal.pk)]
+        response = self.client.get("/api/v2/popup/", {"portals": ",".join(portals)})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(json_response.get("count"), 2)
+        popup_content = json_response.get("results")
+        self.assertEqual(popup_content[0]["id"], self.popup.pk)
+        self.assertEqual(popup_content[1]["id"], self.other_popup.pk)
+
+    def test_filter_without_portals(self):
+        response = self.client.get("/api/v2/popup/")
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(json_response.get("count"), 1)
+        popup_content = json_response.get("results")[0]
+        self.assertEqual(popup_content["id"], self.popup_without_portal.pk)
+
+
+class BannerTestCase(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.portal = common_factory.TargetPortalFactory.create()
+        cls.other_portal = common_factory.TargetPortalFactory.create()
+        cls.banner = flatpages_factory.BannerFactory.create(
+            portals=[cls.portal], published=True
+        )
+        cls.other_banner = flatpages_factory.BannerFactory.create(
+            portals=[cls.other_portal], published=True
+        )
+        cls.banner_without_portal = flatpages_factory.BannerFactory.create(
+            published=True
+        )
+
+    def test_list(self):
+        response = self.client.get("/api/v2/banner/")
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        results = json_response.get("results")
+
+        self.assertEqual(
+            sorted(results[0].keys()), ["content", "date_update", "id", "name"]
+        )
+
+    def test_detail(self):
+        response = self.client.get(f"/api/v2/banner/{self.banner.pk}/")
+        self.assertEqual(response.status_code, 200)
+        result = response.json()
+
+        self.assertEqual(
+            sorted(result.keys()), ["content", "date_update", "id", "name"]
+        )
+
+    def test_filter_portals(self):
+        response = self.client.get("/api/v2/banner/", {"portals": self.portal.pk})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(json_response.get("count"), 1)
+        banner_content = json_response.get("results")[0]
+        self.assertEqual(banner_content["id"], self.banner.pk)
+
+    def test_filter_multiple_portals(self):
+        portals = [str(self.portal.pk), str(self.other_portal.pk)]
+        response = self.client.get("/api/v2/banner/", {"portals": ",".join(portals)})
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(json_response.get("count"), 2)
+        banner_content = json_response.get("results")
+        self.assertEqual(banner_content[0]["id"], self.banner.pk)
+        self.assertEqual(banner_content[1]["id"], self.other_banner.pk)
+
+    def test_filter_without_portals(self):
+        response = self.client.get("/api/v2/banner/")
+        self.assertEqual(response.status_code, 200)
+        json_response = response.json()
+        self.assertEqual(json_response.get("count"), 1)
+        banner_content = json_response.get("results")[0]
+        self.assertEqual(banner_content["id"], self.banner_without_portal.pk)
+
+
 class ReportStatusTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
