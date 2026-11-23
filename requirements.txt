@@ -143,7 +143,7 @@ django-crispy-forms==2.7
     # via
     #   crispy-bootstrap4
     #   mapentity
-django-embed-video @ git+https://github.com/jazzband/django-embed-video.git@2b644987acb178d9113854b0c370b178a3a67a5e#egg=django-embed-video
+django-embed-video @ git+https://github.com/jazzband/django-embed-video.git@d38f33d88f530b80cb81d6d41bb304fee9548a7b#egg=django-embed-video
     # via
     #   geotrek (setup.py)
     #   mapentity
@@ -276,7 +276,7 @@ numpy==2.5.4
     #   onnxruntime
     #   pymupdf
     #   shapely
-onnxruntime==1.31.1
+onnxruntime==1.32.0
     # via pymupdf
 packaging==26.3
     # via
