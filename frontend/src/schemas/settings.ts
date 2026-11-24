@@ -43,7 +43,7 @@ export const settingsSchema = z.object({
       }),
     }),
     appOptions: z.object({
-      minZoom: z.number().int(),
+      minZoom: z.union([z.number().int(), z.null()]),
     }),
   }),
   user: z.object({
