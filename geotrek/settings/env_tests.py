@@ -63,6 +63,7 @@ SESSION_FILE_PATH = os.path.join(TMP_DIR, 'sessions')
 os.makedirs(SESSION_FILE_PATH)
 
 import warnings
+
 warnings.filterwarnings("ignore")
 
 LOGGING['loggers']['']['handlers'] = ('log_file', )
@@ -110,6 +111,12 @@ def _patched_init_worker(*args, **kwargs):
     
     settings.DATA_TEMP_DIR = os.path.join(worker_tmp, 'data')
     os.makedirs(settings.DATA_TEMP_DIR, exist_ok=True)
+    
+    settings.TMP_DIR = os.path.join(worker_tmp, 'tmp')
+    os.makedirs(settings.TMP_DIR, exist_ok=True)
+    
+    settings.SESSION_FILE_PATH = os.path.join(worker_tmp, 'sessions')
+    os.makedirs(settings.SESSION_FILE_PATH, exist_ok=True)
     
     return result
 
