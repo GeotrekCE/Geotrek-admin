@@ -123,8 +123,8 @@ class MenuItemTreeView(GenericAPIView):
         return result
 
 
-class PopupViewSet(api_viewsets.GeotrekViewSet):
-    serializer_class = api_serializers.PopupSerializer
+class ModalWindowViewSet(api_viewsets.GeotrekViewSet):
+    serializer_class = api_serializers.ModalWindowSerializer
     filter_backends = (
         GeotrekPublishedFilter,
         api_filters.EditorialContentFilter,
@@ -133,7 +133,7 @@ class PopupViewSet(api_viewsets.GeotrekViewSet):
     def get_queryset(self):
         with translation.override(self.request.GET.get("language"), deactivate=True):
             return (
-                flatpages_models.Popup.objects.all()
+                flatpages_models.ModalWindow.objects.all()
                 .prefetch_related("portals")
                 .order_by("pk")
             )

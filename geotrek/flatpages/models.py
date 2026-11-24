@@ -96,23 +96,23 @@ class MenuItem(
         return self.title
 
 
-class Popup(BasePublishableMixin, TimeStampedModelMixin):
+class ModalWindow(BasePublishableMixin, TimeStampedModelMixin):
     name = models.CharField(verbose_name=_("Name"), max_length=128)
     content = models.TextField(
         verbose_name=_("Content"),
-        help_text=_("Content of the popup"),
+        help_text=_("Content of the modal window"),
     )
-    # If no portal is specified in the request, the published popup that have no associated portal is returned
+    # If no portal is specified in the request, the published modal window that have no associated portal is returned
     portals = models.ManyToManyField(
         "common.TargetPortal",
         blank=True,
-        related_name="popup",
+        related_name="modal_window",
         verbose_name=_("Portals"),
     )
 
     class Meta:
-        verbose_name = _("Popup")
-        verbose_name_plural = _("Popups")
+        verbose_name = _("Modal window")
+        verbose_name_plural = _("Modal windows")
 
     def __str__(self):
         return self.name

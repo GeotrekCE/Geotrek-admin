@@ -87,7 +87,7 @@ if "geotrek.flatpages" in settings.INSTALLED_APPS:
         FlatPageViewSet,  # noqa
         MenuItemRetrieveView,  # noqa
         MenuItemTreeView,  # noqa
-        PopupViewSet,  # noqa
+        ModalWindowViewSet,  # noqa
     )
 if "geotrek.infrastructure" in settings.INSTALLED_APPS:
     from .infrastructure import (

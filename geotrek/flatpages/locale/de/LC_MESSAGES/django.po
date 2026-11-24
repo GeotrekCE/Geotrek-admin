@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-11-24 08:31+0000\n"
+"POT-Creation-Date: 2026-11-24 09:06+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/flatpages/de/>\n"
@@ -43,11 +43,11 @@ msgid "no portal"
 msgstr ""
 
 #, python-format
-msgid "Each platform (rando, widget, mobile instance) can only have one popup. The following popups are already published on the selected platforms: %(conflicts)s"
+msgid "Each platform (rando, widget, mobile instance) can only have one modal window. The following modal windows are already published on the selected platforms: %(conflicts)s"
 msgstr ""
 
 #, python-format
-msgid "The popup is published in language '%(lang)s' but no content is given in this language."
+msgid "The modal window is published in language '%(lang)s' but no content is given in this language."
 msgstr ""
 
 #, python-format
@@ -109,13 +109,13 @@ msgstr ""
 msgid "Name"
 msgstr ""
 
-msgid "Content of the popup"
+msgid "Content of the modal window"
 msgstr ""
 
-msgid "Popup"
+msgid "Modal window"
 msgstr ""
 
-msgid "Popups"
+msgid "Modal windows"
 msgstr ""
 
 msgid "Content of the banner"

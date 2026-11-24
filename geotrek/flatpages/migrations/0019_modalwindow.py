@@ -12,7 +12,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="Popup",
+            name="ModalWindow",
             fields=[
                 (
                     "id",
@@ -62,22 +62,22 @@ class Migration(migrations.Migration):
                 (
                     "content",
                     models.TextField(
-                        help_text="Content of the popup", verbose_name="Content"
+                        help_text="Content of the modal window", verbose_name="Content"
                     ),
                 ),
                 (
                     "portals",
                     models.ManyToManyField(
                         blank=True,
-                        related_name="popup",
+                        related_name="modal_window",
                         to="common.targetportal",
                         verbose_name="Portals",
                     ),
                 ),
             ],
             options={
-                "verbose_name": "Popup",
-                "verbose_name_plural": "Popups",
+                "verbose_name": "Modal window",
+                "verbose_name_plural": "Modal windows",
             },
         ),
     ]

@@ -7,7 +7,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     dependencies = [
         ("common", "0044_alter_accessibilityattachment_date_insert_and_more"),
-        ("flatpages", "0019_popup"),
+        ("flatpages", "0019_modalwindow"),
     ]
 
     operations = [

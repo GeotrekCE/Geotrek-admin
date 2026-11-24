@@ -2126,7 +2126,7 @@ if "geotrek.flatpages" in settings.INSTALLED_APPS:
 
             return published_parent.id
 
-    class PopupSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+    class ModalWindowSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField()
         content = serializers.SerializerMethodField()
 
@@ -2137,7 +2137,7 @@ if "geotrek.flatpages" in settings.INSTALLED_APPS:
             return get_translation_or_dict("content", self, obj)
 
         class Meta:
-            model = flatpages_models.Popup
+            model = flatpages_models.ModalWindow
             fields = ("id", "name", "content", "date_update")
 
     class BannerSerializer(DynamicFieldsMixin, serializers.ModelSerializer):

@@ -201,7 +201,9 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
     router.register("outdoor_course", api_views.CourseViewSet, basename="course")
 if "geotrek.flatpages" in settings.INSTALLED_APPS:
     router.register("flatpage", api_views.FlatPageViewSet, basename="flatpage")
-    router.register("popup", api_views.PopupViewSet, basename="popup")
+    router.register(
+        "modalwindow", api_views.ModalWindowViewSet, basename="modal-window"
+    )
     router.register("banner", api_views.BannerViewSet, basename="banner")
 if "geotrek.signage" in settings.INSTALLED_APPS:
     router.register("signage", api_views.SignageViewSet, basename="signage")

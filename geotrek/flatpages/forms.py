@@ -8,7 +8,7 @@ from modeltranslation.utils import build_localized_fieldname
 from treebeard.forms import MoveNodeForm
 
 from geotrek.common.models import Attachment, FileType
-from geotrek.flatpages.models import Banner, FlatPage, MenuItem, Popup
+from geotrek.flatpages.models import Banner, FlatPage, MenuItem, ModalWindow
 from geotrek.flatpages.widgets import FlatPageTinyMCE
 
 
@@ -217,16 +217,16 @@ class UniquePublicationPerPortalFormMixin:
         return cleaned_data
 
 
-class PopupForm(UniquePublicationPerPortalFormMixin, forms.ModelForm):
+class ModalWindowForm(UniquePublicationPerPortalFormMixin, forms.ModelForm):
     conflict_error_message = _(
-        "Each platform (rando, widget, mobile instance) can only have one popup. The following popups are already published on the selected platforms: %(conflicts)s"
+        "Each platform (rando, widget, mobile instance) can only have one modal window. The following modal windows are already published on the selected platforms: %(conflicts)s"
     )
     content_error_message = _(
-        "The popup is published in language '%(lang)s' but no content is given in this language."
+        "The modal window is published in language '%(lang)s' but no content is given in this language."
     )
 
     class Meta:
-        model = Popup
+        model = ModalWindow
         fields = (
             "name",
             "portals",

@@ -4,8 +4,8 @@ from django.test import TestCase, override_settings
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.common.tests.factories import TargetPortalFactory
-from geotrek.flatpages.forms import BannerForm, PopupForm
-from geotrek.flatpages.tests.factories import BannerFactory, PopupFactory
+from geotrek.flatpages.forms import BannerForm, ModalWindowForm
+from geotrek.flatpages.tests.factories import BannerFactory, ModalWindowFactory
 
 
 class UniquePublicationPerPortalFormTestMixin:
@@ -166,14 +166,14 @@ class UniquePublicationPerPortalFormTestMixin:
         self.assertTrue(form.is_valid(), form.errors)
 
 
-class PopupFormMixin:
-    form_class = PopupForm
-    factory = PopupFactory
+class ModalWindowFormMixin:
+    form_class = ModalWindowForm
+    factory = ModalWindowFactory
     conflict_message = (
-        "Each platform (rando, widget, mobile instance) can only have one popup. "
-        "The following popups are already published on the selected platforms: "
+        "Each platform (rando, widget, mobile instance) can only have one modal window. "
+        "The following modal windows are already published on the selected platforms: "
     )
-    content_message = "The popup is published in language '%(lang)s' but no content is given in this language."
+    content_message = "The modal window is published in language '%(lang)s' but no content is given in this language."
 
 
 class BannerFormMixin:
@@ -187,15 +187,15 @@ class BannerFormMixin:
 
 
 @override_settings(PUBLISHED_BY_LANG=True)
-class PopupFormPublishedByLangTest(
-    PopupFormMixin, UniquePublicationPerPortalFormTestMixin, TestCase
+class ModalWindowFormPublishedByLangTest(
+    ModalWindowFormMixin, UniquePublicationPerPortalFormTestMixin, TestCase
 ):
     pass
 
 
 @override_settings(PUBLISHED_BY_LANG=False)
-class PopupFormNotPublishedByLangTest(
-    PopupFormMixin, UniquePublicationPerPortalFormTestMixin, TestCase
+class ModalWindowFormNotPublishedByLangTest(
+    ModalWindowFormMixin, UniquePublicationPerPortalFormTestMixin, TestCase
 ):
     pass
 

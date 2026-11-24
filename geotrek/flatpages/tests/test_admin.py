@@ -8,13 +8,13 @@ from mapentity.tests.factories import SuperUserFactory
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.flatpages.admin import BannerAdmin, PopupAdmin
-from geotrek.flatpages.models import Banner, FlatPage, MenuItem, Popup
+from geotrek.flatpages.admin import BannerAdmin, ModalWindowAdmin
+from geotrek.flatpages.models import Banner, FlatPage, MenuItem, ModalWindow
 from geotrek.flatpages.tests.factories import (
     BannerFactory,
     FlatPageFactory,
     MenuItemFactory,
-    PopupFactory,
+    ModalWindowFactory,
 )
 
 
@@ -362,7 +362,7 @@ class MenuItemAdminFormViewsTestCase(TestCase):
         self.assertEqual(len(qs), 0)
 
 
-class PopupAdminTest(TestCase):
+class ModalWindowAdminTest(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.user = SuperUserFactory.create()
@@ -373,8 +373,8 @@ class PopupAdminTest(TestCase):
 
     def test_creation(self):
         post_data = {
-            "name_fr": "Popup fr",
-            "name_en": "Popup en",
+            "name_fr": "Modal window fr",
+            "name_en": "Modal window en",
             "portals": [self.portal.id],
             "published_fr": True,
             "published_en": True,
@@ -382,16 +382,16 @@ class PopupAdminTest(TestCase):
             "content_en": "<p>Content en</p>",
         }
 
-        self.client.post(reverse("admin:flatpages_popup_add"), post_data)
-        self.assertEqual(Popup.objects.get().name_en, "Popup en")
+        self.client.post(reverse("admin:flatpages_modalwindow_add"), post_data)
+        self.assertEqual(ModalWindow.objects.get().name_en, "Modal window en")
 
     def test_portals_display_as_list(self):
         portal1 = TargetPortalFactory(name="Portal1")
         portal2 = TargetPortalFactory(name="Portal2")
-        popup = PopupFactory.create(portals=[portal1, portal2])
+        modal_window = ModalWindowFactory.create(portals=[portal1, portal2])
 
-        admin = PopupAdmin(Popup, AdminSite())
-        portals = admin.portals_for_display(popup)
+        admin = ModalWindowAdmin(ModalWindow, AdminSite())
+        portals = admin.portals_for_display(modal_window)
 
         self.assertEqual(portals, "Portal1, Portal2")
 

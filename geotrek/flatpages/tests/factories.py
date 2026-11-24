@@ -49,11 +49,11 @@ class MenuItemFactory(factory.django.DjangoModelFactory):
         return obj
 
 
-class PopupFactory(factory.django.DjangoModelFactory):
+class ModalWindowFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = flatpages_models.Popup
+        model = flatpages_models.ModalWindow
 
-    name = factory.Sequence(lambda n: f"Popup {n}")
+    name = factory.Sequence(lambda n: f"Modal window {n}")
     content = factory.Sequence(lambda n: f"<p>Content {n}</p>")
 
     @factory.post_generation

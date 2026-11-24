@@ -1945,7 +1945,7 @@ class EditorialContentFilter(BaseFilterBackend):
             if portals:
                 queryset = queryset.filter(portals__in=portals.split(","))
             else:
-                # If no portal is given then return the published popup/banner without associated portal
+                # If no portal is given then return the published modal window/banner without associated portal
                 queryset = queryset.filter(portals__isnull=True)
         return queryset
 

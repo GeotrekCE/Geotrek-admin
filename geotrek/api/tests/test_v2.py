@@ -4980,21 +4980,23 @@ class MenuItemTestCase(TestCase):
         self.assertEqual(menu_item_repr["parent"], None)
 
 
-class PopupTestCase(TestCase):
+class ModalWindowTestCase(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.portal = common_factory.TargetPortalFactory.create()
         cls.other_portal = common_factory.TargetPortalFactory.create()
-        cls.popup = flatpages_factory.PopupFactory.create(
+        cls.modal = flatpages_factory.ModalWindowFactory.create(
             portals=[cls.portal], published=True
         )
-        cls.other_popup = flatpages_factory.PopupFactory.create(
+        cls.other_modal = flatpages_factory.ModalWindowFactory.create(
             portals=[cls.other_portal], published=True
         )
-        cls.popup_without_portal = flatpages_factory.PopupFactory.create(published=True)
+        cls.modal_without_portal = flatpages_factory.ModalWindowFactory.create(
+            published=True
+        )
 
     def test_list(self):
-        response = self.client.get("/api/v2/popup/")
+        response = self.client.get("/api/v2/modalwindow/")
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
         results = json_response.get("results")
@@ -5004,7 +5006,7 @@ class PopupTestCase(TestCase):
         )
 
     def test_detail(self):
-        response = self.client.get(f"/api/v2/popup/{self.popup.pk}/")
+        response = self.client.get(f"/api/v2/modalwindow/{self.modal.pk}/")
         self.assertEqual(response.status_code, 200)
         result = response.json()
 
@@ -5013,30 +5015,32 @@ class PopupTestCase(TestCase):
         )
 
     def test_filter_portals(self):
-        response = self.client.get("/api/v2/popup/", {"portals": self.portal.pk})
+        response = self.client.get("/api/v2/modalwindow/", {"portals": self.portal.pk})
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
         self.assertEqual(json_response.get("count"), 1)
-        popup_content = json_response.get("results")[0]
-        self.assertEqual(popup_content["id"], self.popup.pk)
+        modal_content = json_response.get("results")[0]
+        self.assertEqual(modal_content["id"], self.modal.pk)
 
     def test_filter_multiple_portals(self):
         portals = [str(self.portal.pk), str(self.other_portal.pk)]
-        response = self.client.get("/api/v2/popup/", {"portals": ",".join(portals)})
+        response = self.client.get(
+            "/api/v2/modalwindow/", {"portals": ",".join(portals)}
+        )
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
         self.assertEqual(json_response.get("count"), 2)
-        popup_content = json_response.get("results")
-        self.assertEqual(popup_content[0]["id"], self.popup.pk)
-        self.assertEqual(popup_content[1]["id"], self.other_popup.pk)
+        modal_content = json_response.get("results")
+        self.assertEqual(modal_content[0]["id"], self.modal.pk)
+        self.assertEqual(modal_content[1]["id"], self.other_modal.pk)
 
     def test_filter_without_portals(self):
-        response = self.client.get("/api/v2/popup/")
+        response = self.client.get("/api/v2/modalwindow/")
         self.assertEqual(response.status_code, 200)
         json_response = response.json()
         self.assertEqual(json_response.get("count"), 1)
-        popup_content = json_response.get("results")[0]
-        self.assertEqual(popup_content["id"], self.popup_without_portal.pk)
+        modal_content = json_response.get("results")[0]
+        self.assertEqual(modal_content["id"], self.modal_without_portal.pk)
 
 
 class BannerTestCase(TestCase):
