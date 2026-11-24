@@ -166,8 +166,9 @@ class UniquePublicationPerPortalFormMixin:
     """
 
     conflict_error_message = None
+    content_error_message = None
 
-    def check_conflicts(self, own_portals, published_field):
+    def check_portals_conflicts(self, own_portals, published_field):
         conflicts = self._meta.model.objects.filter(**{published_field: True})
         if own_portals:
             conflicts = conflicts.filter(portals__in=own_portals)
@@ -189,6 +190,17 @@ class UniquePublicationPerPortalFormMixin:
                 params={"conflicts": ", ".join(lines)},
             )
 
+    def check_content_by_language(self, cleaned_data, published_field, language):
+        published = cleaned_data.get(published_field)
+        content_fieldname = build_localized_fieldname("content", language)
+        content = cleaned_data.get(content_fieldname)
+
+        if published and not content:
+            raise ValidationError(
+                self.content_error_message,
+                params={"lang": language},
+            )
+
     def clean(self):
         cleaned_data = super().clean()
         portals = cleaned_data.get("portals")
@@ -197,9 +209,10 @@ class UniquePublicationPerPortalFormMixin:
             for lang in settings.MODELTRANSLATION_LANGUAGES:
                 field = build_localized_fieldname("published", lang)
                 if cleaned_data.get(field):
-                    self.check_conflicts(portals, field)
+                    self.check_portals_conflicts(portals, field)
+                    self.check_content_by_language(cleaned_data, field, lang)
         elif cleaned_data.get("published"):
-            self.check_conflicts(portals, "published")
+            self.check_portals_conflicts(portals, "published")
 
         return cleaned_data
 
@@ -207,6 +220,9 @@ class UniquePublicationPerPortalFormMixin:
 class PopupForm(UniquePublicationPerPortalFormMixin, forms.ModelForm):
     conflict_error_message = _(
         "Each platform (rando, widget, mobile instance) can only have one popup. The following popups are already published on the selected platforms: %(conflicts)s"
+    )
+    content_error_message = _(
+        "The popup is published in language '%(lang)s' but no content is given in this language."
     )
 
     class Meta:
@@ -222,6 +238,9 @@ class PopupForm(UniquePublicationPerPortalFormMixin, forms.ModelForm):
 class BannerForm(UniquePublicationPerPortalFormMixin, forms.ModelForm):
     conflict_error_message = _(
         "Each platform (rando, widget, mobile instance) can only have one banner. The following banners are already published on the selected platforms: %(conflicts)s"
+    )
+    content_error_message = _(
+        "The banner is published in language '%(lang)s' but no content is given in this language."
     )
 
     class Meta:
