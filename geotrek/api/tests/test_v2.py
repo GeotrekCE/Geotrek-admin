@@ -7553,6 +7553,14 @@ class VigilanceAreaTypeHierarchyUsedByPublishedTestCase(TestCase):
             ],
         )
 
+    def test_invalid_portal_filter(self):
+        response = self.client.get("/api/v2/vigilancearea_type/", {"portals": "A,B"})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.json(),
+            {"portals": "A comma-separated list of integers is expected."},
+        )
+
     def test_filter_portals(self):
         self.assertListEqual(
             self.get_type_ids({"portals": self.portal1.pk}),
