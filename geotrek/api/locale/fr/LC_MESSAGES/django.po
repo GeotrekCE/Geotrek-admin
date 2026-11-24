@@ -236,10 +236,10 @@ msgid "Filter by one or multiple Course id. It will show only the POIs related t
 msgstr "Filtrer par un ou plusieurs identifiants de cours. Il n'affichera que les POIliés à ce parcours outdoor. S'il s'agit de plusieurs cours, ils doivent être séparés par des virgules. "
 
 msgid "Filter by a trek id. It will only show the contents related to this trek."
-msgstr ""
+msgstr "Filtrer par identifiant de randonnée. Seuls les contenus liés à cette randonnée s'afficheront."
 
 msgid "Filter by a touristic content id. It will only show the contents related to this touristic content."
-msgstr ""
+msgstr "Filtrer par identifiant de contenu touristique. Seuls les contenus liés à ce contenu touristique s'afficheront."
 
 msgid "Filter by a touristic event id. It will only show the contents related to this touristic event."
 msgstr "Filtrer par l'id d'un évènement touristique. Le filtre n'affichera que les contenus liés à cet évènement touristique."
@@ -284,22 +284,22 @@ msgid "Filter events on cancelled boolean : true/false expected"
 msgstr "Filtre sur les évènements annulés : true/false attendu"
 
 msgid "Filter events happening before or during date, format YYYY-MM-DD"
-msgstr ""
+msgstr "Filtrer les événements ayant lieu avant ou pendant la date, au format AAAA-MM-JJ"
 
 msgid "Filter events happening after or during date, format YYYY-MM-DD"
-msgstr ""
+msgstr "Filtrer les événements se produisant après ou pendant la date, au format AAAA-MM-JJ"
 
 msgid "Filter objects updated after or during date, format YYYY-MM-DD"
-msgstr ""
+msgstr "Filtrer les objets mis à jour après ou à partir de la date, au format AAAA-MM-JJ"
 
 msgid "Filter objects updated before or during date, format YYYY-MM-DD"
-msgstr ""
+msgstr "Filtrer les objets mis à jour avant ou à partir de la date, au format AAAA-MM-JJ"
 
 msgid "Filter objects created after or during date, format YYYY-MM-DD"
-msgstr ""
+msgstr "Filtrer les objets créés après ou à partir de la date indiquée, au format AAAA-MM-JJ"
 
 msgid "Filter objects created before or during date, format YYYY-MM-DD"
-msgstr ""
+msgstr "Filtrer les objets créés avant ou à partir de la date, au format AAAA-MM-JJ"
 
 msgid "Filter by practicability status, true=practicable, false=impracticable."
 msgstr "Filtrer par statut de praticabilité, false=impraticable, true=praticable"
@@ -383,7 +383,7 @@ msgid "Filter by one or more course type id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de type de parcours, séparés par des virgules."
 
 msgid "A comma-separated list of integers is expected."
-msgstr ""
+msgstr "Une liste d'entiers séparés par des virgules est attendue."
 
 msgid "Filter by some case-insensitive text contained in name."
 msgstr "Filtrer par du texte insensible à la casse contenu dans le nom."
@@ -404,13 +404,13 @@ msgid "Filter by one or more source id, comma-separated."
 msgstr "Filtrez par un ou plusieurs identifiants de source, séparés par des virgules."
 
 msgid "Filter by some case-insensitive text contained in name or content."
-msgstr ""
+msgstr "Filtrer en fonction d'une chaîne de caractères (sans distinction de majuscules/minuscules) contenue dans le nom ou le contenu."
 
 msgid "Distance (m)"
 msgstr "Distance (m)"
 
 msgid "Altitude (m)"
-msgstr ""
+msgstr "Altitude (m)"
 
 msgid "Altimetry data not available"
 msgstr "Données altimétriques non disponibles"
