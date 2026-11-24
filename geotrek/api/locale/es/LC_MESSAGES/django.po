@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-14 14:26+0000\n"
+"POT-Creation-Date: 2026-11-24 16:06+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Spanish <https://weblate.makina-corpus.net/projects/geotrek-admin/api/es/>\n"
@@ -380,6 +380,9 @@ msgid "Filter by one or more ratings id, comma-separated. Return sites that have
 msgstr ""
 
 msgid "Filter by one or more course type id, comma-separated."
+msgstr ""
+
+msgid "A comma-separated list of integers is expected."
 msgstr ""
 
 msgid "Filter by some case-insensitive text contained in name."
