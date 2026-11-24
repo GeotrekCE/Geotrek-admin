@@ -269,7 +269,7 @@ mercantile==1.2.1
     # via django-mapbox-baselayer
 networkx==3.7
     # via pymupdf
-numpy==2.5.4
+numpy==2.5.5
     # via
     #   large-image
     #   large-image-source-vips
