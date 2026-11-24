@@ -167,12 +167,9 @@ class TourViewSet(TrekViewSet):
 
 
 class PracticeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TrekRelatedPortalFilter,
-    )
     serializer_class = api_serializers.PracticeSerializer
     queryset = trekking_models.Practice.objects.all()
+    used_by = ("treks",)
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
@@ -208,12 +205,12 @@ class TrekRatingViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = (
         *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.GeotrekRatingFilter,
-        api_filters.TrekRelatedPortalFilter,
     )
     serializer_class = api_serializers.TrekRatingSerializer
     queryset = trekking_models.Rating.objects.order_by(
         "order", "name", "pk"
     )  # Required for reliable pagination
+    used_by = ("treks",)
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
@@ -226,12 +223,9 @@ class TrekRatingViewSet(api_viewsets.GeotrekViewSet):
 
 
 class NetworkViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TrekRelatedPortalFilter,
-    )
     serializer_class = api_serializers.NetworkSerializer
     queryset = trekking_models.TrekNetwork.objects.all()
+    used_by = ("treks",)
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
@@ -244,12 +238,9 @@ class NetworkViewSet(api_viewsets.GeotrekViewSet):
 
 
 class DifficultyViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TrekRelatedPortalFilter,
-    )
     serializer_class = api_serializers.TrekDifficultySerializer
     queryset = trekking_models.DifficultyLevel.objects.all()
+    used_by = ("treks",)
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
@@ -301,12 +292,9 @@ class POITypeViewSet(api_viewsets.GeotrekViewSet):
 
 
 class AccessibilityViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TrekRelatedPortalFilter,
-    )
     serializer_class = api_serializers.AccessibilitySerializer
     queryset = trekking_models.Accessibility.objects.all()
+    used_by = ("treks",)
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
@@ -319,12 +307,9 @@ class AccessibilityViewSet(api_viewsets.GeotrekViewSet):
 
 
 class AccessibilityLevelViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TrekRelatedPortalFilter,
-    )
     serializer_class = api_serializers.AccessibilityLevelSerializer
     queryset = trekking_models.AccessibilityLevel.objects.all()
+    used_by = ("treks",)
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
@@ -337,12 +322,9 @@ class AccessibilityLevelViewSet(api_viewsets.GeotrekViewSet):
 
 
 class RouteViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TrekRelatedPortalFilter,
-    )
     serializer_class = api_serializers.RouteSerializer
     queryset = trekking_models.Route.objects.all()
+    used_by = ("treks",)
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):

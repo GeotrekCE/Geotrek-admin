@@ -19,6 +19,7 @@ class GeotrekViewSet(RetrieveCacheResponseMixin, viewsets.ReadOnlyModelViewSet):
         DjangoFilterBackend,
         api_filters.GeotrekQueryParamsFilter,
         api_filters.GeotrekPublishedFilter,
+        api_filters.UsedByPublishedFilter,
     )
     pagination_class = api_pagination.StandardResultsSetPagination
     permission_classes = (

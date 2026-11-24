@@ -23,12 +23,14 @@ class TargetPortalViewSet(api_viewsets.GeotrekViewSet):
 
 
 class ThemeViewSet(ListCacheResponseMixin, api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TreksAndSitesAndTourismRelatedPortalThemeFilter,
-    )
     serializer_class = api_serializers.ThemeSerializer
     queryset = common_models.Theme.objects.all()
+    used_by = (
+        "treks",
+        "touristiccontents",
+        "touristic_events",
+        *api_filters.if_outdoor("sites"),
+    )
 
     def get_list_cache_key(self):
         """return specific list cache key based on list last_update object"""
@@ -78,12 +80,16 @@ class ThemeViewSet(ListCacheResponseMixin, api_viewsets.GeotrekViewSet):
 
 
 class SourceViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TreksAndSitesAndTourismAndFlatpagesandVigilanceRelatedPortalThemeFilter,
-    )
     serializer_class = api_serializers.RecordSourceSerializer
     queryset = common_models.RecordSource.objects.all()
+    used_by = (
+        "flatpages",
+        "treks",
+        "touristiccontents",
+        "touristicevents",
+        "vigilance_areas",
+        *api_filters.if_outdoor("sites"),
+    )
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
@@ -96,12 +102,9 @@ class SourceViewSet(api_viewsets.GeotrekViewSet):
 
 
 class ReservationSystemViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.RelatedPortalStructureOrReservationSystemFilter,
-    )
     serializer_class = api_serializers.ReservationSystemSerializer
     queryset = common_models.ReservationSystem.objects.all()
+    used_by = ("trek", "touristiccontent")
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
@@ -116,11 +119,11 @@ class ReservationSystemViewSet(api_viewsets.GeotrekViewSet):
 class LabelViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = (
         *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TreksAndSitesRelatedPortalFilter,
         api_filters.GeotrekLabelFilter,
     )
     serializer_class = api_serializers.LabelSerializer
     queryset = common_models.Label.objects.all()
+    used_by = ("treks", *api_filters.if_outdoor("sites"))
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
@@ -144,10 +147,7 @@ class FileTypeViewSet(api_viewsets.GeotrekViewSet):
 
 class HDViewPointViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.HDViewPointSerializer
-    filter_backends = (
-        *api_viewsets.GeotrekGeometricViewset.filter_backends,
-        api_filters.HDViewPointPublishedByPortalFilter,
-    )
+    used_by = ("trek", "poi", *api_filters.if_outdoor("site"))
 
     def get_queryset(self):
         with translation.override(self.request.GET.get("language"), deactivate=True):

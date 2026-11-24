@@ -1,7 +1,6 @@
 from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 
-from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
@@ -9,12 +8,10 @@ from geotrek.authent import models as authent_models
 
 
 class StructureViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.RelatedPortalStructureOrReservationSystemFilter,
-    )
+    filter_backends = (*api_viewsets.GeotrekViewSet.filter_backends,)
     serializer_class = api_serializers.StructureSerializer
     queryset = authent_models.Structure.objects.all()
+    used_by = ("trek", "touristiccontent")
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):

@@ -69,14 +69,11 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class OutdoorPracticeViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = (
-        *api_viewsets.GeotrekGeometricViewset.filter_backends,
-        api_filters.SiteRelatedPortalFilter,
-    )
     serializer_class = api_serializers.OutdoorPracticeSerializer
     queryset = outdoor_models.Practice.objects.order_by(
         "pk"
     )  # Required for reliable pagination
+    used_by = ("sites",)
 
 
 class SectorViewSet(api_viewsets.GeotrekGeometricViewset):
@@ -87,25 +84,19 @@ class SectorViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class SiteTypeViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = (
-        *api_viewsets.GeotrekGeometricViewset.filter_backends,
-        api_filters.SiteRelatedPortalFilter,
-    )
     serializer_class = api_serializers.SiteTypeSerializer
     queryset = outdoor_models.SiteType.objects.order_by(
         "pk"
     )  # Required for reliable pagination
+    used_by = ("sites",)
 
 
 class CourseTypeViewSet(api_viewsets.GeotrekGeometricViewset):
-    filter_backends = (
-        *api_viewsets.GeotrekGeometricViewset.filter_backends,
-        api_filters.CourseRelatedFilter,
-    )
     serializer_class = api_serializers.CourseTypeSerializer
     queryset = outdoor_models.CourseType.objects.order_by(
         "pk"
     )  # Required for reliable pagination
+    used_by = ("courses",)
 
 
 class OutdoorRatingScaleViewSet(api_viewsets.GeotrekViewSet):
@@ -123,12 +114,12 @@ class OutdoorRatingViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = (
         *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.GeotrekRatingFilter,
-        api_filters.SitesRelatedPortalAndCourseRelatedFilter,
     )
     serializer_class = api_serializers.OutdoorRatingSerializer
     queryset = outdoor_models.Rating.objects.order_by(
         "order", "name", "pk"
     )  # Required for reliable pagination
+    used_by = ("courses", "sites")
 
 
 class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
