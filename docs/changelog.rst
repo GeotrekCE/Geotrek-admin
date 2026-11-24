@@ -5,6 +5,10 @@ CHANGELOG
 2.127.2+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Improvements**
+
+* Only provide vigilance areas types that are associated with a published vigilance area in the API v2 endpoint
+
 
 2.127.2         (2026-11-19)
 ----------------------------
