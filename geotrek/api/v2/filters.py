@@ -1,3 +1,4 @@
+from copy import copy
 from datetime import date, datetime
 from distutils.util import strtobool
 
@@ -25,7 +26,7 @@ from geotrek.tourism.models import (
     TouristicEventType,
 )
 from geotrek.trekking.models import POI, ServiceType, Trek
-from geotrek.zoning.models import City, District, VigilanceArea
+from geotrek.zoning.models import City, District, VigilanceArea, VigilanceAreaType
 
 if "geotrek.outdoor" in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
@@ -1504,6 +1505,31 @@ class UsedByPublishedFilter(BaseFilterBackend):
                 "schema": {"type": "string"},
             },
         ]
+
+
+class VigilanceAreaRelatedPortalFilter(UsedByPublishedFilter):
+    def filter_queryset(self, request, queryset, view):
+        type_view = copy(view)
+        type_view.used_by = ("vigilance_areas",)
+        qs = super().filter_queryset(request, queryset, type_view)
+        queryset = queryset.filter(pk__in=self._with_ancestors(qs))
+        return queryset
+
+    def _with_ancestors(self, used_qs):
+        ids = set(used_qs.values_list("pk", flat=True))
+        frontier = ids
+        while frontier:
+            parents = (
+                set(
+                    VigilanceAreaType.objects.filter(
+                        pk__in=frontier, parent__isnull=False
+                    ).values_list("parent_id", flat=True)
+                )
+                - ids
+            )
+            ids |= parents
+            frontier = parents
+        return ids
 
 
 class GeotrekRatingScaleFilter(BaseFilterBackend):

@@ -37,6 +37,10 @@ class VigilanceAreaViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class VigilanceAreaTypeViewSet(api_viewsets.GeotrekViewSet):
+    filter_backends = (
+        *api_viewsets.GeotrekGeometricViewset.filter_backends,
+        api_filters.VigilanceAreaRelatedPortalFilter,
+    )
     serializer_class = api_serializers.VigilanceAreaTypeSerializer
     queryset = zoning_models.VigilanceAreaType.objects.all().order_by("pk")
 
