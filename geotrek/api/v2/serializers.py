@@ -2126,6 +2126,34 @@ if "geotrek.flatpages" in settings.INSTALLED_APPS:
 
             return published_parent.id
 
+    class ModalWindowSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField()
+        content = serializers.SerializerMethodField()
+
+        def get_name(self, obj):
+            return get_translation_or_dict("name", self, obj)
+
+        def get_content(self, obj):
+            return get_translation_or_dict("content", self, obj)
+
+        class Meta:
+            model = flatpages_models.ModalWindow
+            fields = ("id", "name", "content", "date_update")
+
+    class BannerSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
+        name = serializers.SerializerMethodField()
+        content = serializers.SerializerMethodField()
+
+        def get_name(self, obj):
+            return get_translation_or_dict("name", self, obj)
+
+        def get_content(self, obj):
+            return get_translation_or_dict("content", self, obj)
+
+        class Meta:
+            model = flatpages_models.Banner
+            fields = ("id", "name", "content", "date_update")
+
 
 if "geotrek.infrastructure" in settings.INSTALLED_APPS:
 

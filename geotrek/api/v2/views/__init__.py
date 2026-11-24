@@ -82,7 +82,13 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         SiteViewSet,  # noqa
     )
 if "geotrek.flatpages" in settings.INSTALLED_APPS:
-    from .flatpages import MenuItemTreeView, FlatPageViewSet, MenuItemRetrieveView  # noqa
+    from .flatpages import (
+        BannerViewSet,  # noqa
+        FlatPageViewSet,  # noqa
+        MenuItemRetrieveView,  # noqa
+        MenuItemTreeView,  # noqa
+        ModalWindowViewSet,  # noqa
+    )
 if "geotrek.infrastructure" in settings.INSTALLED_APPS:
     from .infrastructure import (
         InfrastructureConditionViewSet,  # noqa

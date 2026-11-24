@@ -94,3 +94,47 @@ class MenuItem(
 
     def __str__(self):
         return self.title
+
+
+class ModalWindow(BasePublishableMixin, TimeStampedModelMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    content = models.TextField(
+        verbose_name=_("Content"),
+        help_text=_("Content of the modal window"),
+    )
+    # If no portal is specified in the request, the published modal window that have no associated portal is returned
+    portals = models.ManyToManyField(
+        "common.TargetPortal",
+        blank=True,
+        related_name="modal_window",
+        verbose_name=_("Portals"),
+    )
+
+    class Meta:
+        verbose_name = _("Modal window")
+        verbose_name_plural = _("Modal windows")
+
+    def __str__(self):
+        return self.name
+
+
+class Banner(BasePublishableMixin, TimeStampedModelMixin):
+    name = models.CharField(verbose_name=_("Name"), max_length=128)
+    content = models.TextField(
+        verbose_name=_("Content"),
+        help_text=_("Content of the banner"),
+    )
+    # If no portal is specified in the request, the published banner that have no associated portal is returned
+    portals = models.ManyToManyField(
+        "common.TargetPortal",
+        blank=True,
+        related_name="banner",
+        verbose_name=_("Portals"),
+    )
+
+    class Meta:
+        verbose_name = _("Banner")
+        verbose_name_plural = _("Banners")
+
+    def __str__(self):
+        return self.name

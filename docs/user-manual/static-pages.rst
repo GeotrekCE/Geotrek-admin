@@ -1,6 +1,9 @@
 =======================
-Pages statiques & menus
+Contenus éditoriaux
 =======================
+
+Pages statiques et menus
+========================
 
 Les pages statiques sont les pages d'information et de contextualisation de votre portail web Geotrek-rando. Comme pourraient l'être les premières pages d'un topo-guide papier. Elles peuvent aussi être consultées dans votre application Geotrek-mobile.
 
@@ -27,7 +30,7 @@ La section correspondante et le type d'entités s'appelle "Élément Menu", dans
 Les exemples de présentation visuelle des menus et des pages statiques décrivent la manière dont Geotrek-rando peut exploiter ces données et paramètrages. La présentation pourrait être différente si le portail n'est pas propulsé par Geotrek-rando.
 
 Créer une page statique
-========================
+-----------------------
 
 .. image:: ../images/user-manual/flatpages_admin_section_pages_statiques.png
 
@@ -76,7 +79,7 @@ Les champs "Titre", "Publiée" et "Contenu" peuvent recevoir une valeur différe
     Ces champs sont une alternative au glisser-déposer sur la liste des Pages Statiques et permettent de déplacer les pages dans l'arborescence (voir `Arborescence des pages statiques`_).
 
 Mise en forme et médias
------------------------
+~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: ../images/user-manual/flatpages_tinymce_tools.png
 
@@ -96,7 +99,7 @@ Médias :
 - encart de suggestion de contenu Geotrek
 
 Insérer une image
------------------
+~~~~~~~~~~~~~~~~~
 
 .. image:: ../images/user-manual/flatpages_tinymce_tools_insert.png
 
@@ -112,7 +115,7 @@ Les champs suivants sont à renseigner :
 Une fois l'image chargée, il est possible de la redimensionner, et de l'aligner à gauche ou à droite du reste du contenu.
 
 Insérer des suggestions de contenus Geotrek
--------------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: ../images/user-manual/flatpages_tinymce_tools_geotrek.png
 
@@ -125,7 +128,7 @@ Avec l'outil *Suggestions*, les champs suivants sont à renseigner :
 Après la validation du formulaire une zone récapitulant les informations saisies sous forme textuelle est placée dans le contenu de la page. Le portail Geotrek-rando enrichira la présentation des suggestions avec les titres des contenus suggérés à la place des identifiants et les images associées.
 
 Vérifier la mise en page du contenu
------------------------------------
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. image:: ../images/user-manual/flatpages_tinymce_tools_code.png
 
@@ -137,7 +140,7 @@ Les outils suivants sont disponibles :
 Il est aussi possible de prévisualiser une page statique avant de la rendre accessible à tous en l'associant à un élément de menu. Pour cela, créer la page, la publier et y accéder en saisissant son URL directement : ``https://URL-GEOTREK-RANDO/information/ID-PAGE`` (exemple : ``https://gtr3demo.ecrins-parcnational.fr/information/6``). Vous pourrez aussi alors récupérer son URL complète générée par Geotrek-rando, si vous souhaitez faire un lien vers cette page statique sans la rendre accessible depuis le menu.
 
 Publier une page
-================
+----------------
 
 Une page créée n'est pas immédiatement visible sur Geotrek-rando ou Geotrek-mobile.
 Il faut d'abord la marquer comme **« Publiée »** pour chacune des langues souhaitées.
@@ -155,7 +158,7 @@ Pour rendre une page accessible aux utilisateurs, plusieurs options sont possibl
 Dans le cas d'une page associée à un élément de menu, **la page et l'élément de menu doivent tous les deux être marqués comme « Publié »**.
 
 Arborescence de menus
-=====================
+---------------------
 
 .. image:: ../images/user-manual/flatpages_admin_with_menuitems.png
 
@@ -191,7 +194,7 @@ Chaque élément de menu peut avoir une cible ou non. S'il a une cible le clic s
 Le champ *Plateforme* permet de différencier des menus destinés uniquement à un portail web Geotrek-rando ou uniquement à une application Geotrek-mobile. 
 
 Arborescence des pages statiques
-================================
+--------------------------------
 
 .. image:: ../images/user-manual/flatpages_admin_with_flatpages.png
 
@@ -220,3 +223,81 @@ Comment procéder ?
 
     - `Striphtml <https://striphtml.com/>`_
     - `W3docs <https://www.w3docs.com/tools/string-remove-tags>`_
+
+.. _popups-et-bannieres:
+
+Popups et bannières
+===================
+
+En complément des pages statiques et des menus, la section **Contenu éditorial** du site d'administration permet de gérer deux types de messages destinés à être mis en avant auprès des visiteurs d'un portail :
+
+- les **popups** : une fenêtre affichée par-dessus le contenu du portail, à l'arrivée du visiteur (message d'accueil, alerte météo, fermeture temporaire d'un secteur, etc.) ;
+- les **bannières** : un bandeau d'information court, affiché sur la page d'accueil du portail (annonce d'un événement, rappel réglementaire, etc.).
+
+Ces contenus sont exposés par l'API de Geotrek-admin, c'est au portail (Geotrek-rando, Geotrek-widget, Geotrek-mobile…) de les récupérer et de les afficher selon sa propre présentation.
+
+Créer une popup ou une bannière
+-------------------------------
+
+Le formulaire de création/modification d'une popup ou d'une bannière contient les champs suivants :
+
+- **Nom \***
+- Portails
+- Publié
+- **Contenu \***
+
+Les champs "Nom", "Publié" et "Contenu" peuvent recevoir une valeur différente pour chaque langue configurée.
+
+*Nom*
+
+    Le nom de la popup ou de la bannière. Il permet de l'identifier dans la liste du site d'administration et est également transmis par l'API.
+
+*Portails*
+
+    Le ou les portails sur lesquels la popup ou la bannière doit être affichée. Ce champ est facultatif : son fonctionnement est détaillé dans la section `Popups, bannières et portails`_.
+
+*Publié*
+
+    Une popup ou une bannière n'est transmise par l'API que si elle est publiée. Si la publication par langue est activée (paramètre ``PUBLISHED_BY_LANG``), la publication se fait langue par langue.
+
+*Contenu*
+
+    Le contenu du message. Pour les popups, le contenu est saisi avec un éditeur de texte riche permettant la mise en forme, l'ajout de liens et d'images. Pour les bannières, il s'agit d'un texte simple, une bannière ayant vocation à afficher un message court.
+
+Popups, bannières et portails
+-----------------------------
+
+Un même Geotrek-admin peut alimenter plusieurs portails (plusieurs Geotrek-rando, des widgets, une application mobile…), déclarés dans la section *Portails cibles* (voir la configuration des portails dans :doc:`configuration-ttw`). Le champ *Portails* permet de choisir sur lequel ou lesquels de ces portails une popup ou une bannière doit apparaître.
+
+**Une seule popup et une seule bannière publiée par portail**
+
+Un portail ne peut afficher qu'une seule popup et qu'une seule bannière à la fois. Geotrek-admin empêche donc d'enregistrer une popup (respectivement une bannière) publiée si une autre popup (respectivement bannière) est déjà publiée sur l'un des portails sélectionnés. Le formulaire affiche alors une erreur listant les éléments en conflit et les portails concernés.
+
+Pour remplacer une popup par une autre sur un portail, il faut donc d'abord dépublier l'ancienne (ou la retirer de ce portail), puis publier la nouvelle.
+
+Si la publication par langue est activée (``PUBLISHED_BY_LANG``), cette contrainte s'applique **langue par langue** : il est possible d'avoir sur un même portail une popup publiée uniquement en français et une autre publiée uniquement en anglais, mais pas deux popups publiées en français.
+
+**Popups et bannières sans portail**
+
+Une popup ou une bannière qui n'est associée à **aucun portail** est considérée comme celle **par défaut** : elle est destinée aux plateformes de diffusion n'utilisant pas de portail. Les éléments sans portail forment un groupe à part entière : la même contrainte s'applique, il ne peut y avoir qu'une seule popup et une seule bannière publiées sans portail.
+
+.. important::
+
+   Une popup ou une bannière sans portail **n'est pas** un contenu « affiché sur tous les portails ». Elle n'est renvoyée que lorsque le portail ne précise pas d'identifiant de portail. Un portail configuré avec un identifiant de portail ne reçoit **que** les éléments explicitement associés à ce portail : il n'y a pas de repli automatique vers l'élément sans portail.
+
+   Pour afficher le même message sur plusieurs portails filtrés, il faut donc sélectionner explicitement chacun de ces portails dans le champ *Portails*.
+
+Accès via l'API
+---------------
+
+Les popups et les bannières sont disponibles dans l'API v2 sur les points d'entrée suivants :
+
+- ``/api/v2/popup/``
+- ``/api/v2/banner/``
+
+Seuls les éléments publiés (dans la langue demandée via le paramètre ``language``, le cas échéant) sont renvoyés. Le paramètre ``portals`` permet de préciser un ou plusieurs identifiants de portail, séparés par des virgules :
+
+- ``/api/v2/popup/?portals=2`` renvoie la popup publiée associée au portail n°2 ;
+- ``/api/v2/popup/`` (sans paramètre ``portals``) renvoie la popup publiée qui n'est associée à aucun portail.
+
+Si plusieurs identifiants de portail sont fournis, l'API peut renvoyer plusieurs éléments (un par portail au maximum).

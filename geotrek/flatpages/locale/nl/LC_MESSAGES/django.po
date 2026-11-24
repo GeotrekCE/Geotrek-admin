@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-16 18:12+0200\n"
+"POT-Creation-Date: 2026-11-24 09:06+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: Dutch <https://weblate.makina-corpus.net/projects/geotrek-admin/flatpages/nl/>\n"
@@ -27,7 +27,7 @@ msgstr ""
 msgid "Link"
 msgstr ""
 
-msgid "Flatpages"
+msgid "Editorial content"
 msgstr ""
 
 msgid "Cover image"
@@ -37,6 +37,25 @@ msgid "Cover image author"
 msgstr ""
 
 msgid "Thumbnail"
+msgstr ""
+
+msgid "no portal"
+msgstr ""
+
+#, python-format
+msgid "Each platform (rando, widget, mobile instance) can only have one modal window. The following modal windows are already published on the selected platforms: %(conflicts)s"
+msgstr ""
+
+#, python-format
+msgid "The modal window is published in language '%(lang)s' but no content is given in this language."
+msgstr ""
+
+#, python-format
+msgid "Each platform (rando, widget, mobile instance) can only have one banner. The following banners are already published on the selected platforms: %(conflicts)s"
+msgstr ""
+
+#, python-format
+msgid "The banner is published in language '%(lang)s' but no content is given in this language."
 msgstr ""
 
 msgid "Title"
@@ -85,6 +104,27 @@ msgid "Menu item"
 msgstr ""
 
 msgid "Menu items"
+msgstr ""
+
+msgid "Name"
+msgstr ""
+
+msgid "Content of the modal window"
+msgstr ""
+
+msgid "Modal window"
+msgstr ""
+
+msgid "Modal windows"
+msgstr ""
+
+msgid "Content of the banner"
+msgstr ""
+
+msgid "Banner"
+msgstr ""
+
+msgid "Banners"
 msgstr ""
 
 msgid "Button Link"

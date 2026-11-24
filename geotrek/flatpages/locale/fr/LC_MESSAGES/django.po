@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-04-16 18:12+0200\n"
+"POT-Creation-Date: 2026-11-24 09:06+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: J-E Castagnede <jean-etienne.castagnede@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/flatpages/fr/>\n"
@@ -27,8 +27,8 @@ msgstr "Page"
 msgid "Link"
 msgstr "Lien"
 
-msgid "Flatpages"
-msgstr "Pages statiques"
+msgid "Editorial content"
+msgstr "Contenu éditorial"
 
 msgid "Cover image"
 msgstr "Image de couverture"
@@ -38,6 +38,25 @@ msgstr "Auteur image couverture"
 
 msgid "Thumbnail"
 msgstr "Miniature"
+
+msgid "no portal"
+msgstr "Pas de portail"
+
+#, python-format
+msgid "Each platform (rando, widget, mobile instance) can only have one modal window. The following modal windows are already published on the selected platforms: %(conflicts)s"
+msgstr "Chaque plateforme (instance rando, widget, mobile) ne peut comporter qu'une seule fenêtre modale. Les fenêtres modales suivantes sont déjà publiées sur les plateformes sélectionnées : %(conflicts)s"
+
+#, python-format
+msgid "The modal window is published in language '%(lang)s' but no content is given in this language."
+msgstr "La fenêtre modale est publiée dans la langue « %(lang)s », mais aucun contenu n'est fourni dans cette langue."
+
+#, python-format
+msgid "Each platform (rando, widget, mobile instance) can only have one banner. The following banners are already published on the selected platforms: %(conflicts)s"
+msgstr "Chaque plateforme (instance rando, widget, mobile) ne peut comporter qu'une seule bannière. Les bannières suivantes sont déjà publiées sur les plateformes sélectionnées : %(conflicts)s"
+
+#, python-format
+msgid "The banner is published in language '%(lang)s' but no content is given in this language."
+msgstr "La bannière est publiée dans la langue « %(lang)s », mais aucun contenu n'est fourni dans cette langue."
 
 msgid "Title"
 msgstr "Titre"
@@ -86,6 +105,27 @@ msgstr "Élément menu"
 
 msgid "Menu items"
 msgstr "Éléments menu"
+
+msgid "Name"
+msgstr "Nom"
+
+msgid "Content of the modal window"
+msgstr "Contenu de la fenêtre modale"
+
+msgid "Modal window"
+msgstr "Fenêtre modale"
+
+msgid "Modal windows"
+msgstr "Fenêtres modales"
+
+msgid "Content of the banner"
+msgstr "Contenu de la bannière"
+
+msgid "Banner"
+msgstr "Bannière"
+
+msgid "Banners"
+msgstr "Bannières"
 
 msgid "Button Link"
 msgstr "Lien bouton"

@@ -9,6 +9,10 @@ CHANGELOG
 2.127.2         (2026-11-19)
 ----------------------------
 
+**Improvements**
+
+* Add popup and banner administration for portals alerts
+
 
 2.127.1         (2026-11-18)
 ----------------------------

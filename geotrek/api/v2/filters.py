@@ -1930,3 +1930,32 @@ class FlatPageFilter(BaseFilterBackend):
                 "schema": {"type": "string"},
             },
         ]
+
+
+class EditorialContentFilter(BaseFilterBackend):
+    def filter_queryset(self, request, queryset, view):
+        # Do not filter on detail view
+        if "pk" not in view.kwargs:
+            portals = request.GET.get("portals")
+            language = request.GET.get("language", "all")
+            model = queryset.model
+
+            queryset = queryset.filter(get_published_filter_expression(model, language))
+
+            if portals:
+                queryset = queryset.filter(portals__in=portals.split(","))
+            else:
+                # If no portal is given then return the published modal window/banner without associated portal
+                queryset = queryset.filter(portals__isnull=True)
+        return queryset
+
+    def get_schema_operation_parameters(self, view):
+        return [
+            {
+                "name": "portals",
+                "required": False,
+                "in": "query",
+                "description": _("Filter by one or more portal id, comma-separated."),
+                "schema": {"type": "string"},
+            },
+        ]

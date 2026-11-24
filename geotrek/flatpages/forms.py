@@ -8,7 +8,7 @@ from modeltranslation.utils import build_localized_fieldname
 from treebeard.forms import MoveNodeForm
 
 from geotrek.common.models import Attachment, FileType
-from geotrek.flatpages.models import FlatPage, MenuItem
+from geotrek.flatpages.models import Banner, FlatPage, MenuItem, ModalWindow
 from geotrek.flatpages.widgets import FlatPageTinyMCE
 
 
@@ -155,3 +155,94 @@ class MenuItemForm(MoveNodeForm):
                 raise ValidationError(
                     {link_url_loc_fieldname: "This field is required."}
                 )
+
+
+class UniquePublicationPerPortalFormMixin:
+    """Ensures that only one object of the form's model is published per portal (and per language
+    if PUBLISHED_BY_LANG is enabled). Objects without portal are considered as a distinct group.
+
+    Forms using this mixin must define `conflict_error_message`, a translatable string containing
+    the `%(conflicts)s` placeholder, which is replaced by the list of conflicting objects.
+    """
+
+    conflict_error_message = None
+    content_error_message = None
+
+    def check_portals_conflicts(self, own_portals, published_field):
+        conflicts = self._meta.model.objects.filter(**{published_field: True})
+        if own_portals:
+            conflicts = conflicts.filter(portals__in=own_portals)
+        else:
+            conflicts = conflicts.filter(portals__isnull=True)
+        if self.instance.pk:
+            conflicts = conflicts.exclude(pk=self.instance.pk)
+        conflicts = conflicts.distinct()
+
+        if conflicts.exists():
+            lines = []
+            for obj in conflicts.prefetch_related("portals"):
+                portals_names = ", ".join(
+                    portal.name for portal in obj.portals.filter(pk__in=own_portals)
+                ) or _("no portal")
+                lines.append(f"{obj.name} ({portals_names})")
+            raise ValidationError(
+                self.conflict_error_message,
+                params={"conflicts": ", ".join(lines)},
+            )
+
+    def check_content_by_language(self, cleaned_data, published_field, language):
+        published = cleaned_data.get(published_field)
+        content_fieldname = build_localized_fieldname("content", language)
+        content = cleaned_data.get(content_fieldname)
+
+        if published and not content:
+            raise ValidationError(
+                self.content_error_message,
+                params={"lang": language},
+            )
+
+    def clean(self):
+        cleaned_data = super().clean()
+        portals = cleaned_data.get("portals")
+
+        if settings.PUBLISHED_BY_LANG:
+            for lang in settings.MODELTRANSLATION_LANGUAGES:
+                field = build_localized_fieldname("published", lang)
+                if cleaned_data.get(field):
+                    self.check_portals_conflicts(portals, field)
+                    self.check_content_by_language(cleaned_data, field, lang)
+        elif cleaned_data.get("published"):
+            self.check_portals_conflicts(portals, "published")
+
+        return cleaned_data
+
+
+class ModalWindowForm(UniquePublicationPerPortalFormMixin, forms.ModelForm):
+    conflict_error_message = _(
+        "Each platform (rando, widget, mobile instance) can only have one modal window. The following modal windows are already published on the selected platforms: %(conflicts)s"
+    )
+    content_error_message = _(
+        "The modal window is published in language '%(lang)s' but no content is given in this language."
+    )
+
+    class Meta:
+        model = ModalWindow
+        fields = (
+            "name",
+            "portals",
+            "published",
+            "content",
+        )
+
+
+class BannerForm(UniquePublicationPerPortalFormMixin, forms.ModelForm):
+    conflict_error_message = _(
+        "Each platform (rando, widget, mobile instance) can only have one banner. The following banners are already published on the selected platforms: %(conflicts)s"
+    )
+    content_error_message = _(
+        "The banner is published in language '%(lang)s' but no content is given in this language."
+    )
+
+    class Meta:
+        model = Banner
+        fields = ("name", "portals", "published", "content")

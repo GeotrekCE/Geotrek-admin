@@ -47,3 +47,29 @@ class MenuItemFactory(factory.django.DjangoModelFactory):
         flatpages_models.MenuItem.add_root(instance=obj)
         obj.save()
         return obj
+
+
+class ModalWindowFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = flatpages_models.ModalWindow
+
+    name = factory.Sequence(lambda n: f"Modal window {n}")
+    content = factory.Sequence(lambda n: f"<p>Content {n}</p>")
+
+    @factory.post_generation
+    def portals(obj, create, extracted=None, **kwargs):
+        if create and extracted:
+            obj.portals.set(extracted)
+
+
+class BannerFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = flatpages_models.Banner
+
+    name = factory.Sequence(lambda n: f"Banner {n}")
+    content = factory.Sequence(lambda n: f"Content {n}")
+
+    @factory.post_generation
+    def portals(obj, create, extracted=None, **kwargs):
+        if create and extracted:
+            obj.portals.set(extracted)

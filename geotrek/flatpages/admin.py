@@ -1,11 +1,18 @@
 from django.conf import settings
 from django.contrib import admin
+from django.db import models
 from django.utils.translation import gettext_lazy as _
+from tinymce.widgets import TinyMCE
 from treebeard.admin import TreeAdmin
 from treebeard.forms import movenodeform_factory
 
 from geotrek.flatpages import models as flatpages_models
-from geotrek.flatpages.forms import FlatPageForm, MenuItemForm
+from geotrek.flatpages.forms import (
+    BannerForm,
+    FlatPageForm,
+    MenuItemForm,
+    ModalWindowForm,
+)
 
 if "modeltranslation" in settings.INSTALLED_APPS:
     from modeltranslation.admin import TabbedTranslationAdmin
@@ -14,6 +21,8 @@ if "modeltranslation" in settings.INSTALLED_APPS:
         pass
 
 else:  # pragma: no cover
+    from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin
+
     # This is excluded from code coverage check, because it cannot be auto-tested.
     # Similar to `from django.contrib.admin import ModelAdmin as TabbedTranslationAdmin` found in other modules
     class BaseAdmin(TreeAdmin):
@@ -156,3 +165,63 @@ class MenuItemAdmin(BaseAdmin):
 if settings.FLATPAGES_ENABLED:
     admin.site.register(flatpages_models.FlatPage, FlatPageAdmin)
     admin.site.register(flatpages_models.MenuItem, MenuItemAdmin)
+
+
+class ModalWindowAdmin(TabbedTranslationAdmin):
+    list_display = (
+        "name",
+        "portals_for_display",
+        "published",
+    )
+    list_filter = (
+        "published",
+        ("portals", admin.filters.RelatedOnlyFieldListFilter),
+    )
+    search_fields = ("name",)
+
+    formfield_overrides = {
+        models.TextField: {"widget": TinyMCE},
+    }
+
+    form = ModalWindowForm
+
+    fields = (
+        "name",
+        "portals",
+        "published",
+        "content",
+    )
+
+    @admin.display(description=_("Portals"))
+    def portals_for_display(self, obj):
+        return ", ".join([portal.name for portal in obj.portals.all()])
+
+
+class BannerAdmin(TabbedTranslationAdmin):
+    list_display = (
+        "name",
+        "portals_for_display",
+        "published",
+    )
+    list_filter = (
+        "published",
+        ("portals", admin.filters.RelatedOnlyFieldListFilter),
+    )
+    search_fields = ("name",)
+
+    form = BannerForm
+
+    fields = (
+        "name",
+        "portals",
+        "published",
+        "content",
+    )
+
+    @admin.display(description=_("Portals"))
+    def portals_for_display(self, obj):
+        return ", ".join([portal.name for portal in obj.portals.all()])
+
+
+admin.site.register(flatpages_models.ModalWindow, ModalWindowAdmin)
+admin.site.register(flatpages_models.Banner, BannerAdmin)

@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.contrib.admin.sites import AdminSite
 from django.contrib.contenttypes.models import ContentType
 from django.test import TestCase
 from django.urls import reverse
@@ -7,8 +8,14 @@ from mapentity.tests.factories import SuperUserFactory
 from geotrek.common.models import Attachment, FileType
 from geotrek.common.tests.factories import TargetPortalFactory
 from geotrek.common.utils.testdata import get_dummy_uploaded_image
-from geotrek.flatpages.models import FlatPage, MenuItem
-from geotrek.flatpages.tests.factories import FlatPageFactory, MenuItemFactory
+from geotrek.flatpages.admin import BannerAdmin, ModalWindowAdmin
+from geotrek.flatpages.models import Banner, FlatPage, MenuItem, ModalWindow
+from geotrek.flatpages.tests.factories import (
+    BannerFactory,
+    FlatPageFactory,
+    MenuItemFactory,
+    ModalWindowFactory,
+)
 
 
 def _flatten(fieldsets):
@@ -353,3 +360,71 @@ class MenuItemAdminFormViewsTestCase(TestCase):
             object_id=menu_item.id, content_type=menu_item_content_type
         ).all()
         self.assertEqual(len(qs), 0)
+
+
+class ModalWindowAdminTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+        cls.portal = TargetPortalFactory.create(name="portal")
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_creation(self):
+        post_data = {
+            "name_fr": "Modal window fr",
+            "name_en": "Modal window en",
+            "portals": [self.portal.id],
+            "published_fr": True,
+            "published_en": True,
+            "content_fr": "<p>Content fr</p>",
+            "content_en": "<p>Content en</p>",
+        }
+
+        self.client.post(reverse("admin:flatpages_modalwindow_add"), post_data)
+        self.assertEqual(ModalWindow.objects.get().name_en, "Modal window en")
+
+    def test_portals_display_as_list(self):
+        portal1 = TargetPortalFactory(name="Portal1")
+        portal2 = TargetPortalFactory(name="Portal2")
+        modal_window = ModalWindowFactory.create(portals=[portal1, portal2])
+
+        admin = ModalWindowAdmin(ModalWindow, AdminSite())
+        portals = admin.portals_for_display(modal_window)
+
+        self.assertEqual(portals, "Portal1, Portal2")
+
+
+class BannerAdminTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.user = SuperUserFactory.create()
+        cls.portal = TargetPortalFactory.create(name="portal")
+
+    def setUp(self):
+        self.client.force_login(self.user)
+
+    def test_creation(self):
+        post_data = {
+            "name_fr": "Banner fr",
+            "name_en": "Banner en",
+            "portals": [self.portal.id],
+            "published_fr": True,
+            "published_en": True,
+            "content_fr": "Content fr",
+            "content_en": "Content en",
+        }
+
+        self.client.post(reverse("admin:flatpages_banner_add"), post_data)
+        self.assertEqual(Banner.objects.get().name_en, "Banner en")
+
+    def test_portals_display_as_list(self):
+        portal1 = TargetPortalFactory(name="Portal1")
+        portal2 = TargetPortalFactory(name="Portal2")
+        banner = BannerFactory.create(portals=[portal1, portal2])
+
+        admin = BannerAdmin(Banner, AdminSite())
+        portals = admin.portals_for_display(banner)
+
+        self.assertEqual(portals, "Portal1, Portal2")
