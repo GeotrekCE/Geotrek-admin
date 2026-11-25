@@ -122,3 +122,21 @@ class PointTopologyParserMixinTest(TestCase):
         self.assertEqual(obj_2.geom.srid, settings.SRID)
         self.assertAlmostEqual(obj_2.geom.x, 777390.880, places=2)
         self.assertAlmostEqual(obj_2.geom.y, 6544963.910, places=2)
+
+    @skipIf(
+        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
+    )
+    def test_parse_obj_resets_topology_when_row_is_skipped(self):
+        from unittest import mock
+
+        parser = PointTopologyTestModelParser()
+        parser.topology = mock.Mock()
+        parser.obj = mock.Mock()
+        parser.obj.geom = mock.Mock()
+
+        with mock.patch.object(JSONParser, "parse_obj", return_value=True):
+            result = parser.parse_obj({}, "updated")
+
+        self.assertTrue(result)
+        self.assertIsNone(parser.topology)
+        parser.obj.mutate.assert_not_called()
