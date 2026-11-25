@@ -41,6 +41,8 @@ class TestCirkwiTrekParserEn(CirkwiTrekParser):
     default_language = "en"
     # English parser must not delete attachments created by French parser
     delete_attachments = False
+    # Enriches the same objects created by TestCirkwiTrekParserFr with the same source date
+    force_update = True
 
 
 class TestCirkwiTouristicContentParserFr(CirkwiTouristicContentParser):
@@ -67,6 +69,8 @@ class TestCirkwiTouristicContentParserEn(CirkwiTouristicContentParser):
     default_language = "en"
     # English parser must not delete attachments created by French parser
     delete_attachments = False
+    # Enriches the same objects created by TestCirkwiTouristicContentParserFr with the same source date
+    force_update = True
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")

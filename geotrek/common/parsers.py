@@ -8,12 +8,15 @@ import textwrap
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable
 from dataclasses import dataclass
+from datetime import date, datetime
+from datetime import time as datetime_time
+from datetime import timezone as datetime_timezone
 from ftplib import FTP
 from functools import reduce
 from io import BytesIO
 from os.path import dirname
 from pathlib import PurePath
-from time import sleep
+from time import monotonic, sleep
 from urllib.parse import urlparse
 
 import magic
@@ -37,7 +40,8 @@ from django.db import connection, models
 from django.db.models.fields import NOT_PROVIDED
 from django.db.utils import InternalError
 from django.template.loader import render_to_string
-from django.utils import translation
+from django.utils import timezone, translation
+from django.utils.dateparse import parse_datetime
 from django.utils.encoding import force_str
 from django.utils.translation import gettext as _
 from modeltranslation.utils import build_localized_fieldname
@@ -83,16 +87,29 @@ class BypassRow(Exception):
     pass
 
 
+def format_duration(duration):
+    if duration is None:
+        return None
+    total_seconds = round(duration, 2)
+    hours, remainder = divmod(total_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    if hours >= 1:
+        return f"{int(hours)}h {int(minutes)}m {seconds:.2f}s"
+    if minutes >= 1:
+        return f"{int(minutes)}m {seconds:.2f}s"
+    return f"{seconds:.2f}s"
+
+
 class Parser:
     """
     provider: Allows to differentiate multiple Parser for the same model
     default_language: Allows to define which language this parser will populate by default
     headers: Allows to configure headers on parser requests
-    default_language: Allows to define which language this parser will populate by default
     eid: Field to use as external id
-    provider: A label that should include the data's source, it allows using multiple Parsers for the same model without concurrency
     delete: Delete old objects that are now missing from flux (based on 'get_to_delete_kwargs' including 'provider')
     update_only: Do not delete previous objects, and should query remote API with most recent 'date_update' timestamp
+    force_update: Force update of existing objects even if 'source_date_update' has not changed in the source
+    source_date_update_field: Source field path containing the external modification date
     flexible_fields: If set to True, all fields in the API response are flexible, meaning no error is thrown if a mapped field is missing. The default is False.
     """
 
@@ -102,6 +119,8 @@ class Parser:
     url = None
     simplify_tolerance = 0  # meters
     update_only = False
+    force_update = False
+    source_date_update_field = None
     delete = False
     duplicate_eid_allowed = False
     fill_empty_translated_fields = False
@@ -125,17 +144,21 @@ class Parser:
     intersection_geom = None
     _ref_geom = None
 
-    def __init__(self, progress_cb=None, user=None, encoding="utf8"):
+    def __init__(self, progress_cb=None, user=None, encoding="utf8", force_update=None):
         self.warnings = {}
         self.line = 0
         self.nb_success = 0
         self.nb_created = 0
         self.nb_updated = 0
         self.nb_unmodified = 0
+        self.duration = None
+        self.handled_obj_pks = set()
         self.progress_cb = progress_cb
         self.user = user
         self.structure = (user and user.profile.structure) or default_structure()
         self.encoding = encoding
+        if force_update is not None:
+            self.force_update = force_update
         self.translated_fields = get_translated_fields(self.model)
 
         if not (
@@ -152,6 +175,7 @@ class Parser:
                 f.name: force_str(f.verbose_name)
                 for f in self.model._meta.fields
                 if not isinstance(f, TranslationField)
+                and f.name != "source_date_update"
             }
             self.m2m_fields = {
                 f.name: force_str(f.verbose_name) for f in self.model._meta.many_to_many
@@ -372,9 +396,101 @@ class Parser:
                 for lang in settings.MODELTRANSLATION_LANGUAGES:
                     updated.append(build_localized_fieldname(dst, lang))
 
+    def _normalize_datetime(self, dt):
+        if settings.USE_TZ:
+            return timezone.make_aware(dt) if timezone.is_naive(dt) else dt
+        return timezone.make_naive(dt) if timezone.is_aware(dt) else dt
+
+    def filter_source_date_update(self, src, val):
+        if isinstance(val, (list, tuple)):
+            val = next((item for item in val if item not in (None, "")), None)
+        if val is None or val == "":
+            return None
+        if isinstance(val, datetime):
+            return self._normalize_datetime(val)
+        if isinstance(val, date):
+            return self._normalize_datetime(datetime.combine(val, datetime_time.min))
+        if isinstance(val, (int, float)):
+            if val <= 0:
+                return None
+            return self._normalize_datetime(
+                datetime.fromtimestamp(val, tz=datetime_timezone.utc)
+            )
+        if isinstance(val, str):
+            val = val.strip()
+            if not val:
+                return None
+            if re.fullmatch(r"\d+(\.\d+)?", val):
+                ts = float(val)
+                if ts <= 0:
+                    return None
+                return self._normalize_datetime(
+                    datetime.fromtimestamp(ts, tz=datetime_timezone.utc)
+                )
+            odata_match = re.fullmatch(r"/Date\((-?\d+)([+-]\d{4})?\)/", val)
+            if odata_match:
+                ts_ms = int(odata_match.group(1))
+                return self._normalize_datetime(
+                    datetime.fromtimestamp(ts_ms / 1000.0, tz=datetime_timezone.utc)
+                )
+            dt = parse_datetime(val)
+            if dt is not None:
+                return self._normalize_datetime(dt)
+            for fmt in ("%d/%m/%Y %H:%M:%S", "%d/%m/%Y"):
+                try:
+                    dt = datetime.strptime(val, fmt)
+                    return self._normalize_datetime(dt)
+                except ValueError:
+                    continue
+        self.add_warning(
+            _("Bad value '{val}' for field '{src}'").format(val=val, src=src)
+        )
+        return None
+
+    def get_source_date_update(self, row):
+        if not hasattr(self.model, "source_date_update"):
+            return None
+        in_fields = bool(self.fields and "source_date_update" in self.fields)
+        src = (
+            self.fields.get("source_date_update") if in_fields else None
+        ) or self.source_date_update_field
+        if not src:
+            return None
+        src = self.normalize_src(src)
+        try:
+            val = self.get_val(row, "source_date_update", src)
+        except ValueImportError as warning:
+            if in_fields:
+                if self.field_options.get("source_date_update", {}).get(
+                    "required", False
+                ):
+                    raise RowImportError(warning)
+                if self.warn_on_missing_fields:
+                    self.add_warning(str(warning))
+            return None
+        return self.filter_source_date_update(src, val)
+
+    def is_obj_unmodified_in_source(self, source_date_update):
+        if source_date_update is None or self.force_update:
+            return False
+        if self.obj.pk and self.obj.pk in self.handled_obj_pks:
+            return False
+        return getattr(self.obj, "source_date_update", None) == source_date_update
+
+    def update_obj_source_date(self, source_date_update, operation, update_fields):
+        if source_date_update is None:
+            return
+        if hasattr(self.obj, "source_date_update"):
+            if self.obj.source_date_update != source_date_update:
+                self.obj.source_date_update = source_date_update
+                if operation == "updated" and "source_date_update" not in update_fields:
+                    update_fields.append("source_date_update")
+
     def parse_fields(self, row, fields, non_field=False):
         updated = []
         for dst, src in fields.items():
+            if not non_field and dst == "source_date_update" and fields is self.fields:
+                continue
             try:
                 self.parse_field(row, dst, src, updated, non_field)
             except ValueImportError as warning:
@@ -387,10 +503,17 @@ class Parser:
 
     def parse_obj(self, row, operation):
         try:
+            source_date_update = self.get_source_date_update(row)
+            if operation == "updated" and self.is_obj_unmodified_in_source(
+                source_date_update
+            ):
+                self.nb_unmodified += 1
+                return True
             update_fields = self.parse_fields(row, self.fields)
             update_fields += self.parse_fields(row, self.constant_fields)
             if "id" in update_fields:
                 update_fields.remove("id")  # Can't update primary key
+            self.update_obj_source_date(source_date_update, operation, update_fields)
         except RowImportError as warnings:
             self.add_warning(str(warnings))
             return False
@@ -410,6 +533,8 @@ class Parser:
             self.obj.save()
         else:
             self.obj.save(update_fields=update_fields)
+        if self.obj.pk:
+            self.handled_obj_pks.add(self.obj.pk)
         update_fields += self.parse_fields(row, self.m2m_fields)
         update_fields += self.parse_fields(row, self.m2m_constant_fields)
         update_fields += self.parse_fields(row, self.non_fields, non_field=True)
@@ -509,6 +634,9 @@ class Parser:
         if self.progress_cb:
             self.progress_cb(float(self.line) / self.nb, self.line, self.eid_val)
 
+    def format_duration(self):
+        return format_duration(self.duration)
+
     def report(self, output_format="txt"):
         context = {
             "nb_success": self.nb_success,
@@ -517,6 +645,7 @@ class Parser:
             "nb_updated": self.nb_updated,
             "nb_deleted": len(self.to_delete) if self.delete else None,
             "nb_unmodified": self.nb_unmodified,
+            "duration": self.format_duration(),
             "warnings": self.warnings,
         }
         return render_to_string(
@@ -677,6 +806,7 @@ class Parser:
         return kwargs
 
     def start(self):
+        self.handled_obj_pks = set()
         kwargs = self.get_to_delete_kwargs()
         if kwargs is None:
             self.to_delete = set()
@@ -712,16 +842,20 @@ class Parser:
             lang = self.default_language
         else:
             lang = settings.MODELTRANSLATION_DEFAULT_LANGUAGE
-        with translation.override(lang, deactivate=True):
-            self.start()
-            for i, row in enumerate(self.next_row()):
-                if limit and i >= limit:
-                    break
-                try:
-                    self.parse_row(row)
-                except Exception as e:
-                    self.add_warning(str(e))
-            self.end()
+        start_time = monotonic()
+        try:
+            with translation.override(lang, deactivate=True):
+                self.start()
+                for i, row in enumerate(self.next_row()):
+                    if limit and i >= limit:
+                        break
+                    try:
+                        self.parse_row(row)
+                    except Exception as e:
+                        self.add_warning(str(e))
+                self.end()
+        finally:
+            self.duration = monotonic() - start_time
 
     def request_or_retry(self, url, verb="get", **kwargs):
         def prepare_retry(error_msg):
@@ -1242,6 +1376,7 @@ class TourInSoftParser(AttachmentParserMixin, Parser):
     version_tourinsoft = 2
     separator = "#"
     separator2 = "|"
+    source_date_update_field = "Updated"
 
     @property
     def items(self):
@@ -1467,6 +1602,7 @@ class LEIParser(AttachmentParserMixin, XmlParser):
 
     results_path = "Resultat/sit_liste"
     eid = "eid"
+    source_date_update_field = "DATMAJ"
 
     def get_part(self, dst, src, val):
         """For generic CRITERES return XML Crit element"""
@@ -1594,18 +1730,24 @@ class GeotrekAggregatorParser:
 
     invalid_model_topology = ["Trek", "POI", "Service", "Signage", "Infrastructure"]
 
-    def __init__(self, progress_cb=None, user=None, encoding="utf8"):
+    def __init__(self, progress_cb=None, user=None, encoding="utf8", force_update=None):
         self.progress_cb = progress_cb
         self.user = user
         self.encoding = encoding
+        if force_update is not None:
+            self.force_update = force_update
         self.line = 0
         self.nb_success = 0
         self.nb_created = 0
         self.nb_updated = 0
         self.nb_unmodified = 0
+        self.duration = None
         self.progress_cb = progress_cb
         self.warnings = {}
         self.report_by_api_v2_by_type = {}
+
+    def format_duration(self):
+        return format_duration(self.duration)
 
     def add_warning(self, key, msg):
         warnings = self.warnings.setdefault(key, [])
@@ -1629,6 +1771,7 @@ class GeotrekAggregatorParser:
                 "nb_updated": parser.nb_updated,
                 "nb_deleted": len(parser.to_delete),
                 "nb_unmodified": parser.nb_unmodified,
+                "duration": parser.format_duration(),
                 "warnings": parser.warnings,
             }
 
@@ -1641,67 +1784,78 @@ class GeotrekAggregatorParser:
         with open(filename) as f:
             json_aggregator = json.load(f)
 
-        for key, datas in json_aggregator.items():
-            self.report_by_api_v2_by_type[key] = {}
-            models_to_import = datas.get("data_to_import")
-            if not models_to_import:
-                models_to_import = self.mapping_model_parser.keys()
-            parsers_to_parse = []
-            for model in models_to_import:
-                if settings.TREKKING_TOPOLOGY_ENABLED:
-                    if model in self.invalid_model_topology:
-                        warning = (
-                            f"{model}s can't be imported with dynamic segmentation"
-                        )
-                        logger.warning(warning)
-                        key_warning = _("Model %(model)s") % {"model": model}
+        start_time = monotonic()
+        try:
+            for key, datas in json_aggregator.items():
+                self.report_by_api_v2_by_type[key] = {}
+                models_to_import = datas.get("data_to_import")
+                if not models_to_import:
+                    models_to_import = self.mapping_model_parser.keys()
+                parsers_to_parse = []
+                for model in models_to_import:
+                    if settings.TREKKING_TOPOLOGY_ENABLED:
+                        if model in self.invalid_model_topology:
+                            warning = (
+                                f"{model}s can't be imported with dynamic segmentation"
+                            )
+                            logger.warning(warning)
+                            key_warning = _("Model %(model)s") % {"model": model}
+                            self.add_warning(key_warning, warning)
+                            self.report_by_api_v2_by_type[key][model] = {
+                                "nb_lines": 0,
+                                "nb_success": 0,
+                                "nb_created": 0,
+                                "nb_updated": 0,
+                                "nb_deleted": None,
+                                "nb_unmodified": 0,
+                                "duration": None,
+                                "warnings": self.warnings,
+                            }
+                            continue
+                    module_name, class_name = self.mapping_model_parser[model]
+                    module = importlib.import_module(module_name)
+                    parser = getattr(module, class_name)
+                    if "url" not in datas:
+                        warning = f"{key} has no url"
+                        key_warning = _("Geotrek-admin")
                         self.add_warning(key_warning, warning)
-                        self.report_by_api_v2_by_type[key][model] = {
+                        self.report_by_api_v2_by_type[key][
+                            str(parser.model._meta.model_name).capitalize()
+                        ] = {
                             "nb_lines": 0,
                             "nb_success": 0,
                             "nb_created": 0,
                             "nb_updated": 0,
                             "nb_deleted": None,
                             "nb_unmodified": 0,
+                            "duration": None,
                             "warnings": self.warnings,
                         }
-                        continue
-                module_name, class_name = self.mapping_model_parser[model]
-                module = importlib.import_module(module_name)
-                parser = getattr(module, class_name)
-                if "url" not in datas:
-                    warning = f"{key} has no url"
-                    key_warning = _("Geotrek-admin")
-                    self.add_warning(key_warning, warning)
-                    self.report_by_api_v2_by_type[key][
-                        str(parser.model._meta.model_name).capitalize()
-                    ] = {
-                        "nb_lines": 0,
-                        "nb_success": 0,
-                        "nb_created": 0,
-                        "nb_updated": 0,
-                        "nb_deleted": None,
-                        "nb_unmodified": 0,
-                        "warnings": self.warnings,
-                    }
-                else:
-                    Parser = parser(
-                        progress_cb=self.progress_cb,
-                        provider=key,
-                        url=datas["url"],
-                        portals_filter=datas.get("portals"),
-                        mapping=datas.get("mapping"),
-                        create_categories=datas.get("create"),
-                        all_datas=datas.get("all_datas"),
-                    )
-                    parsers_to_parse.append(Parser)
+                    else:
+                        Parser = parser(
+                            progress_cb=self.progress_cb,
+                            provider=key,
+                            url=datas["url"],
+                            portals_filter=datas.get("portals"),
+                            mapping=datas.get("mapping"),
+                            create_categories=datas.get("create"),
+                            all_datas=datas.get("all_datas"),
+                            force_update=getattr(self, "force_update", False)
+                            or datas.get("force_update", False),
+                        )
+                        parsers_to_parse.append(Parser)
 
-            self.run_method_parser(key, parsers_to_parse, "start_meta")
-            self.run_method_parser(key, parsers_to_parse, "parse")
-            self.run_method_parser(key, parsers_to_parse, "end_meta")
+                self.run_method_parser(key, parsers_to_parse, "start_meta")
+                self.run_method_parser(key, parsers_to_parse, "parse")
+                self.run_method_parser(key, parsers_to_parse, "end_meta")
+        finally:
+            self.duration = monotonic() - start_time
 
     def report(self, output_format="txt"):
-        context = {"report": self.report_by_api_v2_by_type}
+        context = {
+            "report": self.report_by_api_v2_by_type,
+            "duration": self.format_duration(),
+        }
         return render_to_string(
             f"common/parser_report_aggregator.{output_format}",
             context,
@@ -1728,6 +1882,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     separator = None
     delete = True
     eid = "eid"
+    source_date_update_field = "update_datetime"
     constant_fields = {}
     url_categories = {}
     replace_fields = {}
@@ -1773,7 +1928,8 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         self.fields = dict(
             (f.name, f.name)
             for f in self.model._meta.fields
-            if not isinstance(f, TranslationField) and f.name not in ["id", "provider"]
+            if not isinstance(f, TranslationField)
+            and f.name not in ["id", "provider", "source_date_update"]
         )
         self.m2m_fields = {f.name: f.name for f in self.model._meta.many_to_many}
         # Replace automatics fields and m2m_fields generated above
@@ -1962,6 +2118,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
         available_fields = [field.name for field in self.model._meta.get_fields()]
         if (
             not self.all_datas
+            and not self.force_update
             and self.model.objects.filter(provider__name__exact=self.provider).exists()
             and "date_update" in available_fields
         ):
@@ -2049,6 +2206,7 @@ class ApidaeBaseParser(Parser):
     url = "http://api.apidae-tourisme.com/api/v002/recherche/list-objets-touristiques/"
     size = 100
     skip = 0
+    source_date_update_field = "gestion.dateModification"
 
     # A list of locales to be fetched (i.e. ['fr', 'en']). Leave empty to fetch default locales.
     locales = None
@@ -2060,6 +2218,14 @@ class ApidaeBaseParser(Parser):
         return self.root["objetsTouristiques"]
 
     def next_row(self):
+        response_fields = list(self.responseFields)
+        if (
+            self.source_date_update_field
+            and response_fields
+            and self.source_date_update_field not in response_fields
+            and self.source_date_update_field.split(".")[0] not in response_fields
+        ):
+            response_fields.append(self.source_date_update_field)
         while True:
             params = {
                 "apiKey": self.api_key,
@@ -2067,7 +2233,7 @@ class ApidaeBaseParser(Parser):
                 "selectionIds": [self.selection_id],
                 "count": self.size,
                 "first": self.skip,
-                "responseFields": self.responseFields,
+                "responseFields": response_fields,
             }
             if self.locales:
                 params["locales"] = self.locales
@@ -2127,6 +2293,7 @@ class OpenStreetMapParser(Parser):
     # parser settings
     delete = True
     flexible_fields = True
+    source_date_update_field = "timestamp"
 
     # overpass query settings
     url = "https://overpass-api.de/api/interpreter/"

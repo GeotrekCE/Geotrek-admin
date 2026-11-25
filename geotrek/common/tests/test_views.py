@@ -483,6 +483,54 @@ class ViewsImportTest(TestCase):
             f"Select a valid choice. {real_key} is not one of the available choices.",
         )
 
+    @mock.patch("geotrek.common.views.import_datas_from_web.delay")
+    def test_import_from_web_force_update(self, mock_web_delay):
+        self.client.force_login(user=self.super_user)
+        url = reverse("common:import_dataset")
+        real_key = (
+            self.client.get(url)
+            .context["form_without_file"]
+            .fields["parser"]
+            .choices[0][0]
+        )
+        response = self.client.post(
+            url,
+            {
+                "import-web": "Upload",
+                "without-file-parser": real_key,
+                "without-file-force_update": "on",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(mock_web_delay.called)
+        self.assertTrue(mock_web_delay.call_args.kwargs["force_update"])
+
+    @mock.patch("geotrek.common.views.import_datas.delay")
+    def test_import_from_file_force_update(self, mock_file_delay):
+        self.client.force_login(user=self.super_user)
+        url = reverse("common:import_dataset")
+        choices = {
+            choice: id_choice
+            for id_choice, choice in self.client.get(url)
+            .context["form"]
+            .fields["parser"]
+            .choices
+        }
+        uploaded = SimpleUploadedFile("data.geojson", b"{}")
+        response = self.client.post(
+            url,
+            {
+                "upload-file": "Upload",
+                "with-file-parser": choices["Cities"],
+                "with-file-file": uploaded,
+                "with-file-encoding": "UTF-8",
+                "with-file-force_update": "on",
+            },
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertTrue(mock_file_delay.called)
+        self.assertTrue(mock_file_delay.call_args.kwargs["force_update"])
+
 
 class HDViewPointViewTest(TestCase):
     def setUp(self):

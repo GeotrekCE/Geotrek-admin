@@ -55,6 +55,7 @@ def import_datas(**kwargs):
     module_name = kwargs.get("module")
     encoding = kwargs.get("encoding")
     user_pk = kwargs.get("user", None)
+    force_update = kwargs.get("force_update", False)
 
     Parser = get_parser_class(module_name, class_name)
 
@@ -74,7 +75,19 @@ def import_datas(**kwargs):
     user = user_pk and User.objects.get(pk=user_pk)
 
     try:
-        parser = Parser(progress_cb=progress_cb, user=user, encoding=encoding)
+        if force_update:
+            try:
+                parser = Parser(
+                    progress_cb=progress_cb,
+                    user=user,
+                    encoding=encoding,
+                    force_update=True,
+                )
+            except TypeError:
+                parser = Parser(progress_cb=progress_cb, user=user, encoding=encoding)
+                parser.force_update = True
+        else:
+            parser = Parser(progress_cb=progress_cb, user=user, encoding=encoding)
         parser.parse(filename)
     except Exception as e:
         raise e
@@ -96,6 +109,7 @@ def import_datas_from_web(**kwargs):
     class_name = kwargs.get("name")
     module_name = kwargs.get("module")
     user_pk = kwargs.get("user", None)
+    force_update = kwargs.get("force_update", False)
 
     Parser = get_parser_class(module_name, class_name)
 
@@ -115,7 +129,14 @@ def import_datas_from_web(**kwargs):
     user = user_pk and User.objects.get(pk=user_pk)
 
     try:
-        parser = Parser(progress_cb=progress_cb, user=user)
+        if force_update:
+            try:
+                parser = Parser(progress_cb=progress_cb, user=user, force_update=True)
+            except TypeError:
+                parser = Parser(progress_cb=progress_cb, user=user)
+                parser.force_update = True
+        else:
+            parser = Parser(progress_cb=progress_cb, user=user)
         parser.parse()
     except Exception as e:
         raise e

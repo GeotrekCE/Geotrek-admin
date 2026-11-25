@@ -421,9 +421,12 @@ class ParserTests(TestCase):
     def test_report_format_text(self):
         parser = OrganismParser()
         self.assertRegex(parser.report(), "0/0 lines imported.")
+        self.assertNotRegex(parser.report(), r"Duration:")
         self.assertNotRegex(
             parser.report(), r"<div id=\"collapse-\$celery_id\" class=\"collapse\">"
         )
+        parser.duration = 12.345
+        self.assertRegex(parser.report(), r"Duration: 12\.35s\.")
 
     def test_report_format_html(self):
         parser = OrganismParser()
@@ -431,6 +434,33 @@ class ParserTests(TestCase):
             parser.report(output_format="html"),
             r"<div id=\"collapse-\$celery_id\" class=\"collapse\">",
         )
+        self.assertNotRegex(parser.report(output_format="html"), r'class="duration"')
+        parser.duration = 65.4
+        self.assertRegex(
+            parser.report(output_format="html"),
+            r'<div class="duration">\s*Duration: 1m 5\.40s\.\s*</div>',
+        )
+
+    def test_format_duration(self):
+        parser = OrganismParser()
+        self.assertIsNone(parser.format_duration())
+        parser.duration = 0.123
+        self.assertEqual(parser.format_duration(), "0.12s")
+        parser.duration = 59.999
+        self.assertEqual(parser.format_duration(), "1m 0.00s")
+        parser.duration = 125.5
+        self.assertEqual(parser.format_duration(), "2m 5.50s")
+        parser.duration = 3661.25
+        self.assertEqual(parser.format_duration(), "1h 1m 1.25s")
+
+    def test_parse_sets_duration(self):
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        parser = OrganismParser()
+        self.assertIsNone(parser.duration)
+        parser.parse(filename)
+        self.assertIsNotNone(parser.duration)
+        self.assertGreaterEqual(parser.duration, 0)
+        self.assertRegex(parser.report(), r"Duration: \d+\.\d{2}s\.")
 
     def test_report_format_bad(self):
         parser = OrganismParser()
@@ -2787,3 +2817,322 @@ class BaseParserMethodsTests(TestCase):
         osmp = MyOSMParser()
         self.assertEqual(osmp.get_tag_info([None, "val"]), "val")
         self.assertIsNone(osmp.get_tag_info([None, ""]))
+
+
+class SourceDateUpdateTestParser(JSONParser):
+    model = TouristicContent
+    eid = "eid"
+    delete = True
+    source_date_update_field = "updated_at"
+    fields = {
+        "eid": "eid",
+        "name": "name",
+        "geom": "geom",
+    }
+    constant_fields = {"category": "Foo"}
+    natural_keys = {"category": "label"}
+
+    def filter_geom(self, src, val):
+        return fromstr(val, srid=2154)
+
+
+class SourceDateUpdateLegacyInitTestParser(SourceDateUpdateTestParser):
+    def __init__(self, progress_cb=None, user=None, encoding="utf8"):
+        super().__init__(progress_cb=progress_cb, user=user, encoding=encoding)
+
+
+class SourceDateUpdateParserTests(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        TouristicContentCategory.objects.create(label="Foo")
+
+    def _write_json(self, tmpdir, name, features):
+        path = os.path.join(tmpdir, name)
+        with open(path, "w") as f:
+            json.dump({"features": features}, f)
+        return path
+
+    def test_skip_when_source_date_unchanged_and_update_when_changed(self):
+        from datetime import datetime, timezone
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            file1 = self._write_json(
+                tmpdir,
+                "step1.json",
+                [
+                    {
+                        "eid": "tc1",
+                        "name": "Initial Name 1",
+                        "geom": "POINT(700000 6600000)",
+                        "updated_at": "2024-03-10T12:00:00Z",
+                    },
+                    {
+                        "eid": "tc2",
+                        "name": "Initial Name 2",
+                        "geom": "POINT(700100 6600100)",
+                        "updated_at": "2024-03-10T12:00:00Z",
+                    },
+                ],
+            )
+            parser1 = SourceDateUpdateTestParser()
+            parser1.parse(file1)
+            self.assertEqual(parser1.nb_created, 2)
+            self.assertEqual(parser1.nb_updated, 0)
+            self.assertEqual(parser1.nb_unmodified, 0)
+            tc1 = TouristicContent.objects.get(eid="tc1")
+            self.assertEqual(
+                tc1.source_date_update,
+                datetime(2024, 3, 10, 12, 0, tzinfo=timezone.utc),
+            )
+
+            # Second import: tc1 has a modified name in payload BUT same updated_at; tc2 is omitted
+            file2 = self._write_json(
+                tmpdir,
+                "step2.json",
+                [
+                    {
+                        "eid": "tc1",
+                        "name": "Should Not Be Applied Without Date Change",
+                        "geom": "POINT(700000 6600000)",
+                        "updated_at": "2024-03-10T13:00:00+01:00",  # Same UTC instant!
+                    }
+                ],
+            )
+            parser2 = SourceDateUpdateTestParser()
+            with mock.patch.object(
+                parser2, "filter_geom", wraps=parser2.filter_geom
+            ) as mock_geom:
+                parser2.parse(file2)
+                mock_geom.assert_not_called()
+
+            self.assertEqual(parser2.nb_created, 0)
+            self.assertEqual(parser2.nb_updated, 0)
+            self.assertEqual(parser2.nb_unmodified, 1)
+            # tc2 was deleted (delete=True), tc1 was kept and untouched
+            self.assertEqual(TouristicContent.objects.count(), 1)
+            tc1.refresh_from_db()
+            self.assertEqual(tc1.name, "Initial Name 1")
+
+            # Third import: updated_at changes in source -> tc1 IS updated
+            file3 = self._write_json(
+                tmpdir,
+                "step3.json",
+                [
+                    {
+                        "eid": "tc1",
+                        "name": "Updated Name 1",
+                        "geom": "POINT(700000 6600000)",
+                        "updated_at": "2024-03-11T08:30:00Z",
+                    }
+                ],
+            )
+            parser3 = SourceDateUpdateTestParser()
+            parser3.parse(file3)
+            self.assertEqual(parser3.nb_updated, 1)
+            self.assertEqual(parser3.nb_unmodified, 0)
+            tc1.refresh_from_db()
+            self.assertEqual(tc1.name, "Updated Name 1")
+            self.assertEqual(
+                tc1.source_date_update,
+                datetime(2024, 3, 11, 8, 30, tzinfo=timezone.utc),
+            )
+
+    def test_force_update_via_cli_and_init(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            file1 = self._write_json(
+                tmpdir,
+                "step1.json",
+                [
+                    {
+                        "eid": "tc_force",
+                        "name": "Original",
+                        "geom": "POINT(700000 6600000)",
+                        "updated_at": "2024-05-01T10:00:00Z",
+                    }
+                ],
+            )
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.SourceDateUpdateTestParser",
+                file1,
+                verbosity=0,
+            )
+
+            file2 = self._write_json(
+                tmpdir,
+                "step2.json",
+                [
+                    {
+                        "eid": "tc_force",
+                        "name": "Changed Mapping Result",
+                        "geom": "POINT(700000 6600000)",
+                        "updated_at": "2024-05-01T10:00:00Z",
+                    }
+                ],
+            )
+            # Without --force -> skipped
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.SourceDateUpdateTestParser",
+                file2,
+                verbosity=0,
+            )
+            tc = TouristicContent.objects.get(eid="tc_force")
+            self.assertEqual(tc.name, "Original")
+
+            # With --force -> updated even though updated_at did not change
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.SourceDateUpdateTestParser",
+                file2,
+                "--force",
+                verbosity=0,
+            )
+            tc.refresh_from_db()
+            self.assertEqual(tc.name, "Changed Mapping Result")
+
+            # Also verify legacy __init__ fallback with -f
+            file3 = self._write_json(
+                tmpdir,
+                "step3.json",
+                [
+                    {
+                        "eid": "tc_force",
+                        "name": "Legacy Init Forced",
+                        "geom": "POINT(700000 6600000)",
+                        "updated_at": "2024-05-01T10:00:00Z",
+                    }
+                ],
+            )
+            call_command(
+                "import",
+                "geotrek.common.tests.test_parsers.SourceDateUpdateLegacyInitTestParser",
+                file3,
+                "-f",
+                verbosity=0,
+            )
+            tc.refresh_from_db()
+            self.assertEqual(tc.name, "Legacy Init Forced")
+
+    def test_source_date_update_in_fields_and_formats(self):
+        from datetime import date, datetime, timezone
+
+        class CustomFieldsDateParser(SourceDateUpdateTestParser):
+            source_date_update_field = None
+            warn_on_missing_fields = True
+            fields = {
+                "eid": "eid",
+                "name": "name",
+                "geom": "geom",
+                "source_date_update": "date_maj",
+            }
+
+        p = CustomFieldsDateParser()
+        # Various supported date formats
+        self.assertIsNone(p.filter_source_date_update("d", None))
+        self.assertIsNone(p.filter_source_date_update("d", "   "))
+        self.assertIsNone(p.filter_source_date_update("d", 0))
+        self.assertIsNone(p.filter_source_date_update("d", "0"))
+        self.assertEqual(
+            p.filter_source_date_update("d", 1295828456),
+            datetime(2011, 1, 24, 0, 20, 56, tzinfo=timezone.utc),
+        )
+        self.assertEqual(
+            p.filter_source_date_update("d", "1295828456"),
+            datetime(2011, 1, 24, 0, 20, 56, tzinfo=timezone.utc),
+        )
+        self.assertEqual(
+            p.filter_source_date_update("d", "/Date(1546457575113+0100)/"),
+            datetime(2019, 1, 2, 19, 32, 55, 113000, tzinfo=timezone.utc),
+        )
+        self.assertEqual(
+            p.filter_source_date_update("d", "2018-11-30T08:42:14.436+0000"),
+            datetime(2018, 11, 30, 8, 42, 14, 436000, tzinfo=timezone.utc),
+        )
+        self.assertIsNotNone(p.filter_source_date_update("d", "29/11/2022 11:32:41"))
+        self.assertIsNotNone(p.filter_source_date_update("d", "29/11/2022"))
+        self.assertIsNotNone(p.filter_source_date_update("d", "2022-11-29"))
+        self.assertIsNotNone(p.filter_source_date_update("d", date(2022, 11, 29)))
+        self.assertIsNotNone(
+            p.filter_source_date_update("d", datetime(2022, 11, 29, 10, 0))
+        )
+        self.assertEqual(
+            p.filter_source_date_update("d", [None, "2024-01-01T00:00:00Z"]),
+            datetime(2024, 1, 1, 0, 0, tzinfo=timezone.utc),
+        )
+        with override_settings(USE_TZ=False):
+            naive_res = p.filter_source_date_update("d", "2024-01-01T00:00:00Z")
+            self.assertIsNone(naive_res.tzinfo)
+        # Invalid string adds warning and returns None
+        self.assertIsNone(p.filter_source_date_update("d", "not-a-date"))
+        self.assertTrue(p.warnings)
+
+        # Missing optional field in fields with warn_on_missing_fields=True
+        with tempfile.TemporaryDirectory() as tmpdir:
+            file_missing = self._write_json(
+                tmpdir,
+                "missing.json",
+                [
+                    {
+                        "eid": "tc_m",
+                        "name": "No Date",
+                        "geom": "POINT(700000 6600000)",
+                    }
+                ],
+            )
+            p2 = CustomFieldsDateParser()
+            p2.parse(file_missing)
+            self.assertEqual(p2.nb_created, 1)
+            self.assertIn("Missing field 'date_maj'", str(p2.warnings))
+
+            # Required source_date_update raises RowImportError and skips row
+            p3 = CustomFieldsDateParser()
+            p3.field_options = {"source_date_update": {"required": True}}
+            file_req = self._write_json(
+                tmpdir,
+                "req.json",
+                [
+                    {
+                        "eid": "tc_req",
+                        "name": "Missing Req Date",
+                        "geom": "POINT(700000 6600000)",
+                    }
+                ],
+            )
+            p3.parse(file_req)
+            self.assertEqual(p3.nb_created, 0)
+            self.assertFalse(TouristicContent.objects.filter(eid="tc_req").exists())
+
+    def test_source_date_edge_cases(self):
+        from datetime import datetime, timezone
+
+        from geotrek.common.parsers import ApidaeBaseParser, GeotrekAggregatorParser
+
+        parser = SourceDateUpdateTestParser()
+        self.assertEqual(
+            parser.filter_source_date_update("updated_at", "2024-06-01"),
+            datetime(2024, 6, 1, 0, 0, tzinfo=timezone.utc),
+        )
+
+        class MinimalApidaeParser(ApidaeBaseParser):
+            model = TouristicContent
+            api_key = "key"
+            project_id = "1"
+            selection_id = "2"
+            responseFields = ["id", "nom"]
+
+        apidae_parser = MinimalApidaeParser()
+        mock_resp = mock.MagicMock()
+        mock_resp.json.return_value = {"numFound": 0}
+        with mock.patch.object(
+            apidae_parser, "request_or_retry", return_value=mock_resp
+        ) as mock_req:
+            list(apidae_parser.next_row())
+            sent_query = json.loads(mock_req.call_args.kwargs["params"]["query"])
+            self.assertIn(
+                apidae_parser.source_date_update_field,
+                sent_query["responseFields"],
+            )
+
+        agg_parser = GeotrekAggregatorParser(force_update=True)
+        self.assertTrue(agg_parser.force_update)

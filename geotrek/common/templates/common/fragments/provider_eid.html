@@ -1,7 +1,7 @@
 {% load i18n %}
 {% load mapentity_tags %}
 
-{% if object.provider or object.eid or object.eid2 %}
+{% if object.provider or object.eid or object.eid2 or object.source_date_update %}
     <table class="table table-bordered">
         <thead>
         <tr class="table-active">
@@ -30,6 +30,12 @@
             <td>{% if object.eid2 %}{{ object.eid2 }}
                 {% else %}<span class="none">{% trans "None" %}</span>{% endif %}
             </td>
+        </tr>
+        {% endif %}
+        {% if object.source_date_update %}
+        <tr>
+            <th class="table-active">{{ object|verbose:"source_date_update" }}</th>
+            <td>{{ object.source_date_update }}</td>
         </tr>
         {% endif %}
         </tbody>

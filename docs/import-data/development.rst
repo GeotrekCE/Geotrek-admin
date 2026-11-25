@@ -29,6 +29,8 @@ Available attributes
 +-------------------------------+----------+------------------------------------------------------------------------------------------------------------------------------------------------------+
 | update_only                   | bool     | If enabled, only existing data can be updated. No new object will be created.                                                                        |
 +-------------------------------+----------+------------------------------------------------------------------------------------------------------------------------------------------------------+
+| force_update                  | bool     | If enabled, forces updating existing objects even when their modification date in the external source has not changed.                               |
++-------------------------------+----------+------------------------------------------------------------------------------------------------------------------------------------------------------+
 | delete                        | bool     | If enabled, objects no longer present in the new data will be deleted.                                                                               |
 +-------------------------------+----------+------------------------------------------------------------------------------------------------------------------------------------------------------+
 | duplicate_eid_allowed         | bool     | If enabled, multiple objects can have the same external identifier.                                                                                  |
@@ -42,6 +44,8 @@ Available attributes
 | separator                     | str      | Character used to separate multiple values in a single cell (e.g., a comma).                                                                         |
 +-------------------------------+----------+------------------------------------------------------------------------------------------------------------------------------------------------------+
 | eid                           | str      | Name of the field that contains the unique external identifier for each object.                                                                      |
++-------------------------------+----------+------------------------------------------------------------------------------------------------------------------------------------------------------+
+| source_date_update_field      | str      | Source field path containing the modification date in the external source, used to skip unchanged records (can also be mapped via ``fields``).       |
 +-------------------------------+----------+------------------------------------------------------------------------------------------------------------------------------------------------------+
 | provider                      | str      | Name of the source the data comes from (e.g., a partner or an API name).                                                                             |
 +-------------------------------+----------+------------------------------------------------------------------------------------------------------------------------------------------------------+

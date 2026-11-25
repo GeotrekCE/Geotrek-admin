@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 16:34+0000\n"
+"POT-Creation-Date: 2026-11-25 09:15+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Emmanuelle Helly <emmanuelle.helly@makina-corpus.com>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/common/fr/>\n"
@@ -55,6 +55,12 @@ msgstr "Veuillez sélectionner un choix lié à toutes les structures (sans pare
 
 msgid "Data to import from network"
 msgstr "Données à importer depuis le réseau"
+
+msgid "Force update"
+msgstr "Forcer la mise à jour"
+
+msgid "Update objects even if source update date has not changed."
+msgstr "Mettre à jour les objets même si la date de mise à jour dans la source n'a pas changé."
 
 msgid "Import"
 msgstr "Importer"
@@ -158,6 +164,9 @@ msgstr "Fournisseur"
 
 msgid "External id"
 msgstr "ID externe"
+
+msgid "Source update date"
+msgstr "Date de mise à jour source"
 
 msgid "Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."
 msgstr "L’accès est restreint car tous les éléments sélectionnés n’appartiennent pas à votre structure. Utilisez le filtre par structure pour sélectionner uniquement les éléments autorisés."
@@ -358,6 +367,10 @@ msgstr "La valeur null n'est pas autorisée pour le champ '%(src)s'"
 #, python-format
 msgid "Blank value not allowed for field '%(src)s'"
 msgstr "La valeur blank n'est pas autorisée pour le champ '%(src)s'"
+
+#, python-brace-format
+msgid "Bad value '{val}' for field '{src}'"
+msgstr "Mauvaise valeur '{val}' pour le champ '{src}'"
 
 #, python-brace-format
 msgid "Eid field '{eid_dst}' missing in parser configuration"
@@ -646,10 +659,18 @@ msgstr[0] "%(n)s enregistrement non modifié."
 msgstr[1] "%(n)s enregistrements non modifiés."
 
 #, python-format
+msgid "Duration: %(duration)s."
+msgstr "Durée : %(duration)s."
+
+#, python-format
 msgid "%(n)s warning:"
 msgid_plural "%(n)s warnings:"
 msgstr[0] "%(n)s avertissement :"
 msgstr[1] "%(n)s avertissements :"
+
+#, python-format
+msgid "Total duration: %(duration)s."
+msgstr "Durée totale : %(duration)s."
 
 msgid "Object is published but"
 msgstr "L'objet est publié mais"

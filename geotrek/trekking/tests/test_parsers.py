@@ -610,7 +610,18 @@ class TrekGeotrekParserTests(GeotrekParserTestMixin, TestCase):
         self.assertEqual(Trek.objects.count(), 6)
         trek.refresh_from_db()
         self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
-        self.assertEqual(Attachment.objects.first().attachment_file.read(), b"35")
+        # Without --force, unchanged update_datetime skips attachment re-download
+        self.assertEqual(Attachment.objects.first().attachment_file.read(), b"20")
+        call_command(
+            "import",
+            "geotrek.trekking.tests.test_parsers.TestGeotrekTrekParser",
+            "--force",
+            verbosity=0,
+        )
+        self.assertEqual(Trek.objects.count(), 6)
+        trek.refresh_from_db()
+        self.assertEqual(Attachment.objects.filter(object_id=trek.pk).count(), 3)
+        self.assertEqual(Attachment.objects.first().attachment_file.read(), b"39")
 
     @mock.patch("requests.get")
     @mock.patch("requests.head")

@@ -495,6 +495,12 @@ class ExternalSourceMixin(models.Model):
         db_default="",
         db_index=True,
     )
+    source_date_update = models.DateTimeField(
+        verbose_name=_("Source update date"),
+        blank=True,
+        null=True,
+        editable=False,
+    )
 
     class Meta:
         abstract = True

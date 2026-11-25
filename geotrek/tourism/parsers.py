@@ -192,6 +192,7 @@ class InformationDeskApidaeParser(ApidaeParser):
         "localisation.adresse",
         "localisation.geolocalisation.geoJson.coordinates",
         "informations.moyensCommunication",
+        "gestion.dateModification",
         "illustrations",
     ]
 
@@ -632,6 +633,7 @@ class EspritParcParser(AttachmentParserMixin, TouristicContentMixin, Parser):
     eid = "eid"
     separator = None
     delete = True
+    source_date_update_field = "historique.dateDerniereModification"
     fields = {
         "eid": "eid",
         "name": "nomCommercial",

@@ -47,6 +47,7 @@ class ApidaeInfrastructureParser(PointTopologyParserMixin, ApidaeBaseParser):
         "nom",
         "presentation",
         "prestations.tourismesAdaptes",
+        "gestion.dateModification",
     ]
     fields = {
         "eid": "id",

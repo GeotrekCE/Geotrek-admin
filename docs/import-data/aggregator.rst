@@ -265,7 +265,7 @@ Here is an example to import data from several instances:
 
           docker compose run --rm web ./manage.py import CustomGeotrekAggregator
 
-Data from all source instances are now aggregated into the destination instance.
+Data from all source instances are now aggregated into the destination instance. You can pass ``--force`` (or ``-f``) on the command line or set ``"force_update": true`` for a specific instance in the JSON configuration file to force updating objects even if their source modification date has not changed.
 
 .. seealso::
 

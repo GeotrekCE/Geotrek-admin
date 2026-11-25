@@ -33,6 +33,12 @@
 		</div>
 	{% endif %}
 
+	{% if duration %}
+		<div class="duration">
+		{% blocktrans with duration=duration %}Duration: {{ duration }}.{% endblocktrans %}
+		</div>
+	{% endif %}
+
 	{% if warnings %}
 		<div class="warnings">
 		{% blocktrans count n=warnings|length %}{{ n }} warning:{% plural %}{{ n }} warnings:{% endblocktrans %}

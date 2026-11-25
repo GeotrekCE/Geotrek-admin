@@ -1267,6 +1267,7 @@ class ApidaePOIParser(
         "presentation",
         "localisation",
         "informationsPatrimoineCulturel",
+        "gestion.dateModification",
         "illustrations",
     ]
     locales = ["fr", "en"]
@@ -1320,6 +1321,7 @@ class ApidaeServiceParser(PointTopologyParserMixin, ApidaeBaseParser):
     responseFields = [
         "id",
         "localisation.geolocalisation.geoJson",
+        "gestion.dateModification",
     ]
 
     fields = {
@@ -1352,6 +1354,7 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
 
     model = Trek
     eid = "eid"
+    source_date_update_field = "date_modification"
     separator = ","
     srid = 4326
 
@@ -1631,12 +1634,26 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
                     )
         return license
 
+    def parse_obj(self, row, operation):
+        res = super().parse_obj(row, operation)
+        if res and self.obj.pk:
+            id_local = row.get("id_local")
+            if id_local:
+                self.id_local_to_pk_mapping[id_local] = self.obj.pk
+            itineraire_parent = row.get("itineraire_parent")
+            if (
+                itineraire_parent
+                and self.obj.pk not in self.related_treks_mapping[itineraire_parent]
+            ):
+                self.related_treks_mapping[itineraire_parent].append(self.obj.pk)
+        return res
+
     def save_id_local(self, src, val):
         if val:
             self.id_local_to_pk_mapping[val] = self.obj.pk
 
     def save_itineraire_parent(self, src, val):
-        if val:
+        if val and self.obj.pk not in self.related_treks_mapping[val]:
             self.related_treks_mapping[val].append(self.obj.pk)
 
     def end(self):

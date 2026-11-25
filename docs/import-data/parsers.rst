@@ -106,6 +106,8 @@ The ``Parser`` argument corresponds to:
   - for custom parsers, the class name of the parser (e.g. ``PicNicTableParser``), which you can find in your ``var/conf/parsers.py`` file ;
   - for ready-to-use parsers, the `fully qualified class name (FQCN) <https://en.wikipedia.org/wiki/Fully_qualified_name/>`_ of the parser (e.g. ``geotrek.sensitivity.parsers.BiodivParser``). You can find the parser classes in the ``parsers.py`` file of each Geotrek-admin app's source code directory.
 
+By default, when a parser provides a source modification date, existing objects whose modification date has not changed in the external source are skipped. You can pass ``--force`` (or ``-f``) to force re-importing and updating all objects regardless of their source modification date (for instance after changing your parser mapping in ``var/conf/parsers.py``).
+
 Display logs when importing from the command line
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
@@ -116,6 +118,7 @@ Once the import is complete, a report is displayed, showing:
   - the number of records updated
   - the number of records deleted
   - the number of records left unchanged
+  - the execution duration
 
 If any warnings or errors occur during the import, they are listed at the bottom of the report. Each entry specifies the line where the issue occurred and includes the corresponding message.
 
