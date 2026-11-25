@@ -228,6 +228,7 @@ class Infrastructure(BaseInfrastructure, GeotrekMapEntityMixin):
     class Meta:
         verbose_name = _("Infrastructure")
         verbose_name_plural = _("Infrastructures")
+        indexes = [*ExternalSourceMixin.Meta.indexes]
 
     @classmethod
     def path_infrastructures(cls, path):

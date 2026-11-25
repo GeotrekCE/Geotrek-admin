@@ -334,6 +334,7 @@ class Site(
         verbose_name_plural = _("Outdoor sites")
         ordering = ("name",)
         indexes = [
+            *ExternalSourceMixin.Meta.indexes,
             GistIndex(name="site_geom_3d_gist_idx", fields=["geom_3d"]),
         ]
 
@@ -667,6 +668,7 @@ class Course(
         verbose_name_plural = _("Outdoor courses")
         ordering = ("name",)
         indexes = [
+            *ExternalSourceMixin.Meta.indexes,
             GistIndex(name="course_points_ref_gist_idx", fields=["points_reference"]),
             GistIndex(name="course_geom_3d_gist_idx", fields=["geom_3d"]),
         ]

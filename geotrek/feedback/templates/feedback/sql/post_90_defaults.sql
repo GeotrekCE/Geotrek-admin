@@ -11,7 +11,6 @@ ALTER TABLE feedback_report ALTER COLUMN comment SET DEFAULT '';
 -- created_in_suricate
 -- external_uuid
 ALTER TABLE feedback_report ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
-ALTER TABLE feedback_report ALTER COLUMN eid SET DEFAULT '';
 ALTER TABLE feedback_report ALTER COLUMN locked SET DEFAULT False;
 ALTER TABLE feedback_report ALTER COLUMN origin SET DEFAULT 'unknown';
 -- last_updated_in_suricate
