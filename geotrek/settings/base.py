@@ -961,6 +961,9 @@ REPORT_FILETYPE = "Report"
 PARSER_RETRY_SLEEP_TIME = 60  # time of sleep between requests
 PARSER_NUMBER_OF_TRIES = 3  # number of requests to try before abandon
 PARSER_RETRY_HTTP_STATUS = [503]
+PARSER_DOWNLOAD_MAX_WORKERS = (
+    4  # max parallel threads for attachment downloads (1 = sequential)
+)
 
 USE_BOOKLET_PDF = False
 HIDDEN_FORM_FIELDS = {"report": ["current_user"]}

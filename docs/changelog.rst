@@ -14,6 +14,7 @@ CHANGELOG
 * Add database index on ``eid`` and composite index on ``(eid, provider)`` plus ``db_default=""`` on ``ExternalSourceMixin.eid`` (removing manual SQL ``SET DEFAULT`` statements)
 * Add source modification date comparison on parsers to skip updating unmodified objects, with a ``--force`` / ``force_update`` option to force updates
 * Display execution duration in parser reports (CLI and web interface)
+* Improve parser performance: in-memory preloading for unmodified objects, FK/M2M lookup caching, direct FK ID comparison, skip empty ``update_fields`` saves, ``requests.Session`` reuse, parallel attachment downloads (``PARSER_DOWNLOAD_MAX_WORKERS``), prepared reference geometries, and Celery progress update throttling
 
 
 2.127.2         (2026-11-19)
