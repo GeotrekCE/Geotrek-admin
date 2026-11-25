@@ -3136,3 +3136,16 @@ class SourceDateUpdateParserTests(TestCase):
 
         agg_parser = GeotrekAggregatorParser(force_update=True)
         self.assertTrue(agg_parser.force_update)
+
+        # SchemaRandonneeParser.parse_obj preserves related_treks_mapping when row is unmodified
+        from geotrek.common.parsers import Parser
+        from geotrek.trekking.parsers import SchemaRandonneeParser
+
+        sr_parser = SchemaRandonneeParser()
+        sr_parser.obj = mock.MagicMock(pk=42)
+        with mock.patch.object(Parser, "parse_obj", return_value=True):
+            sr_parser.parse_obj(
+                {"id_local": "child1", "itineraire_parent": "p1"}, "updated"
+            )
+        self.assertEqual(sr_parser.id_local_to_pk_mapping["child1"], 42)
+        self.assertEqual(sr_parser.related_treks_mapping["p1"], [42])
