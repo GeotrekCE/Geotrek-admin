@@ -123,20 +123,28 @@ class PointTopologyParserMixinTest(TestCase):
         self.assertAlmostEqual(obj_2.geom.x, 777390.880, places=2)
         self.assertAlmostEqual(obj_2.geom.y, 6544963.910, places=2)
 
-    @skipIf(
-        not settings.TREKKING_TOPOLOGY_ENABLED, "Test with dynamic segmentation only"
-    )
-    def test_parse_obj_resets_topology_when_row_is_skipped(self):
-        from unittest import mock
+    def test_object_without_geom_does_not_reuse_previous_object_geom(self):
+        filename = self.get_test_data_file_path(
+            "point_topology_test_model_missing_geom.json"
+        )
+        call_command(
+            "import",
+            "geotrek.core.tests.test_mixins.PointTopologyTestModelParser",
+            filename,
+            verbosity=0,
+        )
+        test_objects = PointTopologyTestModel.objects.all()
+        self.assertEqual(len(test_objects), 2)
+        obj_1 = test_objects.get(name="test1")
+        obj_2 = test_objects.get(name="test2")
 
-        parser = PointTopologyTestModelParser()
-        parser.topology = mock.Mock()
-        parser.obj = mock.Mock()
-        parser.obj.geom = mock.Mock()
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            obj_1_path = obj_1.topo_object.paths.get()
+            self.assertEqual(obj_1_path, self.path)
+        self.assertAlmostEqual(obj_1.geom.x, 700000.000, places=2)
+        self.assertAlmostEqual(obj_1.geom.y, 6433418.985, places=2)
 
-        with mock.patch.object(JSONParser, "parse_obj", return_value=True):
-            result = parser.parse_obj({}, "updated")
-
-        self.assertTrue(result)
-        self.assertIsNone(parser.topology)
-        parser.obj.mutate.assert_not_called()
+        # The second object has no geometry in the file
+        if settings.TREKKING_TOPOLOGY_ENABLED:
+            self.assertFalse(obj_2.topo_object.paths.exists())
+        self.assertNotEqual(obj_2.geom, obj_1.geom)
