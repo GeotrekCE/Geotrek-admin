@@ -605,6 +605,36 @@ class TrekCustomViewTests(TrekkingManagerTest):
         context = view.get_context_data()
         self.assertEqual(len(context["pois"]), 1)
 
+    def test_trek_detail_poi_letters_and_printcontext(self):
+        trek = TrekWithPOIsFactory.create()
+        for poi in trek.pois:
+            poi.published = True
+            poi.save()
+        published_pois = list(trek.published_pois.all())
+        self.assertEqual(len(published_pois), 2)
+
+        response = self.client.get(trek.get_detail_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.context["poi_letters"],
+            {published_pois[0].pk: "A", published_pois[1].pk: "B"},
+        )
+        self.assertTrue(trek.get_printcontext().get("poi_enumeration"))
+
+    @override_settings(TREK_EXPORT_POI_LIST_LIMIT=1)
+    def test_trek_detail_poi_letters_respects_limit(self):
+        trek = TrekWithPOIsFactory.create()
+        for poi in trek.pois:
+            poi.published = True
+            poi.save()
+        published_pois = list(trek.published_pois.all())
+        response = self.client.get(trek.get_detail_url())
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.context["poi_letters"],
+            {published_pois[0].pk: "A"},
+        )
+
 
 class TrekCustomPublicViewTests(TrekkingManagerTest):
     @mock.patch("djappypod.backend.os.path.exists", create=True)

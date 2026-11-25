@@ -191,6 +191,16 @@ class TrekKMLDetail(LastModifiedMixin, PublicOrReadPermMixin, BaseDetailView):
         return response
 
 
+def get_trek_export_pois(trek):
+    pois = list(trek.published_pois.all())
+    if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
+        pois = pois[: settings.TREK_EXPORT_POI_LIST_LIMIT]
+    letters = alphabet_enumeration(len(pois))
+    for i, poi in enumerate(pois):
+        poi.letter = letters[i]
+    return pois
+
+
 class TrekDetail(CompletenessMixin, MapEntityDetail):
     queryset = (
         Trek.objects.existing()
@@ -216,11 +226,15 @@ class TrekDetail(CompletenessMixin, MapEntityDetail):
 
     def get_context_data(self, *args, **kwargs):
         context = super().get_context_data(*args, **kwargs)
-        context["can_edit"] = self.get_object().same_structure(self.request.user)
+        trek = self.get_object()
+        context["can_edit"] = trek.same_structure(self.request.user)
         context["labels"] = Label.objects.all()
         context["accessibility_form"] = AttachmentAccessibilityForm(
-            request=self.request, object=self.get_object()
+            request=self.request, object=trek
         )
+        context["poi_letters"] = {
+            poi.pk: poi.letter for poi in get_trek_export_pois(trek)
+        }
         return context
 
 
@@ -248,13 +262,7 @@ class TrekDocumentPublicMixin:
             ]
 
         context["information_desks"] = information_desks
-        pois = list(trek.published_pois.all())
-        if settings.TREK_EXPORT_POI_LIST_LIMIT > 0:
-            pois = pois[: settings.TREK_EXPORT_POI_LIST_LIMIT]
-        letters = alphabet_enumeration(len(pois))
-        for i, poi in enumerate(pois):
-            poi.letter = letters[i]
-        context["pois"] = pois
+        context["pois"] = get_trek_export_pois(trek)
         infrastructures = list(trek.published_infrastructures.all())
         signages = list(trek.published_signages.all())
         context["infrastructures"] = infrastructures

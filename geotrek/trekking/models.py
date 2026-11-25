@@ -706,7 +706,7 @@ class Trek(
             maplayers.append(gettext("Signages"))
         if settings.SHOW_INFRASTRUCTURES_ON_MAP_SCREENSHOT:
             maplayers.append(gettext("Infrastructures"))
-        return {"maplayers": maplayers}
+        return {"maplayers": maplayers, "poi_enumeration": True}
 
 
 @receiver(pre_delete, sender=Topology)

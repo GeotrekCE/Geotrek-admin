@@ -194,13 +194,47 @@
 {#        });#}
 {#    </script>#}
 
+    {{ poi_letters|json_script:"poi-letters" }}
     <script type="text/javascript">
         window.addEventListener('entity:map:detail', function (e) {
             const map = e.detail.map.getMap();
             const layerManager = e.detail.layerManager || MaplibreLayerManager.getInstance();
+            const mapViewContext = typeof getURLParameter === 'function' ? getURLParameter('context') : null;
+            const isPdfPoiEnumeration = Boolean(mapViewContext && mapViewContext.poi_enumeration);
+            const poiLettersEl = document.getElementById('poi-letters');
+            const poiLetters = poiLettersEl ? JSON.parse(poiLettersEl.textContent) : {};
 
             // Stockage des markers par couche pour le contrôle de visibilité
             const markerGroups = {};
+
+            function createPoiEnumerationMarker(letter, iconSize) {
+                const el = document.createElement('div');
+                el.className = 'custom-marker poi-marker poi-enumeration-marker';
+                el.style.minWidth = `${iconSize}px`;
+                if (letter.length === 1) {
+                    el.style.width = `${iconSize}px`;
+                }
+                el.style.height = `${iconSize}px`;
+
+                const badge = document.createElement('div');
+                badge.textContent = letter;
+                badge.style.width = '100%';
+                badge.style.height = '100%';
+                badge.style.padding = letter.length > 1 ? '0 3px' : '0';
+                badge.style.backgroundColor = '#000000';
+                badge.style.color = '#ffffff';
+                badge.style.display = 'flex';
+                badge.style.alignItems = 'center';
+                badge.style.justifyContent = 'center';
+                badge.style.textAlign = 'center';
+                badge.style.fontWeight = 'bold';
+                badge.style.fontSize = `${Math.max(10, Math.round(iconSize * 0.65))}px`;
+                badge.style.lineHeight = '1';
+                badge.style.boxSizing = 'border-box';
+
+                el.appendChild(badge);
+                return el;
+            }
 
             // Fonction utilitaire pour créer des markers HTML personnalisés
             function createCustomMarker(feature, iconSize, className, showPopup = false) {
@@ -322,14 +356,29 @@
                 $.getJSON(url, function (data) {
                     if (!data.features || data.features.length === 0) {
                         $('.map-panel').addClass(`${layerName}_loaded`);
+                        if (layerName === 'poi') {
+                            $('.map-panel').addClass('poi_enum_loaded');
+                        }
                         return;
                     }
 
                     markerGroups[layerName] = [];
 
                     data.features.forEach(feature => {
+                        let element;
+                        if (className === 'poi-marker' && isPdfPoiEnumeration) {
+                            const poiId = String(feature.id ?? feature.properties?.id ?? '');
+                            const letter = poiLetters[poiId];
+                            if (!letter) {
+                                return;
+                            }
+                            element = createPoiEnumerationMarker(letter, iconSize);
+                        } else {
+                            element = createCustomMarker(feature, iconSize, className, className === 'poi-marker');
+                        }
+
                         const marker = new maplibregl.Marker({
-                            element: createCustomMarker(feature, iconSize, className, className === 'poi-marker')
+                            element: element
                         })
                         .setLngLat(feature.geometry.coordinates)
                         .addTo(map);
@@ -342,6 +391,9 @@
                     registerMarkerGroupInLayerControl(layerName, displayName, gettext('Objects'));
 
                     $('.map-panel').addClass(`${layerName}_loaded`);
+                    if (layerName === 'poi') {
+                        $('.map-panel').addClass('poi_enum_loaded');
+                    }
                 });
             }
 
@@ -415,10 +467,6 @@
                 {{ view.icon_sizes.POI }},
                 'poi-marker'
             );
-
-            setTimeout(() => {
-                $('.map-panel').addClass('poi_enum_loaded');
-            }, 1000);
 
             //
             // Trek services layer
