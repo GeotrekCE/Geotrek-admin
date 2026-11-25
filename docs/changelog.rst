@@ -37,6 +37,7 @@ CHANGELOG
 * Fix linked objects to sensitive areas
 * Fix restricted areas additional layers
 * Fix parsers based on PointTopologyParserMixin
+* Fix disordered path aggregations after path split (refs #5935)
 
 **Maintenance**
 

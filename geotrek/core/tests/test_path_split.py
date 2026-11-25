@@ -1,15 +1,59 @@
+from unittest import expectedFailure
+
 from django.conf import settings
 from django.contrib.gis.geos import LineString, Point
 from django.test import TestCase
 
 from geotrek.common.tests.utils import LineStringInBounds
-from geotrek.core.models import Path, PathAggregation, Topology
+from geotrek.core.models import Path, Topology
 from geotrek.core.tests.factories import (
     NetworkFactory,
     PathFactory,
     TopologyFactory,
     UsageFactory,
 )
+
+
+class AggregationsAssertionsMixin:
+    def assertAggregations(self, topology, expected):
+        """
+        Check that the path aggregations of a topology are exactly `expected`,
+        a list of (path, start_position, end_position).
+
+        For a linear topology, `expected` is given along the topology: the
+        aggregations sorted by their "order" must match it one by one, and their
+        orders must go from 0 to n-1 without duplicates.
+
+        For a point topology (every expected aggregation has start = end), the
+        aggregations are compared regardless of their order, and all their
+        orders must be 0: point topologies are never reordered.
+        """
+        topology.refresh_from_db()
+        expected = [
+            (path.pk, round(start, 6), round(end, 6)) for path, start, end in expected
+        ]
+        actual = [
+            (order, path_id, round(start, 6), round(end, 6))
+            for order, path_id, start, end in topology.aggregations.order_by(
+                "order", "id"
+            ).values_list("order", "path_id", "start_position", "end_position")
+        ]
+        if all(start == end for _, start, end in expected):  # Point topology
+            self.assertCountEqual([aggregation[1:] for aggregation in actual], expected)
+            self.assertEqual(
+                [aggregation[0] for aggregation in actual], [0] * len(expected)
+            )
+        else:  # Linear topology
+            self.assertEqual(
+                actual,
+                [(order, *aggregation) for order, aggregation in enumerate(expected)],
+            )
+
+    def get_path(self, name, *coords):
+        """Find a piece of a split path by its name and geometry."""
+        return Path.objects.get(
+            name=name, geom__equals=LineString(*coords, srid=settings.SRID)
+        )
 
 
 class SplitPathTest(TestCase):
@@ -552,7 +596,7 @@ class SplitPathTest(TestCase):
         self.assertAlmostEqual(ab_2.length, 2, places=2)
 
 
-class SplitPathLineTopologyTest(TestCase):
+class SplitPathLineTopologyTest(AggregationsAssertionsMixin, TestCase):
     def create_line_topology(self, serialized):
         """We cannot use TopologyFactory here because we need a workflow similar to when creating a topology via the interface."""
         tmp_topo = Topology.deserialize(serialized)
@@ -586,14 +630,7 @@ class SplitPathLineTopologyTest(TestCase):
         serialized = f'[{{"positions":{{"0":[0.25,0.75]}},"paths":[{ab.pk}]}}]'
         topology = self.create_line_topology(serialized)
         topo_geom = topology.geom
-
-        # Check its path aggregation
-        qs = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs), 1)
-        aggregation = qs.first()
-        self.assertEqual(aggregation.path, ab)
-        self.assertEqual(aggregation.start_position, 0.25)
-        self.assertEqual(aggregation.end_position, 0.75)
+        self.assertAggregations(topology, [(ab, 0.25, 0.75)])
 
         # Create a new path CD, intersecting path AB and the topology
         PathFactory.create(name="CD", geom=LineString((2, 0), (2, 2)))
@@ -602,17 +639,9 @@ class SplitPathLineTopologyTest(TestCase):
             Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
         )  # CB is a copy of AB
 
-        # The topology now has two path aggregations (one on AC, one on BC)
-        topology.refresh_from_db()
-        self.assertEqual(len(topology.paths.all()), 2)
-        self.assertEqual(len(ac.aggregations.all()), 1)
-        self.assertEqual(len(cb.aggregations.all()), 1)
-
-        # The path aggregations positions have been adjusted
-        aggr_ac = ac.aggregations.first()
-        aggr_cb = cb.aggregations.first()
-        self.assertEqual((0.5, 1.0), (aggr_ac.start_position, aggr_ac.end_position))
-        self.assertEqual((0.0, 0.5), (aggr_cb.start_position, aggr_cb.end_position))
+        # The aggregations are ordered along the topology, which is still valid
+        self.assertAggregations(topology, [(ac, 0.5, 1), (cb, 0, 0.5)])
+        self.assertTrue(topology.coupled)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])
@@ -645,14 +674,7 @@ class SplitPathLineTopologyTest(TestCase):
         serialized = f'[{{"positions":{{"0":[0.75,0.25]}},"paths":[{ab.pk}]}}]'
         topology = self.create_line_topology(serialized)
         topo_geom = topology.geom
-
-        # Check its path aggregation
-        qs = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs), 1)
-        aggregation = qs.first()
-        self.assertEqual(aggregation.path, ab)
-        self.assertEqual(aggregation.start_position, 0.75)
-        self.assertEqual(aggregation.end_position, 0.25)
+        self.assertAggregations(topology, [(ab, 0.75, 0.25)])
 
         # Create a new path CD, intersecting path AB and the topology
         PathFactory.create(name="CD", geom=LineString((2, 0), (2, 2)))
@@ -661,19 +683,9 @@ class SplitPathLineTopologyTest(TestCase):
             Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
         )  # CB is a copy of AB
 
-        # The topology now has two path aggregations (one on AC, one on BC)
-        topology.refresh_from_db()
-        self.assertEqual(len(topology.paths.all()), 2)
-        self.assertEqual(len(ac.aggregations.all()), 1)
-        self.assertEqual(len(cb.aggregations.all()), 1)
-
-        # The path aggregations positions have been adjusted
-        aggr_ac = ac.aggregations.first()
-        aggr_cb = cb.aggregations.first()
-        self.assertAlmostEqual(1, aggr_ac.start_position)
-        self.assertAlmostEqual(0.5, aggr_ac.end_position)
-        self.assertAlmostEqual(0.5, aggr_cb.start_position)
-        self.assertAlmostEqual(0, aggr_cb.end_position)
+        # The aggregations are ordered along the topology, which is still valid
+        self.assertAggregations(topology, [(cb, 0.5, 0), (ac, 1, 0.5)])
+        self.assertTrue(topology.coupled)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])
@@ -695,30 +707,17 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a linear topology on path AB
         topology = TopologyFactory.create(paths=[(ab, 0.5, 0.75)])
         topo_geom = topology.geom
-
-        # Check its path aggregation
-        qs = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs), 1)
-        aggregation = qs.first()
-        self.assertEqual(aggregation.path, ab)
-        self.assertEqual(aggregation.start_position, 0.5)
-        self.assertEqual(aggregation.end_position, 0.75)
+        self.assertAggregations(topology, [(ab, 0.5, 0.75)])
 
         # Create a new path CD, intersecting path AB but not the topology
         PathFactory.create(name="CD", geom=LineString((1, 0), (1, 2)))
-        ac = ab  # AB has been shrunk into AC
         cb = (
             Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
         )  # CB is a copy of AB
 
-        # AC no longer has any topology linked to it
-        self.assertEqual(len(ac.aggregations.all()), 0)
-
-        # The topology is now linked to the new path (CB)
-        topology.refresh_from_db()
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(cb.aggregations.all()), 1)
-        self.assertEqual(topology.paths.first().pk, cb.pk)
+        # The topology is now linked to the new path (CB) and is still valid
+        self.assertAggregations(topology, [(cb, 1 / 3, 2 / 3)])
+        self.assertTrue(topology.coupled)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])
@@ -740,30 +739,17 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a linear topology on path AB
         topology = TopologyFactory.create(paths=[(ab, 0.75, 0.5)])
         topo_geom = topology.geom
-
-        # Check its path aggregation
-        qs = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs), 1)
-        aggregation = qs.first()
-        self.assertEqual(aggregation.path, ab)
-        self.assertEqual(aggregation.start_position, 0.75)
-        self.assertEqual(aggregation.end_position, 0.5)
+        self.assertAggregations(topology, [(ab, 0.75, 0.5)])
 
         # Create a new path CD, intersecting path AB but not the topology
         PathFactory.create(name="CD", geom=LineString((1, 0), (1, 2)))
-        ac = ab  # AB has been shrunk into AC
         cb = (
             Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
         )  # CB is a copy of AB
 
-        # AC no longer has any topology linked to it
-        self.assertEqual(len(ac.aggregations.all()), 0)
-
-        # The topology is now linked to the new path (CB)
-        topology.refresh_from_db()
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(cb.aggregations.all()), 1)
-        self.assertEqual(topology.paths.first().pk, cb.pk)
+        # The topology is now linked to the new path (CB) and is still valid
+        self.assertAggregations(topology, [(cb, 2 / 3, 1 / 3)])
+        self.assertTrue(topology.coupled)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])
@@ -785,31 +771,15 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a linear topology on path AB
         topology = TopologyFactory.create(paths=[(ab, 0.3, 0.6)])
         topo_geom = topology.geom
-
-        # Check its path aggregation
-        qs = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs), 1)
-        aggregation = qs.first()
-        self.assertEqual(aggregation.path, ab)
-        self.assertEqual(aggregation.start_position, 0.3)
-        self.assertEqual(aggregation.end_position, 0.6)
+        self.assertAggregations(topology, [(ab, 0.3, 0.6)])
 
         # Create a new path CD, intersecting path AB but not the topology
         PathFactory.create(name="CD", geom=LineString((3, 0), (3, 2)))
         ac = ab  # AB has been shrunk into AC
-        cb = (
-            Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
-        )  # CB is a copy of AB
 
-        # The topology is still linked to AC
-        self.assertEqual(len(ac.aggregations.all()), 1)
-        self.assertEqual(len(cb.aggregations.all()), 0)
-
-        # The path aggregations positions have been adjusted
-        topology.refresh_from_db()
-        aggr_ac = ac.aggregations.first()
-        self.assertAlmostEqual(0.4, aggr_ac.start_position)
-        self.assertAlmostEqual(0.8, aggr_ac.end_position)
+        # The topology is still linked to AC, with adjusted positions, and is still valid
+        self.assertAggregations(topology, [(ac, 0.4, 0.8)])
+        self.assertTrue(topology.coupled)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])
@@ -831,31 +801,15 @@ class SplitPathLineTopologyTest(TestCase):
         # Create a linear topology on path AB
         topology = TopologyFactory.create(paths=[(ab, 0.45, 0.15)])
         topo_geom = topology.geom
-
-        # Check its path aggregation
-        qs = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs), 1)
-        aggregation = qs.first()
-        self.assertEqual(aggregation.path, ab)
-        self.assertEqual(aggregation.start_position, 0.45)
-        self.assertEqual(aggregation.end_position, 0.15)
+        self.assertAggregations(topology, [(ab, 0.45, 0.15)])
 
         # Create a new path CD, intersecting path AB but not the topology
         PathFactory.create(name="CD", geom=LineString((3, 0), (3, 2)))
         ac = ab  # AB has been shrunk into AC
-        cb = (
-            Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
-        )  # CB is a copy of AB
 
-        # The topology is still linked to AC
-        self.assertEqual(len(ac.aggregations.all()), 1)
-        self.assertEqual(len(cb.aggregations.all()), 0)
-
-        # The path aggregations positions have been adjusted
-        topology.refresh_from_db()
-        aggr_ac = ac.aggregations.first()
-        self.assertAlmostEqual(0.6, aggr_ac.start_position)
-        self.assertAlmostEqual(0.2, aggr_ac.end_position)
+        # The topology is still linked to AC, with adjusted positions, and is still valid
+        self.assertAggregations(topology, [(ac, 0.6, 0.2)])
+        self.assertTrue(topology.coupled)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])
@@ -880,12 +834,7 @@ class SplitPathLineTopologyTest(TestCase):
         serialized = f'[{{"positions":{{"0":[0.5,1], "1":[0,1], "2":[0,0.5]}},"paths":[{ab.pk}, {be.pk}, {ef.pk}]}}]'
         topology = self.create_line_topology(serialized)
         topo_geom = topology.geom
-
-        # Check its path aggregations
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(be.aggregations.all()), 1)
-        self.assertEqual(len(ef.aggregations.all()), 1)
-        self.assertEqual(len(topology.paths.all()), 3)
+        self.assertAggregations(topology, [(ab, 0.5, 1), (be, 0, 1), (ef, 0, 0.5)])
 
         # Create a new path CD, intersecting path BE and the topology
         PathFactory.create(name="CD", geom=LineString((3, 0), (3, 2)))
@@ -894,20 +843,12 @@ class SplitPathLineTopologyTest(TestCase):
             Path.objects.filter(name="BE").exclude(pk=be.pk).first()
         )  # CE is a copy of BE
 
-        # The topology now covers 4 paths
-        topology.refresh_from_db()
-        self.assertEqual(len(topology.paths.all()), 4)
-        # The topology is still linked to AB and EF
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(ef.aggregations.all()), 1)
-        # BE and CE have one topology from 0.0 to 1.0
-        self.assertEqual(len(bc.aggregations.all()), 1)
-        self.assertEqual(len(ce.aggregations.all()), 1)
-        aggr_bc = bc.aggregations.first()
-        aggr_ce = ce.aggregations.first()
-        self.assertEqual((0.0, 1.0), (aggr_bc.start_position, aggr_bc.end_position))
-        self.assertEqual((0.0, 1.0), (aggr_ce.start_position, aggr_ce.end_position))
-        self.assertEqual(len(topology.aggregations.all()), 4)
+        # The aggregations are ordered along the topology, which is still valid.
+        # The aggregations on AB and EF were not modified.
+        self.assertAggregations(
+            topology, [(ab, 0.5, 1), (bc, 0, 1), (ce, 0, 1), (ef, 0, 0.5)]
+        )
+        self.assertTrue(topology.coupled)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])
@@ -932,12 +873,7 @@ class SplitPathLineTopologyTest(TestCase):
         serialized = f'[{{"positions":{{"0":[0.5,1], "1":[1,0], "2":[0,0.5]}},"paths":[{ab.pk}, {be.pk}, {ef.pk}]}}]'
         topology = self.create_line_topology(serialized)
         topo_geom = topology.geom
-
-        # Check its path aggregations
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(be.aggregations.all()), 1)
-        self.assertEqual(len(ef.aggregations.all()), 1)
-        self.assertEqual(len(topology.paths.all()), 3)
+        self.assertAggregations(topology, [(ab, 0.5, 1), (be, 1, 0), (ef, 0, 0.5)])
 
         # Create a new path CD, intersecting path BE and the topology
         PathFactory.create(name="DC", geom=LineString((3, 0), (3, 2)))
@@ -946,29 +882,137 @@ class SplitPathLineTopologyTest(TestCase):
             Path.objects.filter(name="BE").exclude(pk=be.pk).first()
         )  # CE is a copy of BE
 
-        # Topology now covers 4 paths
-        topology.refresh_from_db()
-        self.assertEqual(len(topology.paths.all()), 4)
-        # Check its path aggregations
-        aggr_ab = ab.aggregations.first()
-        aggr_bc = bc.aggregations.first()
-        aggr_ce = ce.aggregations.first()
-        aggr_ef = ef.aggregations.first()
-        self.assertAlmostEqual(0.5, aggr_ab.start_position)
-        self.assertAlmostEqual(1, aggr_ab.end_position)
-        self.assertAlmostEqual(1, aggr_bc.start_position)
-        self.assertAlmostEqual(0, aggr_bc.end_position)
-        self.assertAlmostEqual(1, aggr_ce.start_position)
-        self.assertAlmostEqual(0, aggr_ce.end_position)
-        self.assertAlmostEqual(0, aggr_ef.start_position)
-        self.assertAlmostEqual(0.5, aggr_ef.end_position)
-        self.assertEqual(len(topology.aggregations.all()), 4)
+        # The aggregations are ordered along the topology, which is still valid:
+        # BE is reversed, so the topology goes through CE before BC
+        self.assertAggregations(
+            topology, [(ab, 0.5, 1), (ce, 1, 0), (bc, 1, 0), (ef, 0, 0.5)]
+        )
+        self.assertTrue(topology.coupled)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])
         self.assertAlmostEqual(topology.geom.coords[0][1], topo_geom.coords[0][1])
         self.assertAlmostEqual(topology.geom.coords[-1][0], topo_geom.coords[-1][0])
         self.assertAlmostEqual(topology.geom.coords[-1][1], topo_geom.coords[-1][1])
+
+    def test_split_with_waypoint_on_kept_piece(self):
+        """
+        AB exists with a topology along its whole length, with a waypoint W.
+        Add CD: the waypoint stays on the kept piece AC.
+
+                  C
+        A +===W===+=======+ B
+                  |
+                  + D
+
+        A (0,0), B (4,0), W (1,0), C (2,0)
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        topology = TopologyFactory.create(
+            paths=[(ab, 0, 0.25), (ab, 0.25, 0.25), (ab, 0.25, 1)]
+        )
+        topo_geom = topology.geom
+
+        PathFactory.create(name="CD", geom=LineString((2, 0), (2, 2)))
+        ac = ab  # AB has been shrunk into AC
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
+
+        # The aggregations are ordered along the topology, which is still valid
+        self.assertAggregations(
+            topology, [(ac, 0, 0.5), (ac, 0.5, 0.5), (ac, 0.5, 1), (cb, 0, 1)]
+        )
+        self.assertTrue(topology.coupled)
+        self.assertTrue(topology.geom.equals(topo_geom))
+
+    def test_split_with_waypoint_on_kept_piece_reversed(self):
+        """
+        Same as above, with the topology going from B to A.
+
+                  C
+        A +===W===+=======+ B
+                  |
+                  + D
+
+        A (0,0), B (4,0), W (1,0), C (2,0)
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        topology = TopologyFactory.create(
+            paths=[(ab, 1, 0.25), (ab, 0.25, 0.25), (ab, 0.25, 0)]
+        )
+        topo_geom = topology.geom
+
+        PathFactory.create(name="CD", geom=LineString((2, 0), (2, 2)))
+        ac = ab  # AB has been shrunk into AC
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
+
+        # The aggregations are ordered along the topology, which is still valid
+        self.assertAggregations(
+            topology, [(cb, 1, 0), (ac, 1, 0.5), (ac, 0.5, 0.5), (ac, 0.5, 0)]
+        )
+        self.assertTrue(topology.coupled)
+        self.assertTrue(topology.geom.equals(topo_geom))
+
+    @expectedFailure
+    def test_split_with_waypoint_exactly_on_the_cut(self):
+        """
+        AB exists with a topology along its whole length, with a waypoint W.
+        Add CD exactly on W.
+
+                  C
+        A +=======W=======+ B
+                  |
+                  + D
+
+        A (0,0), B (4,0), W = C (2,0)
+
+        Known failure: the waypoint is copied on CD as a junction point, and the trigger
+        `core_pathaggregation_junction_point_iu_tgr` then deletes all the other
+        aggregations of the topology (see `ft_topologies_paths_junction_point_iu`).
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        topology = TopologyFactory.create(
+            paths=[(ab, 0, 0.5), (ab, 0.5, 0.5), (ab, 0.5, 1)]
+        )
+        topo_geom = topology.geom
+
+        PathFactory.create(name="CD", geom=LineString((2, 0), (2, 2)))
+        ac = ab  # AB has been shrunk into AC
+        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
+
+        self.assertAggregations(
+            topology,
+            [(ac, 0, 1), (ac, 1, 1), (cb, 0, 1)],
+        )
+        self.assertTrue(topology.coupled)
+        self.assertTrue(topology.geom.equals(topo_geom))
+
+    def test_split_with_waypoint_at_the_end_of_the_path(self):
+        """
+                B   C   E
+        A +--===+===+===W===--+ F
+                    |
+                    +    AB, BE, EF exist. A topology exists along them,
+                    D    with a waypoint W on E. Add CD: the waypoint is
+                         copied at the end of the new piece CE, keeping its rank.
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (2, 0)))
+        be = PathFactory.create(name="BE", geom=LineString((2, 0), (4, 0)))
+        ef = PathFactory.create(name="EF", geom=LineString((4, 0), (6, 0)))
+        topology = TopologyFactory.create(
+            paths=[(ab, 0.5, 1), (be, 0, 1), (be, 1, 1), (ef, 0, 0.5)]
+        )
+        topo_geom = topology.geom
+
+        PathFactory.create(name="CD", geom=LineString((3, 0), (3, 2)))
+        bc = be  # BE has been shrunk into BC
+        ce = Path.objects.filter(name="BE").exclude(pk=be.pk).first()
+
+        # The aggregations are ordered along the topology, which is still valid
+        self.assertAggregations(
+            topology, [(ab, 0.5, 1), (bc, 0, 1), (ce, 0, 1), (ce, 1, 1), (ef, 0, 0.5)]
+        )
+        self.assertTrue(topology.coupled)
+        self.assertTrue(topology.geom.equals(topo_geom))
 
     def test_split_twice(self):
         """
@@ -987,39 +1031,17 @@ class SplitPathLineTopologyTest(TestCase):
         serialized = f'[{{"positions":{{"0":[0.1,0.9]}},"paths":[{ab.pk}]}}]'
         topology = self.create_line_topology(serialized)
         topo_geom = topology.geom
-
-        # Check its path aggregation
-        qs = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs), 1)
-        aggregation = qs.first()
-        self.assertEqual(aggregation.path, ab)
-        self.assertEqual(aggregation.start_position, 0.1)
-        self.assertEqual(aggregation.end_position, 0.9)
+        self.assertAggregations(topology, [(ab, 0.1, 0.9)])
 
         # Create a new path CD, intersecting path AB and the topology twice
         PathFactory.create(name="CD", geom=LineString((1, 2), (1, -2), (3, -2), (3, 2)))
-        # AB has been shrunk and AB2 and AB3 have been created
-        ab2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
-        ab3 = Path.objects.filter(name="AB").exclude(pk__in=[ab.pk, ab2.pk])[0]
+        # AB has been shrunk into its first piece, AB2 and AB3 are the other pieces
+        ab2 = self.get_path("AB", (1, 0), (3, 0))
+        ab3 = self.get_path("AB", (3, 0), (4, 0))
 
-        # The topology should now have 3 path aggregations
-        topology.refresh_from_db()
-        self.assertEqual(len(topology.paths.all()), 3)
-
-        # Check its aggregation on AB
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        aggr_ab = ab.aggregations.first()
-        self.assertEqual((0.4, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
-
-        # Check its aggregation on AB2 and AB3
-        if ab2.length_2d < ab3.length_2d:
-            ab2, ab3 = ab3, ab2
-        aggr_ab2 = ab2.aggregations.first()
-        aggr_ab3 = ab3.aggregations.first()
-        self.assertAlmostEqual(0, aggr_ab2.start_position)
-        self.assertAlmostEqual(1, aggr_ab2.end_position)
-        self.assertAlmostEqual(0, aggr_ab3.start_position)
-        self.assertAlmostEqual(0.6, aggr_ab3.end_position)
+        # The aggregations are ordered along the topology, which is still valid
+        self.assertAggregations(topology, [(ab, 0.4, 1), (ab2, 0, 1), (ab3, 0, 0.6)])
+        self.assertTrue(topology.coupled)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])
@@ -1044,50 +1066,98 @@ class SplitPathLineTopologyTest(TestCase):
         serialized = f'[{{"positions":{{"0":[0.9,0.1]}},"paths":[{ab.pk}]}}]'
         topology = self.create_line_topology(serialized)
         topo_geom = topology.geom
-
-        # Check its path aggregation
-        qs = PathAggregation.objects.filter(topo_object=topology)
-        self.assertEqual(len(qs), 1)
-        aggregation = qs.first()
-        self.assertEqual(aggregation.path, ab)
-        self.assertEqual(aggregation.start_position, 0.9)
-        self.assertEqual(aggregation.end_position, 0.1)
+        self.assertAggregations(topology, [(ab, 0.9, 0.1)])
 
         # Create a new path CD, intersecting path AB and the topology twice
         PathFactory.create(name="CD", geom=LineString((1, 2), (1, -2), (3, -2), (3, 2)))
-        # AB has been shrunk and AB2 and AB3 have been created
-        ab2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
-        ab3 = Path.objects.filter(name="AB").exclude(pk__in=[ab.pk, ab2.pk])[0]
+        # AB has been shrunk into its first piece, AB2 and AB3 are the other pieces
+        ab2 = self.get_path("AB", (1, 0), (3, 0))
+        ab3 = self.get_path("AB", (3, 0), (4, 0))
 
-        # The topology should now have 3 path aggregations
-        topology.refresh_from_db()
-        self.assertEqual(len(topology.paths.all()), 3)
-
-        # Check its aggregation on AB
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        aggr_ab = ab.aggregations.first()
-        self.assertEqual((1.0, 0.4), (aggr_ab.start_position, aggr_ab.end_position))
-
-        # Check its aggregation on AB2 and AB3
-        aggr_ab2 = ab2.aggregations.first()
-        aggr_ab3 = ab3.aggregations.first()
-        if aggr_ab2.start_position == 1.0:
-            self.assertAlmostEqual(1, aggr_ab2.start_position)
-            self.assertAlmostEqual(0, aggr_ab2.end_position)
-            self.assertAlmostEqual(0.6, aggr_ab3.start_position)
-            self.assertAlmostEqual(0, aggr_ab3.end_position)
-        else:
-            # Depended on postgresql fetch order, `ab2` was actually `ab3`
-            self.assertAlmostEqual(1, aggr_ab3.start_position)
-            self.assertAlmostEqual(0, aggr_ab3.end_position)
-            self.assertAlmostEqual(0.6, aggr_ab2.start_position)
-            self.assertAlmostEqual(0, aggr_ab2.end_position)
+        # The aggregations are ordered along the topology (from B to A), which is still valid
+        self.assertAggregations(topology, [(ab3, 0.6, 0), (ab2, 1, 0), (ab, 1, 0.4)])
+        self.assertTrue(topology.coupled)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])
         self.assertAlmostEqual(topology.geom.coords[0][1], topo_geom.coords[0][1])
         self.assertAlmostEqual(topology.geom.coords[-1][0], topo_geom.coords[-1][0])
         self.assertAlmostEqual(topology.geom.coords[-1][1], topo_geom.coords[-1][1])
+
+    def test_split_two_paths_of_the_topology_with_one_path(self):
+        """
+        AB and BC exist, with a topology from A' to C'.
+        Add DE, which crosses AB at F and BC at G.
+
+                        C +       + E (6,4)
+                          |     /
+                       C' +   /
+                          ║ /
+                          + G (4,2)
+                        / ║
+                      /   ║
+                    /     ║
+        A +---====+=======+ B
+              A' /  F (2,0)
+              /
+            /
+          + D (0,-2)
+
+        A (0,0), B (4,0), C (4,4), A' (1,0), C' (4,3)
+        =, ║  topology
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        bc = PathFactory.create(name="BC", geom=LineString((4, 0), (4, 4)))
+        topology = TopologyFactory.create(paths=[(ab, 0.25, 1), (bc, 0, 0.75)])
+        topo_geom = topology.geom
+
+        PathFactory.create(name="DE", geom=LineString((0, -2), (6, 4)))
+        self.assertEqual(Path.objects.count(), 7)
+        af = ab  # AB has been shrunk into AF
+        fb = Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
+        bg = bc  # BC has been shrunk into BG
+        gc = Path.objects.filter(name="BC").exclude(pk=bc.pk).first()
+
+        # The aggregations are ordered along the topology, which is still valid
+        self.assertAggregations(
+            topology, [(af, 0.5, 1), (fb, 0, 1), (bg, 0, 1), (gc, 0, 0.5)]
+        )
+        self.assertTrue(topology.coupled)
+        self.assertTrue(topology.geom.equals(topo_geom))
+
+    def test_split_three_times(self):
+        """
+        AB exists with a topology along its whole length.
+        Add CD, which crosses AB three times, at E, F and G: AB is split
+        into four pieces (and CD too).
+
+              C +     +-----+
+                |     |     |
+        A +=====+=====+=====+=====+ B
+                |E    |F    |G
+                +-----+     + D
+
+        A (0,0), B (4,0), E (1,0), F (2,0), G (3,0)
+        """
+        ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
+        topology = TopologyFactory.create(paths=[(ab, 0, 1)])
+        topo_geom = topology.geom
+
+        PathFactory.create(
+            name="CD",
+            geom=LineString((1, 2), (1, -2), (2, -2), (2, 2), (3, 2), (3, -2)),
+        )
+        ae = ab  # AB has been shrunk into AE
+        ef = self.get_path("AB", (1, 0), (2, 0))
+        fg = self.get_path("AB", (2, 0), (3, 0))
+        gb = self.get_path("AB", (3, 0), (4, 0))
+
+        # The aggregations are ordered along the topology, which is still valid
+        self.assertAggregations(
+            topology, [(ae, 0, 1), (ef, 0, 1), (fg, 0, 1), (gb, 0, 1)]
+        )
+        self.assertTrue(topology.coupled)
+        self.assertTrue(topology.geom.equals(topo_geom))
 
     def test_split_on_update(self):
         """
@@ -1102,20 +1172,16 @@ class SplitPathLineTopologyTest(TestCase):
         cd = PathFactory.create(name="CD", geom=LineString((0, -1), (4, -1)))
         # Create a topology
         topology = TopologyFactory.create(paths=[(cd, 0.3, 0.9)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(cd, 0.3, 0.9)])
 
         cd.geom = LineString((0, -1), (2, -1), (2, 2))
         cd.save()
         cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 2)
-        self.assertEqual(len(cd.aggregations.all()), 1)
-        self.assertEqual(len(cd2.aggregations.all()), 1)
-        aggr_cd = cd.aggregations.first()
-        aggr_cd2 = cd2.aggregations.first()
-        self.assertAlmostEqual(0.5, aggr_cd.start_position)
-        self.assertAlmostEqual(1, aggr_cd.end_position)
-        self.assertAlmostEqual(0, aggr_cd2.start_position)
-        self.assertAlmostEqual(0.75, aggr_cd2.end_position)
+
+        # CD was split by recursive triggers: the aggregations are ordered along
+        # the topology, which is still valid
+        self.assertAggregations(topology, [(cd, 0.5, 1), (cd2, 0, 0.75)])
+        self.assertTrue(topology.coupled)
 
     def test_split_on_update_2(self):
         """
@@ -1130,17 +1196,14 @@ class SplitPathLineTopologyTest(TestCase):
         cd = PathFactory.create(name="CD", geom=LineString((0, -1), (4, -1)))
         # Create a topology
         topology = TopologyFactory.create(paths=[(cd, 0.15, 0.3)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(cd, 0.15, 0.3)])
 
         cd.geom = LineString((0, -1), (2, -1), (2, 2))
         cd.save()
-        cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 1)
-        self.assertEqual(len(cd2.aggregations.all()), 0)
-        aggr_cd = cd.aggregations.first()
-        self.assertAlmostEqual(0.25, aggr_cd.start_position)
-        self.assertAlmostEqual(0.5, aggr_cd.end_position)
+
+        # The topology stays on the shrunk CD, with adjusted positions
+        self.assertAggregations(topology, [(cd, 0.25, 0.5)])
+        self.assertTrue(topology.coupled)
 
     def test_split_on_update_3(self):
         """
@@ -1155,17 +1218,15 @@ class SplitPathLineTopologyTest(TestCase):
         cd = PathFactory.create(name="CD", geom=LineString((0, -1), (4, -1)))
         # Create a topology
         topology = TopologyFactory.create(paths=[(cd, 0.7, 0.85)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(cd, 0.7, 0.85)])
 
         cd.geom = LineString((0, -1), (2, -1), (2, 2))
         cd.save()
         cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 0)
-        self.assertEqual(len(cd2.aggregations.all()), 1)
-        aggr_cd2 = cd2.aggregations.first()
-        self.assertAlmostEqual(0.25, aggr_cd2.start_position)
-        self.assertAlmostEqual(0.625, aggr_cd2.end_position)
+
+        # The topology moved to the new piece CD2, with adjusted positions
+        self.assertAggregations(topology, [(cd2, 0.25, 0.625)])
+        self.assertTrue(topology.coupled)
 
     def test_split_on_return_topology(self):
         """
@@ -1187,26 +1248,43 @@ class SplitPathLineTopologyTest(TestCase):
                 (ab, 1, 0.5),
             ]
         )
-        self.assertEqual(len(topology.aggregations.all()), 7)
+        self.assertAggregations(
+            topology,
+            [
+                (ab, 0.5, 1),
+                (bc, 0, 1),
+                (cd, 0, 0.5),
+                (cd, 0.5, 0.5),
+                (cd, 0.5, 0),
+                (bc, 1, 0),
+                (ab, 1, 0.5),
+            ],
+        )
 
         topogeom = topology.geom
 
         PathFactory.create(name="split", geom=LineString((9, -1), (9, 1)))
-        topology.reload()
-        self.assertCountEqual(
-            topology.aggregations.order_by("order").values_list("order", "path__name"),
+        cd2 = (
+            Path.objects.filter(name="CD").exclude(pk=cd.pk).first()
+        )  # CD2 is a copy of CD
+
+        # The aggregations are ordered along the topology, which goes through CD
+        # and CD2 in both directions and passes through the waypoint on CD2.
+        self.assertAggregations(
+            topology,
             [
-                (0, "AB"),
-                (1, "BC"),
-                (2, "CD"),
-                (2, "CD"),
-                (3, "CD"),
-                (4, "CD"),
-                (4, "CD"),
-                (5, "BC"),
-                (6, "AB"),
+                (ab, 0.5, 1),
+                (bc, 0, 1),
+                (cd, 0, 1),
+                (cd2, 0, 1 / 3),
+                (cd2, 1 / 3, 1 / 3),
+                (cd2, 1 / 3, 0),
+                (cd, 1, 0),
+                (bc, 1, 0),
+                (ab, 1, 0.5),
             ],
         )
+        self.assertTrue(topology.coupled)
         self.assertTrue(topology.geom.equals(topogeom))
 
     def test_split_on_topology_with_offset(self):
@@ -1217,17 +1295,18 @@ class SplitPathLineTopologyTest(TestCase):
         """
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         topology = TopologyFactory.create(paths=[(ab, 0.25, 0.75)], offset=1)
-        self.assertEqual(len(topology.aggregations.all()), 1)
+        self.assertAggregations(topology, [(ab, 0.25, 0.75)])
 
         topogeom = topology.geom
 
         PathFactory.create(name="split", geom=LineString((2, -2), (2, 2)))
+        ab2 = (
+            Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
+        )  # AB2 is a copy of AB
 
-        topology.reload()
-        self.assertCountEqual(
-            topology.aggregations.order_by("order").values_list("order", "path__name"),
-            [(0, "AB"), (0, "AB")],
-        )
+        self.assertAggregations(topology, [(ab, 0.5, 1), (ab2, 0, 0.5)])
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.offset, 1)
         self.assertTrue(topology.geom.equals(topogeom))
 
     def test_split_on_topology_with_offset_and_point(self):
@@ -1240,21 +1319,28 @@ class SplitPathLineTopologyTest(TestCase):
         topology = TopologyFactory.create(
             paths=[(ab, 0.2, 0.6), (ab, 0.6, 0.6), (ab, 0.6, 0.8)], offset=1
         )
-        self.assertEqual(len(topology.aggregations.all()), 3)
+        self.assertAggregations(
+            topology, [(ab, 0.2, 0.6), (ab, 0.6, 0.6), (ab, 0.6, 0.8)]
+        )
 
         topogeom = topology.geom
 
         PathFactory.create(name="split", geom=LineString((2, -2), (2, 2)))
+        ab2 = (
+            Path.objects.filter(name="AB").exclude(pk=ab.pk).first()
+        )  # AB2 is a copy of AB
 
-        topology.reload()
-        self.assertCountEqual(
-            topology.aggregations.order_by("order").values_list("order", "path__name"),
-            [(0, "AB"), (0, "AB"), (1, "AB"), (2, "AB")],
+        # The waypoint (start = end) moved to AB2 with the line it is on
+        self.assertAggregations(
+            topology,
+            [(ab, 0.5, 1), (ab2, 0, 1 / 3), (ab2, 1 / 3, 1 / 3), (ab2, 1 / 3, 2 / 3)],
         )
+        self.assertTrue(topology.coupled)
+        self.assertEqual(topology.offset, 1)
         self.assertTrue(topology.geom.equals(topogeom))
 
 
-class SplitPathPointTopologyTest(TestCase):
+class SplitPathPointTopologyTest(AggregationsAssertionsMixin, TestCase):
     def test_split_tee_1(self):
         """
                 C
@@ -1265,21 +1351,13 @@ class SplitPathPointTopologyTest(TestCase):
         """
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         topology = TopologyFactory.create(paths=[(ab, 0.5, 0.5)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(ab, 0.5, 0.5)])
 
         cd = PathFactory.create(geom=LineString((2, 0), (2, 2)))
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
 
-        self.assertEqual(len(topology.paths.all()), 3)
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        aggr_ab = ab.aggregations.first()
-        self.assertEqual(len(cb.aggregations.all()), 1)
-        aggr_cb = cb.aggregations.first()
-        self.assertEqual(len(cd.aggregations.all()), 1)
-        aggr_cd = cd.aggregations.first()
-        self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
-        self.assertEqual((0.0, 0.0), (aggr_cb.start_position, aggr_cb.end_position))
-        self.assertEqual((0.0, 0.0), (aggr_cd.start_position, aggr_cd.end_position))
+        # The junction point topology has one aggregation per path of the junction
+        self.assertAggregations(topology, [(ab, 1, 1), (cb, 0, 0), (cd, 0, 0)])
 
     def test_split_tee_2(self):
         """
@@ -1291,12 +1369,12 @@ class SplitPathPointTopologyTest(TestCase):
         """
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         topology = TopologyFactory.create(paths=[(ab, 0.25, 0.25)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(ab, 0.25, 0.25)])
+
         PathFactory.create(geom=LineString((2, 0), (2, 2)))
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        aggr_ab = ab.aggregations.first()
-        self.assertEqual((0.5, 0.5), (aggr_ab.start_position, aggr_ab.end_position))
+
+        # The topology stays on the shrunk AB, with an adjusted position
+        self.assertAggregations(topology, [(ab, 0.5, 0.5)])
 
     def test_split_tee_3(self):
         """
@@ -1308,14 +1386,13 @@ class SplitPathPointTopologyTest(TestCase):
         """
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         topology = TopologyFactory.create(paths=[(ab, 0.75, 0.75)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(ab, 0.75, 0.75)])
+
         PathFactory.create(geom=LineString((2, 0), (2, 2)))
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(ab.aggregations.all()), 0)
-        self.assertEqual(len(cb.aggregations.all()), 1)
-        aggr_cb = cb.aggregations.first()
-        self.assertEqual((0.5, 0.5), (aggr_cb.start_position, aggr_cb.end_position))
+
+        # The topology moved to the new piece CB, with an adjusted position
+        self.assertAggregations(topology, [(cb, 0.5, 0.5)])
 
     def test_split_tee_4(self):
         """
@@ -1327,15 +1404,12 @@ class SplitPathPointTopologyTest(TestCase):
         """
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         topology = TopologyFactory.create(paths=[(ab, 0, 0)])
-        self.assertEqual(len(topology.paths.all()), 1)
-        PathFactory.create(geom=LineString((2, 0), (2, 2)))
-        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
+        self.assertAggregations(topology, [(ab, 0, 0)])
 
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(cb.aggregations.all()), 0)
-        aggr_ab = ab.aggregations.first()
-        self.assertEqual((0.0, 0.0), (aggr_ab.start_position, aggr_ab.end_position))
+        PathFactory.create(geom=LineString((2, 0), (2, 2)))
+
+        # The topology stays at the start of the shrunk AB
+        self.assertAggregations(topology, [(ab, 0, 0)])
 
     def test_split_tee_5(self):
         """
@@ -1347,16 +1421,15 @@ class SplitPathPointTopologyTest(TestCase):
         """
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         topology = TopologyFactory.create(paths=[(ab, 1, 1)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(ab, 1, 1)])
+
         PathFactory.create(name="CD", geom=LineString((2, 0), (2, 2)))
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
 
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(ab.aggregations.all()), 0)
-        self.assertEqual(len(cb.aggregations.all()), 1)
-        aggr_cb = cb.aggregations.first()
-        self.assertEqual((1.0, 1.0), (aggr_cb.start_position, aggr_cb.end_position))
+        # The topology moved to the end of the new piece CB
+        self.assertAggregations(topology, [(cb, 1, 1)])
 
+    @expectedFailure
     def test_split_tee_6(self):
         """
             X
@@ -1372,26 +1445,17 @@ class SplitPathPointTopologyTest(TestCase):
         poi.transform(settings.API_SRID)
         topology = Topology.deserialize({"lat": poi.y, "lng": poi.x})
         topology.save()
-        aggr = topology.aggregations.first()
         position = topology.geom.coords
-
         self.assertAlmostEqual(3, topology.offset, places=6)
-        self.assertAlmostEqual(0.125, aggr.start_position, places=6)
-        self.assertAlmostEqual(0.125, aggr.end_position, places=6)
+        self.assertAggregations(topology, [(ab, 0.125, 0.125)])
 
         # Add CD
         PathFactory.create(name="CD", geom=LineString((4, 0), (4, 2)))
-        cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
-        aggr_ab = ab.aggregations.first()
 
-        topology.reload()
+        # The topology stays on the shrunk AB, with an adjusted position
+        self.assertAggregations(topology, [(ab, 0.25, 0.25)])
         self.assertAlmostEqual(3, topology.offset, places=6)
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(cb.aggregations.all()), 0)
         self.assertEqual(position, topology.geom.coords)
-        self.assertAlmostEqual(0.5, aggr_ab.start_position, places=6)
-        self.assertAlmostEqual(0.5, aggr_ab.end_position, places=6)
 
     def test_split_tee_7(self):
         """
@@ -1408,26 +1472,18 @@ class SplitPathPointTopologyTest(TestCase):
         poi.transform(settings.API_SRID)
         topology = Topology.deserialize({"lat": poi.y, "lng": poi.x})
         topology.save()
-        aggr = topology.aggregations.first()
         position = topology.geom.coords
-
         self.assertAlmostEqual(3, topology.offset, places=6)
-        self.assertAlmostEqual(0.875, aggr.start_position, places=6)
-        self.assertAlmostEqual(0.875, aggr.end_position, places=6)
+        self.assertAggregations(topology, [(ab, 0.875, 0.875)])
 
         # Add CD
         PathFactory.create(name="CD", geom=LineString((4, 0), (4, 2)))
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
 
-        topology.reload()
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(ab.aggregations.all()), 0)
-        self.assertEqual(len(cb.aggregations.all()), 1)
+        # The topology moved to the new piece CB, with an adjusted position
+        self.assertAggregations(topology, [(cb, 0.75, 0.75)])
         self.assertAlmostEqual(3, topology.offset, places=6)
         self.assertEqual(position, topology.geom.coords)
-        aggr_cb = cb.aggregations.first()
-        self.assertAlmostEqual(0.75, aggr_cb.start_position, places=6)
-        self.assertAlmostEqual(0.75, aggr_cb.end_position, places=6)
 
     def test_split_on_update(self):
         """
@@ -1442,27 +1498,18 @@ class SplitPathPointTopologyTest(TestCase):
         cd = PathFactory.create(name="CD", geom=LineString((0, 1), (4, 1)))
 
         topology = TopologyFactory.create(paths=[(cd, 0.5, 0.5)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(cd, 0.5, 0.5)])
 
         cd.geom = LineString((2, -2), (2, 2))
         cd.save()
         ab2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
 
-        self.assertEqual(len(ab2.aggregations.all()), 1)
-        self.assertEqual(len(cd2.aggregations.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 1)
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(topology.paths.all()), 4)
-
-        aggr_ab = ab.aggregations.first()
-        aggr_ab2 = ab2.aggregations.first()
-        aggr_cd = cd.aggregations.first()
-        aggr_cd2 = cd2.aggregations.first()
-        self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
-        self.assertEqual((0.0, 0.0), (aggr_ab2.start_position, aggr_ab2.end_position))
-        self.assertEqual((1.0, 1.0), (aggr_cd.start_position, aggr_cd.end_position))
-        self.assertEqual((0.0, 0.0), (aggr_cd2.start_position, aggr_cd2.end_position))
+        # CD now crosses AB at the topology: the junction point topology has one
+        # aggregation per path of the junction
+        self.assertAggregations(
+            topology, [(ab, 1, 1), (ab2, 0, 0), (cd, 1, 1), (cd2, 0, 0)]
+        )
 
     def test_split_on_update_2(self):
         """
@@ -1476,16 +1523,13 @@ class SplitPathPointTopologyTest(TestCase):
         PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1), (4, 1)))
         topology = TopologyFactory.create(paths=[(cd, 0.25, 0.25)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(cd, 0.25, 0.25)])
 
         cd.geom = LineString((2, -2), (2, 2))
         cd.save()
-        cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 1)
-        self.assertEqual(len(cd2.aggregations.all()), 0)
-        aggr_cd = cd.aggregations.first()
-        self.assertEqual((0.5, 0.5), (aggr_cd.start_position, aggr_cd.end_position))
+
+        # The topology stays on the shrunk CD, with an adjusted position
+        self.assertAggregations(topology, [(cd, 0.5, 0.5)])
 
     def test_split_on_update_3(self):
         """
@@ -1499,16 +1543,14 @@ class SplitPathPointTopologyTest(TestCase):
         PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1), (4, 1)))
         topology = TopologyFactory.create(paths=[(cd, 0.75, 0.75)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(cd, 0.75, 0.75)])
 
         cd.geom = LineString((2, -2), (2, 2))
         cd.save()
         cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 0)
-        self.assertEqual(len(cd2.aggregations.all()), 1)
-        aggr_cd2 = cd2.aggregations.first()
-        self.assertEqual((0.5, 0.5), (aggr_cd2.start_position, aggr_cd2.end_position))
+
+        # The topology moved to the new piece CD2, with an adjusted position
+        self.assertAggregations(topology, [(cd2, 0.5, 0.5)])
 
     def test_split_on_update_4(self):
         """
@@ -1522,16 +1564,13 @@ class SplitPathPointTopologyTest(TestCase):
         PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1), (4, 1)))
         topology = TopologyFactory.create(paths=[(cd, 0, 0)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(cd, 0, 0)])
 
         cd.geom = LineString((2, -2), (2, 2))
         cd.save()
-        cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 1)
-        self.assertEqual(len(cd2.aggregations.all()), 0)
-        aggr_cd = cd.aggregations.first()
-        self.assertEqual((0.0, 0.0), (aggr_cd.start_position, aggr_cd.end_position))
+
+        # The topology stays at the start of the shrunk CD
+        self.assertAggregations(topology, [(cd, 0, 0)])
 
     def test_split_on_update_5(self):
         """
@@ -1545,16 +1584,14 @@ class SplitPathPointTopologyTest(TestCase):
         PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1), (4, 1)))
         topology = TopologyFactory.create(paths=[(cd, 1, 1)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(cd, 1, 1)])
 
         cd.geom = LineString((2, -2), (2, 2))
         cd.save()
         cd2 = Path.objects.filter(name="CD").exclude(pk=cd.pk)[0]
-        self.assertEqual(len(topology.paths.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 0)
-        self.assertEqual(len(cd2.aggregations.all()), 1)
-        aggr_cd2 = cd2.aggregations.first()
-        self.assertEqual((1.0, 1.0), (aggr_cd2.start_position, aggr_cd2.end_position))
+
+        # The topology moved to the end of the new piece CD2
+        self.assertAggregations(topology, [(cd2, 1, 1)])
 
     def test_split_on_update_6(self):
         """
@@ -1568,23 +1605,15 @@ class SplitPathPointTopologyTest(TestCase):
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1), (4, 1)))
         topology = TopologyFactory.create(paths=[(cd, 1, 1)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(cd, 1, 1)])
 
         cd.geom = LineString((2, -2), (2, 0))
         cd.save()
         db = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
 
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(db.aggregations.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 1)
-        self.assertEqual(len(topology.paths.all()), 3)
-
-        aggr_ab = ab.aggregations.first()
-        aggr_db = db.aggregations.first()
-        aggr_cd = cd.aggregations.first()
-        self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
-        self.assertEqual((0.0, 0.0), (aggr_db.start_position, aggr_db.end_position))
-        self.assertEqual((1.0, 1.0), (aggr_cd.start_position, aggr_cd.end_position))
+        # CD now ends on AB at the topology: the junction point topology has one
+        # aggregation per path of the junction
+        self.assertAggregations(topology, [(ab, 1, 1), (db, 0, 0), (cd, 1, 1)])
 
     def test_split_on_update_7(self):
         """
@@ -1597,28 +1626,23 @@ class SplitPathPointTopologyTest(TestCase):
         ab = PathFactory.create(name="AB", geom=LineString((0, 0), (4, 0)))
         cd = PathFactory.create(name="CD", geom=LineString((0, 1), (4, 1)))
         topology = TopologyFactory.create(paths=[(cd, 0, 0)])
-        self.assertEqual(len(topology.paths.all()), 1)
+        self.assertAggregations(topology, [(cd, 0, 0)])
 
         cd.geom = LineString((2, 0), (2, -2))
         cd.save()
         cb = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
 
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(cb.aggregations.all()), 1)
-        self.assertEqual(len(cd.aggregations.all()), 1)
-        self.assertEqual(len(topology.paths.all()), 3)
-
-        aggr_ab = ab.aggregations.first()
-        aggr_cb = cb.aggregations.first()
-        aggr_cd = cd.aggregations.first()
-        self.assertEqual((1.0, 1.0), (aggr_ab.start_position, aggr_ab.end_position))
-        self.assertEqual((0.0, 0.0), (aggr_cb.start_position, aggr_cb.end_position))
-        self.assertEqual((0.0, 0.0), (aggr_cd.start_position, aggr_cd.end_position))
+        # CD now starts on AB at the topology: the junction point topology has one
+        # aggregation per path of the junction
+        self.assertAggregations(topology, [(ab, 1, 1), (cb, 0, 0), (cd, 0, 0)])
 
 
-class SplitPathGenericTopologyTest(TestCase):
+class SplitPathGenericTopologyTest(AggregationsAssertionsMixin, TestCase):
     def create_line_topology(self, serialized):
-        """We cannot use TopologyFactory here because we need a workflow similar to when creating a topology via the interface."""
+        """
+        We cannot use TopologyFactory here because we need a workflow similar to when creating a
+        topology via the interface.
+        """
         tmp_topo = Topology.deserialize(serialized)
         topology = Topology.objects.create()
         topology.mutate(tmp_topo)
@@ -1648,7 +1672,7 @@ class SplitPathGenericTopologyTest(TestCase):
             name="BC", geom=LineString((8, -2), (10, -2), (12, 0), (14, 0))
         )
         topology = TopologyFactory.create(paths=[(ab, 0.25, 1), (bc, 0, 0.75)])
-        self.assertEqual(len(topology.paths.all()), 2)
+        self.assertAggregations(topology, [(ab, 0.25, 1), (bc, 0, 0.75)])
         originalgeom = LineString(
             (2.2071067811865475, 0),
             (4, 0),
@@ -1662,30 +1686,22 @@ class SplitPathGenericTopologyTest(TestCase):
         self.assertEqual(topology.geom, originalgeom)
 
         # Add a path
-        de = PathFactory.create(name="DE", geom=LineString((4, 0), (12, 0)))
+        PathFactory.create(name="DE", geom=LineString((4, 0), (12, 0)))
         self.assertEqual(len(Path.objects.all()), 5)
         ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         bc_2 = Path.objects.filter(name="BC").exclude(pk=bc.pk)[0]
 
-        # Topology aggregations were updated
-        topology.reload()
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(ab_2.aggregations.all()), 1)
-        self.assertEqual(len(bc.aggregations.all()), 1)
-        self.assertEqual(len(bc_2.aggregations.all()), 1)
-        self.assertEqual(len(de.aggregations.all()), 0)
-        aggr_ab = ab.aggregations.first()
-        aggr_ab2 = ab_2.aggregations.first()
-        aggr_bc = bc.aggregations.first()
-        aggr_bc2 = bc_2.aggregations.first()
-        self.assertAlmostEqual(0.551776695296637, aggr_ab.start_position)
-        self.assertAlmostEqual(1, aggr_ab.end_position)
-        self.assertAlmostEqual(0, aggr_ab2.start_position)
-        self.assertAlmostEqual(1, aggr_ab2.end_position)
-        self.assertAlmostEqual(0, aggr_bc.start_position)
-        self.assertAlmostEqual(1, aggr_bc.end_position)
-        self.assertAlmostEqual(0, aggr_bc2.start_position)
-        self.assertAlmostEqual(0.146446609406726, aggr_bc2.end_position)
+        # The aggregations are ordered along the topology, which is still valid
+        self.assertAggregations(
+            topology,
+            [
+                (ab, 0.551776695296637, 1),
+                (ab_2, 0, 1),
+                (bc, 0, 1),
+                (bc_2, 0, 0.146446609406726),
+            ],
+        )
+        self.assertTrue(topology.coupled)
 
         # But topology resulting geometry did not change
         self.assertEqual(topology.geom, originalgeom)
@@ -1713,7 +1729,7 @@ class SplitPathGenericTopologyTest(TestCase):
             name="CB", geom=LineString((14, 0), (12, 0), (10, -2), (8, -2))
         )
         topology = TopologyFactory.create(paths=[(ab, 0.25, 1), (cb, 1, 0.25)])
-        self.assertEqual(len(topology.paths.all()), 2)
+        self.assertAggregations(topology, [(ab, 0.25, 1), (cb, 1, 0.25)])
         originalgeom = LineString(
             (2.2071067811865475, 0),
             (4, 0),
@@ -1727,30 +1743,23 @@ class SplitPathGenericTopologyTest(TestCase):
         self.assertEqual(topology.geom, originalgeom)
 
         # Add a path
-        de = PathFactory.create(name="DE", geom=LineString((4, 0), (12, 0)))
+        PathFactory.create(name="DE", geom=LineString((4, 0), (12, 0)))
         self.assertEqual(len(Path.objects.all()), 5)
         ab_2 = Path.objects.filter(name="AB").exclude(pk=ab.pk)[0]
         cb_2 = Path.objects.filter(name="CB").exclude(pk=cb.pk)[0]
 
-        # Topology aggregations were updated
-        topology.reload()
-        self.assertEqual(len(ab.aggregations.all()), 1)
-        self.assertEqual(len(ab_2.aggregations.all()), 1)
-        self.assertEqual(len(cb.aggregations.all()), 1)
-        self.assertEqual(len(cb_2.aggregations.all()), 1)
-        self.assertEqual(len(de.aggregations.all()), 0)
-        aggr_ab = ab.aggregations.first()
-        aggr_ab2 = ab_2.aggregations.first()
-        aggr_cb = cb.aggregations.first()
-        aggr_cb2 = cb_2.aggregations.first()
-        self.assertAlmostEqual(0.551776695296637, aggr_ab.start_position)
-        self.assertAlmostEqual(1, aggr_ab.end_position)
-        self.assertAlmostEqual(0, aggr_ab2.start_position)
-        self.assertAlmostEqual(1, aggr_ab2.end_position)
-        self.assertAlmostEqual(1, aggr_cb2.start_position)
-        self.assertAlmostEqual(0, aggr_cb2.end_position)
-        self.assertAlmostEqual(1, aggr_cb.start_position)
-        self.assertAlmostEqual(0.853553390593274, aggr_cb.end_position)
+        # The aggregations are ordered along the topology, which is still valid:
+        # CB is reversed, so the topology goes through CB2 before CB
+        self.assertAggregations(
+            topology,
+            [
+                (ab, 0.551776695296637, 1),
+                (ab_2, 0, 1),
+                (cb_2, 1, 0),
+                (cb, 1, 0.853553390593274),
+            ],
+        )
+        self.assertTrue(topology.coupled)
 
         # But topology resulting geometry did not change
         self.assertEqual(topology.geom, originalgeom)
@@ -1784,9 +1793,8 @@ class SplitPathGenericTopologyTest(TestCase):
         topology = self.create_line_topology(serialized)
         topo_geom = topology.geom
 
-        # Check its geometry and number of path aggregations
-        topology.refresh_from_db()
-        self.assertEqual(len(topology.paths.all()), 2)
+        # Check its path aggregations and geometry
+        self.assertAggregations(topology, [(ba, 0.75, 0), (bc, 0, 0.75)])
         expected_geom = LineString(
             (2.2071067811865475, 0),
             (4, 0),
@@ -1800,32 +1808,25 @@ class SplitPathGenericTopologyTest(TestCase):
         self.assertEqual(topology.geom, expected_geom)
 
         # Create a new path DE, intersecting paths BA and BC
-        de = PathFactory.create(name="DE", geom=LineString((4, 0), (12, 0)))
+        PathFactory.create(name="DE", geom=LineString((4, 0), (12, 0)))
         self.assertEqual(len(Path.objects.all()), 5)
         bd = ba  # BA has been shrunk into BD
         da = Path.objects.filter(name="BA").exclude(pk=ba.pk)[0]  # DA is a copy of BA
         be = bc  # BC has been shrunk into BE
         ec = Path.objects.filter(name="BC").exclude(pk=bc.pk)[0]  # EC is a copy of BC
 
-        # Topology aggregations were updated
-        topology.refresh_from_db()
-        self.assertEqual(len(bd.aggregations.all()), 1)
-        self.assertEqual(len(da.aggregations.all()), 1)
-        self.assertEqual(len(be.aggregations.all()), 1)
-        self.assertEqual(len(ec.aggregations.all()), 1)
-        self.assertEqual(len(de.aggregations.all()), 0)
-        aggr_bd = bd.aggregations.first()
-        aggr_da = da.aggregations.first()
-        aggr_be = be.aggregations.first()
-        aggr_ec = ec.aggregations.first()
-        self.assertAlmostEqual(0.448223304703363, aggr_da.start_position)
-        self.assertAlmostEqual(0, aggr_da.end_position)
-        self.assertAlmostEqual(1, aggr_bd.start_position)
-        self.assertAlmostEqual(0, aggr_bd.end_position)
-        self.assertAlmostEqual(0, aggr_be.start_position)
-        self.assertAlmostEqual(1, aggr_be.end_position)
-        self.assertAlmostEqual(0, aggr_ec.start_position)
-        self.assertAlmostEqual(0.146446609406726, aggr_ec.end_position)
+        # The aggregations are ordered along the topology, which is still valid:
+        # BA is reversed, so the topology goes through DA before BD
+        self.assertAggregations(
+            topology,
+            [
+                (da, 0.448223304703363, 0),
+                (bd, 1, 0),
+                (be, 0, 1),
+                (ec, 0, 0.146446609406726),
+            ],
+        )
+        self.assertTrue(topology.coupled)
 
         # The start and end positions of the geometry should not have changed
         self.assertAlmostEqual(topology.geom.coords[0][0], topo_geom.coords[0][0])

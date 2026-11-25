@@ -83,6 +83,52 @@ FOR EACH ROW EXECUTE PROCEDURE paths_snap_extremities();
 
 
 -------------------------------------------------------------------------------
+-- Reorder the path aggregations of linear topologies after a path was split
+-------------------------------------------------------------------------------
+
+-- When a path is split, each of its path aggregations is replaced by one
+-- aggregation per piece of the path, all of them keeping the "order" of the
+-- original aggregation. This function gives back a unique "order" to the
+-- aggregations of the given topologies: pieces of a same aggregation are ranked
+-- along the direction of the topology (kept path first, then the clones in the
+-- order of the cuts, or the reverse for aggregations with start > end).
+-- Point topologies (all aggregations with start = end, e.g. junction points with
+-- one aggregation per path) are left untouched.
+CREATE FUNCTION {{ schema_geotrek }}.ft_path_split_reorder_aggregations(topology_ids integer[], piece_ids integer[]) RETURNS void AS $$
+BEGIN
+    WITH pieces AS (
+        SELECT path_id, rank
+        FROM unnest(piece_ids) WITH ORDINALITY AS p(path_id, rank)
+    ),
+    reordered AS (
+        SELECT et.id,
+               ROW_NUMBER() OVER (
+                   PARTITION BY et.topo_object_id
+                   ORDER BY et."order",
+                            CASE WHEN et.start_position <= et.end_position
+                                 THEN coalesce(p.rank, 0)
+                                 ELSE -coalesce(p.rank, 0)
+                            END,
+                            et.id
+               ) - 1 AS new_order
+        FROM core_pathaggregation et
+        LEFT JOIN pieces p ON p.path_id = et.path_id
+        WHERE et.topo_object_id = ANY(topology_ids)
+          AND EXISTS (SELECT 1
+                      FROM core_pathaggregation linear
+                      WHERE linear.topo_object_id = et.topo_object_id
+                        AND linear.start_position != linear.end_position)
+    )
+    UPDATE core_pathaggregation et
+       SET "order" = reordered.new_order
+      FROM reordered
+     WHERE et.id = reordered.id
+       AND et."order" IS DISTINCT FROM reordered.new_order;
+END;
+$$ LANGUAGE plpgsql;
+
+
+-------------------------------------------------------------------------------
 -- Split paths when crossing each other
 -------------------------------------------------------------------------------
 
@@ -90,8 +136,10 @@ CREATE FUNCTION {{ schema_geotrek }}.paths_topology_intersect_split() RETURNS tr
 DECLARE
     path record;
     tid_clone integer;
+    clone_ids integer[];  -- Clones of the current path, in the order of the cuts
     t_count integer;
     existing_et integer[];
+    existing_topologies integer[];  -- Topologies linked to the current path before it was split
     t_geom geometry;
 
     fraction float8;
@@ -269,6 +317,8 @@ BEGIN
              IF existing_et IS NOT NULL THEN
                  -- RAISE NOTICE 'Existing topologies id for %-% (%): %', path.id, path.name, ST_AsText(path.geom), existing_et;
              END IF;
+            SELECT array_agg(DISTINCT topo_object_id) INTO existing_topologies FROM core_pathaggregation et WHERE et.id = ANY(existing_et);
+            clone_ids := ARRAY[]::integer[];
 
             FOR i IN 1..(array_length(intersections_on_current, 1) - 1)
             LOOP
@@ -325,6 +375,7 @@ BEGIN
                                     path.draft,
                                     True)
                             RETURNING id INTO tid_clone;
+                        clone_ids := array_append(clone_ids, tid_clone);
 
                         -- Copy N-N relations
                         INSERT INTO core_path_networks (path_id, network_id)
@@ -366,8 +417,8 @@ BEGIN
                         IF b = 1 THEN
                             SELECT geom INTO t_geom FROM core_path WHERE id = path.id;
                             fraction := ST_LineLocatePoint(segment, ST_EndPoint(path.geom));
-                            INSERT INTO core_pathaggregation (path_id, topo_object_id, start_position, end_position)
-                                SELECT tid_clone, topo_object_id, start_position, end_position
+                            INSERT INTO core_pathaggregation (path_id, topo_object_id, start_position, end_position, "order")
+                                SELECT tid_clone, topo_object_id, start_position, end_position, "order"
                                 FROM core_pathaggregation et,
                                      core_topology e
                                 WHERE et.topo_object_id = e.id AND
@@ -459,6 +510,10 @@ BEGIN
             IF t_count > 0 THEN
                 -- RAISE NOTICE 'Updated % topologies of %-% on [% ; %]', t_count, path.id,  path.name, a, b;
             END IF;
+
+            -- Pieces of a same aggregation share its "order": give back a unique
+            -- order to the aggregations of the linear topologies which were on this path
+            PERFORM ft_path_split_reorder_aggregations(existing_topologies, ARRAY[path.id] || clone_ids);
         END IF;
 
 

@@ -65,6 +65,7 @@ DROP FUNCTION IF EXISTS paths_snap_extremities() CASCADE;
 
 DROP FUNCTION IF EXISTS troncons_evenement_intersect_split() CASCADE;
 DROP FUNCTION IF EXISTS paths_topology_intersect_split() CASCADE;
+DROP FUNCTION IF EXISTS ft_path_split_reorder_aggregations(integer[], integer[]) CASCADE;
 
 -- 60
 
