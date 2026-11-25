@@ -634,7 +634,7 @@ class HDViewPointViewTest(TestCase):
 
 class ConfigViewTest(AuthentFixturesMixin, TestCase):
     HIDDEN_FIELDS = {
-        "signage": ["access", "access"],
+        "signage": ["access", "code"],
         "infrastructure": ["conditions"],
         "intervention": ["end_date"],
         "report": ["problem_magnitude"],
