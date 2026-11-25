@@ -3,7 +3,7 @@ Description=Geotrek-admin periodic tasks
 PartOf=geotrek.service
 After=geotrek-celery.service
 StartLimitIntervalSec=30
-StartLimitBurst=2
+StartLimitBurst=5
 
 [Service]
 ExecStart=/opt/geotrek-admin/bin/celery -A geotrek beat -l warning
