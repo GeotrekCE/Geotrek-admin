@@ -12,6 +12,7 @@ from django.utils.translation import pgettext_lazy
 from geotrek.authent.models import StructureOrNoneRelated
 from geotrek.common.mixins.models import (
     AddPropertyMixin,
+    ExternalSourceMixin,
     GeotrekMapEntityMixin,
     OptionalPictogramMixin,
     TimeStampedModelMixin,
@@ -148,6 +149,7 @@ class Signage(GeotrekMapEntityMixin, BaseInfrastructure):
     class Meta:
         verbose_name = _("Signage")
         verbose_name_plural = _("Signages")
+        indexes = [*ExternalSourceMixin.Meta.indexes]
 
     @classmethod
     def path_signages(cls, path):

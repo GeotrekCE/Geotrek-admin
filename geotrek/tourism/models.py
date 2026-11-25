@@ -136,6 +136,7 @@ class InformationDesk(TimeStampedModelMixin, ExternalSourceMixin, models.Model):
         verbose_name_plural = _("Information desks")
         ordering = ["name"]
         indexes = [
+            *ExternalSourceMixin.Meta.indexes,
             GistIndex(name="informationdesk_geom_gist_idx", fields=["geom"]),
         ]
 
@@ -397,6 +398,7 @@ class TouristicContent(
         verbose_name = _("Touristic content")
         verbose_name_plural = _("Touristic contents")
         ordering = ("name",)
+        indexes = [*ExternalSourceMixin.Meta.indexes]
 
     def __str__(self):
         return self.name
@@ -709,6 +711,7 @@ class TouristicEvent(
         verbose_name = _("Touristic event")
         verbose_name_plural = _("Touristic events")
         ordering = ["-begin_date"]
+        indexes = [*ExternalSourceMixin.Meta.indexes]
 
     def __str__(self):
         return self.name

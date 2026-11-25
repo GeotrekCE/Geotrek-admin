@@ -221,6 +221,7 @@ class Path(
             ("delete_draft_path", "Can delete draft Path"),
         ]
         indexes = [
+            *ExternalSourceMixin.Meta.indexes,
             GistIndex(name="path_geom_gist_idx", fields=["geom"]),
             GistIndex(name="path_geom_cadastre_gist_idx", fields=["geom_cadastre"]),
             GistIndex(name="path_geom_3d_gist_idx", fields=["geom_3d"]),
@@ -1163,6 +1164,7 @@ class Trail(GeotrekMapEntityMixin, ExternalSourceMixin, Topology, StructureRelat
         verbose_name = _("Trail")
         verbose_name_plural = _("Trails")
         ordering = ["name"]
+        indexes = [*ExternalSourceMixin.Meta.indexes]
 
     def __str__(self):
         return self.name
