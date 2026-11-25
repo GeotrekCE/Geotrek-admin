@@ -423,6 +423,7 @@ class Trek(
         verbose_name = _("Trek")
         verbose_name_plural = _("Treks")
         ordering = ("name",)
+        indexes = [*ExternalSourceMixin.Meta.indexes]
 
     def __str__(self):
         return self.name
@@ -932,6 +933,7 @@ class POI(
     class Meta:
         verbose_name = _("POI")
         verbose_name_plural = _("POI")
+        indexes = [*ExternalSourceMixin.Meta.indexes]
 
     # Override default manager
     objects = POIManager()
@@ -1114,6 +1116,7 @@ class Service(StructureRelated, GeotrekMapEntityMixin, ExternalSourceMixin, Topo
     class Meta:
         verbose_name = _("Service")
         verbose_name_plural = _("Services")
+        indexes = [*ExternalSourceMixin.Meta.indexes]
 
     def __str__(self):
         return str(self.type)

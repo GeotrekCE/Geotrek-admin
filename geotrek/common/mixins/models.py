@@ -488,11 +488,19 @@ class ExternalSourceMixin(models.Model):
         on_delete=models.PROTECT,
     )
     eid = models.CharField(
-        verbose_name=_("External id"), max_length=1024, blank=True, default=""
+        verbose_name=_("External id"),
+        max_length=1024,
+        blank=True,
+        default="",
+        db_default="",
+        db_index=True,
     )
 
     class Meta:
         abstract = True
+        indexes = [
+            models.Index(fields=["eid", "provider"]),
+        ]
 
     @property
     def get_eid(self):

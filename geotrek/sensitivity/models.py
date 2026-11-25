@@ -149,6 +149,7 @@ class SensitiveArea(
         verbose_name = _("Sensitive area")
         verbose_name_plural = _("Sensitive areas")
         permissions = (("import_sensitivearea", "Can import Sensitive area"),)
+        indexes = [*ExternalSourceMixin.Meta.indexes]
 
     def __str__(self):
         return self.species.name

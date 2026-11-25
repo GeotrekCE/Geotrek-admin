@@ -5,6 +5,14 @@ CHANGELOG
 2.127.2+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Reset ``topology`` before parsing each object in ``PointTopologyParserMixin.parse_obj`` so skipped rows do not reuse a previous object's topology
+
+**Improvements**
+
+* Add database index on ``eid`` and composite index on ``(eid, provider)`` plus ``db_default=""`` on ``ExternalSourceMixin.eid`` (removing manual SQL ``SET DEFAULT`` statements)
+
 
 2.127.2         (2026-11-19)
 ----------------------------
