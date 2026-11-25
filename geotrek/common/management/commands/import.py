@@ -70,16 +70,9 @@ class Command(BaseCommand):
                     )
                 )
 
+        parser = Parser(progress_cb=progress_cb, encoding=encoding)
         if force:
-            try:
-                parser = Parser(
-                    progress_cb=progress_cb, encoding=encoding, force_update=True
-                )
-            except TypeError:
-                parser = Parser(progress_cb=progress_cb, encoding=encoding)
-                parser.force_update = True
-        else:
-            parser = Parser(progress_cb=progress_cb, encoding=encoding)
+            parser.force_update = True
 
         try:
             parser.parse(options["filename"], limit=limit)
