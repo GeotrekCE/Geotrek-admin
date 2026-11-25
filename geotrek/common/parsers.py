@@ -1,3 +1,4 @@
+import csv
 import importlib
 import json
 import logging
@@ -10,15 +11,14 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from ftplib import FTP
 from functools import reduce
-from io import BytesIO
+from io import BytesIO, StringIO
 from os.path import dirname
 from pathlib import PurePath
 from time import sleep
-from urllib.parse import urlparse
+from urllib.parse import urlencode, urlparse
 
 import magic
 import requests
-import xlrd
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.models import ContentType
@@ -900,16 +900,33 @@ class ShapeParser(Parser):
         return name[:10]
 
 
-class ExcelParser(Parser):
+class SpreadsheetParser(Parser):
+    CSV_MIMETYPE = "text/csv"
+
+    def start(self):
+        # Convert the file to CSV format
+        server = settings.MAPENTITY_CONFIG["CONVERSION_SERVER"]
+        url = f"{server}?{urlencode({'to': self.CSV_MIMETYPE})}"
+
+        with open(self.filename, "rb") as f:
+            response = requests.post(url, files={"file": f})
+        if response.status_code != 200:
+            msg = _(
+                "The file conversion failed. The file should have CSV, ODS, XLS or XLSX format"
+            )
+            raise GlobalImportError(msg)
+        self.csv_content = response.content.decode(self.encoding)
+        super().start()
+
     def next_row(self):
-        workbook = xlrd.open_workbook(self.filename)
-        sheet = workbook.sheet_by_index(0)
-        header = [self.normalize_field_name(cell.value) for cell in sheet.row(0)]
-        self.nb = sheet.nrows - 1
-        for i in range(1, sheet.nrows):
-            values = [cell.value for cell in sheet.row(i)]
-            row = dict(zip(header, values))
-            yield row
+        reader = csv.DictReader(StringIO(self.csv_content))
+        rows = list(reader)
+        self.nb = len(rows)
+        for row in rows:
+            yield {self.normalize_field_name(key): value for key, value in row.items()}
+
+
+ExcelParser = SpreadsheetParser
 
 
 class AtomParser(Parser):
