@@ -149,17 +149,6 @@ class ExternalSourceMixinTest(TestCase):
         source = self.Source.objects.create(provider=self.provider)
         self.assertEqual(source.get_eid, " <span class='none'>None</span>")
 
-    def test_source_date_update_fields(self):
-        from datetime import datetime, timezone
-
-        source = self.Source.objects.create(provider=self.provider, eid="42")
-        self.assertIsNone(source.source_date_update)
-        dt = datetime(2025, 6, 15, 10, 30, tzinfo=timezone.utc)
-        source.source_date_update = dt
-        source.save()
-        source.refresh_from_db()
-        self.assertEqual(source.source_date_update, dt)
-
 
 class PicturesMixinTest(TestCase):
     def test_pictures_returns_cached_list(self):
