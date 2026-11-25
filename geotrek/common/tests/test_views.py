@@ -633,6 +633,14 @@ class HDViewPointViewTest(TestCase):
 
 
 class ConfigViewTest(AuthentFixturesMixin, TestCase):
+    HIDDEN_FIELDS = {
+        "signage": ["access", "access"],
+        "infrastructure": ["conditions"],
+        "intervention": ["end_date"],
+        "report": ["problem_magnitude"],
+        "attachment": ["legend"],
+    }
+
     @classmethod
     def setUpTestData(cls):
         cls.superuser = SuperUserFactory.create(password="password")
@@ -789,6 +797,19 @@ class ConfigViewTest(AuthentFixturesMixin, TestCase):
         self.assertEqual(data["user"]["lastName"], self.user.last_name)
         self.assertEqual(data["user"]["userName"], self.user.username)
         self.assertEqual(data["user"]["permissions"], self.get_permissions())
+
+    @override_settings(HIDDEN_FORM_FIELDS=HIDDEN_FIELDS)
+    def test_forms_response(self):
+        token = self.authenticate(self.user)
+        r = self.client.get(
+            reverse("common:gtam_config"), headers={"Authorization": token}
+        )
+
+        data = r.json()
+
+        hidden_fields = self.HIDDEN_FIELDS
+        hidden_fields.pop("attachment")
+        self.assertEqual(data["forms"]["hiddenFields"], hidden_fields)
 
 
 class CommonReferencesTest(TestCase):

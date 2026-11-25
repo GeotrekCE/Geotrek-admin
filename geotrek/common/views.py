@@ -631,6 +631,13 @@ class ConfigView(APIView):
         )
         return permissions
 
+    def get_hidden_form_fields(self):
+        return {
+            model: settings.HIDDEN_FORM_FIELDS.get(model, [])
+            for app, model in self.models
+            if app != "common"
+        }
+
     def get(self, request, *args, **kwargs):
         user = request.user
 
@@ -668,6 +675,7 @@ class ConfigView(APIView):
                 "permissions": self.get_all_permissions(user),
                 "userName": user.username,
             },
+            "forms": {"hiddenFields": self.get_hidden_form_fields()},
         }
         return response.Response(data)
 
