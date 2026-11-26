@@ -30,6 +30,24 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
     from geotrek.outdoor.models import Course, Site
 
 
+def _filter_m2m_exists(qs, field_name, values):
+    """Filter a ManyToManyField using an EXISTS semi-join to avoid duplicates and DISTINCT."""
+    field = qs.model._meta.get_field(field_name)
+    through = field.remote_field.through
+    source_col = f"{field.m2m_field_name()}_id"
+    target_col = f"{field.m2m_reverse_field_name()}_id"
+    return qs.filter(
+        Exists(
+            through.objects.filter(
+                **{
+                    source_col: OuterRef("pk"),
+                    f"{target_col}__in": values,
+                }
+            )
+        )
+    )
+
+
 def get_published_filter_expression(model: type[Model], language: str | None = None):
     """Given a model with a `published` field and a language string
     this function returns a query expression to filter on.
@@ -202,7 +220,23 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
         qs = queryset
         practices = request.GET.get("practices")
         if practices:
-            qs = qs.filter(species__practices__id__in=practices.split(","))
+            species_field = qs.model._meta.get_field("species")
+            practices_field = species_field.related_model._meta.get_field("practices")
+            through = practices_field.remote_field.through
+            qs = qs.filter(
+                Exists(
+                    through.objects.filter(
+                        **{
+                            f"{practices_field.m2m_field_name()}_id": OuterRef(
+                                "species_id"
+                            ),
+                            f"{practices_field.m2m_reverse_field_name()}_id__in": practices.split(
+                                ","
+                            ),
+                        }
+                    )
+                )
+            )
         structures = request.GET.get("structures")
         if structures:
             qs = qs.filter(structure__in=structures.split(","))
@@ -226,7 +260,7 @@ class GeotrekSensitiveAreaFilter(BaseFilterBackend):
             qs = _filter_near(
                 base_model=qs.model, queryset=qs, target_model=Trek, target_pk=trek_id
             )
-        return qs.distinct()
+        return qs
 
     def get_schema_operation_parameters(self, view):
         return [
@@ -276,7 +310,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
             qs = qs.filter(structure__in=structures.split(","))
         portals = request.GET.get("portals")
         if portals:
-            qs = qs.filter(portals__in=portals.split(","))
+            qs = _filter_m2m_exists(qs, "portals", portals.split(","))
         practicable = request.GET.get("practicable")
         if practicable:
             qs = qs.filter(impracticable=(practicable == "false"))
@@ -296,7 +330,7 @@ class GeotrekVigilanceAreaFilter(BaseFilterBackend):
             end_date = datetime.strptime(end_date, "%Y-%m-%d").date()
             qs = qs.active_by_dates(start_date, end_date)
 
-        return qs.distinct()
+        return qs
 
     def get_schema_operation_parameters(self, view):
         return [
@@ -408,7 +442,7 @@ class GeotrekPOIFilter(BaseFilterBackend):
                     ).filter(pois_excluded__isnull=False)
                 )
             )
-        return list_pois.distinct()
+        return list_pois
 
     def get_schema_operation_parameters(self, view):
         return [
@@ -600,25 +634,37 @@ class GeotrekZoningAndThemeFilter(BaseFilterBackend):
         q = request.GET.get("q")
         if queryset.model.__name__ == "Course":
             if themes:
-                qs = qs.filter(parent_sites__themes__in=themes.split(","))
+                qs = qs.filter(
+                    Exists(
+                        Site.objects.filter(
+                            children_courses=OuterRef("pk"),
+                            themes__in=themes.split(","),
+                        )
+                    )
+                )
             if portals:
-                qs = qs.filter(parent_sites__portal__in=portals.split(","))
+                qs = qs.filter(
+                    Exists(
+                        Site.objects.filter(
+                            children_courses=OuterRef("pk"),
+                            portal__in=portals.split(","),
+                        )
+                    )
+                )
             if q:
                 qs = qs.filter(Q(name__icontains=q) | Q(description__icontains=q))
         else:
             if themes:
-                qs = qs.filter(themes__in=themes.split(","))
+                qs = _filter_m2m_exists(qs, "themes", themes.split(","))
             if portals:
-                qs = qs.filter(portal__in=portals.split(","))
+                qs = _filter_m2m_exists(qs, "portal", portals.split(","))
             if q:
                 qs = qs.filter(
                     Q(name__icontains=q)
                     | Q(description__icontains=q)
                     | Q(description_teaser__icontains=q)
                 )
-        return (
-            qs.distinct()
-        )  # use distinct to avoid duplicated value because of filters on many-to-many
+        return qs
 
     def _get_schema_operation_parameters(self, view):
         return [
@@ -1073,22 +1119,22 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
             qs = qs.filter(structure__in=structures.split(","))
         accessibilities = request.GET.get("accessibilities")
         if accessibilities:
-            qs = qs.filter(accessibilities__in=accessibilities.split(","))
+            qs = _filter_m2m_exists(qs, "accessibilities", accessibilities.split(","))
         accessibility_level = request.GET.get("accessibility_level")
         if accessibility_level:
             qs = qs.filter(accessibility_level__in=accessibility_level.split(","))
         themes = request.GET.get("themes")
         if themes:
-            qs = qs.filter(themes__in=themes.split(","))
+            qs = _filter_m2m_exists(qs, "themes", themes.split(","))
         portals = request.GET.get("portals")
         if portals:
-            qs = qs.filter(portal__in=portals.split(","))
+            qs = _filter_m2m_exists(qs, "portal", portals.split(","))
         route = request.GET.get("routes")
         if route:
             qs = qs.filter(route__in=route.split(","))
         labels = request.GET.get("labels")
         if labels:
-            qs = qs.filter(labels__in=labels.split(","))
+            qs = _filter_m2m_exists(qs, "labels", labels.split(","))
         labels_exclude = request.GET.get("labels_exclude")
         if labels_exclude:
             qs = qs.exclude(labels__in=labels_exclude.split(","))
@@ -1103,7 +1149,7 @@ class GeotrekTrekQueryParamsFilter(BaseFilterBackend):
                 | Q(description_teaser__icontains=q)
                 | Q(ambiance__icontains=q)
             )
-        return qs.distinct()
+        return qs
 
     def get_schema_operation_parameters(self, view):
         return [
@@ -1390,11 +1436,14 @@ class GeotrekCourseFilter(GeotrekZoningAndThemeFilter):
     def filter_queryset(self, request, queryset, view):
         practices = request.GET.get("practices")
         if practices:
-            queryset = queryset.filter(parent_sites__isnull=False).distinct()
-            queryset = queryset.filter(parent_sites__practice__isnull=False).distinct()
             queryset = queryset.filter(
-                parent_sites__practice__in=practices.split(",")
-            ).distinct()
+                Exists(
+                    Site.objects.filter(
+                        children_courses=OuterRef("pk"),
+                        practice__in=practices.split(","),
+                    )
+                )
+            )
         types = request.GET.get("types")
         if types:
             queryset = queryset.filter(type__in=types.split(","))
@@ -1422,91 +1471,68 @@ class GeotrekCourseFilter(GeotrekZoningAndThemeFilter):
 
 
 class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
-    def filter_queryset_related_objects_published_not_deleted(
-        self, qs, request, related_name, optional_query=Q()
+    def build_related_exists(
+        self, model, request, related_name, check_deleted=False, check_portal=False
     ):
-        qs = qs.exclude(**{f"{related_name}": None})
-        # Ensure no deleted content is taken in consideration in the filter
-        related_field_name = f"{related_name}__deleted"
-        optional_query &= Q(**{related_field_name: False})
-        return self.filter_queryset_related_objects_published(
-            qs, request, related_name, optional_query
+        """
+        Build an Exists() subquery checking whether at least one related object
+        exists (published, optionally non-deleted and matching portals), avoiding
+        LEFT OUTER JOINs and DISTINCT.
+        """
+        rel_field = model._meta.get_field(related_name)
+        related_model = rel_field.related_model
+        remote_field_name = rel_field.remote_field.name
+        sub_qs = related_model.objects.filter(**{remote_field_name: OuterRef("pk")})
+        if check_deleted:
+            sub_qs = sub_qs.filter(deleted=False)
+        pub_expr = get_published_filter_expression(
+            related_model, request.GET.get("language")
         )
+        if pub_expr:
+            sub_qs = sub_qs.filter(pub_expr)
+        if check_portal:
+            portals = request.GET.get("portals")
+            if portals:
+                sub_qs = sub_qs.filter(portal__in=portals.split(","))
+        return Exists(sub_qs)
+
+    def filter_queryset_related_objects_published_not_deleted(
+        self, qs, request, related_name
+    ):
+        return qs.filter(
+            self.build_related_exists(
+                qs.model, request, related_name, check_deleted=True
+            )
+        ).order_by("pk")
 
     def filter_queryset_related_objects_published(
-        self, queryset, request, related_name, optional_query=Q()
+        self, queryset, request, related_name
     ):
-        """
-        TODO : this method is not optimal. the API should have a route /object returning all objects and /object/used returning only used objects.
-        Return a queryset filtered by publication status or related objects.
-        For example for a queryset of DifficultyLevels it will check the publication status of related treks and return the queryset of difficulties that are used by published treks.
-        :param queryset: the queryset to filter
-        :param request: the request object to get to the potential language to filter by
-        :param related_name: the related_name used to fetch the related object in the filter method
-        :param optional_query: optional query Q to add to the filter method (used by portal filter)
-        """
-        qs = queryset
-        q = Q()
-        # check if the model of the queryset published field is translated
-        related_object = qs.model._meta.get_field(related_name).remote_field
-        fields_on_related_object = related_object.model._meta.get_fields()
-        associated_published_fields = [
-            f.name for f in fields_on_related_object if f.name.startswith("published")
-        ]
-        if associated_published_fields:
-            language = request.GET.get("language")
-            if language:
-                # one language is specified
-                related_field_name = "{}__{}".format(
-                    related_name, build_localized_fieldname("published", language)
-                )
-                q &= Q(**{related_field_name: True})
-            else:
-                # no language specified. Check for all.
-                for lang in settings.MODELTRANSLATION_LANGUAGES:
-                    related_field_name = "{}__{}".format(
-                        related_name, build_localized_fieldname("published", lang)
-                    )
-                    q |= Q(**{related_field_name: True})
-        q &= optional_query
-        qs = qs.filter(q)
-        return qs.distinct().order_by("pk")
+        return queryset.filter(
+            self.build_related_exists(queryset.model, request, related_name)
+        ).order_by("pk")
 
 
 class RelatedObjectsPublishedNotDeletedByPortalFilter(
     RelatedObjectsPublishedNotDeletedFilter
 ):
-    def filter_queryset_related_objects_by_portal(self, request, related_name):
-        portals = request.GET.get("portals")
-        query = Q()
-        if portals:
-            related_portal_in = f"{related_name}__portal__in"
-            query = Q(**{related_portal_in: portals.split(",")})
-        return query
-
     def filter_queryset_related_objects_published_not_deleted_by_portal(
         self, qs, request, related_name
     ):
-        # Exclude if no related objects exist
-        qs = qs.exclude(**{f"{related_name}": None})
-        portal_query = self.filter_queryset_related_objects_by_portal(
-            request, related_name
-        )
-        return self.filter_queryset_related_objects_published_not_deleted(
-            qs, request, related_name, portal_query
-        )
+        return qs.filter(
+            self.build_related_exists(
+                qs.model, request, related_name, check_deleted=True, check_portal=True
+            )
+        ).order_by("pk")
 
     def filter_queryset_related_objects_published_by_portal(
         self, qs, request, related_name
     ):
-        # Exclude if no related objects exist
-        qs = qs.exclude(**{f"{related_name}": None})
-        portal_query = self.filter_queryset_related_objects_by_portal(
-            request, related_name
-        )
-        return self.filter_queryset_related_objects_published(
-            qs, request, related_name, portal_query
-        )
+        return qs.filter(
+            self.build_related_exists(
+                qs.model, request, related_name, check_portal=True
+            )
+        ).order_by("pk")
 
     def get_schema_operation_parameters(self, view):
         return [
@@ -1577,24 +1603,26 @@ class SitesRelatedPortalAndCourseRelatedFilter(
     RelatedObjectsPublishedNotDeletedByPortalFilter
 ):
     def filter_queryset(self, request, qs, view):
-        set_1 = self.filter_queryset_related_objects_published(qs, request, "courses")
-        set_2 = self.filter_queryset_related_objects_published_by_portal(
-            qs, request, "sites"
-        )
-        return (set_1 | set_2).distinct()
+        q = self.build_related_exists(
+            qs.model, request, "courses"
+        ) | self.build_related_exists(qs.model, request, "sites", check_portal=True)
+        return qs.filter(q).order_by("pk")
 
 
 class RelatedPortalStructureOrReservationSystemFilter(
     RelatedObjectsPublishedNotDeletedByPortalFilter
 ):
     def filter_queryset(self, request, qs, view):
-        set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(
-            qs, request, "trek"
+        q = self.build_related_exists(
+            qs.model, request, "trek", check_deleted=True, check_portal=True
+        ) | self.build_related_exists(
+            qs.model,
+            request,
+            "touristiccontent",
+            check_deleted=True,
+            check_portal=True,
         )
-        set_2 = self.filter_queryset_related_objects_published_not_deleted_by_portal(
-            qs, request, "touristiccontent"
-        )
-        return (set_1 | set_2).distinct()
+        return qs.filter(q).order_by("pk")
 
 
 class TouristicContentRelatedPortalFilter(
@@ -1609,65 +1637,45 @@ class TouristicContentRelatedPortalFilter(
 class HDViewPointPublishedByPortalFilter(
     RelatedObjectsPublishedNotDeletedByPortalFilter
 ):
-    def filter_queryset_related_objects_published_not_deleted_by_portal(
-        self, qs, request, related_name
-    ):
-        # ####################################
-        # Should be :
-        #       qs = qs.exclude(**{'{}'.format(related_name): None})
-        # But we need to bypass this bug : https://code.djangoproject.com/ticket/26261
-        # TODO Revert when using Django > 4.2
-        qs = qs.filter(**{f"{related_name}__isnull": False})
-        # ####################################
-        # Ensure no deleted content is taken in consideration in the filter
-        portal_query = self.filter_queryset_related_objects_by_portal(
-            request, related_name
-        )
-        related_field_name = f"{related_name}__deleted"
-        portal_query &= Q(**{related_field_name: False})
-        return self.filter_queryset_related_objects_published(
-            qs, request, related_name, portal_query
-        )
-
     def filter_queryset(self, request, qs, view):
-        set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(
-            qs, request, "trek"
+        q = self.build_related_exists(
+            qs.model, request, "trek", check_deleted=True, check_portal=True
+        ) | self.build_related_exists(
+            qs.model, request, "poi", check_deleted=True, check_portal=True
         )
-        set_2 = self.filter_queryset_related_objects_published_not_deleted_by_portal(
-            qs, request, "poi"
-        )
-        set_3 = qs.none()
         if "geotrek.outdoor" in settings.INSTALLED_APPS:
-            related_name = "site"
-            qs = qs.filter(**{f"{related_name}__isnull": False})
-            portal_query = self.filter_queryset_related_objects_by_portal(
-                request, related_name
-            )
-            set_3 = self.filter_queryset_related_objects_published(
-                qs, request, related_name, portal_query
-            )
-        return (set_1 | set_2 | set_3).distinct()
+            q |= self.build_related_exists(qs.model, request, "site", check_portal=True)
+        return qs.filter(q).order_by("pk")
 
 
 class TreksAndSitesAndTourismRelatedPortalThemeFilter(
     RelatedObjectsPublishedNotDeletedByPortalFilter
 ):
     def filter_queryset(self, request, qs, view):
-        set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(
-            qs, request, "treks"
-        )
-        set_2 = self.filter_queryset_related_objects_published_not_deleted_by_portal(
-            qs, request, "touristiccontents"
-        )
-        set_3 = self.filter_queryset_related_objects_published_not_deleted_by_portal(
-            qs, request, "touristic_events"
-        )
-        set_4 = qs.none()
-        if "geotrek.outdoor" in settings.INSTALLED_APPS:
-            set_4 = self.filter_queryset_related_objects_published_by_portal(
-                qs, request, "sites"
+        q = (
+            self.build_related_exists(
+                qs.model, request, "treks", check_deleted=True, check_portal=True
             )
-        return (set_1 | set_2 | set_3 | set_4).distinct()
+            | self.build_related_exists(
+                qs.model,
+                request,
+                "touristiccontents",
+                check_deleted=True,
+                check_portal=True,
+            )
+            | self.build_related_exists(
+                qs.model,
+                request,
+                "touristic_events",
+                check_deleted=True,
+                check_portal=True,
+            )
+        )
+        if "geotrek.outdoor" in settings.INSTALLED_APPS:
+            q |= self.build_related_exists(
+                qs.model, request, "sites", check_portal=True
+            )
+        return qs.filter(q).order_by("pk")
 
 
 class TreksAndSitesAndTourismAndFlatpagesandVigilanceRelatedPortalThemeFilter(
@@ -1741,15 +1749,14 @@ class TreksAndSitesAndTourismAndFlatpagesandVigilanceRelatedPortalThemeFilter(
 
 class TreksAndSitesRelatedPortalFilter(RelatedObjectsPublishedNotDeletedByPortalFilter):
     def filter_queryset(self, request, qs, view):
-        set_1 = self.filter_queryset_related_objects_published_not_deleted_by_portal(
-            qs, request, "treks"
+        q = self.build_related_exists(
+            qs.model, request, "treks", check_deleted=True, check_portal=True
         )
-        set_2 = qs.none()
         if "geotrek.outdoor" in settings.INSTALLED_APPS:
-            set_2 = self.filter_queryset_related_objects_published_by_portal(
-                qs, request, "sites"
+            q |= self.build_related_exists(
+                qs.model, request, "sites", check_portal=True
             )
-        return (set_1 | set_2).distinct()
+        return qs.filter(q).order_by("pk")
 
 
 class GeotrekRatingScaleFilter(BaseFilterBackend):

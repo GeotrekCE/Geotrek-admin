@@ -114,6 +114,6 @@ def get_impracticable_vigilance_areas(request):
         portals = [int(portal) for portal in portals.split(",")]
         impracticable_vigilance_areas = impracticable_vigilance_areas.filter(
             portals__in=portals
-        ).distinct()
+        )
 
     return impracticable_vigilance_areas
