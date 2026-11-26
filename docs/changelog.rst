@@ -12,6 +12,8 @@ CHANGELOG
 **Improvements**
 
 * Add database index on ``eid`` and composite index on ``(eid, provider)`` plus ``db_default=""`` on ``ExternalSourceMixin.eid`` (removing manual SQL ``SET DEFAULT`` statements)
+* Add source modification date comparison on parsers to skip updating unmodified objects, with a ``--force`` / ``force_update`` option to force updates
+* Display execution duration in parser reports (CLI and web interface)
 
 
 2.127.2         (2026-11-19)

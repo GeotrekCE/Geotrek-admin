@@ -140,6 +140,7 @@ class FMA28OtherPortal(TouristicEventTourInSoftParser):
     type = "Agenda rando"
     portal = "Other_portal"
     m2m_aggregate_fields = ["portal"]
+    force_update = True
 
 
 class FilenameLEIParser(LEITouristicContentParser):

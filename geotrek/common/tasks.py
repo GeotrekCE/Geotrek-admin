@@ -55,6 +55,7 @@ def import_datas(**kwargs):
     module_name = kwargs.get("module")
     encoding = kwargs.get("encoding")
     user_pk = kwargs.get("user", None)
+    force_update = kwargs.get("force_update", False)
 
     Parser = get_parser_class(module_name, class_name)
 
@@ -75,6 +76,8 @@ def import_datas(**kwargs):
 
     try:
         parser = Parser(progress_cb=progress_cb, user=user, encoding=encoding)
+        if force_update:
+            parser.force_update = True
         parser.parse(filename)
     except Exception as e:
         raise e
@@ -96,6 +99,7 @@ def import_datas_from_web(**kwargs):
     class_name = kwargs.get("name")
     module_name = kwargs.get("module")
     user_pk = kwargs.get("user", None)
+    force_update = kwargs.get("force_update", False)
 
     Parser = get_parser_class(module_name, class_name)
 
@@ -116,6 +120,8 @@ def import_datas_from_web(**kwargs):
 
     try:
         parser = Parser(progress_cb=progress_cb, user=user)
+        if force_update:
+            parser.force_update = True
         parser.parse()
     except Exception as e:
         raise e

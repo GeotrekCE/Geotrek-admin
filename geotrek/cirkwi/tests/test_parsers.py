@@ -41,6 +41,8 @@ class TestCirkwiTrekParserEn(CirkwiTrekParser):
     default_language = "en"
     # English parser must not delete attachments created by French parser
     delete_attachments = False
+    # Enriches the same objects created by TestCirkwiTrekParserFr with the same source date
+    force_update = True
 
 
 class TestCirkwiTouristicContentParserFr(CirkwiTouristicContentParser):
@@ -67,6 +69,8 @@ class TestCirkwiTouristicContentParserEn(CirkwiTouristicContentParser):
     default_language = "en"
     # English parser must not delete attachments created by French parser
     delete_attachments = False
+    # Enriches the same objects created by TestCirkwiTouristicContentParserFr with the same source date
+    force_update = True
 
 
 @skipIf(settings.TREKKING_TOPOLOGY_ENABLED, "Test without dynamic segmentation only")
@@ -150,18 +154,31 @@ class CirkwiParserTests(TestCase):
         )
 
         # Test update
+        mocked_get.reset_mock()
         mocked_get.side_effect = self.make_dummy_get("circuits_updated.xml")
         call_command(
             "import",
             "geotrek.cirkwi.tests.test_parsers.TestCirkwiTrekParserFrUpdateOnly",
             verbosity=0,
         )
+        self.assertIn("end-time", mocked_get.call_args_list[0].kwargs["params"])
         self.assertEqual(Trek.objects.count(), 2)
         t = Trek.objects.get(name_fr="Le patrimoine de Plancoët à VTT")
         self.assertEqual(t.eid, "10926")
         self.assertEqual(t.description_teaser_fr, "Laissez-vous guider par cette route")
         t = Trek.objects.get(name_fr="Le patrimoine de Plancoët")
         self.assertFalse(t.deleted)
+
+        # Test update with --force disables end-time filter even when update_only=True
+        mocked_get.reset_mock()
+        mocked_get.side_effect = self.make_dummy_get("circuits_updated.xml")
+        call_command(
+            "import",
+            "geotrek.cirkwi.tests.test_parsers.TestCirkwiTrekParserFrUpdateOnly",
+            force=True,
+            verbosity=0,
+        )
+        self.assertNotIn("end-time", mocked_get.call_args_list[0].kwargs["params"])
 
     @mock.patch("requests.get")
     def test_create_touristic_content_no_type(self, mocked_get):

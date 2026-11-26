@@ -341,6 +341,12 @@ class ImportDatasetForm(forms.Form):
         widget=forms.RadioSelect,
         required=True,
     )
+    force_update = forms.BooleanField(
+        label=_("Force update"),
+        required=False,
+        initial=False,
+        help_text=_("Update objects even if source update date has not changed."),
+    )
 
     def __init__(self, choices=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -352,6 +358,7 @@ class ImportDatasetForm(forms.Form):
             Div(
                 Div(
                     "parser",
+                    "force_update",
                 ),
                 FormActions(
                     Submit("import-web", _("Import"), css_class="button white")
@@ -420,6 +427,7 @@ class ImportDatasetFormWithFile(ImportDatasetForm):
                     "parser",
                     "file",
                     "encoding",
+                    "force_update",
                 ),
                 FormActions(
                     Submit("upload-file", _("Import"), css_class="button white")

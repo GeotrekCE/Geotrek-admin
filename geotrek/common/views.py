@@ -187,7 +187,7 @@ class CheckExtentsView(LoginRequiredMixin, TemplateView):
         return super().dispatch(request, *args, **kwargs)
 
 
-def import_file(uploaded, parser, encoding, user_pk):
+def import_file(uploaded, parser, encoding, user_pk, force_update=False):
     destination_dir, destination_file = create_tmp_destination(uploaded.name)
     with open(destination_file, "wb+") as f:
         f.write(uploaded.file.read())
@@ -206,6 +206,7 @@ def import_file(uploaded, parser, encoding, user_pk):
                     module=parser.__module__,
                     encoding=encoding,
                     user=user_pk,
+                    force_update=force_update,
                 )
             return
     import_datas.delay(
@@ -214,6 +215,7 @@ def import_file(uploaded, parser, encoding, user_pk):
         module=parser.__module__,
         encoding=encoding,
         user=user_pk,
+        force_update=force_update,
     )
 
 
@@ -242,8 +244,15 @@ def import_view(request):
                 uploaded = request.FILES["with-file-file"]
                 parser = classes[int(form["parser"].value())]
                 encoding = form.cleaned_data["encoding"]
+                force_update = form.cleaned_data.get("force_update", False)
                 try:
-                    import_file(uploaded, parser, encoding, request.user.pk)
+                    import_file(
+                        uploaded,
+                        parser,
+                        encoding,
+                        request.user.pk,
+                        force_update=force_update,
+                    )
                 except UnicodeDecodeError:
                     render_dict["encoding_error"] = True
 
@@ -254,8 +263,12 @@ def import_view(request):
 
             if form_without_file.is_valid():
                 parser = classes[int(form_without_file["parser"].value())]
+                force_update = form_without_file.cleaned_data.get("force_update", False)
                 import_datas_from_web.delay(
-                    name=parser.__name__, module=parser.__module__, user=request.user.pk
+                    name=parser.__name__,
+                    module=parser.__module__,
+                    user=request.user.pk,
+                    force_update=force_update,
                 )
 
         if "import-suricate" in request.POST:

@@ -31,6 +31,7 @@ class CirkwiParser(AttachmentParserMixin, Parser):
     provider = "Cirkwi"
     rows = 10
     update_only = False
+    source_date_update_field = "@@date_modification"
 
     field_options = {
         "geom": {"required": True},
@@ -44,19 +45,8 @@ class CirkwiParser(AttachmentParserMixin, Parser):
     }
 
     def __init__(self, *args, **kwargs):
-        # Extract URL parameter to use to retrieve updates only (will be used in 'next_row' method)
-        self.updated_after = None
-        if (
-            self.update_only
-            and self.model.objects.filter(provider__name__exact=self.provider).exists()
-        ):
-            last_update_timestamp = (
-                self.model.objects.filter(provider__name__exact=self.provider)
-                .latest("date_update")
-                .date_update.timestamp()
-            )
-            self.updated_after = str(int(last_update_timestamp))
         super().__init__(*args, **kwargs)
+        self.updated_after = None
 
     def normalize_field_name(self, name):
         return name
@@ -74,6 +64,22 @@ class CirkwiParser(AttachmentParserMixin, Parser):
 
         # Get data from API URL :
         else:
+            # Extract URL parameter to use to retrieve updates only
+            self.updated_after = None
+            if (
+                self.update_only
+                and not self.force_update
+                and self.model.objects.filter(
+                    provider__name__exact=self.provider
+                ).exists()
+            ):
+                last_update_timestamp = (
+                    self.model.objects.filter(provider__name__exact=self.provider)
+                    .latest("date_update")
+                    .date_update.timestamp()
+                )
+                self.updated_after = str(int(last_update_timestamp))
+
             # Make first query to retrieve objects count
             # We don't need the objects yet, just need to access 'nb_objects', so set params to 0
             params = {

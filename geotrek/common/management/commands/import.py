@@ -22,11 +22,19 @@ class Command(BaseCommand):
             "-l", dest="limit", type=int, help="Limit number of lines to import"
         )
         parser.add_argument("--encoding", "-e", default="utf8")
+        parser.add_argument(
+            "--force",
+            "-f",
+            action="store_true",
+            default=False,
+            help="Force update of objects even if source update date has not changed",
+        )
 
     def handle(self, *args, **options):
         verbosity = options["verbosity"]
         limit = options["limit"]
         encoding = options["encoding"]
+        force = options["force"]
 
         if "." in options["parser"]:
             # Python import syntax
@@ -63,6 +71,8 @@ class Command(BaseCommand):
                 )
 
         parser = Parser(progress_cb=progress_cb, encoding=encoding)
+        if force:
+            parser.force_update = True
 
         try:
             parser.parse(options["filename"], limit=limit)

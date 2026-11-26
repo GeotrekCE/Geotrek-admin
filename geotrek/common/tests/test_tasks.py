@@ -81,6 +81,8 @@ class TasksTest(TestCase):
         self.assertEqual(organism.organism, "2.0")
         self.assertEqual("100%", log)
         self.assertEqual(task.status, "SUCCESS")
+        self.assertIn('<div class="duration">', task.result["report"])
+        self.assertIn("Duration:", task.result["report"])
 
     @patch("requests.get")
     @patch("sys.stdout", new_callable=StringIO)
@@ -105,6 +107,73 @@ class TasksTest(TestCase):
         self.assertEqual(TouristicEvent.objects.count(), 1)
         event = TouristicEvent.objects.get()
         self.assertEqual(event.eid, "323154")
+        self.assertEqual(task.status, "SUCCESS")
+        self.assertIn('<div class="duration">', task.result["report"])
+        self.assertIn("Duration:", task.result["report"])
+
+        # Re-import with force_update=True
+        task_forced = import_datas_from_web.s(
+            url="http://url_test.com",
+            name="TouristicEventApidaeParser",
+            module="geotrek.tourism.parsers",
+            force_update=True,
+        ).apply()
+        self.assertEqual(task_forced.status, "SUCCESS")
+
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_import_data_task_force_update(self, mock):
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        task = import_datas.s(
+            filename=filename,
+            name="OrganismParser",
+            module="geotrek.common.tests.test_tasks",
+            force_update=True,
+        ).apply()
+        self.assertEqual(task.status, "SUCCESS")
+
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_import_data_task_legacy_parser_force_update(self, mock_stdout):
+        class LegacyFileParser(ExcelParser):
+            model = Organism
+            fields = {"organism": "nOm"}
+
+            def __init__(self, progress_cb=None, user=None, encoding="utf8"):
+                super().__init__(progress_cb=progress_cb, user=user, encoding=encoding)
+
+            def parse(self, filename=None, limit=None):
+                self.duration = 0.01
+
+        with patch(
+            "geotrek.common.tasks.get_parser_class", return_value=LegacyFileParser
+        ):
+            task = import_datas.s(
+                filename="dummy.xls",
+                name="LegacyFileParser",
+                module="geotrek.common.tests.test_tasks",
+                force_update=True,
+            ).apply()
+        self.assertEqual(task.status, "SUCCESS")
+
+    @patch("sys.stdout", new_callable=StringIO)
+    def test_import_data_from_web_legacy_parser_force_update(self, mock_stdout):
+        class LegacyWebParser(ExcelParser):
+            model = Organism
+            fields = {"organism": "nOm"}
+
+            def __init__(self, progress_cb=None, user=None):
+                super().__init__(progress_cb=progress_cb, user=user)
+
+            def parse(self, filename=None, limit=None):
+                self.duration = 0.01
+
+        with patch(
+            "geotrek.common.tasks.get_parser_class", return_value=LegacyWebParser
+        ):
+            task = import_datas_from_web.s(
+                name="LegacyWebParser",
+                module="geotrek.common.tests.test_tasks",
+                force_update=True,
+            ).apply()
         self.assertEqual(task.status, "SUCCESS")
 
     def test_get_parser_class_from_var_dir(self):

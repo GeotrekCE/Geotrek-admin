@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 16:35+0000\n"
+"POT-Creation-Date: 2026-11-25 09:15+0000\n"
 "PO-Revision-Date: 2025-10-22 09:01+0000\n"
 "Last-Translator: Anonymous <noreply@weblate.org>\n"
 "Language-Team: German <https://weblate.makina-corpus.net/projects/geotrek-admin/common/de/>\n"
@@ -54,6 +54,12 @@ msgid "Please select a choice related to all structures (without brackets) or re
 msgstr ""
 
 msgid "Data to import from network"
+msgstr ""
+
+msgid "Force update"
+msgstr ""
+
+msgid "Update objects even if source update date has not changed."
 msgstr ""
 
 msgid "Import"
@@ -157,6 +163,9 @@ msgid "Provider"
 msgstr ""
 
 msgid "External id"
+msgstr ""
+
+msgid "Source update date"
 msgstr ""
 
 msgid "Access is restricted because not all selected items belong to your structure. Use the structure filter to select only authorized items."
@@ -357,6 +366,10 @@ msgstr ""
 
 #, python-format
 msgid "Blank value not allowed for field '%(src)s'"
+msgstr ""
+
+#, python-brace-format
+msgid "Bad value '{val}' for field '{src}'"
 msgstr ""
 
 #, python-brace-format
@@ -646,10 +659,18 @@ msgstr[0] ""
 msgstr[1] ""
 
 #, python-format
+msgid "Duration: %(duration)s."
+msgstr ""
+
+#, python-format
 msgid "%(n)s warning:"
 msgid_plural "%(n)s warnings:"
 msgstr[0] ""
 msgstr[1] ""
+
+#, python-format
+msgid "Total duration: %(duration)s."
+msgstr ""
 
 msgid "Object is published but"
 msgstr ""

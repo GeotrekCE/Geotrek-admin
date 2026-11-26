@@ -11,6 +11,7 @@ class BiodivParser(Parser):
     label = "Biodiv'Sports"
     url = "https://biodiv-sports.fr/api/v2/sensitivearea/?format=json&bubble&period=ignore"
     eid = "eid"
+    source_date_update_field = "update_datetime"
     separator = None
     delete = True
     practices = None
