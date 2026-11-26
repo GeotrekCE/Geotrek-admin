@@ -3536,7 +3536,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_vigilanceareatype_detail(self):
         self.check_structure_response(
             self.get_vigilanceareatype_detail(self.vigilance_area_type.pk),
-            sorted(["id", "code", "name", "parent", "pictogram"]),
+            sorted(["id", "code", "name", "full_name", "pictogram"]),
         )
 
     def test_vigilanceareatype_pictogram(self):
@@ -3566,6 +3566,39 @@ class APIAccessAnonymousTestCase(BaseApiTest):
             response.json(),
             {"portals": "A comma-separated list of integers is expected."},
         )
+
+    def test_vigilanceareatype_full_name_all_languages(self):
+        root_type = zoning_factory.VigilanceAreaTypeFactory.create(
+            name_en="root", name_fr="racine"
+        )
+        child_type = zoning_factory.VigilanceAreaTypeFactory.create(
+            name_en="child", name_fr="enfant", parent=root_type
+        )
+        # mandatory to add types in the API
+        zoning_factory.VigilanceAreaFactory.create(
+            vigilance_area_type=child_type, published=True
+        )
+
+        response = self.get_vigilanceareatype_detail(child_type.pk)
+        data = response.json()
+
+        self.assertEqual(data["full_name"]["en"], "root > child")
+        self.assertEqual(data["full_name"]["fr"], "racine > enfant")
+
+    def test_vigilanceareatype_full_name_en(self):
+        root_type = zoning_factory.VigilanceAreaTypeFactory.create(name_en="root")
+        child_type = zoning_factory.VigilanceAreaTypeFactory.create(
+            name_en="child", parent=root_type
+        )
+        # mandatory to add types in the API
+        zoning_factory.VigilanceAreaFactory.create(
+            vigilance_area_type=child_type, published=True
+        )
+
+        response = self.get_vigilanceareatype_detail(child_type.pk, {"language": "en"})
+        data = response.json()
+
+        self.assertEqual(data["full_name"], "root > child")
 
     def test_vigilancelevel_list(self):
         self.check_number_elems_response(

@@ -1470,11 +1470,41 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
     class VigilanceAreaTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField()
         code = serializers.SerializerMethodField()
-        parent = serializers.IntegerField(source="parent_id")
+        full_name = serializers.SerializerMethodField()
         pictogram = serializers.SerializerMethodField()
 
         def get_name(self, obj):
             return get_translation_or_dict("name", self, obj)
+
+        def get_full_name(self, obj):
+            request = self.context.get("request")
+            requested_language = (
+                request.GET.get("language", "all") if request else "all"
+            )
+            languages = (
+                settings.MODELTRANSLATION_LANGUAGES
+                if requested_language == "all"
+                else [requested_language]
+            )
+
+            nodes = [obj]
+            while nodes[-1].parent_id is not None:
+                nodes.append(nodes[-1].get_parent())
+            nodes.reverse()
+
+            full_names = {
+                lang: " > ".join(
+                    getattr(node, build_localized_fieldname("name", lang)) or ""
+                    for node in nodes
+                )
+                for lang in languages
+            }
+
+            return (
+                full_names
+                if requested_language == "all"
+                else full_names[requested_language]
+            )
 
         def get_code(self, obj):
             return obj.get_code()
@@ -1487,7 +1517,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
 
         class Meta:
             model = zoning_models.VigilanceAreaType
-            fields = ("id", "name", "code", "parent", "pictogram")
+            fields = ("id", "name", "code", "full_name", "pictogram")
 
     class VigilanceLevelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField()
