@@ -4,6 +4,8 @@ import { m } from "@/paraglide/messages"
 import MapBboxDataLayer from "./map-bbox-data-layer"
 import useBounds from "@/hook/useBounds"
 import MapElementsLayer from "./map-elements-layer"
+import ButtonNavigate from "./button-navigate"
+import { getFirstPosition } from "@/lib/map"
 
 export default function DetailMap({
   geom,
@@ -15,7 +17,7 @@ export default function DetailMap({
   pictogram: { url: string }
 }) {
   const bounds = useBounds(geom)
-
+  const position = getFirstPosition(geom)
   return (
     <>
       <Map
@@ -45,6 +47,7 @@ export default function DetailMap({
           <AlertTitle>{m["form.geom-linear-not-supported"]()}</AlertTitle>
         </Alert>
       )}
+      <ButtonNavigate className="mt-4 w-full" position={position} />
     </>
   )
 }
