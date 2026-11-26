@@ -60,8 +60,15 @@ class GeotrekViewSet(RetrieveCacheResponseMixin, viewsets.ReadOnlyModelViewSet):
         """return specific object cache key based on object date_update column"""
         # don't directly use get_object or get_queryset to avoid select / prefetch and annotation sql queries
         # insure object exists and doesn't raise exception
-        instance = get_object_or_404(self.get_queryset().model, pk=pk)
-        date_update = instance.date_update
+        model = (
+            self.queryset.model
+            if self.queryset is not None
+            else self.get_queryset().model
+        )
+        date_update = get_object_or_404(
+            model._base_manager.values_list("date_update", flat=True),
+            pk=pk,
+        )
         return f"{self.get_base_cache_string()}:{date_update.isoformat()}"
 
     def object_cache_key_func(self, **kwargs):
