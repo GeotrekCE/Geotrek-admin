@@ -49,7 +49,7 @@ export function getBoundsFromPolygon(polygon: string) {
   ]
 }
 
-function getFirstPosition(
+export function getFirstPosition(
   geometry: GeoJSON.Geometry
 ): GeoJSON.Position | undefined {
   if (geometry.type === "GeometryCollection") {
