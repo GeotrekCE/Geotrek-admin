@@ -1470,11 +1470,14 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
     class VigilanceAreaTypeSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField()
         code = serializers.SerializerMethodField()
-        parent = serializers.IntegerField(source="parent_id")
         pictogram = serializers.SerializerMethodField()
+        full_name = serializers.SerializerMethodField()
 
         def get_name(self, obj):
             return get_translation_or_dict("name", self, obj)
+
+        def get_full_name(self, obj):
+            return get_translation_or_dict("full_name", self, obj)
 
         def get_code(self, obj):
             return obj.get_code()
@@ -1487,7 +1490,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
 
         class Meta:
             model = zoning_models.VigilanceAreaType
-            fields = ("id", "name", "code", "parent", "pictogram")
+            fields = ("id", "name", "code", "full_name", "pictogram")
 
     class VigilanceLevelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         name = serializers.SerializerMethodField()

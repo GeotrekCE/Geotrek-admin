@@ -11,6 +11,7 @@ from django.db.models.functions import Now
 from django.utils.translation import gettext_lazy as _
 from django.views.generic.dates import timezone_today
 from mapentity.models import DuplicateMixin
+from modeltranslation.utils import build_localized_fieldname
 from treebeard.al_tree import AL_Node
 
 from geotrek.authent.models import StructureRelated
@@ -179,6 +180,30 @@ class VigilanceAreaType(
         if not self.is_root():
             parent = self.get_parent()
             return parent.get_pictogram()
+
+    def get_full_name(self, lang=None):
+        """Return the names of all ancestors and self, joined by ' > '.
+        If `lang` is given, use the `name_<lang>` field, else the current language."""
+        field = build_localized_fieldname("name", lang) if lang else "name"
+        node = self
+        names = [getattr(node, field) or ""]
+        while node.parent_id is not None:
+            node = node.get_parent()
+            names.insert(0, getattr(node, field) or "")
+        return " > ".join(names)
+
+    @property
+    def full_name(self):
+        return self.get_full_name()
+
+
+# Expose full_name_<lang> properties, so that full_name can be used with get_translation_or_dict in the API
+for lang in settings.MODELTRANSLATION_LANGUAGES:
+    setattr(
+        VigilanceAreaType,
+        build_localized_fieldname("full_name", lang),
+        property(lambda self, lang=lang: self.get_full_name(lang)),
+    )
 
 
 class VigilanceLevel(OptionalPictogramMixin, TimeStampedModelMixin, models.Model):

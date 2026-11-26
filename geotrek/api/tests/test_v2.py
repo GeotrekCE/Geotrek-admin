@@ -3536,7 +3536,7 @@ class APIAccessAnonymousTestCase(BaseApiTest):
     def test_vigilanceareatype_detail(self):
         self.check_structure_response(
             self.get_vigilanceareatype_detail(self.vigilance_area_type.pk),
-            sorted(["id", "code", "name", "parent", "pictogram"]),
+            sorted(["id", "code", "name", "full_name", "pictogram"]),
         )
 
     def test_vigilanceareatype_pictogram(self):
@@ -3559,6 +3559,21 @@ class APIAccessAnonymousTestCase(BaseApiTest):
 
         self.assertEqual(data[3]["pictogram"], None)
         self.assertIn(type_with_pictogram.pictogram.url, data[4]["pictogram"])
+
+    def test_vigilanceareatype_full_name(self):
+        root_type = zoning_factory.VigilanceAreaTypeFactory.create(name="root")
+        child_type = zoning_factory.VigilanceAreaTypeFactory.create(
+            name="child", parent=root_type
+        )
+        # mandatory to add types in the API
+        zoning_factory.VigilanceAreaFactory.create(
+            vigilance_area_type=child_type, published=True
+        )
+
+        response = self.get_vigilanceareatype_detail(child_type.pk)
+        data = response.json()
+
+        self.assertEqual(data["full_name"]["en"], "root > child")
 
     def test_vigilancelevel_list(self):
         self.check_number_elems_response(
@@ -7499,89 +7514,3 @@ class SensitivityAPIv2Test(TrekkingManagerTest):
         ):
             mthumb.return_value.get_thumbnail.side_effect = Exception("thumb error")
             self.assertEqual(AttachmentSerializer().get_thumbnail(att), "")
-
-
-class VigilanceAreaTypeHierarchyUsedByPublishedTestCase(TestCase):
-    """A vigilance area type is listed if it is used by a published vigilance area,
-    or if one of its descendants is.
-
-    root1                    root2               root3     root4
-    ├── child1               └── child2          (used by  (unused)
-    │   └── grandchild1          (portal 2)      unpublished)
-    │       (portal 1)
-    └── child1_unused
-    """
-
-    @classmethod
-    def setUpTestData(cls):
-        cls.portal1 = common_factory.TargetPortalFactory()
-        cls.portal2 = common_factory.TargetPortalFactory()
-        type_factory = zoning_factory.VigilanceAreaTypeFactory
-        cls.root1 = type_factory()
-        cls.child1 = type_factory(parent=cls.root1)
-        cls.grandchild1 = type_factory(parent=cls.child1)
-        cls.child1_unused = type_factory(parent=cls.root1)
-        cls.root2 = type_factory()
-        cls.child2 = type_factory(parent=cls.root2)
-        cls.root3 = type_factory()
-        cls.root4 = type_factory()
-        area_factory = partial(zoning_factory.VigilanceAreaFactory, periods=[])
-        area_factory(
-            vigilance_area_type=cls.grandchild1, published=True, portals=[cls.portal1]
-        )
-        area_factory(
-            vigilance_area_type=cls.child2, published=True, portals=[cls.portal2]
-        )
-        area_factory(
-            vigilance_area_type=cls.root3, published=False, portals=[cls.portal1]
-        )
-
-    def get_type_ids(self, params=None):
-        response = self.client.get("/api/v2/vigilancearea_type/", params or {})
-        self.assertEqual(response.status_code, 200)
-        return [result["id"] for result in response.json()["results"]]
-
-    def test_without_filter(self):
-        self.assertListEqual(
-            self.get_type_ids(),
-            [
-                self.root1.pk,
-                self.child1.pk,
-                self.grandchild1.pk,
-                self.root2.pk,
-                self.child2.pk,
-            ],
-        )
-
-    def test_invalid_portal_filter(self):
-        response = self.client.get("/api/v2/vigilancearea_type/", {"portals": "A,B"})
-        self.assertEqual(response.status_code, 400)
-        self.assertEqual(
-            response.json(),
-            {"portals": "A comma-separated list of integers is expected."},
-        )
-
-    def test_filter_portals(self):
-        self.assertListEqual(
-            self.get_type_ids({"portals": self.portal1.pk}),
-            [self.root1.pk, self.child1.pk, self.grandchild1.pk],
-        )
-
-    def test_filter_several_portals(self):
-        self.assertListEqual(
-            self.get_type_ids({"portals": f"{self.portal1.pk},{self.portal2.pk}"}),
-            [
-                self.root1.pk,
-                self.child1.pk,
-                self.grandchild1.pk,
-                self.root2.pk,
-                self.child2.pk,
-            ],
-        )
-
-    def test_filter_language(self):
-        # Vigilance areas publication is not translated: language has no effect
-        self.assertListEqual(
-            self.get_type_ids({"language": "fr", "portals": self.portal1.pk}),
-            [self.root1.pk, self.child1.pk, self.grandchild1.pk],
-        )

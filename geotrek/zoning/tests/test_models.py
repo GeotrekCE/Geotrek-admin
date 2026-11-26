@@ -425,6 +425,25 @@ class VigilanceAreaTypeTestCase(TestCase):
         self.assertEqual(child_type_1.get_pictogram(), parent_type.pictogram)
         self.assertEqual(child_type_2.get_pictogram(), child_type_2.pictogram)
 
+    def test_get_full_name(self):
+        parent_type = VigilanceAreaTypeFactory(name_en="root", name_fr="racine")
+        child_type = VigilanceAreaTypeFactory(
+            parent=parent_type, name_en="child", name_fr="enfant"
+        )
+        grandchild_type = VigilanceAreaTypeFactory(
+            parent=child_type, name_en="grandchild", name_fr="petit enfant"
+        )
+        root_type = VigilanceAreaTypeFactory(name_en="alone", name_fr="seul")
+
+        self.assertEqual(
+            grandchild_type.get_full_name("en"), "root > child > grandchild"
+        )
+        self.assertEqual(
+            grandchild_type.get_full_name("fr"), "racine > enfant > petit enfant"
+        )
+        self.assertEqual(root_type.get_full_name("en"), "alone")
+        self.assertEqual(root_type.get_full_name("fr"), "seul")
+
 
 class VigilanceLevelTestCase(TestCase):
     def test_vigilance_level_str(self):
