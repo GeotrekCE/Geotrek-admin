@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-14 14:26+0000\n"
+"POT-Creation-Date: 2026-11-26 16:10+0000\n"
 "PO-Revision-Date: 2025-10-22 09:00+0000\n"
 "Last-Translator: Camille Monchicourt <camille.monchicourt@ecrins-parcnational.fr>\n"
 "Language-Team: French <https://weblate.makina-corpus.net/projects/geotrek-admin/api/fr/>\n"
@@ -381,6 +381,9 @@ msgstr "Filtrer par un ou plusieurs id de cotation, séparés par des virgules. 
 
 msgid "Filter by one or more course type id, comma-separated."
 msgstr "Filtrer par un ou plusieurs id de type de parcours, séparés par des virgules."
+
+msgid "A comma-separated list of integers is expected."
+msgstr "Une liste d'entiers séparés par des virgules est attendue."
 
 msgid "Filter by some case-insensitive text contained in name."
 msgstr "Filtrer par du texte insensible à la casse contenu dans le nom."
