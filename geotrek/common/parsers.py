@@ -1873,7 +1873,7 @@ class GeotrekParser(AttachmentParserMixin, Parser):
     mapping: Mapping between values in categories (example: /api/v2/touristiccontent_category/) and final values
         Can be use when you want to change a value from the api/v2
     create_categories: Create all categories during importation
-    all_datas: Import all datas and do not use updated_after filter
+    all_datas: Import all datas and do not use updated_after filter (also bypassed when force_update is True)
     """
 
     model = None

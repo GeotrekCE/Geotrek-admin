@@ -3149,3 +3149,36 @@ class SourceDateUpdateParserTests(TestCase):
             )
         self.assertEqual(sr_parser.id_local_to_pk_mapping["child1"], 42)
         self.assertEqual(sr_parser.related_treks_mapping["p1"], [42])
+
+    def test_geotrek_parser_force_update_disables_updated_after(self):
+        from geotrek.common.parsers import GeotrekParser
+        from geotrek.tourism.tests.factories import TouristicContentFactory
+
+        class MinimalGeotrekParser(GeotrekParser):
+            model = TouristicContent
+            url = "https://example.org"
+            next_url = "https://example.org/api/v2/touristiccontent/"
+            provider = "geotrek_remote"
+            url_categories = {}
+            all_datas = False
+
+        provider_obj = Provider.objects.create(name="geotrek_remote")
+        TouristicContentFactory.create(eid="1", provider=provider_obj)
+
+        mock_resp = mock.MagicMock()
+        mock_resp.json.return_value = {"count": 0, "next": None, "results": []}
+
+        # Without force_update, updated_after is populated
+        parser = MinimalGeotrekParser()
+        with mock.patch.object(parser, "request_or_retry", return_value=mock_resp):
+            list(parser.next_row())
+        self.assertIsNotNone(parser.params_used["updated_after"])
+
+        # With force_update set after __init__ (as CLI --force / Celery task do), updated_after is None
+        parser_forced = MinimalGeotrekParser()
+        parser_forced.force_update = True
+        with mock.patch.object(
+            parser_forced, "request_or_retry", return_value=mock_resp
+        ):
+            list(parser_forced.next_row())
+        self.assertIsNone(parser_forced.params_used["updated_after"])
