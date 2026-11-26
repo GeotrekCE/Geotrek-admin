@@ -12,6 +12,7 @@ CHANGELOG
 **Improvements**
 
 * Add database index on ``eid`` and composite index on ``(eid, provider)`` plus ``db_default=""`` on ``ExternalSourceMixin.eid`` (removing manual SQL ``SET DEFAULT`` statements)
+* Optimize API v2 object cache key query in ``GeotrekViewSet.get_object_cache_key`` to fetch only ``date_update`` instead of loading full model instances
 
 
 2.127.2         (2026-11-19)
