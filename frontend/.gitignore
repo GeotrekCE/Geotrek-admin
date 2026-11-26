@@ -28,3 +28,10 @@ public/swe-worker*
 *.njsproj
 *.sln
 *.sw?
+
+# e2e
+/test-results/
+/playwright-report/
+/blob-report/
+/tests/playwright/.cache/
+/tests/playwright/.auth/
