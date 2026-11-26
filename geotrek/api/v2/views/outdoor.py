@@ -1,13 +1,11 @@
-from django.conf import settings
-from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Exists, F, OuterRef
+from django.db.models import Exists, OuterRef
 from django.db.models.query import Prefetch
 from django.utils import translation
 
 from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
-from geotrek.api.v2.utils import get_impracticable_vigilance_areas
+from geotrek.api.v2.utils import annotate_geojson, get_impracticable_vigilance_areas
 from geotrek.common.models import Attachment, HDViewPoint
 from geotrek.outdoor import models as outdoor_models
 
@@ -25,13 +23,11 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         impracticable_vigilance_areas = get_impracticable_vigilance_areas(self.request)
+        include_bbox = self.request.query_params.get("format") == "geojson"
 
         with translation.override(self.request.GET.get("language"), deactivate=True):
-            return (
-                outdoor_models.Site.objects.annotate(
-                    geom_transformed=Transform(F("geom"), settings.API_SRID)
-                )
-                .select_related("parent", "practice", "type")
+            qs = (
+                outdoor_models.Site.objects.select_related("parent", "practice", "type")
                 .prefetch_related(
                     Prefetch(
                         "attachments",
@@ -41,10 +37,11 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
                     ),
                     Prefetch(
                         "view_points",
-                        queryset=HDViewPoint.objects.select_related(
-                            "content_type", "license"
-                        ).annotate(
-                            geom_transformed=Transform(F("geom"), settings.API_SRID)
+                        queryset=annotate_geojson(
+                            HDViewPoint.objects.select_related(
+                                "content_type", "license"
+                            ).defer("geom"),
+                            field_name="geom",
                         ),
                     ),
                     "information_desks",
@@ -66,6 +63,7 @@ class SiteViewSet(api_viewsets.GeotrekGeometricViewset):
                     ),
                 )
             )  # Required for reliable pagination
+            return annotate_geojson(qs, field_name="geom", include_bbox=include_bbox)
 
 
 class OutdoorPracticeViewSet(api_viewsets.GeotrekGeometricViewset):
@@ -144,13 +142,11 @@ class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         impracticable_vigilance_areas = get_impracticable_vigilance_areas(self.request)
+        include_bbox = self.request.query_params.get("format") == "geojson"
 
         with translation.override(self.request.GET.get("language"), deactivate=True):
-            return (
-                outdoor_models.Course.objects.annotate(
-                    geom_transformed=Transform(F("geom"), settings.API_SRID)
-                )
-                .select_related("type")
+            qs = (
+                outdoor_models.Course.objects.select_related("type")
                 .prefetch_related(
                     Prefetch(
                         "attachments",
@@ -183,3 +179,4 @@ class CourseViewSet(api_viewsets.GeotrekGeometricViewset):
                     ),
                 )
             )  # Required for reliable pagination
+            return annotate_geojson(qs, field_name="geom", include_bbox=include_bbox)

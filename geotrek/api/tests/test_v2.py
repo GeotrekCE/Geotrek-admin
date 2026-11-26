@@ -2283,9 +2283,15 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         self.check_number_elems_response(self.get_city_list(), zoning_models.City)
 
     def test_city_detail(self):
-        self.check_structure_response(
-            self.get_city_detail(self.city.pk), CITY_PROPERTIES_JSON_STRUCTURE
-        )
+        response = self.get_city_detail(self.city.pk)
+        self.check_structure_response(response, CITY_PROPERTIES_JSON_STRUCTURE)
+        # Geometry must be projected to API_SRID (WGS84)
+        coords = response.json()["geometry"]["coordinates"][0][0][0]
+        self.assertLessEqual(abs(coords[0]), 180)
+        self.assertLessEqual(abs(coords[1]), 90)
+        geojson_response = self.get_city_detail(self.city.pk, {"format": "geojson"})
+        self.assertEqual(geojson_response.status_code, 200)
+        self.assertIn("bbox", geojson_response.json())
 
     def test_district_list(self):
         self.check_number_elems_response(
@@ -2293,10 +2299,17 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_district_detail(self):
-        self.check_structure_response(
-            self.get_district_detail(self.district.pk),
-            DISTRICT_PROPERTIES_JSON_STRUCTURE,
+        response = self.get_district_detail(self.district.pk)
+        self.check_structure_response(response, DISTRICT_PROPERTIES_JSON_STRUCTURE)
+        # Geometry must be projected to API_SRID (WGS84)
+        coords = response.json()["geometry"]["coordinates"][0][0][0]
+        self.assertLessEqual(abs(coords[0]), 180)
+        self.assertLessEqual(abs(coords[1]), 90)
+        geojson_response = self.get_district_detail(
+            self.district.pk, {"format": "geojson"}
         )
+        self.assertEqual(geojson_response.status_code, 200)
+        self.assertIn("bbox", geojson_response.json())
 
     def test_route_list(self):
         self.check_number_elems_response(self.get_route_list(), trek_models.Route)

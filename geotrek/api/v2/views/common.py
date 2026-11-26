@@ -1,8 +1,6 @@
 from hashlib import md5
 
 from django.conf import settings
-from django.contrib.gis.db.models.functions import Transform
-from django.db.models import F
 from django.shortcuts import get_object_or_404
 from django.utils import translation
 from rest_framework.response import Response
@@ -12,6 +10,7 @@ from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.cache import ListCacheResponseMixin
 from geotrek.api.v2.decorators import cache_response_detail
+from geotrek.api.v2.utils import annotate_geojson
 from geotrek.common import models as common_models
 from geotrek.tourism.models import TouristicContent, TouristicEvent
 from geotrek.trekking.models import Trek
@@ -150,11 +149,14 @@ class HDViewPointViewSet(api_viewsets.GeotrekGeometricViewset):
     )
 
     def get_queryset(self):
+        include_bbox = self.request.query_params.get("format") == "geojson"
         with translation.override(self.request.GET.get("language"), deactivate=True):
-            return (
+            return annotate_geojson(
                 common_models.HDViewPoint.objects.prefetch_related("content_object")
-                .annotate(geom_transformed=Transform(F("geom"), settings.API_SRID))
-                .order_by("title")
+                .defer("geom")
+                .order_by("title"),
+                field_name="geom",
+                include_bbox=include_bbox,
             )  # Required for reliable pagination
 
 
