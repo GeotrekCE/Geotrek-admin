@@ -61,7 +61,11 @@ export function SelectField({
 
   const comboboxValue = multiple ? listToOptions(rawValue as List[]) : undefined
   const selectValue =
-    !multiple && rawValue ? itemToOption(rawValue as List) : undefined
+    !multiple &&
+    rawValue &&
+    list.some((item) => item.id === (rawValue as List).id)
+      ? itemToOption(rawValue as List).value
+      : null
 
   return (
     <FormFieldSet>
