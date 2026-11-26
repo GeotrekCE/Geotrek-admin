@@ -67,6 +67,10 @@ export function SelectField({
       ? itemToOption(rawValue as List).value
       : null
 
+  if (listToOptions(list).length === 0) {
+    return null
+  }
+
   return (
     <FormFieldSet>
       <FormField>
