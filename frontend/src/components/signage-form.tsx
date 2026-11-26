@@ -11,7 +11,7 @@ import { FieldGroup } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
-import { usePermission } from "@/hook/useSettingsQuery"
+import { useIsFieldVisible, usePermission } from "@/hook/useSettingsQuery"
 import { m } from "@/paraglide/messages"
 import { FormUploadGallery } from "@/components/form-upload-gallery"
 import { type AttachmentsSchemaProps } from "@/schemas/attachments"
@@ -117,21 +117,26 @@ export default function SignageForm({
     useFormFields<SignageDataSchemaProps>()
 
   const { can_bypass_structure, is_superuser } = usePermission()
+  const isVisible = useIsFieldVisible("signage")
 
   return (
     <form.AppForm>
       <form.Form>
         <FieldGroup className="mb-4">
-          <FormTextField name="name" label={m["form.name"]()} required />
+          {isVisible("name") && (
+            <FormTextField name="name" label={m["form.name"]()} required />
+          )}
 
-          <FormSelectField
-            name="type"
-            label={m["form.type"]()}
-            list={signagetype}
-            required
-          />
+          {isVisible("type") && (
+            <FormSelectField
+              name="type"
+              label={m["form.type"]()}
+              list={signagetype}
+              required
+            />
+          )}
 
-          {can_bypass_structure && is_superuser && (
+          {isVisible("structure") && can_bypass_structure && is_superuser && (
             <FormSelectField
               name="structure"
               label={m["form.structure"]()}
@@ -140,60 +145,78 @@ export default function SignageForm({
             />
           )}
 
-          <FormTextareaField
-            name="description"
-            label={m["form.description"]()}
-            isRTE
-          />
+          {isVisible("description") && (
+            <FormTextareaField
+              name="description"
+              label={m["form.description"]()}
+              isRTE
+            />
+          )}
 
-          <FormGeomField
-            name="geom"
-            label={m["form.location"]()}
-            pictogram={pictogram}
-            reference="signage"
-            required
-          />
+          {isVisible("geom") && (
+            <FormGeomField
+              name="geom"
+              label={m["form.location"]()}
+              pictogram={pictogram}
+              reference="signage"
+              required
+            />
+          )}
 
-          <FormSelectField
-            name="conditions"
-            label={m["form.state"]()}
-            list={signagecondition}
-            multiple
-          />
+          {isVisible("conditions") && (
+            <FormSelectField
+              name="conditions"
+              label={m["form.state"]()}
+              list={signagecondition}
+              multiple
+            />
+          )}
 
-          <FormTextField
-            name="implantation_year"
-            label={m["form.implantation-year"]()}
-            type="number"
-            min="0"
-          />
+          {isVisible("implantation_year") && (
+            <FormTextField
+              name="implantation_year"
+              label={m["form.implantation-year"]()}
+              type="number"
+              min="0"
+            />
+          )}
 
-          <FormTextField name="code" label={m["content.code"]()} />
+          {isVisible("code") && (
+            <FormTextField name="code" label={m["content.code"]()} />
+          )}
 
-          <FormTextField
-            name="printed_elevation"
-            label={m["content.displayed-elevation"]()}
-            type="number"
-            min="0"
-          />
+          {isVisible("printed_elevation") && (
+            <FormTextField
+              name="printed_elevation"
+              label={m["content.displayed-elevation"]()}
+              type="number"
+              min="0"
+            />
+          )}
 
-          <FormSelectField
-            name="manager"
-            label={m["content.manager"]()}
-            list={organism}
-          />
+          {isVisible("manager") && (
+            <FormSelectField
+              name="manager"
+              label={m["content.manager"]()}
+              list={organism}
+            />
+          )}
 
-          <FormSelectField
-            name="sealing"
-            label={m["content.sealing"]()}
-            list={sealing}
-          />
+          {isVisible("sealing") && (
+            <FormSelectField
+              name="sealing"
+              label={m["content.sealing"]()}
+              list={sealing}
+            />
+          )}
 
-          <FormSelectField
-            name="access"
-            label={m["form.access"]()}
-            list={accessmean}
-          />
+          {isVisible("access") && (
+            <FormSelectField
+              name="access"
+              label={m["form.access"]()}
+              list={accessmean}
+            />
+          )}
 
           <FormUploadGallery />
 

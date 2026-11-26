@@ -11,6 +11,7 @@ import { useNavigate } from "@tanstack/react-router"
 import { m } from "@/paraglide/messages"
 import { FormUploadGallery } from "@/components/form-upload-gallery"
 import { type AttachmentsSchemaProps } from "@/schemas/attachments"
+import { useIsFieldVisible } from "@/hook/useSettingsQuery"
 
 export default function ReportForm({
   defaultValues,
@@ -106,50 +107,69 @@ export default function ReportForm({
   })
   const { FormTextField, FormSelectField, FormTextareaField, FormGeomField } =
     useFormFields<ReportDataSchemaProps>()
+  const isVisible = useIsFieldVisible("report")
 
   return (
     <form.AppForm>
       <form.Form>
         <FieldGroup className="mb-4">
-          <FormTextField name="email" label={m["form.email"]()} type="email" />
+          {isVisible("email") && (
+            <FormTextField
+              name="email"
+              label={m["form.email"]()}
+              type="email"
+            />
+          )}
 
-          <FormTextareaField
-            name="comment"
-            label={m["form.description"]()}
-            isRTE
-          />
+          {isVisible("comment") && (
+            <FormTextareaField
+              name="comment"
+              label={m["form.description"]()}
+              isRTE
+            />
+          )}
 
-          <FormGeomField
-            name="geom"
-            label={m["form.location"]()}
-            reference="report"
-            pictogram={pictogram}
-            required
-          />
+          {isVisible("geom") && (
+            <FormGeomField
+              name="geom"
+              label={m["form.location"]()}
+              reference="report"
+              pictogram={pictogram}
+              required
+            />
+          )}
 
-          <FormSelectField
-            name="activity"
-            label={m["form.activity"]()}
-            list={reportactivity}
-          />
+          {isVisible("activity") && (
+            <FormSelectField
+              name="activity"
+              label={m["form.activity"]()}
+              list={reportactivity}
+            />
+          )}
 
-          <FormSelectField
-            name="category"
-            label={m["form.category"]()}
-            list={reportcategory}
-          />
+          {isVisible("category") && (
+            <FormSelectField
+              name="category"
+              label={m["form.category"]()}
+              list={reportcategory}
+            />
+          )}
 
-          <FormSelectField
-            name="problem_magnitude"
-            label={m["form.problem-magnitude"]()}
-            list={reportproblemmagnitude}
-          />
+          {isVisible("problem_magnitude") && (
+            <FormSelectField
+              name="problem_magnitude"
+              label={m["form.problem-magnitude"]()}
+              list={reportproblemmagnitude}
+            />
+          )}
 
-          <FormSelectField
-            name="status"
-            label={m["form.status"]()}
-            list={reportstatus}
-          />
+          {isVisible("status") && (
+            <FormSelectField
+              name="status"
+              label={m["form.status"]()}
+              list={reportstatus}
+            />
+          )}
 
           <FormUploadGallery />
 
