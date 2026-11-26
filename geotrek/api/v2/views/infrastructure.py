@@ -39,12 +39,9 @@ class InfrastructureViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class InfrastructureTypeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.InfrastructureRelatedPortalFilter,
-    )
     serializer_class = api_serializers.InfrastructureTypeSerializer
     queryset = infra_models.InfrastructureType.objects.all().order_by("pk")
+    used_by = ("infrastructures",)
 
 
 class InfrastructureUsageDifficultyLevelViewSet(api_viewsets.GeotrekViewSet):

@@ -45,12 +45,9 @@ class SignageViewSet(api_viewsets.GeotrekGeometricViewset):
 
 
 class SignageTypeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.SignageRelatedPortalFilter,
-    )
     serializer_class = api_serializers.SignageTypeSerializer
     queryset = signage_models.SignageType.objects.all().order_by("pk")
+    used_by = ("signages",)
 
 
 class SignageConditionViewSet(api_viewsets.GeotrekViewSet):
