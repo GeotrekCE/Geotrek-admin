@@ -4,6 +4,30 @@ export type SettingsSchemaProps = z.infer<typeof settingsSchema>
 export type AppSyncSchemaProps = z.infer<typeof appSync>
 
 export const settingsSchema = z.object({
+  forms: z
+    .object({
+      hiddenFields: z
+        .object({
+          signage: z.array(z.string()).default([]),
+          infrastructure: z.array(z.string()).default([]),
+          intervention: z.array(z.string()).default([]),
+          report: z.array(z.string()).default([]),
+        })
+        .default({
+          signage: [],
+          infrastructure: [],
+          intervention: [],
+          report: [],
+        }),
+    })
+    .default({
+      hiddenFields: {
+        signage: [],
+        infrastructure: [],
+        intervention: [],
+        report: [],
+      },
+    }),
   settings: z.object({
     intervalSyncInHours: z.object({
       data: z.number().int().positive(),

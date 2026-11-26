@@ -10,7 +10,7 @@ import { db } from "@/lib/db"
 import { cn } from "cn"
 import { toast } from "sonner"
 import NotFound from "@/components/not-found"
-import { usePermission } from "@/hook/useSettingsQuery"
+import { useIsFieldVisible, usePermission } from "@/hook/useSettingsQuery"
 import type { InfrastructureDataSchemaProps } from "@/schemas/data"
 import { m } from "@/paraglide/messages"
 import PhotosGallery from "@/components/ui/photos-gallery"
@@ -55,6 +55,7 @@ export default function InfrastructureDetail(params: {
   }, [detail?.name, navigate, params.id])
 
   const { can_bypass_structure, is_superuser } = usePermission()
+  const isVisible = useIsFieldVisible("infrastructure")
 
   if (
     !loaded ||
@@ -96,7 +97,7 @@ export default function InfrastructureDetail(params: {
         <section>
           <h2 className="flex flex-wrap justify-between">
             <span className="text-2xl font-medium text-accent-foreground">
-              {detail.name}
+              {isVisible("name") && detail.name}
             </span>
             {isAsyncItem && (
               <span className="flex items-center gap-2 text-sm text-destructive">
@@ -109,9 +110,9 @@ export default function InfrastructureDetail(params: {
             <span className="text-primary">
               {m["content.infrastructure"]()}
             </span>
-            {detail.type && ` - ${detail.type.name}`}
+            {isVisible("type") && detail.type && ` - ${detail.type.name}`}
           </p>
-          {detail.conditions.length > 0 && (
+          {isVisible("conditions") && detail.conditions.length > 0 && (
             <p className="mt-1 flex flex-wrap gap-1">
               {detail.conditions.map((c) => (
                 <Badge key={c.id} variant="outline">
@@ -132,7 +133,7 @@ export default function InfrastructureDetail(params: {
           </div>
         </section>
 
-        {can_bypass_structure && is_superuser && (
+        {isVisible("structure") && can_bypass_structure && is_superuser && (
           <section className="my-8">
             <h3 className="mb-2 text-xl font-bold text-accent-foreground">
               {m["content.linked-structure"]()}
@@ -145,84 +146,98 @@ export default function InfrastructureDetail(params: {
           </section>
         )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.description"]()}
-          </h3>
-          {detail.description ? (
-            <div dangerouslySetInnerHTML={{ __html: detail.description }} />
-          ) : (
-            <p className="italic">{m["content.no-description"]()}</p>
-          )}
-        </section>
+        {isVisible("description") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.description"]()}
+            </h3>
+            {detail.description ? (
+              <div dangerouslySetInnerHTML={{ __html: detail.description }} />
+            ) : (
+              <p className="italic">{m["content.no-description"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.location"]()}
-          </h3>
-          {detail.geom && (
-            <DetailMap
-              geom={detail.geom}
-              reference="infrastructure"
-              pictogram={reference.pictogram}
-            />
-          )}
-        </section>
+        {isVisible("geom") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.location"]()}
+            </h3>
+            {detail.geom && (
+              <DetailMap
+                geom={detail.geom}
+                reference="infrastructure"
+                pictogram={reference.pictogram}
+              />
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.implantation-year"]()}
-          </h3>
-          {detail.implantation_year ? (
-            <p>{detail.implantation_year}</p>
-          ) : (
-            <p className="italic">{m["content.no-implantation-year"]()}</p>
-          )}
-        </section>
+        {isVisible("implantation_year") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.implantation-year"]()}
+            </h3>
+            {detail.implantation_year ? (
+              <p>{detail.implantation_year}</p>
+            ) : (
+              <p className="italic">{m["content.no-implantation-year"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.accessibility"]()}
-          </h3>
-          {detail.accessibility ? (
-            <div dangerouslySetInnerHTML={{ __html: detail.accessibility }} />
-          ) : (
-            <p className="italic">{m["content.no-accessibility"]()}</p>
-          )}
-        </section>
+        {isVisible("accessibility") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.accessibility"]()}
+            </h3>
+            {detail.accessibility ? (
+              <div dangerouslySetInnerHTML={{ __html: detail.accessibility }} />
+            ) : (
+              <p className="italic">{m["content.no-accessibility"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.usage-level"]()}
-          </h3>
-          {detail.usage_difficulty ? (
-            <p>{detail.usage_difficulty.name}</p>
-          ) : (
-            <p className="italic">{m["content.no-usage-level"]()}</p>
-          )}
-        </section>
+        {isVisible("usage_difficulty") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.usage-level"]()}
+            </h3>
+            {detail.usage_difficulty ? (
+              <p>{detail.usage_difficulty.name}</p>
+            ) : (
+              <p className="italic">{m["content.no-usage-level"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.maintenance-level"]()}
-          </h3>
-          {detail.maintenance_difficulty ? (
-            <p>{detail.maintenance_difficulty.name}</p>
-          ) : (
-            <p className="italic">{m["content.no-maintenance-level"]()}</p>
-          )}
-        </section>
+        {isVisible("maintenance_difficulty") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.maintenance-level"]()}
+            </h3>
+            {detail.maintenance_difficulty ? (
+              <p>{detail.maintenance_difficulty.name}</p>
+            ) : (
+              <p className="italic">{m["content.no-maintenance-level"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.access"]()}
-          </h3>
-          {detail.access ? (
-            <p>{detail.access.name}</p>
-          ) : (
-            <p className="italic">{m["content.no-access"]()}</p>
-          )}
-        </section>
+        {isVisible("access") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.access"]()}
+            </h3>
+            {detail.access ? (
+              <p>{detail.access.name}</p>
+            ) : (
+              <p className="italic">{m["content.no-access"]()}</p>
+            )}
+          </section>
+        )}
 
         <PhotosGallery attachments={detail.attachments} />
 

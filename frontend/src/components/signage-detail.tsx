@@ -17,7 +17,7 @@ import { db } from "@/lib/db"
 import { cn } from "cn"
 import { toast } from "sonner"
 import NotFound from "@/components/not-found"
-import { usePermission } from "@/hook/useSettingsQuery"
+import { useIsFieldVisible, usePermission } from "@/hook/useSettingsQuery"
 import type { SignageDataSchemaProps } from "@/schemas/data"
 import { m } from "@/paraglide/messages"
 import PhotosGallery from "@/components/ui/photos-gallery"
@@ -58,6 +58,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
   }, [detail?.name, navigate, params.id])
 
   const { can_bypass_structure, is_superuser } = usePermission()
+  const isVisible = useIsFieldVisible("signage")
 
   if (
     !loaded ||
@@ -100,7 +101,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
         <section>
           <h2 className="flex flex-wrap justify-between">
             <span className="text-2xl font-medium text-accent-foreground">
-              {detail.name}
+              {isVisible("name") && detail.name}
             </span>
             {isAsyncItem && (
               <span className="flex items-center gap-2 text-sm text-destructive">
@@ -111,9 +112,9 @@ export default function SignageDetail(params: { id: string; type: string }) {
           </h2>
           <p>
             <span className="text-primary">{m["content.signage"]()}</span>
-            {detail.type && ` - ${detail.type.name}`}
+            {isVisible("type") && detail.type && ` - ${detail.type.name}`}
           </p>
-          {detail.conditions.length > 0 && (
+          {isVisible("conditions") && detail.conditions.length > 0 && (
             <p className="mt-1 flex flex-wrap gap-1">
               {detail.conditions.map((c) => (
                 <Badge key={c.id} variant="outline">
@@ -134,7 +135,7 @@ export default function SignageDetail(params: { id: string; type: string }) {
           </div>
         </section>
 
-        {can_bypass_structure && is_superuser && (
+        {isVisible("structure") && can_bypass_structure && is_superuser && (
           <section className="my-8">
             <h3 className="mb-2 text-xl font-bold text-accent-foreground">
               {m["content.linked-structure"]()}
@@ -147,166 +148,187 @@ export default function SignageDetail(params: { id: string; type: string }) {
           </section>
         )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.description"]()}
-          </h3>
-          {detail.description ? (
-            <div dangerouslySetInnerHTML={{ __html: detail.description }} />
-          ) : (
-            <p className="italic">{m["content.no-description"]()}</p>
-          )}
-        </section>
+        {isVisible("description") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.description"]()}
+            </h3>
+            {detail.description ? (
+              <div dangerouslySetInnerHTML={{ __html: detail.description }} />
+            ) : (
+              <p className="italic">{m["content.no-description"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.location"]()}
-          </h3>
-          {detail.geom && (
-            <DetailMap
-              geom={detail.geom}
-              reference="signage"
-              pictogram={reference.pictogram}
-            />
-          )}
-        </section>
+        {isVisible("geom") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.location"]()}
+            </h3>
+            {detail.geom && (
+              <DetailMap
+                geom={detail.geom}
+                reference="signage"
+                pictogram={reference.pictogram}
+              />
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.implantation-year"]()}
-          </h3>
-          {detail.implantation_year ? (
-            <p>{detail.implantation_year}</p>
-          ) : (
-            <p className="italic">{m["content.no-implantation-year"]()}</p>
-          )}
-        </section>
+        {isVisible("implantation_year") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.implantation-year"]()}
+            </h3>
+            {detail.implantation_year ? (
+              <p>{detail.implantation_year}</p>
+            ) : (
+              <p className="italic">{m["content.no-implantation-year"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.code"]()}
-          </h3>
-          {detail.code ? (
-            <p>{detail.code}</p>
-          ) : (
-            <p className="italic">{m["content.no-code"]()}</p>
-          )}
-        </section>
+        {isVisible("code") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.code"]()}
+            </h3>
+            {detail.code ? (
+              <p>{detail.code}</p>
+            ) : (
+              <p className="italic">{m["content.no-code"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.displayed-elevation"]()}
-          </h3>
-          {detail.printed_elevation ? (
-            <p>{detail.printed_elevation}</p>
-          ) : (
-            <p className="italic">{m["content.no-displayed-elevation"]()}</p>
-          )}
-        </section>
+        {isVisible("printed_elevation") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.displayed-elevation"]()}
+            </h3>
+            {detail.printed_elevation ? (
+              <p>{detail.printed_elevation}</p>
+            ) : (
+              <p className="italic">{m["content.no-displayed-elevation"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.manager"]()}
-          </h3>
-          {detail.manager ? (
-            <p>{detail.manager.name}</p>
-          ) : (
-            <p className="italic">{m["content.no-manager"]()}</p>
-          )}
-        </section>
+        {isVisible("manager") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.manager"]()}
+            </h3>
+            {detail.manager ? (
+              <p>{detail.manager.name}</p>
+            ) : (
+              <p className="italic">{m["content.no-manager"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.sealing"]()}
-          </h3>
-          {detail.sealing ? (
-            <p>{detail.sealing.name}</p>
-          ) : (
-            <p className="italic">{m["content.no-sealing"]()}</p>
-          )}
-        </section>
+        {isVisible("sealing") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.sealing"]()}
+            </h3>
+            {detail.sealing ? (
+              <p>{detail.sealing.name}</p>
+            ) : (
+              <p className="italic">{m["content.no-sealing"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.access"]()}
-          </h3>
-          {detail.access ? (
-            <p>{detail.access.name}</p>
-          ) : (
-            <p className="italic">{m["content.no-access"]()}</p>
-          )}
-        </section>
+        {isVisible("access") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.access"]()}
+            </h3>
+            {detail.access ? (
+              <p>{detail.access.name}</p>
+            ) : (
+              <p className="italic">{m["content.no-access"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 flex items-center gap-2 text-xl font-bold text-accent-foreground">
-            {m["content.blades"]()}{" "}
-            <Badge className="size-6">{detail.blades.length}</Badge>
-          </h3>
-          {detail.blades && detail.blades.length > 0 ? (
-            <ul>
-              {detail.blades.map((blade) => (
-                <li key={blade.id} className="my-2 rounded-lg border px-4 pt-2">
-                  <h4>{[detail.code, blade.number].join("-")}</h4>
+        {isVisible("blades") && (
+          <section className="my-8">
+            <h3 className="mb-2 flex items-center gap-2 text-xl font-bold text-accent-foreground">
+              {m["content.blades"]()}{" "}
+              <Badge className="size-6">{detail.blades.length}</Badge>
+            </h3>
+            {detail.blades && detail.blades.length > 0 ? (
+              <ul>
+                {detail.blades.map((blade) => (
+                  <li
+                    key={blade.id}
+                    className="my-2 rounded-lg border px-4 pt-2"
+                  >
+                    <h4>{[detail.code, blade.number].join("-")}</h4>
 
-                  <h5 className="my-2 font-semibold">Type</h5>
-                  <p>{blade.type.name}</p>
+                    <h5 className="my-2 font-semibold">Type</h5>
+                    <p>{blade.type.name}</p>
 
-                  <h5 className="my-2 font-semibold">Conditions</h5>
-                  <p>{blade.conditions.map((c) => c.name).join(", ")}</p>
+                    <h5 className="my-2 font-semibold">Conditions</h5>
+                    <p>{blade.conditions.map((c) => c.name).join(", ")}</p>
 
-                  {blade.color && (
-                    <>
-                      <h5 className="my-2 font-semibold">Couleur</h5>
-                      <p>{blade.color.name}</p>
-                    </>
-                  )}
+                    {blade.color && (
+                      <>
+                        <h5 className="my-2 font-semibold">Couleur</h5>
+                        <p>{blade.color.name}</p>
+                      </>
+                    )}
 
-                  {blade.direction && (
-                    <>
-                      <h5 className="my-2 font-semibold">Direction</h5>
-                      <p>{blade.direction.name}</p>
-                    </>
-                  )}
+                    {blade.direction && (
+                      <>
+                        <h5 className="my-2 font-semibold">Direction</h5>
+                        <p>{blade.direction.name}</p>
+                      </>
+                    )}
 
-                  <h5 className="my-2 font-semibold">Lignes</h5>
-                  <ul>
-                    {blade.lines.map((line) => (
-                      <Item
-                        key={line.id}
-                        variant="outline"
-                        className="my-4 overflow-hidden bg-accent"
-                        render={
-                          <button>
-                            <ItemMedia className="-my-3 -ms-3 self-stretch! bg-primary/50 px-5">
-                              <Info
-                                className="size-6 text-primary"
-                                aria-hidden
-                              />
-                            </ItemMedia>
-                            <ItemContent>
-                              <ItemTitle className="text-accent-foreground">
-                                {line.text}
-                              </ItemTitle>
-                              <ItemDescription>
-                                {line.distance} km - {line.time} h
-                              </ItemDescription>
-                            </ItemContent>
-                            {/* TODO: blade feature 
+                    <h5 className="my-2 font-semibold">Lignes</h5>
+                    <ul>
+                      {blade.lines.map((line) => (
+                        <Item
+                          key={line.id}
+                          variant="outline"
+                          className="my-4 overflow-hidden bg-accent"
+                          render={
+                            <button>
+                              <ItemMedia className="-my-3 -ms-3 self-stretch! bg-primary/50 px-5">
+                                <Info
+                                  className="size-6 text-primary"
+                                  aria-hidden
+                                />
+                              </ItemMedia>
+                              <ItemContent>
+                                <ItemTitle className="text-accent-foreground">
+                                  {line.text}
+                                </ItemTitle>
+                                <ItemDescription>
+                                  {line.distance} km - {line.time} h
+                                </ItemDescription>
+                              </ItemContent>
+                              {/* TODO: blade feature
                             <ItemActions>
                               <ChevronRight aria-hidden />
                             </ItemActions> */}
-                          </button>
-                        }
-                      />
-                    ))}
-                  </ul>
-                </li>
-              ))}
-            </ul>
-          ) : (
-            <p className="italic">{m["content.no-blades"]()}</p>
-          )}
-        </section>
+                            </button>
+                          }
+                        />
+                      ))}
+                    </ul>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="italic">{m["content.no-blades"]()}</p>
+            )}
+          </section>
+        )}
 
         <PhotosGallery attachments={detail.attachments} />
 

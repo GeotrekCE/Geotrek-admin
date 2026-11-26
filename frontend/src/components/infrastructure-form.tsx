@@ -14,7 +14,7 @@ import { FieldGroup } from "@/components/ui/field"
 import { Button } from "@/components/ui/button"
 import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
-import { usePermission } from "@/hook/useSettingsQuery"
+import { useIsFieldVisible, usePermission } from "@/hook/useSettingsQuery"
 import { m } from "@/paraglide/messages"
 import { FormUploadGallery } from "@/components/form-upload-gallery"
 import { type AttachmentsSchemaProps } from "@/schemas/attachments"
@@ -128,21 +128,26 @@ export default function InfrastructureForm({
     useFormFields<InfrastructureDataSchemaProps>()
 
   const { can_bypass_structure, is_superuser } = usePermission()
+  const isVisible = useIsFieldVisible("infrastructure")
 
   return (
     <form.AppForm>
       <form.Form>
         <FieldGroup className="mb-4">
-          <FormTextField name="name" label={m["form.name"]()} required />
+          {isVisible("name") && (
+            <FormTextField name="name" label={m["form.name"]()} required />
+          )}
 
-          <FormSelectField
-            name="type"
-            label={m["form.type"]()}
-            list={infrastructuretype}
-            required
-          />
+          {isVisible("type") && (
+            <FormSelectField
+              name="type"
+              label={m["form.type"]()}
+              list={infrastructuretype}
+              required
+            />
+          )}
 
-          {can_bypass_structure && is_superuser && (
+          {isVisible("structure") && can_bypass_structure && is_superuser && (
             <FormSelectField
               name="structure"
               label={m["form.structure"]()}
@@ -151,59 +156,75 @@ export default function InfrastructureForm({
             />
           )}
 
-          <FormTextareaField
-            name="description"
-            label={m["form.description"]()}
-            isRTE
-          />
+          {isVisible("description") && (
+            <FormTextareaField
+              name="description"
+              label={m["form.description"]()}
+              isRTE
+            />
+          )}
 
-          <FormGeomField
-            name="geom"
-            label={m["form.location"]()}
-            reference="infrastructure"
-            pictogram={pictogram}
-            required
-          />
+          {isVisible("geom") && (
+            <FormGeomField
+              name="geom"
+              label={m["form.location"]()}
+              reference="infrastructure"
+              pictogram={pictogram}
+              required
+            />
+          )}
 
-          <FormTextareaField
-            name="accessibility"
-            label={m["form.accessibility"]()}
-            isRTE
-          />
+          {isVisible("accessibility") && (
+            <FormTextareaField
+              name="accessibility"
+              label={m["form.accessibility"]()}
+              isRTE
+            />
+          )}
 
-          <FormSelectField
-            name="conditions"
-            label={m["form.state"]()}
-            list={infrastructurecondition}
-            multiple
-          />
+          {isVisible("conditions") && (
+            <FormSelectField
+              name="conditions"
+              label={m["form.state"]()}
+              list={infrastructurecondition}
+              multiple
+            />
+          )}
 
-          <FormSelectField
-            name="access"
-            label={m["form.access"]()}
-            list={accessmean}
-          />
+          {isVisible("access") && (
+            <FormSelectField
+              name="access"
+              label={m["form.access"]()}
+              list={accessmean}
+            />
+          )}
 
-          <FormTextField
-            name="implantation_year"
-            label={m["form.implantation-year"]()}
-            type="number"
-            min="0"
-          />
+          {isVisible("implantation_year") && (
+            <FormTextField
+              name="implantation_year"
+              label={m["form.implantation-year"]()}
+              type="number"
+              min="0"
+            />
+          )}
 
-          <FormSelectField
-            name="usage_difficulty"
-            label={m["form.user-level"]()}
-            list={infrastructureusagedifficultylevel}
-            description={m["form.user-level-description"]()}
-          />
+          {isVisible("usage_difficulty") && (
+            <FormSelectField
+              name="usage_difficulty"
+              label={m["form.user-level"]()}
+              list={infrastructureusagedifficultylevel}
+              description={m["form.user-level-description"]()}
+            />
+          )}
 
-          <FormSelectField
-            name="maintenance_difficulty"
-            label={m["form.maintenance-level"]()}
-            list={infrastructuremaintenancedifficultylevel}
-            description={m["form.maintenance-level-description"]()}
-          />
+          {isVisible("maintenance_difficulty") && (
+            <FormSelectField
+              name="maintenance_difficulty"
+              label={m["form.maintenance-level"]()}
+              list={infrastructuremaintenancedifficultylevel}
+              description={m["form.maintenance-level-description"]()}
+            />
+          )}
 
           <FormUploadGallery />
           <Button type="submit" className="h-12">
