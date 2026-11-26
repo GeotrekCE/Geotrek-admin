@@ -14,6 +14,7 @@ CHANGELOG
 * Add database index on ``eid`` and composite index on ``(eid, provider)`` plus ``db_default=""`` on ``ExternalSourceMixin.eid`` (removing manual SQL ``SET DEFAULT`` statements)
 * Optimize API v2 object cache key query in ``GeotrekViewSet.get_object_cache_key`` to fetch only ``date_update`` instead of loading full model instances
 * Serialize API v2 geometries directly in PostGIS via ``AsGeoJSON`` with raw JSON rendering and deferred raw geometry fields (including reprojection of ``city`` and ``district`` endpoints to ``API_SRID``)
+* Replace M2M ``LEFT OUTER JOIN`` + ``DISTINCT`` queries in API v2 filters with ``EXISTS`` subqueries to avoid unnecessary deduplication and Cartesian products
 
 
 2.127.2         (2026-11-19)
