@@ -799,6 +799,7 @@ class BaseApiTest(TestCase):
         cls.sensitivearea_species = sensitivity_factory.SpeciesFactory()
 
         geom = "SRID=4326;MULTIPOLYGON (((-2 -6, -2 5, 1 5, 1 -6, -2 -6)))"
+        cls.vigilance_area_type = zoning_factory.VigilanceAreaTypeFactory()
         cls.vigilance_area1 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,
             published=True,
@@ -812,6 +813,7 @@ class BaseApiTest(TestCase):
             impracticable=True,
             periods=[],
             portals=[cls.portal.pk],
+            vigilance_area_type=cls.vigilance_area_type,
         )
         cls.vigilance_area3 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure, published=True, periods=[]
@@ -819,6 +821,7 @@ class BaseApiTest(TestCase):
         cls.vigilance_area4 = zoning_factory.VigilanceAreaFactory(
             structure=cls.structure,
             published=False,
+            vigilance_area_type=cls.vigilance_area_type,
         )
         cls.period1 = zoning_factory.VigilancePeriodFactory.create(
             vigilance_area=cls.vigilance_area1,
@@ -841,7 +844,6 @@ class BaseApiTest(TestCase):
             start_date=datetime.date(2026, 10, 17),
             end_date=datetime.date(2026, 10, 19),
         )
-        cls.vigilance_area_type = zoning_factory.VigilanceAreaTypeFactory()
         cls.vigilance_level = zoning_factory.VigilanceLevelFactory()
         cls.parent = trek_factory.TrekFactory.create(
             published=True,
@@ -3538,16 +3540,32 @@ class APIAccessAnonymousTestCase(BaseApiTest):
         )
 
     def test_vigilanceareatype_pictogram(self):
-        zoning_factory.VigilanceAreaTypeFactory.create(
+        type_without_pictogram = zoning_factory.VigilanceAreaTypeFactory.create(
             name="without_pictogram", pictogram=None
         )
         type_with_pictogram = zoning_factory.VigilanceAreaTypeFactory.create(
             name="with_pictogram"
         )
+        # mandatory to add types in the API
+        zoning_factory.VigilanceAreaFactory.create(
+            vigilance_area_type=type_without_pictogram, published=True
+        )
+        zoning_factory.VigilanceAreaFactory.create(
+            vigilance_area_type=type_with_pictogram, published=True
+        )
+
         response = self.get_vigilanceareatype_list()
         data = response.json()["results"]
-        self.assertEqual(data[5]["pictogram"], None)
-        self.assertIn(type_with_pictogram.pictogram.url, data[6]["pictogram"])
+        self.assertEqual(data[3]["pictogram"], None)
+        self.assertIn(type_with_pictogram.pictogram.url, data[4]["pictogram"])
+
+    def test_vigilanceareatype_incorrect_portals(self):
+        response = self.get_vigilanceareatype_list({"portals": "A,B"})
+        self.assertEqual(response.status_code, 400)
+        self.assertEqual(
+            response.json(),
+            {"portals": "A comma-separated list of integers is expected."},
+        )
 
     def test_vigilancelevel_list(self):
         self.check_number_elems_response(
@@ -4520,20 +4538,18 @@ class FlatPageTestCase(TestCase):
         self.assertEqual(response.json()["results"][0]["title"]["en"], "AAA")
 
     def test_filter_sources_by_portal(self):
-        # 6 queries for 6 related objects
-        # 1 query for select on IDs
+        # 1 query for select
         # 1 count query
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(2):
             response = self.client.get("/api/v2/source/", {"portals": self.portal.pk})
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()["count"], 1)
             self.assertEqual(response.json()["results"][0]["name"], self.source.name)
 
     def test_filter_sources_by_lang(self):
-        # 6 queries for 6 related objects
         # 1 query for select on IDs
         # 1 count query
-        with self.assertNumQueries(8):
+        with self.assertNumQueries(2):
             response = self.client.get("/api/v2/source/", {"language": "fr"})
             self.assertEqual(response.status_code, 200)
             self.assertEqual(response.json()["count"], 1)

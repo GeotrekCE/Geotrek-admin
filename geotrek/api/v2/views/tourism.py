@@ -23,14 +23,11 @@ class LabelAccessibilityViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TouristicContentCategoryViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TouristicContentRelatedPortalFilter,
-    )
     serializer_class = api_serializers.TouristicContentCategorySerializer
     queryset = tourism_models.TouristicContentCategory.objects.prefetch_related(
         "types"
     ).order_by("pk")  # Required for reliable pagination
+    used_by = ("contents",)
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
@@ -91,10 +88,10 @@ class InformationDeskTypeViewSet(api_viewsets.GeotrekViewSet):
 class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
     filter_backends = (
         *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TreksAndSitesRelatedPortalFilter,
         api_filters.GeotrekInformationDeskFilter,
     )
     serializer_class = api_serializers.InformationDeskSerializer
+    used_by = ("treks", *api_filters.if_outdoor("sites"))
 
     def get_queryset(self):
         with translation.override(self.request.GET.get("language"), deactivate=True):
@@ -113,14 +110,11 @@ class InformationDeskViewSet(api_viewsets.GeotrekViewSet):
 
 
 class TouristicEventTypeViewSet(api_viewsets.GeotrekViewSet):
-    filter_backends = (
-        *api_viewsets.GeotrekViewSet.filter_backends,
-        api_filters.TouristicEventRelatedPortalFilter,
-    )
     serializer_class = api_serializers.TouristicEventTypeSerializer
     queryset = tourism_models.TouristicEventType.objects.order_by(
         "pk"
     )  # Required for reliable pagination
+    used_by = ("touristicevent",)
 
 
 class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
@@ -159,9 +153,9 @@ class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = (
         *api_viewsets.GeotrekGeometricViewset.filter_backends,
         api_filters.UpdateOrCreateDateFilter,
-        api_filters.TouristicEventsRelatedPortalFilter,
     )
     serializer_class = api_serializers.TouristicEventPlaceSerializer
+    used_by = ("touristicevents",)
 
     def get_queryset(self):
         return (
@@ -177,7 +171,7 @@ class TouristicEventOrganizerViewSet(api_viewsets.GeotrekGeometricViewset):
     filter_backends = (
         *api_viewsets.GeotrekViewSet.filter_backends,
         api_filters.UpdateOrCreateDateFilter,
-        api_filters.TouristicEventRelatedPortalFilter,
     )
     serializer_class = api_serializers.TouristicEventOrganizerSerializer
     queryset = tourism_models.TouristicEventOrganizer.objects.order_by("label")
+    used_by = ("touristicevent",)
