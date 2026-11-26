@@ -1,10 +1,92 @@
+import re
+import uuid
+
 import pygal
 from django.conf import settings
 from django.utils import translation
 from django.utils.translation import get_language
 from django.utils.translation import gettext as _
 from pygal.style import LightSolarizedStyle
+from rest_framework import renderers
+from rest_framework.compat import INDENT_SEPARATORS, LONG_SEPARATORS, SHORT_SEPARATORS
 from rest_framework.renderers import BaseRenderer
+from rest_framework.utils import json
+
+
+class RawJSON:
+    """Wrapper for pre-serialized JSON strings (e.g. from PostGIS ST_AsGeoJSON)."""
+
+    __slots__ = ("value",)
+
+    def __init__(self, value: str):
+        self.value = value
+
+    def _parsed(self):
+        return json.loads(self.value)
+
+    def get(self, key, default=None):
+        return self._parsed().get(key, default)
+
+    def __getitem__(self, key):
+        return self._parsed()[key]
+
+
+class RawJSONRenderer(renderers.JSONRenderer):
+    """
+    JSONRenderer that embeds RawJSON instances verbatim into the output
+    without parsing them into Python objects and re-serializing them.
+    """
+
+    def render(self, data, accepted_media_type=None, renderer_context=None):
+        if data is None:
+            return b""
+
+        renderer_context = renderer_context or {}
+        indent = self.get_indent(accepted_media_type, renderer_context)
+
+        if indent is None:
+            separators = SHORT_SEPARATORS if self.compact else LONG_SEPARATORS
+        else:
+            separators = INDENT_SEPARATORS
+
+        placeholder_prefix = f"__RAWJSON_{uuid.uuid4().hex}_"
+        base_encoder = self.encoder_class
+
+        class _RawJSONEncoder(base_encoder):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, **kwargs)
+                self.raw_values = []
+
+            def default(self, obj):
+                if isinstance(obj, RawJSON):
+                    idx = len(self.raw_values)
+                    self.raw_values.append(obj.value)
+                    return f"{placeholder_prefix}{idx}__"
+                return super().default(obj)
+
+        encoder = _RawJSONEncoder(
+            indent=indent,
+            ensure_ascii=self.ensure_ascii,
+            allow_nan=not self.strict,
+            separators=separators,
+        )
+        ret = encoder.encode(data)
+
+        if encoder.raw_values:
+            ret = re.sub(
+                rf'"{placeholder_prefix}(\d+)__"',
+                lambda m: encoder.raw_values[int(m.group(1))],
+                ret,
+            )
+
+        # Preserve DRF JSONRenderer escaping for JS-safe line terminators
+        ret = ret.replace("\u2028", "\\u2028").replace("\u2029", "\\u2029")
+        return ret.encode()
+
+
+class RawGeoJSONRenderer(RawJSONRenderer):
+    format = "geojson"
+    media_type = "application/geo+json"
 
 
 class SVGProfileRenderer(BaseRenderer):

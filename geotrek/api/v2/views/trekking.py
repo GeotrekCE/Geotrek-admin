@@ -1,6 +1,5 @@
 from django.conf import settings
-from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Exists, F, OuterRef, Prefetch, Q
+from django.db.models import Exists, OuterRef, Prefetch, Q
 from django.db.models.aggregates import Count
 from django.utils import translation
 from modeltranslation.utils import build_localized_fieldname
@@ -13,7 +12,7 @@ from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
 from geotrek.api.v2.renderers import SVGProfileRenderer
-from geotrek.api.v2.utils import get_impracticable_vigilance_areas
+from geotrek.api.v2.utils import annotate_geojson, get_impracticable_vigilance_areas
 from geotrek.common.models import AccessibilityAttachment, Attachment, HDViewPoint
 from geotrek.trekking import models as trekking_models
 
@@ -37,9 +36,10 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         impracticable_vigilance_areas = get_impracticable_vigilance_areas(self.request)
+        include_bbox = self.request.query_params.get("format") == "geojson"
 
         with translation.override(self.request.GET.get("language"), deactivate=True):
-            return (
+            qs = (
                 trekking_models.Trek.objects.existing()
                 .select_related("topo_object")
                 .prefetch_related(
@@ -65,15 +65,15 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                     ),
                     Prefetch(
                         "view_points",
-                        queryset=HDViewPoint.objects.select_related(
-                            "content_type", "license"
-                        ).annotate(
-                            geom_transformed=Transform(F("geom"), settings.API_SRID)
+                        queryset=annotate_geojson(
+                            HDViewPoint.objects.select_related(
+                                "content_type", "license"
+                            ).defer("geom"),
+                            field_name="geom",
                         ),
                     ),
                 )
                 .annotate(
-                    geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
                     impracticable=Exists(
                         impracticable_vigilance_areas.filter(
                             geom__intersects=OuterRef("geom"),
@@ -82,6 +82,9 @@ class TrekViewSet(api_viewsets.GeotrekGeometricViewset):
                 )
                 .order_by("name")
             )  # Required for reliable pagination
+            if self.action not in ("dem", "profile"):
+                qs = qs.defer("geom_3d", "topo_object__geom_3d")
+            return annotate_geojson(qs, field_name="geom_3d", include_bbox=include_bbox)
 
     @cache_response_detail()
     def retrieve(self, request, pk=None, format=None):
@@ -155,7 +158,6 @@ class TourViewSet(TrekViewSet):
             qs.annotate(count_children=Count("trek_children"))
             .filter(count_children__gt=0)
             .annotate(
-                geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
                 trek_children__impracticable=Exists(
                     impracticable_vigilance_areas.filter(
                         geom__intersects=OuterRef("geom"),
@@ -269,7 +271,7 @@ class POIViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.UpdateOrCreateDateFilter,
     )
     serializer_class = api_serializers.POISerializer
-    queryset = (
+    queryset = annotate_geojson(
         trekking_models.POI.objects.existing()
         .select_related(
             "topo_object",
@@ -285,13 +287,17 @@ class POIViewSet(api_viewsets.GeotrekGeometricViewset):
             ),
             Prefetch(
                 "view_points",
-                queryset=HDViewPoint.objects.select_related(
-                    "content_type", "license"
-                ).annotate(geom_transformed=Transform(F("geom"), settings.API_SRID)),
+                queryset=annotate_geojson(
+                    HDViewPoint.objects.select_related("content_type", "license").defer(
+                        "geom"
+                    ),
+                    field_name="geom",
+                ),
             ),
         )
-        .annotate(geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID))
-        .order_by("pk")
+        .defer("geom", "geom_3d", "topo_object__geom", "topo_object__geom_3d")
+        .order_by("pk"),
+        field_name="geom_3d",
     )  # Required for reliable pagination
 
 
@@ -376,7 +382,7 @@ class ServiceViewSet(api_viewsets.GeotrekGeometricViewset):
         api_filters.GeotrekServiceFilter,
     )
     serializer_class = api_serializers.ServiceSerializer
-    queryset = (
+    queryset = annotate_geojson(
         trekking_models.Service.objects.existing()
         .select_related(
             "topo_object",
@@ -391,6 +397,7 @@ class ServiceViewSet(api_viewsets.GeotrekGeometricViewset):
                 ),
             ),
         )
-        .annotate(geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID))
-        .order_by("pk")
+        .defer("geom", "geom_3d", "topo_object__geom", "topo_object__geom_3d")
+        .order_by("pk"),
+        field_name="geom_3d",
     )

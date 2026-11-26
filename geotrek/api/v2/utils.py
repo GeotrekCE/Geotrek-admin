@@ -1,8 +1,23 @@
 from django.conf import settings
+from django.contrib.gis.db.models.functions import AsGeoJSON, Envelope, Transform
+from django.db.models import F
 from django.views.generic.dates import timezone_today
 from modeltranslation.utils import build_localized_fieldname
 
 from geotrek.zoning.models import VigilanceArea
+
+
+def annotate_geojson(queryset, field_name="geom", include_bbox=False, geom_expr=None):
+    """
+    Annotate queryset with PostGIS ST_AsGeoJSON(ST_Transform(..., API_SRID), 7)
+    to avoid GEOS decoding and recursive Python coordinate rounding.
+    """
+    if geom_expr is None:
+        geom_expr = Transform(F(field_name), settings.API_SRID)
+    annotations = {"geom_geojson": AsGeoJSON(geom_expr, precision=7)}
+    if include_bbox:
+        annotations["geom_bbox"] = Envelope(geom_expr)
+    return queryset.annotate(**annotations)
 
 
 def get_translation_or_dict(model_field_name, serializer, instance):

@@ -1,6 +1,4 @@
-from django.conf import settings
-from django.contrib.gis.db.models.functions import Transform
-from django.db.models import Exists, F, OuterRef
+from django.db.models import Exists, OuterRef
 from django.db.models.query import Prefetch
 from django.shortcuts import get_object_or_404
 from django.utils import translation
@@ -10,7 +8,7 @@ from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
 from geotrek.api.v2.decorators import cache_response_detail
-from geotrek.api.v2.utils import get_impracticable_vigilance_areas
+from geotrek.api.v2.utils import annotate_geojson, get_impracticable_vigilance_areas
 from geotrek.common.models import Attachment
 from geotrek.tourism import models as tourism_models
 
@@ -54,9 +52,10 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
 
     def get_queryset(self):
         impracticable_vigilance_areas = get_impracticable_vigilance_areas(self.request)
+        include_bbox = self.request.query_params.get("format") == "geojson"
 
         with translation.override(self.request.GET.get("language"), deactivate=True):
-            return (
+            qs = (
                 tourism_models.TouristicContent.objects.existing()
                 .select_related("category", "reservation_system", "label_accessibility")
                 .prefetch_related(
@@ -72,7 +71,6 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
                     ),
                 )
                 .annotate(
-                    geom_transformed=Transform(F("geom"), settings.API_SRID),
                     impracticable=Exists(
                         impracticable_vigilance_areas.filter(
                             geom__intersects=OuterRef("geom"),
@@ -81,6 +79,7 @@ class TouristicContentViewSet(api_viewsets.GeotrekGeometricViewset):
                 )
                 .order_by("name")
             )  # Required for reliable pagination
+            return annotate_geojson(qs, field_name="geom", include_bbox=include_bbox)
 
 
 class InformationDeskTypeViewSet(api_viewsets.GeotrekViewSet):
@@ -134,8 +133,9 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.TouristicEventSerializer
 
     def get_queryset(self):
+        include_bbox = self.request.query_params.get("format") == "geojson"
         with translation.override(self.request.GET.get("language"), deactivate=True):
-            return (
+            qs = (
                 tourism_models.TouristicEvent.objects.existing()
                 .select_related("type")
                 .prefetch_related(
@@ -150,9 +150,9 @@ class TouristicEventViewSet(api_viewsets.GeotrekGeometricViewset):
                         ),
                     ),
                 )
-                .annotate(geom_transformed=Transform(F("geom"), settings.API_SRID))
                 .order_by("begin_date")
             )  # Required for reliable pagination
+            return annotate_geojson(qs, field_name="geom", include_bbox=include_bbox)
 
 
 class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
@@ -164,12 +164,15 @@ class TouristicEventPlaceViewSet(api_viewsets.GeotrekGeometricViewset):
     serializer_class = api_serializers.TouristicEventPlaceSerializer
 
     def get_queryset(self):
-        return (
+        include_bbox = self.request.query_params.get("format") == "geojson"
+        return annotate_geojson(
             tourism_models.TouristicEventPlace.objects.prefetch_related(
                 "touristicevents"
             )
-            .annotate(geom_transformed=Transform("geom", settings.API_SRID))
-            .order_by("name")
+            .defer("geom")
+            .order_by("name"),
+            field_name="geom",
+            include_bbox=include_bbox,
         )
 
 
