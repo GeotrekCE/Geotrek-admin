@@ -7,6 +7,7 @@ import re
 import textwrap
 import xml.etree.ElementTree as ET
 from collections.abc import Iterable
+from concurrent.futures import ThreadPoolExecutor
 from dataclasses import dataclass
 from datetime import date, datetime
 from datetime import time as datetime_time
@@ -47,6 +48,7 @@ from django.utils.translation import gettext as _
 from modeltranslation.utils import build_localized_fieldname
 from paperclip.models import attachment_upload, random_suffix_regexp
 from PIL import Image, UnidentifiedImageError
+from requests.adapters import HTTPAdapter
 from requests.auth import HTTPBasicAuth
 from requests.exceptions import ChunkedEncodingError
 
@@ -153,6 +155,10 @@ class Parser:
         self.nb_unmodified = 0
         self.duration = None
         self.handled_obj_pks = set()
+        self._fk_cache = {}
+        self._existing_objs_cache = None
+        self._session = None
+        self._ref_geom_prepared = None
         self.progress_cb = progress_cb
         self.user = user
         self.structure = (user and user.profile.structure) or default_structure()
@@ -293,9 +299,14 @@ class Parser:
 
     def parse_real_field(self, dst, src, val):
         """Returns True if modified"""
-        if hasattr(self.obj, dst):
+        field = self.model._meta.get_field(dst)
+        is_fk = isinstance(field, models.ForeignKey)
+        has_old = hasattr(self.obj, f"{dst}_id") if is_fk else hasattr(self.obj, dst)
+        if has_old:
             if dst in self.m2m_fields or dst in self.m2m_constant_fields:
                 old = set(getattr(self.obj, dst).all())
+            elif is_fk:
+                old = getattr(self.obj, f"{dst}_id")
             else:
                 old = getattr(self.obj, dst)
 
@@ -313,7 +324,13 @@ class Parser:
                 val
             )  # an exception is raised if the object isn't in the reference geometry
 
-        if hasattr(self.obj, dst):
+        if has_old:
+            if is_fk:
+                new_id = val.pk if isinstance(val, models.Model) else val
+                if old != new_id or (val is not None and new_id is None):
+                    self.set_value(dst, src, val)
+                    return True
+                return False
             if dst in self.m2m_fields or dst in self.m2m_constant_fields:
                 val = set(val)
                 if dst in self.m2m_aggregate_fields:
@@ -470,12 +487,25 @@ class Parser:
             return None
         return self.filter_source_date_update(src, val)
 
-    def is_obj_unmodified_in_source(self, source_date_update):
+    def _is_source_date_unmodified(
+        self, pk, stored_source_date_update, source_date_update
+    ):
         if source_date_update is None or self.force_update:
             return False
-        if self.obj.pk and self.obj.pk in self.handled_obj_pks:
+        if pk and pk in self.handled_obj_pks:
             return False
-        return getattr(self.obj, "source_date_update", None) == source_date_update
+        return stored_source_date_update == source_date_update
+
+    def is_obj_unmodified_in_source(self, source_date_update):
+        return self._is_source_date_unmodified(
+            self.obj.pk,
+            getattr(self.obj, "source_date_update", None),
+            source_date_update,
+        )
+
+    def on_unmodified_obj(self, row, pk):
+        """Hook called when an existing object is skipped without loading it."""
+        pass
 
     def update_obj_source_date(self, source_date_update, operation, update_fields):
         if source_date_update is None:
@@ -531,7 +561,7 @@ class Parser:
                         f"Provider '{self.provider}' did not exist in Geotrek-admin and was automatically created"
                     )
             self.obj.save()
-        else:
+        elif update_fields:
             self.obj.save(update_fields=update_fields)
         if self.obj.pk:
             self.handled_obj_pks.add(self.obj.pk)
@@ -580,6 +610,47 @@ class Parser:
             except RowImportError as warnings:
                 self.add_warning(str(warnings))
                 return
+            if self._existing_objs_cache is not None:
+                cached = self._existing_objs_cache.get(self.eid_val)
+                if (
+                    cached is None
+                    and self.eid_val is not None
+                    and not isinstance(self.eid_val, str)
+                ):
+                    cached = self._existing_objs_cache.get(str(self.eid_val))
+                if cached is not None:
+                    pk, structure_id, stored_source_date_update = cached
+                    has_ownership = (
+                        not hasattr(self.model, "structure")
+                        or structure_id == self.structure.pk
+                        or self.user is None
+                        or self.user.has_perm("authent.can_bypass_structure")
+                    )
+                    if has_ownership:
+                        try:
+                            source_date_update = self.get_source_date_update(row)
+                        except RowImportError as warnings:
+                            self.add_warning(str(warnings))
+                            return
+                        if self._is_source_date_unmodified(
+                            pk,
+                            stored_source_date_update,
+                            source_date_update,
+                        ):
+                            self.obj = self.model.from_db(
+                                self.model.objects.db,
+                                [self.model._meta.pk.attname],
+                                [pk],
+                            )
+                            self.nb_unmodified += 1
+                            self.to_delete.discard(pk)
+                            self.on_unmodified_obj(row, pk)
+                            self.nb_success += 1
+                            if self.progress_cb:
+                                self.progress_cb(
+                                    float(self.line) / self.nb, self.line, self.eid_val
+                                )
+                            return
             objects = self.model.objects.filter(**eid_kwargs)
             if hasattr(self.model, "provider") and self.provider is not None:
                 objects = objects.filter(provider__name__exact=self.provider)
@@ -691,6 +762,46 @@ class Parser:
                 val = mapping[val]
         return val
 
+    def _get_fk_cache_key(self, model, fields):
+        try:
+            items = tuple(
+                (k, v.pk if isinstance(v, models.Model) else v)
+                for k, v in sorted(fields.items())
+            )
+            hash(items)
+            return (model, items)
+        except TypeError:
+            return None
+
+    def _get_or_create_related(self, model, fields, create=False):
+        cache_key = self._get_fk_cache_key(model, fields)
+        if cache_key is not None and cache_key in self._fk_cache:
+            return self._fk_cache[cache_key]
+        if create:
+            obj, created = model.objects.get_or_create(**fields)
+            if created:
+                self.add_warning(
+                    _(
+                        "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
+                    ).format(model=model._meta.verbose_name.title(), val=obj)
+                )
+            if cache_key is not None:
+                self._fk_cache[cache_key] = obj
+            return obj
+        try:
+            obj = model.objects.get(**fields)
+        except model.DoesNotExist:
+            val = next(iter(fields.values()))
+            self.add_warning(
+                _(
+                    "{model} '{val}' does not exists in Geotrek-admin. Please add it"
+                ).format(model=model._meta.verbose_name.title(), val=val)
+            )
+            return None
+        if cache_key is not None:
+            self._fk_cache[cache_key] = obj
+        return obj
+
     def filter_fk(
         self,
         src,
@@ -709,24 +820,7 @@ class Parser:
         fields = {field: val}
         if fk:
             fields[fk] = getattr(self.obj, fk)
-        if create:
-            val, created = model.objects.get_or_create(**fields)
-            if created:
-                self.add_warning(
-                    _(
-                        "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
-                    ).format(model=model._meta.verbose_name.title(), val=val)
-                )
-            return val
-        try:
-            return model.objects.get(**fields)
-        except model.DoesNotExist:
-            self.add_warning(
-                _(
-                    "{model} '{val}' does not exists in Geotrek-admin. Please add it"
-                ).format(model=model._meta.verbose_name.title(), val=val)
-            )
-            return None
+        return self._get_or_create_related(model, fields, create=create)
 
     def filter_m2m(
         self,
@@ -754,25 +848,9 @@ class Parser:
             fields = {field: subval}
             if fk:
                 fields[fk] = getattr(self.obj, fk)
-            if create:
-                subval, created = model.objects.get_or_create(**fields)
-                if created:
-                    self.add_warning(
-                        _(
-                            "{model} '{val}' did not exist in Geotrek-admin and was automatically created"
-                        ).format(model=model._meta.verbose_name.title(), val=subval)
-                    )
-                dst.append(subval)
-                continue
-            try:
-                dst.append(model.objects.get(**fields))
-            except model.DoesNotExist:
-                self.add_warning(
-                    _(
-                        "{model} '{val}' does not exists in Geotrek-admin. Please add it"
-                    ).format(model=model._meta.verbose_name.title(), val=subval)
-                )
-                continue
+            obj = self._get_or_create_related(model, fields, create=create)
+            if obj is not None:
+                dst.append(obj)
         return dst
 
     def get_to_delete_kwargs(self):
@@ -805,8 +883,45 @@ class Parser:
             kwargs["provider__name__exact"] = self.provider
         return kwargs
 
+    def _preload_existing_objects(self):
+        if (
+            self.eid is None
+            or not self.source_date_update_field
+            or self.force_update
+            or self.duplicate_eid_allowed
+            or not hasattr(self.model, "source_date_update")
+        ):
+            self._existing_objs_cache = None
+            return
+        concrete_fields = {f.name for f in self.model._meta.concrete_fields}
+        if self.eid not in concrete_fields:
+            self._existing_objs_cache = None
+            return
+        qs = self.model.objects.all()
+        if hasattr(self.model, "provider") and self.provider is not None:
+            qs = qs.filter(provider__name__exact=self.provider)
+        has_structure = hasattr(self.model, "structure")
+        fields = [self.eid, "pk", "source_date_update"]
+        if has_structure:
+            fields.append("structure_id")
+        cache = {}
+        for row in qs.values_list(*fields).iterator(chunk_size=2000):
+            if has_structure:
+                eid_val, pk, source_date_update, structure_id = row
+            else:
+                eid_val, pk, source_date_update = row
+                structure_id = None
+            if eid_val in cache:
+                # Duplicate EID in DB: fall back to normal DB query so warning is emitted
+                cache[eid_val] = None
+            else:
+                cache[eid_val] = (pk, structure_id, source_date_update)
+        self._existing_objs_cache = cache
+
     def start(self):
         self.handled_obj_pks = set()
+        self._fk_cache = {}
+        self._preload_existing_objects()
         kwargs = self.get_to_delete_kwargs()
         if kwargs is None:
             self.to_delete = set()
@@ -824,6 +939,18 @@ class Parser:
                 params = {"force": True}
 
             self.model.objects.filter(pk__in=self.to_delete).delete(**params)
+
+    @property
+    def session(self):
+        if self._session is None:
+            self._session = requests.Session()
+            pool_size = max(
+                10, int(getattr(settings, "PARSER_DOWNLOAD_MAX_WORKERS", 4) or 4)
+            )
+            adapter = HTTPAdapter(pool_connections=pool_size, pool_maxsize=pool_size)
+            self._session.mount("http://", adapter)
+            self._session.mount("https://", adapter)
+        return self._session
 
     def parse(self, filename=None, limit=None):
         if filename:
@@ -856,6 +983,9 @@ class Parser:
                 self.end()
         finally:
             self.duration = monotonic() - start_time
+            if self._session is not None:
+                self._session.close()
+                self._session = None
 
     def request_or_retry(self, url, verb="get", **kwargs):
         def prepare_retry(error_msg):
@@ -868,7 +998,11 @@ class Parser:
                 "error_msg": e,
             }
 
-        action = getattr(requests, verb)
+        requests_action = getattr(requests, verb)
+        if requests_action is getattr(requests.api, verb, None):
+            action = getattr(self.session, verb)
+        else:
+            action = requests_action
         response = None
         try_get = 0
         while try_get < settings.PARSER_NUMBER_OF_TRIES:
@@ -901,6 +1035,7 @@ class Parser:
         raise DownloadImportError(msg)
 
     def start_intersect_geom(self):
+        self._ref_geom_prepared = None
         if self.intersection_geom:
             required_keys = {"model", "app_label", "geom_field", "object_filter"}
             missing_keys = required_keys - self.intersection_geom.keys()
@@ -938,6 +1073,7 @@ class Parser:
             if isinstance(ref_geom, Polygon) or isinstance(ref_geom, MultiPolygon):
                 self._ref_geom = ref_geom
                 self._ref_geom.transform(settings.SRID)
+                self._ref_geom_prepared = self._ref_geom.prepared
             else:
                 msg = f"Reference geometry must be a Polygon or MultiPolygon, not {type(ref_geom)}"
                 raise ImproperlyConfigured(msg)
@@ -961,7 +1097,8 @@ class Parser:
         * geom_field: field name in the model where the geometry is defined
         * object_filter: {"field_name": "object_name"} with field_name, the name of the field in the model that define the name of the object
         """
-        if self._ref_geom and not self._ref_geom.intersects(geom):
+        ref_geom = self._ref_geom_prepared or self._ref_geom
+        if ref_geom and not ref_geom.intersects(geom):
             if self.delete:
                 self.to_delete.add(self.obj.pk)
             msg = (
@@ -1076,6 +1213,7 @@ class AtomParser(Parser):
 
 class AttachmentParserMixin:
     download_attachments = True
+    download_max_workers = None
     base_url = ""
     delete_attachments = True
     filetype_name = "Photographie"
@@ -1083,6 +1221,14 @@ class AttachmentParserMixin:
         "attachments": _("Attachments"),
     }
     default_license_label = None
+
+    def get_download_max_workers(self):
+        workers = (
+            self.download_max_workers
+            if self.download_max_workers is not None
+            else getattr(settings, "PARSER_DOWNLOAD_MAX_WORKERS", 4)
+        )
+        return max(1, int(workers or 1))
 
     def start(self):
         super().start()
@@ -1153,16 +1299,47 @@ class AttachmentParserMixin:
 
         return True
 
-    def download_attachment(self, url):
+    def _fetch_attachment_content(self, url):
         parsed_url = urlparse(url)
         is_ftp = parsed_url.scheme == "ftp"
         if is_ftp or self.download_attachments:
             try:
                 response = self.request_or_retry(url)
             except Exception as e:
-                self.add_warning(_("Failed to load attachment: %(e)s") % {"e": e})
+                return None, e
+            return (response.read() if is_ftp else response.content), None
+        return None, None
+
+    def _prefetch_attachments(self, urls):
+        unique_urls = list(dict.fromkeys(urls))
+        max_workers = min(self.get_download_max_workers(), len(unique_urls))
+        if max_workers <= 1 or len(unique_urls) <= 1:
+            return {}
+        # Ensure session is initialized on the main thread before spawning workers
+        _ = self.session
+        prefetched = {}
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            futures = {
+                url: executor.submit(self._fetch_attachment_content, url)
+                for url in unique_urls
+            }
+            for url, future in futures.items():
+                prefetched[url] = future.result()
+        return prefetched
+
+    def download_attachment(self, url):
+        prefetched = getattr(self, "_prefetched_attachments", None)
+        if prefetched is not None and url in prefetched:
+            content, error = prefetched[url]
+            if error is not None:
+                self.add_warning(_("Failed to load attachment: %(e)s") % {"e": error})
                 return None
-            return response.read() if is_ftp else response.content
+            return content
+        content, error = self._fetch_attachment_content(url)
+        if error is not None:
+            self.add_warning(_("Failed to load attachment: %(e)s") % {"e": error})
+            return None
+        return content
 
     def check_attachment_updated(self, attachments_to_delete, updated, **kwargs):
         found = False
@@ -1323,6 +1500,7 @@ class AttachmentParserMixin:
 
     def generate_attachments(self, src, val, attachments_to_delete, updated):
         attachments = []
+        pending = []
         for attachment_data in self.filter_attachments(src, val):
             url = self.base_url + attachment_data[0]
             legend = attachment_data[1] or ""
@@ -1342,18 +1520,39 @@ class AttachmentParserMixin:
             )
             if found:
                 continue
+            pending.append((url, urlparse(url), name, author, legend, title))
 
-            parsed_url = urlparse(url)
-            attachment = self.generate_attachment(
-                author=author, legend=legend, title=title
-            )
-            save, updated = self.generate_content_attachment(
-                attachment, parsed_url, url, updated, name
-            )
-            if not save:
-                continue
-            attachments.append(attachment)
-            updated = True
+        urls_to_fetch = [
+            url
+            for url, parsed_url, *_ in pending
+            if (parsed_url.scheme in ("http", "https") and self.download_attachments)
+            or parsed_url.scheme == "ftp"
+        ]
+        can_prefetch = (
+            len(urls_to_fetch) > 1
+            and self.get_download_max_workers() > 1
+            and requests.get is requests.api.get
+            and type(self).download_attachment
+            is AttachmentParserMixin.download_attachment
+            and not hasattr(self.download_attachment, "assert_called")
+        )
+        self._prefetched_attachments = (
+            self._prefetch_attachments(urls_to_fetch) if can_prefetch else None
+        )
+        try:
+            for url, parsed_url, name, author, legend, title in pending:
+                attachment = self.generate_attachment(
+                    author=author, legend=legend, title=title
+                )
+                save, updated = self.generate_content_attachment(
+                    attachment, parsed_url, url, updated, name
+                )
+                if not save:
+                    continue
+                attachments.append(attachment)
+                updated = True
+        finally:
+            self._prefetched_attachments = None
         return updated, attachments
 
     def save_attachments(self, src, val):

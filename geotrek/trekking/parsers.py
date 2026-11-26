@@ -1634,18 +1634,21 @@ class SchemaRandonneeParser(AttachmentParserMixin, Parser):
                     )
         return license
 
+    def on_unmodified_obj(self, row, pk):
+        id_local = row.get("id_local")
+        if id_local:
+            self.id_local_to_pk_mapping[id_local] = pk
+        itineraire_parent = row.get("itineraire_parent")
+        if (
+            itineraire_parent
+            and pk not in self.related_treks_mapping[itineraire_parent]
+        ):
+            self.related_treks_mapping[itineraire_parent].append(pk)
+
     def parse_obj(self, row, operation):
         res = super().parse_obj(row, operation)
         if res and self.obj.pk:
-            id_local = row.get("id_local")
-            if id_local:
-                self.id_local_to_pk_mapping[id_local] = self.obj.pk
-            itineraire_parent = row.get("itineraire_parent")
-            if (
-                itineraire_parent
-                and self.obj.pk not in self.related_treks_mapping[itineraire_parent]
-            ):
-                self.related_treks_mapping[itineraire_parent].append(self.obj.pk)
+            self.on_unmodified_obj(row, self.obj.pk)
         return res
 
     def save_id_local(self, src, val):

@@ -3103,17 +3103,251 @@ class SourceDateUpdateParserTests(TestCase):
             self.assertEqual(p3.nb_created, 0)
             self.assertFalse(TouristicContent.objects.filter(eid="tc_req").exists())
 
-    def test_source_date_edge_cases(self):
+    def test_unmodified_skip_uses_preload_cache_without_per_row_queries(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            rows = [
+                {
+                    "eid": f"fast-{i}",
+                    "name": f"Content {i}",
+                    "geom": "POINT(700000 6600000)",
+                    "updated_at": "2024-06-01T10:00:00Z",
+                }
+                for i in range(5)
+            ]
+            payload = self._write_json(tmpdir, "batch.json", rows)
+
+            parser1 = SourceDateUpdateTestParser()
+            parser1.parse(payload)
+            self.assertEqual(parser1.nb_created, 5)
+
+            parser2 = SourceDateUpdateTestParser()
+            # Queries on re-import of 5 unmodified rows should be constant (preload + to_delete),
+            # not O(N) per-row SELECTs.
+            with self.assertNumQueries(3):
+                parser2.parse(payload)
+            self.assertEqual(parser2.nb_unmodified, 5)
+            self.assertEqual(parser2.nb_updated, 0)
+            self.assertEqual(parser2.nb_success, 5)
+
+    def test_fk_and_m2m_cache_avoids_repeated_queries(self):
+        ThemeFactory(label="Theme Cached")
+        parser = SourceDateUpdateTestParser()
+        # First lookup hits DB
+        with self.assertNumQueries(1):
+            cat1 = parser.filter_fk("cat", "Foo", TouristicContentCategory, "label")
+        # Second identical lookup hits in-memory cache (0 queries)
+        with self.assertNumQueries(0):
+            cat2 = parser.filter_fk("cat", "Foo", TouristicContentCategory, "label")
+        self.assertEqual(cat1.pk, cat2.pk)
+
+        with self.assertNumQueries(1):
+            themes1 = parser.filter_m2m("themes", ["Theme Cached"], Theme, "label")
+        with self.assertNumQueries(0):
+            themes2 = parser.filter_m2m("themes", ["Theme Cached"], Theme, "label")
+        self.assertEqual([t.pk for t in themes1], [t.pk for t in themes2])
+
+    @mock.patch("requests.Session.get")
+    def test_request_or_retry_uses_session_when_unpatched(self, mock_session_get):
+        mock_response = mock.MagicMock(status_code=200)
+        mock_session_get.return_value = mock_response
+        parser = SourceDateUpdateTestParser()
+        resp = parser.request_or_retry("https://example.com/api")
+        self.assertIs(resp, mock_response)
+        mock_session_get.assert_called_once()
+        self.assertIsNotNone(parser._session)
+        parser._session.close()
+
+    def test_fk_comparison_avoids_lazy_load_and_empty_update_skips_save(self):
+        with tempfile.TemporaryDirectory() as tmpdir:
+            payload = self._write_json(
+                tmpdir,
+                "single.json",
+                [
+                    {
+                        "eid": "fk-opt-1",
+                        "name": "Same Name",
+                        "geom": "POINT(700000 6600000)",
+                        "updated_at": "2024-06-01T10:00:00Z",
+                    }
+                ],
+            )
+            parser1 = SourceDateUpdateTestParser()
+            parser1.parse(payload)
+            tc = TouristicContent.objects.get(eid="fk-opt-1")
+
+            # Re-fetch fresh instance (category FK not cached on instance)
+            # Pre-populate parser FK cache so filter_fk itself does 0 queries
+            parser2 = SourceDateUpdateTestParser(force_update=True)
+            parser2.filter_fk("category", "Foo", TouristicContentCategory, "label")
+            parser2.obj = TouristicContent.objects.get(pk=tc.pk)
+
+            # Comparing FK field should use category_id without lazy-loading category (0 queries)
+            with self.assertNumQueries(0):
+                modified = parser2.parse_real_field("category", "category", "Foo")
+            self.assertFalse(modified)
+
+            # Re-importing with force_update=True when no field changed should not call save()
+            with mock.patch.object(
+                TouristicContent, "save", autospec=True
+            ) as mock_save:
+                parser3 = SourceDateUpdateTestParser(force_update=True)
+                parser3.parse(payload)
+                mock_save.assert_not_called()
+            self.assertEqual(parser3.nb_unmodified, 1)
+            self.assertEqual(parser3.nb_updated, 0)
+
+    @mock.patch("requests.Session.get")
+    def test_parallel_attachment_downloads(self, mock_session_get):
+        from geotrek.common.models import Attachment, FileType
+        from geotrek.common.parsers import AttachmentParserMixin
+
+        FileType.objects.get_or_create(type="Photographie")
+
+        class ParallelAttachmentParser(
+            AttachmentParserMixin, SourceDateUpdateTestParser
+        ):
+            download_max_workers = 4
+
+            def filter_attachments(self, src, val):
+                return [(u, "", "") for u in val]
+
+        def fake_get(url, **kwargs):
+            resp = mock.MagicMock()
+            if "broken" in url:
+                msg = "boom"
+                raise requests.exceptions.ConnectionError(msg)
+            resp.status_code = 200
+            resp.content = b"fake-image-bytes-" + url.encode()
+            return resp
+
+        mock_session_get.side_effect = fake_get
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            payload = self._write_json(
+                tmpdir,
+                "att.json",
+                [
+                    {
+                        "eid": "att-1",
+                        "name": "With Attachments",
+                        "geom": "POINT(700000 6600000)",
+                        "updated_at": "2024-06-01T10:00:00Z",
+                        "attachments": [
+                            "https://example.com/a.jpg",
+                            "https://example.com/broken.jpg",
+                            "https://example.com/b.jpg",
+                        ],
+                    }
+                ],
+            )
+            ParallelAttachmentParser.non_fields = {"attachments": "attachments"}
+            with override_settings(PARSER_NUMBER_OF_TRIES=1, PARSER_RETRY_SLEEP_TIME=0):
+                parser = ParallelAttachmentParser()
+                parser.parse(payload)
+            tc = TouristicContent.objects.get(eid="att-1")
+            self.assertEqual(Attachment.objects.attachments_for_object(tc).count(), 2)
+            self.assertTrue(parser.warnings)
+            self.assertIsNone(parser._prefetched_attachments)
+
+    def test_source_date_and_optimization_edge_cases(self):
         from datetime import datetime, timezone
 
-        from geotrek.common.parsers import ApidaeBaseParser, GeotrekAggregatorParser
+        from geotrek.common.parsers import ApidaeBaseParser, AttachmentParserMixin
 
         parser = SourceDateUpdateTestParser()
+
+        # Date-only string parsing
         self.assertEqual(
             parser.filter_source_date_update("updated_at", "2024-06-01"),
             datetime(2024, 6, 1, 0, 0, tzinfo=timezone.utc),
         )
 
+        # Unhashable FK cache key returns None safely
+        self.assertIsNone(parser._get_fk_cache_key(Theme, {"label": ["unhashable"]}))
+
+        # Non-concrete eid skips preloading
+        parser.eid = "non_existent_field"
+        parser._preload_existing_objects()
+        self.assertIsNone(parser._existing_objs_cache)
+
+        # Preload with duplicate EIDs in DB stores None sentinel so normal DB warning runs
+        cat = TouristicContentCategory.objects.get(label="Foo")
+        TouristicContent.objects.create(
+            eid="dup-eid",
+            name="Dup 1",
+            category=cat,
+            geom="SRID=2154;POINT(700000 6600000)",
+        )
+        TouristicContent.objects.create(
+            eid="dup-eid",
+            name="Dup 2",
+            category=cat,
+            geom="SRID=2154;POINT(700000 6600000)",
+        )
+        dup_parser = SourceDateUpdateTestParser()
+        dup_parser._preload_existing_objects()
+        self.assertIsNone(dup_parser._existing_objs_cache["dup-eid"])
+
+        # Fast-path RowImportError when source_date_update is required and missing on cached obj
+        dt = datetime(2024, 6, 1, 10, 0, tzinfo=timezone.utc)
+        TouristicContent.objects.create(
+            eid="req-cached",
+            name="Cached",
+            category=cat,
+            geom="SRID=2154;POINT(700000 6600000)",
+            source_date_update=dt,
+        )
+
+        class RequiredDateParser(SourceDateUpdateTestParser):
+            flexible_fields = False
+            fields = {
+                **SourceDateUpdateTestParser.fields,
+                "source_date_update": "updated_at",
+            }
+            field_options = {"source_date_update": {"required": True}}
+
+        req_parser = RequiredDateParser()
+        req_parser.start()
+        req_parser.parse_row({"eid": "req-cached", "name": "Cached"})
+        self.assertTrue(req_parser.warnings)
+
+        # parse_obj skip path when _existing_objs_cache is None (e.g. duplicate_eid_allowed=True)
+        class DupAllowedParser(SourceDateUpdateTestParser):
+            duplicate_eid_allowed = True
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            payload = self._write_json(
+                tmpdir,
+                "single_dup.json",
+                [
+                    {
+                        "eid": "req-cached",
+                        "name": "Should Not Change",
+                        "geom": "POINT(700000 6600000)",
+                        "updated_at": "2024-06-01T10:00:00Z",
+                    }
+                ],
+            )
+            dup_allowed = DupAllowedParser()
+            dup_allowed.parse(payload)
+            self.assertEqual(dup_allowed.nb_unmodified, 1)
+
+        # AttachmentParserMixin fallbacks: download_attachments=False & single-URL prefetch
+        class NoDownloadAttachmentParser(
+            AttachmentParserMixin, SourceDateUpdateTestParser
+        ):
+            download_attachments = False
+
+        nd_parser = NoDownloadAttachmentParser()
+        self.assertEqual(
+            nd_parser._fetch_attachment_content("https://example.com/a.jpg"),
+            (None, None),
+        )
+        self.assertEqual(
+            nd_parser._prefetch_attachments(["https://example.com/a.jpg"]), {}
+        )
+
+        # ApidaeBaseParser appends source_date_update_field to responseFields if missing
         class MinimalApidaeParser(ApidaeBaseParser):
             model = TouristicContent
             api_key = "key"
@@ -3133,6 +3367,34 @@ class SourceDateUpdateParserTests(TestCase):
                 apidae_parser.source_date_update_field,
                 sent_query["responseFields"],
             )
+
+        # Integer EID in source matches string EID in preloaded cache
+        TouristicContent.objects.create(
+            eid="98765",
+            name="Int EID",
+            category=cat,
+            geom="SRID=2154;POINT(700000 6600000)",
+            source_date_update=dt,
+        )
+        int_eid_parser = SourceDateUpdateTestParser()
+        int_eid_parser.start()
+        int_eid_parser.parse_row(
+            {"eid": 98765, "name": "Int EID", "updated_at": "2024-06-01T10:00:00Z"}
+        )
+        self.assertEqual(int_eid_parser.nb_unmodified, 1)
+
+        # SchemaRandonneeParser.on_unmodified_obj preserves related_treks_mapping
+        from geotrek.trekking.parsers import SchemaRandonneeParser
+
+        sr_parser = SchemaRandonneeParser()
+        sr_parser.on_unmodified_obj(
+            {"id_local": "child1", "itineraire_parent": "p1"}, 42
+        )
+        self.assertEqual(sr_parser.id_local_to_pk_mapping["child1"], 42)
+        self.assertEqual(sr_parser.related_treks_mapping["p1"], [42])
+
+        # GeotrekAggregatorParser accepts force_update kwarg
+        from geotrek.common.parsers import GeotrekAggregatorParser
 
         agg_parser = GeotrekAggregatorParser(force_update=True)
         self.assertTrue(agg_parser.force_update)

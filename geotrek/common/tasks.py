@@ -59,18 +59,25 @@ def import_datas(**kwargs):
 
     Parser = get_parser_class(module_name, class_name)
 
+    last_progress = -1
+
     def progress_cb(progress, line, eid):
+        nonlocal last_progress
+        current = int(100 * progress)
+        if current == last_progress:
+            return
+        last_progress = current
         current_task.update_state(
             state="PROGRESS",
             meta={
-                "current": int(100 * progress),
+                "current": current,
                 "total": 100,
                 "filename": filename.split("/").pop(-1),
                 "parser": class_name,
                 "name": current_task.name,
             },
         )
-        sys.stdout.write(f"{int(100 * progress):02d}%")
+        sys.stdout.write(f"{current:02d}%")
 
     user = user_pk and User.objects.get(pk=user_pk)
 
@@ -103,18 +110,25 @@ def import_datas_from_web(**kwargs):
 
     Parser = get_parser_class(module_name, class_name)
 
+    last_progress = -1
+
     def progress_cb(progress, line, eid):
+        nonlocal last_progress
+        current = int(100 * progress)
+        if current == last_progress:
+            return
+        last_progress = current
         current_task.update_state(
             state="PROGRESS",
             meta={
-                "current": int(100 * progress),
+                "current": current,
                 "total": 100,
                 "filename": _("Import from web."),
                 "parser": class_name,
                 "name": current_task.name,
             },
         )
-        sys.stdout.write(f"{int(100 * progress):02d}%")
+        sys.stdout.write(f"{current:02d}%")
 
     user = user_pk and User.objects.get(pk=user_pk)
 

@@ -132,7 +132,7 @@ class TasksTest(TestCase):
         self.assertEqual(task.status, "SUCCESS")
 
     @patch("sys.stdout", new_callable=StringIO)
-    def test_import_data_task_legacy_parser_force_update(self, mock_stdout):
+    def test_import_data_task_legacy_parser_and_progress_throttling(self, mock_stdout):
         class LegacyFileParser(ExcelParser):
             model = Organism
             fields = {"organism": "nOm"}
@@ -141,6 +141,11 @@ class TasksTest(TestCase):
                 super().__init__(progress_cb=progress_cb, user=user, encoding=encoding)
 
             def parse(self, filename=None, limit=None):
+                # Trigger multiple calls at same integer percentage to verify throttling
+                if self.progress_cb:
+                    self.progress_cb(0.501, 1, "1")
+                    self.progress_cb(0.509, 2, "2")
+                    self.progress_cb(1.0, 3, "3")
                 self.duration = 0.01
 
         with patch(
@@ -153,9 +158,13 @@ class TasksTest(TestCase):
                 force_update=True,
             ).apply()
         self.assertEqual(task.status, "SUCCESS")
+        # 50% written only once despite two calls in [0.50, 0.51), then 100%
+        self.assertEqual(mock_stdout.getvalue(), "50%100%")
 
     @patch("sys.stdout", new_callable=StringIO)
-    def test_import_data_from_web_legacy_parser_force_update(self, mock_stdout):
+    def test_import_data_from_web_legacy_parser_and_progress_throttling(
+        self, mock_stdout
+    ):
         class LegacyWebParser(ExcelParser):
             model = Organism
             fields = {"organism": "nOm"}
@@ -164,6 +173,10 @@ class TasksTest(TestCase):
                 super().__init__(progress_cb=progress_cb, user=user)
 
             def parse(self, filename=None, limit=None):
+                if self.progress_cb:
+                    self.progress_cb(0.251, 1, "1")
+                    self.progress_cb(0.259, 2, "2")
+                    self.progress_cb(1.0, 3, "3")
                 self.duration = 0.01
 
         with patch(
@@ -175,6 +188,7 @@ class TasksTest(TestCase):
                 force_update=True,
             ).apply()
         self.assertEqual(task.status, "SUCCESS")
+        self.assertEqual(mock_stdout.getvalue(), "25%100%")
 
     def test_get_parser_class_from_var_dir(self):
         with override_settings(VAR_DIR=os.path.join(os.path.dirname(__file__), "data")):
