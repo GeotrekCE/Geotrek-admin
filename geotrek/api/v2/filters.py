@@ -1497,11 +1497,15 @@ class RelatedObjectsPublishedNotDeletedFilter(BaseFilterBackend):
         return Exists(sub_qs)
 
     def filter_queryset_related_objects_published_not_deleted(
-        self, qs, request, related_name
+        self, qs, request, related_name, check_portal=False
     ):
         return qs.filter(
             self.build_related_exists(
-                qs.model, request, related_name, check_deleted=True
+                qs.model,
+                request,
+                related_name,
+                check_deleted=True,
+                check_portal=check_portal,
             )
         ).order_by("pk")
 
@@ -1519,11 +1523,9 @@ class RelatedObjectsPublishedNotDeletedByPortalFilter(
     def filter_queryset_related_objects_published_not_deleted_by_portal(
         self, qs, request, related_name
     ):
-        return qs.filter(
-            self.build_related_exists(
-                qs.model, request, related_name, check_deleted=True, check_portal=True
-            )
-        ).order_by("pk")
+        return self.filter_queryset_related_objects_published_not_deleted(
+            qs, request, related_name, check_portal=True
+        )
 
     def filter_queryset_related_objects_published_by_portal(
         self, qs, request, related_name
