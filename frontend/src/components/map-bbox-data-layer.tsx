@@ -6,10 +6,13 @@ import { m } from "@/paraglide/messages"
 
 export default function MapBboxDataLayer() {
   const appSync = useLiveQuery(() => db.appSync.get("data"))
+  const settings = useLiveQuery(() => db.settings.get("settings"))
+
+  const minZoom = settings?.settings?.appOptions.minZoom
 
   const { bounds } = appSync || {}
 
-  if (bounds === undefined) {
+  if (bounds === undefined || minZoom === null) {
     return null
   }
 
