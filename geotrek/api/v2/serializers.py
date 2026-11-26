@@ -3,9 +3,8 @@ import logging
 
 from bs4 import BeautifulSoup
 from django.conf import settings
-from django.contrib.gis.db.models.functions import Transform
 from django.contrib.gis.geos import GEOSGeometry
-from django.db.models import Exists, F, OuterRef
+from django.db.models import Exists, OuterRef
 from django.urls import reverse
 from django.utils.html import escape
 from django.utils.translation import get_language
@@ -26,7 +25,9 @@ from geotrek.api.v2.mixins import (
     PDFSerializerMixin,
     PublishedRelatedObjectsSerializerMixin,
 )
+from geotrek.api.v2.renderers import RawJSON
 from geotrek.api.v2.utils import (
+    annotate_geojson,
     build_url,
     get_impracticable_vigilance_areas,
     get_translation_or_dict,
@@ -62,20 +63,44 @@ if "geotrek.signage" in settings.INSTALLED_APPS:
 logger = logging.getLogger(__name__)
 
 
+class RawGeoJSONField(serializers.ReadOnlyField):
+    """
+    Serialize a geometry pre-rendered by PostGIS AsGeoJSON(..., precision=7)
+    as RawJSON to avoid GEOS decoding and recursive Python coordinate rounding.
+    """
+
+    def to_representation(self, value):
+        if value is None:
+            return None
+        if isinstance(value, str):
+            return RawJSON(value)
+        return GeometryField(read_only=True, precision=7).to_representation(value)
+
+
 class BaseGeoJSONSerializer(geo_serializers.GeoFeatureModelSerializer):
     """
     Mixin used to serialize geojson
     """
 
     def to_representation(self, instance):
-        """Round bbox coordinates"""
+        """Compute and round bbox coordinates"""
         feature = super().to_representation(instance)
-        feature["bbox"] = simplify_coords(feature["bbox"])
+        bbox_geom = getattr(instance, "geom_bbox", None)
+        if bbox_geom is not None:
+            feature["bbox"] = simplify_coords(bbox_geom.extent)
+        else:
+            geo_field = self.fields.get(self.Meta.geo_field)
+            geo_value = geo_field.get_attribute(instance) if geo_field else None
+            if geo_value:
+                if isinstance(geo_value, str):
+                    feature["bbox"] = simplify_coords(GEOSGeometry(geo_value).extent)
+                else:
+                    feature["bbox"] = simplify_coords(geo_value.extent)
         return feature
 
     class Meta:
         geo_field = "geometry"
-        auto_bbox = True
+        auto_bbox = False
 
 
 class TimeStampedSerializer(serializers.ModelSerializer):
@@ -206,9 +231,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
             fields = ("id", "name", "practices", "pictogram")
 
     class ServiceSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom3d_transformed", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
 
         class Meta:
@@ -370,9 +393,7 @@ class LabelSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
 
 
 class HDViewPointSerializer(TimeStampedSerializer):
-    geometry = geo_serializers.GeometryField(
-        read_only=True, source="geom_transformed", precision=7
-    )
+    geometry = RawGeoJSONField(source="geom_geojson")
     picture_tiles_url = serializers.SerializerMethodField()
     annotations = serializers.SerializerMethodField()
     thumbnail_url = serializers.SerializerMethodField()
@@ -505,9 +526,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
     class TouristicModelSerializer(
         PDFSerializerMixin, DynamicFieldsMixin, TimeStampedSerializer
     ):
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom_transformed", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
         accessibility = serializers.SerializerMethodField()
         external_id = serializers.CharField(source="eid")
         cities = serializers.SerializerMethodField()
@@ -718,9 +737,7 @@ if "geotrek.tourism" in settings.INSTALLED_APPS:
             )
 
     class TouristicEventPlaceSerializer(serializers.ModelSerializer):
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom_transformed", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
 
         class Meta:
             model = tourism_models.TouristicEventPlace
@@ -791,9 +808,7 @@ if "geotrek.core" in settings.INSTALLED_APPS:
 
     class PathSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
         url = HyperlinkedIdentityField(view_name="apiv2:path-detail")
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom3d_transformed", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
         length_2d = serializers.FloatField(source="length_2d_display")
         length_3d = serializers.SerializerMethodField()
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
@@ -830,9 +845,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
     ):
         url = HyperlinkedIdentityField(view_name="apiv2:trek-detail")
         published = serializers.SerializerMethodField()
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom3d_transformed", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
         length_2d = serializers.FloatField(source="length_2d_display")
         length_3d = serializers.SerializerMethodField()
         name = serializers.SerializerMethodField()
@@ -1147,19 +1160,22 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
                 self.context["request"]
             )
 
-            qs = (
+            include_bbox = self.context.get("request").GET.get("format") == "geojson"
+            qs = annotate_geojson(
                 obj.children.select_related("topo_object", "difficulty")
                 .prefetch_related(
                     "topo_object__aggregations", "themes", "networks", "attachments"
                 )
                 .annotate(
-                    geom3d_transformed=Transform(F("geom_3d"), settings.API_SRID),
                     impracticable=Exists(
                         impracticable_vigilance_areas.filter(
                             geom__intersects=OuterRef("geom"),
                         )
                     ),
                 )
+                .defer("geom_3d", "topo_object__geom_3d"),
+                field_name="geom_3d",
+                include_bbox=include_bbox,
             )
             FinalClass = override_serializer(
                 self.context.get("request").GET.get("format"), TrekSerializer
@@ -1189,9 +1205,7 @@ if "geotrek.trekking" in settings.INSTALLED_APPS:
         published = serializers.SerializerMethodField()
         create_datetime = serializers.DateTimeField(source="topo_object.date_insert")
         update_datetime = serializers.DateTimeField(source="topo_object.date_update")
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom3d_transformed", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
         attachments = AttachmentSerializer(many=True, source="sorted_attachments")
         view_points = HDViewPointSerializer(many=True)
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
@@ -1298,9 +1312,7 @@ if "geotrek.sensitivity" in settings.INSTALLED_APPS:
         )
         info_url = serializers.URLField(source="species.url")
         published = serializers.BooleanField()
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom_transformed", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
         species_id = serializers.SerializerMethodField()
         kml_url = serializers.SerializerMethodField()
         openair_url = serializers.SerializerMethodField(read_only=True)
@@ -1449,9 +1461,7 @@ if "geotrek.sensitivity" in settings.INSTALLED_APPS:
 if "geotrek.zoning" in settings.INSTALLED_APPS:
 
     class CitySerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
 
         class Meta:
             model = zoning_models.City
@@ -1459,9 +1469,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
             read_only_fields = ("id", "code")
 
     class DistrictsSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
 
         class Meta:
             model = zoning_models.District
@@ -1511,9 +1519,7 @@ if "geotrek.zoning" in settings.INSTALLED_APPS:
             )
 
     class VigilanceAreaSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom_transformed", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
         name = serializers.SerializerMethodField()
         description = serializers.SerializerMethodField()
         practical_info = serializers.SerializerMethodField()
@@ -1634,9 +1640,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         vigilance_areas = serializers.SerializerMethodField()
         period = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name="apiv2:site-detail")
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom_transformed", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
         attachments = AttachmentSerializer(many=True, source="sorted_attachments")
         sector = serializers.SerializerMethodField()
         courses = serializers.SerializerMethodField()
@@ -1782,9 +1786,7 @@ if "geotrek.outdoor" in settings.INSTALLED_APPS:
         advice = serializers.SerializerMethodField()
         description = serializers.SerializerMethodField()
         url = HyperlinkedIdentityField(view_name="apiv2:course-detail")
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom_transformed", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
         children = serializers.SerializerMethodField()
         parents = serializers.SerializerMethodField()
         parents_uuids = serializers.SerializerMethodField()
@@ -2140,9 +2142,7 @@ if "geotrek.infrastructure" in settings.INSTALLED_APPS:
             fields = ("id", "label", "pictogram", "structure", "type")
 
     class InfrastructureSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom3d_transformed", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
         accessibility = serializers.SerializerMethodField()
         attachments = AttachmentSerializer(many=True)
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")
@@ -2219,9 +2219,7 @@ if "geotrek.signage" in settings.INSTALLED_APPS:
             fields = ("id", "label", "structure")
 
     class SignageSerializer(DynamicFieldsMixin, serializers.ModelSerializer):
-        geometry = geo_serializers.GeometryField(
-            read_only=True, source="geom3d_transformed", precision=7
-        )
+        geometry = RawGeoJSONField(source="geom_geojson")
         attachments = AttachmentSerializer(many=True)
         blades = BladeSerializer(many=True)
         provider = serializers.SlugRelatedField(read_only=True, slug_field="name")

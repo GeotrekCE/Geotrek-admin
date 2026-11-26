@@ -2,7 +2,6 @@ from hashlib import md5
 
 from django.conf import settings
 from django_filters.rest_framework.backends import DjangoFilterBackend
-from mapentity.renderers import GeoJSONRenderer
 from rest_framework import renderers, viewsets
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.generics import get_object_or_404
@@ -11,6 +10,7 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from geotrek.api.v2 import filters as api_filters
 from geotrek.api.v2 import pagination as api_pagination
 from geotrek.api.v2.cache import RetrieveCacheResponseMixin
+from geotrek.api.v2.renderers import RawGeoJSONRenderer, RawJSONRenderer
 from geotrek.api.v2.serializers import override_serializer
 
 
@@ -33,12 +33,12 @@ class GeotrekViewSet(RetrieveCacheResponseMixin, viewsets.ReadOnlyModelViewSet):
     authentication_classes = [BasicAuthentication, SessionAuthentication]
     renderer_classes = (
         [
-            renderers.JSONRenderer,
+            RawJSONRenderer,
             renderers.BrowsableAPIRenderer,
         ]
         if settings.DEBUG
         else [
-            renderers.JSONRenderer,
+            RawJSONRenderer,
         ]
     )
     lookup_value_regex = r"\d+"
@@ -91,7 +91,7 @@ class GeotrekGeometricViewset(GeotrekViewSet):
     distance_filter_field = "geom"
     bbox_filter_field = "geom"
     bbox_filter_include_overlapping = True
-    renderer_classes = [*GeotrekViewSet.renderer_classes, GeoJSONRenderer]
+    renderer_classes = [*GeotrekViewSet.renderer_classes, RawGeoJSONRenderer]
 
     def get_serializer_class(self):
         base_serializer_class = super().get_serializer_class()

@@ -5,6 +5,7 @@ from django_filters.rest_framework.backends import DjangoFilterBackend
 
 from geotrek.api.v2 import serializers as api_serializers
 from geotrek.api.v2 import viewsets as api_viewsets
+from geotrek.api.v2.utils import annotate_geojson
 from geotrek.common.functions import Area, Buffer, GeometryType
 from geotrek.common.models import Attachment
 from geotrek.sensitivity import models as sensitivity_models
@@ -58,22 +59,24 @@ class SensitiveAreaViewSet(api_viewsets.GeotrekGeometricViewset):
             .alias(geom_type=GeometryType(F("geom")))
         )
         if "bubble" in self.request.GET:
-            queryset = queryset.annotate(
-                geom_transformed=Transform(F("geom"), settings.API_SRID)
-            )
+            geom_expr = Transform(F("geom"), settings.API_SRID)
         else:
-            queryset = queryset.annotate(
-                geom_transformed=Case(
-                    When(
-                        geom_type="POINT",
-                        then=Transform(
-                            Buffer(F("geom"), F("species__radius"), 4),
-                            settings.API_SRID,
-                        ),
+            geom_expr = Case(
+                When(
+                    geom_type="POINT",
+                    then=Transform(
+                        Buffer(F("geom"), F("species__radius"), 4),
+                        settings.API_SRID,
                     ),
-                    default=Transform(F("geom"), settings.API_SRID),
-                )
+                ),
+                default=Transform(F("geom"), settings.API_SRID),
             )
+        include_bbox = self.request.query_params.get("format") == "geojson"
+        queryset = annotate_geojson(
+            queryset.alias(geom_transformed=geom_expr),
+            geom_expr=F("geom_transformed"),
+            include_bbox=include_bbox,
+        )
         # Ensure smaller areas are at the end of the list, ie above bigger areas on the map
         # to ensure we can select every area in case of overlapping
         # Second sort key pk is required for reliable pagination
