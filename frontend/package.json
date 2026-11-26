@@ -12,7 +12,9 @@
     "format": "prettier --write \"**/*.{js,ts,tsx}\"",
     "typecheck": "tsc --noEmit",
     "preview": "vite preview",
-    "machine-translate": "inlang machine translate --project project.inlang"
+    "machine-translate": "inlang machine translate --project project.inlang",
+    "test": "playwright test",
+    "report": "playwright test && playwright show-report"
   },
   "dependencies": {
     "@base-ui/react": "^1.5.0",
@@ -49,6 +51,7 @@
     "@eslint/js": "^9.39.4",
     "@inlang/cli": "^3.0.0",
     "@inlang/paraglide-js": "^2.18.1",
+    "@playwright/test": "^1.65.1",
     "@serwist/vite": "^9.5.11",
     "@serwist/window": "^9.5.11",
     "@tanstack/eslint-plugin-query": "^5.100.5",

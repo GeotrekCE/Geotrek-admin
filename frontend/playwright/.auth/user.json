@@ -1,0 +1,160 @@
+{
+  "cookies": [
+    {
+      "name": "PARAGLIDE_LOCALE",
+      "value": "en",
+      "domain": "test-admin.geotrek.fr",
+      "path": "/",
+      "expires": 1830271963.942964,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": [
+    {
+      "origin": "https://test-admin.geotrek.fr",
+      "localStorage": [
+        {
+          "name": "gtam-auth-token",
+          "value": "{\"refresh\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoicmVmcmVzaCIsImV4cCI6MTc5NzUyNjM2NCwiaWF0IjoxNzk1NzExOTY0LCJqdGkiOiI0MWRmODczMmU4MzA0Y2RmOGI0ZjNiMjYyMWI1ZjM0ZSIsInVzZXJfaWQiOiIxMCJ9.URsvFUzB52pEF8gfPtHDECEf8-CSBAVIk_KXwUHWcAk\",\"access\":\"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzk1OTcxMTY0LCJpYXQiOjE3OTU3MTE5NjQsImp0aSI6ImZjM2QyZDU1ZWZkMDRlYTg5ZjNiMWE1ZDVlYmYzMTQwIiwidXNlcl9pZCI6IjEwIn0.0cX1MtGMBhKLKuBhJgOstc_lyx3jlghUp-i1O0hwP3o\"}"
+        }
+      ],
+      "indexedDB": [
+        {
+          "name": "gtam",
+          "version": 10,
+          "stores": [
+            {
+              "name": "appSync",
+              "autoIncrement": false,
+              "keyPath": "id",
+              "records": [],
+              "indexes": []
+            },
+            {
+              "name": "infrastructureData",
+              "autoIncrement": true,
+              "keyPath": "id",
+              "records": [],
+              "indexes": [
+                {
+                  "name": "date_update",
+                  "keyPath": "date_update",
+                  "multiEntry": false,
+                  "unique": false
+                },
+                {
+                  "name": "description",
+                  "keyPath": "description",
+                  "multiEntry": false,
+                  "unique": false
+                },
+                {
+                  "name": "name",
+                  "keyPath": "name",
+                  "multiEntry": false,
+                  "unique": false
+                }
+              ]
+            },
+            {
+              "name": "interventionData",
+              "autoIncrement": true,
+              "keyPath": "id",
+              "records": [],
+              "indexes": [
+                {
+                  "name": "date_update",
+                  "keyPath": "date_update",
+                  "multiEntry": false,
+                  "unique": false
+                },
+                {
+                  "name": "description",
+                  "keyPath": "description",
+                  "multiEntry": false,
+                  "unique": false
+                },
+                {
+                  "name": "name",
+                  "keyPath": "name",
+                  "multiEntry": false,
+                  "unique": false
+                }
+              ]
+            },
+            {
+              "name": "rawData",
+              "autoIncrement": false,
+              "keyPath": "id",
+              "records": [],
+              "indexes": [
+                {
+                  "name": "reference",
+                  "keyPath": "reference",
+                  "multiEntry": false,
+                  "unique": false
+                }
+              ]
+            },
+            {
+              "name": "references",
+              "autoIncrement": false,
+              "keyPath": "id",
+              "records": [],
+              "indexes": []
+            },
+            {
+              "name": "reportData",
+              "autoIncrement": true,
+              "keyPath": "id",
+              "records": [],
+              "indexes": [
+                {
+                  "name": "date_update",
+                  "keyPath": "date_update",
+                  "multiEntry": false,
+                  "unique": false
+                }
+              ]
+            },
+            {
+              "name": "settings",
+              "autoIncrement": false,
+              "keyPath": "id",
+              "records": [],
+              "indexes": []
+            },
+            {
+              "name": "signageData",
+              "autoIncrement": true,
+              "keyPath": "id",
+              "records": [],
+              "indexes": [
+                {
+                  "name": "date_update",
+                  "keyPath": "date_update",
+                  "multiEntry": false,
+                  "unique": false
+                },
+                {
+                  "name": "description",
+                  "keyPath": "description",
+                  "multiEntry": false,
+                  "unique": false
+                },
+                {
+                  "name": "name",
+                  "keyPath": "name",
+                  "multiEntry": false,
+                  "unique": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
