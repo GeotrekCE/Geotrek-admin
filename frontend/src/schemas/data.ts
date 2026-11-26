@@ -243,8 +243,8 @@ export const interventionDataSchema = z.object({
   subcontracting: z.boolean(),
   width: z.number(),
   height: z.number(),
-  material_cost: z.number(),
-  heliport_cost: z.number(),
+  material_cost: z.union([z.null(), z.number()]),
+  heliport_cost: z.union([z.null(), z.number()]),
   contractor_cost: z.number(),
   contractors: z.array(
     z.object({
