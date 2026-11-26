@@ -53,6 +53,7 @@ class PointTopologyParserMixin(ABC):
         return geom
 
     def parse_obj(self, row, operation):
+        self.topology = None
         obj_was_parsed = super().parse_obj(row, operation)
         if (
             obj_was_parsed
@@ -61,3 +62,4 @@ class PointTopologyParserMixin(ABC):
             and self.topology
         ):
             self.obj.mutate(self.topology)
+        return obj_was_parsed

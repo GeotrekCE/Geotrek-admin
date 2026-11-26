@@ -315,6 +315,7 @@ class VigilanceArea(
         verbose_name_plural = _("Vigilance areas")
         ordering = ["name"]
         indexes = [
+            *ExternalSourceMixin.Meta.indexes,
             GistIndex(name="vigilance_area_geom_gist_idx", fields=["geom"]),
         ]
         constraints = [

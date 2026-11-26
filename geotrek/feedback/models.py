@@ -250,6 +250,7 @@ class Report(
         verbose_name = _("Report")
         verbose_name_plural = _("Reports")
         ordering = ["-date_insert"]
+        indexes = [*ExternalSourceMixin.Meta.indexes]
 
     def __str__(self):
         if settings.SURICATE_WORKFLOW_ENABLED and self.eid:

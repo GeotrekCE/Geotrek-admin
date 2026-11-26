@@ -5,8 +5,14 @@ CHANGELOG
 2.127.2+dev     (XXXX-XX-XX)
 ----------------------------
 
+**Bug fixes**
+
+* Reset ``topology`` before parsing each object in ``PointTopologyParserMixin.parse_obj`` so skipped rows do not reuse a previous object's topology
+
 **Improvements**
 
+* Add database index on ``eid`` and composite index on ``(eid, provider)`` plus ``db_default=""`` on ``ExternalSourceMixin.eid`` (removing manual SQL ``SET DEFAULT`` statements)
+* Optimize API v2 object cache key query in ``GeotrekViewSet.get_object_cache_key`` to fetch only ``date_update`` instead of loading full model instances
 * Only provide vigilance areas types that are associated with a published vigilance area in the API v2 endpoint
 
 

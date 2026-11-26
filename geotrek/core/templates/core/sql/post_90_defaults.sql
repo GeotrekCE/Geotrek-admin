@@ -13,7 +13,6 @@ ALTER TABLE core_path ALTER COLUMN arrival SET DEFAULT '';
 -- stake
 -- usages
 -- networks
-ALTER TABLE core_path ALTER COLUMN eid SET DEFAULT '';
 ALTER TABLE core_path ALTER COLUMN draft SET DEFAULT False;
 ALTER TABLE core_path ALTER COLUMN uuid SET DEFAULT gen_random_uuid();
 -- geom_3d
@@ -87,6 +86,5 @@ ALTER TABLE core_pathaggregation ALTER COLUMN "order" SET DEFAULT 0;
 ALTER TABLE core_trail ALTER COLUMN departure SET DEFAULT '';
 ALTER TABLE core_trail ALTER COLUMN arrival SET DEFAULT '';
 ALTER TABLE core_trail ALTER COLUMN comments SET DEFAULT '';
-ALTER TABLE core_trail ALTER COLUMN eid SET DEFAULT '';
 
 -- structure
