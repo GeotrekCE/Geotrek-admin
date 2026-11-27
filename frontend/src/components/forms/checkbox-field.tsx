@@ -35,9 +35,13 @@ export function CheckboxField({ label, description }: CheckboxFieldProps) {
           aria-invalid={isTouched && !isValid}
           data-testid={`field-${field.name}`}
           name={field.name}
+          className="size-5"
         />
         <div className="flex flex-1 flex-col gap-1.5 leading-snug">
-          <FieldLabel htmlFor={field.id ?? id} className="leading-none">
+          <FieldLabel
+            htmlFor={field.id ?? id}
+            className="text-base leading-none"
+          >
             {label}
           </FieldLabel>
           {description && <FieldDescription>{description}</FieldDescription>}

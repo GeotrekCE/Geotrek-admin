@@ -59,7 +59,7 @@ export function TextField({
               }
             }}
             aria-invalid={isTouched && !isValid}
-            className={cn("h-12 text-lg", className)}
+            className={cn("h-12", className)}
             data-testid={`field-${field.name}`}
             name={field.name}
             {...inputProps}
