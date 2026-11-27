@@ -22,6 +22,9 @@ import InterventionForm from "@/components/intervention-form"
 import { UpdateDataWarning } from "@/components/update-data-warning"
 import ReportForm from "@/components/report-form"
 import NotFound from "@/components/not-found"
+import { usePermission } from "@/hook/useSettingsQuery"
+import NotAllowed from "@/components/not-allowed"
+import type { SyncReference } from "@/lib/sync"
 
 export const Route = createFileRoute(
   "/{-$locale}/_authenticated/data/$type/$id/edit"
@@ -53,6 +56,7 @@ function RouteComponent() {
     [params.type]
   )
   const typeReferences = references?.[0]
+  const permissions = usePermission()
 
   if (!detail) {
     return (
@@ -73,6 +77,10 @@ function RouteComponent() {
     )
   ) {
     return <NotFound />
+  }
+
+  if (!permissions[params.type as SyncReference]?.update) {
+    return <NotAllowed />
   }
 
   if (

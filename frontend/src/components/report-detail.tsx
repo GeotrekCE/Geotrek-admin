@@ -14,9 +14,11 @@ import { m } from "@/paraglide/messages"
 import PhotosGallery from "@/components/ui/photos-gallery"
 import DetailMap from "@/components/detail-map"
 import DetailConfirmButton from "@/components/detail-confirm-button"
+import { useIsFieldVisible } from "@/hook/useSettingsQuery"
 
 export default function ReportDetail(params: { id: string; type: string }) {
   const navigate = useNavigate()
+  const isVisible = useIsFieldVisible("report")
 
   const [detail, loaded] = useLiveQuery(
     () =>
@@ -112,18 +114,20 @@ export default function ReportDetail(params: { id: string; type: string }) {
           </div>
         </section>
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.comment"]()}
-          </h3>
-          {detail.comment ? (
-            <div dangerouslySetInnerHTML={{ __html: detail.comment }} />
-          ) : (
-            <p className="italic">{m["content.no-comment"]()}</p>
-          )}
-        </section>
+        {isVisible("comment") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.comment"]()}
+            </h3>
+            {detail.comment ? (
+              <div dangerouslySetInnerHTML={{ __html: detail.comment }} />
+            ) : (
+              <p className="italic">{m["content.no-comment"]()}</p>
+            )}
+          </section>
+        )}
 
-        {detail.geom && (
+        {isVisible("geom") && detail.geom && (
           <section className="my-8">
             <h3 className="mb-2 text-xl font-bold text-accent-foreground">
               {m["content.location"]()}
@@ -138,49 +142,57 @@ export default function ReportDetail(params: { id: string; type: string }) {
           </section>
         )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.activity"]()}
-          </h3>
-          {detail.activity ? (
-            <p>{detail.activity.name}</p>
-          ) : (
-            <p className="italic">{m["content.no-activity"]()}</p>
-          )}
-        </section>
+        {isVisible("activity") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.activity"]()}
+            </h3>
+            {detail.activity ? (
+              <p>{detail.activity.name}</p>
+            ) : (
+              <p className="italic">{m["content.no-activity"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.category"]()}
-          </h3>
-          {detail.category ? (
-            <p>{detail.category.name}</p>
-          ) : (
-            <p className="italic">{m["content.no-category"]()}</p>
-          )}
-        </section>
+        {isVisible("category") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.category"]()}
+            </h3>
+            {detail.category ? (
+              <p>{detail.category.name}</p>
+            ) : (
+              <p className="italic">{m["content.no-category"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.problem-magnitude"]()}
-          </h3>
-          {detail.problem_magnitude ? (
-            <p>{detail.problem_magnitude.name}</p>
-          ) : (
-            <p className="italic">{m["content.no-problem-magnitude"]()}</p>
-          )}
-        </section>
+        {isVisible("problem_magnitude") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.problem-magnitude"]()}
+            </h3>
+            {detail.problem_magnitude ? (
+              <p>{detail.problem_magnitude.name}</p>
+            ) : (
+              <p className="italic">{m["content.no-problem-magnitude"]()}</p>
+            )}
+          </section>
+        )}
 
-        <section className="my-8">
-          <h3 className="mb-2 text-xl font-bold text-accent-foreground">
-            {m["content.status"]()}
-          </h3>
-          {detail.status ? (
-            <p>{detail.status.name}</p>
-          ) : (
-            <p className="italic">{m["content.no-status"]()}</p>
-          )}
-        </section>
+        {isVisible("status") && (
+          <section className="my-8">
+            <h3 className="mb-2 text-xl font-bold text-accent-foreground">
+              {m["content.status"]()}
+            </h3>
+            {detail.status ? (
+              <p>{detail.status.name}</p>
+            ) : (
+              <p className="italic">{m["content.no-status"]()}</p>
+            )}
+          </section>
+        )}
 
         <PhotosGallery attachments={detail.attachments} />
 

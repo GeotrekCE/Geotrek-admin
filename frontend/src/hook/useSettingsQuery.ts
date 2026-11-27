@@ -1,6 +1,6 @@
 import { queryOptions } from "@tanstack/react-query"
 import { queryFnWithAuth, useAppQuery } from "@/lib/api"
-import { settingsSchema } from "@/schemas/settings"
+import { settingsSchema, type SettingsSchemaProps } from "@/schemas/settings"
 import { DAY, HOUR } from "@/lib/date"
 import { db } from "@/lib/db"
 import { useLiveQuery } from "dexie-react-hooks"
@@ -25,6 +25,14 @@ export function useSettingsQuery(isEnabled = true) {
 
 export function useSettingsQueryOfflineFirst() {
   return useSettingsQuery(false)
+}
+
+export function useIsFieldVisible(
+  type: keyof SettingsSchemaProps["forms"]["hiddenFields"]
+) {
+  const settings = useLiveQuery(() => db.settings.get("settings"))
+  const hiddenFields = settings?.forms?.hiddenFields[type] ?? []
+  return (field: string) => !hiddenFields.includes(field)
 }
 
 export function useIntervalSync(type: "data" | "references") {

@@ -19,7 +19,7 @@ export default function Unformat({ editor }: { editor: Editor }) {
             onClick={() => editor.chain().focus().unsetAllMarks().run()}
             disabled={!editor.can().chain().focus().unsetAllMarks().run()}
           >
-            <RemoveFormatting className="size-4" aria-hidden />
+            <RemoveFormatting className="size-5" aria-hidden />
             <span className="sr-only">Supprimer la mise en forme</span>
           </Button>
         }

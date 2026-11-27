@@ -30,6 +30,7 @@ from geotrek.common.mixins.views import (
     PublishedFieldMixin,
     ReferencesMixin,
 )
+from geotrek.common.utils import collate_c
 from geotrek.common.viewsets import GeotrekMapentityViewSet
 from geotrek.core.models import AltimetryMixin
 
@@ -178,8 +179,11 @@ class SignageViewSet(AttachmentsMixin, GeotrekMapentityViewSet):
                     )
                     .prefetch_related(
                         "conditions",
-                        Prefetch("lines", queryset=Line.objects.all()),
-                    ),
+                        Prefetch(
+                            "lines", queryset=Line.objects.all().order_by("number")
+                        ),
+                    )
+                    .order_by(collate_c("number")),
                 ),
             )
         else:

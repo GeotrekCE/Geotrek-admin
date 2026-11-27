@@ -18,7 +18,7 @@ export default function Bold({ editor }: { editor: Editor }) {
             onPressedChange={() => editor.chain().focus().toggleBold().run()}
             disabled={!editor.can().chain().focus().toggleBold().run()}
           >
-            <BoldIcon className="size-4" aria-hidden />
+            <BoldIcon className="size-5" aria-hidden />
             <span className="sr-only">Gras</span>
           </Toggle>
         }

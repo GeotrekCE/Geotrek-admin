@@ -48,7 +48,7 @@ export default function Link({ editor }: { editor: Editor }) {
             onPressedChange={setLink}
             disabled={!editor.can().chain().focus().toggleLink().run()}
           >
-            <LinkIcon className="size-4" aria-hidden />
+            <LinkIcon className="size-5" aria-hidden />
             <span className="sr-only">Lien</span>
           </Toggle>
         }

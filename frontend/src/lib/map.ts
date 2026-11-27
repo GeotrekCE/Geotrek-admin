@@ -1,4 +1,31 @@
-import type { LngLatBounds } from "maplibre-gl"
+import type { LngLatBounds, Map as MapLibreMap } from "maplibre-gl"
+
+export function moveOfflineLayersBelowOtherLayers(
+  map: MapLibreMap,
+  offlineMapIds: string[]
+) {
+  const layers = map.getStyle().layers
+  const offlineLayerIds = new Set(
+    layers
+      .filter((layer) =>
+        offlineMapIds.some((id) => layer.id.startsWith(`${id}-`))
+      )
+      .map((layer) => layer.id)
+  )
+  const firstNonOfflineLayer = layers.find(
+    (layer) => !offlineLayerIds.has(layer.id)
+  )
+
+  if (!firstNonOfflineLayer) {
+    return
+  }
+
+  for (const layer of layers) {
+    if (offlineLayerIds.has(layer.id)) {
+      map.moveLayer(layer.id, firstNonOfflineLayer.id)
+    }
+  }
+}
 
 export function getPolygonFromBounds(
   bounds: LngLatBounds | [number, number, number, number]
@@ -22,7 +49,7 @@ export function getBoundsFromPolygon(polygon: string) {
   ]
 }
 
-function getFirstPosition(
+export function getFirstPosition(
   geometry: GeoJSON.Geometry
 ): GeoJSON.Position | undefined {
   if (geometry.type === "GeometryCollection") {

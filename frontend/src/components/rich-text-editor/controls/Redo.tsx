@@ -18,7 +18,7 @@ export default function Redo({ editor }: { editor: Editor }) {
             onClick={() => editor.chain().focus().redo().run()}
             disabled={!editor.can().chain().focus().redo().run()}
           >
-            <RedoIcon className="size-4" aria-hidden />
+            <RedoIcon className="size-5" aria-hidden />
             <span className="sr-only">Rétablir</span>
           </Button>
         }

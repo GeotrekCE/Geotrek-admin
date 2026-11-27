@@ -19,7 +19,7 @@ export default function OrderedList({ editor }: { editor: Editor }) {
               editor.chain().focus().toggleOrderedList().run()
             }
           >
-            <ListOrdered className="size-4" aria-hidden />
+            <ListOrdered className="size-5" aria-hidden />
             <span className="sr-only">Liste ordonnée</span>
           </Toggle>
         }

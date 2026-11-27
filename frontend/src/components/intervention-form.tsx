@@ -16,10 +16,11 @@ import { useAppForm, useFormFields } from "@/components/ui/tanstack-form"
 import { useNavigate } from "@tanstack/react-router"
 import { FormCheckboxField } from "./forms"
 import { Trash } from "lucide-react"
-import { usePermission } from "@/hook/useSettingsQuery"
+import { useIsFieldVisible, usePermission } from "@/hook/useSettingsQuery"
 import { m } from "@/paraglide/messages"
 import { FormUploadGallery } from "@/components/form-upload-gallery"
 import { type AttachmentsSchemaProps } from "@/schemas/attachments"
+import type z from "zod"
 
 export default function InterventionForm({
   defaultValues,
@@ -54,13 +55,32 @@ export default function InterventionForm({
     ...defaultValuesForForm
   } = defaultValues
 
-  const validators = interventionDataSchema.omit({
-    id: true,
-    date_insert: true,
-    date_update: true,
-    appSynced: true,
-    appNewItem: true,
-  })
+  const validators = interventionDataSchema
+    .omit({
+      id: true,
+      date_insert: true,
+      date_update: true,
+      appSynced: true,
+      appNewItem: true,
+    })
+    .superRefine(
+      (
+        data: { begin_date: string; end_date: string | null },
+        ctx: z.RefinementCtx<{ begin_date: string; end_date: string | null }>
+      ) => {
+        if (
+          data.begin_date &&
+          data.end_date &&
+          data.end_date.localeCompare(data.begin_date) === -1
+        ) {
+          ctx.addIssue({
+            code: "custom",
+            path: ["end_date"],
+            message: "La date de début est après la date de fin",
+          })
+        }
+      }
+    )
   const handleChange = () => {
     setFormIsDirty(true)
   }
@@ -128,25 +148,32 @@ export default function InterventionForm({
     useFormFields<InterventionDataSchemaProps>()
 
   const { can_bypass_structure, is_superuser } = usePermission()
+  const isVisible = useIsFieldVisible("intervention")
 
   return (
     <form.AppForm>
       <form.Form>
         <FieldGroup className="mb-4">
-          <FormTextField name="name" label={m["form.name"]()} required />
+          {isVisible("name") && (
+            <FormTextField name="name" label={m["form.name"]()} required />
+          )}
 
-          <FormSelectField
-            name="type"
-            label={m["form.type"]()}
-            list={interventiontype}
-          />
+          {isVisible("type") && (
+            <FormSelectField
+              name="type"
+              label={m["form.type"]()}
+              list={interventiontype}
+            />
+          )}
 
-          <FormCheckboxField
-            name="subcontracting"
-            label={m["form.outsourcing"]()}
-          />
+          {isVisible("subcontracting") && (
+            <FormCheckboxField
+              name="subcontracting"
+              label={m["form.outsourcing"]()}
+            />
+          )}
 
-          {can_bypass_structure && is_superuser && (
+          {isVisible("structure") && can_bypass_structure && is_superuser && (
             <FormSelectField
               name="structure"
               label={m["form.structure"]()}
@@ -155,63 +182,59 @@ export default function InterventionForm({
             />
           )}
 
-          <FormTextField
-            name="begin_date"
-            label={m["form.begin-date"]()}
-            type="date"
-            required
-          />
+          {isVisible("begin_date") && (
+            <FormTextField
+              name="begin_date"
+              label={m["form.begin-date"]()}
+              type="date"
+              required
+            />
+          )}
 
-          <FormTextField
-            name="end_date"
-            label={m["form.end-date"]()}
-            type="date"
-            validators={{
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              onBlur({ value, fieldApi }: { value: string; fieldApi: any }) {
-                const beginDateValue = fieldApi.form.getFieldValue("begin_date")
-                if (
-                  beginDateValue &&
-                  value &&
-                  value.localeCompare(beginDateValue) === -1
-                ) {
-                  return {
-                    message: "La date de début est après la date de fin",
-                  }
-                }
-                return null
-              },
-            }}
-          />
+          {isVisible("end_date") && (
+            <FormTextField
+              name="end_date"
+              label={m["form.end-date"]()}
+              type="date"
+            />
+          )}
 
-          <FormSelectField
-            name="status"
-            label={m["form.status"]()}
-            list={interventionstatus}
-            required
-          />
+          {isVisible("status") && (
+            <FormSelectField
+              name="status"
+              label={m["form.status"]()}
+              list={interventionstatus}
+              required
+            />
+          )}
 
-          <FormTextareaField
-            name="description"
-            label={m["form.description"]()}
-            isRTE
-          />
+          {isVisible("description") && (
+            <FormTextareaField
+              name="description"
+              label={m["form.description"]()}
+              isRTE
+            />
+          )}
 
-          <FormGeomField
-            name="geom"
-            label={m["form.location"]()}
-            reference="intervention"
-            pictogram={pictogram}
-            required
-            description={m["form.geom-description"]()}
-          />
+          {isVisible("geom") && (
+            <FormGeomField
+              name="geom"
+              label={m["form.location"]()}
+              reference="intervention"
+              pictogram={pictogram}
+              required
+              description={m["form.geom-description"]()}
+            />
+          )}
 
-          <FormSelectField
-            name="disorders"
-            label={m["form.state"]()}
-            list={interventiondisorder}
-            multiple
-          />
+          {isVisible("disorders") && (
+            <FormSelectField
+              name="disorders"
+              label={m["form.disorders"]()}
+              list={interventiondisorder}
+              multiple
+            />
+          )}
 
           {/* <FormTextField
             name="length"
@@ -222,91 +245,101 @@ export default function InterventionForm({
             description="Valeur calculée automatiquement"
           /> */}
 
-          <FormTextField
-            name="width"
-            label={m["form.width"]()}
-            type="number"
-            min="0"
-          />
+          {isVisible("width") && (
+            <FormTextField
+              name="width"
+              label={m["form.width"]()}
+              type="number"
+              min="0"
+            />
+          )}
 
-          <FormTextField
-            name="height"
-            label={m["form.height"]()}
-            type="number"
-            min="0"
-          />
+          {isVisible("height") && (
+            <FormTextField
+              name="height"
+              label={m["form.height"]()}
+              type="number"
+              min="0"
+            />
+          )}
 
-          <FormSelectField
-            name="stake"
-            label={m["form.stake"]()}
-            list={stake}
-          />
+          {isVisible("stake") && (
+            <FormSelectField
+              name="stake"
+              label={m["form.stake"]()}
+              list={stake}
+            />
+          )}
 
-          <FormSelectField
-            name="access"
-            label={m["form.access"]()}
-            list={accessmean}
-          />
+          {isVisible("access") && (
+            <FormSelectField
+              name="access"
+              label={m["form.access"]()}
+              list={accessmean}
+            />
+          )}
 
-          <form.Field name="man_day" mode="array">
-            {(field) => (
-              <fieldset className="flex flex-col flex-wrap items-start">
-                <legend className="mt-3">{m["form.man-days"]()}</legend>
-                {field.state.value?.map((_item, index: number) => (
-                  <div
-                    key={index}
-                    className="items-starts my-3 flex flex-wrap gap-5"
-                  >
-                    <FormTextField
-                      name={`man_day[${index}].nb_days`}
-                      label={m["form.time-in-days"]()}
-                      type="number"
-                      className="max-w-full"
-                      step="0.01"
-                    />
-
-                    <FormSelectField
-                      name={`man_day[${index}].job`}
-                      label={m["form.job"]()}
-                      list={interventionjob}
-                      className="w-full"
-                      required
-                    />
-
-                    <Button
-                      className="mt-8"
-                      type="button"
-                      variant="destructive"
-                      size="icon"
-                      onClick={() => {
-                        field.removeValue(index)
-                      }}
+          {isVisible("man_day") && (
+            <form.Field name="man_day" mode="array">
+              {(field) => (
+                <fieldset className="flex flex-col flex-wrap items-start">
+                  <legend className="mt-3">{m["form.man-days"]()}</legend>
+                  {field.state.value?.map((_item, index: number) => (
+                    <div
+                      key={index}
+                      className="items-starts my-3 flex flex-wrap gap-5"
                     >
-                      <Trash aria-hidden />
+                      <FormTextField
+                        name={`man_day[${index}].nb_days`}
+                        label={m["form.time-in-days"]()}
+                        type="number"
+                        className="max-w-full"
+                        step="0.01"
+                      />
 
-                      <span className="sr-only">{m["form.remove"]()}</span>
-                    </Button>
-                  </div>
-                ))}
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => {
-                    field.pushValue({
-                      job: interventionjob[0],
-                      nb_days: 0,
-                    })
-                  }}
-                >
-                  {m["form.add"]()}
-                </Button>
-              </fieldset>
-            )}
-          </form.Field>
+                      <FormSelectField
+                        name={`man_day[${index}].job`}
+                        label={m["form.job"]()}
+                        list={interventionjob}
+                        className="w-full"
+                        required
+                      />
+
+                      <Button
+                        className="mt-8"
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        onClick={() => {
+                          field.removeValue(index)
+                        }}
+                      >
+                        <Trash aria-hidden />
+
+                        <span className="sr-only">{m["form.remove"]()}</span>
+                      </Button>
+                    </div>
+                  ))}
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => {
+                      field.pushValue({
+                        job: interventionjob[0],
+                        nb_days: 0,
+                      })
+                    }}
+                  >
+                    {m["form.add"]()}
+                  </Button>
+                </fieldset>
+              )}
+            </form.Field>
+          )}
 
           <FormUploadGallery />
 
-          <Button type="submit">
+          <Button type="submit" className="h-12">
             {isEdit
               ? m["form.edit"]()
               : `${m["form.create"]()} ${m["content.intervention"]().toLowerCase()}`}
@@ -321,6 +354,7 @@ export default function InterventionForm({
               }}
               type="reset"
               variant="destructive"
+              className="h-12"
             >
               {m["form.reset"]()}
             </Button>

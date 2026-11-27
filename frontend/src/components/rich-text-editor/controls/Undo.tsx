@@ -18,7 +18,7 @@ export default function Undo({ editor }: { editor: Editor }) {
             onClick={() => editor.chain().focus().undo().run()}
             disabled={!editor.can().chain().focus().undo().run()}
           >
-            <UndoIcon className="size-4" aria-hidden />
+            <UndoIcon className="size-5" aria-hidden />
             <span className="sr-only">Annuler</span>
           </Button>
         }

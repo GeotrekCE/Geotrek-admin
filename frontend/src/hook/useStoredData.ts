@@ -15,6 +15,8 @@ import type {
   ReportReferencesSchemaProps,
   SignageReferencesSchemaProps,
 } from "@/schemas/references"
+import { usePermission } from "./useSettingsQuery"
+import { removeDiacritics } from "@/lib/string"
 
 export function useStoredData({ q, type }: ListSearchParams) {
   const references = useLiveQuery(() =>
@@ -35,24 +37,32 @@ export function useStoredData({ q, type }: ListSearchParams) {
         ]
       | undefined) || []
 
+  const permissions = usePermission()
+
   const queries = useLiveQuery(() => {
     const results = []
-    if (!type || type?.includes("signage")) {
+    if (!type || (type?.includes("signage") && permissions.signage.read)) {
       results.push({ collection: db.signageData, reference: signage })
     }
-    if (!type || type?.includes("intervention")) {
+    if (
+      !type ||
+      (type?.includes("intervention") && permissions.intervention.read)
+    ) {
       results.push({
         collection: db.interventionData,
         reference: intervention,
       })
     }
-    if (!type || type?.includes("infrastructure")) {
+    if (
+      !type ||
+      (type?.includes("infrastructure") && permissions.infrastructure.read)
+    ) {
       results.push({
         collection: db.infrastructureData,
         reference: infrastructure,
       })
     }
-    if (!type || type?.includes("report")) {
+    if (!type || (type?.includes("report") && permissions.report.read)) {
       results.push({ collection: db.reportData, reference: report })
     }
     return Promise.all(
@@ -73,7 +83,7 @@ export function useStoredData({ q, type }: ListSearchParams) {
             | ReportReferencesSchemaProps
             | InfrastructureReferencesSchemaProps
         }) => {
-          if (collection.name === "reportData") {
+          if (collection.name === "reportData" && !q) {
             return collection.toArray((data) =>
               data.map((item) => ({
                 ...item,
@@ -101,8 +111,12 @@ export function useStoredData({ q, type }: ListSearchParams) {
           )
             .filter(
               (data) =>
-                data.name.toLowerCase().includes(q.toLowerCase()) ||
-                data.description.toLowerCase().includes(q.toLowerCase())
+                removeDiacritics(data.name)
+                  .toLowerCase()
+                  .includes(removeDiacritics(q.toLowerCase())) ||
+                removeDiacritics(data.description)
+                  .toLowerCase()
+                  .includes(removeDiacritics(q.toLowerCase()))
             )
             .toArray((data) =>
               data.map((item) => ({

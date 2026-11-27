@@ -811,7 +811,7 @@ SYNC_MOBILE_OPTIONS = {"skip_tiles": False}
 GTAM_CONFIG = {
     "REFERENCES_INTERVAL_SYNC": 7 * 24,
     "DATA_INTERVAL_SYNC": 7 * 24,
-    "SYNC_MAP_MIN_ZOOM": 10,
+    "SYNC_MAP_MIN_ZOOM": 8,
 }
 
 """

@@ -8,12 +8,25 @@ CHANGELOG
 **Bug fixes**
 
 * Reset ``topology`` before parsing each object in ``PointTopologyParserMixin.parse_obj`` so skipped rows do not reuse a previous object's topology
+* GTAM: Fix the `material_cost` schema
+* GTAM: Fix offline map ordering issues (ref. #5855)
+* GTAM: Apply permission checks to every view
+* GTAM: Ensure geolocation markers are no longer displayed above points
+* GTAM: Display signage blades in the correct order
+* GTAM: Fix several wordings
+* GTAM: Hide select fields without options
 
 **Improvements**
 
 * Add database index on ``eid`` and composite index on ``(eid, provider)`` plus ``db_default=""`` on ``ExternalSourceMixin.eid`` (removing manual SQL ``SET DEFAULT`` statements)
 * Optimize API v2 object cache key query in ``GeotrekViewSet.get_object_cache_key`` to fetch only ``date_update`` instead of loading full model instances
 * Add full_name in Vigilance area type API v2 endpoint
+* GTAM: Improve photo uploads
+* GTAM: Allow users to remove the `minZoom` settings
+* GTAM: Make search text results insensitive to accented characters
+* GTAM: Add clustering for objects with identical coordinates
+* GTAM: Hide fields configured as hidden in Geotrek-Admin settings
+* GTAM: Add a button to view map objects in the user's preferred map application
 
 **Maintenance**
 

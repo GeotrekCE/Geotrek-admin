@@ -18,6 +18,7 @@ import {
   ComboboxItem,
   ComboboxList,
   ComboboxValue,
+  useComboboxAnchor,
 } from "@/components/ui/combobox"
 import { FieldDescription, FieldLabel } from "@/components/ui/field"
 import {
@@ -61,7 +62,17 @@ export function SelectField({
 
   const comboboxValue = multiple ? listToOptions(rawValue as List[]) : undefined
   const selectValue =
-    !multiple && rawValue ? itemToOption(rawValue as List) : undefined
+    !multiple &&
+    rawValue &&
+    list.some((item) => item.id === (rawValue as List).id)
+      ? itemToOption(rawValue as List).value
+      : null
+
+  const anchor = useComboboxAnchor()
+
+  if (listToOptions(list).length === 0) {
+    return null
+  }
 
   return (
     <FormFieldSet>
@@ -94,16 +105,20 @@ export function SelectField({
               itemValue?.value === selectedValue?.value
             }
           >
-            <ComboboxChips className={cn("relative w-full", className)}>
+            <ComboboxChips className={cn("w-full", className)} ref={anchor}>
               <ComboboxValue>
                 {(values) => (
                   <React.Fragment>
                     {values.map((value: { value: number; label: string }) => (
-                      <ComboboxChip key={value.value}>
+                      <ComboboxChip
+                        key={value.value}
+                        className="py-4 text-base"
+                      >
                         {value.label}
                       </ComboboxChip>
                     ))}
                     <ComboboxChipsInput
+                      className="text-base"
                       data-testid={`field-${field.name}`}
                       name={field.name}
                     />
@@ -115,11 +130,15 @@ export function SelectField({
                 )}
               </ComboboxValue>
             </ComboboxChips>
-            <ComboboxContent>
+            <ComboboxContent anchor={anchor}>
               <ComboboxEmpty>{m["common.none-found"]()}</ComboboxEmpty>
               <ComboboxList>
                 {(item) => (
-                  <ComboboxItem key={item.value} value={item}>
+                  <ComboboxItem
+                    key={item.value}
+                    value={item}
+                    className="py-3 text-base"
+                  >
                     {item.label}
                   </ComboboxItem>
                 )}
@@ -143,15 +162,15 @@ export function SelectField({
             <SelectTrigger
               id={id}
               aria-invalid={isTouched && !isValid}
-              className={className}
+              className={cn("h-12!", className)}
               data-testid={`field-${field.name}`}
               name={field.name}
             >
-              <SelectValue placeholder={placeholder} />
+              <SelectValue placeholder={placeholder} className="text-base" />
             </SelectTrigger>
             <SelectContent>
               {list.map((opt) => (
-                <SelectItem key={opt.id} value={opt.id}>
+                <SelectItem key={opt.id} value={opt.id} className="text-base">
                   {opt.name}
                 </SelectItem>
               ))}
