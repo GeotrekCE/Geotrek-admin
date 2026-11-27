@@ -13,7 +13,7 @@ from ftplib import FTP
 from functools import reduce
 from io import BytesIO, StringIO
 from os.path import dirname
-from pathlib import PurePath
+from pathlib import Path, PurePath
 from time import sleep
 from urllib.parse import urlencode, urlparse
 
@@ -901,13 +901,14 @@ class ShapeParser(Parser):
 
 
 class SpreadsheetParser(Parser):
-    CSV_MIMETYPE = "text/csv"
+    CSV_MIMETYPES = ("text/csv", "text/plain", "application/csv")
+    ODS_MIMETYPE = "application/vnd.oasis.opendocument.spreadsheet"
+    XLS_MIMETYPE = "application/vnd.ms-excel"
+    XLSX_MIMETYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
 
-    def start(self):
-        # Convert the file to CSV format
+    def _convert_to_csv(self):
         server = settings.MAPENTITY_CONFIG["CONVERSION_SERVER"]
-        url = f"{server}?{urlencode({'to': self.CSV_MIMETYPE})}"
-
+        url = f"{server}?{urlencode({'to': self.CSV_MIMETYPES[0]})}"
         with open(self.filename, "rb") as f:
             response = requests.post(url, files={"file": f})
         if response.status_code != 200:
@@ -915,7 +916,20 @@ class SpreadsheetParser(Parser):
                 "The file conversion failed. The file should have CSV, ODS, XLS or XLSX format"
             )
             raise GlobalImportError(msg)
-        self.csv_content = response.content.decode(self.encoding)
+        return response.content
+
+    def start(self):
+        mime_type = magic.Magic(mime=True).from_file(self.filename)
+
+        if mime_type in self.CSV_MIMETYPES:
+            content = Path(self.filename).read_bytes()
+        elif mime_type in (self.ODS_MIMETYPE, self.XLS_MIMETYPE, self.XLSX_MIMETYPE):
+            content = self._convert_to_csv()
+        else:
+            msg = _("The file should have CSV, ODS, XLS or XLSX format")
+            raise GlobalImportError(msg)
+
+        self.csv_content = content.decode(self.encoding)
         super().start()
 
     def next_row(self):

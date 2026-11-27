@@ -33,6 +33,7 @@ from geotrek.common.parsers import (
     AtomParser,
     AttachmentParserMixin,
     DownloadImportError,
+    ExcelParser,
     GeotrekAggregatorParser,
     GeotrekParser,
     GlobalImportError,
@@ -41,6 +42,7 @@ from geotrek.common.parsers import (
     OpenSystemParser,
     Parser,
     RowImportError,
+    SpreadsheetParser,
     TourInSoftParser,
     TourismSystemParser,
     ValueImportError,
@@ -1549,6 +1551,95 @@ class XMLParserTests(TestCase):
         parser = TestXmlParser()
         parser.parse(limit=-1)
         self.assertEqual(Organism.objects.count(), 0)
+
+
+class OrganismSpreadsheetParser(SpreadsheetParser):
+    model = Organism
+    fields = {"organism": "nom"}
+
+
+class OrganismExcelParser(ExcelParser):
+    model = Organism
+    fields = {"organism": "nom"}
+
+
+class SpreadsheetParserTest(TestCase):
+    parser_path = "geotrek.common.tests.test_parsers.OrganismSpreadsheetParser"
+
+    def get_filename(self, name):
+        return os.path.join(os.path.dirname(__file__), "data", name)
+
+    @mock.patch("geotrek.common.parsers.requests.post")
+    def test_import_data_from_csv(self, mocked_post):
+        call_command(
+            "import", self.parser_path, self.get_filename("organism.csv"), verbosity=0
+        )
+        mocked_post.assert_not_called()
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Organism.objects.get().organism, "2")
+
+    @mock.patch("geotrek.common.parsers.requests.post")
+    def test_import_data_from_xls(self, mocked_post):
+        response = Response()
+        response.status_code = 200
+        response._content = b"NoM,Photo\r\n2,http://toto.tata/titi.png\r\n"
+        mocked_post.return_value = response
+
+        call_command(
+            "import", self.parser_path, self.get_filename("organism.xls"), verbosity=0
+        )
+
+        server = settings.MAPENTITY_CONFIG["CONVERSION_SERVER"]
+        mocked_post.assert_called_once()
+        self.assertEqual(mocked_post.call_args.args[0], f"{server}?to=text%2Fcsv")
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Organism.objects.get().organism, "2")
+
+    @mock.patch("geotrek.common.parsers.requests.post")
+    def test_import_data_from_xls_convertit_error(self, mocked_post):
+        response = Response()
+        response.status_code = 500
+        mocked_post.return_value = response
+
+        with self.assertRaisesMessage(
+            CommandError,
+            "The file conversion failed. The file should have CSV, ODS, XLS or XLSX format",
+        ):
+            call_command(
+                "import",
+                self.parser_path,
+                self.get_filename("organism.xls"),
+                verbosity=0,
+            )
+        mocked_post.assert_called_once()
+        self.assertEqual(Organism.objects.count(), 0)
+
+    @mock.patch("geotrek.common.parsers.requests.post")
+    def test_import_data_from_json_wrong_format(self, mocked_post):
+        with self.assertRaisesMessage(
+            CommandError,
+            "The file should have CSV, ODS, XLS or XLSX format",
+        ):
+            call_command(
+                "import",
+                self.parser_path,
+                self.get_filename("organism.json"),
+                verbosity=0,
+            )
+        mocked_post.assert_not_called()
+        self.assertEqual(Organism.objects.count(), 0)
+
+    @mock.patch("geotrek.common.parsers.requests.post")
+    def test_excel_parser_from_csv(self, mocked_post):
+        call_command(
+            "import",
+            "geotrek.common.tests.test_parsers.OrganismExcelParser",
+            self.get_filename("organism.csv"),
+            verbosity=0,
+        )
+        mocked_post.assert_not_called()
+        self.assertEqual(Organism.objects.count(), 1)
+        self.assertEqual(Organism.objects.get().organism, "2")
 
 
 class TourInSoftParserTests(TestCase):

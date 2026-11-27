@@ -6,7 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from django.test.utils import override_settings
 from rest_framework.reverse import reverse
 
-from geotrek.common.parsers import DownloadImportError
+from geotrek.common.parsers import DownloadImportError, Parser
 
 
 def dictfetchall(cursor):

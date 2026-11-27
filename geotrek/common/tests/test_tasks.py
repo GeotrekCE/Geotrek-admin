@@ -10,7 +10,6 @@ from django.views.generic.dates import timezone_today
 
 from geotrek.common.models import FileType, Organism
 from geotrek.common.parsers import GlobalImportError
-from geotrek.common.tests.mixins import JSONParser
 from geotrek.common.tasks import (
     _replace_year,
     get_parser_class,
@@ -18,6 +17,7 @@ from geotrek.common.tasks import (
     import_datas_from_web,
     update_annual_vigilance_areas,
 )
+from geotrek.common.tests.mixins import JSONParser
 from geotrek.tourism.models import TouristicEvent
 from geotrek.zoning.models import VigilancePeriod
 from geotrek.zoning.tests.factories import VigilanceAreaFactory
