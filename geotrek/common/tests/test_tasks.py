@@ -9,7 +9,8 @@ from django.test import TestCase, override_settings
 from django.views.generic.dates import timezone_today
 
 from geotrek.common.models import FileType, Organism
-from geotrek.common.parsers import ExcelParser, GlobalImportError
+from geotrek.common.parsers import GlobalImportError
+from geotrek.common.tests.mixins import JSONParser
 from geotrek.common.tasks import (
     _replace_year,
     get_parser_class,
@@ -22,9 +23,9 @@ from geotrek.zoning.models import VigilancePeriod
 from geotrek.zoning.tests.factories import VigilanceAreaFactory
 
 
-class OrganismParser(ExcelParser):
+class OrganismParser(JSONParser):
     model = Organism
-    fields = {"organism": "nOm"}
+    fields = {"organism": "nom"}
 
 
 class TasksTest(TestCase):
@@ -69,7 +70,7 @@ class TasksTest(TestCase):
 
     @patch("sys.stdout", new_callable=StringIO)
     def test_import_data_task(self, mock):
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         task = import_datas.s(
             filename=filename,
             name="OrganismParser",

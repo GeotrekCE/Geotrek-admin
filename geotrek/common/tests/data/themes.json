@@ -1,0 +1,12 @@
+{
+    "features": [
+        {
+            "nom": "Paysages",
+            "picto": "http://toto.tata/titi.png"
+        },
+        {
+            "nom": "Archéologie",
+            "picto": "http://toto.tata/titi.png"
+        }
+    ]
+}

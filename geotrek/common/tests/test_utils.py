@@ -44,6 +44,7 @@ class UtilsTest(TestCase):
             "TourInSoftParser",
             "CityParser",
             "ExcelParser",
+            "SpreadsheetParser",
             "OpenSystemParser",
             "ShapeParser",
             "ApidaeParser",

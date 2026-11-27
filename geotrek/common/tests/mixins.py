@@ -64,3 +64,19 @@ class AttachmentTestMixin:
         )
         self.assertEqual(attachment.attachment_file.size, len(content))
         self.assertEqual(attachment.filetype.type, "Photographie")
+
+
+class JSONParser(Parser):
+    entry = "features"
+
+    def next_row(self):
+        if self.filename:
+            with open(self.filename) as f:
+                response = f.read()
+        self.root = json.loads(response)
+        rows = self.root[self.entry]
+        self.nb = len(rows)
+        yield from rows
+
+    def normalize_field_name(self, name):
+        return name

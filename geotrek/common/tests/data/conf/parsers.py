@@ -1,7 +1,7 @@
 from geotrek.common.models import Organism
-from geotrek.common.parsers import ExcelParser
+from geotrek.common.tests.test_parsers import JSONParser
 
 
-class CustomParser(ExcelParser):
+class CustomParser(JSONParser):
     model = Organism
-    fields = {"organism": "nOm"}
+    fields = {"organism": "nom"}

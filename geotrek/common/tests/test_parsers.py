@@ -33,7 +33,6 @@ from geotrek.common.parsers import (
     AtomParser,
     AttachmentParserMixin,
     DownloadImportError,
-    ExcelParser,
     GeotrekAggregatorParser,
     GeotrekParser,
     GlobalImportError,
@@ -48,7 +47,7 @@ from geotrek.common.parsers import (
     XmlParser,
 )
 from geotrek.common.tests.factories import ThemeFactory
-from geotrek.common.tests.mixins import GeotrekParserTestMixin
+from geotrek.common.tests.mixins import GeotrekParserTestMixin, JSONParser
 from geotrek.common.utils.testdata import SVG_FILE, get_dummy_img
 from geotrek.tourism.models import (
     InformationDesk,
@@ -62,34 +61,34 @@ from geotrek.trekking.tests.factories import POIFactory, TrekFactory
 from geotrek.zoning.models import District
 
 
-class OrganismParser(ExcelParser):
+class OrganismParser(JSONParser):
     model = Organism
-    fields = {"organism": "nOm"}
+    fields = {"organism": "nom"}
 
 
-class OrganismEidParser(ExcelParser):
+class OrganismEidParser(JSONParser):
     model = Organism
-    fields = {"organism": "nOm"}
+    fields = {"organism": "nom"}
     eid = "organism"
 
 
-class StructureExcelParser(ExcelParser):
+class StructureParser(JSONParser):
     model = Organism
-    fields = {"organism": "nOm", "structure": "structure"}
+    fields = {"organism": "nom", "structure": "structure"}
     eid = "organism"
 
 
-class OrganismNoMappingNoPartialParser(StructureExcelParser):
+class OrganismNoMappingNoPartialParser(StructureParser):
     field_options = {"structure": {"mapping": {"foo": "bar", "": "boo"}}}
     natural_keys = {"structure": "name"}
 
 
-class OrganismNoMappingPartialParser(StructureExcelParser):
+class OrganismNoMappingPartialParser(StructureParser):
     field_options = {"structure": {"mapping": {"foo": "bar"}, "partial": True}}
     natural_keys = {"structure": "name"}
 
 
-class RecordSourceFlexibleFieldsParser(ExcelParser):
+class RecordSourceFlexibleFieldsParser(JSONParser):
     model = RecordSource
     flexible_fields = True
     fields = {
@@ -102,11 +101,11 @@ class RecordSourceFlexibleFieldsParser(ExcelParser):
         return "website test"
 
 
-class OrganismNoNaturalKeysParser(StructureExcelParser):
+class OrganismNoNaturalKeysParser(StructureParser):
     warn_on_missing_fields = True
 
 
-class RecordSourceDefaultFieldValuesNotFlexibleParser(ExcelParser):
+class RecordSourceDefaultFieldValuesNotFlexibleParser(JSONParser):
     model = RecordSource
     default_fields_values = {"website": "website test default"}
     fields = {
@@ -116,7 +115,7 @@ class RecordSourceDefaultFieldValuesNotFlexibleParser(ExcelParser):
     eid = "name"
 
 
-class OrganismWithAttachmentExcelParser(AttachmentParserMixin, OrganismEidParser):
+class OrganismWithAttachmentParser(AttachmentParserMixin, OrganismEidParser):
     non_fields = {"attachments": "photo"}
 
 
@@ -125,30 +124,14 @@ class LicenseAttachmentParser(AttachmentParserMixin, OrganismEidParser):
     default_license_label = "Creative Commons"
 
 
-class WarnAttachmentParser(OrganismWithAttachmentExcelParser):
+class WarnAttachmentParser(OrganismWithAttachmentParser):
     warn_on_missing_fields = True
 
 
-class AttachmentLegendParser(OrganismWithAttachmentExcelParser):
+class AttachmentLegendParser(OrganismWithAttachmentParser):
     def filter_attachments(self, src, val):
         (url, legend, author) = val.split(", ")
         return [(url, legend, author)]
-
-
-class JSONParser(Parser):
-    entry = "features"
-
-    def next_row(self):
-        if self.filename:
-            with open(self.filename) as f:
-                response = f.read()
-        self.root = json.loads(response)
-        rows = self.root[self.entry]
-        self.nb = len(rows)
-        yield from rows
-
-    def normalize_field_name(self, name):
-        return name
 
 
 class OrganismJSONParser(JSONParser):
@@ -339,12 +322,12 @@ class ParserTests(TestCase):
 
     @override_settings(VAR_DIR=os.path.join(os.path.dirname(__file__), "data"))
     def test_custom_parser(self):
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command("import", "CustomParser", filename, verbosity=0)
 
     def test_progress(self):
         output = StringIO()
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.OrganismParser",
@@ -355,7 +338,7 @@ class ParserTests(TestCase):
         self.assertIn("(100%)", output.getvalue())
 
     def test_create(self):
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.OrganismParser",
@@ -367,7 +350,7 @@ class ParserTests(TestCase):
         self.assertEqual(organism.organism, "2.0")
 
     def test_duplicate_without_eid(self):
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.OrganismParser",
@@ -383,7 +366,7 @@ class ParserTests(TestCase):
         self.assertEqual(Organism.objects.count(), 2)
 
     def test_unmodified_with_eid(self):
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.OrganismEidParser",
@@ -399,8 +382,8 @@ class ParserTests(TestCase):
         self.assertEqual(Organism.objects.count(), 1)
 
     def test_updated_with_eid(self):
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
-        filename2 = os.path.join(os.path.dirname(__file__), "data", "organism2.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
+        filename2 = os.path.join(os.path.dirname(__file__), "data", "organism2.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.OrganismEidParser",
@@ -441,7 +424,7 @@ class ParserTests(TestCase):
     def test_databaseerror_except(self, mock_parse_row):
         output = StringIO()
         mock_parse_row.side_effect = DatabaseError("foo bar")
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.OrganismEidParser",
@@ -469,7 +452,7 @@ class ParserTests(TestCase):
 
     def test_fk_not_in_natural_keys(self):
         output = StringIO()
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism5.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism5.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.OrganismNoNaturalKeysParser",
@@ -484,7 +467,7 @@ class ParserTests(TestCase):
 
     def test_no_mapping_not_partial(self):
         output = StringIO()
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism5.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism5.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.OrganismNoMappingNoPartialParser",
@@ -493,13 +476,13 @@ class ParserTests(TestCase):
             stdout=output,
         )
         self.assertIn(
-            "Bad value 'Structure' for field STRUCTURE. Should be in ['foo', '']",
+            "Bad value 'Structure' for field structure. Should be in ['foo', '']",
             output.getvalue(),
         )
 
     def test_no_mapping_partial(self):
         output = StringIO()
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism5.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism5.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.OrganismNoMappingPartialParser",
@@ -508,12 +491,12 @@ class ParserTests(TestCase):
             stdout=output,
         )
         self.assertIn(
-            "Bad value 'Structure' for field STRUCTURE. Should contain ['foo']",
+            "Bad value 'Structure' for field structure. Should contain ['foo']",
             output.getvalue(),
         )
 
     def test_flexible_fields(self):
-        filename = os.path.join(os.path.dirname(__file__), "data", "recordSource.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "recordSource.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.RecordSourceFlexibleFieldsParser",
@@ -524,7 +507,7 @@ class ParserTests(TestCase):
         self.assertEqual(websites[0].website, "website test")
 
     def test_default_fields_values_without_flexible_fields(self):
-        filename = os.path.join(os.path.dirname(__file__), "data", "recordSource2.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "recordSource2.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.RecordSourceDefaultFieldValuesNotFlexibleParser",
@@ -762,12 +745,12 @@ class ParserTests(TestCase):
         )
 
 
-class ThemeParser(ExcelParser):
+class ThemeParser(JSONParser):
     """Parser used in MultilangParserTests, using Theme because it has a translated field"""
 
     model = Theme
     eid = "label"  # Ensure that already created themes with same name will be updated
-    fields = {"label": "Nom"}
+    fields = {"label": "nom"}
 
 
 class MultilangThemeParser(ThemeParser):
@@ -796,7 +779,7 @@ class MultilangParserTests(TestCase):
 
     def test_parser_fill_translated_fields_off(self):
         """Parser should not fill empty fields for all languages, only main language"""
-        filename = os.path.join(os.path.dirname(__file__), "data", "themes.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "themes.json")
         label_default_language = f"label_{settings.MODELTRANSLATION_DEFAULT_LANGUAGE}"
         other_languages = [
             lang
@@ -818,7 +801,7 @@ class MultilangParserTests(TestCase):
 
     def test_parser_fill_translated_fields_on(self):
         """Parser should fill empty fields for all languages"""
-        filename = os.path.join(os.path.dirname(__file__), "data", "themes.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "themes.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.MultilangThemeParser",
@@ -831,7 +814,7 @@ class MultilangParserTests(TestCase):
     def test_parser_fill_translated_fields_on_only_empty(self):
         """Parser should fill empty fields for all languages"""
         theme_landscape = ThemeFactory(label="Paysages", label_en="Landscape")
-        filename = os.path.join(os.path.dirname(__file__), "data", "themes.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "themes.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.MultilangThemeParser",
@@ -844,7 +827,7 @@ class MultilangParserTests(TestCase):
 
     def test_parser_fill_translated_fields_with_apply_method(self):
         """Parser should first apply filter method before"""
-        filename = os.path.join(os.path.dirname(__file__), "data", "themes.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "themes.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.MultilangFilterThemeParser",
@@ -869,10 +852,10 @@ class AttachmentParserTests(TestCase):
     def test_attachment(self, mocked):
         mocked.return_value.status_code = 200
         mocked.return_value.content = get_dummy_img()
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -893,10 +876,10 @@ class AttachmentParserTests(TestCase):
     def test_attachment_bigger_size(self, mocked):
         mocked.return_value.status_code = 200
         mocked.return_value.content = get_dummy_img()
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -906,7 +889,7 @@ class AttachmentParserTests(TestCase):
             # Dummy Image is of size 85
             call_command(
                 "import",
-                "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
                 filename,
                 verbosity=0,
             )
@@ -917,10 +900,10 @@ class AttachmentParserTests(TestCase):
     def test_attachment_min_width(self, mocked):
         mocked.return_value.status_code = 200
         mocked.return_value.content = get_dummy_img()
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -930,7 +913,7 @@ class AttachmentParserTests(TestCase):
             # Dummy Image is of size 85
             call_command(
                 "import",
-                "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
                 filename,
                 verbosity=0,
             )
@@ -941,10 +924,10 @@ class AttachmentParserTests(TestCase):
     def test_attachment_min_height(self, mocked):
         mocked.return_value.status_code = 200
         mocked.return_value.content = get_dummy_img()
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -954,7 +937,7 @@ class AttachmentParserTests(TestCase):
             # Dummy Image is of size 85
             call_command(
                 "import",
-                "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
                 filename,
                 verbosity=0,
             )
@@ -964,10 +947,10 @@ class AttachmentParserTests(TestCase):
     def test_attachment_long_name(self, mocked):
         mocked.return_value.status_code = 200
         mocked.return_value.content = b""
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism3.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism3.json")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -987,7 +970,7 @@ class AttachmentParserTests(TestCase):
     def test_attachment_long_legend(self, mocked):
         mocked.return_value.status_code = 200
         mocked.return_value.content = b""
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism4.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism4.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.AttachmentLegendParser",
@@ -1007,7 +990,7 @@ class AttachmentParserTests(TestCase):
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.content = b""
         mocked_open.side_effect = ValueError("Decompressed Data Too Large")
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism4.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism4.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.AttachmentLegendParser",
@@ -1025,10 +1008,10 @@ class AttachmentParserTests(TestCase):
         FileType.objects.create(type="Photographie", structure=structure)
         mocked.return_value.status_code = 200
         mocked.return_value.content = b""
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -1048,14 +1031,14 @@ class AttachmentParserTests(TestCase):
         self.filetype.delete()
         mocked.return_value.status_code = 200
         mocked.return_value.content = b""
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         with self.assertRaisesRegex(
             CommandError,
             "FileType 'Photographie' does not exists in Geotrek-admin. Please add it",
         ):
             call_command(
                 "import",
-                "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+                "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
                 filename,
                 verbosity=0,
             )
@@ -1067,10 +1050,10 @@ class AttachmentParserTests(TestCase):
         mocked_get.return_value.content = b""
         mocked_head.return_value.status_code = 200
         mocked_head.return_value.headers = {"content-length": 0}
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -1078,7 +1061,7 @@ class AttachmentParserTests(TestCase):
         old_name = attachment.attachment_file.name
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -1094,11 +1077,11 @@ class AttachmentParserTests(TestCase):
         mocked_head.return_value.status_code = 200
         mocked_head.return_value.headers = {"content-length": 0}
         filename_no_legend = os.path.join(
-            os.path.dirname(__file__), "data", "attachment_no_legend.xls"
+            os.path.dirname(__file__), "data", "attachment_no_legend.json"
         )
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename_no_legend,
             verbosity=0,
         )
@@ -1106,7 +1089,7 @@ class AttachmentParserTests(TestCase):
         old_name = attachment.attachment_file.name
         self.assertEqual(attachment.legend, "")
         self.assertEqual(attachment.author, "")
-        filename = os.path.join(os.path.dirname(__file__), "data", "attachment.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "attachment.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.AttachmentLegendParser",
@@ -1127,10 +1110,10 @@ class AttachmentParserTests(TestCase):
         mocked_get.return_value.content = b""
         mocked_head.return_value.status_code = 200
         mocked_head.return_value.headers = {"content-length": 0}
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -1139,7 +1122,7 @@ class AttachmentParserTests(TestCase):
         os.remove(attachment.attachment_file.path)
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -1156,16 +1139,16 @@ class AttachmentParserTests(TestCase):
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.content = b""
         mocked_head.return_value.status_code = 503
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -1179,16 +1162,16 @@ class AttachmentParserTests(TestCase):
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.content = b""
         mocked_head.side_effect = DownloadImportError()
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -1399,9 +1382,9 @@ class AttachmentParserTests(TestCase):
     @mock.patch("requests.get")
     @mock.patch("geotrek.common.parsers.urlparse")
     def test_attachment_ftp_download_fail(self, mocked_urlparse, mocked_get):
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         mocked_get.side_effect = DownloadImportError("An error message")
-        mocked_urlparse.return_value = urlparse("ftp://test.url.com/organism.xls")
+        mocked_urlparse.return_value = urlparse("ftp://test.url.com/organism.json")
         output = StringIO()
         call_command(
             "import",
@@ -1432,10 +1415,10 @@ class AttachmentParserTests(TestCase):
         mocked.side_effect = mocked_requests_get
         structure = StructureFactory.create(name="Structure")
         FileType.objects.create(type="Photographie", structure=structure)
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -1443,13 +1426,13 @@ class AttachmentParserTests(TestCase):
 
     @mock.patch("requests.get")
     def test_attachment_bad_mimetype(self, mocked_get):
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism6.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism6.json")
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.content = get_dummy_img()
         output = StringIO()
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=2,
             stdout=output,
@@ -1465,13 +1448,13 @@ class AttachmentParserTests(TestCase):
 
     @mock.patch("requests.get")
     def test_attachment_bad_extension(self, mocked_get):
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism7.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism7.json")
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.content = get_dummy_img()
         output = StringIO()
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=2,
             stdout=output,
@@ -1489,7 +1472,7 @@ class AttachmentParserTests(TestCase):
     def test_attachment_get_default_license(self, mocked):
         mocked.return_value.status_code = 200
         mocked.return_value.content = get_dummy_img()
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         License.objects.create(label="Creative Commons")
         call_command(
             "import",
@@ -1504,7 +1487,7 @@ class AttachmentParserTests(TestCase):
     def test_attachment_create_default_license(self, mocked):
         mocked.return_value.status_code = 200
         mocked.return_value.content = get_dummy_img()
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
         call_command(
             "import",
             "geotrek.common.tests.test_parsers.LicenseAttachmentParser",
@@ -1522,11 +1505,11 @@ class AttachmentParserTests(TestCase):
     def test_attachment_update_license(self, mocked_get, mocked_size):
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.content = get_dummy_img()
-        filename = os.path.join(os.path.dirname(__file__), "data", "organism.xls")
+        filename = os.path.join(os.path.dirname(__file__), "data", "organism.json")
 
         call_command(
             "import",
-            "geotrek.common.tests.test_parsers.OrganismWithAttachmentExcelParser",
+            "geotrek.common.tests.test_parsers.OrganismWithAttachmentParser",
             filename,
             verbosity=0,
         )
@@ -1682,7 +1665,7 @@ class TourismSystemParserTest(TestCase):
             def __init__(self):
                 self.model = Trek
                 self.filename = os.path.join(
-                    os.path.dirname(__file__), "data", "organism.xls"
+                    os.path.dirname(__file__), "data", "organism.json"
                 )
                 self.filetype = FileType.objects.create(type="Photographie")
                 self.login = "test"
@@ -1713,7 +1696,7 @@ class OpenSystemParserTest(TestCase):
             def __init__(self):
                 self.model = Trek
                 self.filename = os.path.join(
-                    os.path.dirname(__file__), "data", "organism.xls"
+                    os.path.dirname(__file__), "data", "organism.json"
                 )
                 self.filetype = FileType.objects.create(type="Photographie")
                 self.login = "test"
