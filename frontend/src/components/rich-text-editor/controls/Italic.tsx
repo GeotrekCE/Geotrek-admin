@@ -18,7 +18,7 @@ export default function Italic({ editor }: { editor: Editor }) {
             onPressedChange={() => editor.chain().focus().toggleItalic().run()}
             disabled={!editor.can().chain().focus().toggleItalic().run()}
           >
-            <ItalicIcon className="size-4" aria-hidden />
+            <ItalicIcon className="size-5" aria-hidden />
             <span className="sr-only">Italique</span>
           </Toggle>
         }

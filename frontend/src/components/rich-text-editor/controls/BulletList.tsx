@@ -19,7 +19,7 @@ export default function BulletList({ editor }: { editor: Editor }) {
               editor.chain().focus().toggleBulletList().run()
             }
           >
-            <List className="size-4" aria-hidden />
+            <List className="size-5" aria-hidden />
             <span className="sr-only">Liste</span>
           </Toggle>
         }

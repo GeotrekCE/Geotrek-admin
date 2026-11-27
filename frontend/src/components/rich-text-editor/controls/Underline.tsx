@@ -20,7 +20,7 @@ export default function Underline({ editor }: { editor: Editor }) {
             }
             disabled={!editor.can().chain().focus().toggleUnderline().run()}
           >
-            <UnderlineIcon className="size-4" aria-hidden />
+            <UnderlineIcon className="size-5" aria-hidden />
             <span className="sr-only">Souligner</span>
           </Toggle>
         }
